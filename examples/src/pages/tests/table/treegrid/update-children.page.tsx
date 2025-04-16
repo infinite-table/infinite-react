@@ -118,7 +118,6 @@ export default function DataTestPage() {
         <TreeDataSource<FileSystemNode>
           onReady={setDataSourceApi}
           data={nodes}
-          debugMode
           primaryKey="id"
           nodesKey="children"
           selectionMode="multi-row"

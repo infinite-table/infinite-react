@@ -55,6 +55,7 @@ import { MenuIconProps } from '../components/icons/MenuIcon';
 import {
   InfiniteTableCellContext,
   InfiniteTablePublicContext,
+  InfiniteTableRowContext,
 } from './InfiniteTableContextValue';
 import { InfiniteTableCellSelectionApi } from '../api/getCellSelectionApi';
 import { InfiniteTableKeyboardNavigationApi } from '../api/getKeyboardNavigationApi';
@@ -414,6 +415,10 @@ export interface InfiniteTableApi<T> {
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;
   focus: () => void;
+
+  setGroupRenderStrategy: (
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
+  ) => void;
 }
 export type InfiniteTablePropVirtualizeColumns<T> =
   | boolean
@@ -601,8 +606,6 @@ export type InfiniteTablePropKeyboardShorcut = {
     | Promise<any>;
 };
 
-export type InfiniteTablePropDebugMode = boolean;
-
 export type InfiniteTablePropOnCellDoubleClickResult = Partial<{
   preventEdit: boolean;
 }>;
@@ -625,8 +628,6 @@ export interface InfiniteTableProps<T> {
   components?: InfiniteTablePropComponents<T>;
 
   wrapRowsHorizontally?: boolean;
-
-  debugMode?: InfiniteTablePropDebugMode;
 
   keyboardShortcuts?: InfiniteTablePropKeyboardShorcut[];
 
@@ -882,6 +883,15 @@ export interface InfiniteTableProps<T> {
     columnOrder: InfiniteTablePropColumnOrderNormalized,
   ) => void;
   onRowHeightChange?: (rowHeight: number) => void;
+
+  onRowMouseEnter?: (
+    context: InfiniteTableRowContext<T>,
+    event: React.MouseEvent,
+  ) => void;
+  onRowMouseLeave?: (
+    context: InfiniteTableRowContext<T>,
+    event: React.MouseEvent,
+  ) => void;
 
   onReady?: ({
     api,

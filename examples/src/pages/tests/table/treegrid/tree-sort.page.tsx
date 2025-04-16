@@ -61,7 +61,6 @@ export default function App() {
       <div className="flex flex-col gap-2 bg-black justify-start p-10">
         <TreeDataSource<FileSystemNode>
           data={nodes}
-          debugMode
           primaryKey="id"
           nodesKey="children"
           selectionMode="multi-row"

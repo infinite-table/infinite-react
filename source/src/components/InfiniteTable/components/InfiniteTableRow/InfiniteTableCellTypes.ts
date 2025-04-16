@@ -17,6 +17,7 @@ import {
 import {
   InfiniteTablePropCellClassName,
   InfiniteTablePropCellStyle,
+  InfiniteTableProps,
 } from '../../types/InfiniteTableProps';
 
 export type InfiniteTableBaseCellProps<T> = {
@@ -58,8 +59,10 @@ export interface InfiniteTableColumnCellProps<T>
   rowDetailState: false | 'collapsed' | 'expanded';
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
-  onMouseEnter?: VoidFunction;
-  onMouseLeave?: VoidFunction;
+  onMouseEnter?: (event: React.MouseEvent) => void;
+  onMouseLeave?: (event: React.MouseEvent) => void;
+  onRowMouseEnter?: InfiniteTableProps<T>['onRowMouseEnter'];
+  onRowMouseLeave?: InfiniteTableProps<T>['onRowMouseLeave'];
   showZebraRows: boolean;
   virtualized: boolean;
   hidden: boolean;

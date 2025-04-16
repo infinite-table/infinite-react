@@ -132,3 +132,22 @@ export type {
   TableRenderRange,
   InfiniteTablePropGetContextMenuItems,
 };
+
+export type {
+  DevToolsHookFn,
+  DevToolsHookFnOptions,
+  DevToolsMessageAddress,
+  DevToolsGenericMessage,
+  DevToolsHostPageMessage,
+  DevToolsHostPageMessagePayload,
+  DevToolsHostPageMessageType,
+  DevToolsInfiniteOverrides,
+  DevToolsDataSourceOverrides,
+  DevToolsOverrides,
+  ErrorCodeKey,
+  DataSourceDebugWarningKey,
+  InfiniteTableDebugWarningKey,
+  DebugWarningPayload,
+  DevToolsHostPageLogMessage,
+  DevToolsHostPageLogMessagePayload,
+} from './DevTools';

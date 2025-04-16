@@ -26,22 +26,54 @@ export const logColorWarn = COLOR_WARN_VALUE;
 export const logColorError = COLOR_ERROR_VALUE;
 export const logColorSuccess = COLOR_SUCCESS_VALUE;
 
-export const info = (message: string, logger?: DebugLogger) => {
-  logger = logger || infoLogger;
-  logger(log.color(logColorInfo, message));
+type LogFn = typeof console.log;
+
+export const info = (message: string, logger?: DebugLogger | LogFn) => {
+  if (!logger) {
+    logger = logger || infoLogger;
+    logger(log.color(logColorInfo, message));
+  } else {
+    logger(message);
+  }
 };
 
-export const warn = (message: string, logger?: DebugLogger) => {
-  logger = logger ? logger.extend(warnChannel) : warnLogger;
-  logger(log.color(logColorWarn, message));
+export const warn = (message: string, logger?: DebugLogger | LogFn) => {
+  logger = logger
+    ? (logger as DebugLogger).extend
+      ? (logger as DebugLogger).extend(warnChannel)
+      : logger
+    : warnLogger;
+
+  logger(
+    typeof (logger as DebugLogger).color === 'function'
+      ? (logger as DebugLogger).color(logColorWarn, message)
+      : message,
+  );
 };
-export const error = (message: string, logger?: DebugLogger) => {
-  logger = logger ? logger.extend(errorChannel) : errorLogger;
-  logger(log.color(logColorError, message));
+export const error = (message: string, logger?: DebugLogger | LogFn) => {
+  logger = logger
+    ? (logger as DebugLogger).extend
+      ? (logger as DebugLogger).extend(errorChannel)
+      : logger
+    : errorLogger;
+  logger(
+    typeof (logger as DebugLogger).color === 'function'
+      ? (logger as DebugLogger).color(logColorError, message)
+      : message,
+  );
 };
-export const success = (message: string, logger?: DebugLogger) => {
-  logger = logger ? logger.extend(successChannel) : successLogger;
-  logger(log.color(logColorSuccess, message));
+export const success = (message: string, logger?: DebugLogger | LogFn) => {
+  logger = logger
+    ? (logger as DebugLogger).extend
+      ? (logger as DebugLogger).extend(successChannel)
+      : logger
+    : successLogger;
+
+  logger(
+    typeof (logger as DebugLogger).color === 'function'
+      ? (logger as DebugLogger).color(logColorSuccess, message)
+      : message,
+  );
 };
 
 const doOnceFlags: DeepMap<string, boolean> = new DeepMap();
@@ -58,7 +90,7 @@ const doOnce = (func: () => void, ...keys: string[]) => {
 export const infoOnce = (
   message: string,
   key = message,
-  logger?: DebugLogger,
+  logger?: DebugLogger | LogFn,
 ) => {
   doOnce(() => info(message, logger), key, 'info');
 };
@@ -66,7 +98,7 @@ export const infoOnce = (
 export const warnOnce = (
   message: string,
   key = message,
-  logger?: DebugLogger,
+  logger?: DebugLogger | LogFn,
 ) => {
   doOnce(() => warn(message, logger), key, 'warn');
 };
@@ -74,7 +106,7 @@ export const warnOnce = (
 export const errorOnce = (
   message: string,
   key = message,
-  logger?: DebugLogger,
+  logger?: DebugLogger | LogFn,
 ) => {
   doOnce(() => error(message, logger), key, 'error');
 };
@@ -82,7 +114,7 @@ export const errorOnce = (
 export const successOnce = (
   message: string,
   key = message,
-  logger?: DebugLogger,
+  logger?: DebugLogger | LogFn,
 ) => {
   doOnce(() => success(message, logger), key, 'success');
 };

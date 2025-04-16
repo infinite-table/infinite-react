@@ -945,6 +945,10 @@ class DataSourceApiImpl<T> implements DataSourceApi<T> {
     return;
   };
 
+  setGroupBy = (groupBy: DataSourceState<T>['groupBy']) => {
+    this.actions.groupBy = groupBy;
+  };
+
   isRowDisabledAt = (rowIndex: number) => {
     const rowInfo = this.getRowInfoByIndex(rowIndex);
 

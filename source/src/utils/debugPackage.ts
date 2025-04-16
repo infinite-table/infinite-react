@@ -1,3 +1,4 @@
+import { buildSubscriptionCallback } from '../components/utils/buildSubscriptionCallback';
 import { DeepMap } from './DeepMap';
 import { getGlobal } from './getGlobal';
 
@@ -83,6 +84,13 @@ const COLORS = [
 
 const COLOR_SYMBOL = Symbol('color');
 const USED_COLORS_MAP = new WeakMap<string[], number[]>();
+
+const GLOBAL_LOG_INTENT = buildSubscriptionCallback<{
+  channel: string;
+  args: any[];
+  color: string;
+  timestamp: number;
+}>();
 
 function initUsedColors(colors = COLORS) {
   USED_COLORS_MAP.set(
@@ -183,7 +191,7 @@ function isChannelTargeted(channel: string, permissionToken: string) {
  * @param permissions we accept values like "a:b:c,d:e:f,d:x:*" - multiple values separated by a comma. can also contain wildcards
  * @returns boolean
  */
-export function isLoggingEnabled(
+export function isChannelEnabled(
   channel: string,
   permissions: string,
 ): boolean {
@@ -279,8 +287,9 @@ function debugPackage(channelName: string): any {
 
     const channelParts = channel.split(CHANNEL_SEPARATOR);
 
-    if (loggers.has(channelParts)) {
-      return loggers.get(channelParts);
+    const foundLogger = loggers.get(channelParts);
+    if (foundLogger) {
+      return foundLogger;
     }
 
     const parentLogger = loggers.get(channelParts.slice(0, -1));
@@ -292,15 +301,27 @@ function debugPackage(channelName: string): any {
     let enabled: boolean | undefined;
     let lastMessageTimestamp: number = 0;
     const isEnabled = () =>
-      enabled ?? isLoggingEnabled(channel, storageKeyValue);
+      enabled ?? isChannelEnabled(channel, storageKeyValue);
 
     const color = getNextColor(debug.colors);
 
     const logger = Object.defineProperties(
       (...args: any[]) => {
-        if (isLoggingEnabled(channel, storageKeyValue)) {
-          const now = Date.now();
+        const intentListenersCount = GLOBAL_LOG_INTENT.getListenersCount();
 
+        let now;
+        if (intentListenersCount > 0) {
+          now = now ?? Date.now();
+
+          GLOBAL_LOG_INTENT({
+            color,
+            channel,
+            args,
+            timestamp: now,
+          });
+        }
+        if (isEnabled()) {
+          now = now ?? Date.now();
           if (lastMessageTimestamp && logDiffs) {
             const diff = now - lastMessageTimestamp;
 
@@ -371,6 +392,9 @@ function debugPackage(channelName: string): any {
         },
         enabled: {
           get: () => isEnabled(),
+          set: (value: boolean) => {
+            enabled = value;
+          },
         },
         logFn: {
           configurable: false,
@@ -414,10 +438,47 @@ const debug = debugPackage as {
   diffenable: string | boolean;
   logFn: DebugLogger['logFn'];
   destroyAll: () => void;
+  onLogIntent: (
+    channel: string,
+    fn: (options: {
+      timestamp: number;
+      channel: string;
+      color: string;
+      args: any[];
+    }) => void,
+  ) => VoidFunction;
 };
 
 debug.colors = COLORS;
 debug.logFn = defaultLogger;
+
+const onLogIntentGlobal: (typeof debug)['onLogIntent'] = (
+  intentChannel,
+  fn: (options: {
+    timestamp: number;
+    channel: string;
+    color: string;
+    args: any[];
+  }) => void,
+) => {
+  return GLOBAL_LOG_INTENT.onChange((options) => {
+    if (!options) {
+      return;
+    }
+    const { channel, args, color, timestamp } = options;
+
+    if (isChannelTargeted(channel, intentChannel)) {
+      fn({
+        channel,
+        color,
+        args,
+        timestamp,
+      });
+    }
+  });
+};
+
+debug.onLogIntent = onLogIntentGlobal;
 
 debug.destroyAll = () => {
   initUsedColors();
@@ -425,5 +486,9 @@ debug.destroyAll = () => {
   loggers.clear();
   enabledChannelsCache.clear();
 };
+
+if (__DEV__) {
+  (globalThis as any).debugPackage = debug;
+}
 
 export { debug };

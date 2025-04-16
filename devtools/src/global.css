@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@import '../../devtools-ui/dist/index.css';
+
+:root {
+  @apply text-sm;
+}
+/* 
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+} */
+
+#root > div {
+  flex: 1;
+}

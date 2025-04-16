@@ -192,6 +192,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
   rowDetailState: false | 'expanded' | 'collapsed';
   isGroupRow: true;
   isTreeNode: false;
+  isParentNode: false;
   field?: keyof T;
   value: any;
   rawValue: any;

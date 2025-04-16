@@ -43,7 +43,13 @@ import { computeColumnGroupsDepths } from './computeColumnGroupsDepths';
 import { getRowDetailRendererFromComponent } from './rowDetailRendererFromComponent';
 import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
 import { createRenderer } from '../../HeadlessTable/createRenderer';
+import { DEV_TOOLS_INFINITE_OVERRIDES } from '../../../DEV_TOOLS_OVERRIDES';
+import type {
+  InfiniteTableDebugWarningKey,
+  DebugWarningPayload,
+} from '../types/DevTools';
 
+import { getDebugChannel } from '../../../utils/debugChannel';
 const EMPTY_OBJECT = {};
 
 export function getCellSelector(cellPosition?: CellPositionByIndex) {
@@ -55,12 +61,13 @@ export function getCellSelector(cellPosition?: CellPositionByIndex) {
 }
 
 export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
+  const debugChannel = getDebugChannel(debugId);
   /**
    * This is the main virtualization brain that powers the table
    */
   const brain = !wrapRowsHorizontally
-    ? new MatrixBrain(debugId)
-    : new HorizontalLayoutMatrixBrain(debugId, {
+    ? new MatrixBrain(debugChannel)
+    : new HorizontalLayoutMatrixBrain(debugChannel, {
         isHeader: false,
       });
 
@@ -70,8 +77,8 @@ export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
    * (which are due to column groups) than the main grid viewport
    */
   const headerBrain = !wrapRowsHorizontally
-    ? new MatrixBrain('header')
-    : new HorizontalLayoutMatrixBrain('header', {
+    ? new MatrixBrain(debugChannel)
+    : new HorizontalLayoutMatrixBrain(debugChannel, {
         isHeader: true,
         masterBrain: brain as HorizontalLayoutMatrixBrain,
       });
@@ -121,8 +128,10 @@ export function initSetupState<T>({
   const domRef = createRef<HTMLDivElement>();
 
   return {
+    debugWarnings: new Map<InfiniteTableDebugWarningKey, DebugWarningPayload>(),
     renderer,
     onRenderUpdater,
+    devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     lastRowToCollapseRef: { current: null },
     lastRowToExpandRef: { current: null },
@@ -222,7 +231,7 @@ export const forwardProps = <T>(
     groupColumn: 1,
     onReady: 1,
     domProps: 1,
-    debugMode: 1,
+
     onKeyDown: 1,
     onCellClick: 1,
     onCellDoubleClick: 1,
@@ -238,6 +247,9 @@ export const forwardProps = <T>(
     onCellContextMenu: 1,
 
     onRenderRangeChange: 1,
+
+    onRowMouseEnter: 1,
+    onRowMouseLeave: 1,
 
     onScrollToTop: 1,
     onScrollToBottom: 1,
@@ -551,7 +563,7 @@ export const mapPropsToState = <T>(params: {
     ? false
     : props.isRowDetailEnabled || true;
 
-  return {
+  let result = {
     isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,
@@ -592,4 +604,18 @@ export const mapPropsToState = <T>(params: {
           ThemeVars.components.Header.columnHeaderHeight
         : '',
   };
+
+  if (state.devToolsDetected && state.debugId) {
+    const devToolsOverrides = DEV_TOOLS_INFINITE_OVERRIDES.get(state.debugId);
+
+    if (devToolsOverrides) {
+      // @ts-ignore
+      result = {
+        ...result,
+        ...devToolsOverrides,
+      };
+    }
+  }
+
+  return result;
 };

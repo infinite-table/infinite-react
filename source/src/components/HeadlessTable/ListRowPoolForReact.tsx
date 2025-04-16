@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 
 import * as React from 'react';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';

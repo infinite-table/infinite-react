@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useCallback, useContext, useMemo } from 'react';
 import { once } from '../../../../utils/DeepMap/once';
-import { InfiniteTable_Tree_RowInfoBase } from '../../../../utils/groupAndPivot';
+import {
+  InfiniteTableRowInfoDataDiscriminator,
+  InfiniteTable_Tree_RowInfoBase,
+} from '../../../../utils/groupAndPivot';
 // const once = (fn: Function) => fn;
 
 import { join } from '../../../../utils/join';
@@ -23,6 +26,7 @@ import type {
   InfiniteTableColumnStyle,
   InfiniteTableColumn,
 } from '../../types/InfiniteTableColumn';
+import { InfiniteTableRowContext } from '../../types/InfiniteTableContextValue';
 import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
@@ -212,6 +216,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     onMouseLeave,
     onMouseEnter,
 
+    onRowMouseEnter,
+    onRowMouseLeave,
+
     // toggleGroupRow,
     rowIndex,
     rowHeight,
@@ -298,6 +305,34 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const renderParam = renderParams as InfiniteTableColumnCellContextType<T>;
   const renderParamRef =
     React.useRef<InfiniteTableColumnCellContextType<T>>(renderParam);
+
+  const handleMouseEnter =
+    onRowMouseEnter && onMouseEnter
+      ? (event: React.MouseEvent) => {
+          const rowInfoDiscriminator: InfiniteTableRowInfoDataDiscriminator<T> =
+            formattedValueContext;
+
+          const rowContext: InfiniteTableRowContext<T> = {
+            ...rowInfoDiscriminator,
+            rowIndex,
+          } as InfiniteTableRowContext<T>;
+          onRowMouseEnter(rowContext, event);
+          onMouseEnter(event);
+        }
+      : onMouseEnter;
+
+  const handleMouseLeave =
+    onRowMouseLeave && onMouseLeave
+      ? (event: React.MouseEvent) => {
+          const rowContext: InfiniteTableRowContext<T> = {
+            ...formattedValueContext,
+            rowIndex,
+            rowInfo,
+          } as InfiniteTableRowContext<T>;
+          onRowMouseLeave(rowContext, event);
+          onMouseLeave(event);
+        }
+      : onMouseLeave;
 
   const onClick = useCallback(
     (event: React.MouseEvent) => {
@@ -774,8 +809,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     horizontalLayoutPageIndex,
 
     style: memoizedStyle,
-    onMouseLeave,
-    onMouseEnter,
+    onMouseLeave: handleMouseLeave,
+    onMouseEnter: handleMouseEnter,
     onClick,
     afterChildren,
     onMouseDown,

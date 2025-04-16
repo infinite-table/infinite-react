@@ -16,6 +16,7 @@ import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
+  DataSourceDebugWarningKey,
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
   InfiniteTableRowInfo,
@@ -26,10 +27,7 @@ import {
   InfiniteTablePivotColumn,
   InfiniteTablePivotFinalColumnVariant,
 } from '../InfiniteTable/types/InfiniteTableColumn';
-import {
-  InfiniteTablePropDebugMode,
-  ScrollStopInfo,
-} from '../InfiniteTable/types/InfiniteTableProps';
+import { ScrollStopInfo } from '../InfiniteTable/types/InfiniteTableProps';
 import {
   InfiniteTablePropPivotGrandTotalColumnPosition,
   InfiniteTablePropPivotTotalColumnPosition,
@@ -65,6 +63,8 @@ import {
   TreeSelectionState,
   TreeSelectionStateObject,
 } from './TreeSelectionState';
+import { DebugWarningPayload } from '../InfiniteTable/types/DevTools';
+import { DebugLogger } from '../../utils/debugPackage';
 export { RowDetailState } from './RowDetailState';
 export { RowDetailCache } from './RowDetailCache';
 export type { CellSelectionStateObject } from './CellSelectionState';
@@ -172,9 +172,6 @@ export interface DataSourceMappedState<T> {
   onNodeCollapse: TreeDataSourceProps<T>['onNodeCollapse'];
   onNodeExpand: TreeDataSourceProps<T>['onNodeExpand'];
   isRowDisabled: DataSourceProps<T>['isRowDisabled'];
-
-  debugId: DataSourceProps<T>['debugId'];
-  debugMode: DataSourceProps<T>['debugMode'];
 
   nodesKey: NonUndefined<TreeDataSourceProps<T>['nodesKey']>;
 
@@ -288,7 +285,19 @@ export type LazyGroupDataDeepMap<DataType, KeyType = string> = DeepMap<
   LazyRowInfoGroup<DataType>
 >;
 
+export type DebugTimingKey =
+  | 'group-and-pivot'
+  | 'filter'
+  | 'sort'
+  | 'pivot'
+  | 'tree';
+
 export interface DataSourceSetupState<T> {
+  logger: DebugLogger;
+  forceRerenderTimestamp: number;
+  devToolsDetected: boolean;
+  debugTimings: Map<DebugTimingKey, number>;
+  debugWarnings: Map<DataSourceDebugWarningKey, DebugWarningPayload>;
   indexer: Indexer<T, any>;
   getDataSourceMasterContextRef: React.MutableRefObject<
     () => DataSourceMasterDetailContextValue | undefined
@@ -649,6 +658,8 @@ export interface DataSourceApi<T> {
 
   areAllRowsEnabled: () => boolean;
   areAllRowsDisabled: () => boolean;
+
+  setGroupBy: (groupBy: DataSourceState<T>['groupBy']) => void;
 }
 
 export type DataSourcePropRowInfoReducers<T> = Record<
@@ -681,7 +692,6 @@ export type TreeExpandStateValue = TreeExpandState | TreeExpandStateObject<any>;
 export type DataSourceProps<T> = {
   nodesKey?: never;
   debugId?: string;
-  debugMode?: InfiniteTablePropDebugMode;
   children?:
     | React.ReactNode
     | ((contextData: DataSourceState<T>) => React.ReactNode);
@@ -965,6 +975,8 @@ export type DataSourceCallback_BaseParam<T> = {
 };
 
 export type DataSourceDerivedState<T> = {
+  debugId: DataSourceProps<T>['debugId'];
+
   isTree: boolean;
   // TODO pass as second arg the index
   toPrimaryKey: (data: T) => any;

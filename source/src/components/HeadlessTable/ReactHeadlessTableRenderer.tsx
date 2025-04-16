@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 
 import { raf } from '../../utils/raf';
 import { stripVar } from '../../utils/stripVar';

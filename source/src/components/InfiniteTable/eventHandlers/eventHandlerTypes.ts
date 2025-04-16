@@ -20,6 +20,7 @@ import { InfiniteTableActions } from '../types/InfiniteTableState';
 export type InfiniteTableEventHandlerAbstractContext<T> = {
   getComputed: () => InfiniteTableComputedValues<T>;
   getState: () => {
+    debugId: InfiniteTableState<T>['debugId'];
     wrapRowsHorizontally: InfiniteTableState<T>['wrapRowsHorizontally'];
     activeRowIndex: InfiniteTableState<T>['activeRowIndex'];
     activeCellIndex: InfiniteTableState<T>['activeCellIndex'];

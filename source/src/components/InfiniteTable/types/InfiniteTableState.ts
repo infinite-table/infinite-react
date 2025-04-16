@@ -1,26 +1,29 @@
 import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
-import { InfiniteTableRowInfo } from '.';
-import { PointCoords } from '../../../utils/pageGeometry/Point';
-import { RowDetailCache } from '../../DataSource/RowDetailCache';
-import { RowDetailState } from '../../DataSource/RowDetailState';
-import {
+import type { InfiniteTableRowInfo } from '.';
+import type { PointCoords } from '../../../utils/pageGeometry/Point';
+import type { RowDetailCache } from '../../DataSource/RowDetailCache';
+import type { RowDetailState } from '../../DataSource/RowDetailState';
+import type {
   RowDetailCacheEntry,
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
-import { DataSourceGroupBy, DataSourceProps } from '../../DataSource/types';
-import { GridRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
-import { ComponentStateActions } from '../../hooks/useComponentState/types';
-import { CellPositionByIndex } from '../../types/CellPositionByIndex';
+import type {
+  DataSourceGroupBy,
+  DataSourceProps,
+} from '../../DataSource/types';
+import type { GridRenderer } from '../../HeadlessTable/ReactHeadlessTableRenderer';
+import type { ComponentStateActions } from '../../hooks/useComponentState/types';
+import type { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import type { NonUndefined } from '../../types/NonUndefined';
-import { Renderable } from '../../types/Renderable';
+import type { Renderable } from '../../types/Renderable';
 import type { ScrollPosition } from '../../types/ScrollPosition';
 import type { Size } from '../../types/Size';
-import { SubscriptionCallback } from '../../types/SubscriptionCallback';
+import type { SubscriptionCallback } from '../../types/SubscriptionCallback';
 
-import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
-import { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import type { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
+import type { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
-import {
+import type {
   InfiniteTableColumn,
   InfiniteTableComputedColumn,
 } from './InfiniteTableColumn';
@@ -34,6 +37,7 @@ import type {
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
 } from './InfiniteTableProps';
+import { DebugWarningPayload, InfiniteTableDebugWarningKey } from './DevTools';
 
 export type GroupByMap<T> = Map<
   keyof T | string,
@@ -62,6 +66,10 @@ export interface InfiniteTableSetupState<T> {
   headerBrain: MatrixBrain;
   renderer: GridRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
+
+  debugWarnings: Map<InfiniteTableDebugWarningKey, DebugWarningPayload>;
+
+  devToolsDetected: boolean;
 
   forceBodyRerenderTimestamp: number;
 
@@ -160,7 +168,7 @@ export type InfiniteTablePropPivotGrandTotalColumnPosition =
 export interface InfiniteTableMappedState<T> {
   id: InfiniteTableProps<T>['id'];
   debugId: InfiniteTableProps<T>['debugId'];
-  debugMode: NonUndefined<InfiniteTableProps<T>['debugMode']>;
+
   scrollTopKey: InfiniteTableProps<T>['scrollTopKey'];
   multiSortBehavior: NonUndefined<InfiniteTableProps<T>['multiSortBehavior']>;
   viewportReservedWidth: InfiniteTableProps<T>['viewportReservedWidth'];
@@ -169,6 +177,9 @@ export interface InfiniteTableMappedState<T> {
   onKeyDown: InfiniteTableProps<T>['onKeyDown'];
   onCellClick: InfiniteTableProps<T>['onCellClick'];
   onCellDoubleClick: InfiniteTableProps<T>['onCellDoubleClick'];
+
+  onRowMouseEnter: InfiniteTableProps<T>['onRowMouseEnter'];
+  onRowMouseLeave: InfiniteTableProps<T>['onRowMouseLeave'];
 
   repeatWrappedGroupRows: InfiniteTableProps<T>['repeatWrappedGroupRows'];
 
@@ -295,6 +306,7 @@ export interface InfiniteTableMappedState<T> {
 
 export interface InfiniteTableDerivedState<T> {
   isTree: boolean;
+
   groupBy: DataSourceProps<T>['groupBy'];
   computedColumns: Record<string, InfiniteTableColumn<T>>;
   initialColumns: InfiniteTableProps<T>['columns'];

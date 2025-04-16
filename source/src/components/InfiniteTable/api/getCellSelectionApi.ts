@@ -95,6 +95,7 @@ class InfiniteTableCellSelectionApiImpl<T>
     }
 
     const newCellSelection = new CellSelectionState(cellSelection);
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
 
     const [startRowId, startColId] =
       this.getCellSelectionPosition(startOptions);
@@ -215,7 +216,7 @@ class InfiniteTableCellSelectionApiImpl<T>
     }
 
     const newCellSelection = new CellSelectionState(cellSelection);
-
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.deselectAll();
 
     this.dataSourceActions.cellSelection = newCellSelection;
@@ -232,7 +233,7 @@ class InfiniteTableCellSelectionApiImpl<T>
     }
 
     const newCellSelection = new CellSelectionState(cellSelection);
-
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.selectAll();
 
     this.dataSourceActions.cellSelection = newCellSelection;
@@ -259,7 +260,8 @@ class InfiniteTableCellSelectionApiImpl<T>
     );
   };
   selectCell = (options: CellPositionOptions & { clear?: boolean }) => {
-    const cellSelection = this.getDataSourceState().cellSelection;
+    const dataSourceState = this.getDataSourceState();
+    const cellSelection = dataSourceState.cellSelection;
 
     if (!cellSelection) {
       return;
@@ -269,11 +271,14 @@ class InfiniteTableCellSelectionApiImpl<T>
     const newCellSelection = options.clear
       ? new CellSelectionState()
       : new CellSelectionState(cellSelection);
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.selectCell(pk, colId);
     this.dataSourceActions.cellSelection = newCellSelection;
   };
   deselectCell = (options: CellPositionOptions) => {
-    const cellSelection = this.getDataSourceState().cellSelection;
+    const dataSourceState = this.getDataSourceState();
+    const cellSelection = dataSourceState.cellSelection;
+
     if (!cellSelection) {
       return;
     }
@@ -281,6 +286,7 @@ class InfiniteTableCellSelectionApiImpl<T>
     const [pk, colId] = this.getCellSelectionPosition(options);
 
     const newCellSelection = new CellSelectionState(cellSelection);
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.deselectCell(pk, colId);
     this.dataSourceActions.cellSelection = newCellSelection;
   };
@@ -289,22 +295,26 @@ class InfiniteTableCellSelectionApiImpl<T>
     if (options?.clear) {
       this.deselectAll();
     }
-    const cellSelection = this.getDataSourceState().cellSelection;
+    const dataSourceState = this.getDataSourceState();
+    const cellSelection = dataSourceState.cellSelection;
     if (!cellSelection) {
       return;
     }
 
     const newCellSelection = new CellSelectionState(cellSelection);
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.selectColumn(colId);
     this.dataSourceActions.cellSelection = newCellSelection;
   };
   deselectColumn = (colId: string) => {
-    const cellSelection = this.getDataSourceState().cellSelection;
+    const dataSourceState = this.getDataSourceState();
+    const cellSelection = dataSourceState.cellSelection;
     if (!cellSelection) {
       return;
     }
 
     const newCellSelection = new CellSelectionState(cellSelection);
+    newCellSelection.debugId = dataSourceState.debugId ?? '';
     newCellSelection.deselectColumn(colId);
     this.dataSourceActions.cellSelection = newCellSelection;
   };

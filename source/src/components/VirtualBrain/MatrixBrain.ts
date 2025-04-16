@@ -1,6 +1,6 @@
 import binarySearch from 'binary-search';
 
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
 import type { Size } from '../types/Size';
 import type { VoidFn } from '../types/VoidFn';
@@ -14,6 +14,7 @@ import type {
 } from './IBrain';
 
 import { SORT_ASC, ALL_DIRECTIONS } from './IBrain';
+import { getDebugChannel } from '../../utils/debugChannel';
 
 const DEFAULT_EXTEND_BY = {
   start: 0,
@@ -237,9 +238,9 @@ export class MatrixBrain extends Logger implements IBrain {
   private fixedRowsEnd = 0;
 
   constructor(name: string) {
-    const logName = `MatrixBrain${name ? `:${name}` : ''}`;
+    const logName = getDebugChannel(name, `${name}:MatrixBrain`);
     super(logName);
-    this.name = name || 'MatrixBrain';
+    this.name = logName;
 
     this.update = this.update.bind(this);
     this.destroy = this.destroy.bind(this);

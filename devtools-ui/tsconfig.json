@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["react/jsx-runtime", "@types/chrome"],
+
+    /* Modules */
+    "module": "ESNext" /* Specify what module code is generated. */,
+    "moduleResolution": "bundler" /* Specify what module code is generated. */,
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+
+    /* Type Checking */
+    "strict": true /* Enable all strict type-checking options. */,
+
+    /* Completeness */
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@infinite-table/infinite-react": ["../source/dist"]
+    }
+  },
+
+  "include": ["src/**/*.ts", "src/**/*.tsx", "devtools-globals.d.ts"]
+}

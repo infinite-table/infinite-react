@@ -7,10 +7,10 @@ import { GridRenderer } from './ReactHeadlessTableRenderer';
 
 export function createRenderer(brain: MatrixBrain) {
   const renderer = !brain.isHorizontalLayoutBrain
-    ? new GridRenderer(brain, `ReactHeadlessTableRenderer:${brain.name}`)
+    ? new GridRenderer(brain, `${brain.name}:ReactHeadlessTableRenderer`)
     : new HorizontalLayoutTableRenderer(
         brain as HorizontalLayoutMatrixBrain,
-        `HorizontalLayoutTableRenderer:${brain.name}`,
+        `${brain.name}:HorizontalLayoutTableRenderer`,
       );
 
   const onRenderUpdater = buildSubscriptionCallback<Renderable>();

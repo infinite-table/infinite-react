@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { dbg } from '../../../utils/debug';
+import { dbg } from '../../../utils/debugLoggers';
 import { InfiniteTableComputedColumn } from '../types';
 
 const debug = dbg('useColumnSizeFn');

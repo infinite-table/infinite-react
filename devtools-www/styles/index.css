@@ -1,0 +1,6 @@
+@import '../../devtools-ui/src/index.css';
+@source '../../devtools-ui/src';
+
+.flex-container > * {
+  flex: 1;
+}

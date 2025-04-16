@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 
 import * as React from 'react';
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
@@ -299,7 +299,7 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
       this.error('No cells available in the pool!');
     }
 
-    return cell;
+    return cell as GridCellInterface<T_ADDITIONAL_CELL_INFO>;
   }
 
   get attachedSize() {

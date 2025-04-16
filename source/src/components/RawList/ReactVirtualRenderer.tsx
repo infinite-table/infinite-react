@@ -5,7 +5,7 @@ import type { RenderItem } from './types';
 import type { SubscriptionCallback } from '../types/SubscriptionCallback';
 import type { RenderRange } from '../VirtualBrain';
 
-import { dbg, Logger } from '../../utils/debug';
+import { dbg, Logger } from '../../utils/debugLoggers';
 
 import { VirtualBrain } from '../VirtualBrain';
 
@@ -41,8 +41,9 @@ export class ReactVirtualRenderer extends Logger {
     },
   ) {
     super(
-      `ReactVirtualRenderer:${brain.getOptions().mainAxis}` +
-        (channel ? `:${channel}` : ''),
+      `${channel || brain.name}:ReactVirtualRenderer:${
+        brain.getOptions().mainAxis
+      }`,
     );
 
     if (onRender) {

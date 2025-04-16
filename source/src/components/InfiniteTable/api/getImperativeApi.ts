@@ -27,6 +27,7 @@ import {
   InfiniteTableApiStopEditParams,
   InfiniteTableColumnApi,
   InfiniteTableColumnPinnedValues,
+  InfiniteTablePropGroupRenderStrategy,
   MultiSortBehaviorOptions,
   ScrollAdjustPosition,
 } from '../types/InfiniteTableProps';
@@ -127,6 +128,12 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
 
   hideFilterOperatorMenu = () => {
     this.actions.filterOperatorMenuVisibleForColumnId = null;
+  };
+
+  setGroupRenderStrategy = (
+    groupRenderStrategy: InfiniteTablePropGroupRenderStrategy,
+  ) => {
+    this.actions.groupRenderStrategy = groupRenderStrategy;
   };
 
   realignColumnContextMenu(callback?: VoidFunction) {
