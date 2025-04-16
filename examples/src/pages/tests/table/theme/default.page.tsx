@@ -96,7 +96,7 @@ export default function Example() {
             selectedRows: [],
           }}
         >
-          <InfiniteTable<Developer> {...infiniteProps} debugMode />
+          <InfiniteTable<Developer> {...infiniteProps} />
         </DataSource>
       </div>
       <div
