@@ -1,54 +1,26 @@
-# React + TypeScript + Vite
+# Infinite Table Developer Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+In order to interact with Infinite Table DevTools, you need to have Infinite Table version >=7 installed
 
-Currently, two official plugins are available:
+![main](./screenshots/main.jpg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+Adds Infinite Table DataGrid debugging tools to the Chrome Developer Tools.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This extension allows you to interact with Infinite Table DataGrid instances (you need to have version >=7 installed) from your dev console.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+You will get a new tab in your Chrome DevTools: "Infinite Table".
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+In this tab, you will see all your components that have the "debugId" prop set. Use this prop to decide which components you want to see in the devtools.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+By selecting a component from the list in the sidebar, you will be able to interact with it, change it at runtime and see important debugging information:
+ - you will see the logs, even if logging is not turned on via localStorage.debug='*'
+ - you will be displayed important warnings about various misconfigurations
+ - you will see debug timings - how much it took the DataSource to sort, group, filter and pivot the data
+ - you will be able to interact with column visibility, grouping, sorting and more directly in your DevTools, and see info about the current state of the DataGrid.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+This extension requires permissions to access the page's Infinite Table DataGrid component instances, but it does not send data remotely - everything happens locally in the browser.
+
+For docs on Infinite Table, see https://infinite-table.com/
+
+You can find the source-code of the extension at https://github.com/infinite-table/infinite-react/tree/master/devtools
