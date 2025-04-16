@@ -48,6 +48,7 @@ export default function () {
       overlayBgRef.current?.removeEventListener('animationend', onAnimationEnd);
     };
   }, [active]);
+
   return (
     <>
       <div
