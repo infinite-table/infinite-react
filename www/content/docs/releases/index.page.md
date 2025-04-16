@@ -4,6 +4,10 @@ description: All releases | Infinite Table DataGrid for React
 ---
 
 
+## 7.0.0
+
+Important milestone in DataGrid developer productivity.
+
 ## 6.2.11
 
 Improve performance on heavy scrolling by avoiding CSS vars for scroll pos.
