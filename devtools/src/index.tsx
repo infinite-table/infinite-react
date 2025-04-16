@@ -1,5 +1,5 @@
 chrome.devtools.panels.create(
-  'Infinite-Table',
+  'Infinite Table',
   'icons/icon16.png',
   'src/panel.html',
   (panel) => {

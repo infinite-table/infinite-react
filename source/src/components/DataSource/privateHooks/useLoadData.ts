@@ -291,7 +291,7 @@ export function loadData<T>(
           const theKey = [LAZY_ROOT_KEY_FOR_GROUPS, ...keys];
           const dataArray = remoteData.data as LazyGroupDataItem<T>[];
           const newGroupRowInfo: LazyRowInfoGroup<T> = {
-            cache: remoteData.cache ? true : CACHE_DEFAULT,
+            cache: remoteData.cache ?? CACHE_DEFAULT,
             childrenLoading: false,
             childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
