@@ -83,6 +83,9 @@ export const Search: React.FC<SearchProps> = ({
     isOpen: isShowing,
     onOpen,
     onClose,
+    searchButtonRef: {
+      current: null,
+    },
   });
 
   return (

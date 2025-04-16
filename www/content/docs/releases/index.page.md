@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 6.2.11
+
+Improve performance on heavy scrolling by avoiding CSS vars for scroll pos.
+
 ## 6.2.10
 
 Recompute DataSource repeat wrapped group rows when `wrapRowsHorizontally` changes.

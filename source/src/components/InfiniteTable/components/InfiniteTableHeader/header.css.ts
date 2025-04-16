@@ -22,7 +22,6 @@ import {
   CellClsVariants,
   ColumnCellVariantsObject,
 } from '../cell.css';
-import { InternalVars } from '../../internalVars.css';
 
 export { CellCls, CellClsVariants };
 
@@ -84,7 +83,8 @@ export const HeaderClsRecipe = recipe({
     {
       background: ThemeVars.components.Header.background,
       color: ThemeVars.components.Header.color,
-      transform: `translate3d(${InternalVars.virtualScrollLeftOffset}, 0px, 0px)`,
+      // transform: `translate3d(${InternalVars.virtualScrollLeftOffset}, 0px, 0px)`,
+      transform: `translate3d(0px, 0px, 0px)`,
     },
   ],
 
