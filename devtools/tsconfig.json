@@ -30,7 +30,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@infinite-table/infinite-react": ["../source/src/index.ts"],
-      "devtools-ui": ["../devtools-ui/src/index.ts"]
+      "devtools-ui": ["../devtools-ui/src/index.ts"],
+      "devtools-ui/*": ["../devtools-ui/src/*"]
     }
   },
 

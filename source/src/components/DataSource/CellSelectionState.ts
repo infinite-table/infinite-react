@@ -1,7 +1,5 @@
-import { dbg } from '../../utils/debug';
+import { err } from '../../utils/debugLoggers';
 import { DeepMap } from '../../utils/DeepMap';
-
-const debug = dbg('CellSelectionState');
 
 export type CellSelectionPosition<
   ROW_PRIMARY_KEY_TYPE = any,
@@ -38,6 +36,8 @@ export class CellSelectionState {
   deselectedColumnsToRows: Map<string, Set<any>> = new Map();
 
   defaultSelection: boolean = false;
+
+  public debugId: string = '';
 
   constructor(clone?: CellSelectionStateObject | CellSelectionState) {
     const stateObject =
@@ -431,12 +431,24 @@ export class CellSelectionState {
     return false;
   }
 
+  // private debug(message: string) {
+  //   const debug = dbg(`${this.debugId}:CellSelectionState`);
+
+  //   debug(message);
+  // }
+
+  private error(message: string) {
+    const error = err(`${this.debugId}:CellSelectionState`);
+
+    error(message);
+  }
+
   public isCellSelected(rowId: any, colId: string): boolean {
     if (rowId === this.wildcard || colId === this.wildcard) {
-      console.error(
-        `CellSelectionState.isCellSelected should not be called with wildcard`,
-      );
-      debug(
+      // console.error(
+      //   `CellSelectionState.isCellSelected should not be called with wildcard`,
+      // );
+      this.error(
         `CellSelectionState.isCellSelected should not be called with wildcard`,
       );
       return false;

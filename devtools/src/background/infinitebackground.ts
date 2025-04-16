@@ -3,12 +3,16 @@ import type {
   DevToolsMessageAddress,
   DevToolsGenericMessage,
 } from '@infinite-table/infinite-react';
-import { getPageUrlOfCurrentTab } from './lib/getCurrentPageUrl';
+
+import { type DevToolsLogEntry, IGNORE_DEBUG_IDS } from 'devtools-ui';
+
+import { dataUtils } from './dataUtils';
 
 type MessageFromPageToBackground = {
   source: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
   target: Extract<DevToolsMessageAddress, 'infinite-table-devtools-background'>;
   payload: any;
+  url: string;
   type: string;
 };
 
@@ -21,19 +25,6 @@ type MessageForPage = DevToolsGenericMessage & {
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Infinite Table DevTools Extension installed');
 });
-
-// chrome.scripting
-//   .updateContentScripts([
-//     {
-//       id: 'infinite-content-script',
-//       js: ['src/content.js'],
-//       // persistAcrossSessions: false,
-//       matches: ['http://localhost/*', 'https://infinite-table.com/*'],
-//       runAt: 'document_start',
-//     },
-//   ])
-//   .then(() => console.log('registration complete!!'))
-//   .catch((err) => console.warn('unexpected error', err));
 
 // Example: Listen for connections from the DevTools page
 chrome.runtime.onConnect.addListener((port) => {
@@ -56,6 +47,30 @@ function messageRouter(message: DevToolsGenericMessage) {
   if (message.target === 'infinite-table-page') {
     onMessageForPage(message as MessageForPage);
   }
+  if (
+    message.source === 'infinite-table-devtools-contentscript-panel' &&
+    message.target === 'infinite-table-devtools-background'
+  ) {
+    onMessageFromPanel(message);
+  }
+}
+
+function onMessageFromPanel(message: DevToolsGenericMessage) {
+  const messageTypes = {
+    clearLogs: async (message: DevToolsGenericMessage) => {
+      const { debugId } = message.payload;
+
+      dataUtils.logs.clear(debugId);
+    },
+  };
+
+  const messageType = message.type as keyof typeof messageTypes;
+
+  const handler = messageTypes[messageType];
+
+  if (handler) {
+    handler(message);
+  }
 }
 
 function onMessageForPage(message: MessageForPage) {
@@ -65,38 +80,51 @@ function onMessageForPage(message: MessageForPage) {
     chrome.tabs.sendMessage(tabId, message);
   });
 }
-const payloadsForPages: Record<
-  string,
-  Record<string, DevToolsHostPageMessagePayload>
-> = {};
 
 async function onMessageFromPage(message: MessageFromPageToBackground) {
+  const { url } = message;
+  const count = dataUtils.logs.getCount(url);
+
   const messageTypes = {
-    unmount: async (message: MessageFromPageToBackground) => {
-      const pageUrl = await getPageUrlOfCurrentTab();
-      const payloadsForCurrentPage = payloadsForPages[pageUrl] || {};
+    log: async (message: MessageFromPageToBackground) => {
+      const { channel } = message.payload;
 
-      if (payloadsForCurrentPage && payloadsForCurrentPage.instances) {
-        // @ts-ignore
-        delete payloadsForCurrentPage.instances[message.payload.debugId];
-
-        chrome.storage.session.set(payloadsForPages);
+      let debugId = undefined;
+      if (channel.startsWith('DebugID=')) {
+        debugId = channel.split(':')[0].slice('DebugID='.length);
       }
-    },
-    update: async (message: MessageFromPageToBackground) => {
-      const pageUrl = await getPageUrlOfCurrentTab();
 
-      payloadsForPages[pageUrl] = payloadsForPages[pageUrl] || {
-        instances: {},
+      const logEntry: DevToolsLogEntry = {
+        ...message.payload,
+        debugId,
+        index: count,
+        type: 'log',
+
+        message: message.payload.args.join(' '),
       };
 
-      const payloadForCurrentPage = payloadsForPages[pageUrl];
+      if (
+        !logEntry.debugId ||
+        logEntry.debugId in IGNORE_DEBUG_IDS ||
+        logEntry.debugId === 'undefined'
+      ) {
+        return;
+      }
 
-      // @ts-ignore
-      payloadForCurrentPage.instances[message.payload.debugId] =
-        message.payload as DevToolsHostPageMessagePayload;
+      dataUtils.logs.addLog({ url }, logEntry);
+    },
+    unmount: async (message: MessageFromPageToBackground) => {
+      const { debugId } = message.payload;
 
-      chrome.storage.session.set(payloadsForPages);
+      dataUtils.instance.remove({ debugId, url });
+    },
+    update: async (message: MessageFromPageToBackground) => {
+      const debugId: string = message.payload.debugId;
+
+      dataUtils.instance.update(
+        { debugId, url },
+        message.payload as DevToolsHostPageMessagePayload,
+      );
     },
   };
 

@@ -1,5 +1,5 @@
 import binarySearch from 'binary-search';
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 import { DeepMap } from '../../utils/DeepMap';
 import { setFind } from '../../utils/setUtils';
 import { Renderable } from '../types/Renderable';

@@ -1,5 +1,5 @@
 import binarySearch from 'binary-search';
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 import type { Size } from '../types/Size';
 
 import type { OnScrollFn, ScrollPosition } from '../types/ScrollPosition';
@@ -74,7 +74,7 @@ export class VirtualBrain extends Logger {
   private availableSize: Size = { width: 0, height: 0 };
 
   constructor(options: VirtualBrainOptions) {
-    super(`VirtualBrain:${options.mainAxis}`);
+    super(`${options.name}:VirtualBrain:${options.mainAxis}`);
 
     this.options = options;
 

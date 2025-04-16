@@ -16,6 +16,7 @@ import { GroupBy } from '../../utils/groupAndPivot/types';
 import { MultisortInfoAllowMultipleFields } from '../../utils/multisort';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
+  DataSourceDebugWarningKey,
   InfiniteTableColumn,
   InfiniteTableColumnGroup,
   InfiniteTableRowInfo,
@@ -62,6 +63,8 @@ import {
   TreeSelectionState,
   TreeSelectionStateObject,
 } from './TreeSelectionState';
+import { DebugWarningPayload } from '../InfiniteTable/types/DevTools';
+import { DebugLogger } from '../../utils/debugPackage';
 export { RowDetailState } from './RowDetailState';
 export { RowDetailCache } from './RowDetailCache';
 export type { CellSelectionStateObject } from './CellSelectionState';
@@ -290,9 +293,11 @@ export type DebugTimingKey =
   | 'tree';
 
 export interface DataSourceSetupState<T> {
+  logger: DebugLogger;
   forceRerenderTimestamp: number;
   devToolsDetected: boolean;
   debugTimings: Map<DebugTimingKey, number>;
+  debugWarnings: Map<DataSourceDebugWarningKey, DebugWarningPayload>;
   indexer: Indexer<T, any>;
   getDataSourceMasterContextRef: React.MutableRefObject<
     () => DataSourceMasterDetailContextValue | undefined

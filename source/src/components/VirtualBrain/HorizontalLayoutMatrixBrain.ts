@@ -101,7 +101,7 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   private options: HorizontalLayoutMatrixBrainOptions;
 
   constructor(name: string, opts: HorizontalLayoutMatrixBrainOptions) {
-    super(`HorizontalLayout${name ? `:${name}` : ''}`);
+    super(`${name}:HorizontalLayout`);
     this.options = opts;
 
     if (this.options.masterBrain) {

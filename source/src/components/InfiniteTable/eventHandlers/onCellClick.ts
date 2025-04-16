@@ -94,11 +94,12 @@ export function updateCellSelectionOnCellClick<T>(
   }
 
   const { multiCellSelector, computedVisibleColumns } = getComputed();
-  const { brain } = getState();
+  const { brain, debugId } = getState();
   const { rowsPerPage } = brain;
   const columnsPerSet = computedVisibleColumns.length;
 
   const cellSelection = new CellSelectionState(existingCellSelection);
+  cellSelection.debugId = debugId ?? '';
 
   multiCellSelector.cellSelectionState = cellSelection;
 

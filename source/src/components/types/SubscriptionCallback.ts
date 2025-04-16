@@ -7,4 +7,5 @@ export interface SubscriptionCallback<T> {
   get: () => T | null;
   destroy: VoidFn;
   onChange: (fn: SubscriptionCallbackOnChangeFn<T>) => VoidFn;
+  getListenersCount: () => number;
 }

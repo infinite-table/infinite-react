@@ -1,20 +1,23 @@
 import { debug } from './debugPackage';
-const debugTable = debug(`InfiniteTable`);
 
 export interface LogFn {
   (...args: any[]): void;
   extend: (channelName: string) => LogFn;
 }
-export const dbg = (channelName: string) => {
-  const result = debugTable.extend(channelName);
+export const dbg = (channelName?: string) => {
+  const result = debug(
+    channelName ? `${channelName}:TYPE=debug` : 'TYPE=debug',
+  );
 
   result.logFn = console.log.bind(console);
 
   return result;
 };
 
-export const err = (channelName: string) => {
-  const result = debugTable.extend(`${channelName}:error`);
+export const err = (channelName?: string) => {
+  const result = debug(
+    channelName ? `${channelName}:TYPE=error` : 'TYPE=error',
+  );
 
   result.logFn = console.error.bind(console);
 

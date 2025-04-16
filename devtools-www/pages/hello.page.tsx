@@ -4,6 +4,7 @@ import {
   InfiniteTable,
 } from '@infinite-table/infinite-react';
 import { Template } from '../src/Template';
+import { useState } from 'react';
 
 type Developer = {
   id: number;
@@ -28,12 +29,27 @@ const dataSource: DataSourceData<Developer> = ({}) => {
 };
 
 export default function () {
+  const [dataFn, setDataFn] = useState(() => dataSource);
   return (
     <>
+      <button
+        style={{ flex: 'none' }}
+        onClick={() => {
+          for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+              setDataFn((fn: DataSourceData<Developer>) => {
+                return typeof fn === 'function' ? fn.bind(null) : fn;
+              });
+            }, i * 20);
+          }
+        }}
+      >
+        trigger data warning
+      </button>
       <DataSource
         primaryKey={'id'}
-        data={dataSource}
-        shouldReloadData={false}
+        data={dataFn}
+        shouldReloadData={true}
         defaultGroupBy={[
           {
             field: 'country',
@@ -50,7 +66,7 @@ export default function () {
               field: 'firstName',
             },
             anotherName: {
-              field: 'firstName',
+              field: 'lastName',
             },
             age: {
               field: 'age',
@@ -76,7 +92,22 @@ export default function () {
           }}
         />
       </DataSource>
-
+      <DataSource primaryKey={'id'} data={dataFn} defaultSortInfo={[]}>
+        <InfiniteTable
+          debugId="small data"
+          columns={{
+            name: {
+              field: 'firstName',
+            },
+            lastName: {
+              field: 'lastName',
+            },
+            age: {
+              field: 'age',
+            },
+          }}
+        />
+      </DataSource>
       <Template />
     </>
   );

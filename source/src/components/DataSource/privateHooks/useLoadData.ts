@@ -32,6 +32,7 @@ import {
 } from '../types';
 
 import { getChangeDetect } from './getChangeDetect';
+import { logDevToolsWarning } from '../../../utils/debugModeUtils';
 
 const CACHE_DEFAULT = true;
 
@@ -290,7 +291,7 @@ export function loadData<T>(
           const theKey = [LAZY_ROOT_KEY_FOR_GROUPS, ...keys];
           const dataArray = remoteData.data as LazyGroupDataItem<T>[];
           const newGroupRowInfo: LazyRowInfoGroup<T> = {
-            cache: !!remoteData.cache ?? CACHE_DEFAULT,
+            cache: remoteData.cache ? true : CACHE_DEFAULT,
             childrenLoading: false,
             childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
@@ -634,11 +635,10 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
       const timeDiff = now - timestamps[0];
 
       if (timeDiff < 200 && timestamps.length >= 10) {
-        console.warn(
-          `The "data" prop of your DataSource seems to be updating too frequently.
-Make sure you don't pass a new reference on every render. ERROR_CODE = DS001
-See http://infinite-table.com/docs/reference/error-codes#DS001 for more info.`,
-        );
+        logDevToolsWarning({
+          debugId: componentState.debugId,
+          key: 'DS001',
+        });
       }
 
       if (typeof componentState.data !== 'function') {

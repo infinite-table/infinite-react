@@ -37,6 +37,7 @@ import type {
   InfiniteTablePropColumnVisibility,
   InfiniteTableProps,
 } from './InfiniteTableProps';
+import { DebugWarningPayload, InfiniteTableDebugWarningKey } from './DevTools';
 
 export type GroupByMap<T> = Map<
   keyof T | string,
@@ -65,6 +66,8 @@ export interface InfiniteTableSetupState<T> {
   headerBrain: MatrixBrain;
   renderer: GridRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
+
+  debugWarnings: Map<InfiniteTableDebugWarningKey, DebugWarningPayload>;
 
   devToolsDetected: boolean;
 

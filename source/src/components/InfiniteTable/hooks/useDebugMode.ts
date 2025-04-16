@@ -2,16 +2,21 @@ import { useEffect, useRef } from 'react';
 import { once } from '../../../utils/DeepMap/once';
 import type { DebugTimingKey } from '../../DataSource';
 
+import { debug } from '../../../utils/debugPackage';
 import { stripVar } from '../../../utils/stripVar';
 
 import { CSS_LOADED_VALUE, ThemeVars } from '../vars.css';
 import { useInfiniteTable } from './useInfiniteTable';
 import {
+  DataSourceDebugWarningKey,
+  ErrorCodeKey,
+  DebugWarningPayload,
   DevToolsDataSourceOverrides,
   DevToolsHookFn,
   DevToolsHookFnOptions,
   DevToolsHostPageMessage,
   DevToolsInfiniteOverrides,
+  InfiniteTableDebugWarningKey,
 } from '../types/DevTools';
 
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
@@ -25,31 +30,40 @@ import {
   DEV_TOOLS_INFINITE_INITIALS,
   DEV_TOOLS_DATASOURCE_INITIALS,
 } from '../../../DEV_TOOLS_OVERRIDES';
-const logWarning = once(() => {
-  console.warn(
-    `It appears you have not loaded the CSS file for InfiniteTable.
-In most environments, you should be able to fix this by adding the following line:
 
-import '@infinite-table/infinite-react/index.css'
-
-`,
-  );
-});
+import {
+  deleteInstanceFromDevTools,
+  INSTANCES,
+  logDevToolsWarning,
+  setDevToolDataSourcePropertyOverride,
+  setDevToolInfinitePropertyOverride,
+  updateDevToolsForInstance,
+} from '../../../utils/debugModeUtils';
+import {
+  DevToolsOverlay,
+  DevToolsOverlayBg,
+  DevToolsOverlayText,
+} from './debugModeDevToolsOverlay.css';
 
 const cssFileLoadedVarName = stripVar(ThemeVars.loaded);
+const messageBase = {
+  source: 'infinite-table-page',
+  target: 'infinite-table-devtools-background',
+} as const;
 
 function buildMessageForExtension(
-  params: { type: DevToolsHostPageMessage['type']; debugId: string },
+  params: {
+    type: Exclude<DevToolsHostPageMessage['type'], 'log'>;
+    debugId: string;
+  },
   options: DevToolsHookFnOptions | null,
 ): DevToolsHostPageMessage {
   const { type, debugId } = params;
-  const base = {
-    source: 'infinite-table-page',
-    target: 'infinite-table-devtools-background',
-  } as const;
+
   if (type === 'unmount') {
     return {
-      ...base,
+      ...messageBase,
+      url: getPageUrlOfWindow(),
       type,
       payload: {
         debugId,
@@ -63,7 +77,8 @@ function buildMessageForExtension(
   const state = opts.getState();
 
   const message: DevToolsHostPageMessage = {
-    ...base,
+    ...messageBase,
+    url: getPageUrlOfWindow(),
     type,
     payload: {
       debugId,
@@ -88,74 +103,43 @@ function buildMessageForExtension(
       groupBy: dataSourceState.groupBy.map((g) =>
         g.field ? `${g.field}` : '<fn>',
       ),
+      sortInfo: (dataSourceState.sortInfo || [])
+        .filter((sortInfo) => typeof sortInfo.field === 'string')
+        .map((s) => {
+          return {
+            field: `${s.field as string}`,
+            dir: s.dir,
+            type: Array.isArray(s.type) ? s.type[0] : s.type ?? 'string',
+          };
+        }),
+      multiSort: dataSourceState.multiSort,
       devToolsDetected: state.devToolsDetected,
       debugTimings: Object.fromEntries(dataSourceState.debugTimings) as Record<
         DebugTimingKey,
         number
       >,
+      debugWarnings: {
+        ...(Object.fromEntries(dataSourceState.debugWarnings) as Record<
+          ErrorCodeKey,
+          DebugWarningPayload
+        >),
+        ...(Object.fromEntries(state.debugWarnings) as Record<
+          ErrorCodeKey,
+          DebugWarningPayload
+        >),
+      },
     },
   };
 
   return message;
 }
+const getPageUrlOfWindow = once(function () {
+  const url = new URL(window.location.href);
+  return url.origin + url.pathname;
+});
 
-const INSTANCES = new Map<string, DevToolsHookFnOptions>();
-
-function setDevToolInfinitePropertyOverride(
-  debugId: string,
-  property: keyof DevToolsInfiniteOverrides,
-  value: DevToolsInfiniteOverrides[keyof DevToolsInfiniteOverrides],
-) {
-  const instance = INSTANCES.get(debugId);
-
-  if (!instance) {
-    return;
-  }
-
-  const initial = DEV_TOOLS_INFINITE_INITIALS.get(debugId);
-  if (!initial || !Object.hasOwn(initial, property)) {
-    DEV_TOOLS_INFINITE_INITIALS.set(debugId, {
-      ...(initial || {}),
-      [property]: instance.getState()[property],
-    });
-  }
-
-  DEV_TOOLS_INFINITE_OVERRIDES.set(debugId, {
-    ...(DEV_TOOLS_INFINITE_OVERRIDES.get(debugId) || {}),
-    [property]: value,
-  });
-
-  // @ts-ignore
-  instance.actions[property] = value;
-}
-
-function setDevToolDataSourcePropertyOverride(
-  debugId: string,
-  property: keyof DevToolsDataSourceOverrides,
-  value: DevToolsDataSourceOverrides[keyof DevToolsDataSourceOverrides],
-) {
-  const instance = INSTANCES.get(debugId);
-
-  if (!instance) {
-    return;
-  }
-
-  const initial = DEV_TOOLS_DATASOURCE_INITIALS.get(debugId);
-
-  if (!initial || !Object.hasOwn(initial, property)) {
-    DEV_TOOLS_DATASOURCE_INITIALS.set(debugId, {
-      ...(initial || {}),
-      [property]: instance.getDataSourceState()[property],
-    });
-  }
-
-  DEV_TOOLS_DATASOURCE_OVERRIDES.set(debugId, {
-    ...(DEV_TOOLS_DATASOURCE_OVERRIDES.get(debugId) || {}),
-    [property]: value,
-  });
-
-  // @ts-ignore
-  instance.dataSourceActions[property] = value;
+function postMessage(message: DevToolsHostPageMessage) {
+  window.postMessage(message);
 }
 
 const setupHook = once<any, DevToolsHookFn>(() => {
@@ -184,11 +168,7 @@ const setupHook = once<any, DevToolsHookFn>(() => {
         buildMessageForExtension({ type: 'update', debugId }, options),
       );
     } else {
-      INSTANCES.delete(debugId);
-      DEV_TOOLS_INFINITE_OVERRIDES.delete(debugId);
-      DEV_TOOLS_DATASOURCE_OVERRIDES.delete(debugId);
-      DEV_TOOLS_INFINITE_INITIALS.delete(debugId);
-      DEV_TOOLS_DATASOURCE_INITIALS.delete(debugId);
+      deleteInstanceFromDevTools(debugId);
       window.postMessage(
         buildMessageForExtension({ type: 'unmount', debugId }, null),
       );
@@ -197,11 +177,32 @@ const setupHook = once<any, DevToolsHookFn>(() => {
 
   (window as any).__INFINITE_TABLE_DEVTOOLS_HOOK__ = hookFn;
 
+  debug.onLogIntent('*', (options) => {
+    postMessage({
+      ...messageBase,
+      url: getPageUrlOfWindow(),
+      type: 'log',
+      payload: {
+        debugId: undefined,
+        channel: options.channel,
+        color: options.color,
+        args: options.args.map((arg) => {
+          if (typeof arg === 'object' && arg !== null) {
+            return JSON.stringify(arg);
+          }
+          return String(arg);
+        }),
+        timestamp: options.timestamp,
+      },
+    });
+  });
+
   return hookFn;
 });
 
 export function useDebugMode() {
-  const { getState } = useInfiniteTable();
+  const { getState, getDataSourceState, dataSourceActions } =
+    useInfiniteTable();
 
   const state = getState();
   const { domRef, debugId } = state;
@@ -213,10 +214,20 @@ export function useDebugMode() {
       );
 
       if (value !== `${CSS_LOADED_VALUE}`) {
-        logWarning();
+        logDevToolsWarning({
+          debugId,
+          key: 'CSS001_CSS',
+        });
       }
     }
   }
+
+  useEffect(() => {
+    const dataSourceState = getDataSourceState();
+    if (dataSourceState.debugId !== debugId) {
+      dataSourceActions.debugId = debugId;
+    }
+  }, [debugId]);
 
   return useDevTools();
 }
@@ -310,6 +321,40 @@ const DEVTOOLS_MESSAGES = {
       }
     }
   },
+
+  discardWarning: (payload: { warning: ErrorCodeKey; debugId: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+
+    if (instance) {
+      const dsWarningKey = payload.warning as DataSourceDebugWarningKey;
+
+      const dsWarnings = instance.getDataSourceState().debugWarnings;
+      const obj = dsWarnings.get(dsWarningKey);
+
+      if (obj) {
+        // obj.status = 'discarded';
+        dsWarnings.delete(dsWarningKey);
+        updateDevToolsForInstance(payload.debugId);
+      } else {
+        const itWarningKey = payload.warning as InfiniteTableDebugWarningKey;
+        const infiniteWarnings = instance.getState().debugWarnings;
+        const obj = infiniteWarnings.get(itWarningKey);
+        if (obj) {
+          // obj.status = 'discarded';
+          infiniteWarnings.delete(itWarningKey);
+          updateDevToolsForInstance(payload.debugId);
+        }
+      }
+    }
+  },
+  discardAllWarnings: (payload: { debugId: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    if (instance) {
+      instance.getDataSourceState().debugWarnings.clear();
+      instance.getState().debugWarnings.clear();
+      updateDevToolsForInstance(payload.debugId);
+    }
+  },
   setColumnVisibility: (payload: {
     columnVisibility: InfiniteTablePropColumnVisibility;
     debugId: string;
@@ -337,6 +382,23 @@ const DEVTOOLS_MESSAGES = {
       payload.groupRenderStrategy,
     );
   },
+  setSortInfo: (payload: {
+    sortInfo: { field: string; dir: 1 | -1 }[];
+    debugId: string;
+  }) => {
+    setDevToolDataSourcePropertyOverride(
+      payload.debugId,
+      'sortInfo',
+      payload.sortInfo,
+    );
+  },
+  setMultiSort: (payload: { multiSort: boolean; debugId: string }) => {
+    setDevToolDataSourcePropertyOverride(
+      payload.debugId,
+      'multiSort',
+      payload.multiSort,
+    );
+  },
   highlight: (payload: { debugId: string }) => {
     const instance = INSTANCES.get(payload.debugId);
     if (instance) {
@@ -346,14 +408,20 @@ const DEVTOOLS_MESSAGES = {
         const rect = domNode.getBoundingClientRect();
 
         let overlay = document.querySelector(
-          '.infinite-devtools-overlay',
+          `.${DevToolsOverlay.classNames.base}`,
         ) as HTMLElement;
 
         if (!overlay) {
           overlay = document.createElement('div');
-          overlay.classList.add('infinite-devtools-overlay');
+          overlay.classList.add(DevToolsOverlay.classNames.base);
+
+          overlay.innerHTML = [
+            `<div class="${DevToolsOverlayText}"></div>`,
+            `<div class="${DevToolsOverlayBg}"></div>`,
+          ].join('');
           document.body.appendChild(overlay);
         }
+        let textDiv = overlay.firstElementChild!;
 
         if (overlay) {
           // First set the position and size
@@ -362,19 +430,28 @@ const DEVTOOLS_MESSAGES = {
           overlay.style.width = `${rect.width}px`;
           overlay.style.height = `${rect.height}px`;
 
+          textDiv.innerHTML = payload.debugId;
+
+          const overlayBg = overlay.lastElementChild as HTMLElement;
+
           // Force a reflow to ensure the initial styles are applied
-          overlay.offsetHeight;
+          // overlay.offsetHeight;
 
-          // Add the active class to trigger the show animation
-          overlay.classList.add('infinite-devtools-overlay--active');
-
-          // Remove the active class after the show animation completes
-          const handleTransitionEnd = () => {
-            overlay.classList.remove('infinite-devtools-overlay--active');
-            overlay.removeEventListener('transitionend', handleTransitionEnd);
+          // Remove the active class after the animation ends
+          const handleAnimationEnd = () => {
+            overlay.classList.remove(
+              DevToolsOverlay.classNames.variants.active.true,
+            );
+            // Remove the listener
+            overlayBg.removeEventListener('animationend', handleAnimationEnd);
           };
 
-          overlay.addEventListener('transitionend', handleTransitionEnd);
+          overlayBg.addEventListener('animationend', handleAnimationEnd);
+
+          // Add the active class to trigger the show animation
+          overlay.classList.add(
+            DevToolsOverlay.classNames.variants.active.true,
+          );
         }
       }
     }

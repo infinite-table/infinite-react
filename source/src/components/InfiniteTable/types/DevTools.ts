@@ -11,6 +11,11 @@ import type {
   InfiniteTableState,
 } from '.';
 import type { InfiniteTableActions } from './InfiniteTableState';
+import {
+  DS_ERROR_CODES,
+  ERROR_CODES,
+  INFINITE_ERROR_CODES,
+} from '../errorCodes';
 
 export type DevToolsMessageAddress =
   | 'infinite-table-devtools-contentscript'
@@ -23,6 +28,18 @@ export type DevToolsGenericMessage = {
   target: DevToolsMessageAddress;
   payload: any;
   type: string;
+};
+
+export type ErrorCodeKey = keyof typeof ERROR_CODES;
+export type DataSourceDebugWarningKey = keyof typeof DS_ERROR_CODES;
+export type InfiniteTableDebugWarningKey = keyof typeof INFINITE_ERROR_CODES;
+
+export type DebugWarningPayload = {
+  message: string;
+  code: ErrorCodeKey;
+  type: 'error' | 'warning';
+  status?: 'new' | 'discarded';
+  debugId?: string;
 };
 
 export type DevToolsHookFnOptions = {
@@ -46,6 +63,8 @@ export type DevToolsInfiniteOverrides = Partial<{
 
 export type DevToolsDataSourceOverrides = Partial<{
   groupBy: DataSourceState<any>['groupBy'];
+  sortInfo: DataSourceState<any>['sortInfo'];
+  multiSort: DataSourceState<any>['multiSort'];
 }>;
 
 export type DevToolsHostPageMessagePayload = {
@@ -66,16 +85,33 @@ export type DevToolsHostPageMessagePayload = {
   >;
   groupRenderStrategy: InfiniteTableState<any>['groupRenderStrategy'];
   groupBy: string[];
+  sortInfo: { field: string; dir: 1 | -1; type?: string }[];
+  multiSort: DataSourceState<any>['multiSort'];
   selectionMode: DataSourceState<any>['selectionMode'];
   devToolsDetected: InfiniteTableState<any>['devToolsDetected'];
   debugTimings: Record<DebugTimingKey, number>;
+  debugWarnings: Record<ErrorCodeKey, DebugWarningPayload>;
 };
 
-export type DevToolsHostPageMessageType = 'update' | 'unmount';
+export type DevToolsHostPageMessageType = 'update' | 'unmount' | 'log';
+
+export type DevToolsHostPageLogMessage = {
+  type: Extract<DevToolsHostPageMessageType, 'log'>;
+  payload: DevToolsHostPageLogMessagePayload;
+};
+
+export type DevToolsHostPageLogMessagePayload = {
+  channel: string;
+  color: string;
+  args: any[];
+  timestamp: number;
+  debugId?: string;
+};
 
 export type DevToolsHostPageMessage = {
   source: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
   target: Extract<DevToolsMessageAddress, 'infinite-table-devtools-background'>;
+  url: string;
 } & (
   | {
       type: Extract<DevToolsHostPageMessageType, 'update'>;
@@ -87,6 +123,7 @@ export type DevToolsHostPageMessage = {
         debugId: string;
       };
     }
+  | DevToolsHostPageLogMessage
 );
 export type DevToolsHookFn = (
   debugId: string,

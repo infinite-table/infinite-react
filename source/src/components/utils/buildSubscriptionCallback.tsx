@@ -1,4 +1,4 @@
-import {
+import type {
   SubscriptionCallbackOnChangeFn,
   SubscriptionCallback,
 } from '../types/SubscriptionCallback';

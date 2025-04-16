@@ -22,8 +22,8 @@ export function DevToolsSidebarSection(props: DevToolsSidebarSectionProps) {
   return (
     <div
       className={cn(
-        'relative text-sm bg-muted text-muted-foreground p-4 rounded-md flex flex-col gap-2 border-1',
-        overriden ? 'border-amber-400 ' : 'border-transparent',
+        'relative text-sm bg-sidebar text-sidebar-foreground p-4 rounded-md flex flex-col gap-2 border-1',
+        overriden ? 'border-warn ' : 'border-transparent',
         props.className,
       )}
     >

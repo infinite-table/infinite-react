@@ -1,36 +1,45 @@
-import { useState } from 'react';
-import type { DevToolsHostPageMessagePayload } from '@infinite-table/infinite-react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { DevToolsMessagingContext } from 'devtools-ui';
+import {
+  DevToolsLogEntry,
+  DevToolsMessagingContext,
+  type PageData,
+} from 'devtools-ui';
 
-import { sendMessageToContentScript } from '../lib/sendMessageToContentScript';
-import { useOnStorageChange } from '../hooks/useOnStorageChange';
+import {
+  sendMessageToBackgroundScript,
+  sendMessageToHostPage,
+} from '../lib/messagingUtils';
+import { useOnPageStorageChange } from '../hooks/useOnPageStorageChange';
 
 function ChromeDevToolsProvider({ children }: { children: React.ReactNode }) {
-  const [instances, setInstances] = useState<
-    Record<string, DevToolsHostPageMessagePayload>
-  >({});
-
   const [activeDebugId, setActiveDebugId] = useState<string | null>(null);
 
-  useOnStorageChange<typeof instances>(
+  const { pageData, clearLogs, getLogs } = useOnPageStorageChange<PageData>(
     chrome.storage.session,
-    'instances',
-    (instances) => {
-      setInstances(instances ?? {});
-    },
   );
-  const currentInstance = activeDebugId ? instances[activeDebugId] : null;
+  const detectedDebugIds = Object.keys(pageData?.instances ?? []);
+
+  const currentInstance = activeDebugId
+    ? pageData?.instances[activeDebugId] ?? null
+    : null;
+
+  const currentInstanceLogs = useMemo<DevToolsLogEntry[]>(() => {
+    return activeDebugId ? pageData?.logsPerInstance[activeDebugId] ?? [] : [];
+  }, [pageData, activeDebugId]);
 
   return (
     <DevToolsMessagingContext
       value={{
-        instances,
-        setInstances,
+        getLogs,
+        clearLogs,
+        detectedDebugIds,
+        currentInstanceLogs,
         currentInstance,
         activeDebugId,
         setActiveDebugId,
-        sendMessageToContentScript,
+        sendMessageToHostPage,
+        sendMessageToBackgroundScript: sendMessageToBackgroundScript,
       }}
     >
       {children}

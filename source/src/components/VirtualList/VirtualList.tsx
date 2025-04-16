@@ -11,7 +11,7 @@ import {
 } from '../VirtualScrollContainer';
 import { useRerender } from '../hooks/useRerender';
 
-import { dbg } from '../../utils/debug';
+import { dbg } from '../../utils/debugLoggers';
 import { RawList } from '../RawList';
 import type { ScrollPosition } from '../types/ScrollPosition';
 import {

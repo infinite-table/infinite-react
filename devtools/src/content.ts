@@ -9,6 +9,12 @@ type MessageForPage = DevToolsGenericMessage & {
   type: string;
 };
 
+type MessageForBackground = DevToolsGenericMessage & {
+  target: Extract<DevToolsMessageAddress, 'infinite-table-devtools-background'>;
+  payload: any;
+  type: string;
+};
+
 const port = chrome.runtime.connect({ name: 'infinite-table-devtools' });
 
 window.addEventListener('message', (event) => {
@@ -16,6 +22,7 @@ window.addEventListener('message', (event) => {
     // all messages from the page
     // will be forwarded to the background script
     port.postMessage({
+      url: event.data.url,
       source: event.data.source,
       target: 'infinite-table-devtools-background',
       payload: event.data.payload,
@@ -25,14 +32,20 @@ window.addEventListener('message', (event) => {
 });
 
 function onMessageForPage(message: MessageForPage) {
-  console.log('got message for page', message);
   window.postMessage(message);
+}
+
+function onMessageForBackground(message: MessageForBackground) {
+  port.postMessage(message);
 }
 
 // listen for messages from devtools panels
 chrome.runtime.onMessage.addListener((message) => {
   if (message.target === 'infinite-table-page') {
     onMessageForPage(message as MessageForPage);
+  }
+  if (message.target === 'infinite-table-devtools-background') {
+    onMessageForBackground(message as MessageForBackground);
   }
 });
 

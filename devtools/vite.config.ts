@@ -9,7 +9,7 @@ let fileMapping: Record<string, string> = {};
 const SOURCE_TO_MAPPING = {
   'src/content.ts': 'content',
   'src/content.css': 'contentCss.css',
-  'src/infinitebackground.ts': 'infinitebackground',
+  'src/background/infinitebackground.ts': 'infinitebackground',
   'src/index.html': 'index',
   'src/panel.html': 'panel',
   'popup/popup.html': 'popup',
@@ -71,7 +71,7 @@ export default defineConfig({
         popup: './popup/popup.html',
         content: './src/content.ts',
         contentCss: './src/content.css',
-        infinitebackground: './src/infinitebackground.ts',
+        infinitebackground: './src/background/infinitebackground.ts',
         manifest: './manifest.json',
       },
       external: [],

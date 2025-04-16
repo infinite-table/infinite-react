@@ -1,18 +1,23 @@
 import { useDevToolsMessagingContext } from '../lib/DevToolsMessagingContext';
 
 export function HighlightButton(props: {
-  debugId: string;
+  debugId?: string;
   children?: React.ReactNode;
+  onClick?: () => void;
 }) {
-  const { sendMessageToContentScript } = useDevToolsMessagingContext();
+  const { sendMessageToHostPage: sendMessageToContentScript } =
+    useDevToolsMessagingContext();
 
   return (
     <button
-      className="px-2 py-0 bg-amber-400 text-background cursor-pointer rounded-sm"
+      className="px-2 py-0 bg-warn text-warn-foreground cursor-pointer rounded-sm"
       onClick={() => {
-        sendMessageToContentScript('highlight', {
-          debugId: props.debugId,
-        });
+        const fn = () =>
+          sendMessageToContentScript('highlight', {
+            debugId: props.debugId,
+          });
+
+        (props.onClick || fn)();
       }}
     >
       {props.children ?? 'Show'}

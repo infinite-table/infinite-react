@@ -120,7 +120,7 @@ export class DataClient {
       }
       // otherwise continue with the initial query
     }
-    const dataQuery = new DataQuery(options.name || '');
+    const dataQuery = new DataQuery(`${this.name}:${options.name}`);
     this.queryCache.set(stringifiedCacheKey, dataQuery);
 
     dataQuery.fetch(options.fn, options.key);

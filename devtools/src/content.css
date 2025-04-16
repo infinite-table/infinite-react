@@ -1,16 +1,3 @@
-.infinite-devtools-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: red;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1000;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.infinite-devtools-overlay--active {
-  opacity: 0.2;
-}
+/**
+inject CSS
+*/

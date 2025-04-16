@@ -1,4 +1,4 @@
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 import { Renderable } from '../types/Renderable';
 
 export class MappedItems extends Logger {

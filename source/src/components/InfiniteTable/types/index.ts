@@ -144,4 +144,10 @@ export type {
   DevToolsInfiniteOverrides,
   DevToolsDataSourceOverrides,
   DevToolsOverrides,
+  ErrorCodeKey,
+  DataSourceDebugWarningKey,
+  InfiniteTableDebugWarningKey,
+  DebugWarningPayload,
+  DevToolsHostPageLogMessage,
+  DevToolsHostPageLogMessagePayload,
 } from './DevTools';

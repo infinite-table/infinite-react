@@ -1,9 +1,32 @@
-import { debug, isLoggingEnabled } from '@src/utils/debugPackage';
+import { debug, isChannelEnabled } from '@src/utils/debugPackage';
 import { test, expect } from '@playwright/test';
 
 debug.colors = ['red', 'green', 'blue'];
 
 export default test.describe.parallel('debug', () => {
+  test('logging with color', () => {
+    let args: string[] = [];
+
+    debug.destroyAll();
+    debug.enable = '*';
+    debug.logFn = (...x: string[]) => {
+      args = x;
+    };
+
+    const logger1 = debug('channel1');
+
+    logger1(logger1.color('blue', 'testing'), 'works');
+    expect(args).toEqual([
+      '%c[channel1]%c %s',
+      'color: red',
+      '',
+      '%ctesting%c%s',
+      'color: blue',
+      '',
+      'works%s',
+      '',
+    ]);
+  });
   test('should reuse the same color for same channel', () => {
     debug.destroyAll();
     debug.enable = '*';
@@ -140,6 +163,31 @@ export default test.describe.parallel('debug', () => {
     expect(args).toEqual(['%c[channel2]%c %s', 'color: blue', '', '2']);
   });
 
+  test('enabling individual loggers via logger.enabled prop', () => {
+    let args: string[] = [];
+
+    debug.destroyAll();
+    debug.enable = 'channel1:*:x';
+    debug.logFn = (...x: string[]) => {
+      args = x;
+    };
+
+    const chOneax = debug('channel1:a:x');
+    const chOneb = debug('channel1:b');
+
+    chOneax('abc');
+    expect(args).toEqual(['%c[channel1:a:x]%c %s', 'color: red', '', 'abc']);
+
+    chOneb('oneb');
+    expect(args).toEqual(['%c[channel1:a:x]%c %s', 'color: red', '', 'abc']);
+
+    expect(chOneb.enabled).toBe(false);
+    chOneb.enabled = true;
+    expect(chOneb.enabled).toBe(true);
+    chOneb('oneb');
+    expect(args).toEqual(['%c[channel1:b]%c %s', 'color: green', '', 'oneb']);
+  });
+
   test('channel negation working', () => {
     let args: string[] = [];
     let prevArgs: string[] = [];
@@ -162,60 +210,60 @@ export default test.describe.parallel('debug', () => {
   });
 
   test('isLoggingEnabled', () => {
-    expect(isLoggingEnabled('channel1', '*')).toBe(true);
-    expect(isLoggingEnabled('channel1:b', '*')).toBe(true);
-    expect(isLoggingEnabled('channel1:b', '*')).toBe(true);
-    expect(isLoggingEnabled('channel1', 'channel1:*')).toBe(false);
-    expect(isLoggingEnabled('channel1:a', 'channel1:*')).toBe(true);
-    expect(isLoggingEnabled('channel2:a', 'channel1:*')).toBe(false);
-    expect(isLoggingEnabled('channel2:a', 'channel1:*,*')).toBe(true);
+    expect(isChannelEnabled('channel1', '*')).toBe(true);
+    expect(isChannelEnabled('channel1:b', '*')).toBe(true);
+    expect(isChannelEnabled('channel1:b', '*')).toBe(true);
+    expect(isChannelEnabled('channel1', 'channel1:*')).toBe(false);
+    expect(isChannelEnabled('channel1:a', 'channel1:*')).toBe(true);
+    expect(isChannelEnabled('channel2:a', 'channel1:*')).toBe(false);
+    expect(isChannelEnabled('channel2:a', 'channel1:*,*')).toBe(true);
 
-    expect(isLoggingEnabled('channel1:a:b', 'channel1:*')).toBe(true);
-    expect(isLoggingEnabled('channel1:a:b', 'a,channel1:*,x,y')).toBe(true);
-    expect(isLoggingEnabled('channel1x:a:b', 'a,channel1:*,x,y')).toBe(false);
+    expect(isChannelEnabled('channel1:a:b', 'channel1:*')).toBe(true);
+    expect(isChannelEnabled('channel1:a:b', 'a,channel1:*,x,y')).toBe(true);
+    expect(isChannelEnabled('channel1x:a:b', 'a,channel1:*,x,y')).toBe(false);
 
-    expect(isLoggingEnabled('channel1:a', 'xyz,channel1:*,channel2')).toBe(
+    expect(isChannelEnabled('channel1:a', 'xyz,channel1:*,channel2')).toBe(
       true,
     );
-    expect(isLoggingEnabled('channel1:a:b', 'xyz,channel1:*,channel2')).toBe(
+    expect(isChannelEnabled('channel1:a:b', 'xyz,channel1:*,channel2')).toBe(
       true,
     );
-    expect(isLoggingEnabled('xyz', 'xyz,channel1:*,channel2')).toBe(true);
+    expect(isChannelEnabled('xyz', 'xyz,channel1:*,channel2')).toBe(true);
   });
 
   test('isLoggingEnabled - test for simple negations', () => {
-    expect(isLoggingEnabled('channel1', 'channel1:*,-channel1:b')).toBe(false);
-    expect(isLoggingEnabled('channel1:x', 'channel1:*,-channel1:b')).toBe(true);
-    expect(isLoggingEnabled('channel1:x:y', 'channel1:*,-channel1:b')).toBe(
+    expect(isChannelEnabled('channel1', 'channel1:*,-channel1:b')).toBe(false);
+    expect(isChannelEnabled('channel1:x', 'channel1:*,-channel1:b')).toBe(true);
+    expect(isChannelEnabled('channel1:x:y', 'channel1:*,-channel1:b')).toBe(
       true,
     );
 
-    expect(isLoggingEnabled('channel1:b', 'channel1:*,-channel1:b')).toBe(
+    expect(isChannelEnabled('channel1:b', 'channel1:*,-channel1:b')).toBe(
       false,
     );
 
-    expect(isLoggingEnabled('channel1:b', 'channel1:*,-channel1:b:c')).toBe(
+    expect(isChannelEnabled('channel1:b', 'channel1:*,-channel1:b:c')).toBe(
       true,
     );
-    expect(isLoggingEnabled('channel1:b', 'channel1:*,-channel1:b:c')).toBe(
+    expect(isChannelEnabled('channel1:b', 'channel1:*,-channel1:b:c')).toBe(
       true,
     );
-    expect(isLoggingEnabled('channel1:b:d', 'channel1:*,-channel1:b:c')).toBe(
+    expect(isChannelEnabled('channel1:b:d', 'channel1:*,-channel1:b:c')).toBe(
       true,
     );
-    expect(isLoggingEnabled('channel1:b:c', 'channel1:*,-channel1:b:c')).toBe(
+    expect(isChannelEnabled('channel1:b:c', 'channel1:*,-channel1:b:c')).toBe(
       false,
     );
   });
 
   test('isLoggingEnabled - test for wildcard use', () => {
     const permissions = 'channel1:*:b';
-    expect(isLoggingEnabled('channel1', permissions)).toBe(false);
-    expect(isLoggingEnabled('channel1:b', permissions)).toBe(true);
-    expect(isLoggingEnabled('channel1:b', `${permissions},-channel1:b`)).toBe(
+    expect(isChannelEnabled('channel1', permissions)).toBe(false);
+    expect(isChannelEnabled('channel1:b', permissions)).toBe(true);
+    expect(isChannelEnabled('channel1:b', `${permissions},-channel1:b`)).toBe(
       false,
     );
-    expect(isLoggingEnabled('channel1:x:b', permissions)).toBe(true);
-    expect(isLoggingEnabled('channel1:x', permissions)).toBe(false);
+    expect(isChannelEnabled('channel1:x:b', permissions)).toBe(true);
+    expect(isChannelEnabled('channel1:x', permissions)).toBe(false);
   });
 });

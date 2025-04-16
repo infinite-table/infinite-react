@@ -3,7 +3,7 @@ import packageJSON from './package.json';
 import dotenv from 'dotenv';
 import { vanillaExtractPlugin } from '@vanilla-extract/esbuild-plugin';
 import path from 'path';
-const { parsed } = dotenv.config({ path: ['.env.local', '.env'] });
+const { parsed = {} } = dotenv.config({ path: ['.env.local', '.env'] });
 
 const dependencies = { ...packageJSON.dependencies };
 
@@ -13,6 +13,15 @@ external.forEach((key) => {
   //@ts-ignore
   delete dependencies[key];
 });
+
+const define = {
+  __DEV__: JSON.stringify(false),
+  'process.env.NEXT_PUBLIC_INFINITE_TABLE_LICENSE_KEY': JSON.stringify(
+    parsed.INFINITE_TABLE_LICENSE_KEY ||
+      parsed.NEXT_PUBLIC_INFINITE_TABLE_LICENSE_KEY ||
+      '',
+  ),
+};
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/index.css'],
@@ -37,10 +46,5 @@ export default defineConfig({
   },
   external,
 
-  define: {
-    __DEV__: JSON.stringify(false),
-    'process.env.INFINITE_TABLE_LICENSE_KEY': JSON.stringify(
-      (parsed || {}).INFINITE_LICENSE_KEY || '',
-    ),
-  },
+  define,
 });

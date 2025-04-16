@@ -9,7 +9,7 @@ import {
   useLayoutEffect,
 } from 'react';
 
-import { dbg } from '../../../utils/debug';
+import { dbg } from '../../../utils/debugLoggers';
 
 import { proxyFn } from '../../../utils/proxyFnCall';
 import { toUpperFirst } from '../../../utils/toUpperFirst';
@@ -186,7 +186,7 @@ type ComponentStateRootConfig<
   T_ACTIONS = {},
   T_PARENT_STATE = {},
 > = {
-  debugName?: string;
+  debugName?: string | ((props: T_PROPS) => string);
   initSetupState?: (props: T_PROPS) => COMPONENT_SETUP_STATE;
 
   layoutEffect?: boolean;
@@ -570,7 +570,11 @@ export function buildManagedComponent<
 
       if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
         const logger = config.debugName
-          ? dbg(`${config.debugName}:rerender`)
+          ? dbg(
+              typeof config.debugName === 'function'
+                ? `${config.debugName(currentProps)}:rerender`
+                : `${config.debugName}:rerender`,
+            )
           : dbg('rerender');
 
         logger(

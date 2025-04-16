@@ -1,5 +1,5 @@
 import binarySearch from 'binary-search';
-import { Logger } from '../../utils/debug';
+import { Logger } from '../../utils/debugLoggers';
 import { Renderable } from '../types/Renderable';
 import { ListRowInterface } from './ListRowInterface';
 import { ListRowPoolForReact } from './ListRowPoolForReact';

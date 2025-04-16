@@ -1,4 +1,4 @@
-import { debug } from '../../../utils/debugPackage';
+import { debug, type DebugLogger } from '../../../utils/debugPackage';
 export type DataQuerySnapshot = {
   state: 'idle' | 'loading' | 'success' | 'error';
   result: any;
@@ -7,8 +7,6 @@ export type DataQuerySnapshot = {
   doneAt: number;
   promise?: Promise<DataQuery>;
 };
-
-const logger = debug('InfiniteTable:DataQuery');
 
 export class DataQuery {
   private state: 'idle' | 'loading' | 'success' | 'error' = 'idle';
@@ -20,8 +18,11 @@ export class DataQuery {
 
   public debugName: string = '';
 
-  constructor(debugName?: string) {
+  private logger: DebugLogger;
+
+  constructor(debugName: string) {
     this.debugName = debugName || '';
+    this.logger = debug(`${debugName}:DataQuery`);
   }
 
   fetch = async (loadFn: DataQueryFn, ...key: DataQueryKey[]) => {
@@ -29,7 +30,7 @@ export class DataQuery {
     let resolvePending: (v: any) => void = () => {};
 
     try {
-      logger(`Fetching query ${this.debugName}...`);
+      this.logger(`Fetching query ${this.debugName}...`);
       this.pendingPromise = new Promise((resolve) => {
         resolvePending = resolve;
       });
@@ -47,7 +48,7 @@ export class DataQuery {
     this.pendingPromise = undefined;
     resolvePending(this);
 
-    logger(`Fetched query ${this.debugName}. State: ${this.state}.`);
+    this.logger(`Fetched query ${this.debugName}. State: ${this.state}.`);
 
     return this.getDoneSnapshot();
   };

@@ -14,14 +14,15 @@
     }
   },
   "background": {
-    "service_worker": "src/infinitebackground.ts",
+    "service_worker": "src/background/infinitebackground.ts",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["src/content.ts"],
-      "css": ["src/content.css"]
+      "css": ["src/content.css"],
+      "run_at": "document_end"
     }
   ],
   "icons": {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { dbg, err } from '../utils/debug';
+import { dbg, err } from '../utils/debugLoggers';
 
 import { useResizeObserver } from './ResizeObserver';
 

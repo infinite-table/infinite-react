@@ -111,7 +111,6 @@ export default function DataTestPage() {
         <DataSource<CarSale> data={carsales} primaryKey="id">
           <InfiniteTable<CarSale>
             debugId="test"
-            debugMode
             domProps={{
               style: {
                 margin: '5px',

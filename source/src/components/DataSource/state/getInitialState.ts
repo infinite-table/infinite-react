@@ -17,7 +17,7 @@ import {
   RowDisabledStateObject,
   RowSelectionState,
 } from '..';
-import { dbg } from '../../../utils/debug';
+import { dbg } from '../../../utils/debugLoggers';
 import { DeepMap } from '../../../utils/DeepMap';
 import defaultSortTypes from '../../../utils/multisort/sortTypes';
 import { raf } from '../../../utils/raf';
@@ -70,8 +70,11 @@ import { treeSelectionStateConfigGetter } from '../TreeApi';
 import { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTable_Tree_RowInfoNode } from '../../../utils/groupAndPivot';
 import { DEV_TOOLS_DATASOURCE_OVERRIDES } from '../../../DEV_TOOLS_OVERRIDES';
-
-const DataSourceLogger = dbg('DataSource') as DebugLogger;
+import {
+  DataSourceDebugWarningKey,
+  DebugWarningPayload,
+} from '../../InfiniteTable/types/DevTools';
+import { getDebugChannel } from '../../../utils/debugChannel';
 
 export const defaultCursorId = Symbol('cursorId');
 
@@ -87,7 +90,9 @@ export const isNodeSelectable = <T = any>(
   return rowInfo.isParentNode ? !isNodeReadOnly(rowInfo) : true;
 };
 
-export function initSetupState<T>(): DataSourceSetupState<T> {
+export function initSetupState<T>(
+  props: DataSourceProps<T>,
+): DataSourceSetupState<T> {
   const now = Date.now();
   const originalDataArray: T[] = [];
   const dataArray: InfiniteTableRowInfo<T>[] = [];
@@ -96,9 +101,12 @@ export function initSetupState<T>(): DataSourceSetupState<T> {
     string,
     LazyRowInfoGroup<T>
   >();
+  const DataSourceLogger = dbg(`${props.debugId}:DataSource`) as DebugLogger;
 
   return {
+    logger: DataSourceLogger,
     debugTimings: new Map<DebugTimingKey, number>(),
+    debugWarnings: new Map<DataSourceDebugWarningKey, DebugWarningPayload>(),
 
     devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     // TODO cleanup indexer on unmount
@@ -686,14 +694,14 @@ export function deriveStateFromProps<T extends any>(params: {
     warnOnce(
       `"groupMode" prop is deprecated for the <DataSource />, use "shouldReloadData.groupBy: true|false" instead`,
       'groupMode deprecated',
-      DataSourceLogger,
+      state.logger,
     );
   }
   if (props.sortMode) {
     warnOnce(
       `"sortMode" prop is deprecated for the <DataSource />, use "shouldReloadData.sortInfo: true|false" instead`,
       'sortMode deprecated',
-      DataSourceLogger,
+      state.logger,
     );
   }
 
@@ -701,7 +709,7 @@ export function deriveStateFromProps<T extends any>(params: {
     warnOnce(
       `"filterMode" prop is deprecated for the <DataSource />, use "shouldReloadData.filterValue: true|false" instead`,
       'filterMode deprecated',
-      DataSourceLogger,
+      state.logger,
     );
   }
 
@@ -834,8 +842,6 @@ export function onPropChange<T>(
     }
   }
 }
-
-const debugDataParams = dbg('DataSource:dataParams');
 
 export type DataSourceMappedCallbackParams<T> = {
   [k in keyof DataSourceState<T>]: (
@@ -1074,6 +1080,9 @@ export function getInterceptActions<T>(): ComponentInterceptedActions<
         return false;
       }
 
+      const debugDataParams = dbg(
+        getDebugChannel(state.debugId, 'DataSource:dataParams'),
+      );
       debugDataParams(
         'onDataParamsChange triggered because the following values have changed',
         dataParams?.changes,

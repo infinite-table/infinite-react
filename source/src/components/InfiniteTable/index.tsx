@@ -94,6 +94,7 @@ import { useToggleWrapRowsHorizontally } from './hooks/useToggleWrapRowsHorizont
 import { useHorizontalLayout } from './hooks/useHorizontalLayout';
 import { useDebugMode } from './hooks/useDebugMode';
 import { useInfinitePortalContainer } from './hooks/useInfinitePortalContainer';
+import { getDebugChannel } from '../../utils/debugChannel';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -119,7 +120,9 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     mappedCallbacks: getMappedCallbacks(),
     // @ts-ignore
     getParentState: () => useDataSourceState(),
-    debugName: DEBUG_NAME,
+    debugName: (props: { debugId?: string }) => {
+      return getDebugChannel(props.debugId, DEBUG_NAME);
+    },
   });
 
 function InfiniteTableHeader<T>() {
