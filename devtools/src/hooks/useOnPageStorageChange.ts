@@ -2,15 +2,27 @@ import { useCallback, useEffect, useState } from 'react';
 import { getPageUrlOfCurrentTab } from '../lib/getCurrentPageUrl';
 import { type PageData } from 'devtools-ui';
 
-import {
-  sendMessageToBackgroundScript,
-  sendMessageToHostPage,
-} from '../lib/messagingUtils';
+import { sendMessageToBackgroundScript } from '../lib/messagingUtils';
+
+const getEmptyPageData = (): PageData => ({
+  allLogs: [],
+  logsPerInstance: {},
+  instances: {},
+});
 
 export function useOnPageStorageChange<T>(
   storageArea: chrome.storage.SessionStorageArea,
 ) {
-  const [pageData, setPageData] = useState<PageData | null>(null);
+  const [pageData, doSetPageData] = useState<PageData | null>(null);
+  const setPageData = useCallback(
+    (pageData: PageData) => {
+      doSetPageData({
+        ...getEmptyPageData(),
+        ...pageData,
+      });
+    },
+    [doSetPageData],
+  );
 
   const getLogs = useCallback(
     (debugId?: string) => {

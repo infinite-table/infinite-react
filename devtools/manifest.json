@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Infinite Table DevTools Extension",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "A Chrome extension for Infinite Table",
-  "permissions": ["activeTab", "tabs", "scripting", "storage"],
+  "permissions": ["tabs", "storage"],
   "devtools_page": "./src/index.html",
 
   "action": {

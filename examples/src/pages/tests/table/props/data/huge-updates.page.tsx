@@ -80,6 +80,9 @@ const randomlyUpdateData = (
   }
   STARTED = true;
   setInterval(() => {
+    if (!STARTED) {
+      return;
+    }
     const numberOfRowsToUpdate = 2;
     const { renderStartIndex, renderEndIndex } = api.getVerticalRenderRange();
     const dataArray = dataSourceApi.getRowInfoArray();
@@ -93,7 +96,7 @@ const randomlyUpdateData = (
         updateRow(dataSourceApi, row);
       }
     }
-  }, 30);
+  }, 100);
 };
 
 const columns: InfiniteTablePropColumns<Developer> = {
@@ -140,9 +143,27 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 export default () => {
+  const [api, setApi] = React.useState<InfiniteTableApi<Developer> | null>(
+    null,
+  );
+  const [dataSourceApi, setDataSourceApi] =
+    React.useState<DataSourceApi<Developer> | null>(null);
   return (
     <>
       <React.StrictMode>
+        <button
+          className="bg-blue-500 text-white p-2 rounded-md cursor-pointer"
+          onClick={() => {
+            STARTED = !STARTED;
+
+            console.log('STARTED', STARTED);
+            if (STARTED) {
+              randomlyUpdateData(api!, dataSourceApi!);
+            }
+          }}
+        >
+          Toggle updates
+        </button>
         <DataSource<Developer>
           data={dataSource}
           primaryKey="id"
@@ -153,12 +174,15 @@ export default () => {
           groupBy={[{ field: 'stack' }]}
         >
           <InfiniteTable<Developer>
+            debugId="huge-updates"
             domProps={{
               style: {
                 height: '100%',
               },
             }}
             onReady={({ api, dataSourceApi }) => {
+              setApi(api);
+              setDataSourceApi(dataSourceApi);
               randomlyUpdateData(api, dataSourceApi);
             }}
             columnDefaultWidth={100}
