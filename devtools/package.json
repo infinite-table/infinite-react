@@ -5,7 +5,7 @@
   "description": "A Chrome extension for Infinite Table",
   "scripts": {
     "build": "rm -fr devtools.zip && vite build && zip -r devtools.zip dist",
-    "watch": " vite build --watch",
+    "watch": "NODE_ENV=development vite build --watch",
     "lint": "eslint ."
   },
   "type": "module",
@@ -15,7 +15,7 @@
     "@radix-ui/react-checkbox": "^1.1.4",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-separator": "^1.1.2",
-    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@vitejs/plugin-react": "^4.3.4",
     "chokidar-cli": "^3.0.0",

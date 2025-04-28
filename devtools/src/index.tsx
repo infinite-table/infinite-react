@@ -1,5 +1,9 @@
+let title = 'Infinite Table';
+if (__DEV__) {
+  title = 'Infinite Table DEV';
+}
 chrome.devtools.panels.create(
-  'Infinite Table',
+  title,
   'icons/icon16.png',
   'src/panel.html',
   (panel) => {

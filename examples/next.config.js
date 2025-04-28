@@ -22,6 +22,7 @@ module.exports = {
 
     return config;
   },
+  output: 'export',
   pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
   transpilePackages: ['@infinite-table/infinite-react'],
   reactStrictMode: false, // in order to not break tests loading data by double loading

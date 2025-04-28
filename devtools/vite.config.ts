@@ -42,10 +42,11 @@ const updateManifestPlugin = (): Plugin => {
   };
 };
 
+const DEV = process.env.NODE_ENV !== 'production';
 // https://vite.dev/config/
 export default defineConfig({
   define: {
-    __DEV__: 'true',
+    __DEV__: JSON.stringify(DEV),
     __VERSION__: JSON.stringify('v1.0.0'),
     __VERSION_TIMESTAMP__: JSON.stringify(new Date().getTime()),
   },
@@ -60,7 +61,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: path.resolve(__dirname, 'dist'),
+    outDir: path.resolve(__dirname, 'dist' + (DEV ? '-dev' : '')),
     minify: false,
     cssMinify: false,
     cssCodeSplit: true,
