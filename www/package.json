@@ -78,7 +78,6 @@
     "scroll-into-view-if-needed": "^2.2.25",
     "serverless-http": "^2.7.0",
     "shadcn-ui-css-vars": "^2.0.0",
-    "sharp": "^0.32.0",
     "stripe": "^8.193.0"
   },
   "overrides": {
