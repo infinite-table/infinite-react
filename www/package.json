@@ -88,7 +88,7 @@
     "@emotion/styled": "latest",
     "@mui/material": "latest",
     "@mui/x-date-pickers": "latest",
-    "@tailwindcss/postcss": "^4.0.12",
+    "@tailwindcss/postcss": "^4.1.4",
     "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.2.10",
     "@types/debounce": "^1.2.1",
@@ -149,7 +149,7 @@
     "retext-smartypants": "^4.0.0",
     "rss": "^1.2.2",
     "serve": "^14.2.0",
-    "tailwindcss": "^4.0.12",
+    "tailwindcss": "^4.1.4",
     "typescript": "4.9.5",
     "unist-util-visit": "^4.1.0",
     "yaml": "^1.10.2"
