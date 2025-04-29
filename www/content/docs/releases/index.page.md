@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 7.0.1
 
-Bugfix related to devtools Uncaught TypeError: Cannot read properties of undefined (reading 'startsWith')
+Bugfix related to devtools Uncaught TypeError: Cannot read properties of undefined (reading 'startsWith').
 
 ## 7.0.0
 
