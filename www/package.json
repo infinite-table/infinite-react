@@ -31,7 +31,7 @@
     "install-serverless-deps": "cd functions/email-license && npm run install-deps && cd ../on-paddle-subscription && npm run install-deps"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "1.14.2",
