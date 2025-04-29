@@ -462,6 +462,9 @@ function listenForDevTools() {
   if (typeof window !== 'undefined') {
     window.addEventListener('message', (event) => {
       if (
+        event &&
+        event.data &&
+        typeof event.data.source === 'string' &&
         event.data.source.startsWith('infinite-table-devtools-contentscript') &&
         event.data.target === 'infinite-table-page'
       ) {
