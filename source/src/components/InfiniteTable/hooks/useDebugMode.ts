@@ -465,8 +465,9 @@ function listenForDevTools() {
         event &&
         event.data &&
         typeof event.data.source === 'string' &&
-        event.data.source.startsWith('infinite-table-devtools-contentscript') &&
-        event.data.target === 'infinite-table-page'
+        typeof event.data.target === 'string' &&
+        event.data.target === 'infinite-table-page' &&
+        event.data.source.startsWith('infinite-table-devtools-contentscript')
       ) {
         if (!(window as any).__INFINITE_TABLE_DEVTOOLS_HOOK__) {
           setupHook();
