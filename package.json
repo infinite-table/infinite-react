@@ -87,7 +87,6 @@
   },
   "workspaces": [
     "source",
-    "www",
-    "examples"
+    "www"
   ]
 }

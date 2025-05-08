@@ -13,7 +13,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 const queryClient = new QueryClient({
@@ -131,9 +131,9 @@ const Example = () => {
     data,
     fetchNextPage: fetchNext,
     isFetchingNextPage,
-  } = useInfiniteQuery(
-    ['employees', dataParams.sortInfo, dataParams.groupBy],
-    ({ pageParam = 0 }) => {
+  } = useInfiniteQuery({
+    queryKey: ['employees', dataParams.sortInfo, dataParams.groupBy],
+    queryFn: ({ pageParam = 0 }) => {
       const params = {
         livePaginationCursor: pageParam,
         sortInfo: dataParams.sortInfo as
@@ -141,34 +141,38 @@ const Example = () => {
           | undefined,
       };
 
+      //@ts-ignore
       return dataSource(params);
     },
 
-    {
-      keepPreviousData: true,
-      getPreviousPageParam: (firstPage) =>
-        firstPage.prevPageCursor ?? -PAGE_SIZE,
-      getNextPageParam: (lastPage) => {
-        const nextPageCursor = lastPage.hasMore
-          ? lastPage.nextPageCursor
-          : undefined;
+    //@ts-ignore
+    keepPreviousData: true,
+    //@ts-ignore
+    getPreviousPageParam: (firstPage) => firstPage.prevPageCursor ?? -PAGE_SIZE,
+    //@ts-ignore
+    getNextPageParam: (lastPage) => {
+      //@ts-ignore
+      const nextPageCursor = lastPage.hasMore
+        ? //@ts-ignore
+          lastPage.nextPageCursor
+        : undefined;
 
-        return nextPageCursor;
-      },
-
-      select: (data) => {
-        const flatData = data.pages.flatMap((x) => x.data);
-        const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
-
-        const result = {
-          pages: flatData,
-          pageParams: [nextPageCursor],
-        };
-
-        return result;
-      },
+      return nextPageCursor;
     },
-  );
+
+    select: (data) => {
+      //@ts-ignore
+      const flatData = data.pages.flatMap((x) => x.data); //@ts-ignore
+      const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
+
+      const result = {
+        pages: flatData,
+        pageParams: [nextPageCursor],
+      };
+
+      return result;
+    },
+  });
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {
@@ -235,7 +239,7 @@ const Example = () => {
           // take the data from `data.pages`,
           // as returned from our react-query select function
 
-          sortInfo={dataParams?.sortInfo}
+          sortInfo={dataParams?.sortInfo} //@ts-ignore
           data={data?.pages || emptyArray}
           loading={isFetchingNextPage}
           onDataParamsChange={onDataParamsChange}

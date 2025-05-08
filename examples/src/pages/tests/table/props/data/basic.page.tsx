@@ -6,6 +6,7 @@ import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 import { CarSale } from '@examples/datasets/CarSale';
+import { Button } from '@/components/ui/button';
 
 const carsales: CarSale[] = [
   {
@@ -104,9 +105,9 @@ export default function DataTestPage() {
   const [active, setActive] = React.useState([true, true]);
   return (
     <React.StrictMode>
-      <button onClick={() => setActive([!active[0], active[1]])}>
+      <Button onClick={() => setActive([!active[0], active[1]])}>
         toggle test
-      </button>
+      </Button>
       {active[0] && (
         <DataSource<CarSale> data={carsales} primaryKey="id">
           <InfiniteTable<CarSale>
@@ -123,9 +124,9 @@ export default function DataTestPage() {
           />
         </DataSource>
       )}
-      <button onClick={() => setActive([active[0], !active[1]])}>
-        toggle simple
-      </button>
+      <Button onClick={() => setActive([active[0], !active[1]])}>
+        Toggle simple
+      </Button>
       {active[1] && (
         <DataSource<CarSale>
           data={carsales}
