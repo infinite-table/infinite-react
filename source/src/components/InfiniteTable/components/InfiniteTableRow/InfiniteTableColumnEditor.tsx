@@ -9,7 +9,7 @@ export function InfiniteTableColumnEditor<T>() {
   const { initialValue, setValue, confirmEdit, cancelEdit, readOnly } =
     useInfiniteColumnEditor<T>();
 
-  const domRef = useRef<HTMLInputElement>();
+  const domRef = useRef<HTMLInputElement | null>(null);
   const refCallback = React.useCallback((node: HTMLInputElement) => {
     domRef.current = node;
 

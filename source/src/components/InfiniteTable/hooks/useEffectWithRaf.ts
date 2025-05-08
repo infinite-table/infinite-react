@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 export function useEffectWithRaf(fn: EffectCallback, deps: DependencyList) {
   const rafId = useRef<number>(0);
-  const removeFnRaf = useRef<Function | void>();
+  const removeFnRaf = useRef<Function | void>(undefined);
 
   useEffect(() => {
     rafId.current = requestAnimationFrame(() => {
@@ -27,7 +27,7 @@ export function useLayoutEffectWithRaf(
   deps: DependencyList,
 ) {
   const rafId = useRef<number>(0);
-  const removeFnRaf = useRef<Function | void>();
+  const removeFnRaf = useRef<Function | void>(undefined);
 
   useLayoutEffect(() => {
     rafId.current = requestAnimationFrame(() => {

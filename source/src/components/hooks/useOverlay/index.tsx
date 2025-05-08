@@ -276,6 +276,7 @@ function getIdForReactOnlyChild(children: ReactNode | (() => ReactNode)) {
   if (React.Children.count(children) === 1) {
     const child = React.Children.only(children);
     if (React.isValidElement(child)) {
+      //@ts-ignore
       return child.props.id || child.key;
     }
   }
@@ -297,9 +298,11 @@ function injectPortalContainerAndConstrainInMenuChild(
       (child.type as any)[propToIdentifyMenu]
     ) {
       const newProps: Partial<OverlayParams> = {};
+      //@ts-ignore
       if (child.props.portalContainer === undefined) {
         newProps.portalContainer = portalContainer;
       }
+      //@ts-ignore
       if (child.props.constrainTo === undefined) {
         newProps.constrainTo = constrainTo;
       }

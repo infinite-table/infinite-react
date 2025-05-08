@@ -26,6 +26,9 @@ export function useToggleWrapRowsHorizontally() {
 
       actions.renderer = newBrains.renderer;
       actions.onRenderUpdater = newBrains.onRenderUpdater;
+
+      actions.headerRenderer = newBrains.headerRenderer;
+      actions.headerOnRenderUpdater = newBrains.headerOnRenderUpdater;
     }
   }, [oldWrapRowsHorizontally, wrapRowsHorizontally]);
 }

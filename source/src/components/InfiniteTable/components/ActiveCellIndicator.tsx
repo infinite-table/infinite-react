@@ -33,7 +33,7 @@ const reposition = (
   brain: MatrixBrain,
   activeCellIndex: ActiveCellIndicatorProps['activeCellIndex'],
   rowHeight: ActiveCellIndicatorProps['rowHeight'] | undefined,
-  domRef: React.RefObject<HTMLDivElement>,
+  domRef: React.RefObject<HTMLDivElement | null>,
 ) => {
   if (activeCellIndex == null) {
     return;
@@ -66,7 +66,7 @@ const ActiveCellIndicatorFn = (props: ActiveCellIndicatorProps) => {
   const { brain } = props;
   const [_rerenderId, rerender] = useRerender();
 
-  const domRef = useRef<HTMLDivElement>(null);
+  const domRef = useRef<HTMLDivElement | null>(null);
 
   const active =
     props.activeCellIndex != null &&

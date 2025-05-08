@@ -47,7 +47,13 @@ function InfiniteTableHeaderFn<T>(
   const {
     computed,
     getState,
-    state: { headerBrain, headerOptions, showColumnFilters },
+    state: {
+      headerBrain,
+      headerOptions,
+      showColumnFilters,
+      headerRenderer,
+      headerOnRenderUpdater,
+    },
   } = useInfiniteTable<T>();
 
   const { computedColumnsMap } = computed;
@@ -165,6 +171,8 @@ function InfiniteTableHeaderFn<T>(
         name="header"
         renderCell={renderCell}
         brain={headerBrain}
+        renderer={headerRenderer}
+        onRenderUpdater={headerOnRenderUpdater}
         cellHoverClassNames={EMPTY_ARR}
         cellDetachedClassNames={CELL_DETACHED_CLASSNAMES}
       />

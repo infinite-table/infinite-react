@@ -71,14 +71,15 @@ export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
         isHeader: false,
       });
 
+  const headerBrainChannel = `${debugChannel}:header`;
   /**
    * The brain that virtualises the header is different from the main brain
    * because obviously the header will have different rowspans/colspans
    * (which are due to column groups) than the main grid viewport
    */
   const headerBrain = !wrapRowsHorizontally
-    ? new MatrixBrain(debugChannel)
-    : new HorizontalLayoutMatrixBrain(debugChannel, {
+    ? new MatrixBrain(headerBrainChannel)
+    : new HorizontalLayoutMatrixBrain(headerBrainChannel, {
         isHeader: true,
         masterBrain: brain as HorizontalLayoutMatrixBrain,
       });
@@ -92,19 +93,23 @@ export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
     });
   });
 
-  if (__DEV__) {
-    (globalThis as any).brain = brain;
-    (globalThis as any).headerBrain = headerBrain;
-  }
-
   const { renderer, onRenderUpdater } = createRenderer(brain);
+  const { renderer: headerRenderer, onRenderUpdater: headerOnRenderUpdater } =
+    createRenderer(headerBrain);
 
   // and on width changes
   brain.onAvailableSizeChange((size) => {
     headerBrain.update({ width: size.width });
   });
 
-  return { brain, headerBrain, renderer, onRenderUpdater };
+  return {
+    brain,
+    headerBrain,
+    renderer,
+    onRenderUpdater,
+    headerRenderer,
+    headerOnRenderUpdater,
+  };
 }
 
 /**
@@ -120,10 +125,14 @@ export function initSetupState<T>({
 }): InfiniteTableSetupState<T> {
   const columnsGeneratedForGrouping: InfiniteTablePropColumns<T> = {};
 
-  const { brain, headerBrain, renderer, onRenderUpdater } = createBrains(
-    debugId,
-    !!wrapRowsHorizontally,
-  );
+  const {
+    brain,
+    headerBrain,
+    renderer,
+    onRenderUpdater,
+    headerRenderer,
+    headerOnRenderUpdater,
+  } = createBrains(debugId, !!wrapRowsHorizontally);
 
   const domRef = createRef<HTMLDivElement>();
 
@@ -131,6 +140,9 @@ export function initSetupState<T>({
     debugWarnings: new Map<InfiniteTableDebugWarningKey, DebugWarningPayload>(),
     renderer,
     onRenderUpdater,
+    headerRenderer,
+    headerOnRenderUpdater,
+
     devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
     lastRowToCollapseRef: { current: null },
@@ -417,7 +429,9 @@ export const cleanupState = <T>(state: InfiniteTableState<T>) => {
   state.brain.destroy();
   state.headerBrain.destroy();
   state.renderer.destroy();
+  state.headerRenderer.destroy();
   state.onRenderUpdater.destroy();
+  state.headerOnRenderUpdater.destroy();
 
   state.onFlashingDurationCSSVarChange.destroy();
   state.onRowHeightCSSVarChange.destroy();

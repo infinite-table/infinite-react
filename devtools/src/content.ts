@@ -17,8 +17,10 @@ type MessageForBackground = DevToolsGenericMessage & {
 
 const port = chrome.runtime.connect({ name: 'infinite-table-devtools' });
 
-window.addEventListener('message', (event) => {
-  if (event.data.source === 'infinite-table-page') {
+let PORT_DISCONNECTED = false;
+
+const onWindowMessage = (event: MessageEvent) => {
+  if (event.data.source === 'infinite-table-page' && !PORT_DISCONNECTED) {
     // all messages from the page
     // will be forwarded to the background script
     port.postMessage({
@@ -29,6 +31,13 @@ window.addEventListener('message', (event) => {
       type: event.data.type,
     });
   }
+};
+
+window.addEventListener('message', onWindowMessage);
+
+port.onDisconnect.addListener(() => {
+  PORT_DISCONNECTED = true;
+  window.removeEventListener('message', onWindowMessage);
 });
 
 function onMessageForPage(message: MessageForPage) {
@@ -36,6 +45,9 @@ function onMessageForPage(message: MessageForPage) {
 }
 
 function onMessageForBackground(message: MessageForBackground) {
+  if (PORT_DISCONNECTED) {
+    return;
+  }
   port.postMessage(message);
 }
 

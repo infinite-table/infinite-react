@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 import type { Renderable } from '../types/Renderable';
 import type { SubscriptionCallback } from '../types/SubscriptionCallback';
@@ -15,7 +15,12 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
 
   const rafId = useRef<any>(null);
 
-  useEffect(() => {
+  // prev react 19 we had useEffect here
+  // but there are situations when the updater would be called
+  // after initial render and before useEffect triggered
+  // which would cause the component to not re-render
+  // so we use useLayoutEffect here to ensure we pick up those changes
+  useLayoutEffect(() => {
     function onChange(children: Renderable) {
       // so when updater triggers a change
       // we can re-render and set the children

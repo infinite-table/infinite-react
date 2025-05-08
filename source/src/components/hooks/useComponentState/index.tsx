@@ -442,10 +442,7 @@ export function buildManagedComponent<
       return result;
     };
 
-    const [state, dispatch] = useReducer<React.Reducer<COMPONENT_STATE, any>>(
-      theReducer,
-      wholeState,
-    );
+    const [state, dispatch] = useReducer(theReducer, wholeState);
 
     const getComponentState = useLatest(state);
 

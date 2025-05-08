@@ -5,7 +5,7 @@ export type OnMountProps = {
   onUnmount?: (node: HTMLElement) => void;
 };
 export function useOnMount(
-  domRef: RefObject<HTMLElement>,
+  domRef: RefObject<HTMLElement | null>,
   props: OnMountProps,
 ) {
   useEffect(() => {
