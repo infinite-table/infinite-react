@@ -51,6 +51,25 @@ jobs:
       - name: Install examples
         run: npm ci --prefix examples
 
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "::set-output name=version::$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')"
+        working-directory: examples
+
+      - name: Restore cached browser binaries for Playwright
+        id: playwright-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: '~/.cache/ms-playwright'
+          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
+      - name: Install Playwright browsers
+        # this will not install anything if the previous step found a cached browser binary
+        run: npx playwright install --with-deps chromium
+        working-directory: examples
+        env:
+          CI: true
+
       - name: Build component # in the www folder, some CSS files are used from the source/dist folder
         run: npm run build
 
