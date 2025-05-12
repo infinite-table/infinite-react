@@ -170,6 +170,9 @@ jobs:
       - name: Execute 'npm ci' in monorepo
         run: npm ci
 
+      - name: Install examples
+        run: npm ci --prefix examples
+
       - name: Execute 'npm i' in www/dataserver
         run: npm run www-dataserver:install
 
