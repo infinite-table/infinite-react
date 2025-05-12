@@ -36,6 +36,7 @@ const parseChallengeContents = (
   let content: React.ReactElement[] = [];
   React.Children.forEach(children, (child) => {
     const { props } = child;
+    // @ts-ignore
     switch (props.mdxType) {
       case 'Solution': {
         challenge.solution = child;
@@ -51,7 +52,9 @@ const parseChallengeContents = (
       }
       case 'h3': {
         challenge.order = contents.length + 1;
+        // @ts-ignore
         challenge.name = props.children;
+        // @ts-ignore
         challenge.id = props.id;
         break;
       }

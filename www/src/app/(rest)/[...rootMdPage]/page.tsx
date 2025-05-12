@@ -27,7 +27,8 @@ export const generateMetadata = async ({
 }: {
   params: { rootMdPage: string[] };
 }): Promise<Metadata> => {
-  const url = `/${params.rootMdPage.join('/')}`;
+  const p = await params;
+  const url = `/${p.rootMdPage.join('/')}`;
 
   if (url === '/eula') {
     return {

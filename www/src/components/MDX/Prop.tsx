@@ -24,7 +24,7 @@ import { Blockquote } from './Blockquote';
 import { usePathname } from 'next/navigation';
 
 interface PropProps {
-  children: React.ReactNode;
+  children: React.JSX.Element;
   name: string;
   type?: string;
   returnType?: React.ReactNode;
@@ -47,7 +47,7 @@ export const PropLink = ({
   nocode,
 }: {
   name: keyof InfiniteTableProps<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -82,7 +82,7 @@ export const DataSourcePropLink = ({
   nocode,
 }: {
   name: keyof InfiniteTableProps<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -113,7 +113,7 @@ export const DApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -144,7 +144,7 @@ export const TreeApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -175,7 +175,7 @@ export const ColumnApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -206,7 +206,7 @@ export const CellApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -237,7 +237,7 @@ export const RowDetailApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -268,7 +268,7 @@ export const KeyNavApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -299,7 +299,7 @@ export const TypeLink = ({
   nocode,
 }: {
   name: string;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -330,7 +330,7 @@ export const ApiLink = ({
   nocode,
 }: {
   name: keyof DataSourceApi<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -359,7 +359,7 @@ export const LearnLink = ({
   children,
 }: {
   name: string;
-  children: React.ReactNode;
+  children: React.JSX.Element;
 }) => {
   const href = `/docs/learn/${name as string}`;
 
@@ -374,7 +374,7 @@ export const HookLink = ({
   nocode,
 }: {
   name: keyof InfiniteTableProps<any>;
-  children?: React.ReactNode;
+  children?: React.JSX.Element;
   code?: boolean;
   nocode?: boolean;
 }) => {
@@ -675,7 +675,9 @@ export function PropTable({
   let contents = childrenArray.map((child) => {
     if (!React.isValidElement(child)) return null;
 
+    // @ts-ignore
     if (child.props.name) {
+      // @ts-ignore
       const name = child.props.name;
       const lowerName = name.toLowerCase();
       const highlight = lowerHash === lowerName;
@@ -684,6 +686,7 @@ export function PropTable({
         highlightedName = name;
       }
 
+      // @ts-ignore
       let hidden = child.props.hidden;
 
       if (!name) {

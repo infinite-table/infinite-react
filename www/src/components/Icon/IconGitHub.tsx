@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const IconGitHub = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconGitHub = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconGitHub(props) {
     return (
       <svg

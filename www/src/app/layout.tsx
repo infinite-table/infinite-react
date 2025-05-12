@@ -40,7 +40,7 @@ export default function RootLayout({
         <MetaProperties />
       </head>
       <body className="font-sans antialiased text-lg bg-black text-secondary-dark leading-base">
-        <div className={`  bg-black text-content-color `}>
+        <div className={`bg-black text-content-color `}>
           <ClientLayout>{children}</ClientLayout>
         </div>
 

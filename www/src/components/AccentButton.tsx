@@ -24,36 +24,33 @@ export function AccentButton(props: AccentButtonProps) {
     href,
     size = 'big',
   } = props;
-  const Parent = href ? Link : React.Fragment;
-  const Cmp = href ? 'a' : 'button';
-  const parentProps: any = {};
+
+  const cmpProps = {
+    disabled: disabled,
+    onClick: props.onClick,
+    className: `whitespace-nowrap disabled:opacity-40 ${
+      glow ? 'bg-glow hover:bg-glow/90' : 'bg-highlight hover:bg-highlight/90'
+    } rounded-lg inline-flex items-center font-bold text-darkcustom ${
+      styles.buttonPositionWithTransition
+    } ${className || ''} ${
+      size === 'big' ? 'text-xl  py-2 px-5' : 'text-base py-1 px-3'
+    }`,
+    style: {
+      boxShadow: `0px 0px 10px 1px ${newvars.color.darkCustom}`,
+      ...style,
+    },
+  };
 
   if (href) {
-    parentProps.href = href;
-    parentProps.legacyBehavior = true;
-  } else {
+    return (
+      <Link href={href} {...cmpProps}>
+        {children}
+      </Link>
+    );
   }
   return (
-    <Parent {...parentProps}>
-      <Cmp
-        disabled={disabled}
-        onClick={props.onClick}
-        className={`whitespace-nowrap disabled:opacity-40 ${
-          glow
-            ? 'bg-glow hover:bg-glow/90'
-            : 'bg-highlight hover:bg-highlight/90'
-        } rounded-lg inline-flex items-center font-bold text-darkcustom ${
-          styles.buttonPositionWithTransition
-        } ${className || ''} ${
-          size === 'big' ? 'text-xl  py-2 px-5' : 'text-base py-1 px-3'
-        }`}
-        style={{
-          boxShadow: `0px 0px 10px 1px ${newvars.color.darkCustom}`,
-          ...style,
-        }}
-      >
-        {children}
-      </Cmp>
-    </Parent>
+    <React.Fragment>
+      <button {...cmpProps}>{children}</button>
+    </React.Fragment>
   );
 }

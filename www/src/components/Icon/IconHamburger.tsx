@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const IconHamburger = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconHamburger = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconHamburger(props) {
     return (
       <svg

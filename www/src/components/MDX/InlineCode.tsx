@@ -6,7 +6,7 @@ interface InlineCodeProps {
 function InlineCode({
   isLink,
   ...props
-}: JSX.IntrinsicElements['code'] & InlineCodeProps) {
+}: React.JSX.IntrinsicElements['code'] & InlineCodeProps) {
   return (
     <code
       className={cn(

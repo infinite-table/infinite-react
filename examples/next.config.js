@@ -1,14 +1,14 @@
 // next.config.js
 const path = require('path');
 
-const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
-const withVanillaExtract = createVanillaExtractPlugin();
+// const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
+// const withVanillaExtract = createVanillaExtractPlugin();
 
 const webpack = require('webpack');
 
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 
-module.exports = withVanillaExtract({
+module.exports = {
   webpack: (config) => {
     const definePlugin = new webpack.DefinePlugin({
       __DEV__: JSON.stringify(true),
@@ -25,6 +25,11 @@ module.exports = withVanillaExtract({
       './node_modules/react-dom',
     );
 
+    // for whatever reason, due to the monorepo setup
+    // we cannot use the vanilla-extract plugin for next
+    // so we're using the webpack plugin directly
+    config.plugins.push(new VanillaExtractPlugin());
+
     return config;
   },
   output: 'export',
@@ -34,4 +39,4 @@ module.exports = withVanillaExtract({
   eslint: {
     ignoreDuringBuilds: true,
   },
-});
+};

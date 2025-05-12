@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const IconRss = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconRss = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconRss(props) {
     return (
       <svg
