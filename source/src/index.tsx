@@ -3,7 +3,6 @@ export * from './components/InfiniteTable';
 export * from './components/TreeGrid';
 
 export * from './components/DataSource';
-
 export { useDataSourceInternal } from './components/DataSource/privateHooks/useDataSource';
 
 export * from './components/DataSource/DataLoader/DataClient';

@@ -10,7 +10,7 @@
   "scripts": {
     "bundlewatch": "bundlewatch --config bundlewatch.config.json",
     "clean-deps": "[ -f package-lock.json ] && rm package-lock.json; rm -fr node_modules && rm -fr source/node_modules && rm -fr www/node_modules && rm -fr examples/node_modules && rm -fr devtools/node_modules && rm -fr devtools-ui/node_modules && rm -fr devtools-www/node_modules",
-    "install-all": "npm run install-source && npm run install-www && npm run install-examples && npm run install-devtools",
+    "install-all": "npm i && npm run install-source && npm run install-www && npm run install-examples && npm run install-devtools",
     "install-source": "npm --prefix source install",
     "install-www": "npm --prefix www install",
     "install-examples": "npm --prefix examples install",
