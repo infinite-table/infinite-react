@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 7.1.0
 
-Update source-code, fix tests and update typings to work with React 19
+Support for React 19 - update source-code, fix tests and update typings to work with React 19
 
 ## 7.0.1
 
