@@ -1,6 +1,7 @@
 import { RefCallback } from 'react';
-import { Renderable } from '../types/Renderable';
-import { FixedPosition } from '../VirtualBrain/MatrixBrain';
+import type { Renderable } from '../types/Renderable';
+
+import type { FixedPosition } from '../VirtualBrain/MatrixBrain';
 
 export type TableRenderCellFnParam = {
   domRef: RefCallback<HTMLElement>;
