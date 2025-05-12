@@ -79,6 +79,13 @@ jobs:
       - name: Running Playwright Tests
         run: npm run ci:test:run
 
+      - name: Save browser binaries for Playwright
+        id: playwright-save
+        uses: actions/cache/save@v4
+        with:
+          path: '~/.cache/ms-playwright'
+          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
       # - name: Linting
       #   run: npm run lint
       #   working-directory: source

@@ -170,3 +170,10 @@ jobs:
         run: npm run ci:test:run
         env:
           NEXT_PUBLIC_ADAPTABLE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_ADAPTABLE_LICENSE_KEY }}
+
+      - name: Save browser binaries for Playwright
+        id: playwright-save
+        uses: actions/cache/save@v4
+        with:
+          path: '~/.cache/ms-playwright'
+          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
