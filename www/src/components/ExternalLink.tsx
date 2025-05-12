@@ -6,7 +6,7 @@ export function ExternalLink({
   children,
   glow,
   ...props
-}: JSX.IntrinsicElements['a'] & { glow?: boolean }) {
+}: React.JSX.IntrinsicElements['a'] & { glow?: boolean }) {
   return (
     <a
       href={href}

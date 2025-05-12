@@ -9,7 +9,7 @@ import {
   debounce,
 } from '@infinite-table/infinite-react';
 
-import { AgChartProps, AgChartsReact } from 'ag-charts-react';
+import { AgChartProps, AgCharts } from 'ag-charts-react';
 
 import * as React from 'react';
 import { useState } from 'react';
@@ -230,7 +230,7 @@ function Charts(props: { selectedValues: CellSelectionValues | null }) {
     <>
       {node}
       <ChartContainer>
-        <AgChartsReact options={chartOptions} />
+        <AgCharts options={chartOptions} />
       </ChartContainer>
     </>
   );

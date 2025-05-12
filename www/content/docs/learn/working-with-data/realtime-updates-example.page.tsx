@@ -122,7 +122,7 @@ export default function App() {
     dataSourceApi: DataSourceApi<Developer>;
   }>();
 
-  const intervalIdRef = React.useRef<any>();
+  const intervalIdRef = React.useRef<any>(null);
 
   React.useEffect(() => {
     const { current: intervalId } = intervalIdRef;

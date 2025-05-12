@@ -20,7 +20,7 @@ import { cssEllipsisClassName } from '../utilities.css';
 const OFFSET = 10;
 
 function getColumnContentMaxWidths(
-  domRef: RefObject<HTMLElement>,
+  domRef: RefObject<HTMLElement | null>,
   options: {
     includeHeader: boolean;
     columnsToSkip?: Set<string>;

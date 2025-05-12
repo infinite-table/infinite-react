@@ -284,7 +284,7 @@ export class ListRowPoolForReact extends Logger {
       this.error('No rows available in the pool!');
     }
 
-    return row;
+    return row as ListRowInterface;
   }
 
   get attachedSize() {

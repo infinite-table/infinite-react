@@ -10,8 +10,8 @@ import { rootClassName } from '../../internalProps';
 
 export type InfiniteTableColumnHeaderFilterProps<T> = {
   horizontalLayoutPageIndex: null | number;
-  filterEditor: () => React.JSX.Element | null;
-  filterOperatorSwitch: () => React.JSX.Element | null;
+  filterEditor: React.ComponentType<any>;
+  filterOperatorSwitch: React.ComponentType<any>;
   filterTypes: DataSourcePropFilterTypes<T>;
   columnFilterValue: DataSourceFilterValueItem<T> | null;
   operator?: DataSourceFilterOperator<T>;

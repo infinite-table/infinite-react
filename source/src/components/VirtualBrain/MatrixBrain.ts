@@ -269,6 +269,10 @@ export class MatrixBrain extends Logger implements IBrain {
     this.rowOffsetCache = [0];
     this.verticalRenderCount = undefined;
     this.verticalTotalSize = 0;
+    this.verticalRenderRange = {
+      startIndex: 0,
+      endIndex: 0,
+    };
   }
   private resetHorizontal() {
     this.colspanParent = new Map();
@@ -277,6 +281,10 @@ export class MatrixBrain extends Logger implements IBrain {
     this.colOffsetCache = [0];
     this.horizontalRenderCount = undefined;
     this.horizontalTotalSize = 0;
+    this.horizontalRenderRange = {
+      startIndex: 0,
+      endIndex: 0,
+    };
   }
 
   public setScrollStopDelay = (scrollStopDelay: number) => {

@@ -406,7 +406,10 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     const [rowIndex, colIndex] = cellPos;
     this.matrix.visit((_, cellPos) => {
       const [row, col] = cellPos;
-      if (row >= rowIndex || col >= colIndex) {
+      if (row > rowIndex) {
+        this.detachCellAt(cellPos as CellPos);
+      }
+      if (row === rowIndex && col >= colIndex) {
         this.detachCellAt(cellPos as CellPos);
       }
     });

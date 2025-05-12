@@ -15,7 +15,7 @@ export function getColumnResizer<T>(
   }: {
     columns: InfiniteTableComputedColumn<T>[];
     shareSpaceOnResize: boolean;
-    domRef: RefObject<HTMLDivElement>;
+    domRef: RefObject<HTMLDivElement | null>;
   },
 ) {
   const column = columns[colIndex];
@@ -114,7 +114,7 @@ export function getColumnGroupResizer<T>(
   colIndexes: number[],
   config: {
     columns: InfiniteTableComputedColumn<T>[];
-    domRef: RefObject<HTMLDivElement>;
+    domRef: RefObject<HTMLDivElement | null>;
   },
 ) {
   const lastColIndex = colIndexes[colIndexes.length - 1];

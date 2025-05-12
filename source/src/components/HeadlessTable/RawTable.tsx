@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 
 import { AvoidReactDiff } from '../RawList/AvoidReactDiff';
 import { Renderable } from '../types/Renderable';
@@ -35,11 +35,11 @@ export function RawTableFn(props: RawTableProps) {
       : createRenderer(brain);
   }, [brain, props.onRenderUpdater, props.renderer]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     renderer.cellHoverClassNames = props.cellHoverClassNames || [];
   }, [renderer, props.cellHoverClassNames]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     renderer.cellDetachedClassNames = props.cellDetachedClassNames || [];
   }, [renderer, props.cellDetachedClassNames]);
 
@@ -57,16 +57,7 @@ export function RawTableFn(props: RawTableProps) {
       renderCell,
       renderDetailRow,
     });
-  }, [
-    renderer,
-    brain,
-    renderCell,
-    renderDetailRow,
-    onRenderUpdater,
-    forceRerenderTimestamp,
-  ]);
 
-  useEffect(() => {
     const remove = brain.onRenderRangeChange((renderRange) => {
       renderer.renderRange(renderRange, {
         force: false, // TODO should be false
@@ -107,7 +98,7 @@ export function RawTableFn(props: RawTableProps) {
       //   renderDetailRow,
       // };
 
-      // if (brain.name === 'header') {
+      // if (brain.name.includes('header')) {
       //   // @ts-ignore
       //   (globalThis as any).renderHeaderRange = (range = renderRange) => {
       //     renderer.renderRange(range, { ...renderRangeOptions, force: true });
@@ -117,7 +108,14 @@ export function RawTableFn(props: RawTableProps) {
     });
 
     return remove;
-  }, [renderCell, renderDetailRow, brain, onRenderUpdater]);
+  }, [
+    renderer,
+    brain,
+    renderCell,
+    renderDetailRow,
+    onRenderUpdater,
+    forceRerenderTimestamp,
+  ]);
 
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }

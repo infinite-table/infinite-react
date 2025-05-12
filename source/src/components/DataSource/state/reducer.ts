@@ -227,7 +227,7 @@ type FilterDataSourceParams<T> = {
   nodesKey: string | undefined;
 };
 
-function filterDataSource<T>(params: FilterDataSourceParams<T>) {
+export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
   const {
     filterTypes,
 
@@ -564,7 +564,8 @@ export function concludeReducer<T>(params: {
       if (state.devToolsDetected) {
         filterTimestamp = Date.now();
       }
-      dataArray = filterDataSource({
+
+      dataArray = filterDataArray({
         // tree-related stuff
         getNodeChildren,
         isLeafNode,

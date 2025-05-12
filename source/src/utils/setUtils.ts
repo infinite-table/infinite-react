@@ -34,6 +34,7 @@ export function setPop<T>(set: Set<T>): T | undefined {
   }
   const value = set.values().next().value;
 
+  //@ts-ignore
   set.delete(value);
 
   return value;

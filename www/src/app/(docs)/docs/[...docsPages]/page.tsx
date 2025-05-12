@@ -47,7 +47,8 @@ export const generateMetadata = async ({
 }: {
   params: { docsPages: string[] };
 }): Promise<Metadata> => {
-  const path = `/docs/${params.docsPages.join('/')}`;
+  const p = await params;
+  const path = `/docs/${p.docsPages.join('/')}`;
   const pageIndex = allDocsPages.findIndex((page) => page.url === path);
   const page = allDocsPages[pageIndex];
 
@@ -64,12 +65,13 @@ export const generateMetadata = async ({
   return asMeta(res);
 };
 
-export default function DocsPage({
+export default async function DocsPage({
   params,
 }: {
   params: { docsPages: string[] };
 }) {
-  const path = `/docs/${params.docsPages.join('/')}`;
+  const p = await params;
+  const path = `/docs/${p.docsPages.join('/')}`;
 
   const page404 = allRootPages.find((page) => page.url === '/404') as RootPage;
 

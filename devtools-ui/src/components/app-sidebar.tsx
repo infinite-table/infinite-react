@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  ChevronRight,
-  CircleCheck,
-  File,
-  Folder,
-  HighlighterIcon,
-  Table,
-} from 'lucide-react';
+import { ChevronRight, File, Folder, Table } from 'lucide-react';
 
 import {
   Collapsible,
@@ -80,57 +73,66 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const highlight = useHighlight();
   return (
-    <Sidebar {...props}>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Components</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {detectedDebugIds.map((debugId, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton
-                    className={cn(
-                      'cursor-pointer ',
-                      activeDebugId === debugId && 'bg-accent',
-                    )}
-                    onClick={(event) => {
-                      const deselect =
-                        (event.ctrlKey || event.metaKey) && activeDebugId;
+    <>
+      <Sidebar {...props}>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Components</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {detectedDebugIds.map((debugId, index) => (
+                  <SidebarMenuItem key={index}>
+                    <SidebarMenuButton
+                      className={cn(
+                        'cursor-pointer ',
+                        activeDebugId === debugId && 'bg-accent',
+                      )}
+                      onClick={(event) => {
+                        const deselect =
+                          (event.ctrlKey || event.metaKey) && activeDebugId;
 
-                      if (deselect) {
-                        setActiveDebugId(null);
-                      } else {
-                        if (activeDebugId !== debugId) {
-                          setActiveDebugId(debugId);
-                          highlight(debugId);
+                        if (deselect) {
+                          setActiveDebugId(null);
+                        } else {
+                          if (activeDebugId !== debugId) {
+                            setActiveDebugId(debugId);
+                            highlight(debugId);
+                          }
                         }
-                      }
-                    }}
-                  >
-                    <Table />
-                    {debugId}
-                  </SidebarMenuButton>
-                  <SidebarMenuBadge
-                    className={cn(
-                      'invisible',
-                      activeDebugId === debugId && 'visible',
-                    )}
-                  >
-                    <div
-                      onClick={(e) => {
-                        e.preventDefault();
-                        highlight(debugId);
                       }}
-                      className="block w-4 h-4 bg-green-500 rounded-full"
-                    ></div>
-                  </SidebarMenuBadge>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                    >
+                      <Table />
+                      {debugId}
+                    </SidebarMenuButton>
+                    <SidebarMenuBadge
+                      className={cn(
+                        'invisible',
+                        activeDebugId === debugId && 'visible',
+                      )}
+                    >
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          highlight(debugId);
+                        }}
+                        className="block w-4 h-4 bg-green-500 rounded-full"
+                      ></div>
+                    </SidebarMenuBadge>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+              {!detectedDebugIds.length && (
+                <div className="text-muted-foreground text-sm gap-10 grid my-5 leading-relaxed">
+                  <p>{`No components found.`}</p>
+                  <p>
+                    {`Your <InfiniteTable /> components need the "debugId" prop to show up in the devtools.`}
+                  </p>
+                </div>
+              )}
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-        {/* <SidebarGroup>
+          {/* <SidebarGroup>
           <SidebarGroupLabel>Files</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -140,9 +142,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup> */}
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }
 

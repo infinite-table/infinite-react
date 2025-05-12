@@ -70,7 +70,7 @@ function getInfiniteVersion(code: string) {
 }
 
 type SandpackProps = {
-  children: React.ReactChildren;
+  children: React.JSX.Element;
   deps?: string;
   version?: string;
   title?: React.ReactNode;
@@ -129,6 +129,7 @@ function Sandpack(props: SandpackProps) {
       //   return result;
       // }
 
+      // @ts-ignore
       const { props } = codeSnippet.props.children;
 
       //@ts-ignore

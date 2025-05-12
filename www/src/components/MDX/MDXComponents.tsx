@@ -45,21 +45,21 @@ import SimpleCallout from './SimpleCallout';
 import TerminalBlock from './TerminalBlock';
 import YouWillLearnCard from './YouWillLearnCard';
 
-const P = (p: JSX.IntrinsicElements['p']) => (
+const P = (p: React.JSX.IntrinsicElements['p']) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
 );
 
-const Strong = (strong: JSX.IntrinsicElements['strong']) => (
+const Strong = (strong: React.JSX.IntrinsicElements['strong']) => (
   <strong className="font-bold" {...strong} />
 );
 
-const OL = (p: JSX.IntrinsicElements['ol']) => (
+const OL = (p: React.JSX.IntrinsicElements['ol']) => (
   <ol className="ml-6 my-3 list-decimal" {...p} />
 );
-const LI = (p: JSX.IntrinsicElements['li']) => (
+const LI = (p: React.JSX.IntrinsicElements['li']) => (
   <li className="leading-relaxed mb-1" {...p} />
 );
-const UL = (p: JSX.IntrinsicElements['ul']) => (
+const UL = (p: React.JSX.IntrinsicElements['ul']) => (
   <ul className="ml-6 my-3 list-disc" {...p} />
 );
 
@@ -439,7 +439,7 @@ export const MDXComponents = {
     return <CodeBlock {...props} />;
   },
   // The code block renders <pre> so we just want a div here.
-  pre: (p: JSX.IntrinsicElements['div']) => {
+  pre: (p: React.JSX.IntrinsicElements['div']) => {
     return <div {...p} />;
   },
   // Scary: dynamic(() => import('./Scary')),

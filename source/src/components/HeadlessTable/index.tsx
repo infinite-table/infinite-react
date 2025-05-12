@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  MutableRefObject,
-  RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import { setupResizeObserver } from '../ResizeObserver';
 
@@ -36,8 +29,8 @@ import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetach
 // const virtualScrollTopOffset = stripVar(InternalVars.virtualScrollTopOffset);
 
 export type HeadlessTableProps = {
-  scrollerDOMRef?: MutableRefObject<HTMLElement | null>;
-  scrollVarHostRef?: MutableRefObject<HTMLElement | null>;
+  scrollerDOMRef?: RefObject<HTMLElement | null>;
+  scrollVarHostRef?: RefObject<HTMLElement | null>;
   wrapRowsHorizontally?: boolean;
   brain: MatrixBrain;
   forceRerenderTimestamp?: number;

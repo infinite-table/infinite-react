@@ -5,7 +5,7 @@ export const useEffectOnce = (effectCallback: EffectCallback) => {
   const effectFunction = useCallback<EffectCallback>(effectCallback, []);
   const effectCalled = useRef(false);
   const componentRendered = useRef(false);
-  const destroyFn = useRef<void | VoidFunction>();
+  const destroyFn = useRef<void | VoidFunction>(undefined);
   const [_, rerender] = useRerender();
 
   if (effectCalled.current) {

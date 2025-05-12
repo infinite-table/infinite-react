@@ -28,6 +28,7 @@ export { expect };
 export type { Page, ElementHandle, Locator, Response };
 
 type TestExtras = {
+  waitForInfiniteHeaderSelector: () => Promise<void>;
   waitForInfinite: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteHeader: (extraTimeout?: number) => Promise<void>;
   waitForInfiniteSelector: () => Promise<void>;

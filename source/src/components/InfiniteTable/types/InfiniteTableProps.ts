@@ -805,7 +805,7 @@ export interface InfiniteTableProps<T> {
    * on some event handlers (eg: onKeyDown), you might want to use dedicated props that give you access
    * to component state as well.
    */
-  domProps?: React.HTMLProps<HTMLDivElement>;
+  domProps?: React.HTMLAttributes<HTMLDivElement>;
   /**
    * A unique identifier for the table instance. Will not be passed to the DOM.
    */

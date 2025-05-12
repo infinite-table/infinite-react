@@ -83,9 +83,11 @@ export const createFlashingColumnCellComponent = (
 
       initialRef.current = false;
 
-      const flashTimeoutIdRef = React.useRef<any>();
-      const flashDirectionRef = React.useRef<FlashDirection | undefined>();
-      const fadeTimeoutIdRef = React.useRef<any>();
+      const flashTimeoutIdRef = React.useRef<any>(undefined);
+      const flashDirectionRef = React.useRef<FlashDirection | undefined>(
+        undefined,
+      );
+      const fadeTimeoutIdRef = React.useRef<any>(undefined);
 
       useEffectWhen(
         () => {

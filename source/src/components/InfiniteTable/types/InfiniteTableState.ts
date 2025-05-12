@@ -66,6 +66,8 @@ export interface InfiniteTableSetupState<T> {
   headerBrain: MatrixBrain;
   renderer: GridRenderer;
   onRenderUpdater: SubscriptionCallback<Renderable>;
+  headerRenderer: GridRenderer;
+  headerOnRenderUpdater: SubscriptionCallback<Renderable>;
 
   debugWarnings: Map<InfiniteTableDebugWarningKey, DebugWarningPayload>;
 

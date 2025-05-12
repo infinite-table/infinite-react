@@ -52,7 +52,7 @@ export const RowListWithExternalScrolling = (
     onUnmount,
   } = props;
 
-  const domRef = useRef<HTMLDivElement>(null);
+  const domRef = useRef<HTMLDivElement | null>(null);
 
   const renderItem = useCallback<RenderItem>(
     (renderProps: RenderItemParam) =>

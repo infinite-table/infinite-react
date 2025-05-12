@@ -40,15 +40,18 @@ const colors = [
 
 export function APIAnatomy({ children }: APIAnatomyProps) {
   const [activeStep, setActiveStep] = React.useState<number | null>(null);
-  const ref = React.useRef<HTMLDivElement>();
+  const ref = React.useRef<HTMLDivElement>(null);
 
   const { steps, code } = React.Children.toArray(children).reduce(
     (acc: AnatomyContent, child) => {
       if (!React.isValidElement(child)) return acc;
+      // @ts-ignore
       switch (child.props.mdxType) {
         case 'AnatomyStep':
           acc.steps.push(
+            // @ts-ignore
             React.cloneElement(child, {
+              // @ts-ignore
               ...child.props,
               activeStep,
               handleStepChange: setActiveStep,
@@ -60,6 +63,7 @@ export function APIAnatomy({ children }: APIAnatomyProps) {
           acc.code = (
             <CodeBlock
               ref={ref}
+              // @ts-ignore
               {...child.props.children.props}
               noMargin={true}
             />

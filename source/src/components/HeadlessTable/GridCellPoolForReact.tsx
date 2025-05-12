@@ -291,9 +291,8 @@ export class GridCellPoolForReact<T_ADDITIONAL_CELL_INFO> extends Logger {
 
     if (!cell) {
       this.poolSize += GridCellPoolForReact.POOL_SIZE_INCREMENT;
+      cell = detachedCells.values().next().value;
     }
-
-    cell = detachedCells.values().next().value;
 
     if (!cell) {
       this.error('No cells available in the pool!');

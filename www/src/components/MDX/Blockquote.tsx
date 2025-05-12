@@ -1,7 +1,7 @@
 export const Blockquote = ({
   children,
   ...props
-}: JSX.IntrinsicElements['blockquote']) => {
+}: React.JSX.IntrinsicElements['blockquote']) => {
   return (
     <>
       <blockquote

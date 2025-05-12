@@ -31,7 +31,7 @@ const columns: Record<string, InfiniteTableColumn<Car>> = {
   },
   price: { field: 'price' },
 };
-const domProps: React.HTMLAttributes<HTMLDivElement> = {
+const domProps: React.HTMLProps<HTMLDivElement> = {
   style: {
     margin: '5px',
 

@@ -22,7 +22,7 @@ import {
   getMappedCallbacks,
   cleanupDataSource,
 } from './state/getInitialState';
-import { concludeReducer } from './state/reducer';
+import { concludeReducer, filterDataArray } from './state/reducer';
 
 import { InfiniteTableRowInfo } from '../InfiniteTable';
 // import { DataSourceCmp } from './DataSourceCmp';
@@ -89,6 +89,7 @@ export {
   defaultFilterTypes as filterTypes,
   useRowInfoReducers,
   useMasterRowInfo,
+  filterDataArray,
 };
 
 export * from './types';

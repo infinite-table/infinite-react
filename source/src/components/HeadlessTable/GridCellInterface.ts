@@ -11,5 +11,5 @@ export interface GridCellInterface<T_ADDITIONAL_CELL_INFO = any> {
   ): void;
   getAdditionalInfo(): T_ADDITIONAL_CELL_INFO | undefined;
   isMounted(): boolean;
-  ref: (htmlElement: HTMLElement) => void;
+  ref: React.RefCallback<HTMLElement | undefined>;
 }

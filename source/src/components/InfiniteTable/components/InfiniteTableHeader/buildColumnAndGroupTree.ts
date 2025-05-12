@@ -4,7 +4,7 @@ import {
   InfiniteTableComputedColumn,
   InfiniteTableState,
 } from '../../types';
-import { InfiniteTableColumnPinnedValues } from '../../types/InfiniteTableProps';
+import type { InfiniteTableColumnPinnedValues } from '../../types/InfiniteTableProps';
 
 export type ColGroupTreeBaseItem = {
   id: string;

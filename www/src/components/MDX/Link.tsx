@@ -8,7 +8,7 @@ function Link({
   className,
   children,
   ...props
-}: JSX.IntrinsicElements['a']) {
+}: React.JSX.IntrinsicElements['a']) {
   const classes =
     'inline text-link break-normal border-b border-transparent hover:border-link duration-100 ease-in transition leading-normal';
   const modifiedChildren = React.Children.toArray(children).map(

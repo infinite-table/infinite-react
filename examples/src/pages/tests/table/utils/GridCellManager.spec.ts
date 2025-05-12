@@ -114,7 +114,79 @@ export default test.describe('GridCellManager', () => {
     manager.renderNodeAtCell('a', a, [0, 2]);
 
     const newNode = manager.getCellFor([0, 0], 'row')?.getNode();
-    expect((newNode as any).kind).toBe('jsx');
+    expect((newNode as any).__pw_type).toBe('jsx');
+  });
+
+  test('GridCellManager.detachCellsStartingAt', async () => {
+    const manager = new GridCellManager('test');
+
+    const a = createCell('a');
+    const b = createCell('b');
+    const c = createCell('c');
+    const d = createCell('d');
+
+    manager.renderNodeAtCell('a', a, [0, 0]);
+    manager.renderNodeAtCell('b', b, [0, 1]);
+    manager.renderNodeAtCell('c', c, [1, 0]);
+    manager.renderNodeAtCell('d', d, [1, 1]);
+
+    expect(manager.getMatrix()).toEqual([
+      ['a', 'b'],
+      ['c', 'd'],
+    ]);
+
+    manager.detachCellsStartingAt([1, 0]);
+
+    expect(manager.getMatrix()).toEqual([['a', 'b']]);
+  });
+
+  test('GridCellManager.detachCol', async () => {
+    const manager = new GridCellManager('test');
+
+    const a = createCell('a');
+    const b = createCell('b');
+    const c = createCell('c');
+    const d = createCell('d');
+
+    manager.renderNodeAtCell('a', a, [0, 0]);
+    manager.renderNodeAtCell('b', b, [0, 1]);
+    manager.renderNodeAtCell('c', c, [1, 0]);
+    manager.renderNodeAtCell('d', d, [1, 1]);
+
+    expect(manager.getMatrix()).toEqual([
+      ['a', 'b'],
+      ['c', 'd'],
+    ]);
+
+    manager.detachCol(1);
+
+    expect(manager.getMatrix()).toEqual([['a'], ['c']]);
+  });
+
+  test('GridCellManager.detachRow', async () => {
+    const manager = new GridCellManager('test');
+
+    const a = createCell('a');
+    const b = createCell('b');
+    const c = createCell('c');
+    const d = createCell('d');
+
+    manager.renderNodeAtCell('a', a, [0, 0]);
+    manager.renderNodeAtCell('b', b, [0, 1]);
+    manager.renderNodeAtCell('c', c, [1, 0]);
+    manager.renderNodeAtCell('d', d, [1, 1]);
+
+    expect(manager.getMatrix()).toEqual([
+      ['a', 'b'],
+      ['c', 'd'],
+    ]);
+
+    manager.detachRow(0);
+
+    expect(manager.getMatrix()).toEqual([
+      [null, null],
+      ['c', 'd'],
+    ]);
   });
 
   test('GridCellManager.getCellFor - second test', async () => {
@@ -240,9 +312,9 @@ export default test.describe('GridCellManager', () => {
     ]);
 
     // expect it to give me a new node for 0,0 as a is already attached at 0,2
-    expect((manager.getCellFor([0, 0], 'row')?.getNode() as any).kind).toBe(
-      'jsx',
-    );
+    expect(
+      (manager.getCellFor([0, 0], 'row')?.getNode() as any).__pw_type,
+    ).toBe('jsx');
   });
 
   test('GridCellManager.getCellFor - third test', async () => {

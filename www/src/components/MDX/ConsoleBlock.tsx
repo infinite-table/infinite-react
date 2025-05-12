@@ -8,7 +8,7 @@ type LogLevel = 'info' | 'warning' | 'error';
 
 interface ConsoleBlockProps {
   level?: LogLevel;
-  children: React.ReactNode;
+  children: React.JSX.Element;
 }
 
 const Box = ({
@@ -32,8 +32,10 @@ function ConsoleBlock({ level = 'info', children }: ConsoleBlockProps) {
     message = children;
   } else if (
     React.isValidElement(children) &&
+    // @ts-ignore
     typeof children.props.children === 'string'
   ) {
+    // @ts-ignore
     message = children.props.children;
   }
 
