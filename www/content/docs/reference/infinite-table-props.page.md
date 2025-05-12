@@ -8,6 +8,16 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <PropTable sort>
 
+<Prop name="debugId" type="string">
+
+> The unique id to identify this InfiniteTable instance in devtools
+
+If you have [Infinite Table DevTools extension](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa) installed, the current `<InfiniteTable />` instance will be picked up by the devtools with this specific name.
+
+See [/blog/2025/05/12/the-first-devtools-for-a-datagrid](our blogpost on the devtools extension) for more details.
+
+</Prop>
+
 <Prop name="repeatWrappedGroupRows" type="boolean|(rowInfo: InfiniteTableRowInfo<DATA_TYPE>) => boolean" defaultValue={true}>
 
 > When enabled, and <PropLink name="wrapRowsHorizontally" /> is also enabled, if there is <DPropLink name="groupBy" code={false}>grouping configured</DPropLink> or if you're using tree data, the group/tree rows will be repeated at the top of each column set if the group/parent starts in the previous column set.
