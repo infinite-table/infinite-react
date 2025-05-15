@@ -70,4 +70,4 @@ Having said this, we're looking for feedback from you on what insights you'd lik
 
 It's your turn to give us feedback on the Infinite Table DevTools Extension!
 
-Let us know what you think and what you'd like to use it in order to enhance your interaction with the DataGrid. 
+Let us know what you think and how you'd like to use it in order to enhance your interaction with the DataGrid. 

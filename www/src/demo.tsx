@@ -356,6 +356,7 @@ export default function App() {
         groupBy={groupBy}
       >
         <InfiniteTable<Developer>
+          debugId="full-demo"
           groupRenderStrategy="single-column"
           defaultColumnPinning={{
             'group-by': true,
