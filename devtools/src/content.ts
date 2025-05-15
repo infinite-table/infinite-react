@@ -61,11 +61,19 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
-// post message to trigger page to register the __INFINITE_TABLE_DEVTOOLS_HOOK__ fn
-window.postMessage({
-  source: 'infinite-table-devtools-contentscript',
-  target: 'infinite-table-page',
-  type: 'register',
-});
+const registerDevToolsHook = () => {
+  // post message to trigger page to register the __INFINITE_TABLE_DEVTOOLS_HOOK__ fn
+  window.postMessage({
+    source: 'infinite-table-devtools-contentscript',
+    target: 'infinite-table-page',
+    type: 'register',
+  });
+};
+
+registerDevToolsHook();
+
+setInterval(() => {
+  registerDevToolsHook();
+}, 1000);
 
 export {};

@@ -39,7 +39,7 @@ function ChromeDevToolsProvider({ children }: { children: React.ReactNode }) {
         activeDebugId,
         setActiveDebugId,
         sendMessageToHostPage,
-        sendMessageToBackgroundScript: sendMessageToBackgroundScript,
+        sendMessageToBackgroundScript,
       }}
     >
       {children}
