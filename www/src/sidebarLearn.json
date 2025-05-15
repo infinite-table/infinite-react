@@ -300,6 +300,11 @@
     ]
   },
   {
+    "title": "DevTools",
+    "path": "/docs/devtools",
+    "badge": "new"
+  },
+  {
     "title": "Theming",
     "path": "/docs/learn/theming",
     "routes": [

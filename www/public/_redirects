@@ -20,3 +20,4 @@
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
 
+/devtools /docs/devtools
