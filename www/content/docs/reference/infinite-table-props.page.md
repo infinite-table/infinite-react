@@ -14,7 +14,8 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 If you have [Infinite Table DevTools extension](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa) installed, the current `<InfiniteTable />` instance will be picked up by the devtools with this specific name.
 
-See [/blog/2025/05/12/the-first-devtools-for-a-datagrid](our blogpost on the devtools extension) for more details.
+See [our blogpost on the devtools extension](/blog/2025/05/12/the-first-devtools-for-a-datagrid) for more details.
+
 
 </Prop>
 

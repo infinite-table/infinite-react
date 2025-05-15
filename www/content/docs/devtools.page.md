@@ -10,7 +10,7 @@ We're happy to announce that [Infinite Table DevTools extension](https://chromew
 
 <Note>
 
-To see an Infinite Table instance in the devtools, specify the `debugId` prop.
+To see an Infinite Table instance in the devtools, specify the <PropLink name="debugId" /> prop.
 
 
 ```tsx {2}
