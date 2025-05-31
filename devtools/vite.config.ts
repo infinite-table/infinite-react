@@ -60,6 +60,9 @@ export default defineConfig({
       ),
     },
   },
+  optimizeDeps: {
+    exclude: ['@rollup/rollup-linux-x64-gnu'],
+  },
   build: {
     outDir: path.resolve(__dirname, 'dist' + (DEV ? '-dev' : '')),
     minify: false,
