@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.1.1
+
+Fix error that appeared when column pinning was used and no visible columns were available
+
 ## 7.1.0
 
 Support for React 19 - update source-code, fix tests and update typings to work with React 19
