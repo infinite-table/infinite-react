@@ -60,6 +60,10 @@ export default defineConfig({
       ),
     },
   },
+  optimizeDeps: {
+    // needed in order not to fail `npm run build` on CI
+    exclude: ['@rollup/rollup-linux-x64-gnu'],
+  },
   build: {
     outDir: path.resolve(__dirname, 'dist' + (DEV ? '-dev' : '')),
     minify: false,

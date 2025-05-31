@@ -36,6 +36,8 @@ type TestExtras = {
   waitForRaf: () => Promise<void>;
   load: () => Promise<void>;
   getGlobalValue: (name: string) => Promise<any>;
+  failOnConsoleErrors: () => void;
+  getConsoleErrors: () => string[];
 };
 
 function getFileInfoFromTestInfo(testInfo: TestInfo) {
@@ -104,6 +106,31 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
         await page.goto(url);
       }
     };
+    // Store console errors
+    const consoleErrors: string[] = [];
+
+    // Listen to console events
+    page.on('console', (msg: any) => {
+      if (msg.type() === 'error') {
+        const text = msg.text();
+
+        consoleErrors.push(text);
+      }
+    });
+
+    let shouldFailOnErrors = false;
+
+    // Listen to page errors
+    page.on('pageerror', (error: any) => {
+      consoleErrors.push(error.message);
+    });
+
+    page.getConsoleErrors = () => {
+      return consoleErrors;
+    };
+    page.failOnConsoleErrors = () => {
+      shouldFailOnErrors = true;
+    };
 
     page.waitForInfiniteSelector = async () => {
       await page.waitForSelector('.InfiniteColumnCell[data-column-id]');
@@ -161,6 +188,17 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
     };
 
     await use(page);
+
+    // After the test, fail if there were any console errors
+    // but only if the flag is set to true
+    if (shouldFailOnErrors && consoleErrors.length > 0) {
+      console.error(
+        `Console errors detected, this should NOT happen: \n${consoleErrors.join(
+          '\n',
+        )}`,
+      );
+      throw new Error(`Console errors detected: \n${consoleErrors.join('\n')}`);
+    }
   },
 
   rowModel: async ({ page }, use) => {

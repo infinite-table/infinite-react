@@ -98,7 +98,7 @@ We don't depend on any external package, so you can be sure that you're not intr
 
 ### 📦 Small bundle size
 
-Our bundle size is under `300kB` and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+Our bundle size is under `400kB` (without gzip) and we're [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
 ### 🧪 Automated end-to-end tests
 

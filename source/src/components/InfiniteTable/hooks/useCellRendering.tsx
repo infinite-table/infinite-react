@@ -212,6 +212,9 @@ export function useCellRendering<T>(
       if (!rowInfo) {
         return null;
       }
+      if (!column) {
+        return null;
+      }
 
       // it's important we pass the computed rowDetailHeight
       // and not the initially provided one - as the computed one

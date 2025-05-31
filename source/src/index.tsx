@@ -4,10 +4,11 @@ export * from './components/TreeGrid';
 
 export * from './components/DataSource';
 export { useDataSourceInternal } from './components/DataSource/privateHooks/useDataSource';
-
 export * from './components/DataSource/DataLoader/DataClient';
+
 export * from './components/Menu';
 export * from './components/Menu/MenuProps';
+
 export * from './components/hooks/useOverlay';
 export * from './components/hooks/useEffectWithChanges';
 
@@ -18,7 +19,6 @@ import {
   StringFilterEditor,
   NumberFilterEditor,
 } from './components/InfiniteTable/components/FilterEditors';
-
 import { MenuIcon } from './components/InfiniteTable/components/icons/MenuIcon';
 export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
 export { type MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
