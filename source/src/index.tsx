@@ -19,7 +19,6 @@ import {
   StringFilterEditor,
   NumberFilterEditor,
 } from './components/InfiniteTable/components/FilterEditors';
-
 import { MenuIcon } from './components/InfiniteTable/components/icons/MenuIcon';
 export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
 export { type MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
