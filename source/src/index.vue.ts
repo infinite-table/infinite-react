@@ -18,6 +18,13 @@ import LoadMaskVue from './components/InfiniteTable/components/LoadMask.vue';
 import CheckBoxVue from './components/InfiniteTable/components/CheckBox.vue';
 import StringFilterEditorVue from './components/InfiniteTable/components/StringFilterEditor.vue';
 import NumberFilterEditorVue from './components/InfiniteTable/components/NumberFilterEditor.vue';
+import ScrollbarPlaceholderVue from './components/InfiniteTable/components/ScrollbarPlaceholder.vue';
+import CSSNumericVariableWatchVue from './components/CSSNumericVariableWatch.vue';
+import ResizeObserverVue from './components/ResizeObserver/index.vue';
+import MenuItemVue from './components/Menu/MenuItem.vue';
+import IconVue from './components/InfiniteTable/components/icons/Icon.vue';
+import ArrowDownVue from './components/InfiniteTable/components/icons/ArrowDown.vue';
+import ArrowUpVue from './components/InfiniteTable/components/icons/ArrowUp.vue';
 
 // Import MenuIcon from React version for now
 import { MenuIcon } from './components/InfiniteTable/components/icons/MenuIcon';
@@ -25,12 +32,24 @@ import { MenuIcon } from './components/InfiniteTable/components/icons/MenuIcon';
 export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
 export { type MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
 
+// Export Vue composables
+export { useResizeObserver } from './components/ResizeObserver/useResizeObserver.vue';
+export { useEffectWithChanges, useLayoutEffectWithChanges, useEffectWithObject } from './components/hooks/useEffectWithChanges.vue';
+export { useLatest } from './components/hooks/useLatest.vue';
+
 export const components = {
   CheckBox: CheckBoxVue,
   LoadMask: LoadMaskVue,
   MenuIcon, // React version for now
   StringFilterEditor: StringFilterEditorVue,
   NumberFilterEditor: NumberFilterEditorVue,
+  ScrollbarPlaceholder: ScrollbarPlaceholderVue,
+  CSSNumericVariableWatch: CSSNumericVariableWatchVue,
+  ResizeObserver: ResizeObserverVue,
+  MenuItem: MenuItemVue,
+  Icon: IconVue,
+  ArrowDown: ArrowDownVue,
+  ArrowUp: ArrowUpVue,
 };
 
 export { group, flatten } from './utils/groupAndPivot';
