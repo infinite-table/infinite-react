@@ -2,7 +2,6 @@ import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
 import type {
   DataSourcePropGroupBy,
   DataSourcePropGroupRowsStateObject,
-  GroupRowsState,
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
