@@ -81,6 +81,75 @@ Additionally, there are other ways to override those inherited configurations, i
 
 </Note>
 
+## Controlling the collapse/expand state
+
+When you do grouping, by default, all row groups are expanded. Of course you have full control over this and you do this via the <DPropLink name="groupRowsState" />/<DPropLink name="defaultGroupRowsState" /> props.
+
+If you simply want to specify the initial expanded/collapsed state, you should use the <DPropLink name="defaultGroupRowsState" /> prop.
+
+```tsx title="Specifying the default state for group rows"
+const defaultGroupRowsState: DataSourcePropGroupRowsStateObject = {
+  collapsedRows: true,
+  expandedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
+};
+```
+
+The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
+ - `true` - meaning that all groups have this state
+ - an array of arrays - representing the exceptions to the default value
+
+
+So if you have `collapsedRows` set to `true` and then `expandedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are collapsed by default, except the rows specified in the `expandedRows`.
+
+
+<Sandpack title="Everything is collapsed except a few rows">
+
+```ts file="row-grouping-state-example.page.tsx"
+
+```
+
+</Sandpack>
+
+<Note>
+
+You can specify expand/collapse state at any level of nesting.
+
+Let's suppose by default all rows are collapsed - if you want a node to be visible then you have to specify all its parents as expanded.
+
+So having this
+```tsx 
+const defaultGroupRowsState = {
+  collapsedRows: true,
+  expandedRows: [['Mexico', 'backend']],
+};
+```
+will show all rows as collapsed, and just as soon as you expand `Mexico` you will see the `backend` group row for Mexico to be expanded.
+</Note>
+
+This data format gives you ultimate flexibility and allows you to easily restore an expand/collpase state at a later time, if you wanted to.
+
+<Note>
+If you use the controlled <DPropLink name="groupRowsState" />, make sure you update it by leveraging the <DPropLink name="onGroupRowsStateChange" /> callback prop.
+</Note>
+
+
+<Sandpack title="Using controlled expanded/collapsed state for group rows">
+
+```ts file="row-grouping-state-controlled-example.page.tsx"
+
+```
+
+</Sandpack>
+
+In addition to simple objects with the shape described above, the <DPropLink name="groupRowsState" />/<DPropLink name="defaultGroupRowsState" /> can also be instanges of `GroupRowsState` class, which is exported by the Infinite Table package. This class is simply a wrapper around those objects, but it gives you additional utility methods.
+
+<Note>
+
+The <DPropLink name="onGroupRowsStateChange" /> callback gives you an instance of <DPropLink name="GroupRowsState" /> back as the single argument. If you're using plain objects, just do `groupRowsState.getState()` and you'll get the corresponding plain object for the current expand/collapse state.
+
+<TypeLink name="GroupRowsState" /> give you some additional helper methods, which you can read about <TypeLink name="GroupRowsState">here</TypeLink>
+</Note>
+
 ## Grouping strategies
 
 Multiple grouping strategies are supported by, `InfiniteTable` DataGrid:

@@ -185,6 +185,62 @@ The following properties are available on this object:
 
 </Prop>
 
+<Prop name="GroupRowsState">
+
+> Describes the collapse/expand state for group rows, when [grouping is used](/docs/learn/grouping-and-pivoting/grouping-rows). 
+
+This is a class, and instances of it can be used as a value for the <PropLink name="groupRowsState" />/<PropLink name="defaultGroupRowsState" /> props.
+
+It's the sole argument available in the <DPropLink name="onGroupRowsStateChange" /> callback.
+
+It gives you the following additional utility methods:
+
+ - `getState()`
+ - `areAllExpanded()`
+ - `areAllCollapsed()`
+ - `expandAll()`
+ - `collapseAll()`
+ - `isGroupRowExpanded(keys: any[][])`
+ - `isGroupRowCollapsed(keys: any[][])`
+ - `expandGroupRow(keys: any[][])`
+ - `collapseGroupRow(keys: any[][])`
+ - `toggleGroupRow(keys: any[][])`
+
+
+To create an instance, pass a plain object that describes the <PropLink name="groupRowsState" />/<PropLink name="defaultGroupRowsState" /> value:
+
+
+```tsx
+const state = new GroupRowsState({
+  expandedRows: true,
+  collapsedRows: [
+    ['Europe']
+    ['Europe','France'],
+    ['Italy']
+  ]
+})
+
+console.log(state.getState())
+// will log the above object that was used 
+// as the sole argument for the constructor
+
+```
+
+<Note>
+
+When you call those methods, be aware you're not updating the React state! So you'll have to clone the object, call the method on the clone and then update the React state - in the code below, notice the `onClick` code for the `Expand all`/`Collapse all` buttons.
+
+<Sandpack title="Using the expandAll/collapseAll methods with cloning the GroupRowsState instance">
+
+```ts file="using-group-rows-state-controlled-example.page.tsx"
+```
+
+</Sandpack>
+
+</Note>
+</Prop>
+
+
 <Prop name="DataSourcePivotBy" generic>
 
 > Describes a pivot value for the grid.

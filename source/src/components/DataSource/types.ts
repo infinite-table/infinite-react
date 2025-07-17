@@ -139,6 +139,10 @@ export type DataSourcePropGroupRowsStateObject<KeyType = any> = {
   collapsedRows: DataSourceGroupRowsList<KeyType>;
 };
 
+export type DataSourcePropGroupRowsState<KeyType = any> =
+  | GroupRowsState<KeyType>
+  | DataSourcePropGroupRowsStateObject<KeyType>;
+
 export type RowDetailStateObject<KeyType = any> = {
   expandedRows: true | KeyType[];
   collapsedRows: true | KeyType[];
@@ -761,10 +765,8 @@ export type DataSourceProps<T> = {
   defaultGroupBy?: DataSourcePropGroupBy<T>;
   onGroupByChange?: (groupBy: DataSourcePropGroupBy<T>) => void;
 
-  groupRowsState?: GroupRowsState | DataSourcePropGroupRowsStateObject<any>;
-  defaultGroupRowsState?:
-    | GroupRowsState
-    | DataSourcePropGroupRowsStateObject<any>;
+  groupRowsState?: DataSourcePropGroupRowsState<any>;
+  defaultGroupRowsState?: DataSourcePropGroupRowsState<any>;
   onGroupRowsStateChange?: (groupRowsState: GroupRowsState) => void;
 
   collapseGroupRowsOnDataFunctionChange?: boolean;
