@@ -275,6 +275,7 @@ export const forwardProps = <T>(
     editable: 1,
     columnDefaultEditable: 1,
     columnDefaultFilterable: 1,
+    columnDefaultGroupable: 1,
     columnDefaultSortable: 1,
     keyboardShortcuts: 1,
 

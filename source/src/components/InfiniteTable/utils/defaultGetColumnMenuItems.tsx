@@ -36,7 +36,7 @@ export function defaultGetColumnMenuItems<T>(
     dataSourceActions: DataSourceComponentActions<T>;
   },
 ): MenuProps['items'] {
-  const { columnApi, column, getComputed, api } = params;
+  const { columnApi, column, getComputed, api, dataSourceApi } = params;
 
   const sortable = columnApi.isSortable();
 
@@ -153,6 +153,50 @@ export function defaultGetColumnMenuItems<T>(
                     // based on the new visibility
                     api.realignColumnContextMenu();
                   });
+                }}
+              ></InfiniteCheckBox>
+            ),
+          });
+        });
+
+        return {
+          columns: [
+            {
+              name: 'check',
+            },
+            { name: 'label' },
+          ],
+          items: colItems,
+        };
+      },
+    },
+    '-',
+    {
+      key: 'group-by',
+      label: 'Group by',
+      menu: () => {
+        const colItems: MenuItemObject[] = [];
+
+        const computed = getComputed();
+
+        computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
+          if (col.groupByForColumn) {
+            // if it's a group column, we skip it
+            return;
+          }
+          const label = getColumnLabel(col, params);
+
+          colItems.push({
+            key: id,
+            label,
+
+            check: (
+              <InfiniteCheckBox
+                key={col.id}
+                disabled={!col.computedGroupable}
+                checked={col.computedGroupedBy}
+                onChange={() => {
+                  dataSourceApi.toggleGroupByField(col.field as keyof T);
                 }}
               ></InfiniteCheckBox>
             ),

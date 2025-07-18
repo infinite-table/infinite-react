@@ -57,6 +57,14 @@ const HeaderVars = {
   [ThemeVars.components.Header.columnHeaderHeight]: '30px',
 };
 
+const GroupingToolbarVars = {
+  [ThemeVars.components.GroupingToolbar.background]: ThemeVars.background,
+  [ThemeVars.components.GroupingToolbar.color]: ThemeVars.components.Cell.color,
+  [ThemeVars.components.GroupingToolbar.padding]: ThemeVars.spacing[3],
+
+  [ThemeVars.components.GroupingToolbar.gap]: ThemeVars.spacing[2],
+};
+
 const ActiveCellIndicatorVars = {
   [ThemeVars.components.ActiveCellIndicator.inset]:
     ThemeVars.components.Cell.borderWidth,
@@ -216,6 +224,7 @@ export const LightVars = {
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,
+  ...GroupingToolbarVars,
   ...ActiveCellIndicatorVars,
   ...CellVars,
   ...RowVars,

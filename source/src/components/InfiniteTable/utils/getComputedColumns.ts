@@ -4,6 +4,7 @@ import { defaultFilterTypes } from '../../DataSource/defaultFilterTypes';
 import type {
   DataSourceFilterValueItem,
   DataSourcePropFilterValue,
+  DataSourcePropGroupBy,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
 import { computeFlex } from '../../flexbox';
@@ -141,12 +142,15 @@ type GetComputedVisibleColumnsParam<T> = {
   editable: InfiniteTablePropEditable<T>;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultGroupable: InfiniteTableProps<T>['columnDefaultGroupable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   columnDefaultDraggable: InfiniteTableProps<T>['columnDefaultDraggable'];
   columnSizing: InfiniteTablePropColumnSizing;
   columnTypes: InfiniteTablePropColumnTypes<T>;
   columnVisibility: InfiniteTablePropColumnVisibility;
   columnVisibilityAssumeVisible: boolean;
+
+  groupBy: DataSourcePropGroupBy<T>;
 };
 
 export const getComputedColumns = <T extends unknown>({
@@ -179,13 +183,22 @@ export const getComputedColumns = <T extends unknown>({
   editable,
   columnDefaultEditable,
   columnDefaultFilterable,
+  columnDefaultGroupable,
   columnDefaultSortable,
   columnSizing,
   columnTypes,
   columnVisibility,
   columnVisibilityAssumeVisible,
+  groupBy,
 }: GetComputedVisibleColumnsParam<T>): GetComputedColumnsResult<T> => {
   let computedOffset = 0;
+
+  const groupByFields: Record<string, number> = {};
+  groupBy.forEach((group, index) => {
+    if (group.field) {
+      groupByFields[group.field as string] = index;
+    }
+  });
 
   const filterValueRecord = (filterValue || []).reduce(
     (acc, filterValueItem) => {
@@ -569,6 +582,12 @@ export const getComputedColumns = <T extends unknown>({
     const field = c.field ?? colType.field;
     const valueGetter = c.valueGetter ?? colType.valueGetter;
 
+    const computedGroupable =
+      c.defaultGroupable ??
+      colType.defaultGroupable ??
+      columnDefaultGroupable ??
+      !!field;
+
     let sortableColumnOrType = c.defaultSortable ?? colType.defaultSortable;
 
     if (
@@ -580,6 +599,13 @@ export const getComputedColumns = <T extends unknown>({
         sortableColumnOrType = false;
       }
     }
+
+    const computedGroupedBy = field
+      ? groupByFields[field as string] !== undefined
+      : false;
+    const computedGroupedByIndex = computedGroupedBy
+      ? groupByFields[field as string]
+      : undefined;
 
     let computedSortable =
       sortable ??
@@ -635,6 +661,9 @@ export const getComputedColumns = <T extends unknown>({
       computedFilterValue,
       computedFiltered,
       computedFilterable,
+      computedGroupable,
+      computedGroupedBy,
+      computedGroupedByIndex,
       computedWidth,
       computedAbsoluteOffset,
       computedPinningOffset,

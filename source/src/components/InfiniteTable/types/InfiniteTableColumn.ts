@@ -545,6 +545,7 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   defaultWidth?: number;
   defaultFlex?: number;
   defaultFilterable?: boolean;
+  defaultGroupable?: boolean;
 
   minWidth?: number;
   maxWidth?: number;
@@ -672,6 +673,9 @@ type InfiniteTableComputedColumnBase<T> = {
   computedMultiSort: boolean;
   computedFiltered: boolean;
   computedFilterable: boolean;
+  computedGroupedBy: boolean;
+  computedGroupedByIndex: number | undefined;
+  computedGroupable: boolean;
   computedFilterValue: DataSourceFilterValueItem<T> | null;
 
   computedPinned: InfiniteTableColumnPinnedValues;

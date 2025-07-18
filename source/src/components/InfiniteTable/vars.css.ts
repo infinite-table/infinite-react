@@ -66,6 +66,13 @@ export const ThemeVars = createGlobalThemeContract(
     },
 
     components: {
+      GroupingToolbar: {
+        color: 'grouping-toolbar-color',
+        background: 'grouping-toolbar-background',
+        padding: 'grouping-toolbar-padding',
+        border: 'grouping-toolbar-border',
+        gap: 'grouping-toolbar-gap',
+      },
       LoadMask: {
         /**
          * The padding used for the content inside the LoadMask.

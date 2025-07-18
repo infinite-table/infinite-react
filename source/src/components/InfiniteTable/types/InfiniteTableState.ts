@@ -252,6 +252,7 @@ export interface InfiniteTableMappedState<T> {
   >;
   columnDefaultEditable: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultGroupable: InfiniteTableProps<T>['columnDefaultGroupable'];
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   cellStyle: InfiniteTableProps<T>['cellStyle'];

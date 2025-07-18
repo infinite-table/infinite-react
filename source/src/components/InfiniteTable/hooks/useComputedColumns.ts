@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import type {
   DataSourcePropFilterValue,
+  DataSourcePropGroupBy,
   DataSourceProps,
   DataSourceSingleSortInfo,
 } from '../../DataSource/types';
@@ -47,9 +48,12 @@ type UseComputedColumnsParam<T> = {
   filterValue?: DataSourcePropFilterValue<T>;
   filterTypes?: DataSourceProps<T>['filterTypes'];
 
+  groupBy: DataSourcePropGroupBy<T>;
+
   editable: InfiniteTablePropEditable<T>;
   columnDefaultEditable?: InfiniteTableProps<T>['columnDefaultEditable'];
   columnDefaultFilterable?: InfiniteTableProps<T>['columnDefaultFilterable'];
+  columnDefaultGroupable?: InfiniteTableProps<T>['columnDefaultGroupable'];
   columnDefaultSortable?: InfiniteTableProps<T>['columnDefaultSortable'];
   columnPinning: InfiniteTablePropColumnPinning;
   columnSizing: InfiniteTablePropColumnSizing;
@@ -107,6 +111,7 @@ export const useComputedColumns = <T extends unknown>({
   editable,
   columnDefaultEditable,
   columnDefaultFilterable,
+  columnDefaultGroupable,
   columnDefaultSortable,
   scrollbarWidth,
   columnTypes,
@@ -117,6 +122,7 @@ export const useComputedColumns = <T extends unknown>({
   columnVisibility,
   columnVisibilityAssumeVisible,
   columnSizing,
+  groupBy,
 }: UseComputedColumnsParam<T>): UseComputedVisibleColumnsResult<T> => {
   // const columnsRenderId = useRerenderOnKeyChange(columns);
   const columnsRenderId = 1;
@@ -171,6 +177,7 @@ export const useComputedColumns = <T extends unknown>({
       columnPinning,
       columnDefaultEditable,
       columnDefaultFilterable,
+      columnDefaultGroupable,
       columnDefaultSortable,
       editable,
 
@@ -179,6 +186,8 @@ export const useComputedColumns = <T extends unknown>({
 
       columnVisibility,
       columnVisibilityAssumeVisible: columnVisibilityAssumeVisible ?? true,
+
+      groupBy,
     });
   }, [
     columns,
@@ -214,7 +223,9 @@ export const useComputedColumns = <T extends unknown>({
     columnPinning,
     columnDefaultEditable,
     columnDefaultFilterable,
+    columnDefaultGroupable,
     editable,
+    groupBy,
 
     columnsRenderId,
   ]);

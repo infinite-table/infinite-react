@@ -96,6 +96,7 @@ import { useHorizontalLayout } from './hooks/useHorizontalLayout';
 import { useDebugMode } from './hooks/useDebugMode';
 import { useInfinitePortalContainer } from './hooks/useInfinitePortalContainer';
 import { getDebugChannel } from '../../utils/debugChannel';
+import { GroupingToolbar } from './components/GroupingToolbar';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -595,6 +596,7 @@ type InfiniteTableComponent = {
   Body: () => React.JSX.Element | null;
   Footer: () => React.JSX.Element | null;
   HScrollSyncContent: typeof HScrollSyncContent;
+  GroupingToolbar: typeof GroupingToolbar;
 };
 const InfiniteTable: InfiniteTableComponent = function <T>(
   props: InfiniteTableProps<T>,
@@ -620,6 +622,7 @@ InfiniteTable.Header = InfiniteTableHeader;
 InfiniteTable.Body = InfiniteTableBody;
 InfiniteTable.HScrollSyncContent = HScrollSyncContent;
 InfiniteTable.Footer = () => <InfiniteTableFooter />;
+InfiniteTable.GroupingToolbar = GroupingToolbar;
 
 export { InfiniteTable };
 
