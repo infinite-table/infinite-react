@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../../vars.css';
 import { recipe } from '@vanilla-extract/recipes';
-import { display } from '../../utilities.css';
+import { alignItems, cursor, display, padding } from '../../utilities.css';
 
 export const GroupingToolbarBaseCls = style(
   [
@@ -22,12 +22,16 @@ export const GroupingToolbarPlaceholderCls = style({
   opacity: 0.5,
 });
 
-export const GroupingToolbarItemCls = style({
-  display: 'flex',
-  alignItems: 'center',
-  border: `1px solid ${ThemeVars.color.accent}`,
-  padding: ThemeVars.spacing[2],
-});
+export const GroupingToolbarItemCls = style([
+  {
+    border: `1px solid ${ThemeVars.color.accent}`,
+  },
+  padding[2],
+  alignItems.center,
+  display.flex,
+]);
+
+export const GroupingToolbarItemClearCls = style([cursor.pointer]);
 
 export const GroupingToolbarRecipe = recipe({
   base: [GroupingToolbarBaseCls],

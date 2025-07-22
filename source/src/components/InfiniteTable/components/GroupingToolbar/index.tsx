@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   GroupingToolbarBaseCls,
+  GroupingToolbarItemClearCls,
   GroupingToolbarItemCls,
   GroupingToolbarPlaceholderCls,
 } from './index.css';
@@ -38,6 +39,7 @@ export function GroupingToolbar<T = any>(_props: GroupingToolbarProps) {
 
             <div
               tabIndex={-1}
+              className={GroupingToolbarItemClearCls}
               onClick={() => {
                 dataSourceApi.setGroupBy(groupBy.filter((g) => g !== group));
               }}
@@ -51,9 +53,22 @@ export function GroupingToolbar<T = any>(_props: GroupingToolbarProps) {
   );
 
   return (
-    <div className={GroupingToolbarBaseCls}>
+    <div
+      className={GroupingToolbarBaseCls}
+      style={
+        over
+          ? {
+              border: '1px solid red',
+            }
+          : {}
+      }
+      onPointerEnter={() => setOver(true)}
+      onPointerLeave={() => setOver(false)}
+    >
       <button onClick={() => setOver(!over)}>toggle over</button>
       {children}
+
+      <>{!over ? 'Drop to group' : null}</>
     </div>
   );
 }

@@ -65,10 +65,26 @@ export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
   default: { cursor: 'default' },
   colResize: { cursor: 'col-resize' },
+  grabbing: { cursor: 'grabbing' },
 });
 
 export const pointerEvents = styleVariants({
   none: { pointerEvents: 'none' },
+});
+
+export const padding = styleVariants({
+  none: { padding: 0 },
+  0: { padding: 0 },
+  '1': { padding: ThemeVars.spacing[1] },
+  '2': { padding: ThemeVars.spacing[2] },
+  '3': { padding: ThemeVars.spacing[3] },
+  '4': { padding: ThemeVars.spacing[4] },
+  '5': { padding: ThemeVars.spacing[5] },
+  '6': { padding: ThemeVars.spacing[6] },
+  '7': { padding: ThemeVars.spacing[7] },
+  '8': { padding: ThemeVars.spacing[8] },
+  '9': { padding: ThemeVars.spacing[9] },
+  '10': { padding: ThemeVars.spacing[10] },
 });
 
 export const flex = styleVariants({
@@ -141,6 +157,21 @@ export const flexFlow = styleVariants({
 export const alignItems = styleVariants({
   center: { alignItems: 'center' },
   stretch: { alignItems: 'stretch' },
+});
+
+export const gap = styleVariants({
+  none: { gap: 0 },
+  '0': { gap: 0 },
+  '1': { gap: ThemeVars.spacing[1] },
+  '2': { gap: ThemeVars.spacing[2] },
+  '3': { gap: ThemeVars.spacing[3] },
+  '4': { gap: ThemeVars.spacing[4] },
+  '5': { gap: ThemeVars.spacing[5] },
+  '6': { gap: ThemeVars.spacing[6] },
+  '7': { gap: ThemeVars.spacing[7] },
+  '8': { gap: ThemeVars.spacing[8] },
+  '9': { gap: ThemeVars.spacing[9] },
+  '10': { gap: ThemeVars.spacing[10] },
 });
 
 export const justifyContent = styleVariants({

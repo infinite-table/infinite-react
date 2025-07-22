@@ -50,7 +50,16 @@ const dataSource: DataSourceData<Developer> = ({}) => {
 
 export default function App() {
   return (
-    <DataSource<Developer> data={dataSource} primaryKey="id">
+    <DataSource<Developer>
+      data={dataSource}
+      primaryKey="id"
+      defaultGroupBy={[
+        { field: 'country' },
+        {
+          field: 'stack',
+        },
+      ]}
+    >
       <InfiniteTable<Developer>
         domProps={{
           style: {
@@ -60,10 +69,19 @@ export default function App() {
             position: 'relative',
           },
         }}
+        defaultColumnPinning={{
+          salary: 'start',
+        }}
         columns={columns}
         columnDefaultWidth={200}
         columnDefaultGroupable
-      />
+      >
+        <InfiniteTable.GroupingToolbar />
+        <InfiniteTable.Header />
+        <InfiniteTable.Body />
+
+        <InfiniteTable.Header />
+      </InfiniteTable>
     </DataSource>
   );
 }
