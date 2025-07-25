@@ -81,6 +81,13 @@ export class Rectangle extends PolyWithPoints {
     return { left: this.left + this.width, top: this.top + this.height };
   }
 
+  getCenter() {
+    return {
+      left: this.left + this.width / 2,
+      top: this.top + this.height / 2,
+    };
+  }
+
   getPoints() {
     return [
       this.getTopLeft(),

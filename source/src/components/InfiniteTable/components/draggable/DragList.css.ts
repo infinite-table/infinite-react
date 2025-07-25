@@ -28,10 +28,10 @@ export const DraggableItemRecipe = recipe({
   base: [willChange.transform, position.relative],
   variants: {
     active: {
-      true: [zIndex[1000000], transitionTransformActiveItem],
+      true: [zIndex[1000000], transitionTransformActiveItem, cursor.grabbing],
     },
     draggingInProgress: {
-      true: [pointerEvents.none, userSelect.none],
+      true: [userSelect.none],
     },
   },
   compoundVariants: [

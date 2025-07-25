@@ -43,7 +43,7 @@ const updatePosition = (options: {
 };
 
 function getItemClassName(
-  data: Developer,
+  data: Developer | undefined,
   {
     active,
     draggingInProgress,
@@ -53,11 +53,37 @@ function getItemClassName(
     draggingInProgress && !active ? 'bg-green-500/90' : ''
   }
 ${
-  !draggingInProgress
+  !draggingInProgress && data
     ? `cursor-grab ${data.id >= 10 ? 'bg-blue-300/30' : 'bg-red-300/30'}`
     : ''
 }`;
 }
+
+const DragBox = (props: {
+  domProps: React.HTMLProps<HTMLDivElement>;
+  data?: Developer;
+  active: boolean;
+  draggingInProgress: boolean;
+}) => {
+  const { domProps, data, active, draggingInProgress } = props;
+  return (
+    <div
+      {...domProps}
+      className={`${domProps.className} ${getItemClassName(data, {
+        active,
+        draggingInProgress,
+      })}`}
+    >
+      <div className="flex flex-row gap-2">
+        <div>{data?.id}</div>
+        <div className="flex flex-col">
+          <div>{data?.firstName}</div>
+          <div>{data?.lastName}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [data1, setData1] = React.useState<Developer[]>();
@@ -72,7 +98,7 @@ export default function App() {
 
   const onDrop1 = (
     sortedIndexes: number[],
-    { dragItemId, dropItemId }: { dragItemId: string; dropItemId: string },
+    { dragItemId, dropItemId }: { dragItemId: string; dropItemId?: string },
   ) => {
     console.log(
       'onDrop',
@@ -85,18 +111,7 @@ export default function App() {
     setData1(sortedIndexes.map((index) => data1![index]));
   };
 
-  const onDrop2 = (
-    sortedIndexes: number[],
-    { dragItemId, dropItemId }: { dragItemId: string; dropItemId: string },
-  ) => {
-    console.log(
-      'onDrop',
-      sortedIndexes,
-      'dragItemId',
-      dragItemId,
-      'dropItemId',
-      dropItemId,
-    );
+  const onDrop2 = (sortedIndexes: number[]) => {
     setData2(sortedIndexes.map((index) => data2![index]));
   };
 
@@ -104,32 +119,31 @@ export default function App() {
     <div className="flex flex-row gap-2">
       <DragList
         orientation="vertical"
+        dragListId="list1"
         onDrop={onDrop1}
         updatePosition={updatePosition}
         acceptDropsFrom={['list2']}
+        onAcceptDrop={({ dragItemId, dragListId }) => {
+          console.log('onAcceptDrop', dragItemId, dragListId);
+        }}
       >
         {(domProps) => {
           return (
-            <div {...domProps} className="flex flex-col gap-2">
+            <div
+              {...domProps}
+              ref={domProps.ref}
+              className={`${domProps.className} flex flex-col gap-2`}
+            >
               {data1?.map((d) => (
                 <DraggableItem key={d.id} id={d.id}>
                   {(domProps, { active, draggingInProgress }) => {
                     return (
-                      <div
-                        {...domProps}
-                        className={`${domProps.className} ${getItemClassName(
-                          d,
-                          { active, draggingInProgress },
-                        )}`}
-                      >
-                        <div className="flex flex-row gap-2">
-                          <div>{d.id}</div>
-                          <div className="flex flex-col">
-                            <div>{d.firstName}</div>
-                            <div>{d.lastName}</div>
-                          </div>
-                        </div>
-                      </div>
+                      <DragBox
+                        domProps={domProps}
+                        data={d}
+                        active={active}
+                        draggingInProgress={draggingInProgress}
+                      />
                     );
                   }}
                 </DraggableItem>
@@ -138,33 +152,45 @@ export default function App() {
           );
         }}
       </DragList>
-      <DragList orientation="horizontal" onDrop={onDrop2} dragListId="list2">
-        {(domProps) => {
+      <DragList
+        orientation="vertical"
+        onDrop={onDrop2}
+        dragListId="list2"
+        removeOnDropOutside
+        onRemove={onDrop2}
+      >
+        {(domProps, { draggingInProgress, draggingOutside }) => {
           return (
-            <div {...domProps} className="flex flex-row gap-2">
+            <div
+              {...domProps}
+              className={`${domProps.className} ml-30 flex flex-col gap-2 p-2 ${
+                draggingOutside ? 'bg-red-500/30' : ''
+              } ${
+                draggingInProgress && !draggingOutside ? 'bg-green-500/30' : ''
+              }`}
+            >
               {data2?.map((d) => (
                 <DraggableItem key={d.id} id={d.id}>
                   {(domProps, { active, draggingInProgress }) => {
                     return (
-                      <div
-                        {...domProps}
-                        className={`${domProps.className} ${getItemClassName(
-                          d,
-                          { active, draggingInProgress },
-                        )}`}
-                      >
-                        <div className="flex flex-row gap-2">
-                          <div>{d.id}</div>
-                          <div className="flex flex-col">
-                            <div>{d.firstName}</div>
-                            <div>{d.lastName}</div>
-                          </div>
-                        </div>
-                      </div>
+                      <DragBox
+                        domProps={domProps}
+                        data={d}
+                        active={active}
+                        draggingInProgress={draggingInProgress}
+                      />
                     );
                   }}
                 </DraggableItem>
               ))}
+              {/* {draggingInProgress && (
+                <DragBox
+                  domProps={domProps}
+                  data={undefined}
+                  active={false}
+                  draggingInProgress={draggingInProgress}
+                />
+              )} */}
             </div>
           );
         }}
