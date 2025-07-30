@@ -1108,6 +1108,80 @@ You can control the visibility of the column filters by using the <PropLink name
 
 </Prop>
 
+<Prop name="groupRowsState" type="{collapsedRows:true|[][], expandedRows:true|[][]}">
+
+> Controls the expand/collapse state of group rows, when <DPropLink name="groupBy" /> is used
+
+
+See related <DPropLink name="defaultGroupRowsState" />, <DPropLink name="onGroupRowsStateChange" /> and <DPropLink name="groupBy" />
+
+
+```tsx title="Specifying the state for group rows"
+const groupRowsState: DataSourcePropGroupRowsStateObject = {
+  collapsedRows: true,
+  expandedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
+};
+```
+
+The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
+ - `true` - meaning that all groups have this state
+ - an array of arrays - representing the exceptions to the default value
+
+
+So if you have `collapsedRows` set to `true` and then `expandedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are collapsed by default, except the rows specified in the `expandedRows`.
+
+<Sandpack title="Using controlled expanded/collapsed state for group rows">
+
+```ts file="./group-rows-state-controlled-example.page.tsx"
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="onGroupRowsStateChange" type="(state: GroupRowsState) => void">
+
+> Callback prop when the <DPropLink name="groupRowsState" /> changes.
+
+See related <DPropLink name="groupRowsState" /> and <DPropLink name="groupBy" />
+
+This function is called with an object that's an instance of <TypeLink name="GroupRowsState" />, when the user interacts with group rows and expands/collapses them.
+
+If you want to get a plain object from this instance, call the `.getState()` method.
+
+See <TypeLink name="GroupRowsState" /> reference to find out all the utility methods this instance gives you.
+
+</Prop>
+
+<Prop name="defaultGroupRowsState" type="{collapsedRows:true|[][], expandedRows:true|[][]}">
+
+> Specifies the initial expand/collapse state of group rows, when <DPropLink name="groupBy" /> is used
+
+
+For the controlled version, see related <DPropLink name="groupRowsState" />.
+
+
+```tsx title="Specifying the initial state for group rows"
+const defaultGroupRowsState: DataSourcePropGroupRowsStateObject = {
+  expandedRows: true,
+  collapsedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
+};
+```
+
+The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
+ - `true` - meaning that all groups have this state
+ - an array of arrays - representing the exceptions to the default value
+
+
+So if you have `expandedRows` set to `true` and then `collapsedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are expanded by default, except the rows specified in the `collapsedRows`.
+
+<Sandpack title="Specifying initial expanded/collapsed state for group rows">
+```ts file="./group-rows-initial-state-example.page.tsx"
+```
+</Sandpack>
+
+</Prop>
+
 <Prop name="groupBy">
 
 > An array of objects with `field` properties, that control how rows are being grouped.
