@@ -8,6 +8,13 @@ We're happy to announce that [Infinite Table DevTools extension](https://chromew
 
 Infinite Table is the first DataGrid with a Chrome DevTools extension. Starting with version `7.0.0` of Infinite, you can specify the `debugId` property on the `<InfiniteTable />` instance and it will be picked up by the devtools.
 
+<Note>
+
+To see the extension on a live demo, head to the [chrome webstore](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa) to download the extension.
+
+Then visit [our live demo page](/full-demo) and open your browser devtools - you should see the "Infinite Table" devtool tab. Click it and enjoy interacting with the DataGrid!
+</Note>
+
 
 ```tsx {16}
 const columns = {
