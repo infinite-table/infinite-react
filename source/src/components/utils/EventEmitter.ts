@@ -60,8 +60,7 @@ export class EventEmitter<
           handler(...payload);
         } catch (e) {
           // Optionally log or handle error
-          console.log('error in event handler', event, payload);
-          debugger;
+
           console.error(
             `Error in event handler for event '${String(event)}':`,
             e,

@@ -1,5 +1,4 @@
 import {
-  InfiniteTableColumn,
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,

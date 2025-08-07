@@ -1,33 +1,37 @@
 import * as React from 'react';
 
-import { Dragger, DragOperation } from './Dragger';
+import {
+  type DragInteractionTargetData,
+  DragManager,
+  DragOperation,
+} from './DragManager';
 import { useCallback, useEffect } from 'react';
 import { DraggableItemRecipe, DragListRecipe } from './DragList.css';
 import { join } from '../../../../utils/join';
+import { Rectangle } from '../../../../utils/pageGeometry/Rectangle';
+import { useDragDropProvider } from './DragDropProvider';
+import { useLatest } from '../../../hooks/useLatest';
+import { DragInteractionTarget } from './DragInteractionTarget';
 
-type DragContextValue = {
-  draggingId: string | number | null;
+type DragListContextValue = {
+  dragItemId: string | number | null;
   onDragItemPointerDown: (e: React.PointerEvent) => void;
-  isDragging: (id: string | number) => boolean;
   draggingInProgress: boolean;
   dragListId: string;
-  dropTargetListId: string | null;
   dragSourceListId: string | null;
-  draggingOutside: boolean;
+  dropTargetListId: string | null;
 };
-const DragContext = React.createContext<DragContextValue>({
-  draggingId: null,
-  isDragging: () => false,
+const DragListContext = React.createContext<DragListContextValue>({
+  dragItemId: null,
   onDragItemPointerDown: () => {},
   draggingInProgress: false,
   dragListId: '',
-  dropTargetListId: '',
-  dragSourceListId: '',
-  draggingOutside: false,
+  dragSourceListId: null,
+  dropTargetListId: null,
 });
 
-const useDragContext = () => {
-  return React.useContext(DragContext);
+const useDragListContext = () => {
+  return React.useContext(DragListContext);
 };
 
 type DragListProps = {
@@ -35,7 +39,7 @@ type DragListProps = {
   children: (
     domProps: React.HTMLProps<HTMLDivElement>,
 
-    context: DragContextValue,
+    context: DragListContextValue,
   ) => React.ReactNode;
   orientation: 'horizontal' | 'vertical';
   acceptDropsFrom?: string[];
@@ -49,7 +53,9 @@ type DragListProps = {
   ) => void;
   onAcceptDrop?: (options: {
     dragItemId: string;
-    dragListId: string;
+    dragSourceListId: string;
+    dropTargetListId: string;
+    dragIndex: number;
     dropIndex: number;
     dropItemId?: string;
   }) => void;
@@ -103,82 +109,52 @@ function getDraggableItems(domRef: React.RefObject<HTMLElement | null>) {
   return draggableItems;
 }
 
-function getDraggableOptions(params: {
+function getInteractionTargetData(params: {
   domRef: React.RefObject<HTMLElement | null>;
   orientation: 'horizontal' | 'vertical';
   dragListId: string;
   acceptDropsFrom?: string[];
   removeOnDropOutside?: boolean;
-}) {
-  const {
-    domRef,
-    orientation,
-    dragListId,
-    acceptDropsFrom,
-    removeOnDropOutside,
-  } = params;
+}): DragInteractionTargetData {
+  const { domRef, orientation, dragListId } = params;
 
-  const options = {
+  const options: DragInteractionTargetData = {
     draggableItems: getDraggableItems(domRef),
     orientation,
-    dragListId,
-    acceptDropsFrom,
-    removeOnDropOutside,
-    constrainRect:
-      removeOnDropOutside || acceptDropsFrom?.length
-        ? domRef.current?.getBoundingClientRect()
-        : undefined,
+    listId: dragListId,
+    listRectangle: Rectangle.from(domRef.current!.getBoundingClientRect()),
   };
 
   return options;
 }
 
-function createDragger(params: Parameters<typeof getDraggableOptions>[0]) {
-  return Dragger.init(getDraggableOptions(params));
+function createInteractionTarget(
+  params: Parameters<typeof getInteractionTargetData>[0],
+) {
+  const target = new DragInteractionTarget(getInteractionTargetData(params));
+
+  DragManager.registerDragInteractionTarget(target);
+
+  return target;
 }
 
 export const DragList = (props: DragListProps) => {
   const domRef = React.useRef<HTMLElement>(null);
 
-  const [state, setState] = React.useState<{
-    dragItemId: string | number | null;
-    dragSourceListId: string | null;
-    dropTargetListId: string | null;
-  }>({
-    dragItemId: null,
-    dragSourceListId: null,
-    dropTargetListId: null,
-  });
+  const { dropTargetListId, dragSourceListId } = useDragDropProvider();
 
-  // const { updateDragOperationSourceAndTarget } = useDragDropProvider();
+  const { updateDragOperationSourceAndTarget, dragItemId } =
+    useDragDropProvider();
 
-  // useEffect(() => {
-  //   debugger;
-  //   updateDragOperationSourceAndTarget({
-  //     dragSourceListId: props.dragListId,
-  //     dropTargetListId: null,
-  //   });
-  // }, [props.dragListId]);
-
-  const outsideRef = React.useRef<boolean>(false);
-
-  const onDropRef = React.useRef<typeof props.onDrop | null>(null);
-  onDropRef.current = props.onDrop;
-
-  const onAcceptDropRef = React.useRef<typeof props.onAcceptDrop | null>(null);
-  onAcceptDropRef.current = props.onAcceptDrop;
-
-  const onRemoveRef = React.useRef<typeof props.onRemove | null>(null);
-  onRemoveRef.current = props.onRemove;
-
-  const updatePositionRef = React.useRef<typeof props.updatePosition | null>(
-    null,
+  const getOnDrop = useLatest(props.onDrop);
+  const getOnAcceptDrop = useLatest(props.onAcceptDrop);
+  const getOnRemove = useLatest(props.onRemove);
+  const getUpdatePosition = useLatest(
+    props.updatePosition ?? defaultUpdatePosition,
   );
-  updatePositionRef.current = props.updatePosition ?? defaultUpdatePosition;
 
-  const [dragger, setDragger] = React.useState<Dragger | null>(null);
-
-  const dragItemId = state.dragItemId;
+  const [interactionTarget, setInteractionTarget] =
+    React.useState<DragInteractionTarget | null>(null);
 
   useEffect(() => {
     const dragList = document.querySelector(
@@ -196,34 +172,23 @@ export const DragList = (props: DragListProps) => {
   useEffect(() => {
     const dragListId = props.dragListId;
 
-    if (props.acceptDropsFrom && !dragger) {
-      let dragger: Dragger | null = null;
-      const remove = Dragger.on('start', (params) => {
-        if (params.dragSourceListId !== dragListId) {
+    if (props.acceptDropsFrom && !interactionTarget) {
+      const remove = DragManager.on('register', (interactionTarget) => {
+        const interactionTargetData = interactionTarget.getData();
+
+        if (interactionTargetData.listId !== dragListId) {
           // a drag has started in another drag list
-          if (props.acceptDropsFrom?.includes(params.dragSourceListId)) {
-            // we need to create the dragger for this current list
+          if (props.acceptDropsFrom?.includes(interactionTargetData.listId)) {
+            // we need to create the interaction target for this current list
             // so it can listen to the drag operation
 
-            dragger = createDragger({
+            interactionTarget = createInteractionTarget({
               domRef,
               orientation: props.orientation,
               dragListId: props.dragListId,
-              acceptDropsFrom: props.acceptDropsFrom,
-              removeOnDropOutside: props.removeOnDropOutside,
             });
 
-            console.log('setting dragger for', props.dragListId);
-            setDragger(dragger);
-
-            dragger.once('start', (params) => {
-              console.log('starting dragger for', props.dragListId);
-              setState({
-                dragItemId: params.dragItemId,
-                dragSourceListId: params.dragSourceListId,
-                dropTargetListId: null,
-              });
-            });
+            setInteractionTarget(interactionTarget);
           }
         }
       });
@@ -233,88 +198,140 @@ export const DragList = (props: DragListProps) => {
       };
     }
   }, [
-    dragger,
+    interactionTarget,
     props.acceptDropsFrom,
     props.dragListId,
     props.orientation,
-    props.removeOnDropOutside,
   ]);
 
   useEffect(() => {
-    if (dragger) {
-      console.log('adding drag move and drop');
-      const removeOnDragMove = dragger.on(
+    if (interactionTarget) {
+      const dragListId = props.dragListId;
+
+      const removeOnDragStart = interactionTarget.on(
+        'start',
+        ({ dragItem, dragSourceListId, dropTargetListId }) => {
+          updateDragOperationSourceAndTarget({
+            dragSourceListId,
+            dropTargetListId,
+            dragItemId: dragItem.id,
+          });
+        },
+      );
+
+      const removeOnDragMove = interactionTarget.on(
         'move',
-        ({ offsetsForItems, items, isOutside }) => {
+        ({ offsetsForItems, items }) => {
           const dragItems = getDragItems();
+
+          const updatePosition = getUpdatePosition();
 
           items.forEach((item, index) => {
             const offset = offsetsForItems[index];
-
-            updatePositionRef.current!({
+            const node = dragItems![index] as HTMLElement;
+            if (!node) {
+              return;
+            }
+            updatePosition({
               id: item.id,
-              node: dragItems![index] as HTMLElement,
+              node,
               offset,
             });
           });
-
-          if (isOutside !== outsideRef.current) {
-            outsideRef.current = isOutside;
-
-            setState((state) => {
-              return {
-                ...state,
-                dropTargetListId: isOutside ? null : props.dragListId,
-              };
-            });
-          }
         },
       );
 
-      const removeOnDragDrop = dragger.on(
-        'drop',
-        ({ sortedIndexes, items, dragIndex, dropIndex }) => {
-          const dragItems = getDragItems();
+      const removeOnDragDrop = interactionTarget.on('drop', (params) => {
+        const {
+          sortedIndexes,
+          dragIndex,
+          dropIndex,
+          dragItem,
+          items,
+          dragSourceListId,
+          dropTargetListId,
+        } = params;
 
-          items.forEach((item, index) => {
-            updatePositionRef.current!({
-              id: item.id,
-              node: dragItems![index] as HTMLElement,
-              offset: null,
-            });
+        const dragItems = getDragItems();
+
+        dragItemsRef.current = [];
+
+        const onAcceptDrop = getOnAcceptDrop();
+        const onRemove = getOnRemove();
+        const onDrop = getOnDrop();
+        const updatePosition = getUpdatePosition();
+
+        items.forEach((item, index) => {
+          const node = dragItems![index] as HTMLElement;
+          if (!node) {
+            return;
+          }
+
+          updatePosition({
+            id: item.id,
+            node,
+            offset: null,
           });
+        });
 
-          const callbackFn =
-            dropIndex === -1 ? onRemoveRef.current : onDropRef.current;
-
-          if (callbackFn) {
-            callbackFn?.(sortedIndexes, {
+        if (
+          dragListId === dropTargetListId &&
+          dragSourceListId !== dragListId
+        ) {
+          if (onAcceptDrop) {
+            onAcceptDrop({
+              dragItemId: dragItem.id,
+              dragSourceListId,
+              dropTargetListId,
               dragIndex,
               dropIndex,
-              dragItemId: items[dragIndex].id,
               dropItemId: items[dropIndex]?.id,
             });
           }
+        }
 
-          setState({
-            dragItemId: null,
-            dragSourceListId: null,
-            dropTargetListId: null,
+        let callbackFn: typeof onRemove | typeof onDrop | null = null;
+
+        if (
+          dropIndex === -1 &&
+          dragSourceListId === dragListId &&
+          dropTargetListId === dragListId
+        ) {
+          // removing from the list
+          callbackFn = onRemove;
+          console.log('removing from ', dragListId);
+        }
+        if (
+          dropIndex !== -1 &&
+          dropTargetListId === dragListId &&
+          dragSourceListId === dragListId
+        ) {
+          // reordering the list
+          callbackFn = onDrop;
+          console.log('reordering ', dragListId);
+        }
+
+        if (callbackFn) {
+          callbackFn?.(sortedIndexes, {
+            dragIndex,
+            dropIndex,
+            dragItemId: items[dragIndex].id,
+            dropItemId: items[dropIndex]?.id,
           });
+        }
 
-          console.log('dropped!');
-
-          dragger.destroy();
-        },
-      );
+        DragManager.unregisterDragInteractionTarget(interactionTarget);
+        setInteractionTarget(null);
+      });
 
       return () => {
-        console.log('removing drag move and drop');
+        console.log('cLEANUP list', dragListId);
+        removeOnDragStart();
         removeOnDragMove();
         removeOnDragDrop();
       };
     }
-  }, [dragger]);
+  }, [interactionTarget, props.dragListId]);
 
   const dragItemsRef = React.useRef<HTMLElement[]>([]);
 
@@ -345,26 +362,33 @@ export const DragList = (props: DragListProps) => {
 
       dragItemsRef.current = dragItems;
 
-      const dragger = createDragger({
+      const interactionTarget = createInteractionTarget({
         domRef,
         orientation: props.orientation,
         dragListId: props.dragListId,
-        acceptDropsFrom: props.acceptDropsFrom,
-        removeOnDropOutside: props.removeOnDropOutside,
       });
 
-      setDragger(dragger);
-      console.log('created dragger on pointer down', dragger);
+      const draggableItems = interactionTarget.getData().draggableItems;
 
-      dragOperation = dragger.startDrag({
-        left: e.clientX,
-        top: e.clientY,
-      });
+      const dragIndex = draggableItems.findIndex(
+        (item) => item.id === dragItemId,
+      );
+      const dragItem = draggableItems[dragIndex];
 
-      setState({
-        dragItemId,
-        dragSourceListId: props.dragListId,
-        dropTargetListId: props.dragListId,
+      setInteractionTarget(interactionTarget);
+
+      requestAnimationFrame(() => {
+        dragOperation = DragManager.startDrag(
+          {
+            listId: props.dragListId,
+            dragItem,
+            dragIndex,
+          },
+          {
+            left: e.clientX,
+            top: e.clientY,
+          },
+        );
       });
 
       const onPointerMove = (e: PointerEvent) => {
@@ -407,19 +431,13 @@ export const DragList = (props: DragListProps) => {
   const dragging = !!dragItemId;
 
   const contextValue = React.useMemo(() => {
-    const contextValue: DragContextValue = {
-      draggingId: dragItemId,
+    const contextValue: DragListContextValue = {
+      dragItemId: dragItemId,
       onDragItemPointerDown,
-      isDragging,
-
+      dragSourceListId,
+      dropTargetListId,
       dragListId: props.dragListId,
-      dragSourceListId: state.dragSourceListId,
-      dropTargetListId: state.dropTargetListId,
       draggingInProgress: dragging,
-      draggingOutside:
-        dragging &&
-        state.dragSourceListId === props.dragListId &&
-        state.dropTargetListId !== props.dragListId,
     };
 
     return contextValue;
@@ -428,7 +446,8 @@ export const DragList = (props: DragListProps) => {
     onDragItemPointerDown,
     isDragging,
     dragging,
-    state.dropTargetListId,
+    dragSourceListId,
+    dropTargetListId,
     props.dragListId,
   ]);
 
@@ -449,7 +468,7 @@ export const DragList = (props: DragListProps) => {
       ? props.children(domProps, contextValue)
       : props.children;
 
-  return <DragContext value={contextValue}>{children}</DragContext>;
+  return <DragListContext value={contextValue}>{children}</DragListContext>;
 };
 
 type DragItemContextValue = {
@@ -457,6 +476,8 @@ type DragItemContextValue = {
   dragListId: string | null;
   active: boolean;
   draggingInProgress: boolean;
+  dragSourceListId: string | null;
+  dropTargetListId: string | null;
 };
 
 type DraggableItemProps = {
@@ -478,17 +499,22 @@ const DragItemContext = React.createContext<DragItemContextValue>({
   dragListId: '',
   active: false,
   draggingInProgress: false,
+  dragSourceListId: '',
+  dropTargetListId: '',
 });
 
-export const DraggableItem = (props: DraggableItemProps) => {
+const DraggableItem = (props: DraggableItemProps) => {
   const {
-    isDragging,
     onDragItemPointerDown,
     draggingInProgress,
-    dragSourceListId: dragListId,
-  } = useDragContext();
+    dragListId,
+    dragItemId,
+    dragSourceListId,
+    dropTargetListId,
+  } = useDragListContext();
 
-  const active = isDragging(props.id);
+  const active =
+    dragSourceListId === dragListId && dragItemId === `${props.id}`;
 
   const contextValue = React.useMemo(
     () => ({
@@ -496,8 +522,10 @@ export const DraggableItem = (props: DraggableItemProps) => {
       active,
       dragListId,
       draggingInProgress,
+      dragSourceListId,
+      dropTargetListId,
     }),
-    [props.id, active, draggingInProgress],
+    [props.id, active, draggingInProgress, dragSourceListId, dropTargetListId],
   );
 
   const domProps: React.HTMLAttributes<HTMLDivElement> = {
@@ -525,3 +553,5 @@ export const DraggableItem = (props: DraggableItemProps) => {
     </DragItemContext.Provider>
   );
 };
+
+DragList.DraggableItem = DraggableItem;

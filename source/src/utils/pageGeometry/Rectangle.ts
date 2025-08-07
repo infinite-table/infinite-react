@@ -61,6 +61,31 @@ export class Rectangle extends PolyWithPoints {
     }
   }
 
+  toDOMRect() {
+    const rect: DOMRectReadOnly = {
+      top: this.top,
+      left: this.left,
+      bottom: this.top + this.height,
+      right: this.left + this.width,
+      height: this.height,
+      width: this.width,
+      x: this.left,
+      y: this.top,
+      toJSON: () => ({
+        top: this.top,
+        left: this.left,
+        bottom: this.top + this.height,
+        right: this.left + this.width,
+        height: this.height,
+        width: this.width,
+        x: this.left,
+        y: this.top,
+      }),
+    };
+
+    return rect;
+  }
+
   containsPoint(p: PointCoords) {
     return new ConvexPoly(this.getPoints()).containsPoint(p);
   }
