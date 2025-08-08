@@ -92,11 +92,12 @@ const DragBox = (props: {
 export default function App() {
   const [data1, setData1] = React.useState<Developer[]>();
   const [data2, setData2] = React.useState<Developer[]>();
-
+  const [data3, setData3] = React.useState<Developer[]>();
   React.useEffect(() => {
     dataSource({}).then((data) => {
       setData1(data.slice(0, 10));
       setData2(data.slice(10, 20));
+      setData3(data.slice(20, 30));
     });
   }, []);
 
@@ -144,8 +145,7 @@ export default function App() {
                 orientation="vertical"
                 dragListId="list1"
                 onDrop={onDrop1}
-                updatePosition={updatePosition}
-                acceptDropsFrom={['list2']}
+                acceptDropsFrom={['list2', 'list1']}
                 removeOnDropOutside
                 onAcceptDrop={onAcceptDrop1}
                 onRemove={onDrop1}
@@ -181,6 +181,7 @@ export default function App() {
                 orientation="vertical"
                 onDrop={onDrop2}
                 dragListId="list2"
+                acceptDropsFrom={['list1']}
                 removeOnDropOutside
                 onRemove={onDrop2}
               >
@@ -197,6 +198,44 @@ export default function App() {
                       } ml-30 flex flex-col gap-2 ${
                         draggingOutside ? 'bg-red-500/30' : ''
                       } ${draggingInProgress ? 'bg-green-500/30' : ''}`}
+                    >
+                      {data2?.map((d) => (
+                        <DragList.DraggableItem key={d.id} id={d.id}>
+                          {(domProps, { active, draggingInProgress }) => {
+                            return (
+                              <DragBox
+                                domProps={domProps}
+                                data={d}
+                                active={active}
+                                draggingInProgress={draggingInProgress}
+                              />
+                            );
+                          }}
+                        </DragList.DraggableItem>
+                      ))}
+                    </div>
+                  );
+                }}
+              </DragList>{' '}
+              <DragList
+                orientation="vertical"
+                onDrop={() => {}}
+                dragListId="list3"
+                removeOnDropOutside
+                acceptDropsFrom={['list1']}
+                onRemove={() => {}}
+              >
+                {(domProps) => {
+                  const draggingInProgress = dropTargetListId === 'list1';
+
+                  return (
+                    <div
+                      {...domProps}
+                      className={`${
+                        domProps.className
+                      } ml-30 flex flex-col gap-2  ${
+                        draggingInProgress ? 'bg-green-500/30' : ''
+                      }`}
                     >
                       {data2?.map((d) => (
                         <DragList.DraggableItem key={d.id} id={d.id}>

@@ -59,6 +59,9 @@ const HeaderVars = {
 
 const GroupingToolbarVars = {
   [ThemeVars.components.GroupingToolbar.background]: ThemeVars.background,
+  [ThemeVars.components.GroupingToolbar
+    .activeBackground]: `color-mix(in srgb, ${ThemeVars.components.GroupingToolbar.color}, transparent calc(100% - ${ThemeVars.components.GroupingToolbar.activeBackgroundAlpha} * 100%))`,
+  [ThemeVars.components.GroupingToolbar.activeBackgroundAlpha]: '0.15',
   [ThemeVars.components.GroupingToolbar.color]: ThemeVars.components.Cell.color,
   [ThemeVars.components.GroupingToolbar.padding]: ThemeVars.spacing[3],
 

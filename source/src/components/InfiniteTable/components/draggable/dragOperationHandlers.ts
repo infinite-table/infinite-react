@@ -104,6 +104,7 @@ export const handleInsideOperation = (
     dragSourceListId,
     dropTargetListId: listId,
     dragIndex,
+    outside: false,
     items: draggableItems,
     dragItem,
     offsetsForItems,
@@ -130,9 +131,19 @@ export const handleOutsideOperation = (
 
   const sourceSameAsTarget = dragSourceListId === listId;
 
+  const inside = listRectangle.containsPoint(center);
   // we return if we're inside
-  if (listRectangle.containsPoint(center)) {
-    return null;
+  if (inside) {
+    // we're inside the list rectangle
+
+    // however, if we have the same source, and it doesn't accept self drops
+    // we need to keep going
+    const shouldContinue =
+      sourceSameAsTarget && !interactionTarget.acceptsSelfDrops();
+
+    if (!shouldContinue) {
+      return null;
+    }
   }
 
   // if the active drag source is outside of the current interaction target
@@ -140,7 +151,7 @@ export const handleOutsideOperation = (
   // then we don't need to update anything
 
   // but we only do this if this interaction target is not the source of the drag operation
-  // since the source of the drag operation will need toupdate the offset of the dragging item
+  // since the source of the drag operation will need to update the offset of the dragging item
   if (
     interactionTarget.activeDragSourcePosition === 'outside' &&
     !sourceSameAsTarget
@@ -158,6 +169,7 @@ export const handleOutsideOperation = (
     dropIndex: -1,
     dragIndex,
     dragItem,
+    outside: !inside,
     items: draggableItems,
     dragSourceListId,
     dropTargetListId: listId,
@@ -165,6 +177,9 @@ export const handleOutsideOperation = (
       ? draggableItems.map((_item, index) => {
           if (_item.id === dragItem.id) {
             return offset;
+          }
+          if (inside) {
+            return { left: 0, top: 0 };
           }
 
           if (index > dragIndex) {

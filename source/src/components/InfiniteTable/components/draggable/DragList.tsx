@@ -12,6 +12,7 @@ import { Rectangle } from '../../../../utils/pageGeometry/Rectangle';
 import { useDragDropProvider } from './DragDropProvider';
 import { useLatest } from '../../../hooks/useLatest';
 import { DragInteractionTarget } from './DragInteractionTarget';
+import { getGlobal } from '../../../../utils/getGlobal';
 
 type DragListContextValue = {
   dragItemId: string | number | null;
@@ -93,7 +94,7 @@ const getDraggableItemId = (node: HTMLElement) => {
 function getDraggableItems(domRef: React.RefObject<HTMLElement | null>) {
   const dragItems = domRef.current?.querySelectorAll(DRAG_ITEM_SELECTOR) ?? [];
   if (!dragItems || dragItems.length === 0) {
-    console.log('no drag items found in', domRef.current);
+    console.log('No draggable items found in', domRef.current);
   }
 
   const draggableItems = Array.from(dragItems).map((item) => {
@@ -123,6 +124,7 @@ function getInteractionTargetData(params: {
     orientation,
     listId: dragListId,
     listRectangle: Rectangle.from(domRef.current!.getBoundingClientRect()),
+    acceptDropsFrom: params.acceptDropsFrom,
   };
 
   return options;
@@ -132,8 +134,6 @@ function createInteractionTarget(
   params: Parameters<typeof getInteractionTargetData>[0],
 ) {
   const target = new DragInteractionTarget(getInteractionTargetData(params));
-
-  DragManager.registerDragInteractionTarget(target);
 
   return target;
 }
@@ -153,8 +153,22 @@ export const DragList = (props: DragListProps) => {
     props.updatePosition ?? defaultUpdatePosition,
   );
 
-  const [interactionTarget, setInteractionTarget] =
+  const [interactionTarget, doSetInteractionTarget] =
     React.useState<DragInteractionTarget | null>(null);
+  const interactionTargetRef = React.useRef<DragInteractionTarget | null>(null);
+
+  const setInteractionTarget = useCallback(
+    (interactionTarget: DragInteractionTarget | null) => {
+      interactionTargetRef.current = interactionTarget;
+
+      if (interactionTarget) {
+        DragManager.registerDragInteractionTarget(interactionTarget);
+      }
+
+      doSetInteractionTarget(interactionTarget);
+    },
+    [],
+  );
 
   useEffect(() => {
     const dragList = document.querySelector(
@@ -174,10 +188,15 @@ export const DragList = (props: DragListProps) => {
 
     if (props.acceptDropsFrom && !interactionTarget) {
       const remove = DragManager.on('register', (interactionTarget) => {
-        const interactionTargetData = interactionTarget.getData();
+        if (interactionTargetRef.current === interactionTarget) {
+          // debugger;
+          return;
+        }
 
+        const interactionTargetData = interactionTarget.getData();
         if (interactionTargetData.listId !== dragListId) {
           // a drag has started in another drag list
+
           if (props.acceptDropsFrom?.includes(interactionTargetData.listId)) {
             // we need to create the interaction target for this current list
             // so it can listen to the drag operation
@@ -185,7 +204,8 @@ export const DragList = (props: DragListProps) => {
             interactionTarget = createInteractionTarget({
               domRef,
               orientation: props.orientation,
-              dragListId: props.dragListId,
+              dragListId,
+              acceptDropsFrom: props.acceptDropsFrom,
             });
 
             setInteractionTarget(interactionTarget);
@@ -203,6 +223,19 @@ export const DragList = (props: DragListProps) => {
     props.dragListId,
     props.orientation,
   ]);
+
+  useEffect(() => {
+    const removeUnregister = DragManager.on(
+      'unregister',
+      (interactionTarget) => {
+        if (interactionTarget === interactionTargetRef.current) {
+          setInteractionTarget(null);
+        }
+      },
+    );
+
+    return removeUnregister;
+  }, []);
 
   useEffect(() => {
     if (interactionTarget) {
@@ -229,6 +262,7 @@ export const DragList = (props: DragListProps) => {
           items.forEach((item, index) => {
             const offset = offsetsForItems[index];
             const node = dragItems![index] as HTMLElement;
+
             if (!node) {
               return;
             }
@@ -250,6 +284,7 @@ export const DragList = (props: DragListProps) => {
           items,
           dragSourceListId,
           dropTargetListId,
+          outside,
         } = params;
 
         const dragItems = getDragItems();
@@ -295,11 +330,11 @@ export const DragList = (props: DragListProps) => {
         if (
           dropIndex === -1 &&
           dragSourceListId === dragListId &&
-          dropTargetListId === dragListId
+          dropTargetListId === dragListId &&
+          outside
         ) {
           // removing from the list
           callbackFn = onRemove;
-          console.log('removing from ', dragListId);
         }
         if (
           dropIndex !== -1 &&
@@ -308,7 +343,6 @@ export const DragList = (props: DragListProps) => {
         ) {
           // reordering the list
           callbackFn = onDrop;
-          console.log('reordering ', dragListId);
         }
 
         if (callbackFn) {
@@ -325,7 +359,6 @@ export const DragList = (props: DragListProps) => {
       });
 
       return () => {
-        console.log('cLEANUP list', dragListId);
         removeOnDragStart();
         removeOnDragMove();
         removeOnDragDrop();
@@ -366,6 +399,7 @@ export const DragList = (props: DragListProps) => {
         domRef,
         orientation: props.orientation,
         dragListId: props.dragListId,
+        acceptDropsFrom: props.acceptDropsFrom,
       });
 
       const draggableItems = interactionTarget.getData().draggableItems;
@@ -410,11 +444,11 @@ export const DragList = (props: DragListProps) => {
         dragOperation!.drop();
         dragOperation = null;
 
-        window.removeEventListener('pointermove', onPointerMove);
+        getGlobal().removeEventListener('pointermove', onPointerMove);
       };
 
-      window.addEventListener('pointermove', onPointerMove);
-      window.addEventListener('pointerup', onPointerUp, { once: true });
+      getGlobal().addEventListener('pointermove', onPointerMove);
+      getGlobal().addEventListener('pointerup', onPointerUp, { once: true });
     },
     [
       props.orientation,

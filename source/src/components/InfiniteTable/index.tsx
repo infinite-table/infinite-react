@@ -97,6 +97,7 @@ import { useDebugMode } from './hooks/useDebugMode';
 import { useInfinitePortalContainer } from './hooks/useInfinitePortalContainer';
 import { getDebugChannel } from '../../utils/debugChannel';
 import { GroupingToolbar } from './components/GroupingToolbar';
+import { DragDropProvider } from './components/draggable';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -609,7 +610,9 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
       columnHeaderHeight={DEFAULT_COLUMN_HEADER_HEIGHT}
       {...props}
     >
-      <InfiniteTableContextProvider children={props.children} />
+      <DragDropProvider>
+        <InfiniteTableContextProvider children={props.children} />
+      </DragDropProvider>
     </InfiniteTableRoot>
   );
   if (__DEV__) {

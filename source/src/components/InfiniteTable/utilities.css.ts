@@ -66,6 +66,7 @@ export const cursor = styleVariants({
   default: { cursor: 'default' },
   colResize: { cursor: 'col-resize' },
   grabbing: { cursor: 'grabbing' },
+  grab: { cursor: 'grab' },
 });
 
 export const pointerEvents = styleVariants({

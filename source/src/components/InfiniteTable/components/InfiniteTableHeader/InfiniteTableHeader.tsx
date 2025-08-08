@@ -19,6 +19,7 @@ import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
+import { DragList } from '../draggable';
 
 const { rootClassName } = internalProps;
 
@@ -165,18 +166,30 @@ function InfiniteTableHeaderFn<T>(
     ],
   );
 
+  const onDrop = useCallback((sortedIndexes: number[]) => {}, []);
+
   return (
-    <div {...domProps}>
-      <RawTable
-        name="header"
-        renderCell={renderCell}
-        brain={headerBrain}
-        renderer={headerRenderer}
-        onRenderUpdater={headerOnRenderUpdater}
-        cellHoverClassNames={EMPTY_ARR}
-        cellDetachedClassNames={CELL_DETACHED_CLASSNAMES}
-      />
-    </div>
+    <DragList orientation="horizontal" dragListId="header" onDrop={onDrop}>
+      {(dragListDomProps) => {
+        return (
+          <div
+            {...dragListDomProps}
+            {...domProps}
+            className={join(dragListDomProps.className, domProps.className)}
+          >
+            <RawTable
+              name="header"
+              renderCell={renderCell}
+              brain={headerBrain}
+              renderer={headerRenderer}
+              onRenderUpdater={headerOnRenderUpdater}
+              cellHoverClassNames={EMPTY_ARR}
+              cellDetachedClassNames={CELL_DETACHED_CLASSNAMES}
+            />
+          </div>
+        );
+      }}
+    </DragList>
   );
 }
 

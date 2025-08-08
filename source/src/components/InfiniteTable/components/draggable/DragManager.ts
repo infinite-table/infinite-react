@@ -16,7 +16,7 @@ import {
 
 type DragManagerDragStartEvent = {
   dragSourceListId: string;
-  dropTargetListId: string;
+  dropTargetListId: string | null;
   dragIndex: number;
   dragItem: DraggableItem;
 };
@@ -51,8 +51,8 @@ export class DragManager {
       : dragSource;
 
     const dragOperation = new DragOperation({
-      startPoint,
       activeDragSource,
+      startPoint,
     });
 
     dragOperation.on('start', DragManager.onDragStart);
@@ -106,9 +106,19 @@ export class DragManager {
     };
   }
 
+  public static unregisterAll() {
+    DragManager.dragInteractionTargetsMap.forEach((interactionTarget) => {
+      DragManager.unregisterDragInteractionTarget(interactionTarget);
+    });
+  }
+
   public static unregisterDragInteractionTarget(
-    dragInteractionTarget: DragInteractionTarget,
+    dragInteractionTarget: DragInteractionTarget | null | undefined,
   ) {
+    if (!dragInteractionTarget) {
+      return;
+    }
+
     if (
       !DragManager.dragInteractionTargetsMap.has(dragInteractionTarget.listId)
     ) {
@@ -125,7 +135,14 @@ export class DragManager {
   private static onDragStart(dragOperation: DragOperation) {
     const { dragItem, dragIndex } = dragOperation.activeDragSource;
     const dragSourceListId = dragOperation.activeDragSource.listId;
-    const dropTargetListId = dragSourceListId;
+
+    const sourceInteractionTarget =
+      DragManager.dragInteractionTargetsMap.get(dragSourceListId);
+    const acceptDropsFrom = sourceInteractionTarget?.getData().acceptDropsFrom;
+    const acceptsSelfDrops =
+      !acceptDropsFrom || acceptDropsFrom.includes(dragSourceListId);
+
+    const dropTargetListId = acceptsSelfDrops ? dragSourceListId : null;
 
     DragManager.dragInteractionTargetsMap.forEach((interactionTarget) => {
       const interactionTargetData = interactionTarget.getData();
@@ -159,11 +176,19 @@ export class DragManager {
 
     const targets: DragInteractionTarget[] = [];
 
+    let includeSelf = true;
+
     // let's process the drag source first
-    if (DragManager.dragInteractionTargetsMap.has(dragSourceListId)) {
-      targets.push(
-        DragManager.dragInteractionTargetsMap.get(dragSourceListId)!,
-      );
+    const sourceInteractionTarget =
+      DragManager.dragInteractionTargetsMap.get(dragSourceListId);
+
+    if (sourceInteractionTarget) {
+      includeSelf = sourceInteractionTarget.acceptsSelfDrops();
+      if (includeSelf) {
+        targets.push(
+          DragManager.dragInteractionTargetsMap.get(dragSourceListId)!,
+        );
+      }
     }
 
     DragManager.dragInteractionTargetsMap.forEach((interactionTarget) => {
@@ -194,6 +219,12 @@ export class DragManager {
       break;
     }
 
+    if (!includeSelf) {
+      // include it for outside
+      // insert it at the beginning
+      targets.unshift(sourceInteractionTarget!);
+    }
+
     // handle the outside operation
     for (const interactionTarget of targets) {
       const result = handleOutsideOperation(dragOperation, interactionTarget);
@@ -215,9 +246,6 @@ export class DragManager {
     const insideTargetEvent = DragManager.withDragMove(
       dragOperation,
       (interactionTarget, result) => {
-        if (result.dropTargetListId === 'list1') {
-          // console.warn('move', result);
-        }
         interactionTarget.move(result);
       },
     );
@@ -239,7 +267,6 @@ export class DragManager {
     const insideTargetEvent = DragManager.withDragMove(
       dragOperation,
       (interactionTarget, result) => {
-        console.warn('drop', result);
         interactionTarget.drop(result);
       },
     );
@@ -251,6 +278,8 @@ export class DragManager {
       dragIndex: insideTargetEvent?.dragIndex ?? -1,
       dropIndex: insideTargetEvent?.dropIndex ?? -1,
     });
+
+    DragManager.unregisterAll();
   }
 }
 
@@ -407,4 +436,6 @@ export class DragOperation extends EventEmitter<DragOperationEvents> {
   }
 }
 
+// @ts-ignore
+globalThis.DragManager = DragManager;
 export { type DragInteractionTargetData };

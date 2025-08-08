@@ -69,6 +69,8 @@ export const ThemeVars = createGlobalThemeContract(
       GroupingToolbar: {
         color: 'grouping-toolbar-color',
         background: 'grouping-toolbar-background',
+        activeBackground: 'grouping-toolbar-active-background',
+        activeBackgroundAlpha: 'grouping-toolbar-active-background-alpha',
         padding: 'grouping-toolbar-padding',
         border: 'grouping-toolbar-border',
         gap: 'grouping-toolbar-gap',

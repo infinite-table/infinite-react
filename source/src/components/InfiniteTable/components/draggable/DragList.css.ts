@@ -1,13 +1,12 @@
 import { recipe } from '@vanilla-extract/recipes';
+import { style } from '@vanilla-extract/css';
 import {
   cursor,
-  pointerEvents,
   position,
   userSelect,
   willChange,
   zIndex,
 } from '../../utilities.css';
-import { style } from '@vanilla-extract/css';
 
 export const DragListRecipe = recipe({
   base: [willChange.transform, position.relative],
@@ -17,9 +16,11 @@ export const DragListRecipe = recipe({
     },
   },
 });
+
 const transitionTransformActiveItem = style({
   transition: 'transform 0.05s cubic-bezier(0.4, 0, 0.2, 1)',
 });
+
 const transitionTransformNonActiveItem = style({
   transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
 });

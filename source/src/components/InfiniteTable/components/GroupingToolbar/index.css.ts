@@ -4,7 +4,7 @@ import { ThemeVars } from '../../vars.css';
 import { recipe } from '@vanilla-extract/recipes';
 import { alignItems, cursor, display, padding } from '../../utilities.css';
 
-export const GroupingToolbarBaseCls = style(
+const GroupingToolbarBaseCls = style(
   [
     display.flex,
     {
@@ -22,26 +22,39 @@ export const GroupingToolbarPlaceholderCls = style({
   opacity: 0.5,
 });
 
-export const GroupingToolbarItemCls = style([
-  {
-    border: `1px solid ${ThemeVars.color.accent}`,
+export const GroupingToolbarItemRecipe = recipe({
+  base: [
+    {
+      border: `1px solid ${ThemeVars.color.accent}`,
+    },
+    padding[2],
+    alignItems.center,
+    display.flex,
+  ],
+  variants: {
+    draggingInProgress: {
+      true: [
+        cursor.grabbing,
+        {
+          background: ThemeVars.components.GroupingToolbar.background,
+        },
+      ],
+      false: [cursor.grab],
+    },
   },
-  padding[2],
-  alignItems.center,
-  display.flex,
-]);
+});
 
 export const GroupingToolbarItemClearCls = style([cursor.pointer]);
 
 export const GroupingToolbarRecipe = recipe({
   base: [GroupingToolbarBaseCls],
   variants: {
-    active: {
+    draggingInProgress: {
       true: {
-        display: 'block',
+        background: ThemeVars.components.GroupingToolbar.activeBackground,
       },
       false: {
-        display: 'none',
+        background: ThemeVars.components.GroupingToolbar.background,
       },
     },
   },

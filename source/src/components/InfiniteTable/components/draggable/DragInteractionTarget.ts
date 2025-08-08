@@ -11,6 +11,7 @@ export type DragInteractionTargetData = {
   draggableItems: DraggableItem[];
   listRectangle: Rectangle;
   listId: string;
+  acceptDropsFrom?: string[];
 };
 export type DraggableItem = {
   id: string;
@@ -21,12 +22,13 @@ export type DragInteractionTargetStartEvent = {
   dragIndex: number;
   dragItem: DraggableItem;
   dragSourceListId: string;
-  dropTargetListId: string;
+  dropTargetListId: string | null;
 };
 export type DragInteractionTargetDropEvent = {
   dragIndex: number;
   dragItem: DraggableItem;
   items: DraggableItem[];
+  outside: boolean;
   dropIndex: number;
   dragSourceListId: string;
   dropTargetListId: string | null;
@@ -38,6 +40,7 @@ export type DragInteractionTargetMoveEvent = {
   dragIndex: number;
   dragItem: DraggableItem;
   items: DraggableItem[];
+  outside: boolean;
   dragSourceListId: string;
   dropTargetListId: string | null;
   dragRect: DOMRectReadOnly;
@@ -100,6 +103,13 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
     return areModelsEqual(this.data, model.getData());
   }
 
+  acceptsSelfDrops() {
+    return (
+      !this.data.acceptDropsFrom ||
+      this.data.acceptDropsFrom.includes(this.data.listId)
+    );
+  }
+
   move(params: DragInteractionTargetMoveEvent) {
     this.emit('move', params);
   }
@@ -142,6 +152,7 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
       dragSourceListId,
       dropTargetListId,
       dragItem,
+      outside,
     } = params;
 
     const initials = Array.from({ length: items.length }, (_, index) => index);
@@ -165,6 +176,7 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
       dragSourceListId,
       dropTargetListId,
       sortedIndexes,
+      outside,
     };
 
     this.emit('drop', result);
