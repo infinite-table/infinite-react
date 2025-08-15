@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { useMasterDetailContext } from '../../../DataSource/publicHooks/useDataSourceState';
 import { isValidLicense } from './decode';
 

@@ -121,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
+      NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
     strategy:
       matrix:
         node-version: [20.x]
@@ -170,6 +171,8 @@ jobs:
 
       - name: Running Playwright Tests
         run: npm run ci:test:run
+        env:
+          NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
 
       - name: Save browser binaries for Playwright
         id: playwright-save
