@@ -67,16 +67,10 @@ export default function App() {
     <DataSource<Developer>
       data={dataSource}
       primaryKey="id"
-      defaultSortInfo={[
-        {
-          field: 'country',
-          dir: 1,
-        },
-      ]}
       defaultGroupBy={[
         { field: 'country' },
         {
-          field: 'stack',
+          field: 'preferredLanguage',
         },
       ]}
     >
@@ -95,53 +89,8 @@ export default function App() {
         columnDefaultGroupable
         groupRenderStrategy="single-column"
       >
-        <div className="flex flex-1 flex-row">
-          <div className="flex-1 flex flex-col">
-            <InfiniteTable.Header allowColumnHideWhileDragging={false} />
-            <InfiniteTable.Body />
-          </div>
-          <InfiniteTable.GroupingToolbar
-            orientation="vertical"
-            components={{
-              Host: (props) => {
-                return (
-                  <div
-                    {...props.domProps}
-                    style={{
-                      backgroundColor:
-                        props.active && !props.rejectDrop
-                          ? 'blue'
-                          : props.active && props.rejectDrop
-                          ? 'red'
-                          : 'transparent',
-                    }}
-                  >
-                    Group{props.domProps?.children}
-                  </div>
-                );
-              },
-            }}
-          />
-        </div>
-      </InfiniteTable>
-
-      <InfiniteTable<Developer>
-        domProps={{
-          style: {
-            marginBlock: '80px',
-            marginInline: '80px',
-            height: '80vh',
-            border: '1px solid gray',
-            position: 'relative',
-          },
-        }}
-        columns={columns}
-        columnDefaultWidth={200}
-        columnDefaultGroupable
-        groupRenderStrategy="single-column"
-      >
-        <InfiniteTable.GroupingToolbar orientation="horizontal" />
-        <InfiniteTable.Header allowColumnHideWhileDragging={false} />
+        <InfiniteTable.GroupingToolbar />
+        <InfiniteTable.Header />
         <InfiniteTable.Body />
       </InfiniteTable>
     </DataSource>

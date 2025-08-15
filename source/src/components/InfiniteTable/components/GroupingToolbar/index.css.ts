@@ -10,7 +10,6 @@ import {
   cursor,
   display,
   flexFlow,
-  justifyContent,
   padding,
   userSelect,
   zIndex,
@@ -99,7 +98,6 @@ export const GroupingToolbarItemRecipe = recipe({
     userSelect.none,
     alignItems.center,
     display.flex,
-    justifyContent.spaceBetween,
   ],
   variants: {
     active: {

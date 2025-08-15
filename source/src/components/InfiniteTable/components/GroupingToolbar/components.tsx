@@ -7,6 +7,7 @@ import {
 } from './index.css';
 
 import { ClearIcon } from '../icons/ClearIcon';
+import { flex } from '../../utilities.css';
 
 export function HostDefault(props: {
   active: boolean;
@@ -47,6 +48,7 @@ export function GroupingToolbarItemDefault<T = any>(props: {
   return (
     <div {...props.domProps}>
       {props.label}
+      <div className={flex[1]}></div>
       <div
         tabIndex={0}
         role="button"

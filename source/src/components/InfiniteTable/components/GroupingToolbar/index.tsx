@@ -18,7 +18,6 @@ import {
   HostDefault,
 } from './components';
 import { SortIcon } from '../icons/SortIcon';
-import { alignItems, display, flexFlow, gap } from '../../utilities.css';
 import { getGlobal } from '../../../../utils/getGlobal';
 
 export type GroupingToolbarProps = {
@@ -109,10 +108,10 @@ export function GroupingToolbarItem<T = any>(props: {
   ) : null;
 
   const header = (
-    <div className={join(display.flex, flexFlow.row, gap[2], alignItems.end)}>
+    <>
       {columnHeader}
       {sortIcon}
-    </div>
+    </>
   );
 
   const active =
@@ -197,9 +196,11 @@ export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
                     }
                   }}
                   onClear={() => {
-                    dataSourceApi.setGroupBy(
-                      groupBy.filter((g) => g !== group),
-                    );
+                    const newGroupBy = groupBy
+                      .filter((g) => g !== group)
+                      .filter(Boolean);
+
+                    dataSourceApi.setGroupBy(newGroupBy);
                   }}
                 />
               );
