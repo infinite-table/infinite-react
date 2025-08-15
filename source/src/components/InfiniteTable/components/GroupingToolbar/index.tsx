@@ -17,6 +17,9 @@ import {
   GroupingToolbarItemDefault,
   HostDefault,
 } from './components';
+import { SortIcon } from '../icons/SortIcon';
+import { alignItems, display, flexFlow, gap } from '../../utilities.css';
+import { getGlobal } from '../../../../utils/getGlobal';
 
 export type GroupingToolbarProps = {
   orientation?: 'horizontal' | 'vertical';
@@ -33,6 +36,47 @@ export type GroupingToolbarProps = {
   };
 };
 
+const getFastClickHandler = (
+  callback: () => void,
+  prevHandler?: (e: React.MouseEvent<HTMLDivElement>) => void,
+) => {
+  return (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prevHandler) {
+      prevHandler(e);
+    }
+
+    const now = Date.now();
+    let moved: boolean = false;
+    const moveHandler = () => {
+      moved = true;
+    };
+    getGlobal().addEventListener('mousemove', moveHandler, {
+      once: true,
+    });
+
+    getGlobal().addEventListener(
+      'mouseup',
+      () => {
+        // if there was a drag, don't act
+
+        if (!moved) {
+          getGlobal().removeEventListener('mousemove', moveHandler);
+
+          // don't act if we had a long press....
+          if (Date.now() - now < 200) {
+            requestAnimationFrame(() => {
+              callback();
+            });
+          }
+        }
+      },
+      {
+        once: true,
+      },
+    );
+  };
+};
+
 export function GroupingToolbarItem<T = any>(props: {
   id: string;
   domProps?: React.HTMLAttributes<HTMLDivElement>;
@@ -40,8 +84,9 @@ export function GroupingToolbarItem<T = any>(props: {
   field: string | number | undefined;
   components?: GroupingToolbarProps['components'];
   onClear: () => void;
+  toggleSorting: () => void;
 }) {
-  const { column, onClear, components, field, id } = props;
+  const { column, onClear, components, field, id, toggleSorting } = props;
 
   const { dragSourceListId, dragItemId } = useDragListContext();
 
@@ -49,9 +94,26 @@ export function GroupingToolbarItem<T = any>(props: {
 
   const context = useInfiniteTable<T>();
 
-  const header: React.ReactNode =
+  const columnHeader: React.ReactNode =
     (column ? getColumnLabel(column.id, context, 'grouping-toolbar') : field) ??
     id;
+
+  const sortIcon = column ? (
+    <SortIcon
+      forceSize
+      size={20}
+      direction={
+        column.computedSortedAsc ? 1 : column.computedSortedDesc ? -1 : 0
+      }
+    />
+  ) : null;
+
+  const header = (
+    <div className={join(display.flex, flexFlow.row, gap[2], alignItems.end)}>
+      {columnHeader}
+      {sortIcon}
+    </div>
+  );
 
   const active =
     dragItemId === id && dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
@@ -63,10 +125,15 @@ export function GroupingToolbarItem<T = any>(props: {
     }),
     props.domProps?.className,
   );
+  const onMouseDown = getFastClickHandler(
+    toggleSorting,
+    props.domProps?.onMouseDown,
+  );
 
   const domProps: React.HTMLAttributes<HTMLDivElement> = {
     ...props.domProps,
     className,
+    onMouseDown,
   };
 
   const Cmp = components?.ToolbarItem ?? GroupingToolbarItemDefault;
@@ -87,7 +154,7 @@ const GROUPING_TOOLBAR_DRAG_LIST_ID = 'grouping-toolbar';
 
 export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
   const { groupBy } = useDataSourceState<T>();
-  const { getComputed, dataSourceApi } = useInfiniteTable<T>();
+  const { getComputed, dataSourceApi, api } = useInfiniteTable<T>();
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
   const { fieldsToColumn, computedColumnsMap } = getComputed();
 
@@ -124,6 +191,11 @@ export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
                   domProps={domProps}
                   field={group.field}
                   column={column}
+                  toggleSorting={() => {
+                    if (column) {
+                      api.toggleSortingForColumn(column.id);
+                    }
+                  }}
                   onClear={() => {
                     dataSourceApi.setGroupBy(
                       groupBy.filter((g) => g !== group),

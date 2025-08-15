@@ -118,6 +118,26 @@ export default function App() {
           />
         </div>
       </InfiniteTable>
+
+      <InfiniteTable<Developer>
+        domProps={{
+          style: {
+            marginBlock: '80px',
+            marginInline: '80px',
+            height: '80vh',
+            border: '1px solid gray',
+            position: 'relative',
+          },
+        }}
+        columns={columns}
+        columnDefaultWidth={200}
+        columnDefaultGroupable
+        groupRenderStrategy="single-column"
+      >
+        <InfiniteTable.GroupingToolbar orientation="horizontal" />
+        <InfiniteTable.Header allowColumnHideWhileDragging={false} />
+        <InfiniteTable.Body />
+      </InfiniteTable>
     </DataSource>
   );
 }

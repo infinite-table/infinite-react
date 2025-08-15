@@ -244,8 +244,13 @@ export class DragManager {
     const { listId: dragSourceListId, dragItem } = activeDragSource;
 
     let insideTargetEvent: DragInteractionTargetMoveEvent | null = null;
+
+    const events: DragInteractionTargetMoveEvent[] = [];
+
     DragManager.withDragMove(dragOperation, (interactionTarget, { event }) => {
       interactionTarget.move(event);
+
+      events.push(event);
 
       if (!event.outside) {
         insideTargetEvent = event;
@@ -253,7 +258,7 @@ export class DragManager {
     });
 
     const event: DragInteractionTargetMoveEvent | null =
-      insideTargetEvent! ?? null;
+      insideTargetEvent! ?? events[0] ?? null;
 
     const dropTargetListId = event?.dropTargetListId ?? null;
 
@@ -274,8 +279,12 @@ export class DragManager {
 
     let insideTargetEvent: DragInteractionTargetMoveEvent | null = null;
 
+    const events: DragInteractionTargetMoveEvent[] = [];
+
     DragManager.withDragMove(dragOperation, (interactionTarget, { event }) => {
       interactionTarget.drop(event);
+
+      events.push(event);
 
       if (!event.outside) {
         insideTargetEvent = event;
@@ -283,7 +292,7 @@ export class DragManager {
     });
 
     const event: DragInteractionTargetMoveEvent | null =
-      insideTargetEvent! ?? null;
+      insideTargetEvent! ?? events[0] ?? null;
 
     DragManager.emit('drag-drop', {
       dragSourceListId,

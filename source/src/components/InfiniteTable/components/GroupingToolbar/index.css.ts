@@ -2,6 +2,7 @@ import { style } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../../vars.css';
 import { recipe } from '@vanilla-extract/recipes';
+
 import {
   alignItems,
   alignSelf,
@@ -11,6 +12,7 @@ import {
   flexFlow,
   justifyContent,
   padding,
+  userSelect,
   zIndex,
 } from '../../utilities.css';
 
@@ -35,7 +37,7 @@ export const GroupingToolbarRecipe = recipe({
   base: [GroupingToolbarBaseCls],
   variants: {
     orientation: {
-      horizontal: [flexFlow.row],
+      horizontal: [flexFlow.row, alignItems.center],
       vertical: [flexFlow.column],
     },
     draggingInProgress: {
@@ -91,8 +93,10 @@ export const GroupingToolbarItemRecipe = recipe({
       border: ThemeVars.components.GroupingToolbarItem.border,
       borderRadius: ThemeVars.components.GroupingToolbarItem.borderRadius,
       background: ThemeVars.components.GroupingToolbarItem.background,
+      gap: ThemeVars.components.GroupingToolbar.gap,
     },
     padding[2],
+    userSelect.none,
     alignItems.center,
     display.flex,
     justifyContent.spaceBetween,

@@ -178,6 +178,8 @@ export const flexFlow = styleVariants({
 export const alignItems = styleVariants({
   center: { alignItems: 'center' },
   stretch: { alignItems: 'stretch' },
+  start: { alignItems: 'flex-start' },
+  end: { alignItems: 'flex-end' },
 });
 
 export const alignSelf = styleVariants({
