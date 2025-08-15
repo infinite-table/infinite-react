@@ -3,6 +3,17 @@ import { test, expect } from '@playwright/test';
 import { Triangle } from '@src/utils/pageGeometry/Triangle';
 
 export default test.describe.parallel('Triangle', () => {
+  test('strange triangle should work', async ({}) => {
+    const t = new Triangle([
+      { top: 86, left: 1 },
+      { top: 86, left: 1 },
+      { top: 56, left: 1 },
+    ]);
+
+    expect(t.containsPoint({ top: 71, left: 901 })).toBe(false);
+    expect(t.containsPoint({ top: 86, left: 1 })).toBe(true);
+    expect(t.containsPoint({ top: 86, left: 2 })).toBe(false);
+  });
   test('contains point should be fine - test moving point horizontally', async ({}) => {
     const t = new Triangle([
       {
