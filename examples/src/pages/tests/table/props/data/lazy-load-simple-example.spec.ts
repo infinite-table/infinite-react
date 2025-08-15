@@ -1,4 +1,5 @@
 import { getFnCalls } from '@examples/pages/tests/testUtils/getFnCalls';
+
 import { test, expect, Page } from '@testing';
 
 async function getCalls({ page }: { page: Page }) {
