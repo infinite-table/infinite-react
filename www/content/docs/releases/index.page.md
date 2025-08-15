@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.2.0
+
+Ship Grouping Toolbar
+
 ## 7.1.1
 
 Fix error that appeared when column pinning was used and no visible columns were available
