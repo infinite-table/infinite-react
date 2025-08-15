@@ -210,6 +210,8 @@ export type InfiniteTableColumnApi<_T> = {
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
   hideContextMenu: () => void;
 
+  setVisible: (visible: boolean) => void;
+
   showFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
   toggleFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
   hideFilterOperatorMenu: () => void;

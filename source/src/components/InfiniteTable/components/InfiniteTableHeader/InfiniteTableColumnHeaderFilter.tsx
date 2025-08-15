@@ -120,7 +120,7 @@ export function useInfiniteColumnFilterEditor<T>() {
 
   const { column, columnApi } = useInfiniteHeaderCell<T>();
 
-  const columnLabel = getColumnLabel(column, context);
+  const columnLabel = getColumnLabel(column, context, 'column-filter');
 
   const filterContextValue = React.useContext(
     InfiniteTableColumnHeaderFilterContext,

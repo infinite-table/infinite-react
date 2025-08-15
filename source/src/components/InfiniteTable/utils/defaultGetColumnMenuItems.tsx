@@ -131,7 +131,7 @@ export function defaultGetColumnMenuItems<T>(
         const computed = getComputed();
 
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
-          const label = getColumnLabel(col, params);
+          const label = getColumnLabel(col, params, 'column-menu');
 
           colItems.push({
             key: id,
@@ -184,7 +184,7 @@ export function defaultGetColumnMenuItems<T>(
             // if it's a group column, we skip it
             return;
           }
-          const label = getColumnLabel(col, params);
+          const label = getColumnLabel(col, params, 'column-menu');
 
           colItems.push({
             key: id,

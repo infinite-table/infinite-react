@@ -6,10 +6,12 @@ export type DragDropSourceAndTarget = {
   dragSourceListId: string | null;
   dropTargetListId: string | null;
   dragItemId: string;
+  status: 'accepted' | 'rejected';
 };
 
 type DragDropProviderContextValue = DragDropSourceAndTarget & {
   updateDragOperationSourceAndTarget: (params: DragDropSourceAndTarget) => void;
+  getCurrentDragSourceAndTarget: () => DragDropSourceAndTarget;
 };
 
 const DragDropProviderContext =
@@ -17,9 +19,16 @@ const DragDropProviderContext =
     dragSourceListId: null,
     dropTargetListId: null,
     dragItemId: '',
+    status: 'accepted',
     updateDragOperationSourceAndTarget: (
       _params: DragDropSourceAndTarget,
     ) => {},
+    getCurrentDragSourceAndTarget: () => ({
+      dragSourceListId: null,
+      dropTargetListId: null,
+      status: 'accepted',
+      dragItemId: '',
+    }),
   });
 
 export const useDragDropProvider = () => {
@@ -35,20 +44,32 @@ export const DragDropProvider = (props: {
     dragSourceListId: null,
     dropTargetListId: null,
     dragItemId: '',
+    status: 'accepted',
   });
 
   const stateRef = React.useRef(state);
   stateRef.current = state;
 
-  const contextValue = React.useMemo(
-    () => ({
+  const getCurrentDragSourceAndTarget = React.useCallback(() => {
+    const currentState = stateRef.current;
+    return {
+      dragSourceListId: currentState.dragSourceListId,
+      dropTargetListId: currentState.dropTargetListId,
+      dragItemId: currentState.dragItemId,
+      status: currentState.status,
+    };
+  }, []);
+
+  const contextValue = React.useMemo(() => {
+    return {
       dragSourceListId: state.dragSourceListId,
       dropTargetListId: state.dropTargetListId,
       dragItemId: state.dragItemId,
+      status: state.status,
       updateDragOperationSourceAndTarget: setState,
-    }),
-    [state, setState],
-  );
+      getCurrentDragSourceAndTarget,
+    };
+  }, [state, setState]);
 
   useEffect(() => {
     const removeDragStart = DragManager.on('drag-start', (params) => {
@@ -56,6 +77,7 @@ export const DragDropProvider = (props: {
         dragSourceListId: params.dragSourceListId,
         dropTargetListId: params.dropTargetListId,
         dragItemId: params.dragItem.id,
+        status: 'accepted',
       });
     });
 
@@ -66,6 +88,7 @@ export const DragDropProvider = (props: {
         dragSourceListId: params.dragSourceListId,
         dropTargetListId: params.dropTargetListId,
         dragItemId: params.dragItem.id,
+        status: params.status,
       };
 
       if (JSON.stringify(currentState) === JSON.stringify(newState)) {
@@ -80,6 +103,7 @@ export const DragDropProvider = (props: {
         dragSourceListId: null,
         dropTargetListId: null,
         dragItemId: '',
+        status: 'accepted',
       });
     });
 

@@ -55,6 +55,7 @@ export default test.describe.parallel('DND', () => {
     const list1 = new DragInteractionTarget({
       orientation: 'vertical',
       listId: 'list1',
+      initial: true,
       listRectangle: Rectangle.from({
         top: 0,
         left: 0,

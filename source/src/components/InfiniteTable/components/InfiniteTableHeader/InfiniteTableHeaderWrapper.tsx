@@ -9,7 +9,7 @@ import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeaderWrapperClassName } from './headerClassName';
-import { InfiniteTableHeader } from './InfiniteTableHeader';
+import { InfiniteTableInternalHeader } from './InfiniteTableHeader';
 
 export type TableHeaderWrapperProps = {
   headerBrain: MatrixBrain;
@@ -152,7 +152,7 @@ export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
   );
 
   const header = (
-    <InfiniteTableHeader
+    <InfiniteTableInternalHeader
       columns={computedVisibleColumns}
       headerBrain={headerBrain}
       bodyBrain={bodyBrain}

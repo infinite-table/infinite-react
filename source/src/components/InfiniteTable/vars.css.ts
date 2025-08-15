@@ -48,6 +48,7 @@ export const ThemeVars = createGlobalThemeContract(
     fontFamily: 'font-family',
     minHeight: 'min-height',
     borderRadius: 'border-radius',
+    focusOutline: 'focus-outline',
     /**
      * The background color for the whole component.
      *
@@ -69,11 +70,21 @@ export const ThemeVars = createGlobalThemeContract(
       GroupingToolbar: {
         color: 'grouping-toolbar-color',
         background: 'grouping-toolbar-background',
+        rejectBackground: 'grouping-toolbar-reject-background',
         activeBackground: 'grouping-toolbar-active-background',
         activeBackgroundAlpha: 'grouping-toolbar-active-background-alpha',
         padding: 'grouping-toolbar-padding',
         border: 'grouping-toolbar-border',
+        rejectBorder: 'grouping-toolbar-reject-border',
         gap: 'grouping-toolbar-gap',
+      },
+      GroupingToolbarItem: {
+        border: 'grouping-toolbar-item-border',
+        borderRadius: 'grouping-toolbar-item-border-radius',
+        activeBorder: 'grouping-toolbar-item-active-border',
+        background: 'grouping-toolbar-item-background',
+        activeBackground: 'grouping-toolbar-item-active-background',
+        activeBackgroundAlpha: 'grouping-toolbar-item-active-background-alpha',
       },
       LoadMask: {
         /**

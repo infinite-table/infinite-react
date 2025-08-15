@@ -22,6 +22,7 @@ const columnReorderEffectDurationAtIndex = stripVar(
 const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
+const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 export function setInfiniteVarOnRoot(
@@ -140,6 +141,18 @@ export function setInfiniteColumnOffsetWhileReordering(
     typeof offset === 'number'
       ? `calc( var(${columnOffsetAtIndex}-${colIndex}) + ${offset}px )`
       : offset,
+    node,
+  );
+}
+
+export function setInfiniteColumnVisibility(
+  colIndex: number,
+  visibility: string,
+  node: HTMLElement | null,
+) {
+  setInfiniteVarOnRoot(
+    `${columnVisibilityAtIndex}-${colIndex}`,
+    visibility,
     node,
   );
 }

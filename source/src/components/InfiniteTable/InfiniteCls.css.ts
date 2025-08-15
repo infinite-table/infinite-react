@@ -8,8 +8,10 @@ import { RowDetailRecipe } from './components/rowDetail.css';
 import {
   boxSizingBorderBox,
   display,
+  flex,
   flexFlow,
   position,
+  transformTranslateZero,
 } from './utilities.css';
 
 export const InfiniteCls = style([
@@ -32,6 +34,12 @@ export const InfiniteCls = style([
       },
     },
   },
+]);
+
+export const InfiniteBodyCls = style([
+  position.relative,
+  flex['1'],
+  transformTranslateZero,
 ]);
 
 export const InfiniteClsScrolling = style(

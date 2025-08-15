@@ -7,6 +7,7 @@ import { useInfiniteTable } from './useInfiniteTable';
 import {
   clearInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
+  setInfiniteColumnVisibility,
   setInfiniteColumnZIndex,
 } from '../utils/infiniteDOMUtils';
 
@@ -22,6 +23,11 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { InfiniteTablePropColumnPinning } from '../types';
 import adjustColumnOrderForAllColumns from './adjustColumnOrderForAllColumns';
 import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
+import { useDragDropProvider } from '../components/draggable/DragDropProvider';
+
+import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
+import { getBodyNode } from '../bodyClassName';
+import { getHeaderWrapperNodes } from '../components/InfiniteTableHeader/headerClassName';
 
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
 
@@ -52,12 +58,17 @@ export const useColumnPointerEvents = ({
   columnId,
   domRef,
   horizontalLayoutPageIndex,
+  allowColumnHideOnDrag,
 }: {
+  allowColumnHideOnDrag: boolean;
   columnId: string;
   domRef: React.MutableRefObject<HTMLElement | null>;
   horizontalLayoutPageIndex: number | null;
 }) => {
   const [proxyPosition, setProxyPosition] = useState<TopLeftOrNull>(null);
+  const [dragColumnOutside, setDragColumnOutside] = useState(false);
+
+  const { getCurrentDragSourceAndTarget } = useDragDropProvider();
 
   const {
     actions,
@@ -132,9 +143,21 @@ export const useColumnPointerEvents = ({
 
       let didDragAtLeastOnce = false;
 
+      const root = rootRef.current!;
+      const bodyNode = Rectangle.from(
+        getBodyNode(root)!.getBoundingClientRect(),
+      );
+      const headerWrapperNodes = getHeaderWrapperNodes(root).map((node) =>
+        Rectangle.from(node.getBoundingClientRect()),
+      );
+      const acceptDropToReorderRect = bodyNode.getMinimumBoundingRectangle(
+        ...headerWrapperNodes,
+      );
+
       const dragger = reorderColumnsOnDrag({
         brain,
         horizontalLayoutPageIndex,
+        allowColumnHideOnDrag,
         pageWidth,
         draggableColumnsRestrictTo,
         computedPinnedEndColumns,
@@ -144,10 +167,13 @@ export const useColumnPointerEvents = ({
         computedVisibleColumnsMap,
         dragColumnHeaderTargetRect: targetRect,
         dragColumnId: columnId,
+        getCurrentDragSourceAndTarget,
         api,
         infiniteDOMNode: rootRef.current!,
         setProxyPosition,
+        setDragColumnOutside,
         tableRect,
+        acceptDropToReorderRect,
         initialMousePosition: {
           clientX: e.clientX,
           clientY: e.clientY,
@@ -275,6 +301,8 @@ export const useColumnPointerEvents = ({
           );
         });
 
+        setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
+
         setInfiniteColumnZIndex(
           dragColumnIndex,
           getColumnZIndex(dragColumn, {
@@ -306,6 +334,12 @@ export const useColumnPointerEvents = ({
 
         if (reorderDragResult) {
           persistColumnOrder(reorderDragResult);
+        } else if (didDragAtLeastOnce) {
+          if (allowColumnHideOnDrag) {
+            // the column was dropped outside
+            // so we need to hide it
+            api.setVisibilityForColumn(dragColumn.id, false);
+          }
         }
 
         actions.columnReorderDragColumnId = false;
@@ -327,6 +361,8 @@ export const useColumnPointerEvents = ({
       ?.computedDraggable
       ? onPointerDown
       : defaultPointerDown,
+
+    dragColumnOutside,
 
     proxyPosition,
   };

@@ -2,7 +2,17 @@ import { style } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../../vars.css';
 import { recipe } from '@vanilla-extract/recipes';
-import { alignItems, cursor, display, padding } from '../../utilities.css';
+import {
+  alignItems,
+  alignSelf,
+  borderRadius,
+  cursor,
+  display,
+  flexFlow,
+  justifyContent,
+  padding,
+  zIndex,
+} from '../../utilities.css';
 
 const GroupingToolbarBaseCls = style(
   [
@@ -10,7 +20,6 @@ const GroupingToolbarBaseCls = style(
     {
       gap: ThemeVars.components.GroupingToolbar.gap,
       color: ThemeVars.components.GroupingToolbar.color,
-      background: ThemeVars.components.GroupingToolbar.background,
       padding: ThemeVars.components.GroupingToolbar.padding,
       border: ThemeVars.components.GroupingToolbar.border,
     },
@@ -22,40 +31,98 @@ export const GroupingToolbarPlaceholderCls = style({
   opacity: 0.5,
 });
 
+export const GroupingToolbarRecipe = recipe({
+  base: [GroupingToolbarBaseCls],
+  variants: {
+    orientation: {
+      horizontal: [flexFlow.row],
+      vertical: [flexFlow.column],
+    },
+    draggingInProgress: {
+      true: [zIndex['1000']],
+      false: [],
+    },
+    dropRejected: {
+      true: [],
+      false: [],
+    },
+    active: {
+      true: [],
+      false: {},
+    },
+  },
+  compoundVariants: [
+    {
+      variants: {
+        dropRejected: true,
+        active: true,
+      },
+      style: {
+        background: ThemeVars.components.GroupingToolbar.rejectBackground,
+        border: ThemeVars.components.GroupingToolbar.rejectBorder,
+      },
+    },
+    {
+      variants: {
+        dropRejected: false,
+        active: true,
+      },
+      style: {
+        background: ThemeVars.components.GroupingToolbar.activeBackground,
+        border: ThemeVars.components.GroupingToolbar.border,
+      },
+    },
+    {
+      variants: {
+        active: false,
+        dropRejected: false,
+      },
+      style: {
+        background: ThemeVars.components.GroupingToolbar.background,
+        border: ThemeVars.components.GroupingToolbar.border,
+      },
+    },
+  ],
+});
+
 export const GroupingToolbarItemRecipe = recipe({
   base: [
     {
-      border: `1px solid ${ThemeVars.color.accent}`,
+      border: ThemeVars.components.GroupingToolbarItem.border,
+      borderRadius: ThemeVars.components.GroupingToolbarItem.borderRadius,
+      background: ThemeVars.components.GroupingToolbarItem.background,
     },
     padding[2],
     alignItems.center,
     display.flex,
+    justifyContent.spaceBetween,
   ],
   variants: {
-    draggingInProgress: {
+    active: {
       true: [
         cursor.grabbing,
+        zIndex['1000'],
         {
-          background: ThemeVars.components.GroupingToolbar.background,
+          background: ThemeVars.components.GroupingToolbarItem.background,
+          border: ThemeVars.components.GroupingToolbarItem.activeBorder,
         },
       ],
       false: [cursor.grab],
     },
-  },
-});
-
-export const GroupingToolbarItemClearCls = style([cursor.pointer]);
-
-export const GroupingToolbarRecipe = recipe({
-  base: [GroupingToolbarBaseCls],
-  variants: {
     draggingInProgress: {
-      true: {
-        background: ThemeVars.components.GroupingToolbar.activeBackground,
-      },
-      false: {
-        background: ThemeVars.components.GroupingToolbar.background,
-      },
+      true: [],
+      false: [],
     },
   },
 });
+
+export const GroupingToolbarItemClearCls = style([
+  cursor.pointer,
+  borderRadius.default,
+  alignSelf.end,
+  {
+    ':focus': {
+      outline: ThemeVars.focusOutline,
+    },
+  },
+]);

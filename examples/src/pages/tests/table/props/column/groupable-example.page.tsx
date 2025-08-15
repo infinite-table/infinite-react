@@ -26,19 +26,34 @@ type Developer = {
 const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: {
     field: 'preferredLanguage',
-    header: 'This is my preferred language',
+    header: 'Language',
   },
   salary: {
     field: 'salary',
     type: 'number',
     defaultGroupable: false,
   },
-  age: { field: 'age' },
-  canDesign: { field: 'canDesign', defaultGroupable: true },
+  age: {
+    field: 'age',
+  },
+  canDesign: {
+    field: 'canDesign',
+    defaultGroupable: true,
+    header: ({ renderLocation }) => {
+      return (
+        <div>
+          hey{' '}
+          {renderLocation === 'grouping-toolbar'
+            ? 'CAN DESIGN'
+            : 'can design!!'}
+        </div>
+      );
+    },
+  },
   country: { field: 'country' },
   firstName: { field: 'firstName' },
   stack: { field: 'stack' },
-  id: { field: 'id' },
+  id: { field: 'id', defaultGroupable: false },
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
@@ -62,24 +77,46 @@ export default function App() {
       <InfiniteTable<Developer>
         domProps={{
           style: {
-            margin: '5px',
+            marginBlock: '80px',
+            marginInline: '80px',
             height: '80vh',
             border: '1px solid gray',
             position: 'relative',
           },
         }}
-        defaultColumnPinning={{
-          salary: 'start',
-        }}
         columns={columns}
         columnDefaultWidth={200}
         columnDefaultGroupable
+        groupRenderStrategy="single-column"
       >
-        <InfiniteTable.GroupingToolbar />
-        <InfiniteTable.Header />
-        <InfiniteTable.Body />
-
-        <InfiniteTable.Header />
+        <div className="flex flex-1 flex-row">
+          <div className="flex-1 flex flex-col">
+            <InfiniteTable.Header allowColumnHideWhileDragging={false} />
+            <InfiniteTable.Body />
+          </div>
+          <InfiniteTable.GroupingToolbar
+            orientation="vertical"
+            components={{
+              Host: (props) => {
+                return (
+                  <div
+                    {...props.domProps}
+                    style={{
+                      backgroundColor:
+                        props.active && !props.rejectDrop
+                          ? 'blue'
+                          : props.active && props.rejectDrop
+                          ? 'red'
+                          : 'transparent',
+                    }}
+                  >
+                    Group{props.domProps?.children}
+                  </div>
+                );
+              },
+            }}
+          />
+        </div>
       </InfiniteTable>
     </DataSource>
   );

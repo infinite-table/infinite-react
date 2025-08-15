@@ -189,6 +189,15 @@ type ComponentStateRootConfig<
   debugName?: string | ((props: T_PROPS) => string);
   initSetupState?: (props: T_PROPS) => COMPONENT_SETUP_STATE;
 
+  Context?: React.Context<
+    ManagedComponentStateContextValue<
+      COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE,
+      ComponentStateGeneratedActions<
+        COMPONENT_MAPPED_STATE & COMPONENT_DERIVED_STATE & COMPONENT_SETUP_STATE
+      >
+    >
+  >;
+
   layoutEffect?: boolean;
 
   forwardProps?: (
@@ -476,6 +485,7 @@ export function buildManagedComponent<
     ]) as ACTIONS_TYPE;
 
     const Context =
+      config.Context ??
       getComponentStateContext<
         ManagedComponentStateContextValue<COMPONENT_STATE, ACTIONS_TYPE>
       >();
@@ -642,7 +652,7 @@ export function buildManagedComponent<
   }
 
   const ManagedComponentContextProvider = React.memo(function CSR(
-    props: T_PROPS & { children: React.ReactNode },
+    props: T_PROPS & { children?: React.ReactNode },
   ) {
     const { contextValue, ContextComponent } = useManagedComponent(props);
     return (
@@ -657,9 +667,17 @@ export function buildManagedComponent<
   };
 }
 
-export function useManagedComponentState<COMPONENT_STATE>() {
+export function useManagedComponentState<COMPONENT_STATE>(
+  Context?: React.Context<
+    ManagedComponentStateContextValue<
+      COMPONENT_STATE,
+      ComponentStateActions<COMPONENT_STATE>
+    >
+  >,
+) {
   type ACTIONS_TYPE = ComponentStateActions<COMPONENT_STATE>;
-  const Context =
+  Context =
+    Context ??
     getComponentStateContext<
       ManagedComponentStateContextValue<COMPONENT_STATE, ACTIONS_TYPE>
     >();

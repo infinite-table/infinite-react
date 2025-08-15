@@ -81,10 +81,10 @@ export type InfiniteTableColumnHeaderParam<
   | {
       domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
       htmlElementRef: React.MutableRefObject<HTMLElement | null>;
-      insideColumnMenu: false;
+      renderLocation: 'column-header';
     }
   | {
-      insideColumnMenu: true;
+      renderLocation: 'grouping-toolbar' | 'column-menu' | 'column-filter';
     }
 );
 
@@ -182,7 +182,7 @@ export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
   InfiniteTableColumnHeaderParam<DATA_TYPE> & {
     domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
     htmlElementRef: React.MutableRefObject<HTMLElement | null>;
-    insideColumnMenu: false;
+    renderLocation: 'column-header';
   };
 
 export type InfiniteTableGroupColumnRenderIconParam<

@@ -582,11 +582,15 @@ export const getComputedColumns = <T extends unknown>({
     const field = c.field ?? colType.field;
     const valueGetter = c.valueGetter ?? colType.valueGetter;
 
-    const computedGroupable =
+    let computedGroupable =
       c.defaultGroupable ??
       colType.defaultGroupable ??
       columnDefaultGroupable ??
       !!field;
+
+    if ((c as InfiniteTableGeneratedGroupColumn<T>).groupByForColumn) {
+      computedGroupable = false;
+    }
 
     let sortableColumnOrType = c.defaultSortable ?? colType.defaultSortable;
 

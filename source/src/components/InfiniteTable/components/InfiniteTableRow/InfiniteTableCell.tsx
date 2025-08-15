@@ -48,7 +48,8 @@ function InfiniteTableCellFn<T>(
     ...domProps
   } = props;
 
-  const children = renderChildren();
+  const children =
+    typeof renderChildren === 'function' ? renderChildren() : renderChildren;
 
   // TODO very important - dont access any context here,
   // otherwise we'll be re-rendering all cells every time

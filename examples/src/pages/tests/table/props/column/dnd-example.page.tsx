@@ -28,23 +28,23 @@ const dataSource = async ({}) => {
     .then((data: Developer[]) => data);
 };
 
-const updatePosition = (options: {
-  id: string;
-  node: HTMLElement;
-  offset: null | { left: number; top: number };
-}) => {
-  const { node, offset } = options;
-  if (!node) {
-    return;
-  }
+// const updatePosition = (options: {
+//   id: string;
+//   node: HTMLElement;
+//   offset: null | { left: number; top: number };
+// }) => {
+//   const { node, offset } = options;
+//   if (!node) {
+//     return;
+//   }
 
-  if (!offset) {
-    node.style.transform = 'none';
-    return;
-  }
+//   if (!offset) {
+//     node.style.transform = 'none';
+//     return;
+//   }
 
-  node.style.transform = `translate3d(0px, ${offset.top}px, 0px)`;
-};
+//   node.style.transform = `translate3d(0px, ${offset.top}px, 0px)`;
+// };
 
 function getItemClassName(
   data: Developer | undefined,
@@ -58,7 +58,7 @@ function getItemClassName(
   }
 ${
   !draggingInProgress && data
-    ? `cursor-grab ${data.id >= 10 ? 'bg-blue-300/30' : 'bg-red-300/30'}`
+    ? ` ${data.id >= 10 ? 'bg-blue-300/30' : 'bg-red-300/30'}`
     : ''
 }`;
 }
@@ -70,16 +70,22 @@ const DragBox = (props: {
   draggingInProgress: boolean;
 }) => {
   const { domProps, data, active, draggingInProgress } = props;
+  const { onPointerDown, className: classNameProp, ...restDomProps } = domProps;
   return (
     <div
-      {...domProps}
-      className={`${domProps.className} ${getItemClassName(data, {
+      {...restDomProps}
+      className={`${getItemClassName(data, {
         active,
         draggingInProgress,
       })}`}
     >
       <div className="flex flex-row gap-2">
-        <div>{data?.id}</div>
+        <div
+          onPointerDown={onPointerDown}
+          className={`${classNameProp} border border-indigo-400/50 rounded-full bg-amber-300/50 p-2`}
+        >
+          {data?.id}
+        </div>
         <div className="flex flex-col">
           <div>{data?.firstName}</div>
           <div>{data?.lastName}</div>
@@ -92,7 +98,7 @@ const DragBox = (props: {
 export default function App() {
   const [data1, setData1] = React.useState<Developer[]>();
   const [data2, setData2] = React.useState<Developer[]>();
-  const [data3, setData3] = React.useState<Developer[]>();
+  const [_data3, setData3] = React.useState<Developer[]>();
   React.useEffect(() => {
     dataSource({}).then((data) => {
       setData1(data.slice(0, 10));
@@ -137,13 +143,22 @@ export default function App() {
 
   return (
     <DragDropProvider>
-      {({ dragSourceListId, dropTargetListId }) => {
+      {({ dragSourceListId, dropTargetListId, status }) => {
+        console.log('status', status);
         return (
           <>
             <div className="flex flex-row gap-2">
               <DragList
                 orientation="vertical"
                 dragListId="list1"
+                shouldAcceptDrop={(event) => {
+                  if (event.dragSourceListId === 'list2') {
+                    if (event.dragItem.id == `12`) {
+                      return false;
+                    }
+                  }
+                  return true;
+                }}
                 onDrop={onDrop1}
                 acceptDropsFrom={['list2', 'list1']}
                 removeOnDropOutside
@@ -151,11 +166,18 @@ export default function App() {
                 onRemove={onDrop1}
               >
                 {(domProps) => {
+                  const rejected = status === 'rejected';
                   return (
                     <div
                       {...domProps}
                       ref={domProps.ref}
-                      className={`${domProps.className} flex flex-col gap-2`}
+                      className={`${domProps.className} ${
+                        rejected ? 'bg-red-500' : ''
+                      } ${
+                        dropTargetListId === 'list1' && !rejected
+                          ? 'bg-green-500'
+                          : ''
+                      } flex flex-col gap-2`}
                     >
                       {data1?.map((d) => (
                         <DragList.DraggableItem key={d.id} id={d.id}>
@@ -181,7 +203,7 @@ export default function App() {
                 orientation="vertical"
                 onDrop={onDrop2}
                 dragListId="list2"
-                acceptDropsFrom={['list1']}
+                acceptDropsFrom={['list1', 'list2']}
                 removeOnDropOutside
                 onRemove={onDrop2}
               >
@@ -216,7 +238,7 @@ export default function App() {
                     </div>
                   );
                 }}
-              </DragList>{' '}
+              </DragList>
               <DragList
                 orientation="vertical"
                 onDrop={() => {}}
@@ -229,28 +251,31 @@ export default function App() {
                   const draggingInProgress = dropTargetListId === 'list1';
 
                   return (
-                    <div
-                      {...domProps}
-                      className={`${
-                        domProps.className
-                      } ml-30 flex flex-col gap-2  ${
-                        draggingInProgress ? 'bg-green-500/30' : ''
-                      }`}
-                    >
-                      {data2?.map((d) => (
-                        <DragList.DraggableItem key={d.id} id={d.id}>
-                          {(domProps, { active, draggingInProgress }) => {
-                            return (
-                              <DragBox
-                                domProps={domProps}
-                                data={d}
-                                active={active}
-                                draggingInProgress={draggingInProgress}
-                              />
-                            );
-                          }}
-                        </DragList.DraggableItem>
-                      ))}
+                    <div>
+                      <div>list3 - accepts drops from list1</div>
+                      <div
+                        {...domProps}
+                        className={`${
+                          domProps.className
+                        } ml-30 flex flex-col gap-2  ${
+                          draggingInProgress ? 'bg-green-500/30' : ''
+                        }`}
+                      >
+                        {data2?.map((d) => (
+                          <DragList.DraggableItem key={d.id} id={d.id}>
+                            {(domProps, { active, draggingInProgress }) => {
+                              return (
+                                <DragBox
+                                  domProps={domProps}
+                                  data={d}
+                                  active={active}
+                                  draggingInProgress={draggingInProgress}
+                                />
+                              );
+                            }}
+                          </DragList.DraggableItem>
+                        ))}
+                      </div>
                     </div>
                   );
                 }}

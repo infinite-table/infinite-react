@@ -155,6 +155,10 @@ export function getColumnApiForColumn<T>(
       return getComputed().computedVisibleColumnsMap.has(column.id);
     },
 
+    setVisible(visible: boolean) {
+      api.setVisibilityForColumn(column.id, visible);
+    },
+
     toggleSort(
       params: MultiSortBehaviorOptions = {
         multiSortBehavior: 'replace',

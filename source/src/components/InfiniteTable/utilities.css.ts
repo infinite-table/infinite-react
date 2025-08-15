@@ -55,8 +55,13 @@ export const transformTranslateZero = style({
   transform: 'translate3d(0,0,0)',
 });
 
+export const color = styleVariants({
+  currentColor: { color: 'currentColor' },
+});
+
 export const transform = styleVariants({
   translateZero: { transform: 'translate3d(0,0,0)' },
+  'translate-50%Y': { transform: 'translate3d(0,-50%,0)' },
   rotate90: { transform: 'rotate(90deg)' },
   rotate180: { transform: 'rotate(180deg)' },
 });
@@ -67,6 +72,19 @@ export const cursor = styleVariants({
   colResize: { cursor: 'col-resize' },
   grabbing: { cursor: 'grabbing' },
   grab: { cursor: 'grab' },
+});
+
+export const borderRadius = styleVariants({
+  none: { borderRadius: 0 },
+  default: { borderRadius: ThemeVars.borderRadius },
+  full: { borderRadius: '100%' },
+  '1': { borderRadius: ThemeVars.spacing[1] },
+  '2': { borderRadius: ThemeVars.spacing[2] },
+  '3': { borderRadius: ThemeVars.spacing[3] },
+  '4': { borderRadius: ThemeVars.spacing[4] },
+  '5': { borderRadius: ThemeVars.spacing[5] },
+  '6': { borderRadius: ThemeVars.spacing[6] },
+  '7': { borderRadius: ThemeVars.spacing[7] },
 });
 
 export const pointerEvents = styleVariants({
@@ -131,11 +149,13 @@ export const width = styleVariants({
 });
 export const top = styleVariants({
   '100%': { top: '100%' },
+  '50%': { top: '50%' },
   '0': { top: '0' },
 });
 
 export const left = styleVariants({
   '100%': { left: '100%' },
+  '50%': { left: '50%' },
   '0': { left: '0' },
   auto: { left: 'auto' },
 });
@@ -158,6 +178,10 @@ export const flexFlow = styleVariants({
 export const alignItems = styleVariants({
   center: { alignItems: 'center' },
   stretch: { alignItems: 'stretch' },
+});
+
+export const alignSelf = styleVariants({
+  end: { alignSelf: 'end' },
 });
 
 export const gap = styleVariants({

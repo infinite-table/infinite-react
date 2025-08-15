@@ -6,12 +6,16 @@ import { moveXatY } from '../../utils/moveXatY';
 
 type DragInteractionTargetOrientation = 'horizontal' | 'vertical';
 
+export type DragInteractionTargetRejectFeedback = 'reject';
+
 export type DragInteractionTargetData = {
   orientation: DragInteractionTargetOrientation;
   draggableItems: DraggableItem[];
   listRectangle: Rectangle;
   listId: string;
   acceptDropsFrom?: string[];
+  shouldAcceptDrop?: (event: DragInteractionTargetMoveEvent) => boolean;
+  initial: boolean;
 };
 export type DraggableItem = {
   id: string;
@@ -33,7 +37,9 @@ export type DragInteractionTargetDropEvent = {
   dragSourceListId: string;
   dropTargetListId: string | null;
   sortedIndexes: number[];
+  status: 'accepted' | 'rejected';
 };
+
 export type DragInteractionTargetMoveEvent = {
   offset: PointCoords;
   dropIndex: number;
@@ -45,11 +51,15 @@ export type DragInteractionTargetMoveEvent = {
   dropTargetListId: string | null;
   dragRect: DOMRectReadOnly;
   offsetsForItems: PointCoords[];
+  status: 'accepted' | 'rejected';
 };
 type DragInteractionTargetEvents = {
   move: (params: DragInteractionTargetMoveEvent) => void;
   drop: (params: DragInteractionTargetDropEvent) => void;
+  'accept-feedback': (params: DragInteractionTargetMoveEvent) => void;
+  'reject-feedback': (params: DragInteractionTargetMoveEvent) => void;
   start: (params: DragInteractionTargetStartEvent) => void;
+  unregister: (self: DragInteractionTarget) => void;
 };
 
 export function areModelsEqual(
@@ -110,8 +120,33 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
     );
   }
 
+  private previousAcceptsDropResult: boolean = true;
+
+  acceptsDrop(event: DragInteractionTargetMoveEvent) {
+    let result = true;
+    if (typeof this.data.shouldAcceptDrop === 'function') {
+      result = this.data.shouldAcceptDrop(event);
+    }
+    result = !!result;
+
+    if (result !== this.previousAcceptsDropResult) {
+      this.previousAcceptsDropResult = result;
+      if (!result) {
+        this.emit('reject-feedback', event);
+      } else {
+        this.emit('accept-feedback', event);
+      }
+    }
+
+    return result;
+  }
+
   move(params: DragInteractionTargetMoveEvent) {
     this.emit('move', params);
+  }
+
+  unregister() {
+    this.emit('unregister', this);
   }
 
   start(params: DragInteractionTargetStartEvent) {
@@ -177,8 +212,8 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
       dropTargetListId,
       sortedIndexes,
       outside,
+      status: params.status,
     };
-
     this.emit('drop', result);
   }
 }

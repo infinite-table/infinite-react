@@ -8,6 +8,7 @@ export function getColumnLabel<T>(
   context: {
     api: InfiniteTableApi<T>;
   } & GetImperativeApiParam<T>,
+  renderLocation: 'grouping-toolbar' | 'column-menu' | 'column-filter',
 ) {
   const col =
     typeof colIdOrCol === 'string'
@@ -44,7 +45,7 @@ export function getColumnLabel<T>(
         column: col,
         columnApi,
         dataSourceApi,
-        insideColumnMenu: true,
+        renderLocation,
         dragging: false,
         columnsMap: computed.computedColumnsMap,
         columnSortInfo: col.computedSortInfo,

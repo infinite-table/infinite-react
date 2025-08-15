@@ -23,7 +23,6 @@ import { debounce } from '../utils/debounce';
 
 import { InfiniteTableFooter } from './components/InfiniteTableFooter';
 import { useInfiniteHeaderCell } from './components/InfiniteTableHeader/InfiniteTableHeaderCell';
-import { TableHeaderWrapper } from './components/InfiniteTableHeader/InfiniteTableHeaderWrapper';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter';
 import {
   useInfiniteColumnCell,
@@ -60,14 +59,7 @@ import type {
   InfiniteTableProps,
   InfiniteTableState,
 } from './types';
-import {
-  position,
-  zIndex,
-  top,
-  left,
-  flex,
-  transformTranslateZero,
-} from './utilities.css';
+import { position, zIndex, top, left } from './utilities.css';
 import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
@@ -98,6 +90,10 @@ import { useInfinitePortalContainer } from './hooks/useInfinitePortalContainer';
 import { getDebugChannel } from '../../utils/debugChannel';
 import { GroupingToolbar } from './components/GroupingToolbar';
 import { DragDropProvider } from './components/draggable';
+import { InfiniteBodyCls } from './InfiniteCls.css';
+import { InfiniteTableBodyClassName } from './bodyClassName';
+import { InfiniteTableHeader } from './components/InfiniteTablePublicHeader';
+import { InfiniteTableHeaderProps } from './components/InfiniteTablePublicHeader/types';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -128,29 +124,7 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     },
   });
 
-function InfiniteTableHeader<T>() {
-  const context = useInfiniteTable<T>();
-
-  const { state: componentState, getComputed } = context;
-  const { header, brain, headerBrain, wrapRowsHorizontally } = componentState;
-  const { scrollbars } = getComputed();
-
-  return header ? (
-    <TableHeaderWrapper
-      wrapRowsHorizontally={!!wrapRowsHorizontally}
-      bodyBrain={brain}
-      headerBrain={headerBrain}
-      scrollbars={scrollbars}
-    />
-  ) : null;
-}
-
-const InfiniteTableBodyCls = join(
-  `${rootClassName}Body`,
-  position.relative,
-  flex['1'],
-  transformTranslateZero,
-);
+const BodyClassName = join(InfiniteBodyCls, InfiniteTableBodyClassName);
 
 function InfiniteTableBodyContainer(
   props: React.HTMLAttributes<HTMLDivElement>,
@@ -159,9 +133,7 @@ function InfiniteTableBodyContainer(
     <div
       {...props}
       className={
-        props.className
-          ? join(InfiniteTableBodyCls, props.className)
-          : InfiniteTableBodyCls
+        props.className ? join(BodyClassName, props.className) : BodyClassName
       }
     />
   );
@@ -593,7 +565,9 @@ const DEFAULT_COLUMN_HEADER_HEIGHT = toCSSVarName(columnHeaderHeightName);
 type InfiniteTableComponent = {
   <T>(props: InfiniteTableProps<T>): React.JSX.Element;
   licenseKey?: string;
-  Header: () => React.JSX.Element | null;
+  Header: <T = any>(
+    props: InfiniteTableHeaderProps<T>,
+  ) => React.JSX.Element | null;
   Body: () => React.JSX.Element | null;
   Footer: () => React.JSX.Element | null;
   HScrollSyncContent: typeof HScrollSyncContent;

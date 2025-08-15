@@ -1,5 +1,5 @@
 import binarySearch from 'binary-search';
-import { DragOperation } from './DragManager';
+import { DragOperation, DragOperationHandlerResult } from './DragManager';
 import { Point } from '../../../../utils/pageGeometry/Point';
 import {
   DragInteractionTarget,
@@ -9,7 +9,7 @@ import {
 export const handleInsideOperation = (
   operation: DragOperation,
   interactionTarget: DragInteractionTarget,
-) => {
+): DragOperationHandlerResult | null => {
   const { offset, activeDragSource } = operation;
   const {
     orientation,
@@ -109,14 +109,24 @@ export const handleInsideOperation = (
     dragItem,
     offsetsForItems,
     dragRect,
+    status: 'accepted',
   };
 
-  return result;
+  if (!interactionTarget.acceptsDrop(result)) {
+    result.status = 'rejected';
+    return {
+      event: result,
+      error: 'rejected by interaction target',
+      success: false,
+    };
+  }
+
+  return { event: result, error: null, success: true };
 };
 export const handleOutsideOperation = (
   operation: DragOperation,
   interactionTarget: DragInteractionTarget,
-) => {
+): DragOperationHandlerResult | null => {
   const { offset, activeDragSource } = operation;
   const { orientation, listId, listRectangle, draggableItems } =
     interactionTarget.getData();
@@ -194,7 +204,17 @@ export const handleOutsideOperation = (
           return { left: 0, top: 0 };
         }),
     dragRect,
+    status: 'accepted',
   };
 
-  return result;
+  if (!interactionTarget.acceptsDrop(result)) {
+    result.status = 'rejected';
+    return {
+      event: result,
+      error: 'rejected by interaction target',
+      success: false,
+    };
+  }
+
+  return { event: result, error: null, success: true };
 };

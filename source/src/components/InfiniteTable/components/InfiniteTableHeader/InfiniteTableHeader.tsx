@@ -17,7 +17,7 @@ import { CELL_DETACHED_CLASSNAMES } from '../cellDetachedCls';
 import { HeaderClsRecipe } from './header.css';
 import { InfiniteTableHeaderCell } from './InfiniteTableHeaderCell';
 import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
-import type { InfiniteTableHeaderProps } from './InfiniteTableHeaderTypes';
+import type { InfiniteTableInternalHeaderProps } from './InfiniteTableHeaderTypes';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
 import { DragList } from '../draggable';
 
@@ -31,8 +31,14 @@ const headerCls = HeaderClsRecipe({
   overflow: false,
 });
 
-function InfiniteTableHeaderFn<T>(
-  props: InfiniteTableHeaderProps<T> & React.HTMLAttributes<HTMLDivElement>,
+const updatePosition = (_options: {
+  id: string;
+  node: HTMLElement;
+  offset: null | { left: number; top: number };
+}) => {};
+function InfiniteTableInternalHeaderFn<T>(
+  props: InfiniteTableInternalHeaderProps<T> &
+    React.HTMLAttributes<HTMLDivElement>,
 ) {
   const {
     bodyBrain,
@@ -166,10 +172,15 @@ function InfiniteTableHeaderFn<T>(
     ],
   );
 
-  const onDrop = useCallback((sortedIndexes: number[]) => {}, []);
+  const onDrop = useCallback((_sortedIndexes: number[]) => {}, []);
 
   return (
-    <DragList orientation="horizontal" dragListId="header" onDrop={onDrop}>
+    <DragList
+      orientation="horizontal"
+      dragListId="header"
+      onDrop={onDrop}
+      updatePosition={updatePosition}
+    >
       {(dragListDomProps) => {
         return (
           <div
@@ -193,6 +204,6 @@ function InfiniteTableHeaderFn<T>(
   );
 }
 
-export const InfiniteTableHeader = React.memo(
-  InfiniteTableHeaderFn,
-) as typeof InfiniteTableHeaderFn;
+export const InfiniteTableInternalHeader = React.memo(
+  InfiniteTableInternalHeaderFn,
+) as typeof InfiniteTableInternalHeaderFn;

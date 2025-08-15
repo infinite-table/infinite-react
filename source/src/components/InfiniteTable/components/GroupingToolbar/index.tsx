@@ -1,68 +1,110 @@
 import * as React from 'react';
-import {
-  GroupingToolbarRecipe,
-  GroupingToolbarItemClearCls,
-  GroupingToolbarItemRecipe,
-  GroupingToolbarPlaceholderCls,
-} from './index.css';
-import { useDataSourceState } from '../../../DataSource';
+import { useCallback } from 'react';
+import { GroupingToolbarRecipe, GroupingToolbarItemRecipe } from './index.css';
+
+import { DataSourcePropGroupBy, useDataSourceState } from '../../../DataSource';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { ClearIcon } from '../icons/ClearIcon';
 import { DragList } from '../draggable';
 import { join } from '../../../../utils/join';
 import { InfiniteTableComputedColumn } from '../../types';
 import { useDragDropProvider } from '../draggable/DragDropProvider';
+import { DragListProps, useDragListContext } from '../draggable/DragList';
+import { getColumnLabel } from '../InfiniteTableHeader/getColumnLabel';
 
-type GroupingToolbarProps = {};
+import { DragInteractionTargetMoveEvent } from '../draggable/DragInteractionTarget';
+import {
+  PlaceholderDefault,
+  GroupingToolbarItemDefault,
+  HostDefault,
+} from './components';
+
+export type GroupingToolbarProps = {
+  orientation?: 'horizontal' | 'vertical';
+  placeholder?: <T = any>(params: {
+    draggingInProgress: boolean;
+    active: boolean;
+    groupBy: DataSourcePropGroupBy<T>;
+  }) => React.ReactNode;
+  domProps?: React.HTMLAttributes<HTMLDivElement>;
+  components?: {
+    Host?: typeof HostDefault;
+    Placeholder?: typeof PlaceholderDefault;
+    ToolbarItem?: typeof GroupingToolbarItemDefault;
+  };
+};
 
 export function GroupingToolbarItem<T = any>(props: {
+  id: string;
   domProps?: React.HTMLAttributes<HTMLDivElement>;
   column: InfiniteTableComputedColumn<T> | undefined;
-
-  onClear?: () => void;
+  field: string | number | undefined;
+  components?: GroupingToolbarProps['components'];
+  onClear: () => void;
 }) {
-  const column = props.column;
+  const { column, onClear, components, field, id } = props;
 
-  const { dragSourceListId } = useDragDropProvider();
+  const { dragSourceListId, dragItemId } = useDragListContext();
 
-  const draggingInProgress = dragSourceListId === 'grouping-toolbar';
+  const draggingInProgress = dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+
+  const context = useInfiniteTable<T>();
+
+  const header: React.ReactNode =
+    (column ? getColumnLabel(column.id, context, 'grouping-toolbar') : field) ??
+    id;
+
+  const active =
+    dragItemId === id && dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+
+  const className = join(
+    GroupingToolbarItemRecipe({
+      draggingInProgress,
+      active,
+    }),
+    props.domProps?.className,
+  );
+
+  const domProps: React.HTMLAttributes<HTMLDivElement> = {
+    ...props.domProps,
+    className,
+  };
+
+  const Cmp = components?.ToolbarItem ?? GroupingToolbarItemDefault;
 
   return (
-    <div
-      {...props.domProps}
-      className={join(
-        GroupingToolbarItemRecipe({
-          draggingInProgress,
-        }),
-        props.domProps?.className,
-      )}
-    >
-      {column?.header && typeof column.header !== 'function'
-        ? column.header
-        : column?.name || column?.id || ''}
-
-      <div
-        tabIndex={-1}
-        className={GroupingToolbarItemClearCls}
-        onClick={props.onClear}
-      >
-        <ClearIcon />
-      </div>
-    </div>
+    <Cmp
+      active={active}
+      domProps={domProps}
+      column={column}
+      field={field}
+      label={header}
+      onClear={onClear}
+    />
   );
 }
 
-export function GroupingToolbar<T = any>(_props: GroupingToolbarProps) {
+const GROUPING_TOOLBAR_DRAG_LIST_ID = 'grouping-toolbar';
+
+export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
   const { groupBy } = useDataSourceState<T>();
-
   const { getComputed, dataSourceApi } = useInfiniteTable<T>();
+  const { dropTargetListId, dragSourceListId } = useDragDropProvider();
+  const { fieldsToColumn, computedColumnsMap } = getComputed();
 
-  const { fieldsToColumn } = getComputed();
+  const active = dropTargetListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+  const draggingInProgress = dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
 
-  const placeholderMessage = 'Drag columns to group';
+  const PlaceholderComponent = (props.components?.Placeholder ??
+    PlaceholderDefault) as typeof PlaceholderDefault;
+
+  const HostComponent = props.components?.Host ?? HostDefault;
 
   const children = !groupBy.length ? (
-    <div className={GroupingToolbarPlaceholderCls}>{placeholderMessage}</div>
+    <PlaceholderComponent<T>
+      draggingInProgress={draggingInProgress}
+      active={active}
+      groupBy={groupBy}
+    />
   ) : (
     <>
       {groupBy.map((group, index) => {
@@ -70,14 +112,17 @@ export function GroupingToolbar<T = any>(_props: GroupingToolbarProps) {
           ? fieldsToColumn.get(group.field)
           : undefined;
 
-        const id = group.field ?? `idx-${index}`;
+        const id = `${group.field ?? `idx-${index}`}`;
 
         return (
           <DragList.DraggableItem key={id} id={id}>
             {(domProps) => {
               return (
                 <GroupingToolbarItem
+                  id={id}
+                  components={props.components}
                   domProps={domProps}
+                  field={group.field}
                   column={column}
                   onClear={() => {
                     dataSourceApi.setGroupBy(
@@ -98,25 +143,82 @@ export function GroupingToolbar<T = any>(_props: GroupingToolbarProps) {
     dataSourceApi.setGroupBy(newGroupBy);
   };
 
+  const onAcceptDrop: DragListProps['onAcceptDrop'] = (params) => {
+    const { dragItemId } = params;
+    const dragColumnId = dragItemId as string;
+
+    const dragColumn = computedColumnsMap.get(dragColumnId);
+
+    if (!dragColumn || !dragColumn.field || !dragColumn.computedGroupable) {
+      return;
+    }
+
+    const newGroupBy = [...groupBy];
+
+    newGroupBy.splice(params.dropIndex, 0, {
+      field: dragColumn.field,
+    });
+
+    dataSourceApi.setGroupBy(newGroupBy);
+  };
+
+  const shouldAcceptDrop = useCallback(
+    (event: DragInteractionTargetMoveEvent) => {
+      const { computedColumnsMap } = getComputed();
+
+      const columnId = event.dragItem.id;
+      const column = computedColumnsMap.get(columnId);
+
+      if (!column || !column.computedGroupable) {
+        return false;
+      }
+
+      if (groupBy.some((g) => g.field === column.field)) {
+        return false;
+      }
+
+      return true;
+    },
+    [groupBy],
+  );
+
+  const orientation = props.orientation ?? 'horizontal';
+  const { domProps: groupingToolbarDOMProps } = props;
   return (
     <DragList
-      orientation="horizontal"
-      dragListId="grouping-toolbar"
+      orientation={orientation}
+      dragListId={GROUPING_TOOLBAR_DRAG_LIST_ID}
+      acceptDropsFrom={['header', GROUPING_TOOLBAR_DRAG_LIST_ID]}
       onDrop={onDrop}
+      onAcceptDrop={onAcceptDrop}
+      shouldAcceptDrop={shouldAcceptDrop}
     >
-      {(domProps, { draggingInProgress }) => {
+      {(domProps, { draggingInProgress, status }) => {
+        const className = join(
+          GroupingToolbarRecipe({
+            active,
+            orientation,
+            draggingInProgress,
+            dropRejected: status === 'rejected',
+          }),
+          domProps.className,
+          groupingToolbarDOMProps?.className,
+        );
+
+        const allDomProps: React.HTMLAttributes<HTMLDivElement> = {
+          ...domProps,
+          ...groupingToolbarDOMProps,
+          className,
+          children,
+        };
+
         return (
-          <div
-            {...domProps}
-            className={join(
-              GroupingToolbarRecipe({
-                draggingInProgress,
-              }),
-              domProps.className,
-            )}
-          >
-            {children}
-          </div>
+          <HostComponent
+            active={active}
+            rejectDrop={status === 'rejected'}
+            domProps={allDomProps}
+            orientation={orientation}
+          />
         );
       }}
     </DragList>

@@ -11,8 +11,12 @@ import { join } from '../../../../utils/join';
 import { Rectangle } from '../../../../utils/pageGeometry/Rectangle';
 import { useDragDropProvider } from './DragDropProvider';
 import { useLatest } from '../../../hooks/useLatest';
-import { DragInteractionTarget } from './DragInteractionTarget';
+import {
+  DragInteractionTarget,
+  DragInteractionTargetMoveEvent,
+} from './DragInteractionTarget';
 import { getGlobal } from '../../../../utils/getGlobal';
+import { selectParent } from '../../../../utils/selectParent';
 
 type DragListContextValue = {
   dragItemId: string | number | null;
@@ -21,21 +25,23 @@ type DragListContextValue = {
   dragListId: string;
   dragSourceListId: string | null;
   dropTargetListId: string | null;
+  status: 'accepted' | 'rejected';
 };
 const DragListContext = React.createContext<DragListContextValue>({
   dragItemId: null,
   onDragItemPointerDown: () => {},
   draggingInProgress: false,
   dragListId: '',
+  status: 'accepted',
   dragSourceListId: null,
   dropTargetListId: null,
 });
 
-const useDragListContext = () => {
+export const useDragListContext = () => {
   return React.useContext(DragListContext);
 };
 
-type DragListProps = {
+export type DragListProps = {
   dragListId: string;
   children: (
     domProps: React.HTMLProps<HTMLDivElement>,
@@ -45,6 +51,7 @@ type DragListProps = {
   orientation: 'horizontal' | 'vertical';
   acceptDropsFrom?: string[];
   removeOnDropOutside?: boolean;
+  shouldAcceptDrop?: (event: DragInteractionTargetMoveEvent) => boolean;
   onRemove?: (
     sortedIndexes: number[],
     options: {
@@ -94,7 +101,7 @@ const getDraggableItemId = (node: HTMLElement) => {
 function getDraggableItems(domRef: React.RefObject<HTMLElement | null>) {
   const dragItems = domRef.current?.querySelectorAll(DRAG_ITEM_SELECTOR) ?? [];
   if (!dragItems || dragItems.length === 0) {
-    console.log('No draggable items found in', domRef.current);
+    // console.log('No draggable items found in', domRef.current);
   }
 
   const draggableItems = Array.from(dragItems).map((item) => {
@@ -114,17 +121,23 @@ function getInteractionTargetData(params: {
   domRef: React.RefObject<HTMLElement | null>;
   orientation: 'horizontal' | 'vertical';
   dragListId: string;
+  initial: boolean;
   acceptDropsFrom?: string[];
   removeOnDropOutside?: boolean;
+  shouldAcceptDrop?: (event: DragInteractionTargetMoveEvent) => boolean;
 }): DragInteractionTargetData {
   const { domRef, orientation, dragListId } = params;
+
+  const listRectangle = Rectangle.from(domRef.current!.getBoundingClientRect());
 
   const options: DragInteractionTargetData = {
     draggableItems: getDraggableItems(domRef),
     orientation,
     listId: dragListId,
-    listRectangle: Rectangle.from(domRef.current!.getBoundingClientRect()),
+    listRectangle,
     acceptDropsFrom: params.acceptDropsFrom,
+    shouldAcceptDrop: params.shouldAcceptDrop,
+    initial: params.initial,
   };
 
   return options;
@@ -138,12 +151,82 @@ function createInteractionTarget(
   return target;
 }
 
+function useInteractionTarget(
+  domRef: React.RefObject<HTMLElement | null>,
+  props: DragListProps,
+) {
+  const getProps = useLatest(props);
+  const [interactionTarget, doSetInteractionTarget] =
+    React.useState<DragInteractionTarget | null>(null);
+
+  const setInteractionTarget = useCallback(
+    (interactionTarget: DragInteractionTarget | null) => {
+      if (interactionTarget) {
+        DragManager.registerDragInteractionTarget(interactionTarget);
+      } else {
+        const currentInteractionTarget = getInteractionTarget();
+        if (currentInteractionTarget) {
+          DragManager.unregisterDragInteractionTarget(currentInteractionTarget);
+        }
+      }
+
+      doSetInteractionTarget(interactionTarget);
+    },
+    [],
+  );
+  const getInteractionTarget = useLatest(interactionTarget);
+
+  useEffect(() => {
+    return DragManager.on('register', (interactionTarget) => {
+      const { dragListId, acceptDropsFrom, orientation, shouldAcceptDrop } =
+        getProps();
+
+      const interactionTargetData = interactionTarget.getData();
+
+      if (!interactionTargetData.initial) {
+        return;
+      }
+
+      if (interactionTargetData.listId === dragListId) {
+        return;
+      }
+
+      // a drag has started in another drag list
+      if (acceptDropsFrom?.includes(interactionTargetData.listId)) {
+        // we need to create the interaction target for this current list
+        // so it can listen to the drag operation
+
+        const newInteractionTarget = createInteractionTarget({
+          domRef,
+          orientation,
+          dragListId,
+          initial: false,
+          acceptDropsFrom,
+          shouldAcceptDrop,
+        });
+
+        interactionTarget.once('unregister', () => {
+          setInteractionTarget(null);
+        });
+
+        setInteractionTarget(newInteractionTarget);
+      }
+    });
+  }, [getProps]);
+
+  return {
+    interactionTarget,
+    setInteractionTarget,
+    getInteractionTarget,
+  };
+}
+
 export const DragList = (props: DragListProps) => {
   const domRef = React.useRef<HTMLElement>(null);
 
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
 
-  const { updateDragOperationSourceAndTarget, dragItemId } =
+  const { updateDragOperationSourceAndTarget, dragItemId, status } =
     useDragDropProvider();
 
   const getOnDrop = useLatest(props.onDrop);
@@ -152,22 +235,9 @@ export const DragList = (props: DragListProps) => {
   const getUpdatePosition = useLatest(
     props.updatePosition ?? defaultUpdatePosition,
   );
-
-  const [interactionTarget, doSetInteractionTarget] =
-    React.useState<DragInteractionTarget | null>(null);
-  const interactionTargetRef = React.useRef<DragInteractionTarget | null>(null);
-
-  const setInteractionTarget = useCallback(
-    (interactionTarget: DragInteractionTarget | null) => {
-      interactionTargetRef.current = interactionTarget;
-
-      if (interactionTarget) {
-        DragManager.registerDragInteractionTarget(interactionTarget);
-      }
-
-      doSetInteractionTarget(interactionTarget);
-    },
-    [],
+  const { interactionTarget, setInteractionTarget } = useInteractionTarget(
+    domRef,
+    props,
   );
 
   useEffect(() => {
@@ -184,60 +254,6 @@ export const DragList = (props: DragListProps) => {
   }, [props.dragListId]);
 
   useEffect(() => {
-    const dragListId = props.dragListId;
-
-    if (props.acceptDropsFrom && !interactionTarget) {
-      const remove = DragManager.on('register', (interactionTarget) => {
-        if (interactionTargetRef.current === interactionTarget) {
-          // debugger;
-          return;
-        }
-
-        const interactionTargetData = interactionTarget.getData();
-        if (interactionTargetData.listId !== dragListId) {
-          // a drag has started in another drag list
-
-          if (props.acceptDropsFrom?.includes(interactionTargetData.listId)) {
-            // we need to create the interaction target for this current list
-            // so it can listen to the drag operation
-
-            interactionTarget = createInteractionTarget({
-              domRef,
-              orientation: props.orientation,
-              dragListId,
-              acceptDropsFrom: props.acceptDropsFrom,
-            });
-
-            setInteractionTarget(interactionTarget);
-          }
-        }
-      });
-
-      return () => {
-        remove();
-      };
-    }
-  }, [
-    interactionTarget,
-    props.acceptDropsFrom,
-    props.dragListId,
-    props.orientation,
-  ]);
-
-  useEffect(() => {
-    const removeUnregister = DragManager.on(
-      'unregister',
-      (interactionTarget) => {
-        if (interactionTarget === interactionTargetRef.current) {
-          setInteractionTarget(null);
-        }
-      },
-    );
-
-    return removeUnregister;
-  }, []);
-
-  useEffect(() => {
     if (interactionTarget) {
       const dragListId = props.dragListId;
 
@@ -248,13 +264,18 @@ export const DragList = (props: DragListProps) => {
             dragSourceListId,
             dropTargetListId,
             dragItemId: dragItem.id,
+            status: 'accepted',
           });
         },
       );
 
       const removeOnDragMove = interactionTarget.on(
         'move',
-        ({ offsetsForItems, items }) => {
+        ({ offsetsForItems, items, status }) => {
+          if (status === 'rejected') {
+            return;
+          }
+
           const dragItems = getDragItems();
 
           const updatePosition = getUpdatePosition();
@@ -285,6 +306,7 @@ export const DragList = (props: DragListProps) => {
           dragSourceListId,
           dropTargetListId,
           outside,
+          status,
         } = params;
 
         const dragItems = getDragItems();
@@ -309,11 +331,13 @@ export const DragList = (props: DragListProps) => {
           });
         });
 
+        const accepted = status === 'accepted';
+
         if (
           dragListId === dropTargetListId &&
           dragSourceListId !== dragListId
         ) {
-          if (onAcceptDrop) {
+          if (onAcceptDrop && accepted) {
             onAcceptDrop({
               dragItemId: dragItem.id,
               dragSourceListId,
@@ -353,9 +377,6 @@ export const DragList = (props: DragListProps) => {
             dropItemId: items[dropIndex]?.id,
           });
         }
-
-        DragManager.unregisterDragInteractionTarget(interactionTarget);
-        setInteractionTarget(null);
       });
 
       return () => {
@@ -364,6 +385,8 @@ export const DragList = (props: DragListProps) => {
         removeOnDragDrop();
       };
     }
+
+    return undefined;
   }, [interactionTarget, props.dragListId]);
 
   const dragItemsRef = React.useRef<HTMLElement[]>([]);
@@ -385,7 +408,25 @@ export const DragList = (props: DragListProps) => {
   const onDragItemPointerDown = useCallback(
     (e: React.PointerEvent) => {
       const target = e.currentTarget as HTMLElement;
-      const dragItemId = `${target.dataset.dragItem}`;
+      let dragItemId = target.getAttribute(DRAG_ITEM_ATTRIBUTE);
+
+      if (dragItemId == null) {
+        const parentDragItem = selectParent(target, DRAG_ITEM_SELECTOR);
+        if (parentDragItem) {
+          dragItemId = parentDragItem.getAttribute(DRAG_ITEM_ATTRIBUTE);
+        }
+      }
+
+      if (dragItemId == null) {
+        console.warn(
+          `Could not find drag item id for element`,
+          target,
+          `Make sure you have a parent element with a ${DRAG_ITEM_ATTRIBUTE} attribute`,
+        );
+        return;
+      }
+
+      dragItemId = `${dragItemId}`;
 
       let dragOperation: DragOperation | null = null;
 
@@ -400,6 +441,7 @@ export const DragList = (props: DragListProps) => {
         orientation: props.orientation,
         dragListId: props.dragListId,
         acceptDropsFrom: props.acceptDropsFrom,
+        initial: true,
       });
 
       const draggableItems = interactionTarget.getData().draggableItems;
@@ -411,23 +453,39 @@ export const DragList = (props: DragListProps) => {
 
       setInteractionTarget(interactionTarget);
 
-      requestAnimationFrame(() => {
-        dragOperation = DragManager.startDrag(
-          {
-            listId: props.dragListId,
-            dragItem,
-            dragIndex,
-          },
-          {
-            left: e.clientX,
-            top: e.clientY,
-          },
-        );
-      });
+      // we don't want to create the drag operation here
+      // as we don't want to react to normal "click" events
+      // we'll create the drag operation in the pointer move event
+      // requestAnimationFrame(() => {
+      //   dragOperation = DragManager.startDrag(
+      //     {
+      //       listId: props.dragListId,
+      //       dragItem,
+      //       dragIndex,
+      //     },
+      //     {
+      //       left: e.clientX,
+      //       top: e.clientY,
+      //     },
+      //   );
+      // });
+
+      const initialCoords = {
+        left: e.clientX,
+        top: e.clientY,
+      };
 
       const onPointerMove = (e: PointerEvent) => {
         if (!dragOperation) {
-          return;
+          dragOperation = DragManager.startDrag(
+            {
+              listId: props.dragListId,
+              dragItem,
+              dragIndex,
+            },
+            initialCoords,
+          );
+          // return;
         }
 
         dragOperation!.move({
@@ -437,14 +495,17 @@ export const DragList = (props: DragListProps) => {
       };
 
       const onPointerUp = () => {
+        getGlobal().removeEventListener('pointermove', onPointerMove);
         if (!dragOperation) {
+          // we didn't have an pointer move
+          // so we need to discard the interaction target
+          // as we won't have a drop event triggered
+          setInteractionTarget(null);
           return;
         }
 
         dragOperation!.drop();
         dragOperation = null;
-
-        getGlobal().removeEventListener('pointermove', onPointerMove);
       };
 
       getGlobal().addEventListener('pointermove', onPointerMove);
@@ -470,6 +531,7 @@ export const DragList = (props: DragListProps) => {
       onDragItemPointerDown,
       dragSourceListId,
       dropTargetListId,
+      status,
       dragListId: props.dragListId,
       draggingInProgress: dragging,
     };
@@ -525,7 +587,7 @@ type DraggableItemProps = {
 };
 
 const DRAG_LIST_ATTRIBUTE = 'data-drag-list-id';
-const DRAG_ITEM_ATTRIBUTE = 'data-drag-item';
+export const DRAG_ITEM_ATTRIBUTE = 'data-drag-item-id';
 const DRAG_ITEM_SELECTOR = `[${DRAG_ITEM_ATTRIBUTE}]`;
 
 const DragItemContext = React.createContext<DragItemContextValue>({
@@ -564,7 +626,7 @@ const DraggableItem = (props: DraggableItemProps) => {
 
   const domProps: React.HTMLAttributes<HTMLDivElement> = {
     // @ts-ignore
-    'data-drag-item': `${props.id}`,
+    'data-drag-item-id': `${props.id}`,
     onPointerDown: onDragItemPointerDown,
     className: join(
       'DraggableItem',

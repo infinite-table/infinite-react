@@ -26,10 +26,16 @@ const transitionTransformNonActiveItem = style({
 });
 
 export const DraggableItemRecipe = recipe({
-  base: [willChange.transform, position.relative],
+  base: [willChange.transform, position.relative, cursor.grab],
   variants: {
     active: {
-      true: [zIndex[1000000], transitionTransformActiveItem, cursor.grabbing],
+      true: [
+        zIndex[1000000],
+        transitionTransformActiveItem,
+        {
+          cursor: 'grabbing',
+        },
+      ],
     },
     draggingInProgress: {
       true: [userSelect.none],
