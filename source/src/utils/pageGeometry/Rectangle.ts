@@ -15,6 +15,29 @@ type CoordsNoSize = {
   top: number;
 };
 
+function getMinimumBoundingRectangle(
+  firstRectangle: Rectangle,
+  otherRectangle: Rectangle,
+) {
+  const left = Math.min(firstRectangle.left, otherRectangle.left);
+  const top = Math.min(firstRectangle.top, otherRectangle.top);
+
+  const rightA = firstRectangle.left + firstRectangle.width;
+  const rightB = otherRectangle.left + otherRectangle.width;
+  const right = Math.max(rightA, rightB);
+
+  const bottomA = firstRectangle.top + firstRectangle.height;
+  const bottomB = otherRectangle.top + otherRectangle.height;
+  const bottom = Math.max(bottomA, bottomB);
+
+  return new Rectangle({
+    top,
+    left,
+    width: right - left,
+    height: bottom - top,
+  });
+}
+
 export type RectangleCoords = CoordsWithSize | CoordsNoSize;
 export class Rectangle extends PolyWithPoints {
   top: number = 0;
@@ -59,6 +82,14 @@ export class Rectangle extends PolyWithPoints {
       this.width = (coordsAndSize as CoordsNoSize).right - coordsAndSize.left;
       this.height = (coordsAndSize as CoordsNoSize).bottom - coordsAndSize.top;
     }
+  }
+
+  getMinimumBoundingRectangle(...otherRectangles: Rectangle[]) {
+    let minRectangle: Rectangle = this;
+    for (const otherRectangle of otherRectangles) {
+      minRectangle = getMinimumBoundingRectangle(minRectangle, otherRectangle);
+    }
+    return minRectangle;
   }
 
   toDOMRect() {
