@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { useCallback, useState } from 'react';
 
 import { useInfiniteTable } from './useInfiniteTable';
