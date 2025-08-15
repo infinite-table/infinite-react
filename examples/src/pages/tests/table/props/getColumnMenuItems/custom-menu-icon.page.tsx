@@ -43,8 +43,8 @@ const columns: InfiniteTablePropColumns<Developer> = {
   preferredLanguage: {
     field: 'preferredLanguage',
     defaultWidth: 350,
-    header: ({ columnApi, insideColumnMenu }) => {
-      if (insideColumnMenu) {
+    header: ({ columnApi, renderLocation }) => {
+      if (renderLocation === 'column-menu') {
         return 'Preferred Language';
       }
       return (

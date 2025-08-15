@@ -15,6 +15,7 @@ export default test.describe.parallel('Column context menu', () => {
       'Pin to start',
       'Unpin',
       'Columns',
+      'Group by',
       'Close',
     ]);
   });
@@ -36,6 +37,7 @@ export default test.describe.parallel('Column context menu', () => {
       'Pin to start',
       'Unpin',
       'Columns',
+      'Group by',
       'Close',
     ]);
   });

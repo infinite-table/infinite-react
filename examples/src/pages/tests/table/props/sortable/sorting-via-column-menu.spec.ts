@@ -40,7 +40,9 @@ export default test.describe.parallel('Sorting via column menu', () => {
       'currency',
     ]);
 
-    await headerModel.clickColumnMenuItem('age', 'sort-desc');
+    await headerModel.clickColumnMenuItem('age', 'sort-desc', {
+      skipOpen: true,
+    });
     expect(await getColumnHeaders()).toEqual([
       'firstName',
       'country',
@@ -55,7 +57,9 @@ export default test.describe.parallel('Sorting via column menu', () => {
       'currency',
     ]);
 
-    await headerModel.clickColumnMenuItem('age', 'sort-none');
+    await headerModel.clickColumnMenuItem('age', 'sort-none', {
+      skipOpen: true,
+    });
     expect(await getColumnHeaders()).toEqual([
       'firstName',
       'country',
