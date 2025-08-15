@@ -14,6 +14,8 @@ import { InfiniteTable } from '@infinite-table/infinite-react';
 
 InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
+console.log('License ENV', process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY);
+
 function MyApp({ Component, pageProps }: any) {
   return <Component {...pageProps} />;
 }
