@@ -33,6 +33,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     editable,
     columnDefaultEditable,
     columnDefaultFilterable,
+    columnDefaultGroupable,
     columnTypes,
     rowHeight,
     rowDetailHeight,
@@ -76,7 +77,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       showSeparatePivotColumnForSingleAggregation;
   }, [showSeparatePivotColumnForSingleAggregation]);
 
-  const { multiSort, filterValue, filterTypes } = dataSourceState;
+  const { multiSort, filterValue, filterTypes, groupBy } = dataSourceState;
 
   const { toggleGroupRow } = useColumnsWhen<T>();
 
@@ -131,6 +132,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     sortInfo: dataSourceState.sortInfo ?? undefined,
     multiSort,
 
+    groupBy,
     columnOrder,
 
     columnVisibility,
@@ -140,6 +142,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     editable,
     columnDefaultEditable,
     columnDefaultFilterable,
+    columnDefaultGroupable,
     filterValue,
     filterTypes,
 

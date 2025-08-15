@@ -59,6 +59,7 @@ import { TreeColumnCellExpanderCls } from './row.css';
 const { rootClassName } = internalProps;
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
 
 export function styleForTreeColumn<T>({
   rowInfo,
@@ -731,6 +732,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   style.height = rowHeight;
   style.zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
+  // @ts-ignore
+  style.visibility = `var(${columnVisibilityAtIndex}-${column.computedVisibleIndex}, visible)`;
 
   const memoizedStyle = useMemo(
     () => style,

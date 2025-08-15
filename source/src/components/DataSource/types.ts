@@ -664,6 +664,8 @@ export interface DataSourceApi<T> {
   areAllRowsDisabled: () => boolean;
 
   setGroupBy: (groupBy: DataSourceState<T>['groupBy']) => void;
+
+  toggleGroupByField: (field: keyof T) => void;
 }
 
 export type DataSourcePropRowInfoReducers<T> = Record<

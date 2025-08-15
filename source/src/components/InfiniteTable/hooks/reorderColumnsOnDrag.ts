@@ -17,10 +17,13 @@ import {
   InternalVarUtils,
   restoreInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
+  setInfiniteColumnVisibility,
   setInfiniteVarOnRoot,
 } from '../utils/infiniteDOMUtils';
 import { moveXatY } from '../utils/moveXatY';
 import { progressiveSpeedScroller } from '../utils/progressiveSpeedScroller';
+import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
+import { DragDropSourceAndTarget } from '../components/draggable/DragDropProvider';
 
 type TopLeft = {
   left: number;
@@ -63,9 +66,12 @@ export type ReorderParams<T> = {
 
   computedVisibleColumnsMap: Map<string, InfiniteTableComputedColumn<T>>;
 
+  allowColumnHideOnDrag: boolean;
+
   brain: MatrixBrain;
 
   tableRect: DOMRect;
+  acceptDropToReorderRect: Rectangle;
   /**
    * The rect of the column header which is being dragged
    */
@@ -80,6 +86,8 @@ export type ReorderParams<T> = {
   api: InfiniteTableApi<T>;
 
   setProxyPosition: (position: TopLeftOrNull) => void;
+  setDragColumnOutside: (outside: boolean) => void;
+  getCurrentDragSourceAndTarget: () => DragDropSourceAndTarget;
 };
 
 const PROXY_OFFSET = 10;
@@ -99,7 +107,11 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     dragColumnHeaderTargetRect,
     draggableColumnsRestrictTo,
     tableRect,
+    acceptDropToReorderRect,
+    allowColumnHideOnDrag,
     setProxyPosition,
+    setDragColumnOutside,
+    getCurrentDragSourceAndTarget,
     api: imperativeApi,
     horizontalLayoutPageIndex,
     pageWidth,
@@ -289,7 +301,10 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
       clientX === currentMousePosition.clientX &&
       clientY === currentMousePosition.clientY
     ) {
-      return;
+      return Rectangle.from(dragColumnHeaderTargetRect).shift({
+        left: currentDiff.x,
+        top: currentDiff.y,
+      });
     }
 
     currentMousePosition = { clientX, clientY };
@@ -310,6 +325,11 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     setProxyPosition({
       left: initialProxyPosition.left + currentDiff.x,
       top: initialProxyPosition.top + currentDiff.y,
+    });
+
+    return Rectangle.from(dragColumnHeaderTargetRect).shift({
+      left: currentDiff.x,
+      top: currentDiff.y,
     });
   }
 
@@ -365,7 +385,18 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
       return;
     }
 
+    if (currentDropIndex === -1 && newDropIndex !== -1) {
+      // column is no longer outside, so we need to show it
+      setInfiniteColumnVisibility(dragColumnIndex, '', infiniteDOMNode);
+      setDragColumnOutside(false);
+    }
+
     currentDropIndex = newDropIndex;
+
+    if (newDropIndex === -1) {
+      removeColumn(dragColumnIndex);
+      return;
+    }
 
     const newColumnIndexes = moveXatY(
       initialIndexes,
@@ -402,6 +433,39 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
       indexesWithTransition,
       pinnedStartCount: currentPinnedStartCount,
     };
+  }
+
+  function removeColumn(columnIndexToRemove: number) {
+    const newColumnIndexes = currentIndexes.filter(
+      (i) => i !== columnIndexToRemove,
+    );
+    currentIndexes = newColumnIndexes;
+
+    computedVisibleColumns.forEach((col) => {
+      const colIndex = col.computedVisibleIndex;
+      const after = colIndex > columnIndexToRemove;
+
+      restoreInfiniteColumnReorderDuration(colIndex, infiniteDOMNode);
+
+      let newPosition: string = '';
+
+      if (after) {
+        newPosition = CSSCalc.minus(
+          InternalVarUtils.columnOffsets.get(colIndex),
+          InternalVarUtils.columnWidths.get(columnIndexToRemove),
+        ).done();
+      }
+
+      setInfiniteColumnOffsetWhileReordering(
+        colIndex,
+        newPosition,
+        infiniteDOMNode,
+      );
+    });
+
+    setInfiniteColumnVisibility(columnIndexToRemove, 'hidden', infiniteDOMNode);
+
+    setDragColumnOutside(true);
   }
 
   function adjustAllOffsets(indexesWithTransition: Set<number>) {
@@ -478,8 +542,22 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     stop() {
       speedScroller.stop();
     },
-    onMove(mousePosition: MousePosition): ReorderDragResult {
-      updatePositionAndDiff(mousePosition);
+    onMove(mousePosition: MousePosition): ReorderDragResult | null {
+      const currentColHeaderRect = updatePositionAndDiff(mousePosition);
+
+      if (
+        getCurrentDragSourceAndTarget().dropTargetListId ===
+          'grouping-toolbar' ||
+        (allowColumnHideOnDrag &&
+          !acceptDropToReorderRect.containsPoint(
+            currentColHeaderRect.getCenter(),
+          ))
+      ) {
+        if (allowColumnHideOnDrag) {
+          updateDropIndex(-1);
+        }
+        return null;
+      }
 
       speedScroller.scroll({
         mousePosition: currentMousePosition,
@@ -522,7 +600,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
           ? breakpoints[idx].columnIndex
           : breakpoints[breakpoints.length - 1].columnIndex + 1;
       }
-      // the drag column has 2 valid positionswhen it doesn't change the order - either before itself or after itself
+      // the drag column has 2 valid positions when it doesn't change the order - either before itself or after itself
       // which is basically the same position, but let's normalise to only have one of them
       if (idx === dragColumnIndex + 1) {
         idx = dragColumnIndex;

@@ -33,6 +33,7 @@
   --color-darkcustom: #0d1114;
   --color-special-border-color: rgba(255, 255, 255, 0.09);
   --color-deep-dark: #07131c;
+  --color-mint-500: oklch(0.72 0.11 178);
 
   --color-gray-95: #16181d;
   --color-gray-90: #23272f;

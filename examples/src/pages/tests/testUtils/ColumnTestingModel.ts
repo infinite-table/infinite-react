@@ -117,7 +117,10 @@ export class ColumnTestingModel {
     const box = (await headerCell!.boundingBox())!;
     await this.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await this.page.mouse.down();
-    await this.page.mouse.move(box.x + box.width / 2 + leftOrRight, 0);
+    await this.page.mouse.move(
+      box.x + box.width / 2 + leftOrRight,
+      box.y + box.height / 2,
+    );
     await this.page.mouse.up();
   }
 }

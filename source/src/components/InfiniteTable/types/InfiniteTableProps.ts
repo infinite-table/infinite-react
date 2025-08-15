@@ -148,6 +148,7 @@ export type InfiniteTableColumnType<T> = {
   defaultSortable?: InfiniteTableColumn<T>['defaultSortable'];
   defaultEditable?: InfiniteTableColumn<T>['defaultEditable'];
   defaultFilterable?: InfiniteTableColumn<T>['defaultFilterable'];
+  defaultGroupable?: InfiniteTableColumn<T>['defaultGroupable'];
 
   columnGroup?: string;
 
@@ -208,6 +209,8 @@ export type InfiniteTableColumnApi<_T> = {
   showContextMenu: (target: EventTarget | HTMLElement) => void;
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
   hideContextMenu: () => void;
+
+  setVisible: (visible: boolean) => void;
 
   showFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
   toggleFilterOperatorMenu: (target: EventTarget | HTMLElement) => void;
@@ -645,6 +648,7 @@ export interface InfiniteTableProps<T> {
 
   columnDefaultFilterable?: boolean;
   columnDefaultEditable?: boolean;
+  columnDefaultGroupable?: boolean;
 
   /**
    * Default behavior for column sorting. Defaults to true.

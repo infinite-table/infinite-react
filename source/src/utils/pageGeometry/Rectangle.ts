@@ -15,6 +15,29 @@ type CoordsNoSize = {
   top: number;
 };
 
+function getMinimumBoundingRectangle(
+  firstRectangle: Rectangle,
+  otherRectangle: Rectangle,
+) {
+  const left = Math.min(firstRectangle.left, otherRectangle.left);
+  const top = Math.min(firstRectangle.top, otherRectangle.top);
+
+  const rightA = firstRectangle.left + firstRectangle.width;
+  const rightB = otherRectangle.left + otherRectangle.width;
+  const right = Math.max(rightA, rightB);
+
+  const bottomA = firstRectangle.top + firstRectangle.height;
+  const bottomB = otherRectangle.top + otherRectangle.height;
+  const bottom = Math.max(bottomA, bottomB);
+
+  return new Rectangle({
+    top,
+    left,
+    width: right - left,
+    height: bottom - top,
+  });
+}
+
 export type RectangleCoords = CoordsWithSize | CoordsNoSize;
 export class Rectangle extends PolyWithPoints {
   top: number = 0;
@@ -61,6 +84,39 @@ export class Rectangle extends PolyWithPoints {
     }
   }
 
+  getMinimumBoundingRectangle(...otherRectangles: Rectangle[]) {
+    let minRectangle: Rectangle = this;
+    for (const otherRectangle of otherRectangles) {
+      minRectangle = getMinimumBoundingRectangle(minRectangle, otherRectangle);
+    }
+    return minRectangle;
+  }
+
+  toDOMRect() {
+    const rect: DOMRectReadOnly = {
+      top: this.top,
+      left: this.left,
+      bottom: this.top + this.height,
+      right: this.left + this.width,
+      height: this.height,
+      width: this.width,
+      x: this.left,
+      y: this.top,
+      toJSON: () => ({
+        top: this.top,
+        left: this.left,
+        bottom: this.top + this.height,
+        right: this.left + this.width,
+        height: this.height,
+        width: this.width,
+        x: this.left,
+        y: this.top,
+      }),
+    };
+
+    return rect;
+  }
+
   containsPoint(p: PointCoords) {
     return new ConvexPoly(this.getPoints()).containsPoint(p);
   }
@@ -79,6 +135,13 @@ export class Rectangle extends PolyWithPoints {
 
   getBottomRight() {
     return { left: this.left + this.width, top: this.top + this.height };
+  }
+
+  getCenter() {
+    return {
+      left: this.left + this.width / 2,
+      top: this.top + this.height / 2,
+    };
   }
 
   getPoints() {

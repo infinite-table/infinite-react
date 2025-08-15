@@ -4,7 +4,7 @@ import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps
 
 import { ColumnAndGroupTreeInfo } from './buildColumnAndGroupTree';
 
-export type InfiniteTableHeaderProps<T> = {
+export type InfiniteTableInternalHeaderProps<T> = {
   repaintId?: string | number;
   headerBrain: MatrixBrain;
   bodyBrain: MatrixBrain;

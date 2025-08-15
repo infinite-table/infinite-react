@@ -55,10 +55,66 @@ function sortPoints(
   return result;
 }
 
+function pointsAreOnTheSameLine(points: PointCoords[]) {
+  if (points.length < 2) {
+    return false;
+  }
+
+  const left = points[0].left;
+  const top = points[0].top;
+
+  const sidesWithDifferentValue = {
+    left: false,
+    top: false,
+  };
+
+  for (let i = 1, len = points.length; i < len; i++) {
+    if (sidesWithDifferentValue.left && sidesWithDifferentValue.top) {
+      return false;
+    }
+    if (points[i].left !== left) {
+      sidesWithDifferentValue.left = true;
+    }
+    if (points[i].top !== top) {
+      sidesWithDifferentValue.top = true;
+    }
+  }
+
+  if (sidesWithDifferentValue.left && sidesWithDifferentValue.top) {
+    return false;
+  }
+  return true;
+}
+
+function lineContainsPoint(points: PointCoords[], point: PointCoords) {
+  if (points.length < 2) {
+    return points[0]
+      ? points[0].left === point.left && points[0].top === point.top
+      : false;
+  }
+
+  points = sortPoints(points as ArrayWithAtLeast3<PointCoords>);
+
+  const first = points[0];
+  const last = points[points.length - 1];
+
+  return first.left === last.left
+    ? point.left === first.left &&
+        point.top >= Math.min(first.top, last.top) &&
+        point.top <= Math.max(first.top, last.top)
+    : point.top === first.top &&
+        point.left >= Math.min(first.left, last.left) &&
+        point.left <= Math.max(first.left, last.left);
+}
+
 export function polyContainsPoint(
   points: ArrayWithAtLeast3<PointCoords>,
   point: PointCoords,
 ): boolean {
+  if (pointsAreOnTheSameLine(points)) {
+    return lineContainsPoint(points, point);
+  }
+
   // we need to sort the points so they are in clockwise or counter clockwise order
   points = sortPoints(points);
 

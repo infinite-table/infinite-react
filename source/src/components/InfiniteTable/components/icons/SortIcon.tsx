@@ -14,6 +14,7 @@ type SortIconProps = {
   style?: React.CSSProperties;
   className?: string;
   index?: number;
+  forceSize?: boolean;
 };
 
 const defaultLineStyle: React.CSSProperties = {
@@ -75,7 +76,7 @@ export function SortIcon(props: SortIconProps) {
     }
   };
 
-  if (!rendered) {
+  if (!rendered && !props.forceSize) {
     return null;
   }
 

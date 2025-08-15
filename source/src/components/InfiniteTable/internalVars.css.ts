@@ -25,6 +25,7 @@ export const InternalVars = createThemeContract({
   columnWidthAtIndex: null,
   columnOffsetAtIndex: null,
   columnOffsetAtIndexWhileReordering: null,
+  columnVisibilityAtIndex: null,
   columnZIndexAtIndex: null,
 
   pinnedStartWidth: null,

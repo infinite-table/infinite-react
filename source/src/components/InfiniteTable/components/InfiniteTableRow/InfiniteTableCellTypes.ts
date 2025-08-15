@@ -28,7 +28,7 @@ export type InfiniteTableBaseCellProps<T> = {
 
   rowId?: any;
 
-  renderChildren: () => Renderable;
+  renderChildren: React.ReactNode | (() => Renderable);
   width: number;
   cssEllipsis?: boolean;
   // children: Renderable;

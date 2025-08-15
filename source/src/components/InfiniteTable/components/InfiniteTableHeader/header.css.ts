@@ -5,16 +5,20 @@ import { InfiniteClsRecipe } from '../../InfiniteCls.css';
 import { ThemeVars } from '../../vars.css';
 import {
   alignItems,
+  color,
   cssEllipsisClassName,
   display,
   flexFlow,
   height,
   justifyContent,
+  left,
   overflow,
   position,
   top,
+  transform,
   visibility,
   width,
+  zIndex,
 } from '../../utilities.css';
 import {
   CellBorderObject,
@@ -64,6 +68,26 @@ export const HeaderFilterIconIndexCls = style({
   transition: 'top 0.2s',
   top: 0,
   right: 2,
+});
+
+export const HeaderCellProxyRemoveIconRecipe = recipe({
+  base: [
+    position.absolute,
+    top['50%'],
+    left[0],
+    transform['translate-50%Y'],
+    color.currentColor,
+  ],
+  variants: {
+    visible: {
+      true: {
+        visibility: 'visible',
+      },
+      false: {
+        visibility: 'hidden',
+      },
+    },
+  },
 });
 
 export const HeaderScrollbarPlaceholderCls = style([
@@ -146,6 +170,8 @@ export const HeaderClsRecipe = recipe({
 });
 
 export const HeaderCellProxy = style([
+  position.absolute,
+  zIndex['1000000'],
   {
     background: ThemeVars.components.HeaderCell.hoverBackground,
     color: ThemeVars.components.Cell.color,
@@ -153,6 +179,10 @@ export const HeaderCellProxy = style([
     padding: ThemeVars.components.Cell.padding,
     paddingLeft: 20,
     zIndex: 2_000,
+    display: 'flex',
+    flexFlow: 'row',
+    alignItems: 'center',
+    justifyContent: 'start',
   },
   cssEllipsisClassName,
 ]);

@@ -57,6 +57,30 @@ const HeaderVars = {
   [ThemeVars.components.Header.columnHeaderHeight]: '30px',
 };
 
+const GroupingToolbarVars = {
+  [ThemeVars.components.GroupingToolbar.background]: ThemeVars.background,
+  [ThemeVars.components.GroupingToolbar.rejectBackground]:
+    ThemeVars.components.GroupingToolbar.background,
+  [ThemeVars.components.GroupingToolbar
+    .activeBackground]: `color-mix(in srgb, ${ThemeVars.components.GroupingToolbar.color}, transparent calc(100% - ${ThemeVars.components.GroupingToolbar.activeBackgroundAlpha} * 100%))`,
+  [ThemeVars.components.GroupingToolbar.activeBackgroundAlpha]: '0.15',
+  [ThemeVars.components.GroupingToolbar.color]: ThemeVars.components.Cell.color,
+  [ThemeVars.components.GroupingToolbar.padding]: ThemeVars.spacing[3],
+  [ThemeVars.components.GroupingToolbar.gap]: ThemeVars.spacing[2],
+
+  [ThemeVars.components.GroupingToolbarItem.background]:
+    ThemeVars.components.GroupingToolbar.background,
+  [ThemeVars.components.GroupingToolbarItem
+    .border]: `1px solid ${ThemeVars.components.GroupingToolbar.color}`,
+  [ThemeVars.components.GroupingToolbarItem.borderRadius]:
+    ThemeVars.borderRadius,
+  [ThemeVars.components.GroupingToolbarItem
+    .activeBorder]: `1px solid ${ThemeVars.color.accent}`,
+  [ThemeVars.components.GroupingToolbarItem
+    .activeBackground]: `color-mix(in srgb, ${ThemeVars.components.GroupingToolbar.color}, transparent calc(100% - ${ThemeVars.components.GroupingToolbar.activeBackgroundAlpha} * 100%))`,
+  [ThemeVars.components.GroupingToolbarItem.activeBackgroundAlpha]: '0.15',
+};
+
 const ActiveCellIndicatorVars = {
   [ThemeVars.components.ActiveCellIndicator.inset]:
     ThemeVars.components.Cell.borderWidth,
@@ -202,6 +226,7 @@ export const LightVars = {
   [ThemeVars.fontSize[7]]: '2.25rem' /* 36px when 1rem=16px */,
 
   [ThemeVars.fontFamily]: 'inherit',
+  [ThemeVars.focusOutline]: `2px solid ${ThemeVars.color.accent}`,
   [ThemeVars.color.color]: '#484848',
   [ThemeVars.color.accent]: '#0284c7',
   [ThemeVars.color.success]: '#7aff7a',
@@ -216,6 +241,7 @@ export const LightVars = {
   ...LoadMaskVars,
   ...HeaderCellVars,
   ...HeaderVars,
+  ...GroupingToolbarVars,
   ...ActiveCellIndicatorVars,
   ...CellVars,
   ...RowVars,

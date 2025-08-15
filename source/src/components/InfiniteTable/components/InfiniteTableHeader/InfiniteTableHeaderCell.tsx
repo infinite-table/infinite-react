@@ -54,6 +54,7 @@ import {
   HeaderCellContentRecipe,
   HeaderCellContentVariantsType,
   HeaderSortIconRecipe,
+  HeaderCellProxyRemoveIconRecipe,
 } from './header.css';
 import {
   InfiniteTableColumnHeaderFilter,
@@ -102,6 +103,9 @@ export const InfiniteTableHeaderCellContext = React.createContext<
 >(null as any as InfiniteTableHeaderCellContextType<any>);
 
 import { InfiniteTableHeaderCellClassName } from './headerClassName';
+import { DRAG_ITEM_ATTRIBUTE, useDragListContext } from '../draggable/DragList';
+import { HiddenIcon } from '../icons/HiddenIcon';
+import { useInfiniteTableHeaderState } from '../InfiniteTablePublicHeader';
 export { InfiniteTableHeaderCellClassName };
 
 export function getColumnFilterType<T>(
@@ -136,6 +140,7 @@ export function getColumnFilterType<T>(
 }
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
+const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
 
 const spacer = <div className={flex['1']}></div>;
 
@@ -146,12 +151,18 @@ export const InfiniteHeaderCellDataAttributes = keyMirror({
   'data-column-id': '',
   'data-sort': '',
   'data-sort-index': '',
+  [DRAG_ITEM_ATTRIBUTE]: '',
 });
+
 export function InfiniteTableHeaderCell<T>(
   props: InfiniteTableHeaderCellProps<T>,
 ) {
   const column: InfiniteTableComputedColumn<T> = props.column;
 
+  const { allowColumnHideWhileDragging: ALLOW_COLUMN_HIDE_ON_DRAG } =
+    useInfiniteTableHeaderState();
+
+  const { onDragItemPointerDown } = useDragListContext();
   const {
     api,
     getComputed,
@@ -284,7 +295,7 @@ export function InfiniteTableHeaderCell<T>(
     dragging,
     domRef: ref,
     htmlElementRef: domRef,
-    insideColumnMenu: false,
+    renderLocation: 'column-header',
     column,
     columnsMap,
     columnSortInfo: sortInfo,
@@ -310,10 +321,14 @@ export function InfiniteTableHeaderCell<T>(
   };
   const renderParam = initialRenderParam;
 
+  let currentHeader = renderParam.renderBag.header;
+
   const renderChildren = () => {
     // #header-rendering-pipeline-run-twice-fix
     // if you uncomment this, all the rendering pipeline below
-    // will be flawed!!!
+    // will be flawed!!! (if passing renderChildren as a function to the InfiniteTableCell,
+    // as opposed to passing the result of renderChildren())
+
     // for whatever reason, this renderChildren() fn is called twice
     // probably because of React.StrictMode (it's called twice for the same outer closure run)
     // so removing the following 4 lines would result
@@ -423,7 +438,7 @@ export function InfiniteTableHeaderCell<T>(
     }
 
     if (header instanceof Function) {
-      renderParam.renderBag.header = (
+      renderParam.renderBag.header = currentHeader = (
         <RenderHeaderCellHookComponent
           render={header}
           renderParam={{
@@ -509,35 +524,16 @@ export function InfiniteTableHeaderCell<T>(
       ? column.headerClassName(renderParam)
       : column.headerClassName;
 
-  const { onPointerDown, proxyPosition } = useColumnPointerEvents({
-    columnId: column.id,
-    domRef,
-    horizontalLayoutPageIndex,
-  });
+  const { onPointerDown, proxyPosition, dragColumnOutside } =
+    useColumnPointerEvents({
+      columnId: column.id,
+      domRef,
+      horizontalLayoutPageIndex,
+      allowColumnHideOnDrag: ALLOW_COLUMN_HIDE_ON_DRAG,
+    });
 
   let draggingProxy = null;
 
-  if (dragging && proxyPosition) {
-    draggingProxy = (
-      <div
-        key={column.id}
-        className={`${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`}
-        style={{
-          position: 'absolute',
-          height,
-          width,
-          left: proxyPosition!.left ?? 0,
-
-          top: proxyPosition!.top ?? 0,
-          zIndex: 1_000_000_000,
-        }}
-      >
-        {renderParam.renderBag.header}
-      </div>
-    );
-
-    draggingProxy = createPortal(draggingProxy, portalDOMRef.current!);
-  }
   const ContextProvider =
     InfiniteTableHeaderCellContext.Provider as React.Provider<
       InfiniteTableHeaderCellContextType<T>
@@ -589,11 +585,15 @@ export function InfiniteTableHeaderCell<T>(
   const zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
   style.zIndex = zIndex;
 
+  // @ts-ignore
+  style.visibility = `var(${columnVisibilityAtIndex}-${column.computedVisibleIndex}, visible)`;
+
   const dataAttrs: {
     [K in keyof typeof InfiniteHeaderCellDataAttributes]: string;
   } = {
     'data-field': `${column.field || ''}`,
     'data-column-id': column.id,
+    [DRAG_ITEM_ATTRIBUTE]: column.id,
     'data-header-align': align,
     'data-name': 'HeaderCell',
     'data-sort': column.computedSortedAsc
@@ -625,6 +625,42 @@ export function InfiniteTableHeaderCell<T>(
 
   renderParam.renderBag.filterEditor = columnFilterEditor;
 
+  const pointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      onPointerDown(e);
+      onDragItemPointerDown(e);
+    },
+    [onPointerDown, onDragItemPointerDown],
+  );
+
+  const children = renderChildren();
+
+  if (dragging && proxyPosition) {
+    draggingProxy = (
+      <div
+        key={column.id}
+        className={`${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`}
+        style={{
+          height,
+          width,
+          left: proxyPosition!.left ?? 0,
+          top: proxyPosition!.top ?? 0,
+        }}
+      >
+        <div
+          className={HeaderCellProxyRemoveIconRecipe({
+            visible: dragColumnOutside,
+          })}
+        >
+          <HiddenIcon size={16} />
+        </div>
+
+        {currentHeader}
+      </div>
+    );
+
+    draggingProxy = createPortal(draggingProxy, portalDOMRef.current!);
+  }
   return (
     <ContextProvider value={renderParam}>
       <InfiniteTableCell<T>
@@ -637,7 +673,7 @@ export function InfiniteTableHeaderCell<T>(
         data-z-index={zIndex}
         style={style}
         width={width}
-        onPointerDown={onPointerDown}
+        onPointerDown={pointerDown}
         contentClassName={join(
           HeaderCellContentRecipe(contentRecipeVariants),
           justifyContent[align],
@@ -680,7 +716,7 @@ export function InfiniteTableHeaderCell<T>(
             {resizeHandle}
           </>
         }
-        renderChildren={renderChildren}
+        renderChildren={children}
       />
       {draggingProxy}
     </ContextProvider>

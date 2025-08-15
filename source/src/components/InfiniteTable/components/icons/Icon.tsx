@@ -4,6 +4,7 @@ export type TableIconProps = {
   size?: number;
   style?: React.CSSProperties;
   className?: string;
+  viewBox?: string;
 };
 
 export const Icon = (props: TableIconProps) => {

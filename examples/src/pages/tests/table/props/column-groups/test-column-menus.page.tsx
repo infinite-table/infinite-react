@@ -56,8 +56,8 @@ const columns: InfiniteTablePropColumns<Person> = {
     field: 'lastName',
 
     columnGroup: 'hello',
-    header: ({ insideColumnMenu }) => {
-      if (insideColumnMenu) {
+    header: ({ renderLocation }) => {
+      if (renderLocation === 'column-menu') {
         return 'Last name in col';
       }
       return 'Last Name!!';

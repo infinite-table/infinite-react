@@ -75,6 +75,8 @@ jobs:
 
       - name: Build test app
         run: npm run ci:test:build
+        env:
+          NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
 
       - name: Running Playwright Tests
         run: npm run ci:test:run

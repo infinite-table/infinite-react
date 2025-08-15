@@ -31,4 +31,21 @@ export default test.describe.parallel('polyContainsPoint', () => {
 
     expect(contained).toBe(true);
   });
+
+  test('strange poly should work', async ({}) => {
+    const contained = polyContainsPoint(
+      [
+        { top: 86, left: 1 },
+        { top: 86, left: 1 },
+        { top: 56, left: 1 },
+        { top: 56, left: 1 },
+      ],
+      {
+        left: 901,
+        top: 71,
+      },
+    );
+
+    expect(contained).toBe(false);
+  });
 });

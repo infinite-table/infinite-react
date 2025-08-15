@@ -55,8 +55,13 @@ export const transformTranslateZero = style({
   transform: 'translate3d(0,0,0)',
 });
 
+export const color = styleVariants({
+  currentColor: { color: 'currentColor' },
+});
+
 export const transform = styleVariants({
   translateZero: { transform: 'translate3d(0,0,0)' },
+  'translate-50%Y': { transform: 'translate3d(0,-50%,0)' },
   rotate90: { transform: 'rotate(90deg)' },
   rotate180: { transform: 'rotate(180deg)' },
 });
@@ -65,10 +70,40 @@ export const cursor = styleVariants({
   pointer: { cursor: 'pointer' },
   default: { cursor: 'default' },
   colResize: { cursor: 'col-resize' },
+  grabbing: { cursor: 'grabbing' },
+  grab: { cursor: 'grab' },
+});
+
+export const borderRadius = styleVariants({
+  none: { borderRadius: 0 },
+  default: { borderRadius: ThemeVars.borderRadius },
+  full: { borderRadius: '100%' },
+  '1': { borderRadius: ThemeVars.spacing[1] },
+  '2': { borderRadius: ThemeVars.spacing[2] },
+  '3': { borderRadius: ThemeVars.spacing[3] },
+  '4': { borderRadius: ThemeVars.spacing[4] },
+  '5': { borderRadius: ThemeVars.spacing[5] },
+  '6': { borderRadius: ThemeVars.spacing[6] },
+  '7': { borderRadius: ThemeVars.spacing[7] },
 });
 
 export const pointerEvents = styleVariants({
   none: { pointerEvents: 'none' },
+});
+
+export const padding = styleVariants({
+  none: { padding: 0 },
+  0: { padding: 0 },
+  '1': { padding: ThemeVars.spacing[1] },
+  '2': { padding: ThemeVars.spacing[2] },
+  '3': { padding: ThemeVars.spacing[3] },
+  '4': { padding: ThemeVars.spacing[4] },
+  '5': { padding: ThemeVars.spacing[5] },
+  '6': { padding: ThemeVars.spacing[6] },
+  '7': { padding: ThemeVars.spacing[7] },
+  '8': { padding: ThemeVars.spacing[8] },
+  '9': { padding: ThemeVars.spacing[9] },
+  '10': { padding: ThemeVars.spacing[10] },
 });
 
 export const flex = styleVariants({
@@ -114,11 +149,13 @@ export const width = styleVariants({
 });
 export const top = styleVariants({
   '100%': { top: '100%' },
+  '50%': { top: '50%' },
   '0': { top: '0' },
 });
 
 export const left = styleVariants({
   '100%': { left: '100%' },
+  '50%': { left: '50%' },
   '0': { left: '0' },
   auto: { left: 'auto' },
 });
@@ -141,6 +178,27 @@ export const flexFlow = styleVariants({
 export const alignItems = styleVariants({
   center: { alignItems: 'center' },
   stretch: { alignItems: 'stretch' },
+  start: { alignItems: 'flex-start' },
+  end: { alignItems: 'flex-end' },
+});
+
+export const alignSelf = styleVariants({
+  end: { alignSelf: 'end' },
+});
+
+export const gap = styleVariants({
+  none: { gap: 0 },
+  '0': { gap: 0 },
+  '1': { gap: ThemeVars.spacing[1] },
+  '2': { gap: ThemeVars.spacing[2] },
+  '3': { gap: ThemeVars.spacing[3] },
+  '4': { gap: ThemeVars.spacing[4] },
+  '5': { gap: ThemeVars.spacing[5] },
+  '6': { gap: ThemeVars.spacing[6] },
+  '7': { gap: ThemeVars.spacing[7] },
+  '8': { gap: ThemeVars.spacing[8] },
+  '9': { gap: ThemeVars.spacing[9] },
+  '10': { gap: ThemeVars.spacing[10] },
 });
 
 export const justifyContent = styleVariants({
