@@ -35,9 +35,10 @@ export async function generateStaticParams() {
 export const generateMetadata = async ({
   params,
 }: {
-  params: { blogpost: string[] };
+  params: Promise<{ blogpost: string[] }>;
 }): Promise<Metadata> => {
-  const path = `/blog/${params.blogpost.join('/')}`;
+  const p = await params;
+  const path = `/blog/${p.blogpost.join('/')}`;
 
   const postIndex = sortedPostsIncludingDrafts.findIndex(
     (post) => post.url === path,
@@ -53,12 +54,13 @@ export const generateMetadata = async ({
 
   return asMeta(res);
 };
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { blogpost: string[] };
+  params: Promise<{ blogpost: string[] }>;
 }) {
-  const path = `/blog/${params.blogpost.join('/')}`;
+  const p = await params;
+  const path = `/blog/${p.blogpost.join('/')}`;
 
   let arr = sortedPosts;
   let postIndex = arr.findIndex((post) => post.url === path);

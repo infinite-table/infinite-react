@@ -45,9 +45,10 @@ export async function generateStaticParams() {
 export const generateMetadata = async ({
   params,
 }: {
-  params: { docsPages: string[] };
+  params: Promise<{ docsPages: string[] }>;
 }): Promise<Metadata> => {
   const p = await params;
+
   const path = `/docs/${p.docsPages.join('/')}`;
   const pageIndex = allDocsPages.findIndex((page) => page.url === path);
   const page = allDocsPages[pageIndex];
@@ -68,7 +69,7 @@ export const generateMetadata = async ({
 export default async function DocsPage({
   params,
 }: {
-  params: { docsPages: string[] };
+  params: Promise<{ docsPages: string[] }>;
 }) {
   const p = await params;
   const path = `/docs/${p.docsPages.join('/')}`;
