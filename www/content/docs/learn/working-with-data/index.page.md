@@ -83,13 +83,10 @@ The <DataSourcePropLink name="data" /> prop can be either:
 
 </Note>
 
-<Sandpack title="Data loading example with promise">
-
-```ts file="basic-example.page.tsx"
+```ts live title="Data loading example with promise" file="basic-example.page.tsx"
 
 ```
 
-</Sandpack>
 
 ## Data Loading Strategies
 

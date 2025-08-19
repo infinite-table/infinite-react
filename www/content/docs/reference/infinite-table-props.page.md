@@ -2763,11 +2763,11 @@ If it's a function, it will be called with the following arguments:
 - `colInfo.groupIndexForColumn` - the index of `colInfo.groupByForColumn` in `colInfo.groupBy` - corresponding to the current column. Only defined when `groupRenderStrategy` is `multi-column`.
 - `toggleGroupRow(groupKeys: any[])` - a function you can use to toggle a group row. Pass an array of keys - the path to the group row you want to toggle.
 
-<Gotcha>
+<Note>
 
 You can still use <PropLink name="groupColumn" /> as a function with single column group render strategy, but in this case, you have to be explicit and specify <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>.
 
-</Gotcha>
+</Note>
 
 <Sandpack title="groupColumn used as an object">
 

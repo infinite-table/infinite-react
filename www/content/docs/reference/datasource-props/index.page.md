@@ -1565,11 +1565,11 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 </Note>
 
-<Gotcha>
+<Note>
 
 The <DPropLink name="useGroupKeysForMultiRowSelection" /> prop can be used for both lazy and non-lazy `DataSource` components.
 
-</Gotcha>
+</Note>
 
 <Sandpack title="Multi row checkbox selection with grouping" >
 

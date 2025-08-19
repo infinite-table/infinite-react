@@ -63,13 +63,13 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
 <InfiniteTable columns={columns} />
 ```
 
-<Gotcha>
+<Note>
 
 It's very important to remember you should not pass a different reference of a prop on each render. `<InfiniteTable />` is a optimized to only re-render when props change - so if you change the props on every re-render you will get a performance penalty.
 
 You should use `React.useCallback` / `React.useMemo` / `React.useState` to make sure you only update the props you pass down to `InfiniteTable` when you have to.
 
-</Gotcha>
+</Note>
 
 <Sandpack title="Basic Column Configuration">
 
