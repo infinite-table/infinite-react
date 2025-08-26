@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.2.1
+
+Fix usage of React context, to be backwards compatible to React 18. This prevented the component from rendering in React 18 (affected version was 7.2.0).
+
 ## 7.2.0
 
 Release GroupingToolbar - a new way to interact with your grouping.
