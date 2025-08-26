@@ -564,7 +564,11 @@ export const DragList = (props: DragListProps) => {
       ? props.children(domProps, contextValue)
       : props.children;
 
-  return <DragListContext value={contextValue}>{children}</DragListContext>;
+  return (
+    <DragListContext.Provider value={contextValue}>
+      {children}
+    </DragListContext.Provider>
+  );
 };
 
 type DragItemContextValue = {
