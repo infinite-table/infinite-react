@@ -10,6 +10,21 @@ type Pair<KeyType, ValueType> = {
   revision?: number;
 };
 
+type PairWithKeys<KeyType, ValueType> = Pair<KeyType, ValueType> & {
+  keys: KeyType[];
+};
+
+type StartingWithMethodOptions = {
+  excludeSelf?: boolean;
+  depthLimit?: number;
+};
+
+type StartingWithMethodOptionsWithOrder = {
+  excludeSelf?: boolean;
+  depthLimit?: number;
+  respectOrder?: boolean;
+};
+
 const SORT_ASC_REVISION = (p1: Pair<any, any>, p2: Pair<any, any>) =>
   sortAscending(p1.revision!, p2.revision!);
 
@@ -51,8 +66,7 @@ export class DeepMap<KeyType, ValueType> {
 
   getValuesStartingWith(
     keys: KeyType[],
-    excludeSelf?: boolean,
-    depthLimit?: number,
+    options?: StartingWithMethodOptions,
   ): ValueType[] {
     const result: ValueType[] = [];
     this.getStartingWith(
@@ -60,8 +74,7 @@ export class DeepMap<KeyType, ValueType> {
       (_keys, value) => {
         result.push(value);
       },
-      excludeSelf,
-      depthLimit,
+      options,
     );
 
     return result;
@@ -69,8 +82,7 @@ export class DeepMap<KeyType, ValueType> {
 
   getEntriesStartingWith(
     keys: KeyType[],
-    excludeSelf?: boolean,
-    depthLimit?: number,
+    options?: StartingWithMethodOptions,
   ): [KeyType[], ValueType][] {
     const result: [KeyType[], ValueType][] = [];
     this.getStartingWith(
@@ -78,24 +90,82 @@ export class DeepMap<KeyType, ValueType> {
       (keys, value) => {
         result.push([keys, value]);
       },
-      excludeSelf,
-      depthLimit,
+      options,
     );
 
     return result;
   }
 
-  getUnnestedKeysStartingWith(
+  getLeafNodesStartingWith<T>(
     keys: KeyType[],
-    excludeSelf?: boolean,
-    depthLimit?: number,
+    withPair: (pair: PairWithKeys<KeyType, ValueType>) => T,
+    options?: StartingWithMethodOptionsWithOrder,
+  ): T[] {
+    const { respectOrder = false } = options || {};
+    const pairs: PairWithKeys<KeyType, ValueType>[] = [];
+    const result: T[] = [];
+    this.getStartingWith(
+      keys,
+      (_keys, _value, pair) => {
+        if (!pair.map && pair.hasOwnProperty('value')) {
+          if (respectOrder) {
+            pairs.push(pair);
+          } else {
+            result.push(withPair(pair));
+          }
+        }
+      },
+      options,
+    );
+
+    if (respectOrder) {
+      return pairs.sort(SORT_ASC_REVISION).map(withPair);
+    }
+
+    return result;
+  }
+
+  getKeysForLeafNodesStartingWith(
+    keys: KeyType[],
+    options?: StartingWithMethodOptionsWithOrder,
   ): KeyType[][] {
+    return this.getLeafNodesStartingWith(keys, (pair) => pair.keys, options);
+  }
+
+  getKeysAndValuesForLeafNodesStartingWith(
+    keys: KeyType[],
+    options?: StartingWithMethodOptionsWithOrder,
+  ): [KeyType[], ValueType][] {
+    return this.getLeafNodesStartingWith(
+      keys,
+      (pair) => [pair.keys, pair.value!],
+      options,
+    );
+  }
+
+  /**
+   * @param keys - the keys of the node to start from
+   * @param excludeSelf - whether to exclude the start node
+   * @param depthLimit - the depth limit
+   * @returns the keys of the first child on each branch (starting from the node with the given keys)
+   */
+  getKeysOfFirstChildOnEachBranchStartingWith(
+    keys: KeyType[],
+    options?: StartingWithMethodOptionsWithOrder,
+  ): KeyType[][] {
+    const { excludeSelf, depthLimit, respectOrder = true } = options || {};
     const pairs: (Pair<KeyType, ValueType> & { keys: KeyType[] })[] = [];
+
+    const result: KeyType[][] = [];
 
     const fn: (pair: Pair<KeyType, ValueType> & { keys: KeyType[] }) => void = (
       pair,
     ) => {
-      pairs.push(pair);
+      if (respectOrder) {
+        pairs.push(pair);
+      } else {
+        result.push(pair.keys);
+      }
     };
 
     let currentMap = this.map;
@@ -139,7 +209,10 @@ export class DeepMap<KeyType, ValueType> {
       }
     }
     if (stop) {
-      return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+      if (respectOrder) {
+        return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+      }
+      return result;
     }
 
     this.visitWithNext(
@@ -154,13 +227,15 @@ export class DeepMap<KeyType, ValueType> {
       excludeSelf,
     );
 
-    return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+    if (respectOrder) {
+      return pairs.sort(SORT_ASC_REVISION).map((pair) => pair.keys);
+    }
+    return result;
   }
 
   getKeysStartingWith(
     keys: KeyType[],
-    excludeSelf?: boolean,
-    depthLimit?: number,
+    options?: StartingWithMethodOptions,
   ): KeyType[][] {
     const result: KeyType[][] = [];
     this.getStartingWith(
@@ -168,8 +243,7 @@ export class DeepMap<KeyType, ValueType> {
       (keys) => {
         result.push(keys);
       },
-      excludeSelf,
-      depthLimit,
+      options,
     );
 
     return result;
@@ -177,10 +251,14 @@ export class DeepMap<KeyType, ValueType> {
 
   private getStartingWith(
     keys: KeyType[],
-    fn: (key: KeyType[], value: ValueType) => void,
-    excludeSelf?: boolean,
-    depthLimit?: number,
+    fn: (
+      key: KeyType[],
+      value: ValueType,
+      pair: PairWithKeys<KeyType, ValueType>,
+    ) => void,
+    options?: StartingWithMethodOptions,
   ) {
+    const { excludeSelf, depthLimit } = options || {};
     let currentMap = this.map;
     let pair: Pair<KeyType, ValueType> | undefined;
     let stop = false;
@@ -210,7 +288,7 @@ export class DeepMap<KeyType, ValueType> {
 
     if (pair && pair.value !== undefined) {
       if (!excludeSelf) {
-        fn(keys, pair.value!);
+        fn(keys, pair.value!, { ...pair, keys });
       }
     }
     if (stop) {
@@ -219,8 +297,8 @@ export class DeepMap<KeyType, ValueType> {
 
     this.visitWithNext(
       keys,
-      (value, keys, _i, next) => {
-        fn(keys, value);
+      (value, keys, _i, next, pair) => {
+        fn(keys, value, { ...pair, keys });
         next?.();
       },
       false,
@@ -722,3 +800,6 @@ export class DeepMap<KeyType, ValueType> {
   //   return makeIterator();
   // }
 }
+
+// @ts-ignore
+globalThis.DeepMap = DeepMap;

@@ -177,7 +177,9 @@ export default test.describe('DeepMap', () => {
       [4, 10],
       [4, 20],
     ]);
-    expect(map.getKeysStartingWith([5], true)).toEqual([[5, 1]]);
+    expect(map.getKeysStartingWith([5], { excludeSelf: true })).toEqual([
+      [5, 1],
+    ]);
     expect(map.getKeysStartingWith([5])).toEqual([[5], [5, 1]]);
   });
 
@@ -194,14 +196,27 @@ export default test.describe('DeepMap', () => {
     // map.set([2, 1, 2], 7);
     // map.set([2, 1, 3], 8);
 
-    expect(map.getKeysStartingWith([], true, 1)).toEqual([[1], [2]]);
-    expect(map.getKeysStartingWith([], false, 1)).toEqual([[], [1], [2]]);
+    expect(
+      map.getKeysStartingWith([], { excludeSelf: true, depthLimit: 1 }),
+    ).toEqual([[1], [2]]);
+    expect(
+      map.getKeysStartingWith([], { excludeSelf: false, depthLimit: 1 }),
+    ).toEqual([[], [1], [2]]);
 
-    expect(map.getKeysStartingWith([1], false, 1)).toEqual([[1], [1, 0]]);
-    expect(map.getKeysStartingWith([1], true, 1)).toEqual([[1, 0]]);
-    expect(map.getKeysStartingWith([1, 1, 2], true, 1)).toEqual([]);
+    expect(
+      map.getKeysStartingWith([1], { excludeSelf: false, depthLimit: 1 }),
+    ).toEqual([[1], [1, 0]]);
+    expect(
+      map.getKeysStartingWith([1], { excludeSelf: true, depthLimit: 1 }),
+    ).toEqual([[1, 0]]);
+    expect(
+      map.getKeysStartingWith([1, 1, 2], { excludeSelf: true, depthLimit: 1 }),
+    ).toEqual([]);
 
-    const value = map.getKeysStartingWith([1], true, 2);
+    const value = map.getKeysStartingWith([1], {
+      excludeSelf: true,
+      depthLimit: 2,
+    });
 
     expect(value).toEqual([
       [1, 0],
@@ -504,7 +519,7 @@ export default test.describe('DeepMap', () => {
     ]);
   });
 
-  test('getUnnestedKeysStartingWith should work correctly - 1', () => {
+  test('getKeysOfFirstChildOnEachBranchStartingWith should work correctly - 1', () => {
     let map = new DeepMap<string | number, boolean>();
 
     map.set(['3', '31'], true);
@@ -512,8 +527,12 @@ export default test.describe('DeepMap', () => {
     map.set(['1', '10'], true);
     map.set(['3'], true);
 
-    expect(map.getUnnestedKeysStartingWith([], true)).toEqual([['1'], ['3']]);
-    expect(map.getKeysStartingWith([], true)).toEqual([
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual([['1'], ['3']]);
+    expect(map.getKeysStartingWith([], { excludeSelf: true })).toEqual([
       ['3'],
       ['3', '31'],
       ['1'],
@@ -528,10 +547,15 @@ export default test.describe('DeepMap', () => {
     map.set(['3'], true);
     map.set(['1'], true);
 
-    expect(map.getUnnestedKeysStartingWith([], true)).toEqual([['3'], ['1']]);
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual([['3'], ['1']]);
   });
 
-  test('getUnnestedKeysStartingWith should work correctly - 2', () => {
+  // so get unnested means get the first key you find going down the tree on a branch
+  test('getKeysOfFirstChildOnEachBranchStartingWith should work correctly - 2', () => {
     let map = new DeepMap<string | number, boolean>();
 
     map.set(['3', '31', '300'], true);
@@ -549,21 +573,148 @@ export default test.describe('DeepMap', () => {
       ['3', '31', '400'],
       ['1'],
     ];
-    expect(map.getUnnestedKeysStartingWith([], true)).toEqual(expected);
-    expect(map.getUnnestedKeysStartingWith(['3', '31'])).toEqual([
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual(expected);
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith(['3', '31']),
+    ).toEqual([
       ['3', '31', '300'],
       ['3', '31', '400'],
     ]);
 
     map.set([], true);
 
-    expect(map.getUnnestedKeysStartingWith([])).toEqual([[]]);
-    expect(map.getUnnestedKeysStartingWith([], true)).toEqual(expected);
-    expect(map.getUnnestedKeysStartingWith([], true, 1)).toEqual([['1']]);
-    expect(map.getUnnestedKeysStartingWith([], true, 2)).toEqual([
-      ['3', '30'],
-      ['1'],
+    expect(map.getKeysOfFirstChildOnEachBranchStartingWith([])).toEqual([[]]);
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual(expected);
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 1,
+      }),
+    ).toEqual([['1']]);
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 2,
+      }),
+    ).toEqual([['3', '30'], ['1']]);
+  });
+
+  test('getKeysOfFirstChildOnEachBranchStartingWith should work correctly - 3', () => {
+    // let map = new DeepMap<string | number, boolean>();
+    // map.set(['1'], true);
+    // map.set(['1', '10'], true);
+    // map.set(['3'], true);
+    // expect(map.getKeysOfFirstChildOnEachBranchStartingWith([], true)).toEqual([
+    //   ['1', '10'],
+    //   ['3'],
+    // ]);
+    let map = new DeepMap<string | number, boolean>();
+    map.set(['1'], true);
+    map.set(['3', '31'], true);
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+
+    expect(
+      map.getKeysOfFirstChildOnEachBranchStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual([['1'], ['3']]);
+  });
+
+  test('getKeysForLeafNodesStartingWith should work correctly - with excludeSelf: true', () => {
+    let map = new DeepMap<string | number, boolean>();
+    map.set(['1'], true);
+    map.set(['3', '31'], true);
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+
+    expect(
+      map.getKeysForLeafNodesStartingWith([], {
+        excludeSelf: true,
+        respectOrder: true,
+      }),
+    ).toEqual([
+      ['3', '31'],
+      ['1', '10'],
     ]);
+
+    map = new DeepMap<string | number, boolean>();
+    map.set(['3', '31'], true);
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+
+    expect(
+      map.getKeysForLeafNodesStartingWith([], {
+        excludeSelf: true,
+        respectOrder: true,
+      }),
+    ).toEqual([
+      ['3', '31'],
+      ['1', '10'],
+    ]);
+
+    map = new DeepMap<string | number, boolean>();
+    map.set(['1', '10'], true);
+    map.set(['3', '31'], true);
+    map.set(['3'], true);
+
+    expect(
+      map.getKeysForLeafNodesStartingWith(['1', '10'], {
+        excludeSelf: true,
+        respectOrder: true,
+      }),
+    ).toEqual([]);
+    expect(
+      map.getKeysForLeafNodesStartingWith(['1', '10'], {
+        excludeSelf: false,
+        respectOrder: true,
+      }),
+    ).toEqual([['1', '10']]);
+  });
+
+  test('getKeysForLeafNodesStartingWith should work correctly - with depthLimit', () => {
+    let map = new DeepMap<string | number, boolean>();
+    map.set(['1'], true);
+    map.set(['3', '31'], true);
+    map.set(['1', '10'], true);
+    map.set(['3'], true);
+    map.set(['4'], true);
+
+    expect(
+      map.getKeysForLeafNodesStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 1,
+      }),
+    ).toEqual([['4']]);
+    expect(
+      map.getKeysForLeafNodesStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 2,
+        respectOrder: true,
+      }),
+    ).toEqual([['3', '31'], ['1', '10'], ['4']]);
+
+    map = new DeepMap<string | number, boolean>();
+    expect(
+      map.getKeysForLeafNodesStartingWith([], { excludeSelf: false }),
+    ).toEqual([]);
+
+    map = new DeepMap<string | number, boolean>();
+    map.set([], true);
+    expect(
+      map.getKeysForLeafNodesStartingWith([], { excludeSelf: false }),
+    ).toEqual([[]]);
+    expect(
+      map.getKeysForLeafNodesStartingWith([], { excludeSelf: true }),
+    ).toEqual([]);
   });
 
   test('visit depth first, with index', () => {
