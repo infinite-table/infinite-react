@@ -1,19 +1,4 @@
-import { test, expect, Page } from '@testing';
-
-async function getCheckboxes(page: Page) {
-  let checkboxes = await page.$$('.InfiniteBody input[type="checkbox"]');
-
-  return await Promise.all(
-    checkboxes.map(
-      async (checkbox) =>
-        await checkbox.evaluate((el) =>
-          (el as HTMLInputElement).indeterminate
-            ? null
-            : (el as HTMLInputElement).checked,
-        ),
-    ),
-  );
-}
+import { test, expect } from '@testing';
 
 export default test.describe('TreeApi', () => {
   test('getSelectedLeafNodePaths works', async ({ page, apiModel }) => {
