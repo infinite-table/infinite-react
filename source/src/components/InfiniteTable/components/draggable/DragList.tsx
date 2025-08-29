@@ -222,7 +222,7 @@ function useInteractionTarget(
 }
 
 export const DragList = (props: DragListProps) => {
-  const domRef = React.useRef<HTMLElement>(null);
+  const domRef = React.useRef<HTMLElement | null>(null);
 
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
 

@@ -1,3 +1,4 @@
+import { TreeApi } from '@src/components/DataSource/TreeApi';
 import { Page } from '@playwright/test';
 import { DataSourceApi } from '@src/components/DataSource/types';
 import { InfiniteTableApi } from '@src/components/InfiniteTable/types';
@@ -33,6 +34,15 @@ export class InfiniteTableApiModel {
       const api = (window as any).DATA_SOURCE_API as DataSourceApi<any>;
       const fn = eval(evaluateFn);
       return fn(api);
+    }, evaluateFn.toString());
+  }
+
+  async evaluateTreeApi(evaluateFn: (treeApi: TreeApi<any>) => void) {
+    return this.page.evaluate((evaluateFn) => {
+      const api = (window as any).DATA_SOURCE_API as DataSourceApi<any>;
+
+      const fn = eval(evaluateFn);
+      return fn(api.treeApi);
     }, evaluateFn.toString());
   }
 }

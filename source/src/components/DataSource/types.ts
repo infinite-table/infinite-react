@@ -449,11 +449,13 @@ export type DataSourcePropOnRowSelectionChange_MultiRow = (
 ) => void;
 
 export type DataSourcePropOnTreeSelectionChange_MultiNode<T = any> = (
-  treeSelection: TreeSelectionStateObject,
+  treeSelectionStateObject: TreeSelectionStateObject,
   params: {
+    treeSelectionState: TreeSelectionState<T>;
     selectionMode: 'multi-row';
     lastUpdatedNodePath: NodePath | null;
     dataSourceApi: DataSourceApi<T>;
+    treeApi: TreeApi<T>;
   },
 ) => void;
 export type DataSourcePropOnRowSelectionChange_SingleRow = (

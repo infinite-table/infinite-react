@@ -171,8 +171,9 @@ function isChannelTargeted(channel: string, permissionToken: string) {
     : tokenParts;
 
   if (
-    partsMap.getKeysStartingWith(storagePartsWithoutWildcard, hasWildcard)
-      .length > 0
+    partsMap.getKeysStartingWith(storagePartsWithoutWildcard, {
+      excludeSelf: hasWildcard,
+    }).length > 0
   ) {
     const remainingParts = tokenParts.slice(indexOfToken + 1);
     if (remainingParts.length) {

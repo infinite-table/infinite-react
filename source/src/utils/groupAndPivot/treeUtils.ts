@@ -41,7 +41,10 @@ export function toTreeDataArray<T = any, RESULT_T = any>(
   }
 
   function traverse(path: string[], arr: RESULT_T[]) {
-    const nextLevelKeys = treeMap.getKeysStartingWith(path, true, 1);
+    const nextLevelKeys = treeMap.getKeysStartingWith(path, {
+      excludeSelf: true,
+      depthLimit: 1,
+    });
 
     for (const nextLevelKey of nextLevelKeys) {
       const p = [...path, nextLevelKey[nextLevelKey.length - 1]];

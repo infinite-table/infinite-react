@@ -1,6 +1,9 @@
 import { DataSourceApi, DataSourceComponentActions } from '.';
 
-import { InfiniteTableRowInfo } from '../InfiniteTable/types';
+import {
+  InfiniteTable_Tree_RowInfoLeafNode,
+  InfiniteTableRowInfo,
+} from '../InfiniteTable/types';
 import { getRowInfoAt } from './dataSourceGetters';
 import { NodePath, TreeExpandState } from './TreeExpandState';
 import {
@@ -41,7 +44,7 @@ export type TreeExpandStateApi<T> = {
   getRowInfoByPath(nodePath: any[]): InfiniteTableRowInfo<T> | null;
 };
 
-type TreeSelectionApi<_T = any> = {
+type TreeSelectionApi<T = any> = {
   get allRowsSelected(): boolean;
   isNodeSelected(nodePath: NodePath): boolean | null;
 
@@ -58,6 +61,19 @@ type TreeSelectionApi<_T = any> = {
   expandAll(): void;
   collapseAll(): void;
   deselectAll(): void;
+
+  getSelectedLeafNodePaths(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): NodePath[];
+  getDeselectedLeafNodePaths(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): NodePath[];
+  getSelectedLeafRowInfos(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): InfiniteTable_Tree_RowInfoLeafNode<T>[];
 };
 
 export type TreeApi<T> = TreeExpandStateApi<T> & TreeSelectionApi<T>;
@@ -92,6 +108,75 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     this.getState = param.getState;
     this.actions = param.actions;
     this.dataSourceApi = param.dataSourceApi;
+  }
+
+  getSelectedLeafNodePaths(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): NodePath[] {
+    const { treePaths } = this.getState();
+    const treeSelectionState =
+      config?.treeSelectionState || this.getState().treeSelectionState;
+
+    if (!treeSelectionState) {
+      return [];
+    }
+
+    return treeSelectionState.getSelectedLeafNodePaths(
+      config?.rootNodePath,
+      treePaths,
+    );
+  }
+
+  getDeselectedLeafNodePaths(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): NodePath[] {
+    const { treePaths } = this.getState();
+    const treeSelectionState =
+      config?.treeSelectionState || this.getState().treeSelectionState;
+
+    if (!treeSelectionState) {
+      return [];
+    }
+
+    return treeSelectionState.getDeselectedLeafNodePaths(
+      config?.rootNodePath,
+      treePaths,
+    );
+  }
+
+  getSelectedLeafRowInfos(config?: {
+    rootNodePath?: NodePath;
+    treeSelectionState?: TreeSelectionState<T>;
+  }): InfiniteTable_Tree_RowInfoLeafNode<T>[] {
+    const { treePaths } = this.getState();
+    const treeSelectionState =
+      config?.treeSelectionState || this.getState().treeSelectionState;
+
+    if (!treePaths || !treeSelectionState) {
+      return [];
+    }
+    const rootNodePath = config?.rootNodePath || [];
+
+    const selectedLeafRowInfos: InfiniteTable_Tree_RowInfoLeafNode<T>[] = [];
+
+    treePaths.getLeafNodesStartingWith(
+      rootNodePath,
+      (pair) => {
+        if (treeSelectionState.isNodeSelected(pair.keys)) {
+          const rowInfo = this.getRowInfoByPath(
+            pair.keys,
+          ) as InfiniteTable_Tree_RowInfoLeafNode<T>;
+          if (rowInfo) {
+            selectedLeafRowInfos.push(rowInfo);
+          }
+        }
+      },
+      { excludeSelf: true },
+    );
+
+    return selectedLeafRowInfos;
   }
 
   setNodeSelection = (

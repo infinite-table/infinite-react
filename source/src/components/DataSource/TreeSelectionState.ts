@@ -49,6 +49,38 @@ export class TreeSelectionState<T = any> {
     return this.getConfig().treeDeepMap;
   }
 
+  getSelectedLeafNodePaths(
+    rootNodePath: NodePath = [],
+    treeDeepMap?: DeepMap<any, any>,
+  ) {
+    treeDeepMap = treeDeepMap || this.getConfig().treeDeepMap;
+    const selectedLeafPaths: NodePath[] = [];
+
+    treeDeepMap.getLeafNodesStartingWith(rootNodePath, (pair) => {
+      if (this.isNodeSelected(pair.keys)) {
+        selectedLeafPaths.push(pair.keys);
+      }
+    });
+
+    return selectedLeafPaths;
+  }
+
+  getDeselectedLeafNodePaths(
+    rootNodePath: NodePath = [],
+    treeDeepMap?: DeepMap<any, any>,
+  ) {
+    treeDeepMap = treeDeepMap || this.getConfig().treeDeepMap;
+    const deselectedLeafPaths: NodePath[] = [];
+
+    treeDeepMap.getLeafNodesStartingWith(rootNodePath, (pair) => {
+      if (!this.isNodeSelected(pair.keys)) {
+        deselectedLeafPaths.push(pair.keys);
+      }
+    });
+
+    return deselectedLeafPaths;
+  }
+
   isLeafNode(nodePath: NodePath) {
     return !this.getTreeDeepMap().has(nodePath);
   }
@@ -193,7 +225,9 @@ export class TreeSelectionState<T = any> {
 
     const childPaths = selectionMap
       // todo this could be replaced with a .hasKeysUnder call (to be implemented in the deep map later)
-      .getUnnestedKeysStartingWith(nodePath, true)
+      .getKeysOfFirstChildOnEachBranchStartingWith(nodePath, {
+        excludeSelf: true,
+      })
       .sort(shortestToLongest);
 
     if (!childPaths.length) {

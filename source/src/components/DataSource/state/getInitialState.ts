@@ -890,15 +890,20 @@ export function getMappedCallbacks<T>() {
           callbackParams,
         };
       }
-      const callbackParams: Parameters<DataSourcePropOnTreeSelectionChange_MultiNode> =
-        [
-          (treeSelection as TreeSelectionState).getState(),
-          {
-            selectionMode: 'multi-row',
-            lastUpdatedNodePath: state.lastSelectionUpdatedNodePathRef.current,
-            dataSourceApi: state.__apiRef.current!,
-          },
-        ];
+      const dataSourceApi = state.__apiRef.current!;
+      const treeApi = dataSourceApi.treeApi;
+      const callbackParams: Parameters<
+        DataSourcePropOnTreeSelectionChange_MultiNode<T>
+      > = [
+        (treeSelection as TreeSelectionState).getState(),
+        {
+          treeSelectionState: treeSelection as TreeSelectionState<T>,
+          selectionMode: 'multi-row',
+          lastUpdatedNodePath: state.lastSelectionUpdatedNodePathRef.current,
+          dataSourceApi,
+          treeApi,
+        },
+      ];
       return {
         callbackParams,
       };

@@ -330,7 +330,10 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   }
 
   getColumnsWithCells() {
-    const positions = this.matrix.getUnnestedKeysStartingWith([], true);
+    const positions = this.matrix.getKeysOfFirstChildOnEachBranchStartingWith(
+      [],
+      { excludeSelf: true },
+    );
 
     // we use a set to remove duplicates
     const columns = new Set(positions.map((pos) => pos[1]));

@@ -92,14 +92,23 @@ export class RowSelectionState<T = any> {
 
   getGroupKeysDirectlyInsideGroup(groupKeys: any[]) {
     const { groupDeepMap } = this.getConfig();
-    return groupDeepMap?.getKeysStartingWith(groupKeys, true, 1) || [];
+    return (
+      groupDeepMap?.getKeysStartingWith(groupKeys, {
+        excludeSelf: true,
+        depthLimit: 1,
+      }) || []
+    );
   }
 
   getAllPrimaryKeysInsideGroup(groupKeys: any[]): any[] {
     const { groupDeepMap } = this.getConfig();
 
     if (!groupKeys.length) {
-      const topLevelKeys = groupDeepMap?.getKeysStartingWith([], true, 1) || [];
+      const topLevelKeys =
+        groupDeepMap?.getKeysStartingWith([], {
+          excludeSelf: true,
+          depthLimit: 1,
+        }) || [];
 
       return topLevelKeys
         .map((groupKeys) => this.getAllPrimaryKeysInsideGroup(groupKeys))
@@ -434,7 +443,9 @@ export class RowSelectionState<T = any> {
       return;
     }
     // retrieve any selection under this group
-    const selectedKeys = this.selectedMap.getKeysStartingWith(groupKeys, true);
+    const selectedKeys = this.selectedMap.getKeysStartingWith(groupKeys, {
+      excludeSelf: true,
+    });
 
     // and clean it up
     selectedKeys.forEach((groupKeys) => {
@@ -473,10 +484,9 @@ export class RowSelectionState<T = any> {
       return;
     }
     // retrieve any deselection under this group
-    const deselectedKeys = this.deselectedMap.getKeysStartingWith(
-      groupKeys,
-      true,
-    );
+    const deselectedKeys = this.deselectedMap.getKeysStartingWith(groupKeys, {
+      excludeSelf: true,
+    });
 
     // and clean it up
     deselectedKeys.forEach((groupKeys) => {
@@ -681,18 +691,16 @@ export class RowSelectionState<T = any> {
       const totalCount = this.getGroupCount(groupKeys);
 
       //explicitly selected rows
-      let selectedCount = this.selectedMap.getKeysStartingWith(
-        groupKeys,
-        true,
-        1,
-      ).length;
+      let selectedCount = this.selectedMap.getKeysStartingWith(groupKeys, {
+        excludeSelf: true,
+        depthLimit: 1,
+      }).length;
 
       // explicitly deselected rows
-      let deselectedCount = this.deselectedMap.getKeysStartingWith(
-        groupKeys,
-        true,
-        1,
-      ).length;
+      let deselectedCount = this.deselectedMap.getKeysStartingWith(groupKeys, {
+        excludeSelf: true,
+        depthLimit: 1,
+      }).length;
 
       const notSpecifiedCount = totalCount - (selectedCount + deselectedCount);
 
