@@ -1,7 +1,7 @@
 import { debug, DebugLogger } from './debugPackage';
 import { DeepMap } from './DeepMap';
 
-export const log: DebugLogger = debug('InfiniteTable');
+export const log: DebugLogger = debug('IT:InfiniteTable');
 
 export const COLOR_ERROR_VALUE = `#dc3545`;
 export const COLOR_WARN_VALUE = `#eb9316`;

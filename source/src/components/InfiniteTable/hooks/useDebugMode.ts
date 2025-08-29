@@ -177,7 +177,7 @@ const setupHook = once<any, DevToolsHookFn>(() => {
 
   (window as any).__INFINITE_TABLE_DEVTOOLS_HOOK__ = hookFn;
 
-  debug.onLogIntent('*', (options) => {
+  debug.onLogIntent('IT:*', (options) => {
     postMessage({
       ...messageBase,
       url: getPageUrlOfWindow(),
@@ -188,7 +188,16 @@ const setupHook = once<any, DevToolsHookFn>(() => {
         color: options.color,
         args: options.args.map((arg) => {
           if (typeof arg === 'object' && arg !== null) {
-            return JSON.stringify(arg);
+            let str = '';
+            try {
+              str = JSON.stringify(arg);
+            } catch (e) {
+              console.error(
+                `Cannot stringify arg in global log interceptor`,
+                arg,
+              );
+            }
+            return str;
           }
           return String(arg);
         }),

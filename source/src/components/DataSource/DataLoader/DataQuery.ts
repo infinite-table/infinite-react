@@ -22,7 +22,7 @@ export class DataQuery {
 
   constructor(debugName: string) {
     this.debugName = debugName || '';
-    this.logger = debug(`${debugName}:DataQuery`);
+    this.logger = debug(`IT:${debugName}:DataQuery`);
   }
 
   fetch = async (loadFn: DataQueryFn, ...key: DataQueryKey[]) => {

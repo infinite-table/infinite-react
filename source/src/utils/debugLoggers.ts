@@ -6,7 +6,7 @@ export interface LogFn {
 }
 export const dbg = (channelName?: string) => {
   const result = debug(
-    channelName ? `${channelName}:TYPE=debug` : 'TYPE=debug',
+    channelName ? `IT:${channelName}:TYPE=debug` : 'IT:TYPE=debug',
   );
 
   result.logFn = console.log.bind(console);
@@ -16,7 +16,7 @@ export const dbg = (channelName?: string) => {
 
 export const err = (channelName?: string) => {
   const result = debug(
-    channelName ? `${channelName}:TYPE=error` : 'TYPE=error',
+    channelName ? `IT:${channelName}:TYPE=error` : 'IT:TYPE=error',
   );
 
   result.logFn = console.error.bind(console);

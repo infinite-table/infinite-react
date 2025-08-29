@@ -3,6 +3,14 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.2.3
+
+Fix listening to logs from the `debug` fn that Infinite exports, so we only listen to own logs. This avoids errors circular stringification errors of log messages.
+
+## 7.2.2
+
+Improve `TreeApi` with `getSelectedLeafNodePaths` method and other related methods.
+
 ## 7.2.1
 
 Fix usage of React context, to be backwards compatible to React 18. This prevented the component from rendering in React 18 (affected version was 7.2.0).
