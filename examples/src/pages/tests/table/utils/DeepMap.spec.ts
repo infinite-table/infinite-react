@@ -717,6 +717,48 @@ export default test.describe('DeepMap', () => {
     ).toEqual([]);
   });
 
+  test('getLeafNodesStartingWith should work correctly', () => {
+    let map = new DeepMap<string | number, boolean>();
+    map.set(['1'], true);
+    map.set(['3', '31'], true);
+    map.set(['1', '10'], true);
+    map.set(['1', '20'], true);
+    map.set(['3'], true);
+    map.set(['4'], true);
+
+    const result = map.getLeafNodesStartingWith([], (pair) => pair.keys);
+    expect(result).toEqual([['1', '10'], ['1', '20'], ['3', '31'], ['4']]);
+  });
+
+  test('getLeafNodesStartingWith should work correctly - second scenario', () => {
+    let map = new DeepMap<string | number, boolean>();
+    map.set(['1'], true);
+    map.set(['1', '10'], true);
+    map.set(['1', '10', '100'], true);
+    map.set(['1', '10', '101'], true);
+    map.set(['1', '10', '102'], true);
+    map.set(['2'], true);
+    map.set(['2', '20'], true);
+    map.set(['3', '30'], true);
+    map.set(['3', '31'], true);
+    map.set(['3', '31', '310'], true);
+    map.set(['3', '31', '311'], true);
+    map.set(['3', '31', '311', '3110'], true);
+    map.set(['3', '31', '311', '3111'], true);
+
+    const result = map.getLeafNodesStartingWith([], (pair) => pair.keys);
+    expect(result).toEqual([
+      ['1', '10', '100'],
+      ['1', '10', '101'],
+      ['1', '10', '102'],
+      ['2', '20'],
+      ['3', '30'],
+      ['3', '31', '310'],
+      ['3', '31', '311', '3110'],
+      ['3', '31', '311', '3111'],
+    ]);
+  });
+
   test('visit depth first, with index', () => {
     const map = new DeepMap<string | number, number>();
 

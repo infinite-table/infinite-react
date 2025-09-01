@@ -110,6 +110,10 @@ export default function App() {
   const [dataSourceApi, setDataSourceApi] =
     useState<DataSourceApi<FileSystemNode> | null>();
 
+  const [treeSelectionState, setTreeSelectionState] =
+    useState<TreeSelectionValue>(defaultTreeSelection);
+
+  (globalThis as any).treeSelectionState = treeSelectionState;
   return (
     <>
       <TreeDataSource
@@ -117,14 +121,13 @@ export default function App() {
         nodesKey="children"
         primaryKey="id"
         data={dataSource}
-        defaultTreeSelection={defaultTreeSelection}
+        treeSelection={treeSelectionState}
         selectionMode="multi-row"
-        onTreeSelectionChange={(e, { treeSelectionState }) => {
-          console.log(
-            'onTreeSelectionChange',
-            e,
-            treeSelectionState.getSelectedLeafNodePaths(),
-          );
+        onTreeSelectionChange={(_e, { treeSelectionState }) => {
+          setTreeSelectionState({
+            defaultSelection: false,
+            selectedPaths: treeSelectionState.getSelectedLeafNodePaths(),
+          });
         }}
       >
         <div

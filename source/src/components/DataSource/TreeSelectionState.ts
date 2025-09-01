@@ -22,6 +22,7 @@ export type TreeSelectionStateObject =
 
 export type TreeSelectionStateConfig<_T = any> = {
   treeDeepMap: DeepMap<any, DeepMapTreeValueType<any, any>>;
+  treePaths: DeepMap<any, true>;
 };
 
 export type GetTreeSelectionStateConfig<T> = () => TreeSelectionStateConfig<T>;
@@ -51,12 +52,12 @@ export class TreeSelectionState<T = any> {
 
   getSelectedLeafNodePaths(
     rootNodePath: NodePath = [],
-    treeDeepMap?: DeepMap<any, any>,
+    treePaths?: DeepMap<any, true>,
   ) {
-    treeDeepMap = treeDeepMap || this.getConfig().treeDeepMap;
+    treePaths = treePaths || this.getConfig().treePaths;
     const selectedLeafPaths: NodePath[] = [];
 
-    treeDeepMap.getLeafNodesStartingWith(rootNodePath, (pair) => {
+    treePaths.getLeafNodesStartingWith(rootNodePath, (pair) => {
       if (this.isNodeSelected(pair.keys)) {
         selectedLeafPaths.push(pair.keys);
       }
@@ -67,12 +68,12 @@ export class TreeSelectionState<T = any> {
 
   getDeselectedLeafNodePaths(
     rootNodePath: NodePath = [],
-    treeDeepMap?: DeepMap<any, any>,
+    treePaths?: DeepMap<any, true>,
   ) {
-    treeDeepMap = treeDeepMap || this.getConfig().treeDeepMap;
+    treePaths = treePaths || this.getConfig().treePaths;
     const deselectedLeafPaths: NodePath[] = [];
 
-    treeDeepMap.getLeafNodesStartingWith(rootNodePath, (pair) => {
+    treePaths.getLeafNodesStartingWith(rootNodePath, (pair) => {
       if (!this.isNodeSelected(pair.keys)) {
         deselectedLeafPaths.push(pair.keys);
       }

@@ -89,7 +89,7 @@ const treeParams = {
   toKey: (node: FileSystemNode) => node.id,
 };
 
-const { deepMap } = tree(treeParams, nodes);
+const { deepMap, treePaths } = tree(treeParams, nodes);
 
 export default test.describe.parallel('TreeSelectionState', () => {
   test('should work properly', async () => {
@@ -101,6 +101,7 @@ export default test.describe.parallel('TreeSelectionState', () => {
       },
       () => ({
         treeDeepMap: deepMap,
+        treePaths,
       }),
     );
 
@@ -119,6 +120,7 @@ export default test.describe.parallel('TreeSelectionState', () => {
       },
       () => ({
         treeDeepMap: deepMap,
+        treePaths,
       }),
     );
 
@@ -133,5 +135,43 @@ export default test.describe.parallel('TreeSelectionState', () => {
     );
 
     expect(treeSelectionState.getSelectedCount()).toBe(3);
+  });
+
+  test('DeepMap.getLeafNodesStartingWith should work properly', async () => {
+    const result = treePaths.getLeafNodesStartingWith([], (pair) => pair.keys);
+
+    expect(result).toEqual([
+      ['1', '10', '100'],
+      ['1', '10', '101'],
+      ['1', '10', '102'],
+      ['2', '20'],
+      ['3', '30'],
+      ['3', '31', '310'],
+      ['3', '31', '311', '3110'],
+      ['3', '31', '311', '3111'],
+    ]);
+  });
+
+  test('getSelectedLeafNodePaths should work properly', async () => {
+    const treeSelectionState = new TreeSelectionState(
+      {
+        defaultSelection: false,
+        selectedPaths: [['3'], ['1', '10', '100']],
+      },
+      () => ({
+        treeDeepMap: deepMap,
+        treePaths,
+      }),
+    );
+
+    const result = treeSelectionState.getSelectedLeafNodePaths();
+
+    expect(result).toEqual([
+      ['1', '10', '100'],
+      ['3', '30'],
+      ['3', '31', '310'],
+      ['3', '31', '311', '3110'],
+      ['3', '31', '311', '3111'],
+    ]);
   });
 });

@@ -10,7 +10,7 @@ import {
 import {
   DraggableItem,
   DragInteractionTarget,
-  DragInteractionTargetData,
+  type DragInteractionTargetData,
   DragInteractionTargetMoveEvent,
 } from './DragInteractionTarget';
 

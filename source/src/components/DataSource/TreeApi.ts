@@ -94,6 +94,7 @@ export function treeSelectionStateConfigGetter<T>(
         : stateOrStateGetter;
 
     return {
+      treePaths: state.treePaths!,
       treeDeepMap: state.treeDeepMap!,
     };
   };
