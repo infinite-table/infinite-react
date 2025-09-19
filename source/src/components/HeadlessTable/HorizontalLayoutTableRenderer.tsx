@@ -16,10 +16,6 @@ export class HorizontalLayoutTableRenderer extends GridRenderer {
   }
 
   protected getCellRealCoordinates(rowIndex: number, colIndex: number) {
-    // return {
-    //   rowIndex,
-    //   colIndex,
-    // };
     return this.brain.getHorizontalLayoutPositionFromMatrixCoordinates({
       rowIndex,
       colIndex,
