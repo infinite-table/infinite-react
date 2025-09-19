@@ -57,3 +57,5 @@ export {
   createFlashingColumnCellComponent,
   FlashingColumnCell,
 } from './components/InfiniteTable/components/InfiniteTableRow/FlashingColumnCell';
+
+export { INTERNAL_MatrixDebugger } from './components/HeadlessTable/MatrixDebugger';

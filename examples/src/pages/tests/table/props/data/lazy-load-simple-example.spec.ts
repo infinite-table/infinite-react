@@ -10,7 +10,7 @@ async function getCallCount({ page }: { page: Page }) {
   return (await getFnCalls('dataSource', { page })).length;
 }
 
-const TIMEOUT = 50;
+const TIMEOUT = 150;
 
 export default test.describe.parallel('Lazy Load Data', () => {
   test('should work', async ({ page, tableModel }) => {

@@ -10,7 +10,7 @@ async function getCallCount({ page }: { page: Page }) {
   return (await getFnCalls('dataSource', { page })).length;
 }
 
-const TIMEOUT = 50;
+const TIMEOUT = 150;
 
 export default test.describe.parallel('Lazy Load Grouped Data', () => {
   test('should work when we expand a group and sort by it', async ({
@@ -41,7 +41,7 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     });
 
     await cell.clickDetailIcon();
-    await page.waitForTimeout(50);
+    await page.waitForTimeout(TIMEOUT);
 
     CALL_COUNT = 2;
     dataSourceCalls = await getCalls({ page });

@@ -54,7 +54,7 @@ export class GridRenderer extends Logger {
 
   public cellDetachedClassNames: string[] = [];
 
-  protected cellManager: GridCellManager<{
+  public cellManager: GridCellManager<{
     renderRowIndex: number;
     renderColIndex: number;
   }>;
