@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { flushSync } from 'react-dom';
 import { useLayoutEffect, useRef, useState } from 'react';
 
 import type { Renderable } from '../types/Renderable';
@@ -30,10 +31,14 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
           cancelAnimationFrame(rafId.current);
         }
         rafId.current = requestAnimationFrame(() => {
-          setChildren(children);
+          flushSync(() => {
+            setChildren(children);
+          });
         });
       } else {
-        setChildren(children);
+        flushSync(() => {
+          setChildren(children);
+        });
       }
     }
     const remove = props.updater.onChange(onChange);
