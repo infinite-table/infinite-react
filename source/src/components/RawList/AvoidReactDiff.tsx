@@ -31,13 +31,17 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
           cancelAnimationFrame(rafId.current);
         }
         rafId.current = requestAnimationFrame(() => {
-          flushSync(() => {
-            setChildren(children);
+          queueMicrotask(() => {
+            flushSync(() => {
+              setChildren(children);
+            });
           });
         });
       } else {
-        flushSync(() => {
-          setChildren(children);
+        queueMicrotask(() => {
+          flushSync(() => {
+            setChildren(children);
+          });
         });
       }
     }
