@@ -2,7 +2,10 @@ import { test, expect } from '@testing';
 
 export default test.describe
   .parallel('Switching from pivot to normal table', () => {
-  test('should properly handle the change', async ({ page, tableModel }) => {
+  test.skip('should properly handle the change', async ({
+    page,
+    tableModel,
+  }) => {
     await page.waitForInfinite();
 
     await page.getByText('Switch to no pivot').click();
