@@ -6,6 +6,8 @@ export default test.describe
     await page.waitForInfinite();
 
     await page.getByText('Switch to no pivot').click();
+
+    await page.waitForTimeout(200);
     expect(await tableModel.getVisibleColumnIds()).toEqual([
       'id',
       'name',
@@ -17,7 +19,7 @@ export default test.describe
     ]);
 
     await page.getByText('Switch to Pivot').click();
-
+    await page.waitForTimeout(200);
     expect(await tableModel.getVisibleColumnIds()).toEqual([
       'group-by-license',
       'group-by-language',
