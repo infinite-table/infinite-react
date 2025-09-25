@@ -3,10 +3,16 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 7.2.5 
+## 7.3.0
 
 Fix DataGrid virtualization issues in React 18 and above, caused by batched updates
 Improve tree selection when there is an external filter
+
+Starting with this version, the minimum React version is `18`.
+
+## 7.2.4 
+
+Minor bugfixes
 
 ## 7.2.3
 
