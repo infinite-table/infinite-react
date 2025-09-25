@@ -3,6 +3,11 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.2.5 
+
+Fix DataGrid virtualization issues in React 18 and above, caused by batched updates
+Improve tree selection when there is an external filter
+
 ## 7.2.3
 
 Fix listening to logs from the `debug` fn that Infinite exports, so we only listen to own logs. This avoids errors circular stringification errors of log messages.

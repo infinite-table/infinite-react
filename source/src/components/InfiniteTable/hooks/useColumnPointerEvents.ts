@@ -27,6 +27,7 @@ import { useDragDropProvider } from '../components/draggable/DragDropProvider';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { getBodyNode } from '../bodyClassName';
 import { getHeaderWrapperNodes } from '../components/InfiniteTableHeader/headerClassName';
+import { isTargetInput } from '../../../utils/isTargetInput';
 
 const baseZIndexForCells = stripVar(InternalVars.baseZIndexForCells);
 
@@ -96,9 +97,7 @@ export const useColumnPointerEvents = ({
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
-      //@ts-ignore
-      const tagName = e.target?.tagName;
-      if (tagName === 'INPUT' || tagName === 'BUTTON') {
+      if (isTargetInput(e.target)) {
         // early exit, so that (for example) checkbox selection works in the column header when clicking the checkbox
         return;
       }

@@ -1,5 +1,4 @@
 import { DeepMap } from '../../utils/DeepMap';
-import { DeepMapTreeValueType } from '../../utils/groupAndPivot';
 
 export type NodePath = any[];
 
@@ -20,12 +19,16 @@ export type TreeSelectionStateObject =
       deselectedPaths?: NodePath;
     };
 
-export type TreeSelectionStateConfig<_T = any> = {
-  treeDeepMap: DeepMap<any, DeepMapTreeValueType<any, any>>;
+type TreeSelectionStateConfigObject = {
   treePaths: DeepMap<any, true>;
 };
 
-export type GetTreeSelectionStateConfig<T> = () => TreeSelectionStateConfig<T>;
+export type TreeSelectionStateConfigParam<_T = any> = {
+  treePaths: TreeSelectionStateConfigObject['treePaths'] | [any[]];
+};
+export type GetTreeSelectionStateConfig<T> =
+  | TreeSelectionStateConfigParam<T>
+  | (() => TreeSelectionStateConfigParam<T>);
 
 type NodeSelectionState = {
   selected: boolean | null;
@@ -46,55 +49,138 @@ export class TreeSelectionState<T = any> {
 
   getConfig!: GetTreeSelectionStateConfig<T>;
 
-  getTreeDeepMap() {
-    return this.getConfig().treeDeepMap;
+  config!: TreeSelectionStateConfigObject;
+
+  getTreePaths(treePaths?: TreeSelectionStateConfigParam['treePaths']) {
+    if (treePaths) {
+      if (Array.isArray(treePaths)) {
+        return new DeepMap(treePaths.map((path) => [path, true] as const));
+      }
+      return treePaths;
+    }
+    return this.config.treePaths;
+  }
+
+  withTreePaths<T>(
+    fn: (treePaths: TreeSelectionStateConfigObject['treePaths']) => T,
+    treePaths?: TreeSelectionStateConfigParam['treePaths'],
+  ): T {
+    const initialTreePaths = this.config.treePaths;
+
+    treePaths = this.getTreePaths(treePaths);
+
+    const treePathsDifferent = treePaths !== initialTreePaths;
+
+    if (treePathsDifferent) {
+      this.xcache();
+    }
+
+    this.config.treePaths = treePaths;
+
+    const result = fn(treePaths);
+
+    this.config.treePaths = initialTreePaths;
+
+    if (treePathsDifferent) {
+      this.xcache();
+    }
+
+    return result;
+  }
+
+  getLeafNodePaths(
+    rootNodePath: NodePath = [],
+    treePaths?: TreeSelectionStateConfigParam['treePaths'],
+  ) {
+    return this.withTreePaths((paths) => {
+      return paths.getKeysForLeafNodesStartingWith(rootNodePath);
+    }, treePaths);
+  }
+
+  forEachLeafNodePath(
+    fn: (nodePath: NodePath, { selected }: { selected: boolean }) => void,
+    rootNodePath: NodePath = [],
+    treePaths?: TreeSelectionStateConfigParam['treePaths'],
+  ) {
+    const selectedObj = { selected: false };
+    this.withTreePaths((paths) => {
+      paths.getLeafNodesStartingWith(rootNodePath, (pair) => {
+        selectedObj.selected = this.isNodeSelected(pair.keys) === true;
+        fn(pair.keys, selectedObj);
+      });
+    }, treePaths);
   }
 
   getSelectedLeafNodePaths(
     rootNodePath: NodePath = [],
-    treePaths?: DeepMap<any, true>,
+    treePaths?: TreeSelectionStateConfigParam['treePaths'],
   ) {
-    treePaths = treePaths || this.getConfig().treePaths;
     const selectedLeafPaths: NodePath[] = [];
 
-    treePaths.getLeafNodesStartingWith(rootNodePath, (pair) => {
-      if (this.isNodeSelected(pair.keys)) {
-        selectedLeafPaths.push(pair.keys);
-      }
-    });
+    this.withTreePaths((paths) => {
+      paths.getLeafNodesStartingWith(rootNodePath, (pair) => {
+        if (this.isNodeSelected(pair.keys)) {
+          selectedLeafPaths.push(pair.keys);
+        }
+      });
+    }, treePaths);
 
     return selectedLeafPaths;
   }
 
   getDeselectedLeafNodePaths(
     rootNodePath: NodePath = [],
-    treePaths?: DeepMap<any, true>,
+    treePaths?: TreeSelectionStateConfigParam['treePaths'],
   ) {
-    treePaths = treePaths || this.getConfig().treePaths;
     const deselectedLeafPaths: NodePath[] = [];
 
-    treePaths.getLeafNodesStartingWith(rootNodePath, (pair) => {
-      if (!this.isNodeSelected(pair.keys)) {
-        deselectedLeafPaths.push(pair.keys);
-      }
-    });
+    this.withTreePaths((paths) => {
+      paths.getLeafNodesStartingWith(rootNodePath, (pair) => {
+        if (!this.isNodeSelected(pair.keys)) {
+          deselectedLeafPaths.push(pair.keys);
+        }
+      });
+    }, treePaths);
 
     return deselectedLeafPaths;
   }
 
-  isLeafNode(nodePath: NodePath) {
-    return !this.getTreeDeepMap().has(nodePath);
+  isLeafNode(nodePath: NodePath): boolean | null {
+    const { treePaths } = this.config;
+
+    if (!treePaths.has(nodePath)) {
+      return null;
+    }
+
+    const keys = treePaths.getKeysForLeafNodesStartingWith(nodePath);
+
+    if (keys.length === 1) {
+      return true;
+    }
+
+    return false;
+
+    // this was the initial implementation
+    // which is very correct, but let's use the tree paths instead of treeDeepMap
+    // because a TreeSelectionState object can be created more easily with a treePaths object
+    // than with a treeDeepMap object
+
+    // return !this.getTreeDeepMap().has(nodePath);
   }
 
   getLeafNodesCount(nodePath: NodePath) {
-    const treeDeepMap = this.getTreeDeepMap();
-    const deepMapValue = treeDeepMap.get(nodePath);
-    if (!deepMapValue) {
-      // this is a leaf node
-      return 1;
-    }
+    // if the node path is a leaf node, we return 1
+    return this.config.treePaths.getKeysForLeafNodesStartingWith(nodePath)
+      .length;
 
-    return deepMapValue.items.length;
+    // const treeDeepMap = this.getTreeDeepMap();
+    // const deepMapValue = treeDeepMap.get(nodePath);
+    // if (!deepMapValue) {
+    //   // this is a leaf node
+    //   return 1;
+    // }
+
+    // return deepMapValue.items.length;
   }
 
   static from<T>(
@@ -106,28 +192,44 @@ export class TreeSelectionState<T = any> {
 
   constructor(
     state: TreeSelectionStateObject | TreeSelectionState,
-    getConfig: GetTreeSelectionStateConfig<T>,
+    getConfig?: GetTreeSelectionStateConfig<T>,
   ) {
-    const stateObject =
-      state instanceof Object.getPrototypeOf(this).constructor
-        ? //@ts-ignore
-          state.getState()
-        : state;
+    const isTreeSelectionStateInstance =
+      state instanceof Object.getPrototypeOf(this).constructor;
+    const stateObject = isTreeSelectionStateInstance
+      ? //@ts-ignore
+        state.getState()
+      : state;
 
-    this.setConfigFn(getConfig);
+    this.setConfig(
+      getConfig ||
+        (isTreeSelectionStateInstance
+          ? (state as TreeSelectionState).config
+          : {
+              treePaths: new DeepMap(),
+            }),
+    );
 
+    this.disableCorrectnessChecks();
     this.update(stateObject);
+    this.enableCorrectnessChecks();
   }
-  setConfigFn(getConfig: GetTreeSelectionStateConfig<T>) {
-    this.getConfig = getConfig;
+  setConfig(getConfig: GetTreeSelectionStateConfig<T>) {
+    const config = typeof getConfig === 'function' ? getConfig() : getConfig;
+
+    this.config = {
+      treePaths: Array.isArray(config.treePaths)
+        ? new DeepMap(config.treePaths.map((path) => [path, true]))
+        : config.treePaths,
+    };
     this.xcache();
   }
 
-  xcache() {
+  private xcache() {
     this.cache.clear();
   }
 
-  update(stateObject: TreeSelectionStateObject) {
+  private update(stateObject: TreeSelectionStateObject) {
     this.selectedPaths = stateObject.selectedPaths || null;
     this.deselectedPaths = stateObject.deselectedPaths || null;
 
@@ -147,7 +249,11 @@ export class TreeSelectionState<T = any> {
     this.xcache();
   }
 
-  setSelectionForPath(nodePath: NodePath, selected: boolean) {
+  private setSelectionForPath(nodePath: NodePath, selected: boolean) {
+    if (!this.isPathAvailable(nodePath)) {
+      return;
+    }
+
     this.selectionMap.set(nodePath, selected);
   }
 
@@ -185,6 +291,26 @@ export class TreeSelectionState<T = any> {
     });
   }
 
+  private correctnessChecks = false;
+
+  enableCorrectnessChecks() {
+    this.correctnessChecks = true;
+  }
+
+  disableCorrectnessChecks() {
+    this.correctnessChecks = false;
+  }
+
+  isPathAvailable(nodePath: NodePath) {
+    if (!this.correctnessChecks) {
+      return true;
+    }
+
+    const { treePaths } = this.config;
+
+    return treePaths.has(nodePath);
+  }
+
   isNodeSelected(nodePath: NodePath) {
     return this.isPathSelected(nodePath);
   }
@@ -207,7 +333,7 @@ export class TreeSelectionState<T = any> {
       return cachedResult;
     }
 
-    if (this.isLeafNode(nodePath)) {
+    if (this.isLeafNode(nodePath) !== false) {
       const selected = this.isSelfSelected(nodePath);
       if (selected !== null) {
         return this.cacheIt(nodePath, {
@@ -224,12 +350,16 @@ export class TreeSelectionState<T = any> {
 
     const { selectionMap } = this;
 
-    const childPaths = selectionMap
+    let childPaths = selectionMap
       // todo this could be replaced with a .hasKeysUnder call (to be implemented in the deep map later)
       .getKeysOfFirstChildOnEachBranchStartingWith(nodePath, {
         excludeSelf: true,
       })
       .sort(shortestToLongest);
+
+    if (this.correctnessChecks) {
+      childPaths = childPaths.filter((path) => this.isPathAvailable(path));
+    }
 
     if (!childPaths.length) {
       // no explicit selection or deselection for any child
@@ -331,6 +461,10 @@ export class TreeSelectionState<T = any> {
   }
 
   private isPathSelected(nodePath: NodePath) {
+    if (!this.isPathAvailable(nodePath)) {
+      return false;
+    }
+
     return this.getSelectionStateForNode(nodePath, true).selected;
   }
 
@@ -360,6 +494,7 @@ export class TreeSelectionState<T = any> {
     if (!nodePath.length) {
       return;
     }
+    this.xcache();
     // retrieve any selection under this group
     const keys = this.selectionMap.getKeysStartingWith(nodePath);
 
@@ -421,8 +556,8 @@ export class TreeSelectionState<T = any> {
   }
 
   destroy() {
-    // @ts-ignore
-    this.getConfig = null;
+    //@ts-ignore
+    this.config = undefined;
     this.xcache();
     this.selectionMap.clear();
   }

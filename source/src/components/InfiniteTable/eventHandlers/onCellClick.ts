@@ -1,3 +1,4 @@
+import { isTargetInput } from '../../../utils/isTargetInput';
 import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
 import { InfiniteTablePropOnCellDoubleClickResult } from '../types/InfiniteTableProps';
@@ -39,6 +40,9 @@ function onCellDoubleClick<T>(
   context: OnCellClickContext<T>,
   event: React.MouseEvent<Element> & { key: string },
 ) {
+  if (isTargetInput(event.target)) {
+    return;
+  }
   const { onCellDoubleClick } = context.getState();
   let dblClickResult: Required<InfiniteTablePropOnCellDoubleClickResult> = {
     preventEdit: false,

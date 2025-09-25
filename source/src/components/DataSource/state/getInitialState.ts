@@ -229,6 +229,7 @@ export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   };
   state.treeExpandState?.destroy();
   state.treePaths?.clear();
+  state.unfilteredTreePaths?.clear();
   state.waitForNodePathPromises.clear();
   state.pathToIndexMap?.clear();
   state.rowDisabledState?.destroy();
@@ -449,7 +450,7 @@ export function getTreeSelectionState<T>(
   const config = treeSelectionStateConfigGetter(state);
 
   if (currentTreeSelection instanceof TreeSelectionState) {
-    currentTreeSelection.setConfigFn(config);
+    currentTreeSelection.setConfig(config);
     return currentTreeSelection;
   }
 
@@ -468,7 +469,7 @@ export function getTreeSelectionState<T>(
   let instance: TreeSelectionState = weakMap.get(treeSelectionStateObject);
 
   if (instance) {
-    instance.setConfigFn(config);
+    instance.setConfig(config);
   }
 
   instance =
@@ -898,8 +899,11 @@ export function getMappedCallbacks<T>() {
         (treeSelection as TreeSelectionState).getState(),
         {
           treeSelectionState: treeSelection as TreeSelectionState<T>,
+          prevTreeSelectionState:
+            state.treeSelectionState as TreeSelectionState<T>,
           selectionMode: 'multi-row',
-          lastUpdatedNodePath: state.lastSelectionUpdatedNodePathRef.current,
+          lastUpdatedNodeInfo: state.lastSelectionUpdatedNodePathRef.current,
+          unfilteredTreePaths: state.unfilteredTreePaths!,
           dataSourceApi,
           treeApi,
         },

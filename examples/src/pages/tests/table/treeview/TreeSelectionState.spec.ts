@@ -97,18 +97,19 @@ export default test.describe.parallel('TreeSelectionState', () => {
       {
         defaultSelection: false,
         selectedPaths: [['3']],
-        deselectedPaths: [['3', '311']],
+        deselectedPaths: [['3', '31', '311']],
       },
       () => ({
-        treeDeepMap: deepMap,
         treePaths,
       }),
     );
 
     expect(treeSelectionState.isNodeSelected(['3'])).toBe(null);
     expect(treeSelectionState.isNodeSelected(['3', '30'])).toBe(true);
-    expect(treeSelectionState.isNodeSelected(['3', '311'])).toBe(false);
-    expect(treeSelectionState.isNodeSelected(['3', '311', '3110'])).toBe(false);
+    expect(treeSelectionState.isNodeSelected(['3', '31', '311'])).toBe(false);
+    expect(treeSelectionState.isNodeSelected(['3', '31', '311', '3110'])).toBe(
+      false,
+    );
   });
 
   test('should work properly - 2', async () => {

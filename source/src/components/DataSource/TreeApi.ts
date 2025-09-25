@@ -95,7 +95,6 @@ export function treeSelectionStateConfigGetter<T>(
 
     return {
       treePaths: state.treePaths!,
-      treeDeepMap: state.treeDeepMap!,
     };
   };
 }
@@ -212,7 +211,10 @@ export class TreeApiImpl<T> implements TreeApi<T> {
     );
 
     treeSelectionState.setNodeSelection(nodePath, selected);
-    this.getState().lastSelectionUpdatedNodePathRef.current = nodePath;
+    this.getState().lastSelectionUpdatedNodePathRef.current = {
+      nodePath,
+      selected,
+    };
     this.actions.treeSelection = treeSelectionState;
   };
   get allRowsSelected() {
@@ -343,8 +345,7 @@ export class TreeApiImpl<T> implements TreeApi<T> {
   }
 
   getNodeDataByPath(nodePath: any[]) {
-    const { treeDeepMap } = this.getState();
-    if (!treeDeepMap || !nodePath.length) {
+    if (!nodePath.length) {
       return null;
     }
 

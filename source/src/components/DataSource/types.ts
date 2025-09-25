@@ -307,7 +307,10 @@ export interface DataSourceSetupState<T> {
     () => DataSourceMasterDetailContextValue | undefined
   >;
   __apiRef: React.MutableRefObject<DataSourceApi<T> | null>;
-  lastSelectionUpdatedNodePathRef: React.MutableRefObject<NodePath | null>;
+  lastSelectionUpdatedNodePathRef: React.MutableRefObject<{
+    nodePath: NodePath;
+    selected: boolean;
+  } | null>;
   lastExpandStateInfoRef: React.MutableRefObject<{
     state: 'collapsed' | 'expanded';
     nodePath: NodePath | null;
@@ -368,6 +371,7 @@ export interface DataSourceSetupState<T> {
   groupDeepMap?: DeepMap<GroupKeyType, DeepMapGroupValueType<T, any>>;
   treeDeepMap?: DeepMap<TreeKeyType, DeepMapTreeValueType<T, any>>;
   treePaths?: DeepMap<TreeKeyType, true>;
+  unfilteredTreePaths?: DeepMap<TreeKeyType, true>;
   groupRowsIndexesInDataArray?: number[];
   reducerResults?: Record<string, AggregationReducerResult>;
   allRowsSelected: boolean;
@@ -406,6 +410,8 @@ export type DataSourcePropRowSelection =
 export type DataSourcePropRowSelection_MultiRow = RowSelectionStateObject;
 
 export type TreeSelectionValue = TreeSelectionStateObject | TreeSelectionState;
+
+export type { TreeSelectionStateObject };
 
 export type DataSourcePropTreeSelection_MultiNode = TreeSelectionValue;
 
@@ -452,8 +458,10 @@ export type DataSourcePropOnTreeSelectionChange_MultiNode<T = any> = (
   treeSelectionStateObject: TreeSelectionStateObject,
   params: {
     treeSelectionState: TreeSelectionState<T>;
+    prevTreeSelectionState: TreeSelectionState<T>;
+    unfilteredTreePaths: DeepMap<TreeKeyType, true>;
     selectionMode: 'multi-row';
-    lastUpdatedNodePath: NodePath | null;
+    lastUpdatedNodeInfo: { nodePath: NodePath; selected: boolean } | null;
     dataSourceApi: DataSourceApi<T>;
     treeApi: TreeApi<T>;
   },

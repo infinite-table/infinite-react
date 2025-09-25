@@ -552,6 +552,16 @@ export function concludeReducer<T>(params: {
 
   let dataArray = state.originalDataArray;
 
+  if (shouldTree && shouldTreeAgain) {
+    const treeParams = {
+      isLeafNode: isLeafNode!,
+      getNodeChildren: getNodeChildren!,
+      toKey: toPrimaryKey,
+    };
+
+    state.unfilteredTreePaths = tree(treeParams, dataArray).treePaths;
+  }
+
   if (!shouldFilter) {
     state.unfilteredCount = dataArray.length;
   }
