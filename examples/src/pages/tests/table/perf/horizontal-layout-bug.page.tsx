@@ -117,7 +117,7 @@ Object.keys(columns).forEach((key) => {
 
 function CustomCmp() {
   const { rowInfo, column } = useInfiniteColumnCell();
-  const now = Date.now();
+  // const now = Date.now();
 
   // while (Date.now() - now < 0.001) {
   //   // do nothing
