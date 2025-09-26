@@ -43,7 +43,7 @@ export const useCSSVariableWatch = (
   React.useLayoutEffect(() => {
     const value = params.ref.current!.getBoundingClientRect().height;
 
-    if (value) {
+    if (value != null) {
       lastValueRef.current = value;
 
       debug(`Variable ${params.varName} found and equals ${value}.`);
