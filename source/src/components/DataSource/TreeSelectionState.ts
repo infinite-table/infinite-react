@@ -21,10 +21,19 @@ export type TreeSelectionStateObject =
 
 type TreeSelectionStateConfigObject = {
   treePaths: DeepMap<any, true>;
+  strictCheckPaths: boolean;
 };
 
 export type TreeSelectionStateConfigParam<_T = any> = {
-  treePaths: TreeSelectionStateConfigObject['treePaths'] | [any[]];
+  treePaths: TreeSelectionStateConfigObject['treePaths'] | any[][];
+  /**
+   * Defaults to true. If false, when checking if a given path is selected,
+   * it will not check if the path is in the treePaths, but will only check
+   * in the selectionMap.
+   *
+   * If true, will check for the path both in the treePaths and the selectionMap.
+   */
+  strictCheckPaths?: boolean;
 };
 export type GetTreeSelectionStateConfig<T> =
   | TreeSelectionStateConfigParam<T>
@@ -210,9 +219,12 @@ export class TreeSelectionState<T = any> {
             }),
     );
 
-    this.disableCorrectnessChecks();
+    this.disableStrictMode();
     this.update(stateObject);
-    this.enableCorrectnessChecks();
+
+    if (this.config.strictCheckPaths) {
+      this.enableStrictMode();
+    }
   }
   setConfig(getConfig: GetTreeSelectionStateConfig<T>) {
     const config = typeof getConfig === 'function' ? getConfig() : getConfig;
@@ -221,6 +233,7 @@ export class TreeSelectionState<T = any> {
       treePaths: Array.isArray(config.treePaths)
         ? new DeepMap(config.treePaths.map((path) => [path, true]))
         : config.treePaths,
+      strictCheckPaths: config.strictCheckPaths ?? true,
     };
     this.xcache();
   }
@@ -291,18 +304,18 @@ export class TreeSelectionState<T = any> {
     });
   }
 
-  private correctnessChecks = false;
+  private strictMode = false;
 
-  enableCorrectnessChecks() {
-    this.correctnessChecks = true;
+  enableStrictMode() {
+    this.strictMode = true;
   }
 
-  disableCorrectnessChecks() {
-    this.correctnessChecks = false;
+  disableStrictMode() {
+    this.strictMode = false;
   }
 
   isPathAvailable(nodePath: NodePath) {
-    if (!this.correctnessChecks) {
+    if (!this.strictMode) {
       return true;
     }
 
@@ -357,7 +370,7 @@ export class TreeSelectionState<T = any> {
       })
       .sort(shortestToLongest);
 
-    if (this.correctnessChecks) {
+    if (this.strictMode) {
       childPaths = childPaths.filter((path) => this.isPathAvailable(path));
     }
 

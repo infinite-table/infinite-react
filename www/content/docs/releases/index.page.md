@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.3.1
+
+Improve TreeSelectionState standalone usage by adding config for strict mode.
+
 ## 7.3.0
 
 Fix DataGrid virtualization issues in React 18 and above, caused by batched updates

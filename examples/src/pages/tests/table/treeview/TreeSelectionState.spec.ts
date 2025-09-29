@@ -175,4 +175,35 @@ export default test.describe.parallel('TreeSelectionState', () => {
       ['3', '31', '311', '3111'],
     ]);
   });
+
+  test('strictCheckPaths should work properly', async () => {
+    let treeSelectionState = new TreeSelectionState({
+      defaultSelection: false,
+      selectedPaths: [
+        ['media', 'videos'],
+        ['media', 'pictures'],
+        ['documents'],
+      ],
+    });
+
+    expect(treeSelectionState.isNodeSelected(['media', 'videos'])).toBe(false);
+
+    treeSelectionState = new TreeSelectionState(
+      {
+        defaultSelection: false,
+        selectedPaths: [
+          ['media', 'videos'],
+          ['media', 'pictures'],
+          ['documents'],
+        ],
+      },
+      {
+        treePaths: [],
+        strictCheckPaths: false,
+      },
+    );
+
+    expect(treeSelectionState.isNodeSelected(['media', 'videos'])).toBe(true);
+    expect(treeSelectionState.isNodeSelected(['media', 'other'])).toBe(false);
+  });
 });
