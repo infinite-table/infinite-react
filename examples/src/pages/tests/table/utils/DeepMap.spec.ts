@@ -645,6 +645,11 @@ export default test.describe('DeepMap', () => {
       ['3', '31'],
       ['1', '10'],
     ]);
+    expect(
+      map.getCountOfLeafNodesStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual(2);
 
     map = new DeepMap<string | number, boolean>();
     map.set(['3', '31'], true);
@@ -660,6 +665,11 @@ export default test.describe('DeepMap', () => {
       ['3', '31'],
       ['1', '10'],
     ]);
+    expect(
+      map.getCountOfLeafNodesStartingWith([], {
+        excludeSelf: true,
+      }),
+    ).toEqual(2);
 
     map = new DeepMap<string | number, boolean>();
     map.set(['1', '10'], true);
@@ -673,11 +683,15 @@ export default test.describe('DeepMap', () => {
       }),
     ).toEqual([]);
     expect(
-      map.getKeysForLeafNodesStartingWith(['1', '10'], {
-        excludeSelf: false,
-        respectOrder: true,
+      map.getCountOfLeafNodesStartingWith(['1', '10'], {
+        excludeSelf: true,
       }),
-    ).toEqual([['1', '10']]);
+    ).toEqual(0);
+    expect(
+      map.getCountOfLeafNodesStartingWith(['1', '10'], {
+        excludeSelf: false,
+      }),
+    ).toEqual(1);
   });
 
   test('getKeysForLeafNodesStartingWith should work correctly - with depthLimit', () => {
@@ -695,12 +709,24 @@ export default test.describe('DeepMap', () => {
       }),
     ).toEqual([['4']]);
     expect(
+      map.getCountOfLeafNodesStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 1,
+      }),
+    ).toEqual(1);
+    expect(
       map.getKeysForLeafNodesStartingWith([], {
         excludeSelf: true,
         depthLimit: 2,
         respectOrder: true,
       }),
     ).toEqual([['3', '31'], ['1', '10'], ['4']]);
+    expect(
+      map.getCountOfLeafNodesStartingWith([], {
+        excludeSelf: true,
+        depthLimit: 2,
+      }),
+    ).toEqual(3);
 
     map = new DeepMap<string | number, boolean>();
     expect(
@@ -713,8 +739,15 @@ export default test.describe('DeepMap', () => {
       map.getKeysForLeafNodesStartingWith([], { excludeSelf: false }),
     ).toEqual([[]]);
     expect(
+      map.getCountOfLeafNodesStartingWith([], { excludeSelf: false }),
+    ).toEqual(1);
+
+    expect(
       map.getKeysForLeafNodesStartingWith([], { excludeSelf: true }),
     ).toEqual([]);
+    expect(
+      map.getCountOfLeafNodesStartingWith([], { excludeSelf: true }),
+    ).toEqual(0);
   });
 
   test('getLeafNodesStartingWith should work correctly', () => {
@@ -728,6 +761,7 @@ export default test.describe('DeepMap', () => {
 
     const result = map.getLeafNodesStartingWith([], (pair) => pair.keys);
     expect(result).toEqual([['1', '10'], ['1', '20'], ['3', '31'], ['4']]);
+    expect(map.getCountOfLeafNodesStartingWith([])).toEqual(4);
   });
 
   test('getLeafNodesStartingWith should work correctly - second scenario', () => {
@@ -757,6 +791,7 @@ export default test.describe('DeepMap', () => {
       ['3', '31', '311', '3110'],
       ['3', '31', '311', '3111'],
     ]);
+    expect(map.getCountOfLeafNodesStartingWith([])).toEqual(8);
   });
 
   test('visit depth first, with index', () => {

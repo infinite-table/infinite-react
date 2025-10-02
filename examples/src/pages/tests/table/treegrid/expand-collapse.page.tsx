@@ -107,7 +107,7 @@ export default function DataTestPage() {
         treeExpandState={treeExpandState}
         onTreeExpandStateChange={(expandState) => {
           console.log('expandState', expandState);
-          debugger;
+          // console.log(expandState.collapsedPaths)
           setTreeExpandState(expandState);
         }}
       >

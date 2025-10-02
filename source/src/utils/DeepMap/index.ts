@@ -125,6 +125,24 @@ export class DeepMap<KeyType, ValueType> {
     return result;
   }
 
+  getCountOfLeafNodesStartingWith(
+    keys: KeyType[],
+    options?: StartingWithMethodOptions,
+  ) {
+    let count = 0;
+    this.getStartingWith(
+      keys,
+      (_keys, _value, pair) => {
+        if (!pair.map && pair.hasOwnProperty('value')) {
+          count++;
+        }
+      },
+      options,
+    );
+
+    return count;
+  }
+
   getKeysForLeafNodesStartingWith(
     keys: KeyType[],
     options?: StartingWithMethodOptionsWithOrder,

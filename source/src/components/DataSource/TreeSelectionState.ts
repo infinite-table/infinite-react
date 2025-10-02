@@ -229,10 +229,12 @@ export class TreeSelectionState<T = any> {
   setConfig(getConfig: GetTreeSelectionStateConfig<T>) {
     const config = typeof getConfig === 'function' ? getConfig() : getConfig;
 
+    const treePaths = Array.isArray(config.treePaths)
+      ? new DeepMap(config.treePaths.map((path) => [path, true as const]))
+      : config.treePaths;
+
     this.config = {
-      treePaths: Array.isArray(config.treePaths)
-        ? new DeepMap(config.treePaths.map((path) => [path, true]))
-        : config.treePaths,
+      treePaths,
       strictCheckPaths: config.strictCheckPaths ?? true,
     };
     this.xcache();
