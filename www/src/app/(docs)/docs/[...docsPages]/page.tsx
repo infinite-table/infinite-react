@@ -1,18 +1,11 @@
 import { CenterContent } from '@www/app/CenterContent';
-import { MDXContent } from '@www/components/MDXContent';
 import PageHeading from '@www/components/PageHeading';
 
 import { Page, type RouteItem } from '@www/components/Layout/Page';
+
 import sidebarLearn from '@www/sidebarLearn.json';
 import sidebarReference from '@www/sidebarReference.json';
 import sidebarReleases from '@www/sidebarReleases.json';
-
-import {
-  allDocsPages,
-  allRootPages,
-  RootPage,
-  type DocsPage,
-} from 'contentlayer/generated';
 
 import { metadata as meta } from '../../../metadata';
 import { Metadata } from 'next';
@@ -25,11 +18,17 @@ import {
 import { Toc } from '@www/components/Layout/Toc';
 import { redirect } from 'next/navigation';
 
+import { siteContent } from '@www/content';
+
+import { MarkdownDocsPage } from '@www/components/MarkdownDocsPage';
+
 export async function generateStaticParams() {
-  const result = allDocsPages
+  const result = siteContent.routes
+    .filter((page) => page.routePath.startsWith('/docs/'))
+
     .map((page) => {
       return {
-        docsPages: page.url
+        docsPages: page.routePath
           .split('/')
           .slice(2) // to take out the first empty string and the '/docs' portion
           .map((x) => x.trim())
@@ -38,7 +37,6 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.docsPages.length > 0);
 
-  // console.log('result', result);
   return result;
 }
 
@@ -50,17 +48,18 @@ export const generateMetadata = async ({
   const p = await params;
 
   const path = `/docs/${p.docsPages.join('/')}`;
-  const pageIndex = allDocsPages.findIndex((page) => page.url === path);
-  const page = allDocsPages[pageIndex];
+
+  const page = siteContent.paths[path];
 
   const res = {
     title:
-      page?.metaTitle ??
-      (page?.title
-        ? `${page?.title} | Infinite Table DataGrid for React`
+      page?.frontmatter?.title ??
+      (page?.frontmatter?.title
+        ? `${page?.frontmatter?.title} | Infinite Table DataGrid for React`
         : null) ??
       meta.title,
-    description: page?.metaDescription ?? page?.description ?? meta.description,
+    description:
+      page?.frontmatter?.description ?? page?.excerpt ?? meta.description,
   };
 
   return asMeta(res);
@@ -74,13 +73,13 @@ export default async function DocsPage({
   const p = await params;
   const path = `/docs/${p.docsPages.join('/')}`;
 
-  const page404 = allRootPages.find((page) => page.url === '/404') as RootPage;
+  const page404 = siteContent.paths['/404'];
 
-  const pageIndex = allDocsPages.findIndex((page) => page.url === path);
-  const page = allDocsPages[pageIndex] ?? page404;
+  const page =
+    siteContent.paths[path] ?? siteContent.paths[path + '/'] ?? page404;
 
-  if (page && page.redirect_to) {
-    const redirect_to = page.redirect_to;
+  if (page && page.frontmatter.redirect_to) {
+    const redirect_to = page.frontmatter.redirect_to;
 
     redirect(redirect_to);
   }
@@ -95,9 +94,9 @@ export default async function DocsPage({
     sidebar = sidebarReleases;
   }
   if (sidebar === sidebarReference) {
-    anchors = getPropHeadings(page.body.raw);
+    anchors = getPropHeadings(page.content);
   } else {
-    anchors = getMarkdownHeadingsForPage(page.body.raw);
+    anchors = getMarkdownHeadingsForPage(page.content);
   }
 
   const afterChildren =
@@ -106,12 +105,16 @@ export default async function DocsPage({
         <Toc headings={anchors} noHighlight={sidebar === sidebarReference} />
       </div>
     ) : null;
+
+  // console.log('DOCS PAGES slug', p.docsPages);
   return (
     <Page routeTree={sidebar}>
       <CenterContent>
-        <PageHeading title={page.title} since={page.since}></PageHeading>
-
-        <MDXContent>{page.body.code}</MDXContent>
+        <PageHeading
+          title={page.frontmatter.title}
+          since={page.frontmatter.since}
+        ></PageHeading>
+        <MarkdownDocsPage params={{ slug: p.docsPages }}></MarkdownDocsPage>
       </CenterContent>
       {afterChildren}
     </Page>

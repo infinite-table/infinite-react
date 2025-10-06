@@ -1,7 +1,7 @@
 ---
 title: Flashing column cells in Infinite Table
 author: admin
-
+date: 2024-10-15
 ---
 
 Flashing cells is an important feature that has been requested by some of our users - both [in public](https://github.com/infinite-table/infinite-react/issues/250) and private conversations.

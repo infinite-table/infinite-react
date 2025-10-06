@@ -185,11 +185,7 @@ Let's see an example of how the component would render the table with the multi-
 
 <Sandpack title="Multi-column group render strategy">
 
-```ts file="row-grouping-multi-column-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["row-grouping-multi-column-example.page.tsx","columns.ts"]
 
 ```
 
@@ -199,11 +195,7 @@ For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColum
 
 <Sandpack title="Hide Empty Group Columns">
 
-```ts file="$DOCS/reference/hideEmptyGroupColumns-example.page.tsx"
-
-```
-
-```ts file="$DOCS/reference/employee-columns.ts" as="employee-columns.ts"
+```ts files=["$DOCS/reference/hideEmptyGroupColumns-example.page.tsx","$DOCS/reference/employee-columns.ts"]
 
 ```
 
@@ -229,11 +221,7 @@ By default the generated group column will "inherit" many of the properties (the
 
 <Sandpack title="Single-column group render strategy">
 
-```ts file="row-grouping-single-column-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["row-grouping-single-column-example.page.tsx","columns.ts"]
 
 ```
 

@@ -50,11 +50,11 @@ Use this `getter` function to compute the value the current item in the array br
 getter: (dataItem: Developer) => data.salary.net;
 ```
 
-<Hint>
+<Note>
 
 For using nested values inside aggregations, use the aggregation `getter` function.
 
-</Hint>
+</Note>
 
 ### A completion `done` function
 
@@ -103,7 +103,7 @@ function App() {
 
 In the above example, note that aggregations are an object where the keys of the object are used to identify the aggregation and the values are the aggregation configuration objects, as described above.
 
-<Hint>
+<Note>
 
 At run-time, you have access to the aggregation reducer results inside group rows - you can use the `rowInfo.reducerResults` object to access those values. For the example above, you change how group rows are rendered for a certain column and display the aggregation results in a custom way:
 
@@ -122,7 +122,7 @@ country: {
 },
 ```
 
-</Hint>
+</Note>
 
 <Sandpack title="Sum and average aggregation example">
 

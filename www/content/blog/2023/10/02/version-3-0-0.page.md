@@ -2,6 +2,7 @@
 title: 'Infinite Table React DataGrid version 3.0.0 released'
 description: 'InfiniteTable DataGrid for React version 3.0.0 brings many small fixes and enhancements, along with a major new feature: cell selection'
 author: [admin]
+date: 2023-10-02
 ---
 
 Version `3.0.0` is a release that brings a long awaited feature: cell selection. This allows the user to perform fined-grained cell selection, either via the <DPropLink name="cellSelection"/> prop or via the [Cell Selection API](/docs/reference/cell-selection-api).

@@ -25,11 +25,11 @@ Row selection is defined on the `DataSource` component, so that's where you spec
 
 </Note>
 
-<Hint>
+<Note>
 
 You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be derived from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
 
-</Hint>
+</Note>
 
 # Single Row Selection
 

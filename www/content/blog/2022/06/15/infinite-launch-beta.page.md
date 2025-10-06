@@ -1,6 +1,7 @@
 ---
 title: 'Infinite Table Beta Launch 🚀'
 author: [admin]
+date: 2022-06-15
 ---
 
 Today we are announcing the beta version (`0.3.12`) of `Infinite Table` ready to be used by early adopters.

@@ -13,15 +13,7 @@ It also showcases different way of customizing columns based on dynamic conditio
 
 <Sandpack deps="react-select" viewMode="preview" size="lg">
 
-```tsx file="dynamic-advanced-pivoting-example.page.tsx"
-
-```
-
-```tsx file="Settings.tsx"
-
-```
-
-```tsx file="types.ts"
+```tsx files=["dynamic-advanced-pivoting-example.page.tsx","Settings.tsx","types.ts"]
 
 ```
 
@@ -31,17 +23,9 @@ It also showcases different way of customizing columns based on dynamic conditio
 
 This example is very similar with the above one, but pivoting, grouping and aggregation is done on the server-side.
 
-<Sandpack deps="react-select" viewMode="preview" size="lg">
+<Sandpack viewMode="preview" size="lg">
 
-```tsx file="dynamic-pivoting-serverside-example.page.tsx"
-
-```
-
-```tsx file="Settings.tsx"
-
-```
-
-```tsx file="types.ts"
+```tsx files=["dynamic-pivoting-serverside-example.page.tsx","Settings.tsx","types.ts"]
 
 ```
 

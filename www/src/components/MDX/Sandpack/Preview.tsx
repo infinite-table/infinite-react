@@ -38,13 +38,7 @@ export function Preview({
     number | null
   >(null);
 
-  const {
-    registerBundler,
-    unregisterBundler,
-    errorScreenRegisteredRef,
-    openInCSBRegisteredRef,
-    loadingScreenRegisteredRef,
-  } = sandpack;
+  const { registerBundler, unregisterBundler } = sandpack;
   let { error: rawError } = sandpack;
 
   if (
@@ -59,12 +53,6 @@ export function Preview({
 
   const clientId = React.useRef<string>(generateRandomId());
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
-
-  // SandpackPreview immediately registers the custom screens/components so the bundler does not render any of them
-  // TODO: why are we doing this during render?
-  openInCSBRegisteredRef.current = true;
-  errorScreenRegisteredRef.current = true;
-  loadingScreenRegisteredRef.current = true;
 
   React.useEffect(() => {
     const iframeElement = iframeRef.current!;

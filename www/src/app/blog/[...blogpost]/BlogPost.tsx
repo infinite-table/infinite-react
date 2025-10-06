@@ -1,12 +1,12 @@
 'use client';
-
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
 import { DocsPageFooter, DocsPageRoute } from '@www/components/DocsFooter';
 
 import cmpStyles from '@www/components/components.module.css';
 
 import { useTwitter } from '@www/components/Layout/useTwitter';
 
-import { MDXContent } from '@www/components/MDXContent';
 import type { TocHeading } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
 
@@ -15,8 +15,10 @@ export function BlogPost({
   nextRoute,
   prevRoute,
   headings,
+  children,
 }: {
   headings: TocHeading[];
+  children: React.ReactNode;
   post: {
     body: {
       code: string;
@@ -29,8 +31,6 @@ export function BlogPost({
   nextRoute?: DocsPageRoute;
   prevRoute?: DocsPageRoute;
 }) {
-  const date = post.date;
-
   let author = post.author;
   if (Array.isArray(author)) {
     author = author[0];
@@ -63,11 +63,16 @@ export function BlogPost({
                 By {author}
                 <span className="mx-2">·</span>
                 <span className="lead inline-flex text-gray-50">
-                  <time dateTime={post.date}>{date}</time>
+                  <time dateTime={post.date}>
+                    {format(
+                      parseISO(post.date ?? new Date().toISOString()),
+                      'MMMM dd, yyyy',
+                    )}
+                  </time>
                 </span>
               </p>
 
-              <MDXContent>{post.body.code}</MDXContent>
+              {children}
             </div>
           </div>
 

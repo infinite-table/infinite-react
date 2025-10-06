@@ -15,11 +15,7 @@ Read thorough documentation covering pivoting and aggregation.
 
 <Sandpack title="Simple row grouping">
 
-```ts file="row-grouping-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["row-grouping-example.page.tsx","columns.ts"]
 
 ```
 

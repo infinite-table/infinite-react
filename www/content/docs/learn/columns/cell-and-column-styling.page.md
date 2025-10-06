@@ -7,7 +7,7 @@ description: Styling columns in the InfiniteTable React DataGrid via both style 
 
 The most straightforward way to style the cells in a column is to use the <PropLink name="columns.style">column.style</PropLink> property as an object.
 
-```ts title="Styling_a_column_in_the_DataGrid"
+```ts title="Styling a column in the DataGrid"
 const column = {
   firstName: {
     style: {
@@ -30,7 +30,7 @@ The <PropLink name="columns.style">column.style</PropLink> property can either b
 
 Using functions for the <PropLink name="columns.style">column.style</PropLink> property allows you to style the cells based on the cell's value or other properties.
 
-```ts {6} title=Styling_a_column_using_a_style_function
+```ts {6} title="Styling a column using a style function"
 const columns = {
   salary: {
     field: 'salary',
@@ -69,7 +69,7 @@ Mirroring the behavior already described for the <PropLink name="columns.style">
 
 It can be used as a string or a function that returns a string.
 
-```ts title="Styling_a_column_using_column.className"
+```ts title="Styling a column using column.className"
 const columns = {
   firstName: {
     className: 'first-name-column',
@@ -79,11 +79,7 @@ const columns = {
 
 <Sandpack title="Using column.className as an string">
 
-```tsx file="column-className-string-example.page.tsx"
-
-```
-
-```css file="coloring.module.css"
+```tsx files=["column-className-string-example.page.tsx","coloring.module.css"]
 
 ```
 
@@ -91,7 +87,7 @@ const columns = {
 
 Using functions for the <PropLink name="columns.className">column.className</PropLink> property allows you to style the cells based on the cell's data/value/rowInfo etc.
 
-```ts {6} title=Styling_a_column_using_a_className_function
+```ts {6} title="Styling a column using a className function"
 const columns = {
   salary: {
     field: 'salary',
@@ -105,11 +101,7 @@ const columns = {
 
 <Sandpack title="Using column.className as a function">
 
-```tsx file="column-className-fn-example.page.tsx"
-
-```
-
-```css file="coloring.module.css"
+```tsx files=["column-className-fn-example.page.tsx","coloring.module.css"]
 
 ```
 

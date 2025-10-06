@@ -1,6 +1,7 @@
 ---
 title: New DataGrid themes available - ocean and balsam
 author: admin
+date: 2024-10-10
 ---
 
 With the release of `<InfiniteTable />` <b>v5.0.0</b> we've added two new themes: `ocean` and `balsam`.

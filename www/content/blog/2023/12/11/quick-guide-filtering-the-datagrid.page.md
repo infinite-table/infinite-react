@@ -2,6 +2,7 @@
 title: Quick Guide - Filtering the DataGrid
 author: admin
 draft: true
+date: 2023-12-11
 ---
 
 This is the first article in a series of quick guides that will help you get started with the DataGrid, each focusing on a specific feature. In this article, we will learn how to use filtering in the DataGrid.

@@ -1,6 +1,7 @@
 ---
 title: How to configure the DataGrid to maximise screen real estate
 author: admin
+date: 2024-06-18
 ---
 
 Many modern apps rely heavily on white-space to make the user interface easy to read and follow. However, there are financial apps or data-heavy apps where you need to display a lot of information in a small space.

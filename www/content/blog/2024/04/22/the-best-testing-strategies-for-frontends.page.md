@@ -1,6 +1,7 @@
 ---
 title: The best testing strategies for frontends
 author: admin
+date: 2024-04-22
 ---
 
 In our previous article, we focused on documenting [the best testing setup for frontends](https://infinite-table/blog/2024/04/18/the-best-testing-setup-for-frontends-playwright-nextjs), which used Playwright and Next.js. You can check out the repository [here](https://github.com/infinite-table/testing-setup-nextjs-playwright) where you can find the full setup.

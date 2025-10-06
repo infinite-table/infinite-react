@@ -1,6 +1,7 @@
 ---
 title: shadcn/ui theme available for the InfiniteTable React DataGrid
 author: admin
+date: 2024-10-16
 ---
 
 We've all come to know and love ❤️ [shadcn/ui](https://ui.shadcn.com/). It comes with a consistent look and feel for all the components in the UI kit, and it's built on top of Tailwind, so people feel at home using it. As React developers, we're thankful for all the hard work happening in the React ecosystem, and we're happy to see more and more UI libraries focusing on providing great developer experience.

@@ -577,11 +577,7 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 
 <Sandpack>
 
-```ts file="columnDefaultWidth-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columnDefaultWidth-example.page.tsx","data.ts"]
 
 ```
 
@@ -602,11 +598,7 @@ The column header height is set to `60` pixels. The column filters will also pic
 
 </Description>
 
-```ts file="columnHeaderHeight-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columnHeaderHeight-example.page.tsx","data.ts"]
 
 ```
 
@@ -712,11 +704,7 @@ The following properties are available:
 
 <Sandpack>
 
-```ts file="columns-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columns-example.page.tsx","data.ts"]
 
 ```
 
@@ -743,11 +731,7 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 
 <Sandpack>
 
-```ts file="column-className-function-example.page.tsx"
-
-```
-
-```css file="coloring.module.css"
+```ts files=["column-className-function-example.page.tsx","coloring.module.css"]
 
 ```
 
@@ -1258,11 +1242,7 @@ If no <PropLink name="columns.header" /> is specified, it will be used as the co
 
 <Sandpack>
 
-```ts file="columns-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columns-example.page.tsx","data.ts"]
 
 ```
 
@@ -1435,11 +1415,7 @@ For configuring the column header height, see the <PropLink name="columnHeaderHe
 
 <Sandpack>
 
-```ts file="columns-header-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columns-header-example.page.tsx","data.ts"]
 
 ```
 
@@ -1573,11 +1549,11 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 
 </Note>
 
-<Hint>
+<Note>
 
 To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/learn/columns/column-rendering#rendering-pipeline).
 
-</Hint>
+</Note>
 
 The <PropLink name="columns.render">render</PropLink> and <PropLink name="columns.renderValue">renderValue</PropLink> functions are called with an object that has the following properties:
 
@@ -1637,11 +1613,11 @@ The `firstName` column will show a custom filter icon when filtered.
 
 For actual content of group cells, see related <PropLink name="columns.renderGroupValue" />
 
-<Hint>
+<Note>
 
 To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/learn/columns/column-rendering#rendering-pipeline).
 
-</Hint>
+</Note>
 
 <Sandpack title="Column with custom renderGroupIcon">
 
@@ -1695,11 +1671,11 @@ If `true` is provided, the default selection checkbox will be rendered. When a f
 `rowSelected` property in the function parameter can be either `boolean` or `null`. The `null` value is used for groups with indeterminate state, meaning the group has some children selected, but not all of them.
 </Note>
 
-<Hint>
+<Note>
 
 To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/learn/columns/column-rendering#rendering-pipeline).
 
-</Hint>
+</Note>
 
 <Sandpack title="Column with custom renderSelectionCheckBox">
 
@@ -1769,11 +1745,11 @@ Note that for customizing the collapse/expand tool, you can use specify `renderG
 
 </Note>
 
-<Hint>
+<Note>
 
 To understand how the rendering pipeline works, head over to the page on [Column rendering](/docs/learn/columns/column-rendering#rendering-pipeline).
 
-</Hint>
+</Note>
 
 The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
 
@@ -1971,11 +1947,7 @@ See the example below - `id` and `age` columns are `type='number'`.
 
 <Sandpack>
 
-```ts file="columns-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["columns-example.page.tsx","data.ts"]
 
 ```
 
@@ -2522,11 +2494,7 @@ For applying a className when the focus is within the component, see <PropLink n
 
 <Sandpack>
 
-```ts file="domprops-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["domprops-example.page.tsx","data.ts"]
 
 ```
 
@@ -2584,11 +2552,7 @@ For applying a className when the component root element is focused, see <PropLi
 
 <Sandpack title="focusedStyle example">
 
-```ts file="focusedStyle-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["focusedStyle-example.page.tsx","data.ts"]
 
 ```
 
@@ -2607,11 +2571,7 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 <Sandpack title="focusedWithinStyle example - focus an input inside the table to see it in action">
 
-```ts file="focusedWithinStyle-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["focusedWithinStyle-example.page.tsx","data.ts"]
 
 ```
 
@@ -2799,11 +2759,7 @@ This example shows how to use <PropLink name="groupColumn" /> as a function that
 
 <Sandpack>
 
-```ts file="groupRenderStrategy-example.page.tsx"
-
-```
-
-```ts file="employee-columns.ts"
+```ts files=["groupRenderStrategy-example.page.tsx","employee-columns.ts"]
 
 ```
 
@@ -2835,11 +2791,7 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 
 <Sandpack>
 
-```ts file="hideEmptyGroupColumns-example.page.tsx"
-
-```
-
-```ts file="employee-columns.ts"
+```ts files=["hideEmptyGroupColumns-example.page.tsx","employee-columns.ts"]
 
 ```
 
@@ -3008,11 +2960,7 @@ This callback is fired when a focusable element inside the component is blurred,
 
 <Sandpack title="Blur an input inside the table to see the callback fired">
 
-```ts file="onBlurWithin-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["onBlurWithin-example.page.tsx","data.ts"]
 
 ```
 
@@ -3128,11 +3076,7 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
 <Sandpack title="Focus an input inside the table to see the callback fired">
 
-```ts file="onFocusWithin-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["onFocusWithin-example.page.tsx","data.ts"]
 
 ```
 
@@ -3399,11 +3343,7 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 <Sandpack title="rowHeight as number">
 
-```ts file="rowHeight-number-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["rowHeight-number-example.page.tsx","data.ts"]
 
 ```
 
@@ -3411,11 +3351,7 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 <Sandpack title="rowHeight from CSS variable name">
 
-```ts file="rowHeight-cssvar-example.page.tsx"
-
-```
-
-```ts file="data.ts"
+```ts files=["rowHeight-cssvar-example.page.tsx","data.ts"]
 
 ```
 
@@ -3480,11 +3416,7 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 
 <Sandpack title="rowStyle example usage">
 
-```ts file="rowStyle-example.page.tsx"
-
-```
-
-```ts file="rowStyle-example-columns.ts"
+```ts files=["rowStyle-example.page.tsx","rowStyle-example-columns.ts"]
 
 ```
 

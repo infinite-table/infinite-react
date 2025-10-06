@@ -312,10 +312,10 @@ function injectPortalContainerAndConstrainInMenuChild(
   return children;
 }
 
-//@ts-ignore
-globalThis.allhandles = {};
-//@ts-ignore
-globalThis.thehandles = {};
+// //@ts-ignore
+// globalThis.allhandles = {};
+// //@ts-ignore
+// globalThis.thehandles = {};
 
 export type UpdateOverlayContentFn = (
   content: ReactNode | (() => ReactNode),

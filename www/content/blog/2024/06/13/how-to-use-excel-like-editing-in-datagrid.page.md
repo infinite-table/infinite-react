@@ -1,6 +1,7 @@
 ---
 title: How to use Excel-like editing in your DataGrid
 author: admin
+date: 2024-06-13
 ---
 
 Excel-like editing is a very popular request we had. In this short article, we show you how to configure Excel-like editing in the Infinite React DataGrid.

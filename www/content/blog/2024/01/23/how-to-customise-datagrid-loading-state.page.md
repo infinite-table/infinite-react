@@ -1,6 +1,7 @@
 ---
 title: How to customise the DataGrid loading state
 author: admin
+date: 2024-01-23
 ---
 
 We're starting a series of short `"How to"` articles that are very focused and show how to achieve a specific thing with the Infinite Table DataGrid.

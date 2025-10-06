@@ -1,6 +1,7 @@
 ---
 title: How to customise the DataGrid default sorting
 author: admin
+date: 2024-02-02
 ---
 
 In this article, we'll show you how easy it is to configure the default sorting for the React DataGrid.

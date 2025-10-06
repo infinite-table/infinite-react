@@ -1,6 +1,7 @@
 ---
 title: Async Context Menus
 description: Learn how to use async context menus in Infinite Table.
+date: 2025-03-20
 ---
 
 Infinite Table 6.1.0 introduces support for lazy loading context menus. This is useful when you need to load your context menu items conditionally, from the backend, based on the cell's value or other conditions.

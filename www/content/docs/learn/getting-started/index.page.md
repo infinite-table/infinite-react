@@ -22,7 +22,6 @@ npm i @infinite-table/infinite-react
 <Description>
 
 This is an example to get you started with Infinite Table with minimal setup.
-
 </Description>
 
 ```ts file="meet-the-code.page.tsx"

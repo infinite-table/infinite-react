@@ -77,7 +77,7 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 - `fieldsToColumn` a `Map` that links `DataSource` fields to columns. Columns bound to fields (so with <PropLink name="columns.field" /> specified) will be included in this `Map`.
 - `api` - A reference to the [Infinite Table API](/docs/reference/api) object.
 
-<DeepDive title="Column renderValue vs render">
+<Note title="Column renderValue vs render">
 
 <PropLink name="columns.render"/> is the last function called in the rendering pipeline for a column cell, while <PropLink name="columns.renderValue"/> is called before render, towards the beginning of the [rendering pipeline (read more about this below)](#rendering-pipeline).
 
@@ -85,7 +85,7 @@ Avoid over-writing <PropLink name="columns.render"/> for special columns (like g
 
 However, there are easier ways to override the collapse/expand group icon, like using <PropLink name="columns.renderGroupIcon"/>.
 
-</DeepDive>
+</Note>
 
 <Note>
 
@@ -396,13 +396,13 @@ const column: InfiniteTableColumn<T> = {
 };
 ```
 
-<Hint>
+<Note>
 
 Inside <PropLink name="columns.renderGroupIcon" />, you have access to `renderBag.groupIcon`, which is basically the default group icon - so you can use that if you want, and build on that.
 
 Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `toggleGroupRow` so you can properly hook the collapse/expand behaviour to your custom group icon.
 
-</Hint>
+</Note>
 
 ### Rendering pipeline - `renderBag.selectionCheckBox`
 

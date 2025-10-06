@@ -2,6 +2,7 @@
 title: 'Infinite Table DataGrid for React reaches version 2.0.0'
 description: 'With version 2.0.0 InfiniteTable DataGrid for React brings lots of fixes and enhancements including support for sorting group columns, better APIs, improved pivoting, smarter column menus and more.'
 author: [admin]
+date: 2023-07-14
 ---
 
 Version `2.0.0` is a release that allowed us to polish many areas of the component and consolidate its existing features and APIs.

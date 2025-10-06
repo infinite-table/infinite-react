@@ -9,6 +9,31 @@ export type TocHeading = {
 function toUrl(str: string) {
   return toHashUrl(str);
 }
+
+const removeHTMLTags = (str: string) => {
+  // str.trim().replace(/<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g, '$1');
+  const stringWithoutTags = str
+    .trim()
+    .replace(
+      /<[^>]*name="([^"]+)"[^>]*\/>|<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g,
+      (_match, name, innerHTML) => {
+        if (name) {
+          return name;
+        } else {
+          return innerHTML;
+        }
+      },
+    );
+
+  return stringWithoutTags;
+};
+
+const removeBackticks = (str: string) => str.replace(/`/g, '');
+const getNameAttributeFromSelfClosingTag = (tag: string) => {
+  const match = tag.match(/<[^>]*name="([^"]*)"[^>]*\/>/i);
+  return match ? match[1] : tag;
+};
+
 export function getPropHeadings(mdxString: string): TocHeading[] {
   const tags = mdxString.match(/<Prop\s+.*?name=["'](\w+)["'].*?>/g);
 
@@ -56,6 +81,29 @@ export function getMarkdownHeadingsForPage(mdxString: string): TocHeading[] {
   return anchors;
 }
 
+export function getHashForText(mdxString: string | string[]): string {
+  const text = Array.isArray(mdxString) ? mdxString : [mdxString.trim()];
+
+  let str = text
+    .map(removeHTMLTags)
+    .map(removeBackticks)
+    .map(getNameAttributeFromSelfClosingTag)
+    .filter(Boolean)
+    .join('');
+
+  // Build valid URL hash identifier
+  str = str
+    .toLowerCase()
+    .trim()
+    .replace(/\./g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return str;
+}
+
 export function getMarkdownHeadings(mdxString: string): TocHeading[] {
   const headings = mdxString.match(/^#+\s.+$/gm);
   const result = headings ? headings.map((heading) => heading.trim()) : [];
@@ -63,49 +111,27 @@ export function getMarkdownHeadings(mdxString: string): TocHeading[] {
   const anchors = result
     .map((heading) => {
       const depth = heading.match(/^#+/gm);
-      const text = heading.match(/[^#]*$/gm);
+      let text = heading.match(/[^#]*$/gm);
       if (!text) {
         return null;
       }
-
-      const removeHTMLTags = (str: string) => {
-        // str.trim().replace(/<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g, '$1');
-        const stringWithoutTags = str
-          .trim()
-          .replace(
-            /<[^>]*name="([^"]+)"[^>]*\/>|<[^>]*>([^<]*)<\/[^>]*>|<[^>]*>/g,
-            (_match, name, innerHTML) => {
-              if (name) {
-                return name;
-              } else {
-                return innerHTML;
-              }
-            },
-          );
-
-        return stringWithoutTags;
-      };
-
-      const removeBackticks = (str: string) => str.replace(/`/g, '');
-      const getNameAttributeFromSelfClosingTag = (tag: string) => {
-        const match = tag.match(/<[^>]*name="([^"]*)"[^>]*\/>/i);
-        return match ? match[1] : tag;
-      };
-
-      const str = text
+      const cleanText = text
         .map(removeHTMLTags)
         .map(removeBackticks)
         .map(getNameAttributeFromSelfClosingTag)
         .filter(Boolean)
         .join('');
 
-      return {
+      const str = getHashForText(cleanText);
+
+      const result = {
         url: '#' + toUrl(str),
         depth: depth ? depth[0].length : 0,
-        text: str,
+        text: cleanText,
       };
+
+      return result;
     })
     .filter(Boolean) as TocHeading[];
-
   return anchors;
 }

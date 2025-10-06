@@ -7,11 +7,11 @@ import { IconCodeBlock } from '../Icon/IconCodeBlock';
 import { IconNavArrow } from '../Icon/IconNavArrow';
 import { IconOpenInWindow } from '../Icon/IconOpenInWindow';
 
-import { APIAnatomy, AnatomyStep } from './APIAnatomy';
+// import { , AnatomyStep } from './APIAnatomy';
 import { Blockquote } from './Blockquote';
 import { Challenges, /*Hint, */ Solution } from './Challenges';
-import CodeBlock from './CodeBlock';
-import { CodeDiagram } from './CodeDiagram';
+// import CodeBlock from './CodeBlock';
+// import { CodeDiagram } from './CodeDiagram';
 import ConsoleBlock from './ConsoleBlock';
 import Convention from './Convention';
 import ExpandableCallout from './ExpandableCallout';
@@ -22,7 +22,7 @@ import HomepageHero from './HomepageHero';
 import InlineCode from './InlineCode';
 import Intro from './Intro';
 import Link from './Link';
-import { PackageImport } from './PackageImport';
+// import { PackageImport } from './PackageImport';
 import {
   Prop,
   PropTable,
@@ -436,16 +436,16 @@ export const MDXComponents = {
       return <InlineCode {...props} />;
     }
 
-    return <CodeBlock {...props} />;
+    return null;
   },
   // The code block renders <pre> so we just want a div here.
   pre: (p: React.JSX.IntrinsicElements['div']) => {
     return <div {...p} />;
   },
   // Scary: dynamic(() => import('./Scary')),
-  APIAnatomy,
-  AnatomyStep,
-  CodeDiagram,
+  // APIAnatomy,
+  // AnatomyStep,
+  // CodeDiagram,
   ConsoleBlock,
   Convention,
   DeepDive: (props: {
@@ -471,7 +471,7 @@ export const MDXComponents = {
   MathI,
   Note,
   ReadMore,
-  PackageImport,
+  // PackageImport,
   Prop,
   PropLink,
   TypeLink,

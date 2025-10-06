@@ -1,6 +1,7 @@
 ---
 title: Building a DataGrid with the right tools
 author: admin
+date: 2023-10-05
 ---
 
 Building for the browser has historically been very tedious. In the old days you had to resort to all sorts of hacks for getting the right layout - anyone remembers conditional comments targeting IE6-9? 😅

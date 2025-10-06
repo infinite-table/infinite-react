@@ -1,7 +1,7 @@
 'use client';
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
-import { Post } from 'contentlayer/generated';
+import { BlogPost } from '@www/utils/blogUtils';
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
 import cmpStyles from './components.module.css';
@@ -62,14 +62,17 @@ function NpmCmd() {
   );
 }
 
-function HomepageBlogpostCard({ post }: { post: Post }) {
+function HomepageBlogpostCard({ post }: { post: BlogPost }) {
   return (
-    <Card title={post.title} href={post.url}>
+    <Card title={post.title} href={post.href}>
       <div className="flex items-center mt-4">
         <div>
           <div className="flex text-sm leading-5  ">
             <time dateTime={post.date}>
-              {format(parseISO(post.date), 'MMMM dd, yyyy')}
+              {format(
+                parseISO(post.date || new Date().toISOString()),
+                'MMMM dd, yyyy',
+              )}
             </time>
             <span className="mx-1">·</span>
             <span>{post.readingTime}</span>
@@ -79,13 +82,13 @@ function HomepageBlogpostCard({ post }: { post: Post }) {
       <div
         className="mt-8"
         dangerouslySetInnerHTML={{
-          __html: post.excerpt || '',
+          __html: post.description || '',
         }}
       ></div>
     </Card>
   );
 }
-export function IndexPage({ posts }: { posts?: Post[] }) {
+export function IndexPage({ posts }: { posts?: BlogPost[] }) {
   const seoTitle =
     'Infinite Table DataGrid for React — One Table — Infinite Applications.';
   const seoDescription = `Infinite Table DataGrid for React — One Table — Infinite Applications. Infinite Table is the modern DataGrid for building React apps — faster.`;
@@ -95,7 +98,7 @@ export function IndexPage({ posts }: { posts?: Post[] }) {
   let postsContent = null;
   if (posts.length > 0) {
     const list = posts.map((post) => {
-      return <HomepageBlogpostCard key={post._id} post={post} />;
+      return <HomepageBlogpostCard key={post.href} post={post} />;
     });
 
     postsContent = (

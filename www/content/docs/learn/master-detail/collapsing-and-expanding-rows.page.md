@@ -71,7 +71,7 @@ If you're using the controlled <PropLink name="rowDetailState" /> prop, you'll n
 
 <Note>
 
-As an alternative to using the object literals as specified above, you can import the `RowDetailState` class from `@infinite-table/infintie-react` and use it to define the state of the row details. You can pass instances of `RowDetailState` into the <PropLink name="defaultRowDetailState" /> or <PropLink name="rowDetailState" /> props.
+As an alternative to using the object literals as specified above, you can import the `RowDetailState` class from `@infinite-table/infinite-react` and use it to define the state of the row details. You can pass instances of `RowDetailState` into the <PropLink name="defaultRowDetailState" /> or <PropLink name="rowDetailState" /> props.
 
 ```tsx title="Passing an instance of RowDetailState to the InfiniteTable"
 import { RowDetailState } from '@infinite-table/infinite-react';

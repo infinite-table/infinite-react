@@ -1,6 +1,7 @@
 ---
 title: The best testing setup for frontends, with Playwright and NextJS
 author: admin
+date: 2024-04-18
 ---
 
 We want to share with you the best testing setup we've experienced - and this includes using [Playwright](https://playwright.dev/) and [NextJS](https://nextjs.org/). It's a setup we've come up with for Infinite React DataGrid, which is a complex component, with lots of things to test, but this configuration has helped us ship with more confidence and speed.

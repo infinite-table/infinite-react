@@ -1,6 +1,7 @@
 ---
 title: A minimalist theme for your favorite React DataGrid
 author: admin
+date: 2024-05-27
 ---
 
 We implemented a minimalist theme for the Infinite React DataGrid - it's designed to be simple and clean, with a focus on readability and performance.

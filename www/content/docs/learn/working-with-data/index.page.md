@@ -104,11 +104,7 @@ For basic datasets, which have simple data requirements, using `fetch` is probab
 
 <Sandpack title="Using fetch for remote data">
 
-```ts file="using-fetch-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["using-fetch-example.page.tsx","columns.ts"]
 
 ```
 
@@ -128,11 +124,7 @@ Alternatively, you can use the <DPropLink name="refetchKey" /> prop to trigger a
 
 <Sandpack title="Re-fetching data">
 
-```ts file="refetch-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["refetch-example.page.tsx","columns.ts"]
 
 ```
 

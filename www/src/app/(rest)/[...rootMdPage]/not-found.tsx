@@ -1,8 +1,8 @@
 import { MDXContent } from '@www/components/MDXContent';
-import { allRootPages } from 'contentlayer/generated';
+import { siteContent } from '@www/content';
 
 export default function NotFound() {
-  const page = allRootPages.find((page) => page.url === '/404')!;
+  const page = siteContent.paths['/404'];
 
-  return <MDXContent>{page.body.code}</MDXContent>;
+  return <MDXContent>{page.content}</MDXContent>;
 }

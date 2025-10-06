@@ -2,6 +2,7 @@
 title: The First DataGrid with a DevTools Extension
 description: We've launched a Chrome DevTools Extension for Infinite Table
 author: admin
+date: 2025-05-12
 ---
 
 We're happy to announce that [Infinite Table DevTools extension](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa) is now live!
