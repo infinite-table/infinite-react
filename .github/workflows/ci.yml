@@ -113,7 +113,7 @@ jobs:
         run: npm ci --prefix examples
 
       - name: Install www
-        run: npm ci --prefix www
+        run: npm i --prefix www
 
       - name: Execute 'npm i' in www/dataserver
         run: npm run www-dataserver:install
