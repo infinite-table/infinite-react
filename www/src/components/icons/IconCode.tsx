@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const IconCode = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconCode = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconCode({ className }) {
     return (
       <svg

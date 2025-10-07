@@ -27,7 +27,7 @@ const DEPS_VERSIONS: Record<string, string> = {
 };
 
 type SandpackProps = {
-  children?: React.ReactChildren;
+  children?: React.ReactNode;
   files: SandpackInputFile[];
   deps?: string[];
   version?: string;

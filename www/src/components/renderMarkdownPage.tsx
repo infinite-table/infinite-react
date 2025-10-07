@@ -6,6 +6,7 @@ import { useMDXComponents } from '../../content/new-mdx-components';
 import { siteContent } from '@www/content';
 
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
+import type { JSX } from 'react';
 
 export async function renderMarkdownPage(options: {
   slug: string[];

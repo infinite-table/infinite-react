@@ -11,7 +11,7 @@ import {
   DataSourcePropAggregationReducers,
 } from '@infinite-table/infinite-react';
 
-import { AgChartsReact } from 'ag-charts-react';
+import { AgCharts as AgChartsReact } from 'ag-charts-react';
 
 type Developer = {
   id: number;
@@ -105,7 +105,6 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
           return (
             <AgChartsReact
               options={{
-                autoSize: true,
                 title: {
                   text: `Avg salary by stack in ${rowInfo.data?.name}, ${rowInfo.data?.country}`,
                 },

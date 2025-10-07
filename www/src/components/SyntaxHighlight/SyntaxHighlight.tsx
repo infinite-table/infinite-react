@@ -82,7 +82,7 @@ const SyntaxHighlight: React.ForwardRefExoticComponent<
     </div>
   ) : null;
 
-  let el: JSX.Element | null = null;
+  let el: React.JSX.Element | null = null;
 
   if (language === 'mmd') {
     el = <Mermaid chart={children.trimEnd()} />;

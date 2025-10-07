@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import * as React from 'react';
 
-export const IconFullScreen = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconFullScreen = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconFullScreen({ className, ...rest }) {
     const classes = cn(className);
     return (

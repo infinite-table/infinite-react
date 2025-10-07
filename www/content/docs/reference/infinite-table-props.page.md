@@ -3204,7 +3204,7 @@ Also see <PropLink name="onScrollToTop" />, <PropLink name="onScrollToBottom" />
 
 Also see <PropLink name="onScrollToTop" /> and <PropLink name="onScrollStop" />.
 
-As an example usage, we're demoing live pagination, done in combination with the [react-query](https://react-query.tanstack.com/) library.
+As an example usage, we're demoing live pagination, done in combination with the [react-query](https://tanstack.com/query/latest) library.
 
 <Note>
 
@@ -3212,7 +3212,7 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 
 </Note>
 
-<Sandpack title="Fetch new data on scroll to bottom" deps="react-query">
+<Sandpack title="Fetch new data on scroll to bottom">
 
 ```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 

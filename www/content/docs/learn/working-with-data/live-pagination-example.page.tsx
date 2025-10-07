@@ -13,7 +13,8 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
-} from 'react-query';
+  keepPreviousData,
+} from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -122,9 +123,10 @@ const Example = () => {
     data,
     fetchNextPage: fetchNext,
     isFetchingNextPage,
-  } = useInfiniteQuery(
-    ['employees', dataParams.sortInfo, dataParams.groupBy],
-    ({ pageParam = 0 }) => {
+  } = useInfiniteQuery({
+    initialPageParam: 0,
+    queryKey: ['employees', dataParams.sortInfo, dataParams.groupBy],
+    queryFn: ({ pageParam = 0 }) => {
       const params = {
         livePaginationCursor: pageParam,
         sortInfo:
@@ -134,30 +136,28 @@ const Example = () => {
       return dataSource(params);
     },
 
-    {
-      keepPreviousData: true,
-      getPreviousPageParam: (firstPage) => firstPage.prevPageCursor || 0,
-      getNextPageParam: (lastPage) => {
-        const nextPageCursor = lastPage.hasMore
-          ? lastPage.nextPageCursor
-          : undefined;
+    placeholderData: keepPreviousData,
+    getPreviousPageParam: (firstPage) => firstPage.prevPageCursor || 0,
+    getNextPageParam: (lastPage) => {
+      const nextPageCursor = lastPage.hasMore
+        ? lastPage.nextPageCursor
+        : undefined;
 
-        return nextPageCursor;
-      },
-
-      select: (data) => {
-        const flatData = data.pages.flatMap((x) => x.data);
-        const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
-
-        const result = {
-          pages: flatData,
-          pageParams: [nextPageCursor],
-        };
-
-        return result;
-      },
+      return nextPageCursor;
     },
-  );
+
+    select: (data) => {
+      const flatData = data.pages.flatMap((x) => x.data);
+      const nextPageCursor = data.pages[data.pages.length - 1].nextPageCursor;
+
+      const result = {
+        pages: flatData,
+        pageParams: [nextPageCursor],
+      };
+
+      return result;
+    },
+  });
 
   const onDataParamsChange = useCallback(
     (dataParams: DataSourceDataParams<Employee>) => {

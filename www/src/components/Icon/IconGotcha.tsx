@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export const IconGotcha = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconGotcha = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconGotcha({ className }) {
     return (
       <svg

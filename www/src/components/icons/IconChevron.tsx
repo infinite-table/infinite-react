@@ -1,21 +1,21 @@
-import cn from "classnames";
-import * as React from "react";
+import cn from 'classnames';
+import * as React from 'react';
 
 export const IconChevron = React.memo<
-  JSX.IntrinsicElements["svg"] & {
-    displayDirection: "up" | "down" | "left" | "right";
+  React.JSX.IntrinsicElements['svg'] & {
+    displayDirection: 'up' | 'down' | 'left' | 'right';
     size?: number;
     className?: string;
   }
 >(function IconChevron({ className, displayDirection, size = 20 }) {
   const classes = cn(
     {
-      "transform rotate-0": displayDirection === "down",
-      "transform rotate-90": displayDirection === "left",
-      "transform rotate-180": displayDirection === "up",
-      "transform -rotate-90": displayDirection === "right",
+      'transform rotate-0': displayDirection === 'down',
+      'transform rotate-90': displayDirection === 'left',
+      'transform rotate-180': displayDirection === 'up',
+      'transform -rotate-90': displayDirection === 'right',
     },
-    className
+    className,
   );
   return (
     <svg
@@ -38,4 +38,4 @@ export const IconChevron = React.memo<
   );
 });
 
-IconChevron.displayName = "IconChevron";
+IconChevron.displayName = 'IconChevron';

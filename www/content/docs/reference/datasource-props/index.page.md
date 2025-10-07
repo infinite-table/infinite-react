@@ -1261,7 +1261,7 @@ This example uses `groupBy.column` to configure the generated columns correspond
 
 Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> and <DataSourcePropLink name="onDataParamsChange" />
 
-<Sandpack  title="Live pagination - with react-query" deps="react-query">
+<Sandpack  title="Live pagination - with react-query">
 
 ```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 

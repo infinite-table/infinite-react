@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import * as React from 'react';
 
-export const IconSolution = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconSolution = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconSolution({ className }) {
     return (
       <svg

@@ -9,7 +9,7 @@ import {
   debounce,
 } from '@infinite-table/infinite-react';
 
-import { AgChartProps, AgChartsReact } from 'ag-charts-react';
+import { AgChartProps, AgCharts as AgChartsReact } from 'ag-charts-react';
 
 import * as React from 'react';
 import { useState } from 'react';

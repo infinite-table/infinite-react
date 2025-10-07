@@ -2,7 +2,7 @@ import cn from 'classnames';
 import * as React from 'react';
 
 export const IconChevron = React.memo<
-  JSX.IntrinsicElements['svg'] & {
+  React.JSX.IntrinsicElements['svg'] & {
     displayDirection: 'up' | 'down' | 'left' | 'right';
   }
 >(function IconChevron({ className, displayDirection }) {

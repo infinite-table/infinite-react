@@ -40,7 +40,9 @@ const columns: InfiniteTablePropColumns<Developer> = {
   },
   hobby: {
     field: 'hobby',
-    header: HobbyHeader,
+    components: {
+      HeaderCell: HobbyHeader,
+    },
   },
 };
 

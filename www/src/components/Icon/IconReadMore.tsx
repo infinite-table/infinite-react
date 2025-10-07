@@ -5,7 +5,7 @@
 import cn from 'classnames';
 import * as React from 'react';
 
-export const IconReadMore = React.memo<JSX.IntrinsicElements['svg']>(
+export const IconReadMore = React.memo<React.JSX.IntrinsicElements['svg']>(
   function IconHint({ className }) {
     return (
       <svg
