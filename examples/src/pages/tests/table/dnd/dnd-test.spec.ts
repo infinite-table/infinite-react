@@ -1,8 +1,8 @@
 import { DragManager } from '@src/components/InfiniteTable/components/draggable/DragManager';
 import { test, expect } from '@playwright/test';
-import { Rectangle } from '@infinite-table/infinite-react/src/utils/pageGeometry/Rectangle';
-import { PointCoords } from '@infinite-table/infinite-react/src/utils/pageGeometry/Point';
-import { DragInteractionTarget } from '@infinite-table/infinite-react/src/components/InfiniteTable/components/draggable/DragInteractionTarget';
+import { Rectangle } from '@src/utils/pageGeometry/Rectangle';
+import { PointCoords } from '@src/utils/pageGeometry/Point';
+import { DragInteractionTarget } from '@src/components/InfiniteTable/components/draggable/DragInteractionTarget';
 
 export default test.describe.parallel('DND', () => {
   test('should work for simple vertical list, no other interaction', () => {

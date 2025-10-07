@@ -24,7 +24,7 @@ const renderItem: RenderItem = ({ itemIndex, domRef }) => {
         top: 0,
         left: 0,
       }}
-      ref={domRef}
+      ref={domRef as React.Ref<HTMLDivElement>}
     >
       #{itemIndex}
     </div>

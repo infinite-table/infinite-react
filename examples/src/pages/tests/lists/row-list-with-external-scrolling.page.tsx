@@ -20,7 +20,7 @@ const renderRow: RenderRow = ({ rowIndex, domRef }) => {
         top: 0,
         left: 0,
       }}
-      ref={domRef}
+      ref={domRef as React.Ref<HTMLDivElement>}
     >
       row {rowIndex}
     </div>

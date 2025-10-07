@@ -1,6 +1,6 @@
-import { HeadlessTableWithPinnedContainers } from '@infinite-table/infinite-react/src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
-import { TableRenderCellFnParam } from '@infinite-table/infinite-react/src/components/HeadlessTable/rendererTypes';
-import { MatrixBrain } from '@infinite-table/infinite-react/src/components/VirtualBrain/MatrixBrain';
+import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
+import { TableRenderCellFnParam } from '@src/components/HeadlessTable/rendererTypes';
+import { MatrixBrain } from '@src/components/VirtualBrain/MatrixBrain';
 import * as React from 'react';
 import { useState } from 'react';
 
@@ -24,7 +24,7 @@ export default function App() {
       <b
         onMouseLeave={onMouseLeave}
         onMouseEnter={onMouseEnter}
-        ref={domRef}
+        ref={domRef as React.Ref<HTMLElement>}
         style={{
           overflow: 'hidden',
           height: heightWithRowspan,

@@ -4,11 +4,6 @@
   "private": true,
   "description": "The most productive Data Table for React",
   "main": "index.js",
-  "overrides": {
-    "next": "15.5.4",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
-  },
   "scripts": {
     "bundlewatch": "bundlewatch --config bundlewatch.config.json",
     "clean-deps": "[ -f package-lock.json ] && rm package-lock.json; rm -fr node_modules && rm -fr source/node_modules && rm -fr www/node_modules && rm -fr examples/node_modules && rm -fr devtools/node_modules && rm -fr devtools-ui/node_modules && rm -fr devtools-www/node_modules",
@@ -92,9 +87,5 @@
     "semi": true,
     "singleQuote": true,
     "trailingComma": "all"
-  },
-  "workspaces": [
-    "source",
-    "www"
-  ]
+  }
 }
