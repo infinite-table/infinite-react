@@ -3,6 +3,7 @@ import { RowListWithExternalScrolling } from '@src/components/VirtualList/RowLis
 import { RenderRow } from '@src/components/VirtualList/types';
 
 const COUNT = 100;
+
 const brain = new VirtualBrain({
   count: COUNT,
   itemSize: 50,
