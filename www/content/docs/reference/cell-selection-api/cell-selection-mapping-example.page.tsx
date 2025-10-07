@@ -10,7 +10,6 @@ import {
 } from '@infinite-table/infinite-react';
 
 import { AgChartProps, AgCharts as AgChartsReact } from 'ag-charts-react';
-
 import * as React from 'react';
 import { useState } from 'react';
 
