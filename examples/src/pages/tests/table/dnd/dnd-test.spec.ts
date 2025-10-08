@@ -66,6 +66,7 @@ export default test.describe.parallel('DND', () => {
     });
 
     DragManager.registerDragInteractionTarget(list1);
+
     const dragOperation = DragManager.startDrag(
       {
         listId: 'list1',
