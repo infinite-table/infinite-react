@@ -29,8 +29,6 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.blogpost.length > 0);
 
-  result.length = 1;
-  console.log('blog posts:', result);
   return result;
 }
 

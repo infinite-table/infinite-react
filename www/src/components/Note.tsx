@@ -18,37 +18,10 @@ const variantStyles = {
     title: '',
     content: '',
   },
-  warning: {
-    container:
-      'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/50',
-    icon: 'text-yellow-600 dark:text-yellow-400',
-    title: 'text-yellow-900 dark:text-yellow-100',
-    content: 'text-yellow-800 dark:text-yellow-200',
-  },
-  success: {
-    container:
-      'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50',
-    icon: 'text-green-600 dark:text-green-400',
-    title: 'text-green-900 dark:text-green-100',
-    content: 'text-green-800 dark:text-green-200',
-  },
-  error: {
-    container:
-      'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50',
-    icon: 'text-red-600 dark:text-red-400',
-    title: 'text-red-900 dark:text-red-100',
-    content: 'text-red-800 dark:text-red-200',
-  },
 };
 
-export function Note({
-  children,
-  className,
-  variant = 'info',
-  title,
-  icon = true,
-}: NoteProps) {
-  const styles = variantStyles[variant];
+export function Note({ children, className, title, icon = true }: NoteProps) {
+  const styles = variantStyles.info;
 
   return (
     <div

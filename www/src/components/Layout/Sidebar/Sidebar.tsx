@@ -78,25 +78,6 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
         >
           Buy a License
         </AccentButton>
-
-        {/* <div className="w-full text-center justify-center flex flex-row border rounded-lg font-bold overflow-hidden">
-          <Link href={pathname === '/blog' ? '/docs' : '/blog'}>
-            <a className="pr-6 border-r py-2 flex-1 text-right hover:bg-highlight hover:text-darkcustom">
-              {pathname === '/blog' ? 'Docs' : 'Blog'}
-            </a>
-          </Link>{' '}
-          <Link
-            href={
-              pathname.startsWith('/docs/releases')
-                ? '/docs/reference'
-                : '/docs/releases'
-            }
-          >
-            <a className="pl-6 py-2  flex-1 text-left">
-              {pathname.startsWith('/docs/releases') ? 'Reference' : 'Releases'}
-            </a>
-          </Link>
-        </div> */}
       </div>
     </aside>
   );

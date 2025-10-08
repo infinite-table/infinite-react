@@ -1,6 +1,3 @@
-// import fs from 'node:fs';
-// import path from 'node:path';
-
 import * as React from 'react';
 
 import SyntaxHighlight from '../SyntaxHighlight';
@@ -16,29 +13,6 @@ type BasicCodeBlockProps = {
   children?: string;
   lang?: string;
 };
-
-// import packageJSON from '../../../package.json';
-
-// export const getFileContent = async (file: string) => {
-//   const contentRoot =
-//     process.env.npm_config_contentroot ?? packageJSON.docsRoot.source;
-
-//   let filePath = file.startsWith('@content/')
-//     ? path.join(contentRoot, file.replace('@content/', ''))
-//     : file;
-
-//   console.log('reading file', filePath);
-
-//   let fileContent = '';
-//   try {
-//     fileContent = fs.readFileSync(path.resolve(filePath), 'utf8');
-//   } catch (error) {
-//     console.error('Error reading file', error);
-//     throw error;
-//   }
-
-//   return fileContent;
-// };
 
 export function CodeBlock(props: BasicCodeBlockProps) {
   return <CodeBlockCmp {...props} />;

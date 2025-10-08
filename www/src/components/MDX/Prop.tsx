@@ -485,7 +485,7 @@ export function Prop({
                 <span className="italic opacity-40">{` <T>`}</span>
               ) : null}
               {deprecated ? (
-                <span className="text-xs ml-3 absolute top-16 -left-4 bg-red-400 text-darkcustom p-1 leading-none rounded">
+                <span className="text-xs ml-3 absolute -top-6 -left-4 bg-error text-darkcustom p-1 leading-none rounded">
                   deprecated
                 </span>
               ) : null}

@@ -16,7 +16,7 @@ export default function NavLink({ href, children, isActive }: NavLinkProps) {
       // 'border-glow text-glow  font-bold': isActive,
     },
     { 'border-transparent': !isActive },
-    'inline-flex w-full items-center border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-link  whitespace-nowrap',
+    'inline-flex w-full items-center border-b-2 justify-center text-base leading-9 hover:text-link whitespace-nowrap group',
   );
 
   if (href.startsWith('https://')) {
@@ -29,7 +29,11 @@ export default function NavLink({ href, children, isActive }: NavLinkProps) {
 
   return (
     <NextLink href={href} className={classes}>
-      {children}
+      <div
+        className={cn({}, 'm-1 px-3 rounded-lg group-hover:bg-highlight-dark ')}
+      >
+        {children}
+      </div>
     </NextLink>
   );
 }

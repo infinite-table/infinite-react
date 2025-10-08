@@ -43,8 +43,7 @@
   --color-card: #f6f7f9; /* gray-05 */
   --color-card-dark: #343a46; /* gray-80 */
   --color-glow: #3bff7f;
-  /* highlight: '#e7e247', // blue-10 */
-  --color-highlight: #3bff7f; /* blue-10 */
+
   /* this is the color used in the logo */
   --color-accent2: #497aff; /* blue-10 */
   --color-highlight: #e6f7ff; /* blue-10 */
@@ -63,6 +62,7 @@
   --color-special-border-color: rgba(255, 255, 255, 0.09);
   --color-deep-dark: #07131c;
   --color-mint-500: oklch(0.72 0.11 178);
+  --color-error: var(--color-red-400);
 
   --color-gray-95: #16181d;
   --color-gray-90: #23272f;
@@ -82,44 +82,7 @@
   --color-blue-20: #abe2ed;
   --color-blue-10: #e6f7ff;
   --color-blue-5: #e6f6fa;
-  /*
-  // Yellow
-  'yellow-60': '#B65700',
-  'yellow-50': '#C76A15',
-  'yellow-40': '#DB7D27', // unused
-  'yellow-30': '#FABD62', // unused
-  'yellow-20': '#FCDEB0', // unused
-  'yellow-10': '#FDE7C7',
-  'yellow-5': '#FEF5E7',
 
-  // Purple
-  'purple-60': '#2B3491', // unused
-  'purple-50': '#575FB7',
-  'purple-40': '#6B75DB',
-  'purple-30': '#8891EC',
-  'purple-20': '#C3C8F5', // unused
-  'purple-10': '#E7E9FB',
-  'purple-5': '#F3F4FD',
-
-  // Green
-  'green-60': '#2B6E62',
-  'green-50': '#388F7F',
-  'green-40': '#44AC99',
-  'green-30': '#7FCCBF',
-  'green-20': '#ABDED5',
-  'green-10': '#E5F5F2',
-  'green-5': '#F4FBF9',
-
-  // RED
-  'red-60': '#712D28',
-  'red-50': '#A6423A', // unused
-  'red-40': '#C1554D',
-  'red-30': '#D07D77',
-  'red-20': '#E5B7B3', // unused
-  'red-10': '#F2DBD9', // unused
-  'red-5': '#FAF1F0',
-
-  */
   /* // MISC */
   --color-code-block: #99a1b30f;
   --color-gradient-blue: #58c4dc;
@@ -143,20 +106,16 @@
   --text-xs: 11px;
   --text-code: calc(1em - 20%);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-default: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-    0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0px 0.8px 2px rgba(0, 0, 0, 0.032),
-    0px 2.7px 6.7px rgba(0, 0, 0, 0.048), 0px 12px 30px rgba(0, 0, 0, 0.08);
-  --shadow-lgdark: 0 0 0 1px rgba(255, 255, 255, 0.15),
-    0px 0.8px 2px rgba(0, 0, 0, 0.032), 0px 2.7px 6.7px rgba(0, 0, 0, 0.048),
-    0px 12px 30px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-3xl: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+  --shadow-sm: inset 0 1px 2px 0 oklch(1 0 0 / 0.23) /* top highlight */,
+    0 1px 2px 0 oklch(0 0 0 / 0.23),
+    0 2px 4px 0 oklch(1 0 0 / 0.2) /* dark shadow */;
+  --shadow-md: inset 0 2px 4px 0 oklch(1 0 0 / 0.23) /* top highlight */,
+    0 4px 6px 0 oklch(0 0 0 / 0.23),
+    0 4px 6px 0 oklch(1 0 0 / 0.2) /* dark shadow */;
+  --shadow-lg: inset 0 1px 3px 0 oklch(1 0 0 / 0.23) /* top highlight */,
+    0 3px 5px 0 oklch(0 0 0 / 0.23),
+    0 4px 6px 0 oklch(1 0 0 / 0.2) /* dark shadow */;
+
   --shadow-inner: inset 0 1px 4px 0 rgba(0, 0, 0, 0.05);
   --shadow-none: none;
 }

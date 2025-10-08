@@ -126,18 +126,6 @@ export function SidebarRouteTree({
 
           const selected = slug === pagePath && !transient;
 
-          // if current route item has no path and children treat it as an API sidebar heading
-          // if (!path || !pagePath || heading) {
-          //   return (
-          //     <SidebarRouteTree
-          //       key={`${index}-${level}`}
-          //       level={level + 1}
-          //       isMobile={isMobile}
-          //       routeTree={{ title, routes }}
-          //     />
-          //   );
-          // }
-
           // if route has a path and child routes, treat it as an expandable sidebar item
           if (routes) {
             // console.log({ expanded, path });

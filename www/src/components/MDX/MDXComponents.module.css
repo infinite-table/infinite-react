@@ -1,8 +1,3 @@
-/* Stop purging. */
-.markdown p {
-  /* @apply mb-4 leading-7 whitespace-pre-wrap text-gray-70; */
-}
-
 .markdown ol {
   @apply mb-4 ml-8 list-decimal;
 }

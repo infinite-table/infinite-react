@@ -18,13 +18,9 @@ const column = {
 };
 ```
 
-<Sandpack title="Using column.style as an object">
-
-```tsx file="column-style-object-example.page.tsx"
+```tsx live title="Using column.style as an object" file="column-style-object-example.page.tsx"
 
 ```
-
-</Sandpack>
 
 The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `React.CSSProperties`) or a function that returns an object (of the same type).
 

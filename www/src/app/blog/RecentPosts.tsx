@@ -64,42 +64,8 @@ export default function RecentPosts({ posts }: { posts: BlogPost[] }) {
                 </div>
               );
             })}
-          {/* <div className="text-center">
-              <Link href="/blog/all">
-                <a className="px-4 py-1.5 hover:bg-opacity-80 text-center bg-link text-white  font-bold   transition duration-150 ease-in-out rounded-lg inline-flex items-center">
-                  View all articles
-                </a>
-              </Link>
-            </div> */}
         </div>
       </CenterContent>
     </>
   );
 }
-
-// RecentPosts.displayName = 'Index';
-
-// RecentPosts.appShell = function AppShell(props: { children: React.ReactNode }) {
-//   // console.log(blogIndexRecentRouteTree);
-//   return (
-//     <Page
-//       blog
-//       routeTree={
-//         {
-//           title: 'Blog',
-//           heading: false,
-//           path: '/blog',
-//           routes: [
-//             {
-//               title: 'Blog',
-//               heading: false,
-//               path: '/blog',
-//               routes: blogIndexRouteTree.routes,
-//             },
-//           ],
-//         } as any as RouteItem
-//       }
-//       {...props}
-//     />
-//   );
-// };
