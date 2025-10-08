@@ -63,7 +63,7 @@ jobs:
         run: npm ci --force
 
       - name: Install source
-        run: npm ci --prefix source
+        run: npm i --prefix source
 
       - name: Install www
         run: npm ci --prefix www

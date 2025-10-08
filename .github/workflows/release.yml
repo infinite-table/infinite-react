@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Install source
-        run: npm ci --prefix source
+        run: npm i --prefix source
 
       - name: Install examples
         run: npm ci --prefix examples
