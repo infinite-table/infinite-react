@@ -130,6 +130,7 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
       rowIndex: 0,
     };
     let text = await rowModel.getTextForCell(cellEditable1);
+
     expect(text).toBe('frontend');
 
     await editModel.startEdit({
