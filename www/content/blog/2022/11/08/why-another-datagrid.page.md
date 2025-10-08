@@ -2,6 +2,7 @@
 title: 'Why Another React DataGrid?'
 description: 'Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different'
 author: [admin]
+date: 2022-11-08
 ---
 
 We've been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.
@@ -191,7 +192,7 @@ Building on the legacy of YUI 3, the ExtJS added virtualization to make the Data
 
 Also ExtJS tried to make things declarative and you could describe most of your UI by nesting JavaScript objects into a root object. The idea was clever, but it was only applicable for the initial rendering and you had to write imperative code as soon as you wanted some changes after the initial render.
 
-<Gotcha title="What If...">
+<Note title="What If...">
 
 It was while working on a project with ExtJS 3 and exploring everything it had to offer that we had the great idea 😅 that we should start writing a DataGrid component.
 
@@ -199,7 +200,7 @@ We were digging deep into ExtJS source code, wrote a few plugins for it and then
 
 It was supposed to take us just a few short months 😅...
 
-</Gotcha>
+</Note>
 
 ## The React Revolution
 
@@ -215,9 +216,9 @@ By the time the presentation was finished we knew we had to do something.
 
 This declarative way of describing the UI got us hooked and we knew we had to **drop what we were doing and adopt React** for anything going forward. It proved to be the right decision and we were early adopters of [React](https://reactjs.org/). It was astonishing to us how easy it was to learn React at the time - only taking a few hours to fully grasp the mental model and start building reusable components.
 
-<Gotcha title="The move to React">
+<Note title="The move to React">
 2013 was the year we switched trajectory and went full-React with all our new projects. We went back to the drawing board and started our first experiments with a DataGrid component in React. 
-</Gotcha>
+</Note>
 
 While we were building the DataGrid in React we got side-tracked with other projects but we saw the same pattern again and again - people trying to implement the grid component again and again, in various projects. Most of those attempts either failed terribly or at best they were good-enough for a simple use-case.
 

@@ -76,14 +76,14 @@ This example starts with row at index `2` already active and uses <PropLink name
 
 When the DataSource is <DPropLink name="groupBy" code={false}>grouped</DPropLink>, you can use the keyboard to collapse/expand group rows, by pressing the `Enter` key on the active row.
 
-<Hint>
+<Note>
 
 Since you're in row navigation mode, you can also use
 
 - `←` to collapse a group row
 - `→` to expand a group row
 
-</Hint>
+</Note>
 
 <Sandpack>
 
@@ -125,11 +125,11 @@ For selection all the rows in the table, you can use `cmd`/`ctrl` + `A` keyboard
 
 </Note>
 
-<Hint>
+<Note>
 
 Keyboard selection is also possible when there's a column configured with checkbox selection - [make sure you read more about it](../selection/row-selection#using-a-selection-checkbox).
 
-</Hint>
+</Note>
 
 ## Theming
 

@@ -185,11 +185,7 @@ Let's see an example of how the component would render the table with the multi-
 
 <Sandpack title="Multi-column group render strategy">
 
-```ts file="row-grouping-multi-column-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["row-grouping-multi-column-example.page.tsx","columns.ts"]
 
 ```
 
@@ -199,21 +195,17 @@ For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColum
 
 <Sandpack title="Hide Empty Group Columns">
 
-```ts file="$DOCS/reference/hideEmptyGroupColumns-example.page.tsx"
-
-```
-
-```ts file="$DOCS/reference/employee-columns.ts" as="employee-columns.ts"
+```ts files=["$DOCS/reference/hideEmptyGroupColumns-example.page.tsx","$DOCS/reference/employee-columns.ts"]
 
 ```
 
 </Sandpack>
 
-<Gotcha>
+<Note>
 
 You can specify an `id` for group columns. This is helpful if you want to size those columns (via <PropLink name="columnSizing" />) or pin them (via <PropLink name="columnPinning" />) or configure them in other ways. If no `id` is specified, it will be generated like this: `"group-by-${field}"`
 
-</Gotcha>
+</Note>
 
 ### Single group column
 
@@ -229,11 +221,7 @@ By default the generated group column will "inherit" many of the properties (the
 
 <Sandpack title="Single-column group render strategy">
 
-```ts file="row-grouping-single-column-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["row-grouping-single-column-example.page.tsx","columns.ts"]
 
 ```
 
@@ -247,11 +235,11 @@ If <PropLink name="groupColumn" /> is specified to an object and no <PropLink na
 
 </Note>
 
-<Gotcha>
+<Note>
 
 You can specify an `id` for the single <PropLink name="groupColumn" />. This is helpful if you want to size this column (via <PropLink name="columnSizing" />) or pin it (via <PropLink name="columnPinning" />) or configure it in other ways. If no `id` is specified, it will default to `"group-by"`.
 
-</Gotcha>
+</Note>
 
 ## Customizing the group column
 
@@ -420,7 +408,7 @@ Each <DataSourcePropLink name="aggregationReducers" code={false}>reducer</DataSo
 
 If an aggregation reducer is bound to a `field` in the dataset, and there is a column mapped to the same `field`, that column will show the corresponding aggregation value for each group row, as shown in the example above.
 
-<Gotcha>
+<Note>
 
 If you want to prevent the user to expand the last level of group rows, you can override the `render` function for the group column
 
@@ -432,7 +420,7 @@ If you want to prevent the user to expand the last level of group rows, you can 
 
 </Sandpack>
 
-</Gotcha>
+</Note>
 
 <HeroCards>
 <YouWillLearnCard title="Aggregations" path="group-aggregations">

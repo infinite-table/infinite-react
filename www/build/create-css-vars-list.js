@@ -122,7 +122,7 @@ const vars = extract(
   ),
   ['ThemeVars'],
 );
-console.log(vars);
+// console.log(vars);
 const mdFilePath = path.resolve(
   __dirname,
   '../content/docs/learn/theming/css-variables.page.md',

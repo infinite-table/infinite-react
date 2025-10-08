@@ -4,11 +4,11 @@ import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 import Link from 'next/link';
 
-import { type Post } from 'contentlayer/generated';
+import { BlogPost } from '@www/utils/blogUtils';
 import { BlostPostExcerpt } from './BlostPostExcerpt';
 import { CenterContent } from '../CenterContent';
 
-export default function RecentPosts({ posts }: { posts: Post[] }) {
+export default function RecentPosts({ posts }: { posts: BlogPost[] }) {
   return (
     <>
       <CenterContent>
@@ -39,9 +39,9 @@ export default function RecentPosts({ posts }: { posts: Post[] }) {
                 author = author[0];
               }
               return (
-                <div key={post.url}>
+                <div key={post.href}>
                   <h3 className="font-bold leading-8 text-content-color text-2xl mb-4 hover:underline">
-                    <Link href={post.url}>{post.title}</Link>
+                    <Link href={post.href}>{post.title}</Link>
                   </h3>
                   <BlostPostExcerpt post={post} />
                   <div className="flex items-center mt-4">
@@ -51,7 +51,10 @@ export default function RecentPosts({ posts }: { posts: Post[] }) {
                       </p>
                       <div className="flex text-sm leading-5  ">
                         <time dateTime={post.date}>
-                          {format(parseISO(post.date), 'MMMM dd, yyyy')}
+                          {format(
+                            parseISO(post.date ?? new Date().toISOString()),
+                            'MMMM dd, yyyy',
+                          )}
                         </time>
                         <span className="mx-1">·</span>
                         <span>{post.readingTime}</span>

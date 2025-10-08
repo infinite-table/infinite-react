@@ -62,6 +62,12 @@ jobs:
       - name: Install
         run: npm ci --force
 
+      - name: Install source
+        run: npm i --prefix source
+
+      - name: Install www
+        run: npm ci --prefix www
+
       - name: 'Building'
         run: |
           npm run build:all

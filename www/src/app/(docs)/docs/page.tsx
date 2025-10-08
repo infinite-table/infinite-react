@@ -3,23 +3,28 @@ import { Page } from '@www/components/Layout/Page';
 
 import sidebarLearn from '@www/sidebarLearn.json';
 
-import { MDXContent } from '@www/components/MDXContent';
 import PageHeading from '@www/components/PageHeading';
-import { allDocsPages, type DocsPage } from 'contentlayer/generated';
+
 import { metadata as meta } from '../../metadata';
 import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
+import { MarkdownDocsPage } from '@www/components/MarkdownDocsPage';
+import { siteContent } from '../../../content';
+import { MarkdownFileInfo } from '../../../utils/MarkdownFileInfo';
 
 export const metadata = asMeta(meta);
 
 export default function Docs() {
   const path = `/docs`;
 
-  const pageIndex = allDocsPages.findIndex((page) => page.url === path);
-  const page = allDocsPages[pageIndex] as DocsPage;
+  const pageIndex = siteContent.routes.findIndex((page) => {
+    return page.routePath === path || page.routePath === `${path}/`;
+  });
 
-  const anchors = getMarkdownHeadingsForPage(page.body.raw);
+  const page = siteContent.routes[pageIndex] as MarkdownFileInfo;
+
+  const anchors = getMarkdownHeadingsForPage(page.content);
 
   const afterChildren =
     anchors && anchors.length ? (
@@ -32,8 +37,8 @@ export default function Docs() {
       <CenterContent>
         {page ? (
           <>
-            <PageHeading title={page.title}></PageHeading>
-            <MDXContent>{page.body.code}</MDXContent>
+            <PageHeading title={page.frontmatter.title}></PageHeading>
+            <MarkdownDocsPage params={{ slug: [] }}></MarkdownDocsPage>
           </>
         ) : (
           <div>No Docs Page found</div>

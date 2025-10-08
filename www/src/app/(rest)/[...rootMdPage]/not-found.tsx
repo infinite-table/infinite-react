@@ -1,8 +1,13 @@
-import { MDXContent } from '@www/components/MDXContent';
-import { allRootPages } from 'contentlayer/generated';
+import { MainContent } from '../../../layouts/MainLayout';
+import { renderMarkdownPage } from '../../../components/renderMarkdownPage';
 
-export default function NotFound() {
-  const page = allRootPages.find((page) => page.url === '/404')!;
-
-  return <MDXContent>{page.body.code}</MDXContent>;
+export default async function NotFound() {
+  return (
+    <MainContent>
+      {await renderMarkdownPage({
+        slug: ['/404'],
+        baseUrl: import.meta.url,
+      })}
+    </MainContent>
+  );
 }

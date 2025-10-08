@@ -475,7 +475,7 @@ export function Prop({
             <H4
               as="h2"
               id={theId}
-              className={`pt-[80px] mt-[-80px] mb-0 relative ${
+              className={`mt-[0px] mb-0 relative ${
                 deprecated ? 'line-through' : ''
               }`}
             >
@@ -570,7 +570,9 @@ export function Prop({
         </div>
       </div>
       {expanded ? (
-        <div className={cn('p-8 border-t border-deep-dark')}>{content}</div>
+        <div className={cn('p-8 pt-0 border-t border-deep-dark')}>
+          {content}
+        </div>
       ) : null}
     </div>
   );
@@ -698,13 +700,13 @@ export function PropTable({
       if (!hidden) {
         visibleCount++;
       }
-      if (highlight) {
-        console.log({
-          highlight,
-          lowerName,
-          lowerHash,
-        });
-      }
+      // if (highlight) {
+      //   console.log({
+      //     highlight,
+      //     lowerName,
+      //     lowerHash,
+      //   });
+      // }
       return React.cloneElement(child, {
         //@ts-ignore
         hidden,

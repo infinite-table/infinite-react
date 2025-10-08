@@ -44,11 +44,7 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 
 <Sandpack>
 
-```tsx file="column-groups-example.page.tsx"
-
-```
-
-```tsx file="column-groups-data.ts"
+```tsx files=["column-groups-example.page.tsx","column-groups-data.ts"]
 
 ```
 

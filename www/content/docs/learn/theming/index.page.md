@@ -60,21 +60,20 @@ You will want to apply the theme name and theme mode classNames to the same elem
 </body>
 ```
 
-<Sandpack title="Theme switching demo - defaults to minimalist theme in dark mode" size="md" viewMode="preview" deps="shadcn-ui-css-vars">
+
+
+<Snippet>
 
 <Description>
 
 Example configured with `minimalist` theme and `dark` mode by default.
 </Description>
-```ts file="theme-switching-minimalist-theme-default-example.page.tsx"
 
+```tsx live title="Theme switching demo - defaults to minimalist theme in dark mode" size="md" viewMode="preview" files="theme-switching-minimalist-theme-default-example.page.tsx,columns.ts"
 ```
 
-```ts file="columns.ts"
+</Snippet>
 
-```
-
-</Sandpack>
 
 ## Theme mode - light or dark
 
@@ -104,22 +103,14 @@ If instead you specify a `infinite-theme-mode--dark` CSS className, the dark mod
 </body>
 ```
 
-<Sandpack title="Theme switching demo - defaults to light theme" size="md" viewMode="preview" deps="shadcn-ui-css-vars">
 
 <Description>
-
 Example configured with `default` theme and `light` mode by default.
 </Description>
 
-```ts file="theme-switching-example.page.tsx"
+```tsx live title="Theme switching demo - defaults to light theme" size="md" viewMode="preview"  files="theme-switching-example.page.tsx,columns.ts"
 
 ```
-
-```ts file="columns.ts"
-
-```
-
-</Sandpack>
 
 <Note>
 

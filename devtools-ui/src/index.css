@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '@infinite-table/infinite-react/dist/index.css';
+@import '../../source/dist/index.css';
 
 @custom-variant dark (&:is(.dark *));
 

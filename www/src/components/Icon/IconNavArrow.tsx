@@ -2,7 +2,7 @@ import cn from 'classnames';
 import * as React from 'react';
 
 export const IconNavArrow = React.memo<
-  JSX.IntrinsicElements['svg'] & {
+  React.JSX.IntrinsicElements['svg'] & {
     displayDirection: 'right' | 'down' | 'left';
   }
 >(function IconNavArrow({ displayDirection = 'right', className }) {

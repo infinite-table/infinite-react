@@ -1,15 +1,13 @@
-import { allPosts, type Post } from 'contentlayer/generated';
+// import { allPosts, type Post } from 'contentlayer/generated';
 
-import parseISO from 'date-fns/parseISO';
+import { getBlogPosts } from '../../utils/blogUtils';
 // they are sorted by date in descending order - so the most recent post is first
-export const sortedPosts = allPosts
-  .filter((post) => post.draft !== true)
-  .sort((post1, post2) =>
-    parseISO(post1.date) > parseISO(post2.date) ? -1 : 1,
-  );
+export const sortedPosts = getBlogPosts();
 
-export const sortedPostsIncludingDrafts = allPosts.sort((post1, post2) =>
-  parseISO(post1.date) > parseISO(post2.date) ? -1 : 1,
-);
+import type { BlogPost } from '../../utils/blogUtils';
 
-export type { Post };
+export type { BlogPost };
+
+export const sortedPostsIncludingDrafts = getBlogPosts({
+  skipDrafts: false,
+});

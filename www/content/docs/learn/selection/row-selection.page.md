@@ -25,11 +25,11 @@ Row selection is defined on the `DataSource` component, so that's where you spec
 
 </Note>
 
-<Hint>
+<Note>
 
 You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-row"` or `"multi-row"` (or `false`) but it will generally be derived from the value of your <DPropLink name="rowSelection" />/<PropLink name="defaultRowSelection" /> prop.
 
-</Hint>
+</Note>
 
 # Single Row Selection
 
@@ -193,11 +193,11 @@ Use the selection checkboxes to select rows. You can also use the spacebar key (
 
 The mouse interactions are the obvious ones you would expect from checkbox selection. Clicking a checkbox will toggle the selection for the correspondign row. Also, clicking the header checkbox will select/deselect all the rows in the table. The selection checkbox in the column header can be in an indeterminate state (when just some of the rows are selected), and when clicking it, it will become checked and select all rows.
 
-<Gotcha>
+<Note>
 
 You can use <PropLink name="columns.renderHeaderSelectionCheckBox">renderHeaderSelectionCheckBox</PropLink> for a column to customize the checkbox in the column header. If no header selection checkbox is specified, <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> will be used for the column header as well, just like it's used for grid rows.
 
-</Gotcha>
+</Note>
 
 ### Keyboard interactions
 
@@ -247,7 +247,7 @@ As shown above, the `rowSelection.selectedRows` and `rowSelection.deselectedRows
 - primary keys of rows (which are usually strings or numbers) - any non-array value inside `rowSelection.selectedRows`/`rowSelection.deselectedRows` is considered an id/primaryKey value for a leaf row in the grouped dataset.
 - arrays of group keys (can be combined with primary keys as well) - those arrays describe the path of the specified selected group. Please note that `rowSelection.selectedRows` can contain certain paths while `rowSelection.deselectedRows` can contain child paths of those paths ... or any other imaginable combination. For this kind of <DPropLink name="rowSelection" />, you need to enable <DPropLink name="useGroupKeysForMultiRowSelection" />.
 
-<Gotcha>
+<Note>
  
 Row Selection only uses primary keys by default, even when you have grouped data.
 
@@ -256,7 +256,7 @@ Note that if you use selection with group keys, the selection will not be releva
 
 When you have both grouping and <DPropLink name="lazyLoad">lazy loading</DPropLink>, <DPropLink name="useGroupKeysForMultiRowSelection" /> must be enabled - read more about it in the note below.
 
-</Gotcha>
+</Note>
 
 <Note>
 

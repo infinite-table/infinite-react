@@ -5,9 +5,10 @@ import { Metadata } from 'next';
 import {
   sortedPosts,
   sortedPostsIncludingDrafts,
-  type Post,
+  BlogPost as BlogPostType,
 } from '../sortedPosts';
 import { BlogPost } from './BlogPost';
+import { renderMarkdownPage } from '../../../components/renderMarkdownPage';
 
 const suffix = '| Infinite Table DataGrid for React';
 const meta = {
@@ -19,7 +20,7 @@ export async function generateStaticParams() {
   const result = sortedPostsIncludingDrafts
     .map((post) => {
       return {
-        blogpost: post.url
+        blogpost: post.href
           .split('/')
           .slice(2) // to take out the first empty string and the '/blog' portion
           .map((x) => x.trim())
@@ -28,21 +29,23 @@ export async function generateStaticParams() {
     })
     .filter((x) => x.blogpost.length > 0);
 
-  // console.log('result', result);
+  result.length = 1;
+  console.log('blog posts:', result);
   return result;
 }
 
 export const generateMetadata = async ({
   params,
 }: {
-  params: { blogpost: string[] };
+  params: Promise<{ blogpost: string[] }>;
 }): Promise<Metadata> => {
-  const path = `/blog/${params.blogpost.join('/')}`;
+  const p = await params;
+  const path = `/blog/${p.blogpost.join('/')}`;
 
   const postIndex = sortedPostsIncludingDrafts.findIndex(
-    (post) => post.url === path,
+    (post) => post.href === path,
   );
-  const post = sortedPostsIncludingDrafts[postIndex] as Post;
+  const post = sortedPostsIncludingDrafts[postIndex] as BlogPostType;
 
   const res = {
     title: (post?.title ? `${post?.title} ${suffix}` : null) ?? meta.title,
@@ -53,21 +56,22 @@ export const generateMetadata = async ({
 
   return asMeta(res);
 };
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { blogpost: string[] };
+  params: Promise<{ blogpost: string[] }>;
 }) {
-  const path = `/blog/${params.blogpost.join('/')}`;
+  const p = await params;
+  const path = `/blog/${p.blogpost.join('/')}`;
 
   let arr = sortedPosts;
-  let postIndex = arr.findIndex((post) => post.url === path);
+  let postIndex = arr.findIndex((post) => post.href === path);
 
   if (postIndex === -1) {
     arr = sortedPostsIncludingDrafts;
-    postIndex = arr.findIndex((post) => post.url === path);
+    postIndex = arr.findIndex((post) => post.href === path);
   }
-  const post = arr[postIndex] as Post;
+  const post = arr[postIndex] as BlogPostType;
 
   // the prev post is older, so it's the next post in the array
   const prevPost = arr[postIndex + 1];
@@ -75,23 +79,29 @@ export default function BlogPostPage({
   // the next post is more recent, so it's the previous post in the array
   const nextPost = arr[postIndex - 1];
 
+  const children = await renderMarkdownPage({
+    slug: ['blog', ...p.blogpost],
+    baseUrl: import.meta.url,
+  });
+
   return (
     <BlogPost
-      headings={getMarkdownHeadingsForPage(post.body.raw)}
+      headings={getMarkdownHeadingsForPage(post.content)}
+      children={children}
       post={{
-        author: post.author,
-        date: post.date,
+        author: post.author ?? '',
+        date: post.date ?? '',
         title: post.title,
-        url: post.url,
+        url: post.href,
         body: {
-          code: post.body.code,
+          code: post.content,
         },
       }}
       nextRoute={
         nextPost
           ? {
               title: nextPost?.title,
-              path: nextPost?.url,
+              path: nextPost?.href,
             }
           : {
               title: 'All posts',
@@ -102,7 +112,7 @@ export default function BlogPostPage({
         prevPost
           ? {
               title: prevPost?.title,
-              path: prevPost?.url,
+              path: prevPost?.href,
             }
           : {
               title: 'All posts',

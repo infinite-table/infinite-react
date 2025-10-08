@@ -19,7 +19,7 @@ export default function BlogLayout({
           routes: sortedPosts.map((post) => {
             return {
               title: post.title,
-              path: post.url,
+              path: post.href,
             };
           }),
         },

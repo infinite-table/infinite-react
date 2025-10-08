@@ -1,16 +1,17 @@
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 import { getCurrentPageForUrl } from '../getCurrentPageForUrl';
 
-export default function RootLayout({
-  params: { rootMdPage },
+export default async function RootLayout({
+  params,
   children,
 }: {
-  params: { rootMdPage: string[] };
+  params: Promise<{ rootMdPage: string[] }>;
   children: React.ReactNode;
 }) {
-  const url = `/${rootMdPage.join('/')}`;
+  const p = await params;
+  const url = `/${p.rootMdPage.join('/')}`;
   const page = getCurrentPageForUrl(url);
-  const pageTitle = page.title;
+  const pageTitle = page.frontmatter.title;
 
   return (
     <MainLayout skipIndex subtitle={pageTitle}>

@@ -1,6 +1,35 @@
 @import 'tailwindcss';
 
 @theme {
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--tw-gradient-stops)
+  );
+
+  --color-paleglow: #319c75;
+  --color-textcolorpale: hsla(0, 0%, 100%, 0.7);
+  --color-codebg: #313131;
+  --color-bgcolor: hsl(0, 0%, 10%);
+
+  --color-datagrid-blue: #3b82f6;
+
+  --color-datagrid-purple: #8b5cf6;
+  --color-datagrid-indigo: #6366f1;
+  --color-datagrid-light-blue: #93c5fd;
+  --color-datagrid-dark-blue: #1e40af;
+  --color-datagrid-light-purple: #c4b5fd;
+
+  --spacing-asidewidth: min(15rem, 25vw);
+  --spacing-navigationheight: 100px;
+
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
   --color-black: #000000;
   --color-primary: #23272f; /* gray-90 */
   --color-primary-dark: #f6f7f9; /* gray-5 */
@@ -150,6 +179,7 @@
   html {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-tap-highlight-color: transparent;
+    scroll-padding-top: var(--spacing-navigationheight);
   }
 
   html,
@@ -196,7 +226,7 @@
   }
 
   .text-code {
-    font-size: calc(1em - 10%) !important;
+    font-size: calc(1em - 20%) !important;
   }
 
   .text-gradient {
@@ -343,4 +373,24 @@
   --docsearch-modal-background: #171a21; /*bg-secondary opacity 40%*/
   --docsearch-footer-background: #23272f; /*bg-secondary opacity 40%*/
   --docsearch-key-gradient: linear-gradient(-26.5deg, #404756, #23272f);
+}
+
+:root {
+  --text-paragraph: var(--text-base);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --text-paragraph: var(--text-lg);
+  }
+}
+/* 
+@media (min-width: 1024px) {
+  :root {
+    --text-paragraph: var(--text-xl);
+  }
+} */
+
+[role='paragraph'] {
+  font-size: var(--text-paragraph); /* text-md */
 }

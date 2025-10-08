@@ -1,13 +1,13 @@
 'use client';
 
-import type { Post } from './sortedPosts';
+import type { BlogPost } from './sortedPosts';
 
-export const BlostPostExcerpt = ({ post }: { post: Post }) => {
-  return post.excerpt ? (
+export const BlostPostExcerpt = ({ post }: { post: BlogPost }) => {
+  return post.description ? (
     <div
       className={' mb-0 font-light'}
       dangerouslySetInnerHTML={{
-        __html: post.excerpt,
+        __html: post.description,
       }}
     />
   ) : null;

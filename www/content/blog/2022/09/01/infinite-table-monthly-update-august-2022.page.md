@@ -2,6 +2,7 @@
 title: 'Quarterly Update - Summer 2022'
 description: 'Infinite Table update for Summper 2022 - row selection, column rendering, group columns'
 author: [admin]
+date: 2022-09-01
 ---
 
 Over the summer, we continued our work on preparing for our official release, focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.
@@ -21,7 +22,7 @@ And we have updated some of the existing features:
 - [group columns can be bound to a field](#group-columns-bound-to-a-field)
 - [using the column valueGetter in sorting](#column-valuegetter-in-sorting)
 
-<Hint title="Coming soon">
+<Note title="Coming soon">
 
 We started working on column and context menus.
 We will first release fully customizable **column** menus to show/hide columns and to easily perform other operations on columns.
@@ -31,7 +32,7 @@ This will be followed by **context** menus where you will be able to define your
 
 Don't worry, the menus will be fully customizable, the menu items are fully replaceable with whatever you need, or you will be able to swap our menu component with a custom one of your own.
 
-</Hint>
+</Note>
 
 ## New Features
 
@@ -123,11 +124,11 @@ const sortInfo = [{ field: ['stack', 'age'], dir: 1, id: 'group-by' }];
 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
 
- <Hint>
+ <Note>
 
 In both single and multi group column render strategy, you can use the <PropLink name="columns.sortable" /> property to override the default behavior.
 
- </Hint>
+ </Note>
 
 ## Updated Features
 

@@ -152,7 +152,7 @@ When he user is performing a column resize (via drag & drop), <PropLink name="on
 
 </Note>
 
-<Gotcha>
+<Note>
 
 You can also size (generated) group columns by using their <PropLink name="columns.id">column.id</PropLink> property.
 
@@ -160,7 +160,7 @@ For <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</Pro
 
 For <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink>, if no `id` is specified in the <PropLink name="groupColumn" /> it will default to: `"group-by"`.
 
-</Gotcha>
+</Note>
 
 ## Resizing columns via drag & drop
 

@@ -18,7 +18,7 @@ function ButtonLink({
   label,
   target = '_self',
   ...props
-}: JSX.IntrinsicElements['a'] & ButtonLinkProps) {
+}: React.JSX.IntrinsicElements['a'] & ButtonLinkProps) {
   const classes = cn(
     className,
     'inline-flex font-bold items-center border-2 border-transparent outline-none focus:ring-1 focus:ring-offset-2 focus:ring-link active:bg-link active:text-white active:ring-0 active:ring-offset-0 leading-normal',

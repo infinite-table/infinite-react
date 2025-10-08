@@ -1,6 +1,7 @@
 ---
 title: 'Infinite Table Alpha Launch 🚀'
 author: [admin]
+date: 2021-12-10
 ---
 
 Today we are announcing the alpha version (`0.0.7`) of `Infinite Table` ready to be used by early adopters - you can take it from npm

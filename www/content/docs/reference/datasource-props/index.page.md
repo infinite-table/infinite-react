@@ -458,11 +458,7 @@ The `DataSourceAggregationReducer` type can have the following properties
 
 <Sandpack title="Aggregation demo - see `salary` column">
 
-```ts file="groupBy-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["groupBy-example.page.tsx","columns.ts"]
 
 ```
 
@@ -522,11 +518,7 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 <Sandpack title="Re-fetching data">
 
-```ts file="$DOCS/learn/working-with-data/refetch-example.page.tsx"
-
-```
-
-```ts file="$DOCS/learn/working-with-data/columns.ts" as="columns.ts"
+```ts files=["$DOCS/learn/working-with-data/refetch-example.page.tsx","$DOCS/learn/working-with-data/columns.ts"]
 
 ```
 
@@ -1200,11 +1192,7 @@ See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
 <Sandpack>
 
-```ts file="groupBy-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["groupBy-example.page.tsx","columns.ts"]
 
 ```
 
@@ -1259,11 +1247,7 @@ This example uses `groupBy.column` to configure the generated columns correspond
 
 </Description>
 
-```ts file="groupBy-multi-with-column-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["groupBy-multi-with-column-example.page.tsx","columns.ts"]
 
 ```
 
@@ -1277,7 +1261,7 @@ This example uses `groupBy.column` to configure the generated columns correspond
 
 Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> and <DataSourcePropLink name="onDataParamsChange" />
 
-<Sandpack  title="Live pagination - with react-query" deps="react-query">
+<Sandpack  title="Live pagination - with react-query">
 
 ```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
 
@@ -1565,11 +1549,11 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 </Note>
 
-<Gotcha>
+<Note>
 
 The <DPropLink name="useGroupKeysForMultiRowSelection" /> prop can be used for both lazy and non-lazy `DataSource` components.
 
-</Gotcha>
+</Note>
 
 <Sandpack title="Multi row checkbox selection with grouping" >
 

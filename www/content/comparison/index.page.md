@@ -2,8 +2,8 @@
 
 ## DevExtreme Data Grid
 
-<!--
-<Sandpack deps="devextreme-react,devextreme">
+
+Sandpack deps="devextreme-react,devextreme">
 
 ```tsx file="devexpress.app.tsx"
 
@@ -17,32 +17,32 @@
 
 ```
 
-</Sandpack>
+Sandpack
 
 ## AG Grid
 
-<Sandpack deps="ag-grid-community,ag-grid-react,ag-grid-enterprise">
+Sandpack deps="ag-grid-community,ag-grid-react,ag-grid-enterprise"
 
-```tsx file="aggrid.page.tsx"
+`tsx file="aggrid.page.tsx"
 
-```
+`
 
-```ts file="columns.ts"
+`ts file="columns.ts"
 
-```
+`
 
-</Sandpack>
+Sandpack
 
 ## Infinite Table
 
-<Sandpack >
+Sandpack
 
-```tsx file="infinite.page.tsx"
+`tsx file="infinite.page.tsx"
 
-```
+`
 
-```ts file="columns.ts"
+`ts file="columns.ts"
 
-```
+`
 
-</Sandpack> -->
+Sandpack

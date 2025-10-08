@@ -1,7 +1,6 @@
 'use client';
-import { MDXProvider } from '@mdx-js/react';
+
 import { DocsPageFooter } from '@www/components/DocsFooter';
-import { MDXComponents } from '@www/components/MDX/MDXComponents';
 
 import * as React from 'react';
 
@@ -68,10 +67,7 @@ export function MarkdownArticle(props: {
         {/* <Seo title={title} description={description} /> */}
 
         <div className="px-4 sm:px-12">
-          <div className="max-w-7xl mx-auto">
-            {/* @ts-ignore */}
-            <MDXProvider components={MDXComponents}>{children}</MDXProvider>
-          </div>
+          <div className="max-w-7xl mx-auto">{children}</div>
           {showDocsFooter ? (
             <DocsPageFooter
               route={route}

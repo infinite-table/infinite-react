@@ -2,10 +2,10 @@
 // import { HeadlessTableWithPinnedContainers } from '@src/components/HeadlessTable/HeadlessTableWithPinnedContainers';
 
 import * as React from 'react';
-import { MatrixBrain } from '@infinite-table/infinite-react/components/VirtualBrain/MatrixBrain';
+import { MatrixBrain } from '@src/components/VirtualBrain/MatrixBrain';
 import { HeadlessTable } from '@src/components/HeadlessTable';
 import { useState } from 'react';
-import { TableRenderCellFnParam } from '@infinite-table/infinite-react/src/components/HeadlessTable/rendererTypes';
+import { TableRenderCellFnParam } from '@src/components/HeadlessTable/rendererTypes';
 
 export default function App() {
   const renderCell = (param: TableRenderCellFnParam) => {
@@ -26,7 +26,7 @@ export default function App() {
       <b
         onMouseLeave={onMouseLeave}
         onMouseEnter={onMouseEnter}
-        ref={domRef}
+        ref={domRef as React.Ref<HTMLElement>}
         style={{
           overflow: 'hidden',
           height: heightWithRowspan,

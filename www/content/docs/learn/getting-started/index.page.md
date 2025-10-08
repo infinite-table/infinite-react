@@ -17,19 +17,18 @@ npm i @infinite-table/infinite-react
 
 ## Meet the Code
 
-<Sandpack>
+<Snippet>
 
 <Description>
 
 This is an example to get you started with Infinite Table with minimal setup.
-
 </Description>
 
 ```ts file="meet-the-code.page.tsx"
 
 ```
 
-</Sandpack>
+</Snippet>
 
 
 <Note>
@@ -81,7 +80,7 @@ Read more about how to use our TypeScript types.
 
 `Infinite Table` is built specifically for React and is fully declarative and fully typed. When you use `Infinite Table`, it feels at-home in your React application - every prop has both a controlled and uncontrolled version so you get full control over every area of the component.
 
-<Sandpack>
+<Snippet>
 
 <Description>
 
@@ -100,7 +99,7 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 
 ```
 
-</Sandpack>
+</Snippet>
 
 ## Licensing
 
@@ -109,17 +108,10 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 - with a license - requests for license quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the [Powered by Infinite Table](https://infinite-table.com) footer go away.
 - without a license, but it will include a [Powered by Infinite Table](https://infinite-table.com) link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io) - which are used throughout this demo site. Check the demo below to see the license footer in action.
 
-<Sandpack title="Invalid License Demo">
-
-```ts file="invalid-license.page.tsx"
-
+```ts live title="Invalid License Demo" files="invalid-license.page.tsx,data.tsx"
 ```
 
-```ts file="data.tsx"
 
-```
-
-</Sandpack>
 
 <HeroCards>
 <YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">

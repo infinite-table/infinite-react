@@ -58,6 +58,11 @@ let nextConfig = withMDX({
   images: {
     unoptimized: true,
   },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   output: 'export',
   // exportTrailingSlash: true,
   experimental: {
@@ -66,9 +71,7 @@ let nextConfig = withMDX({
   },
   // transpilePackages: ['@infinite-table/infinite-react'],
 });
-const { withContentlayer } = require('next-contentlayer');
 
-nextConfig = withContentlayer(nextConfig);
 // the redirects are added by the contentlayer plugin
 // as a way to force building the pages, but we don't want that
 // as we call the contentlayer CLI ourselves

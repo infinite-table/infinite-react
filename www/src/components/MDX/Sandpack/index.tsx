@@ -3,8 +3,8 @@ import {
   SandpackProvider,
   SandpackSetup,
   SandpackFile,
+  SandpackFiles,
 } from '@codesandbox/sandpack-react';
-import { SandpackFiles } from '@codesandbox/sandpack-react/dist/types/types';
 import * as React from 'react';
 
 import { useInfiniteTemplate } from '../../useInfiniteTemplate';

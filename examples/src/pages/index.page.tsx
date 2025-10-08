@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import LinkList from '@examples/LinkList';
-
 export default () => {
   return (
     <LinkList>

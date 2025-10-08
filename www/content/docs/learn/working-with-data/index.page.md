@@ -83,13 +83,10 @@ The <DataSourcePropLink name="data" /> prop can be either:
 
 </Note>
 
-<Sandpack title="Data loading example with promise">
-
-```ts file="basic-example.page.tsx"
+```ts live title="Data loading example with promise" file="basic-example.page.tsx"
 
 ```
 
-</Sandpack>
 
 ## Data Loading Strategies
 
@@ -107,11 +104,7 @@ For basic datasets, which have simple data requirements, using `fetch` is probab
 
 <Sandpack title="Using fetch for remote data">
 
-```ts file="using-fetch-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["using-fetch-example.page.tsx","columns.ts"]
 
 ```
 
@@ -131,11 +124,7 @@ Alternatively, you can use the <DPropLink name="refetchKey" /> prop to trigger a
 
 <Sandpack title="Re-fetching data">
 
-```ts file="refetch-example.page.tsx"
-
-```
-
-```ts file="columns.ts"
+```ts files=["refetch-example.page.tsx","columns.ts"]
 
 ```
 

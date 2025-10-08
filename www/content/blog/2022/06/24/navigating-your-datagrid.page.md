@@ -2,6 +2,7 @@
 title: DataGrid Keyboard Navigation
 author: [admin]
 excerpt: With version `0.3.6` Infinite Table added keyboard navigation to your favorite React DataGrid component.
+date: 2022-06-24
 ---
 
 Using your keyboard to navigate around an app is crucial to moving fast and being productive.

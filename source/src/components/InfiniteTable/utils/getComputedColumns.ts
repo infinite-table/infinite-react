@@ -588,6 +588,10 @@ export const getComputedColumns = <T extends unknown>({
       columnDefaultGroupable ??
       !!field;
 
+    if (!field) {
+      computedGroupable = false;
+    }
+
     if ((c as InfiniteTableGeneratedGroupColumn<T>).groupByForColumn) {
       computedGroupable = false;
     }

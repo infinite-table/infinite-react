@@ -1,4 +1,4 @@
-import { MDXComponents } from '@www/components/MDX/MDXComponents';
+import { MDXComponents } from '@www/components/MDX/xMDXComponents';
 import type { MDXComponents as MDXType } from 'mdx/types';
 
 // This file allows you to provide custom React components

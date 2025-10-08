@@ -1,16 +1,21 @@
-import { MDXContent } from '@www/components/MDXContent';
 import { Metadata } from 'next';
 import { getCurrentPageForUrl } from '../getCurrentPageForUrl';
 
 import { metadata as meta } from '../../metadata';
 import { asMeta } from '@www/utils/asMeta';
-import { allRootPages } from 'contentlayer/generated';
+import { siteContent } from '@www/content';
+import { renderMarkdownPage } from '../../../components/renderMarkdownPage';
 
 export async function generateStaticParams() {
-  const result = allRootPages
+  const result = siteContent.routes
+    .filter(
+      (page) =>
+        !page.routePath.startsWith('/docs/') &&
+        !page.routePath.startsWith('/blog/'),
+    )
     .map((page) => {
       return {
-        rootMdPage: page.url
+        rootMdPage: page.routePath
           .split('/')
           .slice(1) // to take out the first empty string
           .map((x) => x.trim())
@@ -25,7 +30,7 @@ export async function generateStaticParams() {
 export const generateMetadata = async ({
   params,
 }: {
-  params: { rootMdPage: string[] };
+  params: Promise<{ rootMdPage: string[] }>;
 }): Promise<Metadata> => {
   const p = await params;
   const url = `/${p.rootMdPage.join('/')}`;
@@ -41,24 +46,28 @@ export const generateMetadata = async ({
 
   const res = {
     title:
-      page?.metaTitle ??
-      (page?.title
-        ? `${page?.title} | Infinite Table DataGrid for React`
+      page?.frontmatter?.metaTitle ??
+      (page?.frontmatter?.title
+        ? `${page?.frontmatter?.title} | Infinite Table DataGrid for React`
         : null) ??
       meta.title,
-    description: page?.metaDescription ?? page.description ?? meta.description,
+    description:
+      page?.frontmatter.metaDescription ??
+      page.frontmatter.description ??
+      meta.description,
   };
 
   return asMeta(res);
 };
-export default function Docs({
-  params: { rootMdPage },
+export default async function Docs({
+  params,
 }: {
-  params: { rootMdPage: string[] };
+  params: Promise<{ rootMdPage: string[] }>;
 }) {
-  const url = `/${rootMdPage.join('/')}`;
+  const p = await params;
 
-  const page = getCurrentPageForUrl(url);
-
-  return <MDXContent>{page.body.code}</MDXContent>;
+  return await renderMarkdownPage({
+    slug: p.rootMdPage,
+    baseUrl: import.meta.url,
+  });
 }

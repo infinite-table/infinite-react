@@ -48,8 +48,14 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Install source
+        run: npm i --prefix source
+
       - name: Install examples
         run: npm ci --prefix examples
+
+      - name: Install www
+        run: npm i --prefix www
 
       - name: Get installed Playwright version
         id: playwright-version
