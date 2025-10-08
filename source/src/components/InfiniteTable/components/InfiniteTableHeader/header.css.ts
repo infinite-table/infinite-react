@@ -374,7 +374,8 @@ export const HeaderMenuIconCls = recipe({
         '&:active': {
           top: '1px',
         },
-        [`${HeaderCellRecipe({})}:hover &`]: menuVisibleStyle,
+        [`${HeaderCellRecipe.classNames.variants.dragging.false}:hover &`]:
+          menuVisibleStyle,
       },
     },
   ],

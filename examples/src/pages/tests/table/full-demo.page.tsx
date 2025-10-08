@@ -108,7 +108,6 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
       renderValue: ({ value }) => value,
     },
     salary: {
-      header: 'Compensation',
       field: 'salary',
       type: 'number',
       defaultWidth: 210,
@@ -123,7 +122,6 @@ function getColumns(): Record<string, InfiniteTableColumn<Developer>> {
       defaultWidth: 135,
       field: 'canDesign',
       header: 'Design Skills',
-      renderMenuIcon: false,
       renderValue: ({ value }) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -240,10 +238,10 @@ const defaultFilterValue: DataSourcePropFilterValue<Developer> = [
 
 const domProps = {
   style: {
-    // minHeight: '50vh',
-    width: 575,
-    height: 390,
-    margin: 5,
+    minHeight: '50vh',
+    width: '100vw',
+    // width: 575,
+    marginTop: 200,
   },
 };
 
@@ -300,10 +298,6 @@ export default function App() {
       filterMode="local"
       useGroupKeysForMultiRowSelection
       defaultRowSelection={defaultRowSelection}
-      defaultSortInfo={{
-        dir: -1,
-        field: 'country',
-      }}
       onDataArrayChange={(data) => {
         const min = Math.min(...data.map((data) => data.salary ?? 0));
         const max = Math.max(...data.map((data) => data.salary ?? 0));

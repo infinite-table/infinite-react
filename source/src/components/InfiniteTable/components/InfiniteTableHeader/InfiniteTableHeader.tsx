@@ -31,11 +31,8 @@ const headerCls = HeaderClsRecipe({
   overflow: false,
 });
 
-const updatePosition = (_options: {
-  id: string;
-  node: HTMLElement;
-  offset: null | { left: number; top: number };
-}) => {};
+const emptyFn = () => {};
+
 function InfiniteTableInternalHeaderFn<T>(
   props: InfiniteTableInternalHeaderProps<T> &
     React.HTMLAttributes<HTMLDivElement>,
@@ -172,14 +169,12 @@ function InfiniteTableInternalHeaderFn<T>(
     ],
   );
 
-  const onDrop = useCallback((_sortedIndexes: number[]) => {}, []);
-
   return (
     <DragList
       orientation="horizontal"
       dragListId="header"
-      onDrop={onDrop}
-      updatePosition={updatePosition}
+      onDrop={emptyFn}
+      updatePosition={emptyFn}
     >
       {(dragListDomProps) => {
         return (

@@ -292,6 +292,11 @@ export const useColumnPointerEvents = ({
             col.computedVisibleIndex,
             rootRef.current,
           );
+          setInfiniteColumnVisibility(
+            col.computedVisibleIndex,
+            '',
+            rootRef.current,
+          );
           setInfiniteColumnOffsetWhileReordering(
             col.computedVisibleIndex,
             '',
@@ -299,7 +304,7 @@ export const useColumnPointerEvents = ({
           );
         });
 
-        setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
+        // setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
 
         setInfiniteColumnZIndex(
           dragColumnIndex,

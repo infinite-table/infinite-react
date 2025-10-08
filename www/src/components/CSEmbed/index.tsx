@@ -66,7 +66,7 @@ export function CSEmbed({
   ) : null;
 
   return descriptionBlock || titleBlock ? (
-    <div className="bg-csdark rounded-lg">
+    <div className="bg-codesandboxdark rounded-lg">
       {titleBlock}
       {descriptionBlock}
       {frame}

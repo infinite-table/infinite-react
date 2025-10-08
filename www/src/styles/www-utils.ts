@@ -16,7 +16,7 @@ const colorVariables = {
   brandDark: BRAND_COLOR_DARK,
   black: colors.black,
   darkCustom: colors['darkcustom'],
-  csdark: colors['csdark'],
+  codesandboxdark: colors['codesandboxdark'],
   blue: 'blue',
   blue700: '#1c4fd8',
   glow: colors.glow,
