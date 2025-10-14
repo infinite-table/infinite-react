@@ -41,8 +41,20 @@ export default function RecentPosts({ posts }: { posts: BlogPost[] }) {
               return (
                 <div key={post.href}>
                   <h3 className="font-bold leading-8 text-content-color text-2xl mb-4 hover:underline">
-                    <Link href={post.href}>{post.title}</Link>
+                    <Link href={post.href}>
+                      {post.title}
+                      {post.thumbnail && (
+                        <div className="relative aspect-video overflow-hidden rounded-t-lg max-h-52 my-8">
+                          <img
+                            src={post.thumbnail}
+                            alt={post.title}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      )}
+                    </Link>
                   </h3>
+
                   <BlostPostExcerpt post={post} />
                   <div className="flex items-center mt-4">
                     <div>

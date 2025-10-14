@@ -31,7 +31,7 @@ const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
-See the [Infinite Table Cell Selection API page](/docs/reference/cell-selecti-api) for the cell selection API.
+See the [Infinite Table Cell Selection API page](/docs/reference/cell-selection-api) for the cell selection API.
 See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
 See the [Infinite Table Row Detail API page](/docs/reference/row-detail-api) for the row detail API (when master-detail is configured).
 

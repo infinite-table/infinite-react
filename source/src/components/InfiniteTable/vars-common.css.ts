@@ -29,4 +29,5 @@ export const CommonThemeVars = {
   [ThemeVars.components.LoadMask.color]: ThemeVars.components.Cell.color,
 
   [ThemeVars.components.Row.background]: ThemeVars.background,
+  [ThemeVars.components.GroupingToolbar.background]: ThemeVars.background,
 };

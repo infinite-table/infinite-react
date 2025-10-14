@@ -184,6 +184,7 @@ export const ThemeVars = createGlobalThemeContract(
         flashingDownBackground: 'flashing-down-background',
         padding: 'cell-padding',
         borderWidth: 'cell-border-width',
+        borderColor: 'cell-border-color',
         /**
          * Specifies the border for cells.
          *

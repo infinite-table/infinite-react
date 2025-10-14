@@ -15,24 +15,53 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 > Gives you access to the master row info in the current <PropLink name="components.RowDetail" code={false} >RowDetail</PropLink> component.
 
 
-<Sandpack title="Basic master detail DataGrid example" size="lg">
+<Sandpack>
 
 <Description>
-
 This example shows a master DataGrid with cities & countries.
 
 The details for each city shows a DataGrid with developers in that city.
-
 </Description>
 
-```ts file="$DOCS/learn/master-detail/master-detail-component-example.page.tsx"
+```ts file="$DOCS/learn/master-detail/master-detail-component-example.page.tsx" title="Basic master detail DataGrid example" size="lg"
 
 ```
-
 </Sandpack>
-
-
 </Prop>
+
+<Prop name="useDataSourceState" returnTypeLink="DataSourceState">
+
+> You can use it in your app components that are nested inside the `<DataSource />`
+
+```ts
+import { useDataSourceState } from '@infinite-table/infinite-react'
+```
+
+Using it gives you access to the underlying data that InfiniteTable is using.
+
+<Note>
+
+Please make sure you know what you're doing. This is intended only for advanced and complex use-cases.
+
+</Note>
+
+
+```tsx title="InfiniteTable can be nested anywhere inside the <DataSource /> component"
+<DataSource>
+  <h1>Your DataGrid>
+  <App>
+    <InfiniteTable />
+  </App>
+</DataSource>
+```
+
+Any component nested inside the `<DataSource />` can access the underlying data.
+
+```tsx live file="using-datasource-context.page.tsx"
+
+```
+</Prop>
+
 <Prop name="useInfiniteColumnCell" returnTypeLink="InfiniteColumnEditorContextType">
 
 > Use it inside the <PropLink name="columns.render" /> or <PropLink name="column.components.ColumnCell" /> (or <PropLink name="columns.renderValue" code={false}>other</PropLink> rendering functions) to retrieve information about the cell that is being rendered.

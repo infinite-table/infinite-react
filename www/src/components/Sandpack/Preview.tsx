@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useSandpack, LoadingOverlay } from "@codesandbox/sandpack-react";
-import cn from "classnames";
-import * as React from "react";
-import { CSSProperties } from "react";
+import { useSandpack, LoadingOverlay } from '@codesandbox/sandpack-react';
+import cn from 'classnames';
+import * as React from 'react';
+import { CSSProperties } from 'react';
 
-import { Error } from "./Error";
-import { computeViewportSize, generateRandomId } from "./utils";
+import { Error } from './Error';
+import { computeViewportSize, generateRandomId } from './utils';
 
 type CustomPreviewProps = {
   className?: string;
@@ -49,7 +49,7 @@ export function Preview({
 
   if (
     rawError &&
-    rawError.message === "_csbRefreshUtils.prelude is not a function"
+    rawError.message === '_csbRefreshUtils.prelude is not a function'
   ) {
     // Work around a noisy internal error.
     rawError = null;
@@ -72,13 +72,13 @@ export function Preview({
     // (window as any).iframeElement = iframeElement;
 
     const unsub = listen((message: any) => {
-      if (message.type === "resize") {
+      if (message.type === 'resize') {
         setComputedAutoHeight(message.height);
-      } else if (message.type === "start") {
+      } else if (message.type === 'start') {
         if (message.firstLoad) {
           setIsReady(false);
         }
-      } else if (message.type === "test") {
+      } else if (message.type === 'test') {
         // Does it make sense that we're listening to "test" event?
         // Not really. Does it cause less flicker than "done"? Yes.
         setIsReady(true);
@@ -91,7 +91,7 @@ export function Preview({
     };
   }, []);
 
-  const viewportStyle = computeViewportSize("auto", "portrait");
+  const viewportStyle = computeViewportSize('auto', 'portrait');
   const overrideStyle = error
     ? {
         // Don't collapse errors
@@ -107,7 +107,7 @@ export function Preview({
   // parent and making them scrollable is confusing.
   let overflow;
   if (!isExpanded && !error && isReady) {
-    overflow = "auto";
+    overflow = 'auto';
   }
 
   // WARNING:
@@ -136,23 +136,23 @@ export function Preview({
     style.maxHeight = style.height;
   }
   return (
-    <div className={cn("sp-stack", className)} style={style}>
+    <div className={cn('sp-stack', className)} style={style}>
       <div
         className={cn(
-          "p-0 sm:p-1 md:p-2 bg-gray-950 h-full relative rounded-b-lg lg:rounded-b-none"
+          'p-0 sm:p-1 md:p-2 bg-gray-950 h-full relative rounded-b-lg lg:rounded-b-none',
         )}
         style={{ overflow }}
       >
         <div
           style={{
-            padding: "initial",
+            padding: 'initial',
             position: hideContent
-              ? "relative"
+              ? 'relative'
               : isExpanded
-              ? "sticky"
+              ? 'sticky'
               : undefined,
-            top: isExpanded ? "2rem" : undefined,
-            height: error ? "" : "100%",
+            top: isExpanded ? '2rem' : undefined,
+            height: error ? '' : '100%',
           }}
         >
           <iframe
@@ -160,16 +160,16 @@ export function Preview({
             className="rounded-t-none bg-gray-950 shadow-md sm:rounded-md w-full max-w-full"
             title="Sandbox Preview"
             style={{
-              height: "100%", // AFL changed this
-              position: hideContent ? "absolute" : undefined,
+              height: '100%', // AFL changed this
+              position: hideContent ? 'absolute' : undefined,
               // We can't *actually* hide content because that would
               // break calculating the computed height in the iframe
               // (which we're using for autosizing). This is noticeable
               // if you make a compiler error and then fix it with code
               // that expands the content. You want to measure that.
               opacity: hideContent ? 0 : 1,
-              pointerEvents: hideContent ? "none" : undefined,
-              zIndex: isExpanded ? "initial" : -1,
+              pointerEvents: hideContent ? 'none' : undefined,
+              zIndex: isExpanded ? 'initial' : -1,
             }}
           />
         </div>
@@ -179,8 +179,8 @@ export function Preview({
             style={{
               // This isn't absolutely positioned so that
               // the errors can also expand the parent height.
-              position: isExpanded ? "sticky" : undefined,
-              top: isExpanded ? "2rem" : "",
+              position: isExpanded ? 'sticky' : undefined,
+              top: isExpanded ? '2rem' : '',
             }}
           >
             <Error error={error} />

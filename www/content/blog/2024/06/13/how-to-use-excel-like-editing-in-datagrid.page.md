@@ -32,7 +32,7 @@ import {
 }
 ```
 
-The `instantEdit` [keyboard shorcut](/docs/learn/keyboard-navigation/keyboard-shorcuts) is configured (by default) to respond to any key (via the special `*` identifier which matches anything) and will start editing the cell as soon as a key is pressed. This behavior is the same as in Excel, Google Sheets, Numbers or other spreadsheet software.
+The `instantEdit` [keyboard shorcut](/docs/learn/keyboard-navigation/keyboard-shortcuts) is configured (by default) to respond to any key (via the special `*` identifier which matches anything) and will start editing the cell as soon as a key is pressed. This behavior is the same as in Excel, Google Sheets, Numbers or other spreadsheet software.
 
 <Note>
 

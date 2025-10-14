@@ -45,14 +45,43 @@ export const generateMetadata = async ({
   );
   const post = sortedPostsIncludingDrafts[postIndex] as BlogPostType;
 
-  const res = {
+  const metadata: any = {
     title: (post?.title ? `${post?.title} ${suffix}` : null) ?? meta.title,
     description:
       (post?.description ? `${post.description} ${suffix}` : null) ??
       meta.description,
   };
 
-  return asMeta(res);
+  const canonical = post
+    ? `https://infinite-table.com${post?.path}`
+    : 'https://infinite-table.com/blog';
+
+  // Add Open Graph image if thumbnail is available
+  if (post?.thumbnail) {
+    const ogImageUrl = `https://thedatagrid.com${post.thumbnail}`;
+
+    metadata.openGraph = {
+      url: canonical,
+      images: [
+        {
+          url: ogImageUrl,
+          width: post.thumbnailDimensions?.width,
+          height: post.thumbnailDimensions?.height,
+          alt: metadata.title || 'Blog post thumbnail',
+        },
+      ],
+      type: 'article',
+    };
+
+    metadata.twitter = {
+      card: 'summary_large_image',
+      title: metadata.title,
+      description: metadata.description,
+      images: [ogImageUrl],
+    };
+  }
+
+  return asMeta(metadata);
 };
 export default async function BlogPostPage({
   params,
@@ -86,15 +115,7 @@ export default async function BlogPostPage({
     <BlogPost
       headings={getMarkdownHeadingsForPage(post.content)}
       children={children}
-      post={{
-        author: post.author ?? '',
-        date: post.date ?? '',
-        title: post.title,
-        url: post.href,
-        body: {
-          code: post.content,
-        },
-      }}
+      post={post}
       nextRoute={
         nextPost
           ? {

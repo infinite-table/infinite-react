@@ -10,7 +10,7 @@ export default function Document() {
         />
       </Head>
       <body
-        className="__next dark infinite-theme-mode--dark"
+        className="__next infinite-theme-mode--dark"
         style={{
           //@ts-ignore ignore
           '--it-row-height': '3rem',

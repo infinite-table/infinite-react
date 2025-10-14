@@ -23,7 +23,7 @@ const onReady = (
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
 
-See the [Infinite Table Cell Selection API page](/docs/reference/cell-selecti-api) for the cell selection API.
+See the [Infinite Table Cell Selection API page](/docs/reference/cell-selection-api) for the cell selection API.
 See the [Infinite Table Column API page](/docs/reference/column-api) for the column API.
 See the [Infinite Table Keyboard Navigation API page](/docs/reference/keyboard-navigation-api) for the keyboard navigation API.
 

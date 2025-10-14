@@ -8,10 +8,26 @@ export interface TemplateConfig {
   validCustomFileNames: string[];
 }
 
-export const useInfiniteTemplate = (): TemplateConfig => {
+export interface TemplateOptions {
+  tailwind?: boolean;
+}
+
+const TAILWIND_CUSTOMIZATION = `<style type="text/tailwindcss">
+  @theme {
+    --color-foreground: var(--infinite-cell-color);
+    --color-background: var(--infinite-background);
+    --color-accent: var(--infinite-accent-color);
+    --color-success: var(--infinite-success-color);
+    --color-error: var(--infinite-error-color);
+  }
+</style>`;
+
+export const useInfiniteTemplate = (
+  templateOptions?: TemplateOptions,
+): TemplateConfig => {
   const validCustomFileNames = ['index.tsx', 'App.tsx', 'styles.css'];
   const sandpackTemplate = 'react';
-  const sandpackTemplateFiles = getReactTemplateFiles();
+  const sandpackTemplateFiles = getReactTemplateFiles(templateOptions);
 
   return {
     sandpackTemplate,
@@ -19,7 +35,31 @@ export const useInfiniteTemplate = (): TemplateConfig => {
     sandpackTemplateFiles,
   };
 };
-const getReactTemplateFiles = (): Record<string, SandpackFile> => {
+const getReactTemplateFiles = (
+  options?: TemplateOptions,
+): Record<string, SandpackFile> => {
+  const inHead = options?.tailwind
+    ? ` 
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+` // the script needs to be both here and in Sandpack.externalResources -
+    : ``;
+
+  const inBody = options?.tailwind ? TAILWIND_CUSTOMIZATION : '';
+  const BASE_INDEX_HTML = `<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    ${inHead}
+  </head>
+  <body>
+  ${inBody}
+    <div id="root"></div>
+    
+  </body>
+</html>`;
+
   return {
     '/App.tsx': {
       code: BASE_FILE_REACT_APP,
@@ -45,29 +85,8 @@ const getReactTemplateFiles = (): Record<string, SandpackFile> => {
   };
 };
 
-// react
-// const BASE_PATH_REACT_PREFIX =
-//   '../code-snippets/base-react/src';
-// const BASE_FILE_REACT_APP = raw(
-//   `${BASE_PATH_REACT_PREFIX}/App.tsx`
-// );
-
 const BASE_FILE_REACT_APP = ``;
-// const BASE_FILE_REACT_INDEX = raw(
-//   `${BASE_PATH_REACT_PREFIX}/index.tsx`
-// );
 
-const BASE_INDEX_HTML = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-  </head>
-  <body>
-    <div id="root" class="infinite-theme-mode--dark"></div>
-  </body>
-</html>`;
 const BASE_FILE_REACT_INDEX = `
 import * as React from 'react';
 import { StrictMode } from 'react';
@@ -78,6 +97,9 @@ import '@infinite-table/infinite-react/index.css';
 
 import App from './App';
 import './styles.css';
+
+//let's force dark mode on root
+document.documentElement.classList.add('infinite-theme-mode--dark');
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
@@ -92,6 +114,7 @@ root.render(
 // );
 
 const BASE_FILE_REACT_STYLES = `
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',

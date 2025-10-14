@@ -9,6 +9,7 @@ import { useTwitter } from '@www/components/Layout/useTwitter';
 
 import type { TocHeading } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
+import { type BlogPost } from '../sortedPosts';
 
 export function BlogPost({
   post,
@@ -19,15 +20,7 @@ export function BlogPost({
 }: {
   headings: TocHeading[];
   children: React.ReactNode;
-  post: {
-    body: {
-      code: string;
-    };
-    title: string;
-    url: string;
-    date: string;
-    author: string;
-  };
+  post: BlogPost;
   nextRoute?: DocsPageRoute;
   prevRoute?: DocsPageRoute;
 }) {
@@ -72,6 +65,16 @@ export function BlogPost({
                 </span>
               </p>
 
+              {post.thumbnail && (
+                <div className="mb-8 aspect-video max-w-4xl mx-auto">
+                  <img
+                    src={post.thumbnail}
+                    alt={post.title || 'Blog post thumbnail'}
+                    className="w-full h-full object-contain rounded-lg shadow-lg"
+                  />
+                </div>
+              )}
+
               {children}
             </div>
           </div>
@@ -79,7 +82,7 @@ export function BlogPost({
           <DocsPageFooter
             route={{
               title: post.title,
-              path: post.url,
+              path: post.href,
             }}
             nextRoute={nextRoute}
             prevRoute={prevRoute}
