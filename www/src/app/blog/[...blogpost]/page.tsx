@@ -56,22 +56,22 @@ export const generateMetadata = async ({
     ? `https://infinite-table.com${post?.path}`
     : 'https://infinite-table.com/blog';
 
+  metadata.openGraph = metadata.openGraph || {};
+  metadata.openGraph.type = 'article';
+  metadata.openGraph.url = canonical;
+
   // Add Open Graph image if thumbnail is available
   if (post?.thumbnail) {
     const ogImageUrl = `https://thedatagrid.com${post.thumbnail}`;
 
-    metadata.openGraph = {
-      url: canonical,
-      images: [
-        {
-          url: ogImageUrl,
-          width: post.thumbnailDimensions?.width,
-          height: post.thumbnailDimensions?.height,
-          alt: metadata.title || 'Blog post thumbnail',
-        },
-      ],
-      type: 'article',
-    };
+    metadata.openGraph.images = [
+      {
+        url: ogImageUrl,
+        width: post.thumbnailDimensions?.width,
+        height: post.thumbnailDimensions?.height,
+        alt: metadata.title || 'Blog post thumbnail',
+      },
+    ];
 
     metadata.twitter = {
       card: 'summary_large_image',

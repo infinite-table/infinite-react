@@ -36,10 +36,33 @@ export function getFileInfoBySlug(slug: string[]): MarkdownFileInfo | null {
   return fileInfo;
 }
 
-export function getBlogPosts(options?: {
+type GetBlogPostsOptions = {
   sortRecentFirst?: boolean;
   skipDrafts?: boolean;
-}): BlogPost[] {
+};
+
+export function getBlogPostByPath(
+  path: string,
+  options?: GetBlogPostsOptions,
+): BlogPost | null {
+  if (!path.startsWith('/blog/')) {
+    return null;
+  }
+
+  const sortedPostsIncludingDrafts = getBlogPosts({
+    skipDrafts: false,
+    ...options,
+  });
+  const postIndex = sortedPostsIncludingDrafts.findIndex(
+    (post) => post.href === path,
+  );
+
+  const post = sortedPostsIncludingDrafts[postIndex] as BlogPost;
+
+  return post;
+}
+
+export function getBlogPosts(options?: GetBlogPostsOptions): BlogPost[] {
   const { sortRecentFirst = true, skipDrafts = false } = options || {};
   return Object.entries(siteContent.paths)
     .filter(([path]) => path.startsWith('/blog/') && path !== '/blog/')
