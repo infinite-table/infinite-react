@@ -78,15 +78,6 @@ const columns: Record<string, InfiniteTableColumn<Developer>> = {
   },
 };
 
-const domProps = {
-  style: {
-    minHeight: '50vh',
-    width: '100vw',
-    // width: 575,
-    marginTop: 200,
-  },
-};
-
 export default function App() {
   const groupBy: DataSourceGroupBy<Developer>[] = React.useMemo(
     () => [
