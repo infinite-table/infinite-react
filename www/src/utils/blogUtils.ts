@@ -8,6 +8,10 @@ export interface BlogPost {
   readingTime?: string;
   href: string;
   thumbnail?: string;
+  thumbnailDimensions?: {
+    width: number;
+    height: number;
+  };
   date?: string;
   hide_in_homepage?: boolean;
   draft: boolean;
@@ -49,6 +53,7 @@ export function getBlogPosts(options?: {
       hide_in_homepage: fileInfo.frontmatter?.hide_in_homepage === true,
       date: fileInfo.frontmatter?.date,
       thumbnail: fileInfo.frontmatter?.thumbnail,
+      thumbnailDimensions: fileInfo.frontmatter?.thumbnailDimensions,
       author: fileInfo.frontmatter?.author,
       authorData: fileInfo.frontmatter?.authorData,
       draft: fileInfo.frontmatter?.draft === true,

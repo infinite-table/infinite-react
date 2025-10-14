@@ -19,6 +19,17 @@ So, for example, the type for <DPropLink name="groupBy" /> is <TypeLink name="Da
 
 <PropTable searchPlaceholder="Type to filter type definitions" sort>
 
+<Prop name="DataSourceState" generic>
+
+> Represents the state of the whole `<DataSource />` component.
+
+You can grab a reference to the `<DataSource />` component state via the <HookLink name="useDataSourceState" /> hook that Infinite exposes.
+
+Available properties:
+
+ - `dataArray` - array of <TypeLink name="InfiniteTableRowInfo" />
+
+</Prop>
 <Prop name="TreeSelectionValue">
 
 > Represents the selection state of the tree nodes. See <DPropLink name="treeSelection" /> for more details.

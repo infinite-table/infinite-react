@@ -1,5 +1,6 @@
 import { fallbackVar } from '@vanilla-extract/css';
 import { CSS_LOADED_VALUE, ThemeVars } from './vars.css';
+import { CommonThemeVars } from './vars-common.css';
 // declare here vars that default to other vars
 const LoadMaskVars = {
   [ThemeVars.components.LoadMask.textBackground]: 'rgba(255,255,255,0.8)',
@@ -28,15 +29,13 @@ const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.resizeHandleConstrainedHoverBackground]:
     ThemeVars.color.error,
   [ThemeVars.components.HeaderCell.background]: '#ededed',
-  [ThemeVars.components.HeaderCell.borderRight]:
-    ThemeVars.components.Cell.border,
   [ThemeVars.components.HeaderCell.filterEditorBackground]:
     ThemeVars.components.Row.background,
   [ThemeVars.components.HeaderCell
     .filterEditorBorder]: `${ThemeVars.components.Cell.border}`,
   [ThemeVars.components.HeaderCell.filterEditorFocusBorderColor]:
     ThemeVars.color.accent,
-  [ThemeVars.components.HeaderCell.border]: ThemeVars.components.Cell.border,
+
   [ThemeVars.components.HeaderCell.filterEditorColor]: `currentColor`,
   [ThemeVars.components.HeaderCell.filterEditorBorderRadius]:
     ThemeVars.borderRadius,
@@ -92,30 +91,26 @@ const CellVars = {
   [ThemeVars.components.Cell.flashingOverlayZIndex]: -1,
   [ThemeVars.components.Cell
     .horizontalLayoutColumnReorderDisabledPageOpacity]: 0.3,
-  [ThemeVars.components.Cell.flashingBackground]: ThemeVars.color.accent,
-  [ThemeVars.components.Cell.flashingUpBackground]: ThemeVars.color.success,
-  [ThemeVars.components.Cell.flashingDownBackground]: ThemeVars.color.error,
+
   [ThemeVars.components.Cell
     .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
+  [ThemeVars.components.Cell.borderColor]: '#c6c6c6',
   [ThemeVars.components.Cell
-    .border]: `${ThemeVars.components.Cell.borderWidth} solid #c6c6c6`,
+    .border]: `${ThemeVars.components.Cell.borderWidth} solid ${ThemeVars.components.Cell.borderColor}`,
   [ThemeVars.components.Cell
     .borderLeft]: `${ThemeVars.components.Cell.borderWidth} solid transparent`,
   [ThemeVars.components.Cell
     .borderRight]: `${ThemeVars.components.Cell.borderWidth} solid transparent`,
 
   [ThemeVars.components.Cell
-    .pinnedBorder]: `${ThemeVars.components.Cell.borderWidth} solid #2a323d`,
+    .pinnedBorder]: `${ThemeVars.components.Cell.border}`,
   [ThemeVars.components.Cell.borderInvisible]: 'none',
   [ThemeVars.components.Cell.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.components.Cell.reorderEffectDuration]: '.2s',
 
-  // [ThemeVars.components.Cell.selectedCellBorder]: '2px solid red',
   [ThemeVars.components.Cell.selectedBorderStyle]: 'solid',
   [ThemeVars.components.Cell.activeBorderStyle]: 'dashed',
   [ThemeVars.components.Cell.activeBorderWidth]: '1px',
-  // [ThemeVars.components.Cell.activeBorderColor]: '#4d95d7',
-  // [ThemeVars.components.Cell.activeBackground]: 'rgba(77, 149, 215, 0.25)',
 
   [ThemeVars.components.Cell.activeBackgroundAlpha]: '0.25',
   [ThemeVars.components.Cell.activeBackgroundAlphaWhenTableUnfocused]: '0.1',
@@ -156,8 +151,6 @@ const ExpandCollapseIconVars = {
 };
 
 const RowVars = {
-  [ThemeVars.components.Row.background]: ThemeVars.background,
-
   [ThemeVars.components.Row.oddBackground]: '#f6f6f6',
   [ThemeVars.components.Row.disabledOpacity]: '0.5',
   [ThemeVars.components.Row.disabledBackground]: '#eeeeee',
@@ -179,20 +172,14 @@ const RowDetailsVars = {
 };
 
 const MenuVars = {
-  [ThemeVars.components.Menu.background]: ThemeVars.background,
-  [ThemeVars.components.Menu.color]: ThemeVars.components.Cell.color,
   [ThemeVars.components.Menu.separatorColor]: 'currentColor',
   [ThemeVars.components.Menu.padding]: ThemeVars.spacing[3],
   [ThemeVars.components.Menu.cellPaddingVertical]: ThemeVars.spacing[3],
   [ThemeVars.components.Menu.cellPaddingHorizontal]: ThemeVars.spacing[3],
   [ThemeVars.components.Menu.cellMarginVertical]: ThemeVars.spacing[0],
-  [ThemeVars.components.Menu.itemDisabledBackground]:
-    ThemeVars.components.Menu.background,
+
   [ThemeVars.components.Menu.itemDisabledOpacity]: 0.5,
-  [ThemeVars.components.Menu.itemActiveBackground]:
-    ThemeVars.components.Row.hoverBackground,
-  [ThemeVars.components.Menu.itemPressedBackground]:
-    ThemeVars.components.Row.hoverBackground,
+
   [ThemeVars.components.Menu.itemActiveOpacity]: 0.9,
   [ThemeVars.components.Menu.itemPressedOpacity]: 1,
   [ThemeVars.components.Menu.borderRadius]: ThemeVars.spacing[2],
@@ -234,6 +221,8 @@ export const LightVars = {
   [ThemeVars.borderRadius]: ThemeVars.spacing[2],
   [ThemeVars.background]: 'white',
   [ThemeVars.minHeight]: '100px',
+
+  ...CommonThemeVars,
 
   ...SelectionCheckBoxVars,
   ...MenuVars,

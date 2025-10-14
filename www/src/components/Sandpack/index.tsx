@@ -32,6 +32,7 @@ type SandpackProps = {
   deps?: string[];
   version?: string;
   title?: React.ReactNode;
+  tailwind?: boolean;
   description?: React.ReactNode;
   autorun?: boolean;
   viewMode?: 'code' | 'preview' | 'both';
@@ -57,7 +58,9 @@ function Sandpack(props: SandpackProps) {
   const description =
     props.description || sandpackChildren.find(isSandpackDescriptionElement);
 
-  const { sandpackTemplateFiles, validCustomFileNames } = useInfiniteTemplate();
+  const { sandpackTemplateFiles, validCustomFileNames } = useInfiniteTemplate({
+    tailwind: props.tailwind,
+  });
 
   const dependencies: Record<string, string> = {
     '@infinite-table/infinite-react':
@@ -162,8 +165,12 @@ function Sandpack(props: SandpackProps) {
         options={{
           activeFile: activeFilePath!,
           autorun,
+          autoReload: true,
           recompileMode: 'delayed',
           recompileDelay: 500,
+          externalResources: props.tailwind
+            ? ['https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4']
+            : [],
         }}
       >
         <CustomPreset

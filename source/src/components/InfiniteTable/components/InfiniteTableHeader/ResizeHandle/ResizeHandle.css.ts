@@ -139,6 +139,7 @@ export const ResizeHandleDraggerClsRecipe = recipe({
       variants: {
         computedPinned: 'start',
         computedLastInCategory: true,
+        computedFirstInCategory: false,
       },
       style: {
         right: 0,
@@ -148,6 +149,7 @@ export const ResizeHandleDraggerClsRecipe = recipe({
       variants: {
         computedPinned: 'end',
         computedFirstInCategory: true,
+        computedLastInCategory: false,
       },
       style: {
         right: 'unset',

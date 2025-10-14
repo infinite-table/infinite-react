@@ -636,6 +636,7 @@ export const getComputedColumns = <T extends unknown>({
       renderValue: colType.renderValue,
       render: colType.render,
       style: colType.style,
+      className: colType.className,
       contentFocusable: colType.contentFocusable,
 
       renderMenuIcon: colType.renderMenuIcon,

@@ -171,6 +171,7 @@ export type InfiniteTableColumnType<T> = {
   shouldAcceptEdit?: InfiniteTableColumn<T>['shouldAcceptEdit'];
   style?: InfiniteTableColumn<T>['style'];
   headerStyle?: InfiniteTableColumn<T>['headerStyle'];
+  className?: InfiniteTableColumn<T>['className'];
   headerClassName?: InfiniteTableColumn<T>['headerClassName'];
 };
 export type InfiniteTablePropColumnTypesMap<T> = Map<

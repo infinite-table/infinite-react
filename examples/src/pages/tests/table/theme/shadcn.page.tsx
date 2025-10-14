@@ -87,8 +87,9 @@ export default function Example() {
         display: 'flex',
         flexFlow: 'row',
       }}
+      className="infinite-theme-mode--light"
     >
-      <div style={containerStyle} className="infinite-theme-name--shadcn">
+      <div style={containerStyle} className=" infinite-theme-name--shadcn">
         <DataSource<Order>
           primaryKey="OrderId"
           data={orders.slice(0, 10)}

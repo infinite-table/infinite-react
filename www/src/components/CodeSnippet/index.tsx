@@ -9,6 +9,7 @@ export type CodeSnippetProps = {
   size?: 'default' | 'md' | 'lg';
   title?: string;
   description?: React.ReactNode | string;
+  tailwind?: boolean;
   code?: string;
   file?: string;
   lang?: string;
@@ -55,6 +56,7 @@ export function CodeSnippet(props: CodeSnippetProps) {
         title={props.title}
         description={props.description || descriptions}
         files={files}
+        tailwind={props.tailwind}
         deps={props.importedPackages}
       ></Sandpack>
     );

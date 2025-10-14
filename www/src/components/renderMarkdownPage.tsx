@@ -6,6 +6,7 @@ import { useMDXComponents } from '../../content/new-mdx-components';
 import { siteContent } from '@www/content';
 
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
+import markdownLinkChecker from '@www/utils/markdownLinkChecker';
 import type { JSX } from 'react';
 
 export async function renderMarkdownPage(options: {
@@ -26,7 +27,7 @@ export async function renderMarkdownPage(options: {
 
   if (!fileInfo) {
     console.warn(`File not found: ${fileKey}`);
-    console.log('available keys: ' + Object.keys(siteContent.paths).join('\n'));
+
     return options.children404 !== undefined ? (
       options.children404
     ) : (
@@ -36,15 +37,19 @@ export async function renderMarkdownPage(options: {
 
   const mdxComponents = useMDXComponents(fileInfo);
 
+  const contentWithoutComments = fileInfo.content.replace(
+    /<!--[\s\S]*?-->/g,
+    '',
+  );
   const code = String(
-    await compile(fileInfo.content, {
+    await compile(contentWithoutComments, {
       outputFormat: 'function-body',
 
       remarkPlugins: [
         remarkMdx,
-        // markdownLinkChecker({
-        //   fileInfo,
-        // }),
+        markdownLinkChecker({
+          fileInfo,
+        }),
         snippetTransformer({
           fileInfo,
           env: {

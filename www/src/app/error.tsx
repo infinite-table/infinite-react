@@ -9,7 +9,7 @@ export default function ServerError() {
   return (
     <>
       <h1>500 - Server Error</h1>
-      <p>Something went wrong on the server.</p>
+      <p>Something went wrong on the server...</p>
     </>
   );
 }

@@ -113,7 +113,7 @@ It helps you display huge datasets and get the most out of your data by providin
 - [<img src="/icons/lazy-loading.svg" style={{display: 'inline-block'}} /> lazy loading](/docs/learn/working-with-data/lazy-loading)
 - [<img src="/icons/keyboard-navigation.svg" style={{display: 'inline-block'}} /> keyboard navigation](/docs/learn/keyboard-navigation/navigating-cells)
 - [<img src="/icons/fixed-flex-cols.svg" style={{display: 'inline-block'}} /> fixed and flexible columns](/docs/learn/columns/fixed-and-flexible-size)
-- [<img src="/icons/column-grouping.svg" style={{display: 'inline-block'}} /> column grouping](/docs/learn/column-groups)
+- [<img src="/icons/column-grouping.svg" style={{display: 'inline-block'}} /> column grouping](/docs/learn/columns/column-grouping)
 - [<img src="/icons/theming.svg" style={{display: 'inline-block'}} /> theming](/docs/learn/theming)
 - ... and many others
 
