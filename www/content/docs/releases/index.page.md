@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.3.2
+
+Add support for `className` in `colTypes`.
+
 ## 7.3.1
 
 Improve TreeSelectionState standalone usage by adding config for strict mode.

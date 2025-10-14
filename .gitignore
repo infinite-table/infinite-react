@@ -104,3 +104,5 @@ test-results
 tsconfig.tsbuildinfo
 
 .parcel-cache
+
+/www/src/.gen
