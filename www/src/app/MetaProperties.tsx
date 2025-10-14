@@ -22,7 +22,6 @@ export function MetaProperties() {
       <> </>
     );
 
-  console.log('pathname', pathname);
   return (
     <>
       <link rel="icon shortcut" type="image/x-icon" href="/favicon.ico"></link>
