@@ -127,16 +127,16 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
       return undefined;
     }
 
-    if (props.rowHoverClassName) {
-      return Array.isArray(props.rowHoverClassName)
-        ? [...InfiniteTableBody.rowHoverClassNames, ...props.rowHoverClassName]
-        : [...InfiniteTableBody.rowHoverClassNames, props.rowHoverClassName];
+    if (props.rowHoverClassNames) {
+      return Array.isArray(props.rowHoverClassNames)
+        ? [...InfiniteTableBody.rowHoverClassNames, ...props.rowHoverClassNames]
+        : [...InfiniteTableBody.rowHoverClassNames, props.rowHoverClassNames];
     }
 
     return InfiniteTableBody.rowHoverClassNames;
   }, [
     showHoverRows,
-    props.rowHoverClassName,
+    props.rowHoverClassNames,
     InfiniteTableBody.rowHoverClassNames,
   ]);
 
