@@ -1,7 +1,7 @@
+import { Metadata } from 'next';
 import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 
-import { Metadata } from 'next';
 import {
   sortedPosts,
   sortedPostsIncludingDrafts,
