@@ -16,10 +16,10 @@ export function MetaProperties() {
           content="https://infinite-table.com/og-image.png"
         />
         <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="680" />{' '}
+        <meta property="og:image:height" content="680" />
       </>
     ) : (
-      <> </>
+      <></>
     );
 
   return (
