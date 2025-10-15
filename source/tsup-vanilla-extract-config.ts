@@ -4,9 +4,14 @@ import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
 
 async function processCss(css) {
-  const result = await postcss([autoprefixer]).process(css, {
-    from: undefined /* suppress source map warning */,
-  });
+  const result = await postcss([autoprefixer]).process(
+    `@layer infinite-table {
+  ${css}
+}`,
+    {
+      from: undefined /* suppress source map warning */,
+    },
+  );
 
   return result.css;
 }
