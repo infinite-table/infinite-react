@@ -25,7 +25,7 @@ import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayout
 import { useDragDropProvider } from '../components/draggable/DragDropProvider';
 
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { getBodyNode } from '../bodyClassName';
+import { getBodyNode } from '../components/InfiniteTableBody/bodyClassName';
 import { getHeaderWrapperNodes } from '../components/InfiniteTableHeader/headerClassName';
 import { isTargetInput } from '../../../utils/isTargetInput';
 

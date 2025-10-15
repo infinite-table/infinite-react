@@ -57,7 +57,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const dataSource: DataSourceData<Developer> = ({}) => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers10k-sql`)
+  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers100`)
     .then((r) => r.json())
     .then((data: Developer[]) => data);
 };
@@ -83,6 +83,9 @@ export default function App() {
             border: '1px solid gray',
             position: 'relative',
           },
+        }}
+        groupColumn={{
+          field: 'id',
         }}
         columns={columns}
         columnDefaultWidth={200}

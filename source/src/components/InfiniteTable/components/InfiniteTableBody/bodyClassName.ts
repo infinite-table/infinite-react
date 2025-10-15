@@ -1,4 +1,4 @@
-import { rootClassName } from './internalProps';
+import { rootClassName } from '../../internalProps';
 
 export const InfiniteTableBodyClassName = `${rootClassName}Body`;
 

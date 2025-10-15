@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from 'react';
 import { selectParent } from '../../../utils/selectParent';
-import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
+import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 
 import {
   getFirstFocusableChildForNode,

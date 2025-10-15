@@ -5,7 +5,6 @@ import {
   InfiniteTableRowInfoDataDiscriminator,
   InfiniteTable_Tree_RowInfoBase,
 } from '../../../../utils/groupAndPivot';
-// const once = (fn: Function) => fn;
 
 import { join } from '../../../../utils/join';
 
@@ -14,7 +13,6 @@ import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDa
 
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../internalVars.css';
 import { InfiniteColumnEditorContextType } from '../../types';
 
@@ -55,8 +53,7 @@ import {
 } from './InfiniteTableCellTypes';
 import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
 import { TreeColumnCellExpanderCls } from './row.css';
-
-const { rootClassName } = internalProps;
+import { InfiniteTableColumnCellClassName } from './InfiniteTableColumnCellClassNames';
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
@@ -78,8 +75,6 @@ export function styleForTreeColumn<T>({
 export const InfiniteTableColumnCellContext = React.createContext<
   InfiniteTableColumnCellContextType<any>
 >(null as any as InfiniteTableColumnCellContextType<any>);
-
-export const InfiniteTableColumnCellClassName = `${rootClassName}ColumnCell`;
 
 export const defaultRenderRowDetailIcon: InfiniteTableColumnRenderFunction<
   any

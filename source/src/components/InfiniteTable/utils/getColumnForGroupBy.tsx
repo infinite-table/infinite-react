@@ -12,7 +12,7 @@ import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
 import { Renderable } from '../../types/Renderable';
 import { ExpandCollapseIcon } from '../components/icons/ExpandCollapseIcon';
 import { LoadingIcon } from '../components/icons/LoadingIcon';
-import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
+import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
 import { ThemeVars } from '../vars.css';
