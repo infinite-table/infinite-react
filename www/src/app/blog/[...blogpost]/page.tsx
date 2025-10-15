@@ -62,7 +62,7 @@ export const generateMetadata = async ({
 
   // Add Open Graph image if thumbnail is available
   if (post?.thumbnail) {
-    const ogImageUrl = `https://thedatagrid.com${post.thumbnail}`;
+    const ogImageUrl = `https://infinite-table.com${post.thumbnail}`;
 
     metadata.openGraph.images = [
       {
