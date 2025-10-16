@@ -3,6 +3,14 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.3.6
+
+Add `InfiniteTable.Body.rowHoverClassName` to allow customizing the CSS `className` applied to cells on hover.
+
+## 7.3.3
+
+Add CSS layer `infinite-table` to all CSS styles we provide in our CSS files.
+
 ## 7.3.2
 
 Add support for `className` in `colTypes`.

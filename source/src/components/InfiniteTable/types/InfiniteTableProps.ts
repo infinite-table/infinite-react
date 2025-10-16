@@ -769,6 +769,7 @@ export interface InfiniteTableProps<T> {
   cellStyle?: InfiniteTablePropCellStyle<T>;
   cellClassName?: InfiniteTablePropCellClassName<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
+  rowHoverClassName?: string;
   columnHeaderHeight?: number | string;
 
   onKeyDown?: (

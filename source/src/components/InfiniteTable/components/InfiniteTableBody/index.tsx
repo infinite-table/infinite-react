@@ -25,6 +25,17 @@ const _HOVERED_CLASS_NAMES = [
   `${InfiniteTableColumnCellClassName}--hovered`,
 ];
 
+function toClassNameArray(str: string | string[]) {
+  if (Array.isArray(str)) {
+    str = str.join(' ');
+  }
+
+  return str
+    .split(' ')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
   const context = useInfiniteTable<T>();
 
@@ -48,6 +59,7 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
     wrapRowsHorizontally,
     domProps,
     domRef,
+    rowHoverClassName,
   } = componentState;
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
@@ -127,17 +139,26 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
       return undefined;
     }
 
-    if (props.rowHoverClassNames) {
-      return Array.isArray(props.rowHoverClassNames)
-        ? [...InfiniteTableBody.rowHoverClassNames, ...props.rowHoverClassNames]
-        : [...InfiniteTableBody.rowHoverClassNames, props.rowHoverClassNames];
+    let result: string[] = [];
+
+    if (rowHoverClassName) {
+      result = result.concat(rowHoverClassName);
     }
 
-    return InfiniteTableBody.rowHoverClassNames;
+    if (props.rowHoverClassName) {
+      result = result.concat(props.rowHoverClassName);
+    }
+
+    if (InfiniteTableBody.rowHoverClassName) {
+      result = result.concat(InfiniteTableBody.rowHoverClassName);
+    }
+
+    return toClassNameArray(result);
   }, [
     showHoverRows,
-    props.rowHoverClassNames,
-    InfiniteTableBody.rowHoverClassNames,
+    rowHoverClassName,
+    props.rowHoverClassName,
+    InfiniteTableBody.rowHoverClassName,
   ]);
 
   return (
@@ -178,6 +199,6 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
   );
 }
 
-InfiniteTableBody.rowHoverClassNames = _HOVERED_CLASS_NAMES;
+InfiniteTableBody.rowHoverClassName = _HOVERED_CLASS_NAMES;
 
 export { InfiniteTableBody };

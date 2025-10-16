@@ -284,6 +284,7 @@ export const forwardProps = <T>(
 
     rowProps: 1,
     rowClassName: 1,
+    rowHoverClassName: 1,
     cellClassName: 1,
 
     repeatWrappedGroupRows: 1,

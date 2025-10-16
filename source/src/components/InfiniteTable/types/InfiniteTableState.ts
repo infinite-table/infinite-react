@@ -258,6 +258,7 @@ export interface InfiniteTableMappedState<T> {
   cellStyle: InfiniteTableProps<T>['cellStyle'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
+  rowHoverClassName: InfiniteTableProps<T>['rowHoverClassName'];
   cellClassName: InfiniteTableProps<T>['cellClassName'];
   pinnedStartMaxWidth: InfiniteTableProps<T>['pinnedStartMaxWidth'];
   pinnedEndMaxWidth: InfiniteTableProps<T>['pinnedEndMaxWidth'];
