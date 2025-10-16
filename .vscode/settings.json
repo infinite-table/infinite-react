@@ -11,6 +11,7 @@
     "source/dist": true,
     "www/src/ts-compiler-bundle-large.js": true
   },
+  "files.associations": { "*.json": "jsonc" },
   "files.exclude": {
     "source/examples/.next": true,
     "source/examples/out": true,

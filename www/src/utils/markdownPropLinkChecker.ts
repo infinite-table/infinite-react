@@ -1,73 +1,67 @@
 import { visit } from 'unist-util-visit';
-import fs from 'fs';
-import path from 'path';
 
 import { MarkdownFileEnv, MarkdownFileInfo } from './MarkdownFileInfo';
 
-// Load the extracted prop names
-let validPropNames: Set<string> | null = null;
+import infiniteTableProps from '../../../source/infinite-table-props.api.json';
 
-function loadValidPropNames(): Set<string> {
-  if (validPropNames === null) {
-    try {
-      // Try multiple possible paths for the props file
-      const possiblePaths = [
-        path.resolve(__dirname, './infinite-table-props.json'),
-        path.resolve(process.cwd(), 'src/utils/infinite-table-props.json'),
-        path.resolve(process.cwd(), 'www/src/utils/infinite-table-props.json'),
-      ];
-
-      let propsData = null;
-      for (const propsFilePath of possiblePaths) {
-        try {
-          if (fs.existsSync(propsFilePath)) {
-            propsData = JSON.parse(fs.readFileSync(propsFilePath, 'utf8'));
-            break;
-          }
-        } catch (e) {
-          // Continue to next path
-        }
-      }
-
-      if (propsData && propsData.propNames) {
-        validPropNames = new Set(propsData.propNames);
-      } else {
-        throw new Error('Could not find or parse props file');
-      }
-    } catch (error) {
-      console.warn('Could not load InfiniteTable prop names:', error);
-      validPropNames = new Set(); // Fallback to empty set
-    }
-  }
-  return validPropNames;
-}
+let membersMap: Map<string, any> = new Map<string, any>();
 
 function isValidPropName(name: string): boolean {
-  const validProps = loadValidPropNames();
-  return validProps.has(name);
-}
+  if (membersMap.size === 0) {
+    const entryPoint = infiniteTableProps.members.find(
+      (member) => member.kind === 'EntryPoint',
+    );
 
-console.log(isValidPropName);
+    const InfiniteTableProps = entryPoint!.members.find(
+      (member) => member.name === 'InfiniteTableProps',
+    );
+
+    membersMap = InfiniteTableProps!.members!.reduce((acc, member) => {
+      acc.set(member.name, {
+        name: member.name,
+        // type: member.type,
+        // description: member.description,
+        // tags: member.tags,
+      });
+      return acc;
+    }, new Map<string, {}>());
+  }
+  return membersMap.has(name);
+}
 
 export default (params: {
   fileInfo: MarkdownFileInfo;
   env: MarkdownFileEnv;
 }) => {
-  const { fileInfo: _ } = params;
+  const { fileInfo } = params;
   const transformer = (ast: any) => {
     visit(ast, 'mdxJsxFlowElement', (node) => {
-      if (node.name === 'PropLink') {
+      if (
+        node.name === 'PropLink' ||
+        (node.name === 'Prop' &&
+          fileInfo.routePath === '/docs/reference/infinite-table-props')
+      ) {
+        const CmpName = node.name;
         const nameAttribute = node.attributes.find(
           (attribute: any) => attribute.name === 'name',
         );
 
         if (nameAttribute && nameAttribute.value) {
-          // const _propName = nameAttribute.value;
-          // if (!isValidPropName(propName)) {
-          //   const errorMessage = `Invalid prop name: "${propName}", found in file ${fileInfo.fileAbsolutePath}.`;
-          //   console.error(`\n\ \n \n ${errorMessage} \n \n \n`);
-          //   throw new Error(errorMessage);
-          // }
+          const propName = nameAttribute.value;
+
+          if (!isValidPropName(propName)) {
+            // todo implement check for nested properties
+            if (propName.includes('.')) {
+              return;
+            }
+            const errorMessage = `<${CmpName} name="${propName}" /> is invalid.
+
+Property "${propName}" is not valid. Found in file ${fileInfo.fileAbsolutePath}.
+
+`;
+            console.error(`\n\ \n \n ${errorMessage} \n \n \n`);
+            throw new Error(errorMessage);
+          }
         }
       }
     });
