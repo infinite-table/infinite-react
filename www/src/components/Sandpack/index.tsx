@@ -143,10 +143,12 @@ function Sandpack(props: SandpackProps) {
     // Remount on any source change in development.
     key +=
       '-' +
-      JSON.stringify({
-        ...props,
-        children: sandpackFiles,
-      });
+      JSON.stringify(
+        Object.values(sandpackFiles)
+          //@ts-ignore
+          .map((file) => file.code)
+          .join(','),
+      );
   }
 
   const customSetup = {

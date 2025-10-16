@@ -7,9 +7,6 @@ good morning `radu` how are you?
 
 ```hello```
 
-have a good day
+<PropLink name="columns" />
 
-
-```ts live files=["$DOCS/learn/working-with-data/refetch-example.page.tsx","$DOCS/learn/working-with-data/columns.ts"]
-
-```
+<!-- <DPropLink name="DataSourcePropLinkName" /> -->

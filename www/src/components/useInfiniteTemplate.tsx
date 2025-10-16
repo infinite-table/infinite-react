@@ -20,6 +20,18 @@ const TAILWIND_CUSTOMIZATION = `<style type="text/tailwindcss">
     --color-success: var(--infinite-success-color);
     --color-error: var(--infinite-error-color);
   }
+
+/**
+ * Make sure we put the 'infinite-table' layer before the tailwind 'components' layer,
+ * so tailwind can override our styles.
+ * 
+ * But we need to put it before 'base', so the tailwind resets don't affect our component.
+ */
+
+@layer theme, base, infinite-table, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
 </style>`;
 
 export const useInfiniteTemplate = (

@@ -126,7 +126,11 @@ export function CustomPreset({
   }
 
   const descriptionBlock = description ? (
-    <div className={'leading-base w-full border-b border-gray-60 '}>
+    <div
+      className={
+        'leading-base w-full border-b border-gray-60 bg-darkcustom pt-2 '
+      }
+    >
       <div
         className={`sandpackDescription pb-4 text-content-color text-base px-4 border-b-transparent border-b-1 relative [--text-paragraph:var(--text-base)]`}
       >

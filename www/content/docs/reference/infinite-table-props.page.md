@@ -1005,7 +1005,7 @@ Inside a custom component used as a column header, you have to use <HookLink nam
 It's very important that you take
 
 ```tsx
-const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
+const { domRef } = useInfiniteHeaderCell<DATA_TYPE>();
 ```
 
 the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it on to the root DOM element of your header component.
@@ -2180,6 +2180,7 @@ By default, all columns have the `default` column type applied. So, if you defin
 The following properties are currently supported for defining a column type:
 
 - `align` - See <PropLink name="columns.align" />
+- `className` - See <PropLink name="columns.className" />
 - `components` - See <PropLink name="columns.components" />
 - `cssEllipsis` - See <PropLink name="columns.cssEllipsis" />
 - `defaultEditable` - See <PropLink name="columns.defaultEditable" />
@@ -3359,6 +3360,27 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 </Prop>
 
+<Prop name="rowHoverClassName" type="string?">
+
+> Specifies the className to be applied to a row, when it is hovered.
+
+
+This property is static and cannot be a function, as applying the hover style does not trigger a re-render.
+Combined with the related <PropLink name="rowClassName" /> you will be able to achieve any dynamic use-case your app may need.
+
+
+
+<Note>
+
+In the example below, we applied `bg-orange-800!` (notice the Tailwind important `!` modifier) - because the default Infinite row styles target the `background` of the rows, and not the `background-color` as Tailwind CSS `bg-*` classes. Hence the important CSS modifier.
+
+</Note>
+
+
+```tsx title="Changing the row hover background" live file="row-hover-class-name-example.page.tsx" tailwind
+```
+
+</Prop>
 <Prop name="rowClassName" type="string|(params:InfiniteTableStylingFnParams) => string">
 
 > Specifies the className to be applied to all rows or conditionally to certain rows.

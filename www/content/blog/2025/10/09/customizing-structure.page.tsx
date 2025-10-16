@@ -121,7 +121,12 @@ function AppGrid() {
             </div>
             <InfiniteTable.Header />
           </div>
-          <InfiniteTable.GroupingToolbar orientation="vertical" />
+          <InfiniteTable.GroupingToolbar
+            orientation="vertical"
+            domProps={{
+              className: 'bg-orange-700',
+            }}
+          />
         </div>
       </InfiniteTable>
     </div>

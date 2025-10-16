@@ -1,9 +1,11 @@
 import {
   InfiniteTable,
   DataSource,
-  InfiniteTableColumn,
   components,
-  InfiniteTableProps,
+  useInfiniteHeaderCell,
+  type InfiniteTableColumn,
+  type InfiniteTableProps,
+  type InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -22,6 +24,19 @@ type Developer = {
   hobby: string;
   salary: number;
   age: number;
+};
+
+const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
+  const { domRef } = useInfiniteHeaderCell<Developer>();
+  return (
+    <div
+      ref={domRef}
+      {...props}
+      className={`${props.className} bg-orange-500/30 hover:bg-orange-500/70 text-white'`}
+    >
+      {props.children}
+    </div>
+  );
 };
 
 const columns: Record<string, InfiniteTableColumn<Developer>> = {
@@ -73,12 +88,21 @@ const columns: Record<string, InfiniteTableColumn<Developer>> = {
   city: {
     field: 'city',
     header: 'City',
-    renderHeader: ({ column }) => `${column.computedVisibleIndex} City`,
   },
 };
 
-const columnDefaults = {
-  className: `px-6 py-2 hover:bg-blue-500/10`,
+const columnDefaults: InfiniteTablePropColumnTypes<Developer>['default'] = {
+  className: ({ rowInfo }) => {
+    const cls =
+      rowInfo.indexInAll % 2 === 0 ? 'bg-orange-800/10' : 'bg-gray-700/30';
+
+    // use the hover to make this specific cell more proeminent
+    return `${cls} hover:bg-orange-900/90!`;
+  },
+
+  components: {
+    HeaderCell,
+  },
 };
 
 const columnTypes: InfiniteTableProps<Developer>['columnTypes'] = {
@@ -91,6 +115,7 @@ export default function App() {
     <DataSource<Developer> data={dataSource} primaryKey="id">
       <InfiniteTable<Developer>
         columnTypes={columnTypes}
+        rowHoverClassName="bg-orange-900/70!"
         columns={columns}
         columnDefaultWidth={150}
       ></InfiniteTable>

@@ -14,6 +14,7 @@
     "build": "npm run copy-license && npm run index-content && npm --prefix dataserver install && npm run generate-lib-dts && npm run update-css-vars-list && npm run next-build",
     "next-build": "next build --turbopack",
     "update-css-vars-list": "node build/create-css-vars-list.js",
+    "extract-props": "node build/extract-infinite-table-props.js",
     "///": "/// copying the license file and also append --- layout: NoDocs --- at the beginning of the file",
     "copy-license": "echo \"---\ntitle: End User License Agreement\n---\n$(cat ../source/LICENSE.md | sed 's/<!--.*-->//g')\" > content/eula.page.md",
     "watch-license": "npm run copy-license && chokidar ../source/LICENSE.md -c 'npm run copy-license'",

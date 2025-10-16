@@ -7,6 +7,7 @@ import { siteContent } from '@www/content';
 
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
 import markdownLinkChecker from '@www/utils/markdownLinkChecker';
+import markdownPropLinkChecker from '@www/utils/markdownPropLinkChecker';
 import type { JSX } from 'react';
 
 export async function renderMarkdownPage(options: {
@@ -16,6 +17,13 @@ export async function renderMarkdownPage(options: {
   env?: Record<string, string>;
 }): Promise<JSX.Element> {
   const slug = options.slug;
+
+  const env = {
+    ...options.env,
+    NEXT_PUBLIC_BASE_URL:
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      'https://infinite-table.com/.netlify/functions/json-server',
+  };
 
   let fileKey = '/' + slug.join('/');
   let fileInfo = siteContent.paths[fileKey];
@@ -50,14 +58,13 @@ export async function renderMarkdownPage(options: {
         markdownLinkChecker({
           fileInfo,
         }),
+        markdownPropLinkChecker({
+          fileInfo,
+          env,
+        }),
         snippetTransformer({
           fileInfo,
-          env: {
-            ...options.env,
-            NEXT_PUBLIC_BASE_URL:
-              process.env.NEXT_PUBLIC_BASE_URL ||
-              'https://infinite-table.com/.netlify/functions/json-server',
-          },
+          env,
         }),
       ],
     }),
