@@ -536,7 +536,8 @@ export type RowDetailComponentProps<T = any> = {
   rowInfo: InfiniteTableRowInfo<T>;
   cache: RowDetailCacheStorageForCurrentRow<RowDetailCacheEntry>;
 };
-export type InfiniteTablePropComponents<T = any> = {
+
+export interface InfiniteTablePropComponents<T = any> {
   LoadMask?: (
     props: LoadMaskProps & { children?: React.ReactNode | undefined },
   ) => React.JSX.Element | null;
@@ -546,7 +547,7 @@ export type InfiniteTablePropComponents<T = any> = {
   ) => React.JSX.Element | null;
   MenuIcon?: (props: MenuIconProps) => React.JSX.Element | null;
   RowDetail?: (props: RowDetailComponentProps<T>) => React.JSX.Element | null;
-};
+}
 
 export type ScrollStopInfo = {
   scrollTop: number;

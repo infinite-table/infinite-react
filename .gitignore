@@ -68,6 +68,7 @@ typings/
 dist
 dist-declarations
 dist-deepmap
+/source/infinite-table-props.api.json
 .rts2_cache_cjs
 .rts2_cache_esm
 .cache
