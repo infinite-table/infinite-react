@@ -84,6 +84,7 @@ import { MatrixBrain, MatrixBrainOptions } from './MatrixBrain';
 type HorizontalLayoutMatrixBrainOptions = {
   isHeader: boolean;
   masterBrain?: HorizontalLayoutMatrixBrain;
+  debugId?: string;
 };
 
 export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
@@ -101,7 +102,9 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
   private options: HorizontalLayoutMatrixBrainOptions;
 
   constructor(name: string, opts: HorizontalLayoutMatrixBrainOptions) {
-    super(`${name}:HorizontalLayout`);
+    super(`${name}:HorizontalLayout`, {
+      debugId: opts.debugId,
+    });
     this.options = opts;
 
     if (this.options.masterBrain) {

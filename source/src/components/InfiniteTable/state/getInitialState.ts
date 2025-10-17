@@ -66,9 +66,12 @@ export function createBrains(debugId: string, wrapRowsHorizontally: boolean) {
    * This is the main virtualization brain that powers the table
    */
   const brain = !wrapRowsHorizontally
-    ? new MatrixBrain(debugChannel)
+    ? new MatrixBrain(debugChannel, {
+        debugId,
+      })
     : new HorizontalLayoutMatrixBrain(debugChannel, {
         isHeader: false,
+        debugId,
       });
 
   const headerBrainChannel = `${debugChannel}:header`;

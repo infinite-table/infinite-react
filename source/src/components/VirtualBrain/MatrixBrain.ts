@@ -237,9 +237,12 @@ export class MatrixBrain extends Logger implements IBrain {
    */
   private fixedRowsEnd = 0;
 
-  constructor(name: string) {
+  private _debugId?: string;
+
+  constructor(name: string, opts?: { debugId?: string }) {
     const logName = getDebugChannel(name, `${name}:MatrixBrain`);
     super(logName);
+    this._debugId = opts?.debugId;
     this.name = logName;
 
     this.update = this.update.bind(this);

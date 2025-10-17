@@ -43,6 +43,12 @@ import { TreeExpandState } from '../TreeExpandState';
 import { getTreeSelectionState } from './getInitialState';
 
 import { once } from '../../../utils/DeepMap/once';
+import {
+  DevToolsMarker,
+  getMarker,
+  type PerfMarker,
+} from '../../../utils/devTools';
+import { notNullable } from '../../InfiniteTable/types/Utility';
 
 export function cleanupEmptyFilterValues<T>(
   filterValue: DataSourceState<T>['filterValue'],
@@ -215,6 +221,7 @@ function filterTreeDataSource<T>(params: {
 }
 
 type FilterDataSourceParams<T> = {
+  marker?: PerfMarker;
   dataArray: T[];
   operatorsByFilterType: DataSourceDerivedState<T>['operatorsByFilterType'];
   filterTypes: DataSourcePropFilterTypes<T>;
@@ -230,7 +237,7 @@ type FilterDataSourceParams<T> = {
 export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
   const {
     filterTypes,
-
+    marker,
     operatorsByFilterType,
     filterFunction,
     toPrimaryKey,
@@ -241,6 +248,10 @@ export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
   } = params;
 
   let { dataArray } = params;
+
+  marker?.start({
+    details: [{ name: 'Count before', value: dataArray.length }],
+  });
 
   if (filterFunction) {
     dataArray = dataArray.filter((data, index, arr) =>
@@ -267,7 +278,7 @@ export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
     cleanupEmptyFilterValues(params.filterValue, filterTypes) || [];
 
   if (filterValueArray && filterValueArray.length) {
-    return dataArray.filter((data, index, arr) => {
+    const result = dataArray.filter((data, index, arr) => {
       const param = {
         data,
         index,
@@ -316,8 +327,16 @@ export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
       }
       return true;
     });
+
+    marker?.end({
+      details: [{ name: 'Count after', value: result.length }],
+    });
+    return result;
   }
 
+  marker?.end({
+    details: [{ name: 'Count after', value: dataArray.length }],
+  });
   return dataArray;
 }
 
@@ -327,7 +346,16 @@ export function concludeReducer<T>(params: {
     DataSourceDerivedState<T> &
     DataSourceSetupState<T>;
 }) {
+  let marker: DevToolsMarker | undefined;
+
   const { state, previousState } = params;
+
+  const debugId = state.debugId;
+
+  let rootMarker: DevToolsMarker | undefined;
+  if (debugId) {
+    rootMarker = getMarker(debugId).track.DataSource.label.PrepareData.start();
+  }
 
   const cacheAffectedParts = getCacheAffectedParts(state);
 
@@ -554,6 +582,11 @@ export function concludeReducer<T>(params: {
 
   if (shouldTree && shouldTreeAgain) {
     const treeParams = {
+      marker: debugId
+        ? getMarker(
+            debugId,
+          ).track.DataSource.label.TreeUnfilteredTreePaths.start()
+        : undefined,
       isLeafNode: isLeafNode!,
       getNodeChildren: getNodeChildren!,
       toKey: toPrimaryKey,
@@ -576,6 +609,9 @@ export function concludeReducer<T>(params: {
       }
 
       dataArray = filterDataArray({
+        marker: debugId
+          ? getMarker(debugId).track.DataSource.label.Filter.start()
+          : undefined,
         // tree-related stuff
         getNodeChildren,
         isLeafNode,
@@ -612,11 +648,21 @@ export function concludeReducer<T>(params: {
       if (state.devToolsDetected) {
         sortTimestamp = Date.now();
       }
+      if (debugId) {
+        marker = getMarker(debugId).track.DataSource.label.Sort.start({
+          details: [{ name: 'Count', value: dataArray.length }],
+        });
+      }
       if (state.sortFunction) {
         dataArray = state.sortFunction(sortInfo!, [...dataArray]);
+        if (marker) {
+          marker.end();
+          marker = undefined;
+        }
       } else {
         if (isTree) {
           dataArray = multisortNested(sortInfo!, dataArray, {
+            marker,
             inplace: false,
             isLeafNode: isLeafNode!,
             getNodeChildren: getNodeChildren!,
@@ -624,8 +670,13 @@ export function concludeReducer<T>(params: {
             nodesKey: nodesKey!,
           });
         } else {
-          dataArray = multisort(sortInfo!, [...dataArray]);
+          dataArray = multisort(sortInfo!, [...dataArray], { marker });
         }
+      }
+
+      if (debugId) {
+        marker?.end();
+        marker = undefined;
       }
       if (state.devToolsDetected) {
         const sortDuration = Date.now() - sortTimestamp;
@@ -737,6 +788,9 @@ export function concludeReducer<T>(params: {
               indexer: state.indexer,
               toPrimaryKey,
               cache,
+              marker: debugId
+                ? getMarker(debugId).track.DataSource.label.LazyGroup.start()
+                : undefined,
             },
             state.originalLazyGroupData,
           )
@@ -745,6 +799,9 @@ export function concludeReducer<T>(params: {
               groupBy,
               pivot: pivotBy,
               reducers: aggregationReducers,
+              marker: debugId
+                ? getMarker(debugId).track.DataSource.label.Group.start()
+                : undefined,
             },
             dataArray,
           );
@@ -793,6 +850,9 @@ export function concludeReducer<T>(params: {
           : undefined;
 
       const flattenResult = enhancedFlatten({
+        marker: debugId
+          ? getMarker(debugId).track.DataSource.label.FlattenTree.start()
+          : undefined,
         groupResult,
         lazyLoad: !!state.lazyLoad,
         reducers: aggregationReducers,
@@ -856,6 +916,9 @@ export function concludeReducer<T>(params: {
       let aggregationReducers = state.aggregationReducers;
 
       const treeParams = {
+        marker: debugId
+          ? getMarker(debugId).track.DataSource.label.Tree.start()
+          : undefined,
         isLeafNode: isLeafNode!,
         getNodeChildren: getNodeChildren!,
         toKey: toPrimaryKey,
@@ -933,6 +996,9 @@ export function concludeReducer<T>(params: {
         state.rowsPerPage != null ? state.repeatWrappedGroupRows : false;
 
       const flattenResult = enhancedTreeFlatten({
+        marker: debugId
+          ? getMarker(debugId).track.DataSource.label.FlattenTree.start()
+          : undefined,
         treeResult,
         treeParams,
         dataArray,
@@ -1035,6 +1101,12 @@ export function concludeReducer<T>(params: {
 
   if (state.selectionMode === 'multi-row') {
     if (shouldGroup && state.lazyLoad) {
+      if (debugId) {
+        marker =
+          getMarker(
+            debugId,
+          ).track.DataSource.label.ComputeSelectionCountLazy.start();
+      }
       let allRowsSelected = true;
       let someRowsSelected = false;
 
@@ -1054,7 +1126,17 @@ export function concludeReducer<T>(params: {
       });
       state.allRowsSelected = allRowsSelected;
       state.someRowsSelected = someRowsSelected;
+      if (debugId) {
+        marker?.end();
+        marker = undefined;
+      }
     } else {
+      if (debugId) {
+        marker =
+          getMarker(
+            debugId,
+          ).track.DataSource.label.ComputeSelectionCount.start();
+      }
       const dataArrayCount = state.isTree
         ? state.totalLeafNodesCount
         : state.filteredCount;
@@ -1067,6 +1149,10 @@ export function concludeReducer<T>(params: {
 
       state.allRowsSelected = dataArrayCount === selectedRowCount;
       state.someRowsSelected = selectedRowCount > 0;
+      if (debugId) {
+        marker?.end();
+        marker = undefined;
+      }
     }
   }
 
@@ -1082,6 +1168,45 @@ export function concludeReducer<T>(params: {
       mutations: mutations?.size ? mutations : undefined,
       treeMutations: treeMutations?.size ? treeMutations : undefined,
     };
+  }
+
+  if (rootMarker) {
+    rootMarker?.track.DataSource.label.PrepareData.end({
+      details: [
+        shouldFilterAgain ||
+        shouldSortAgain ||
+        shouldGroupAgain ||
+        shouldTreeAgain
+          ? {
+              name: 'Performed operations',
+              value: [
+                shouldFilterAgain ? 'filter' : null,
+                shouldSortAgain ? 'sort' : null,
+                shouldGroupAgain ? 'group' : null,
+                shouldTreeAgain ? 'tree' : null,
+              ]
+                .filter(notNullable)
+                .join(', '),
+            }
+          : null,
+        refetchKeyChanged
+          ? {
+              name: 'Refetch key',
+              value: `Old ${previousState.refetchKey} -> New ${state.refetchKey}`,
+            }
+          : null,
+        originalDataArrayChanged
+          ? {
+              name: 'Original data array changed',
+              value: ``,
+            }
+          : null,
+        {
+          name: 'Unfiltered data length',
+          value: state.originalDataArray.length,
+        },
+      ].filter(notNullable),
+    });
   }
 
   return state;
