@@ -1,3 +1,4 @@
+import type { PerfMarker } from '../devTools/PerfMarker';
 import { treeTraverse } from '../groupAndPivot/treeUtils';
 import TYPES from './sortTypes';
 
@@ -81,10 +82,23 @@ function toPlainSortInfo<T>(
 export const multisort = <T>(
   sortInfo: MultisortInfoAllowMultipleFields<T>[],
   array: T[],
-  options?: { get?: (item: any) => T } | ((item: any) => T),
+  options?:
+    | { marker?: PerfMarker; get?: (item: any) => T }
+    | ((item: any) => T),
 ): T[] => {
   const get = typeof options === 'function' ? options : options?.get;
+  const marker =
+    options && typeof options === 'object' ? options.marker : undefined;
+
+  if (marker) {
+    marker.start();
+  }
+
   array.sort(getMultisortFunction<T>(toPlainSortInfo(sortInfo), get));
+
+  if (marker) {
+    marker.end();
+  }
 
   return array;
 };
@@ -97,12 +111,18 @@ export type NestedMultiSortOptions<T> = {
   toKey: (item: T) => any;
   depthFirst?: boolean;
   inplace?: boolean;
+  marker?: PerfMarker;
 };
 export const multisortNested = <T>(
   sortInfo: MultisortInfoAllowMultipleFields<T>[],
   array: T[],
   options: NestedMultiSortOptions<T>,
 ): T[] => {
+  const { marker } = options;
+  if (marker) {
+    marker.start();
+  }
+
   const sortFn = getMultisortFunction<T>(
     toPlainSortInfo(sortInfo),
     options.get,
@@ -164,6 +184,10 @@ export const multisortNested = <T>(
     } else {
       array = [...array].sort(sortFn);
     }
+  }
+
+  if (marker) {
+    marker.end();
   }
 
   return array;

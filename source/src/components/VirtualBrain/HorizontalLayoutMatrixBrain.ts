@@ -84,6 +84,7 @@ import { MatrixBrain, MatrixBrainOptions } from './MatrixBrain';
 type HorizontalLayoutMatrixBrainOptions = {
   isHeader: boolean;
   masterBrain?: HorizontalLayoutMatrixBrain;
+  debugId?: string;
 };
 
 export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {

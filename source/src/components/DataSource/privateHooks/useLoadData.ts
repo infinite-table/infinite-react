@@ -33,6 +33,7 @@ import {
 
 import { getChangeDetect } from './getChangeDetect';
 import { logDevToolsWarning } from '../../../utils/debugModeUtils';
+import { DevToolsMarker, getMarker } from '../../../utils/devTools';
 
 const CACHE_DEFAULT = true;
 
@@ -694,6 +695,13 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
       const componentState = getComponentState();
       if (typeof componentState.data === 'function') {
+        let marker: DevToolsMarker | undefined;
+
+        if (componentState.debugId) {
+          marker = getMarker(
+            componentState.debugId,
+          ).track.DataSource.label.RemoteDataLoad.start();
+        }
         loadData(
           componentState.data,
           componentState,
@@ -702,7 +710,9 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
             append: appendWhenLivePagination,
           },
           masterContext,
-        );
+        ).then(() => {
+          marker?.end();
+        });
       }
     },
     { ...depsObject, data },

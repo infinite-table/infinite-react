@@ -24,6 +24,7 @@ import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 import { sharedValueGetterParamsFlyweightObject } from './sharedValueGetterParamsFlyweightObject';
 import { TreeSelectionState } from '../../components/DataSource/TreeSelectionState';
+import type { PerfMarker } from '../devTools/PerfMarker';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
@@ -528,6 +529,7 @@ export type PivotBy<DataType, KeyType> = Omit<
 };
 
 export type TreeParams<DataType, _KeyType> = {
+  marker?: PerfMarker;
   isLeafNode: (item: DataType) => boolean;
   getNodeChildren: (item: DataType) => null | DataType[];
   toKey: (item: DataType) => any;
@@ -536,6 +538,7 @@ export type TreeParams<DataType, _KeyType> = {
 };
 
 type GroupParams<DataType, KeyType> = {
+  marker?: PerfMarker;
   groupBy: GroupBy<DataType, KeyType>[];
   defaultToKey?: (value: any, item: DataType) => GroupKeyType<KeyType>;
 
@@ -650,6 +653,7 @@ export function lazyGroup<DataType, KeyType extends string = string>(
   rootData: LazyGroupDataDeepMap<DataType>,
 ): DataGroupResult<DataType, KeyType> {
   const {
+    marker,
     reducers = {},
     pivot,
     groupBy,
@@ -659,6 +663,10 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     cache,
     mappings,
   } = groupParams;
+
+  if (marker) {
+    marker.start();
+  }
 
   const deepMap = new DeepMap<
     GroupKeyType<KeyType>,
@@ -842,6 +850,17 @@ export function lazyGroup<DataType, KeyType extends string = string>(
     result.pivot = pivot;
   }
 
+  if (marker) {
+    marker.end({
+      details: [
+        {
+          name: 'Group by fields',
+          value: groupBy.map((group) => group.field).join(', '),
+        },
+      ],
+    });
+  }
+
   return result;
 }
 
@@ -1019,7 +1038,22 @@ export function tree<DataType, KeyType = any>(
   treeParams: TreeParams<DataType, KeyType>,
   data: DataType[],
 ): DataTreeResult<DataType, KeyType> {
-  const { reducers } = treeParams;
+  const { reducers, marker } = treeParams;
+
+  if (marker) {
+    const reducerKeys = Object.keys(reducers ?? {});
+    marker.start({
+      details:
+        reducerKeys.length > 0
+          ? [
+              {
+                name: 'Reducers',
+                value: reducerKeys.join(', '),
+              },
+            ]
+          : undefined,
+    });
+  }
 
   const initialReducerValue = initReducers<DataType>(reducers);
   const globalReducerResults = deepClone(initialReducerValue);
@@ -1069,6 +1103,10 @@ export function tree<DataType, KeyType = any>(
     reducerResults: globalReducerResults,
   };
 
+  if (marker) {
+    marker.end();
+  }
+
   return result;
 }
 
@@ -1077,11 +1115,16 @@ export function group<DataType, KeyType = any>(
   data: DataType[],
 ): DataGroupResult<DataType, KeyType> {
   const {
+    marker,
     groupBy,
     defaultToKey = DEFAULT_TO_KEY,
     pivot,
     reducers,
   } = groupParams;
+
+  if (marker) {
+    marker.start();
+  }
 
   const groupByLength = groupBy.length;
 
@@ -1254,6 +1297,17 @@ export function group<DataType, KeyType = any>(
   if (pivot) {
     result.topLevelPivotColumns = topLevelPivotColumns;
     result.pivot = pivot;
+  }
+
+  if (marker) {
+    marker.end({
+      details: [
+        {
+          name: 'Group by fields',
+          value: groupBy.map((group) => group.field).join(', '),
+        },
+      ],
+    });
   }
 
   return result;
@@ -1450,6 +1504,7 @@ export type InfiniteTablePropRepeatWrappedGroupRows<T> =
   | ((rowInfo: InfiniteTableRowInfo<T>) => boolean);
 
 export type EnhancedTreeFlattenParam<DataType, KeyType = any> = {
+  marker?: PerfMarker;
   dataArray: DataType[];
   treeResult: DataTreeResult<DataType, KeyType>;
   treeParams: TreeParams<DataType, KeyType>;
@@ -1694,16 +1749,25 @@ function flattenTreeNodes<DataType>(
 export function enhancedTreeFlatten<DataType, KeyType = any>(
   param: EnhancedTreeFlattenParam<DataType, KeyType>,
 ): { data: InfiniteTableRowInfo<DataType>[] } {
-  const { dataArray } = param;
+  const { dataArray, marker } = param;
+
+  if (marker) {
+    marker.start();
+  }
 
   const result: InfiniteTableRowInfo<DataType>[] = [];
 
   flattenTreeNodes(dataArray, [], [], [], param, result);
 
+  if (marker) {
+    marker.end();
+  }
+
   return { data: result };
 }
 
 export type EnhancedFlattenParam<DataType, KeyType = any> = {
+  marker?: PerfMarker;
   lazyLoad: boolean;
 
   groupResult: DataGroupResult<DataType, KeyType>;
@@ -1724,6 +1788,7 @@ export function enhancedFlatten<DataType, KeyType = any>(
   param: EnhancedFlattenParam<DataType, KeyType>,
 ): { data: InfiniteTableRowInfo<DataType>[]; groupRowsIndexes: number[] } {
   const {
+    marker,
     lazyLoad,
     groupResult,
     rowsPerPage,
@@ -1740,6 +1805,17 @@ export function enhancedFlatten<DataType, KeyType = any>(
   } = param;
   const { groupParams, deepMap, pivot } = groupResult;
   const { groupBy } = groupParams;
+
+  if (marker) {
+    marker.start({
+      details: [
+        {
+          name: 'Group by fields',
+          value: groupBy.map((g) => g.field).join(', '),
+        },
+      ],
+    });
+  }
 
   // const groupByStrings = groupBy.map((g) => g.field);
 
@@ -1988,6 +2064,10 @@ export function enhancedFlatten<DataType, KeyType = any>(
       indexInParentGroups.pop();
     },
   );
+
+  if (marker) {
+    marker.end();
+  }
 
   return {
     data: result,

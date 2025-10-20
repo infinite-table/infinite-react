@@ -275,80 +275,83 @@ export const useColumnPointerEvents = ({
       };
 
       const onPointerUp = (e: PointerEvent) => {
-        const { multiSortBehavior } = getState();
-        const target = domRef.current!;
-        rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
+        const pointerId = e.pointerId;
+        requestAnimationFrame(() => {
+          const { multiSortBehavior } = getState();
+          const target = domRef.current!;
+          rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
 
-        dragger.stop();
+          dragger.stop();
 
-        brain.update({
-          ...initialAvailableSize,
-        });
-        discardAlwaysRenderedColumn?.();
-        restoreRenderRange?.();
-
-        computedVisibleColumns.forEach((col) => {
-          clearInfiniteColumnReorderDuration(
-            col.computedVisibleIndex,
-            rootRef.current,
-          );
-          setInfiniteColumnVisibility(
-            col.computedVisibleIndex,
-            '',
-            rootRef.current,
-          );
-          setInfiniteColumnOffsetWhileReordering(
-            col.computedVisibleIndex,
-            '',
-            rootRef.current,
-          );
-        });
-
-        // setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
-
-        setInfiniteColumnZIndex(
-          dragColumnIndex,
-          getColumnZIndex(dragColumn, {
-            pinnedStartColsCount: computedPinnedStartColumns.length,
-            visibleColsCount: computedVisibleColumns.length,
-          }),
-          rootRef.current,
-        );
-
-        target.style.cursor = initialCursor as string;
-        target.releasePointerCapture(e.pointerId);
-
-        target.removeEventListener('pointermove', onPointerMove);
-        target.removeEventListener('pointerup', onPointerUp);
-
-        setProxyPosition(null);
-
-        const dragColumnSortable =
-          api.getColumnApi(dragColumn.id)?.isSortable() ?? false;
-
-        if (!didDragAtLeastOnce && dragColumnSortable) {
-          api.toggleSortingForColumn(dragColumn.id, {
-            multiSortBehavior:
-              multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
-                ? 'append'
-                : multiSortBehavior,
+          brain.update({
+            ...initialAvailableSize,
           });
-        }
+          discardAlwaysRenderedColumn?.();
+          restoreRenderRange?.();
 
-        if (reorderDragResult) {
-          persistColumnOrder(reorderDragResult);
-        } else if (didDragAtLeastOnce) {
-          if (allowColumnHideOnDrag) {
-            // the column was dropped outside
-            // so we need to hide it
-            api.setVisibilityForColumn(dragColumn.id, false);
+          computedVisibleColumns.forEach((col) => {
+            clearInfiniteColumnReorderDuration(
+              col.computedVisibleIndex,
+              rootRef.current,
+            );
+            setInfiniteColumnVisibility(
+              col.computedVisibleIndex,
+              '',
+              rootRef.current,
+            );
+            setInfiniteColumnOffsetWhileReordering(
+              col.computedVisibleIndex,
+              '',
+              rootRef.current,
+            );
+          });
+
+          // setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
+
+          setInfiniteColumnZIndex(
+            dragColumnIndex,
+            getColumnZIndex(dragColumn, {
+              pinnedStartColsCount: computedPinnedStartColumns.length,
+              visibleColsCount: computedVisibleColumns.length,
+            }),
+            rootRef.current,
+          );
+
+          target.style.cursor = initialCursor as string;
+          target.releasePointerCapture(pointerId);
+
+          target.removeEventListener('pointermove', onPointerMove);
+          target.removeEventListener('pointerup', onPointerUp);
+
+          setProxyPosition(null);
+
+          const dragColumnSortable =
+            api.getColumnApi(dragColumn.id)?.isSortable() ?? false;
+
+          if (!didDragAtLeastOnce && dragColumnSortable) {
+            api.toggleSortingForColumn(dragColumn.id, {
+              multiSortBehavior:
+                multiSortBehavior === 'replace' && (e.ctrlKey || e.metaKey)
+                  ? 'append'
+                  : multiSortBehavior,
+            });
           }
-        }
 
-        actions.columnReorderDragColumnId = false;
-        if (horizontalLayoutPageIndex != null) {
-          actions.columnReorderInPageIndex = null;
-        }
+          if (reorderDragResult) {
+            persistColumnOrder(reorderDragResult);
+          } else if (didDragAtLeastOnce) {
+            if (allowColumnHideOnDrag) {
+              // the column was dropped outside
+              // so we need to hide it
+              api.setVisibilityForColumn(dragColumn.id, false);
+            }
+          }
+
+          actions.columnReorderDragColumnId = false;
+          if (horizontalLayoutPageIndex != null) {
+            actions.columnReorderInPageIndex = null;
+          }
+        });
       };
 
       target.addEventListener('pointermove', onPointerMove);
