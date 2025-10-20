@@ -28,7 +28,7 @@ export default test.describe
     // wait for Canada to be loaded as well, from the remote location
     await page.waitForRequest(condition);
     // also wait for node to be expanded
-    await page.waitForTimeout(80);
+    await page.waitForTimeout(150);
 
     const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
 
