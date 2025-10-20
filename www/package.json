@@ -5,7 +5,7 @@
   "scripts": {
     "build-dev": "npm run source-build && npm run generate-lib-dts && npm run dev",
     "dev": "concurrently \"npm run copy-license\" \"npm run watch-content\" \"npm run next-dev\"",
-    "watch-content": "chokidar \"./content/**/*.(page|code).(md|tsx)\" -c 'npm run index-content && npm run touch-slug-pages'",
+    "watch-content": "npm run index-content && chokidar \"./content/**/*.(page|code).(md|tsx)\" -c 'npm run index-content && npm run touch-slug-pages'",
     "index-content": "npx @thedatagrid/generate-docs-meta",
     "touch-slug-pages": "npm run touch-docs-slug-page && npm run touch-blog-slug-page",
     "touch-docs-slug-page": "touch ./src/app/\\(docs\\)/docs/[...docsPages]/page.tsx",
