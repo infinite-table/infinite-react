@@ -1,3 +1,5 @@
+import { PerfMarker, PerfMarkerDetails } from './PerfMarker';
+
 type DevToolsColor =
   | 'primary'
   | 'primary-light'
@@ -15,7 +17,7 @@ export type DevToolsMarkerDetails = {
   track: string;
   trackGroup?: string;
   color?: DevToolsColor;
-  details?: { name: string; value: string | number | boolean }[];
+  details?: PerfMarkerDetails;
   tooltip?: string;
 
   startTs?: DOMHighResTimeStamp;
@@ -36,11 +38,6 @@ type EndMethod<T extends Omit<DevToolsMarkerDetails, 'track' | 'label'>> =
   HasRequiredProps<T> extends true
     ? (markerDetails: T) => DevToolsMarker
     : (markerDetails?: T) => DevToolsMarker;
-
-export interface PerfMarker {
-  start(options?: { details?: DevToolsMarkerDetails['details'] }): PerfMarker;
-  end(options?: { details?: DevToolsMarkerDetails['details'] }): PerfMarker;
-}
 
 export class DevToolsMarker implements PerfMarker {
   static create(debugId: string) {
@@ -253,3 +250,5 @@ export const DevToolsTracks = {
 export function getMarker(debugId: string) {
   return DevToolsMarker.create(debugId);
 }
+
+export type { PerfMarker };

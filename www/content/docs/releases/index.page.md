@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.4.0
+
+Add custom tracks in Chrome DevTools when `debugId` is being used.
+
 ## 7.3.6
 
 Add `InfiniteTable.Body.rowHoverClassName` to allow customizing the CSS `className` applied to cells on hover.

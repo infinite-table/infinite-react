@@ -1,4 +1,4 @@
-import type { PerfMarker } from '../devTools';
+import type { PerfMarker } from '../devTools/PerfMarker';
 import { treeTraverse } from '../groupAndPivot/treeUtils';
 import TYPES from './sortTypes';
 

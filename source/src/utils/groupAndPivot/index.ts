@@ -24,7 +24,7 @@ import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 import { sharedValueGetterParamsFlyweightObject } from './sharedValueGetterParamsFlyweightObject';
 import { TreeSelectionState } from '../../components/DataSource/TreeSelectionState';
-import type { PerfMarker } from '../devTools';
+import type { PerfMarker } from '../devTools/PerfMarker';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
