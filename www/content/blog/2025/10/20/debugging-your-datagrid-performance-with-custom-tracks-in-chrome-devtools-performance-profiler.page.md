@@ -40,6 +40,9 @@ Once your <PropLink name="debugId" /> prop is configured, you can hit the record
 
 For now, we mainly show data-heavy operations, like sorting, grouping/filtering and flattening the data array, but more will be added in the near future.
 
+```tsx live viewMode="preview" file="debugging-with-custom-tracks.page.tsx" title="Start recording a performance profile - while recording, click a column header to trigger a sort"
+```
+
 The custom tracks give you high-fidelity information about the time the operation took, but give you additional insights - like the count of your data-array for sorting operations, what types of manipulations actually take place with the data and more.
 
 We're really interested to see what other insights you find useful and want us to include in the custom tracks. Reach out to us on [X](https://x.com/get_infinite) and let's start the conversation!
