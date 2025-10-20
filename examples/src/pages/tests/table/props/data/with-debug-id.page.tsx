@@ -4,8 +4,6 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
-  DataSourceData,
-  DataSourceRemoteData,
 } from '@infinite-table/infinite-react';
 import { useState } from 'react';
 
