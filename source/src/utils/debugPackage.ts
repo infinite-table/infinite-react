@@ -439,6 +439,7 @@ const debug = debugPackage as {
   diffenable: string | boolean;
   logFn: DebugLogger['logFn'];
   destroyAll: () => void;
+  isChannelEnabled: typeof isChannelEnabled;
   onLogIntent: (
     channel: string,
     fn: (options: {
@@ -480,6 +481,7 @@ const onLogIntentGlobal: (typeof debug)['onLogIntent'] = (
 };
 
 debug.onLogIntent = onLogIntentGlobal;
+debug.isChannelEnabled = isChannelEnabled;
 
 debug.destroyAll = () => {
   initUsedColors();

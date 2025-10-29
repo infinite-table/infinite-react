@@ -3,6 +3,9 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.4.1
+
+Minor enhancement on the `debug` export
 ## 7.4.0
 
 Add custom tracks in Chrome DevTools performance profiler. Read [our blogpost on custom tracks in Chrome DevTools performance profiler](/blog/2025/10/20/debugging-your-datagrid-performance-with-custom-tracks-in-chrome-devtools-performance-profiler)
