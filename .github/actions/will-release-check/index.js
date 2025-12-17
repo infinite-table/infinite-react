@@ -7,9 +7,7 @@ async function run() {
   try {
     const { payload } = context;
     const commit = payload.commits.filter((commit) =>
-      commit.message
-        .toLowerCase()
-        .includes('release version')
+      commit.message.toLowerCase().includes('release version'),
     )[0];
 
     let type;
@@ -28,45 +26,18 @@ async function run() {
 
       if (type || isCanary) {
         const versionbump =
-          type && isCanary
-            ? `${type}:canary`
-            : type
-            ? type
-            : 'canary';
-        const releasecmd = isCanary
-          ? 'canary-nobump'
-          : 'nobump';
+          type && isCanary ? `${type}:canary` : type ? type : 'canary';
+        const releasecmd = isCanary ? 'canary-nobump' : 'nobump';
 
-        const contents = `
-//registry.npmjs.org/:_authToken=${process.env.NPM_REGISTRY_TOKEN}
-package-lock=false
-`;
+        core.exportVariable(
+          'WILL_RELEASE_CMD',
+          `npm run release:${releasecmd}`,
+        );
+        core.exportVariable('WILL_RELEASE_VERSION', versionbump);
+        core.exportVariable('WILL_RELEASE', 'true');
 
-        fs.writeFile(
-          '.npmrc',
-
-          contents,
-          (error) => {
-            if (error) {
-              core.setFailed(error.message);
-            } else {
-              core.exportVariable(
-                'WILL_RELEASE_CMD',
-                `npm run release:${releasecmd}`
-              );
-              core.exportVariable(
-                'WILL_RELEASE_VERSION',
-                versionbump
-              );
-              core.exportVariable('WILL_RELEASE', 'true');
-
-              core.info(
-                'set env var WILL_RELEASE_CMD = ' +
-                  `npm run release:${releasecmd}`
-              );
-              core.info('DONE writing .npmrc');
-            }
-          }
+        core.info(
+          'set env var WILL_RELEASE_CMD = ' + `npm run release:${releasecmd}`,
         );
         return;
       }

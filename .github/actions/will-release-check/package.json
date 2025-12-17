@@ -8,10 +8,10 @@
     "package": "ncc build index.js -o out"
   },
   "dependencies": {
-    "@actions/core": "^1.1.1",
-    "@actions/github": "^2.0.0"
+    "@actions/core": "^2.0.1",
+    "@actions/github": "^6.0.1"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.20.5"
+    "@vercel/ncc": "^0.38.4"
   }
 }

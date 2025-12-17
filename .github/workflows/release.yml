@@ -9,6 +9,10 @@ on:
     # paths-ignore:
     #   - 'www/**'
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: write
+
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -31,11 +35,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - uses: './.github/actions/will-release-check'
-        env:
-          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
+        # env:
+        #   NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
-      - name: Echo whoami on public npm registry
-        run: npm whoami
+      # - name: Echo whoami on public npm registry
+      #   run: npm whoami
 
       - name: Echo publish cmd
         run: echo $WILL_RELEASE_CMD
@@ -107,9 +111,6 @@ jobs:
 
       - name: Building
         run: npm run build
-
-      - name: copy .npmrc
-        run: cp .npmrc source && cp .npmrc source/dist
 
       - name: Ship it
         uses: './.github/actions/execute-cmd'
