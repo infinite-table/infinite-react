@@ -58,7 +58,7 @@ const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
 };
 
 export default function DataTestPage() {
-  const [active, setActive] = React.useState([true, true]);
+  const [active] = React.useState([true, true]);
   const [ds, setDs] = React.useState<DataSourceDataFn<Developer>>(
     () => dataSourceFn,
   );
