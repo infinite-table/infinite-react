@@ -55,7 +55,7 @@ jobs:
           git config --local user.name "SHIP IT"
 
       - name: Install
-        run: npm ci
+        run: npm i
 
       - name: Install source
         run: npm i --prefix source
