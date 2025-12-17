@@ -34,6 +34,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Upgrade npm (required for OIDC trusted publishing)
+        run: |
+          npm i -g npm@^11.5.1
+          npm --version
+
       - uses: './.github/actions/will-release-check'
         # env:
         #   NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
