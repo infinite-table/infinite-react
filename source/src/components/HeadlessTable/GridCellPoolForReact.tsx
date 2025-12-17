@@ -26,6 +26,8 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
   private mounted: boolean = false;
 
+  private IS_UPDATED_WHILE_SCROLLING = false;
+
   private mountSubscription =
     buildSubscriptionCallback<GridCellInterface<T_ADDITIONAL_CELL_INFO>>();
 
@@ -39,7 +41,14 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
     this.updater = buildSubscriptionCallback<Renderable>();
 
-    this.node = <AvoidReactDiff key={key} name={key} updater={this.updater} />;
+    this.node = (
+      <AvoidReactDiff
+        key={key}
+        name={key}
+        updater={this.updater}
+        shouldFlushSync={this.isUpdatedWhileScrolling}
+      />
+    );
 
     this.ref = (htmlElement) => {
       this.element = htmlElement;
@@ -51,6 +60,10 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
       }
     };
   }
+
+  isUpdatedWhileScrolling = () => {
+    return this.IS_UPDATED_WHILE_SCROLLING;
+  };
 
   isMounted() {
     return this.mounted;
@@ -79,7 +92,16 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     return this.node;
   }
 
-  update(content: Renderable, additionalInfo?: T_ADDITIONAL_CELL_INFO): void {
+  update(
+    content: Renderable,
+    additionalInfo?: T_ADDITIONAL_CELL_INFO,
+    scrollingObjectParam?: {
+      scrolling: boolean;
+    },
+  ): void {
+    this.IS_UPDATED_WHILE_SCROLLING = scrollingObjectParam
+      ? scrollingObjectParam.scrolling
+      : false;
     this.updater(content);
     this.cellInfo = additionalInfo;
   }

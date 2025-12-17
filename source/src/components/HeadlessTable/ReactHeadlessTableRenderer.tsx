@@ -42,6 +42,10 @@ export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
+const SCROLLING_OBJECT_PARAM_FLYWEIGHT = {
+  scrolling: false,
+};
+
 export class GridRenderer extends Logger {
   protected brain: MatrixBrain;
 
@@ -1364,11 +1368,13 @@ export class GridRenderer extends Logger {
 
       return;
     }
+    SCROLLING_OBJECT_PARAM_FLYWEIGHT.scrolling = this.scrolling;
     this.cellManager.renderNodeAtCell(
       renderedNode,
       cell,
       [rowIndex, colIndex],
       cellAdditionalInfo,
+      SCROLLING_OBJECT_PARAM_FLYWEIGHT,
     );
 
     this.updateElementPosition(cell, { hidden, rowspan, colspan });

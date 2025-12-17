@@ -185,6 +185,9 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     cell: GridCellInterface<T_ADDITIONAL_CELL_INFO>,
     cellPos: CellPos,
     additionalInfo?: T_ADDITIONAL_CELL_INFO,
+    scrollingObjectParam?: {
+      scrolling: boolean;
+    },
   ) {
     const currentCellAtPos = this.getCellAt(cellPos);
 
@@ -199,7 +202,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
 
     this.setCellPositionInMatrix(cell, cellPos);
 
-    cell.update(node, additionalInfo);
+    cell.update(node, additionalInfo, scrollingObjectParam);
 
     return cell;
   }

@@ -121,6 +121,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     this.getState().scrollerDOMRef.current?.focus();
   }
 
+  getVisibleRenderRange = () => {
+    return this.getState().brain.getRenderRange();
+  };
+
   hideContextMenu() {
     this.actions.contextMenuVisibleFor = null;
     this.actions.cellContextMenuVisibleFor = null;

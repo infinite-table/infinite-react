@@ -124,13 +124,15 @@ export type DataSourceRemoteData<T> = {
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
 
+export type DataSourceDataFn<T> = (
+  dataInfo: DataSourceDataParams<T>,
+) => T[] | Promise<T[] | DataSourceRemoteData<T>>;
+
 export type DataSourceData<T> =
   | T[]
   | DataSourceRemoteData<T>
   | Promise<T[] | DataSourceRemoteData<T>>
-  | ((
-      dataInfo: DataSourceDataParams<T>,
-    ) => T[] | Promise<T[] | DataSourceRemoteData<T>>);
+  | DataSourceDataFn<T>;
 
 export type DataSourceGroupRowsList<KeyType = any> = true | KeyType[][];
 

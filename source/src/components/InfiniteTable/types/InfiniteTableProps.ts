@@ -295,6 +295,7 @@ export interface InfiniteTableApi<T> {
   realignColumnContextMenu: () => void;
   getColumnOrder: () => string[];
   getVisibleColumnOrder: () => string[];
+  getVisibleRenderRange: () => TableRenderRange;
   getComputedColumnById: (
     colId: string,
   ) => InfiniteTableComputedColumn<T> | undefined;

@@ -13,7 +13,7 @@ import { dbg } from '../../../utils/debugLoggers';
 
 import { proxyFn } from '../../../utils/proxyFnCall';
 import { toUpperFirst } from '../../../utils/toUpperFirst';
-import { UPDATED_VALUES } from '../../InfiniteTable/types/Utility';
+import { notNullable, UPDATED_VALUES } from '../../InfiniteTable/types/Utility';
 
 import { isControlled } from '../../utils/isControlled';
 import { useEffectOnce } from '../useEffectOnceWithProperUnmount';
@@ -26,6 +26,7 @@ import {
   ManagedComponentStateContextValue,
   ComponentStateGeneratedActions,
 } from './types';
+import { getMarker } from '../../../utils/devTools';
 
 export const notifyChange = (
   props: any,
@@ -576,13 +577,18 @@ export function buildManagedComponent<
       });
 
       if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
-        const logger = config.debugName
-          ? dbg(
-              typeof config.debugName === 'function'
-                ? `${config.debugName(currentProps)}:rerender`
-                : `${config.debugName}:rerender`,
-            )
-          : dbg('rerender');
+        const debugId = (state as any).debugId as string | undefined;
+
+        const marker = debugId
+          ? getMarker(debugId).track.ComponentState.label.PropUpdate.start()
+          : undefined;
+
+        const debugChannelName = config.debugName
+          ? typeof config.debugName === 'function'
+            ? `${config.debugName(currentProps)}:rerender`
+            : `${config.debugName}:rerender`
+          : 'rerender';
+        const logger = dbg(debugChannelName);
 
         logger(
           'Triggered by new values for the following props',
@@ -591,6 +597,33 @@ export function buildManagedComponent<
             ...Object.keys(updatedPropsToState ?? {}),
           ],
         );
+
+        if (marker) {
+          marker.end({
+            label: debugChannelName,
+            details: [
+              newMappedStateCount > 0
+                ? {
+                    name: 'Updated properties',
+                    value: Object.keys(newMappedState).join(', '),
+                  }
+                : undefined,
+              updatedPropsToStateCount > 0
+                ? {
+                    name: 'Updated props',
+                    value: Object.keys(updatedPropsToState).join(', '),
+                  }
+                : undefined,
+              updatedPropsToStateCount > 0 || updatedPropsToState
+                ? {
+                    name: 'Details',
+                    value:
+                      'The time for this marker is not accurate. The marker is only displayed so you can easily identify the props that triggered the rerender.',
+                  }
+                : undefined,
+            ].filter(notNullable),
+          });
+        }
         const action = {
           payload: {
             mappedState: newMappedStateCount ? newMappedState : null,

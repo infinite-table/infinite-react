@@ -29,4 +29,10 @@ export const DevToolsTracks = {
       ComputeRenderRange: 'Computing render range',
     },
   },
+  ComponentState: {
+    track: 'ComponentState',
+    labels: {
+      PropUpdate: 'Prop update',
+    },
+  },
 } as const;

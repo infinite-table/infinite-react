@@ -2,7 +2,13 @@ import { Renderable } from '../types/Renderable';
 
 export interface GridCellInterface<T_ADDITIONAL_CELL_INFO = any> {
   debugId: string;
-  update(content: Renderable, additionalInfo?: T_ADDITIONAL_CELL_INFO): void;
+  update(
+    content: Renderable,
+    additionalInfo?: T_ADDITIONAL_CELL_INFO,
+    scrollingObjectParam?: {
+      scrolling: boolean;
+    },
+  ): void;
   getElement(): HTMLElement | null;
   getNode(): Renderable;
   destroy(): void;
