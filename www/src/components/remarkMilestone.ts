@@ -46,8 +46,6 @@ async function fetchAllMilestoneIssues(
 }
 
 async function getMilestone(milestone: string | number, status = 'all') {
-  const url = `https://api.github.com/repos/${repo}/issues?milestone=${milestone}&state=${status}`;
-
   const issues = await fetchAllMilestoneIssues(milestone, status);
 
   if (!Array.isArray(issues)) {
