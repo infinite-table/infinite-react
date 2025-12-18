@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 7.4.2
 
-Perf enhancements
+Improve perf by leveraging React async flushing whenever possible.
 
 ## 7.4.1
 
