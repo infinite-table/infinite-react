@@ -88,10 +88,11 @@ async function getMilestone(milestone: string | number, status = 'all') {
 import { visit } from 'unist-util-visit';
 
 const remarkMilestonePlugin = function () {
+  // @ts-ignore
   const unified = this as any;
   const tasks: [number, any, number | null, any][] = [];
 
-  return async function transformer(tree: any, file: any) {
+  return async function transformer(tree: any) {
     visit(tree, 'paragraph', (node, index, parent) => {
       if (
         node.children &&
@@ -118,8 +119,8 @@ const remarkMilestonePlugin = function () {
     });
 
     await Promise.all(
-      tasks.map(async ([id, node, index, parent]) => {
-        const { issues, milestone } = await getMilestone(id);
+      tasks.map(async ([id, index, parent]) => {
+        const { issues } = await getMilestone(id);
 
         const content = [
           `<table>`,
@@ -143,7 +144,14 @@ const remarkMilestonePlugin = function () {
           '</table>',
         ].join('');
         const children = unified.parse(content).children;
-        parent.children.splice(index, 1, ...children);
+
+        if (!parent) return;
+
+        // @ts-ignore
+        if (Array.isArray(parent.children)) {
+          // @ts-ignore
+          parent.children.splice(index, 1, ...children);
+        }
       }),
     );
   };
