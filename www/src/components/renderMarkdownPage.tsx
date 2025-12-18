@@ -8,6 +8,7 @@ import { siteContent } from '@www/content';
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
 import markdownLinkChecker from '@www/utils/markdownLinkChecker';
 import markdownPropLinkChecker from '@www/utils/markdownPropLinkChecker';
+import remarkMilestonePlugin from '@www/components/remarkMilestone';
 import type { JSX } from 'react';
 
 export async function renderMarkdownPage(options: {
@@ -58,6 +59,7 @@ export async function renderMarkdownPage(options: {
         markdownLinkChecker({
           fileInfo,
         }),
+        remarkMilestonePlugin,
         markdownPropLinkChecker({
           fileInfo,
           env,
