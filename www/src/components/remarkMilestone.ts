@@ -1,10 +1,15 @@
-const pat = process.env.GITHUB_PAT;
+import fetch from 'node-fetch';
+import { Parser, Program } from 'acorn';
+import jsx from 'acorn-jsx';
+import { MdxFlowExpression } from 'mdast-util-mdx';
+
+const pat = process.env.READ_GITHUB_ISSUES_TOKEN || process.env.GITHUB_PAT;
 
 const headers = { Authorization: `token ${pat}` };
 
-import fetch from 'node-fetch';
+const parser = Parser.extend(jsx());
 
-const repo = `infinite-table/infinite-react`;
+const REPO = `infinite-table/infinite-react`;
 
 interface GithubIssue {
   title: string;
@@ -28,18 +33,22 @@ const sortOpenFirst = (issue1: GithubIssue, issue2: GithubIssue) => {
 async function fetchAllMilestoneIssues(
   milestone: string | number,
   status = 'all',
-  currentPage = 0,
-) {
-  const url = `https://api.github.com/repos/${repo}/issues?milestone=${milestone}&state=${status}&per_page=100`;
+  currentPage = 1, // GitHub API pages are 1-indexed
+): Promise<GithubIssue[]> {
+  const url = `https://api.github.com/repos/${REPO}/issues?milestone=${milestone}&state=${status}&per_page=100&page=${currentPage}`;
 
-  const issues: GithubIssue[] = (
+  const issues: GithubIssue[] = (await (
     await fetch(url, { headers })
-  ).json() as unknown as GithubIssue[];
+  ).json()) as unknown as GithubIssue[];
 
-  if (issues.length) {
-    issues.push(
-      ...(await fetchAllMilestoneIssues(milestone, status, currentPage + 1)),
+  // If we got a full page (100 issues), there might be more pages
+  if (issues.length === 100) {
+    const nextPageIssues = await fetchAllMilestoneIssues(
+      milestone,
+      status,
+      currentPage + 1,
     );
+    return [...issues, ...nextPageIssues];
   }
 
   return issues;
@@ -55,7 +64,7 @@ async function getMilestone(milestone: string | number, status = 'all') {
   return {
     milestone: await (
       await fetch(
-        `https://api.github.com/repos/${repo}/milestones/${milestone}`,
+        `https://api.github.com/repos/${REPO}/milestones/${milestone}`,
         {
           headers,
         },
@@ -119,7 +128,7 @@ const remarkMilestonePlugin = function () {
     });
 
     await Promise.all(
-      tasks.map(async ([id, index, parent]) => {
+      tasks.map(async ([id, _node, index, parent]) => {
         const { issues } = await getMilestone(id);
 
         const content = [
@@ -143,15 +152,17 @@ const remarkMilestonePlugin = function () {
           ),
           '</table>',
         ].join('');
-        const children = unified.parse(content).children;
 
-        if (!parent) return;
+        const estree = parser.parse(content, {
+          ecmaVersion: 'latest',
+        }) as Program;
 
         // @ts-ignore
-        if (Array.isArray(parent.children)) {
-          // @ts-ignore
-          parent.children.splice(index, 1, ...children);
-        }
+        parent!.children[index!] = {
+          type: 'mdxFlowExpression',
+          value: content,
+          data: { estree },
+        } as MdxFlowExpression;
       }),
     );
   };
