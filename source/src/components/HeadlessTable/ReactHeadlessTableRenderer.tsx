@@ -1273,6 +1273,16 @@ export class GridRenderer extends Logger {
     };
   }
 
+  protected onMouseEnterNotBound = (event: React.MouseEvent<HTMLElement>) => {
+    const rowIndex = Number((event.target as HTMLElement).dataset.rowIndex);
+    this.onMouseEnter(rowIndex);
+  };
+  protected onMouseLeaveNotBound = (event: React.MouseEvent<HTMLElement>) => {
+    const rowIndex = Number((event.target as HTMLElement).dataset.rowIndex);
+
+    this.onMouseLeave(rowIndex);
+  };
+
   protected renderCellAt(
     rowIndex: number,
     colIndex: number,
@@ -1323,8 +1333,10 @@ export class GridRenderer extends Logger {
       hidden,
       heightWithRowspan,
       widthWithColspan,
-      onMouseEnter: this.onMouseEnter.bind(null, rowIndex),
-      onMouseLeave: this.onMouseLeave.bind(null, rowIndex),
+      // onMouseEnter: this.onMouseEnter.bind(null, rowIndex),
+      onMouseEnter: this.onMouseEnterNotBound, //.bind(null, rowIndex),
+      // onMouseLeave: this.onMouseLeave.bind(null, rowIndex),
+      onMouseLeave: this.onMouseLeaveNotBound, //.bind(null, rowIndex),
       domRef: cell.ref,
     });
 

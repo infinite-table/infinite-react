@@ -48,8 +48,8 @@ const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
         setTimeout(() => {
           // console.log(data, 'data');
           // data.length = 1;
-          // const newData = [...data.data.slice(0, 3)];
-          const newData = data;
+          const newData = [...data.data.slice(0, 2)];
+          // const newData = data;
 
           resolve(newData);
         }, 20);

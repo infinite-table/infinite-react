@@ -403,7 +403,7 @@ In these Terms, where the context so admits, the following words and expressions
       <td>
         means the support services, to be provided by the Licensor in respect of
         the Software (including the provision of Updates), as set out in the
-        Support Schedule; and
+        Support Schedule
       </td>
     </tr>
   </tbody>

@@ -16,8 +16,8 @@ export type TableRenderCellFnParam = {
   heightWithRowspan: number;
   rowFixed: FixedPosition;
   colFixed: FixedPosition;
-  onMouseEnter: VoidFunction;
-  onMouseLeave: VoidFunction;
+  onMouseEnter: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
 export type TableRenderDetailRowFnParam = {
@@ -26,8 +26,8 @@ export type TableRenderDetailRowFnParam = {
   hidden: boolean;
   height: number;
   rowFixed: FixedPosition;
-  onMouseEnter: VoidFunction;
-  onMouseLeave: VoidFunction;
+  onMouseEnter: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave: (event: React.MouseEvent<HTMLElement>) => void;
 };
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
 export type TableRenderDetailRowFn = (

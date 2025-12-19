@@ -313,7 +313,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             rowIndex,
           } as InfiniteTableRowContext<T>;
           onRowMouseEnter(rowContext, event);
-          onMouseEnter(event);
+          onMouseEnter(event as React.MouseEvent<HTMLElement>);
         }
       : onMouseEnter;
 
@@ -326,7 +326,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
             rowInfo,
           } as InfiniteTableRowContext<T>;
           onRowMouseLeave(rowContext, event);
-          onMouseLeave(event);
+          onMouseLeave(event as React.MouseEvent<HTMLElement>);
         }
       : onMouseLeave;
 

@@ -59,8 +59,8 @@ export interface InfiniteTableColumnCellProps<T>
   rowDetailState: false | 'collapsed' | 'expanded';
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
-  onMouseEnter?: (event: React.MouseEvent) => void;
-  onMouseLeave?: (event: React.MouseEvent) => void;
+  onMouseEnter?: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave?: (event: React.MouseEvent<HTMLElement>) => void;
   onRowMouseEnter?: InfiniteTableProps<T>['onRowMouseEnter'];
   onRowMouseLeave?: InfiniteTableProps<T>['onRowMouseLeave'];
   showZebraRows: boolean;
