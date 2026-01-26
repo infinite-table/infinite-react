@@ -44,7 +44,8 @@ export function useCellRendering<T>(
 ): CellRenderingResult {
   const { computed, bodySize, imperativeApi } = param;
 
-  const { actions, state, getState } = useInfiniteTable<T>();
+  const { actions, state, getState, getComputed, getDataSourceMasterContext } =
+    useInfiniteTable<T>();
 
   const {
     computedPinnedStartColumns,
@@ -66,7 +67,7 @@ export function useCellRendering<T>(
     api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
-  const { dataArray, isNodeReadOnly } = dataSourceState;
+  const { dataArray, rowInfoStore } = dataSourceState;
 
   const getData = useLatest(dataArray);
   const {
@@ -92,6 +93,7 @@ export function useCellRendering<T>(
     onScrollStop,
     scrollToBottomOffset,
     wrapRowsHorizontally,
+    updatedAt: componentStateUpdatedAt,
     ready,
   } = state;
 
@@ -255,7 +257,7 @@ export function useCellRendering<T>(
         horizontalLayoutPageIndex,
 
         rowIndex,
-        rowInfo,
+        rowInfoStore,
         hidden,
         toggleGroupRow,
         rowHeight,
@@ -274,6 +276,21 @@ export function useCellRendering<T>(
         rowClassName,
         cellStyle,
         cellClassName,
+
+        // repaintId: componentStateUpdatedAt,
+
+        // DataSource context values passed as props to avoid context re-renders
+        getDataSourceState,
+        dataSourceApi,
+        dataSourceActions,
+
+        // InfiniteTable context values passed as props to avoid context re-renders
+        getState,
+        imperativeApi,
+        componentActions: actions,
+
+        getComputed,
+        getDataSourceMasterContext,
       };
 
       return <InfiniteTableColumnCell<T> {...cellProps} />;
@@ -296,11 +313,23 @@ export function useCellRendering<T>(
       showZebraRows,
       brain,
       repaintId,
-      isNodeReadOnly,
+      rowInfoStore,
       rowStyle,
       rowClassName,
       cellClassName,
       cellStyle,
+      getDataSourceState,
+      dataSourceApi,
+      dataSourceActions,
+
+      getState,
+      imperativeApi,
+      actions,
+
+      getComputed,
+      getDataSourceMasterContext,
+
+      componentStateUpdatedAt,
     ],
   );
 

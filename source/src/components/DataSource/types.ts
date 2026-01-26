@@ -44,6 +44,7 @@ import {
   CellSelectionPosition,
 } from './CellSelectionState';
 import { DataSourceCache, DataSourceMutation } from './DataSourceCache';
+import { RowInfoStore } from './RowInfoStore';
 import { TreeApi } from './TreeApi';
 import { GroupRowsState } from './GroupRowsState';
 import { Indexer } from './Indexer';
@@ -302,6 +303,7 @@ export interface DataSourceSetupState<T> {
   logger: DebugLogger;
   forceRerenderTimestamp: number;
   devToolsDetected: boolean;
+  rowInfoStore: RowInfoStore<T>;
   debugTimings: Map<DebugTimingKey, number>;
   debugWarnings: Map<DataSourceDebugWarningKey, DebugWarningPayload>;
   indexer: Indexer<T, any>;

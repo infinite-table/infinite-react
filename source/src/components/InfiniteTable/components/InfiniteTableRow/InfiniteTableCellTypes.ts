@@ -1,6 +1,13 @@
 import { CSSProperties } from 'react';
 
 import { InfiniteTableComputedColumn } from '../..';
+import { RowInfoStore } from '../../../DataSource/RowInfoStore';
+import {
+  DataSourceApi,
+  DataSourceComponentActions,
+  DataSourceMasterDetailContextValue,
+  DataSourceState,
+} from '../../../DataSource/types';
 import { Renderable } from '../../../types/Renderable';
 import { OnResizeFn } from '../../../types/Size';
 import {
@@ -9,7 +16,11 @@ import {
   InfiniteTablePropRowStyle,
   InfiniteTablePropRowClassName,
   InfiniteTablePropHeaderOptions,
+  InfiniteTableComputedValues,
+  InfiniteTableState,
+  InfiniteTableApi,
 } from '../../types';
+import { InfiniteTableActions } from '../../types/InfiniteTableState';
 import {
   InfiniteTableColumnAlignValues,
   InfiniteTableToggleGroupRowFn,
@@ -42,6 +53,8 @@ export type InfiniteTableBaseCellProps<T> = {
 
   cssPosition?: CSSProperties['position'];
   domRef?: React.RefCallback<HTMLElement>;
+
+  repaintId?: number | string;
 };
 export type InfiniteTableCellProps<T> =
   | ({
@@ -66,7 +79,7 @@ export interface InfiniteTableColumnCellProps<T>
   showZebraRows: boolean;
   virtualized: boolean;
   hidden: boolean;
-  rowInfo: InfiniteTableRowInfo<T>;
+  rowInfoStore: RowInfoStore<T>;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   getData: () => InfiniteTableRowInfo<T>[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
@@ -78,6 +91,21 @@ export interface InfiniteTableColumnCellProps<T>
   cellClassName?: InfiniteTablePropCellClassName<T>;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
+
+  // DataSource context values passed as props to avoid context re-renders
+  getDataSourceState: () => DataSourceState<T>;
+  dataSourceApi: DataSourceApi<T>;
+  dataSourceActions: DataSourceComponentActions<T>;
+
+  // InfiniteTable context values passed as props to avoid context re-renders
+  getState: () => InfiniteTableState<T>;
+  componentActions: InfiniteTableActions<T>;
+  imperativeApi: InfiniteTableApi<T>;
+
+  getComputed: () => InfiniteTableComputedValues<T>;
+  getDataSourceMasterContext: () =>
+    | DataSourceMasterDetailContextValue
+    | undefined;
 }
 
 export interface InfiniteTableHeaderCellProps<T>

@@ -62,6 +62,8 @@ export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
 };
 
 export interface InfiniteTableSetupState<T> {
+  updatedAt: number;
+
   brain: MatrixBrain;
   headerBrain: MatrixBrain;
   renderer: GridRenderer;

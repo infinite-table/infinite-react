@@ -133,6 +133,19 @@ export default function DataTestPage() {
         </Button>
         <Button
           onClick={() => {
+            if (!dataSourceApi || !api) {
+              return;
+            }
+
+            const [activeRow] = activeCellIndex || [];
+            const rowId = dataSourceApi.getPrimaryKeyByIndex(activeRow);
+            dataSourceApi.removeData({ id: rowId });
+          }}
+        >
+          remove row
+        </Button>
+        <Button
+          onClick={() => {
             setDs(dataSourceFn.bind(null));
           }}
         >

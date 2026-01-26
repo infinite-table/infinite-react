@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
 import { once } from '../../../../utils/DeepMap/once';
 import {
   InfiniteTableRowInfoDataDiscriminator,
@@ -9,7 +9,6 @@ import {
 import { join } from '../../../../utils/join';
 
 import { stripVar } from '../../../../utils/stripVar';
-import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
 
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
@@ -54,6 +53,7 @@ import {
 import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
 import { TreeColumnCellExpanderCls } from './row.css';
 import { InfiniteTableColumnCellClassName } from './InfiniteTableColumnCellClassNames';
+import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
@@ -195,7 +195,7 @@ function applyColumnStyle<T>(
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
-    rowInfo,
+    rowInfoStore,
     rowStyle,
     rowClassName,
 
@@ -225,7 +225,37 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     domRef: initialDomRef,
     hidden,
     showZebraRows,
+
+    // DataSource context values passed as props
+    getDataSourceState,
+    dataSourceApi,
+    dataSourceActions,
+
+    // InfiniteTable context values passed as props
+    getState,
+    imperativeApi,
+    componentActions,
+
+    getComputed,
+    getDataSourceMasterContext,
   } = props;
+
+  // Subscribe to rowInfo changes at this specific rowIndex
+  // This will only trigger re-render when rowInfo at this index actually changes
+  const rowInfoFromStore = useSyncExternalStore(
+    useCallback(
+      (callback) => rowInfoStore.subscribeToRowIndex(rowIndex, callback),
+      [rowInfoStore, rowIndex],
+    ),
+    useCallback(
+      () => rowInfoStore.getRowInfoAtIndex(rowIndex),
+      [rowInfoStore, rowIndex],
+    ),
+  );
+
+  // Use EMPTY_ROW_INFO as fallback to allow all hooks to be called unconditionally
+
+  const isEmptyRowInfo = !rowInfoFromStore;
 
   const htmlElementRef = React.useRef<HTMLElement | null>(null);
   const domRef = useCallback(
@@ -242,21 +272,17 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return <div ref={domRef}>no column</div>;
   }
 
+  if (!rowInfoFromStore) {
+    console.warn('no rowInfo at index', rowIndex);
+    return <div ref={domRef}>no rowInfo</div>;
+  }
+  const rowInfo = rowInfoFromStore;
+
   const { rowSelected } = rowInfo;
 
-  const {
-    getState,
-    actions: componentActions,
-    computed,
-    api: imperativeApi,
-    getDataSourceMasterContext,
-  } = useInfiniteTable<T>();
-  const {
-    componentState: dataSourceState,
-    getState: getDataSourceState,
-    api: dataSourceApi,
-    componentActions: dataSourceActions,
-  } = useDataSourceContextValue<T>();
+  // All context values are now passed as props to avoid context re-renders
+  const computed = getComputed();
+  // const { componentState: dataSourceState } = useDataSourceContextValue<T>();
 
   const { activeRowIndex, keyboardNavigation, columnReorderInPageIndex } =
     getState();
@@ -366,7 +392,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [rowIndex, rowDisabled, column.computedVisibleIndex, keyboardNavigation],
   );
 
-  const { selectionMode, cellSelection, isNodeReadOnly } = dataSourceState;
+  // Use getDataSourceState() to avoid subscribing to context changes
+  const { selectionMode, cellSelection, isNodeReadOnly } = getDataSourceState();
 
   const cellSelected = renderParam.cellSelected;
 
@@ -853,6 +880,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     InfiniteTableColumnCellContext.Provider as React.Provider<
       InfiniteTableColumnCellContextType<T>
     >;
+
+  // Return empty div for missing column or rowInfo (after all hooks have been called)
+  if (!column || isEmptyRowInfo) {
+    return <div ref={domRef} style={{ display: 'none' }} />;
+  }
+
+  console.log('update', rowInfo.indexInAll, column.id);
+
   return (
     // this context is here for supporting useInfiniteColumnCell to be used
     // with a custom column component, specified via column.components.ColumnCell

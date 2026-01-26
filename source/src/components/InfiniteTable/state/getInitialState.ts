@@ -135,6 +135,7 @@ export function initSetupState<T>({
   } = createBrains(debugId, !!wrapRowsHorizontally);
 
   const domRef = createRef<HTMLDivElement>();
+  const now = Date.now();
 
   return {
     debugWarnings: new Map<InfiniteTableDebugWarningKey, DebugWarningPayload>(),
@@ -142,6 +143,8 @@ export function initSetupState<T>({
     onRenderUpdater,
     headerRenderer,
     headerOnRenderUpdater,
+
+    updatedAt: now,
 
     devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
     propsCache: new Map<keyof InfiniteTableProps<T>, WeakMap<any, any>>([]),
@@ -580,6 +583,7 @@ export const mapPropsToState = <T>(params: {
     : props.isRowDetailEnabled || true;
 
   let result = {
+    updatedAt: Date.now(),
     isTree: parentState.isTree,
     rowDetailRenderer,
     rowDetailState: rowDetailState as RowDetailState<any> | undefined,

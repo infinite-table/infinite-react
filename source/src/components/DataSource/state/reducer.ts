@@ -1097,6 +1097,11 @@ export function concludeReducer<T>(params: {
   }
 
   state.dataArray = rowInfoDataArray;
+
+  // Update the RowInfoStore - this will compare old vs new rowInfo at each index
+  // and notify subscribers only for changed indices
+  state.rowInfoStore.setDataArray(rowInfoDataArray);
+
   state.reducedAt = now;
 
   if (state.selectionMode === 'multi-row') {
