@@ -1,0 +1,49 @@
+{
+  "name": "@infinite-table/infinite-solid",
+  "description": "Infinite Table for Solid JS",
+  "keywords": [
+    "solid",
+    "infinite-table",
+    "solid-table",
+    "table",
+    "datagrid",
+    "solid-datagrid",
+    "solid-infinite"
+  ],
+  "config": {
+    "//": "// configures where the build artifacts will be placed - taken into account by the 'build' script and others",
+    "outdir": "dist"
+  },
+  "author": {
+    "name": "Infinite Table",
+    "email": "admin@infinite-table.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/infinite-table/infinite-react.git"
+  },
+  "bugs": {
+    "url": "https://github.com/infinite-table/infinite-react/issues"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.9.10"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.25",
+    "prettier": "^2.5.0",
+    "typescript": "5.7.2",
+    "solid-js": "^1.9.10"
+  },
+  "version": "7.4.2",
+  "private": true,
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "scripts": {
+    "tsc": "tsc --project tsconfig.json",
+    "tscw": "tsc --project tsconfig.json --watch"
+  },
+  "license": "Commercial & Open Source",
+  "//": "will be updated at build time",
+  "publishedAt": 1624970570587
+}

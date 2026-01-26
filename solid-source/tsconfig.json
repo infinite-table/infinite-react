@@ -1,0 +1,27 @@
+{
+  "extends": "../tsconfig.root.json",
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+    // "../source/globals.d.ts",
+    // "../source/src/**/*.ts"
+  ],
+  "exclude": ["../source/**/*.tsx", "node_modules", "dist"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noImplicitThis": true,
+    "allowSyntheticDefaultImports": true,
+
+    "jsx": "react-jsx",
+    "jsxImportSource": "solid-js",
+    "baseUrl": ".",
+    "paths": {
+      "@infinite/*": ["../source/src/*"]
+    }
+  }
+}

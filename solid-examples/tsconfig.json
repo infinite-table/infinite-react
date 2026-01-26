@@ -1,0 +1,32 @@
+{
+  "extends": "../solid-source/tsconfig.json",
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "../solid-source/src/**/*.ts",
+    "../solid-source/src/**/*.tsx",
+    "../source/globals.d.ts",
+    "../source/src/**/*.ts"
+  ],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "solid-js",
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["vinxi/types/client"],
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"],
+      "@src/*": ["../solid-source/src/*"],
+      "@src": ["../solid-source/src/index.tsx"],
+      "@infinite/*": ["../source/src/*"]
+    }
+  }
+}
