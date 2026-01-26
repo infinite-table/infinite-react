@@ -165,5 +165,6 @@ export class HeaderTestingModel {
       .click({
         modifiers: ctrlKey ? ['Control', 'Meta'] : [],
       });
+    await this.page.evaluate(() => new Promise(requestAnimationFrame));
   }
 }

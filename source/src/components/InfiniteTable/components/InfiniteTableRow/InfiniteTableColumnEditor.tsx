@@ -10,6 +10,9 @@ export function InfiniteTableColumnEditor<T>() {
     useInfiniteColumnEditor<T>();
 
   const domRef = useRef<HTMLInputElement | null>(null);
+  // Track if edit was cancelled via Escape to prevent onBlur from confirming
+  const cancelledRef = useRef(false);
+
   const refCallback = React.useCallback((node: HTMLInputElement) => {
     domRef.current = node;
 
@@ -23,9 +26,17 @@ export function InfiniteTableColumnEditor<T>() {
     if (key === 'Enter' || key === 'Tab') {
       confirmEdit();
     } else if (key === 'Escape') {
+      cancelledRef.current = true;
       cancelEdit();
     } else {
       event.stopPropagation();
+    }
+  }, []);
+
+  const onBlur = useCallback(() => {
+    // Don't confirm if edit was cancelled via Escape
+    if (!cancelledRef.current) {
+      confirmEdit();
     }
   }, []);
 
@@ -35,7 +46,7 @@ export function InfiniteTableColumnEditor<T>() {
         readOnly={readOnly}
         ref={refCallback}
         onKeyDown={onKeyDown}
-        onBlur={() => confirmEdit()}
+        onBlur={onBlur}
         className={join(absoluteCover, outline.none)}
         type={'text'}
         defaultValue={initialValue}
