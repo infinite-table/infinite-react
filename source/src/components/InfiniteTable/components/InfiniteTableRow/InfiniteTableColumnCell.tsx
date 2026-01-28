@@ -901,7 +901,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     return <div ref={domRef} style={{ display: 'none' }} />;
   }
 
-  console.log('update', rowInfo.indexInAll, column.id);
+  // console.log('update', rowInfo.indexInAll, column.id);
 
   return (
     // this context is here for supporting useInfiniteColumnCell to be used
