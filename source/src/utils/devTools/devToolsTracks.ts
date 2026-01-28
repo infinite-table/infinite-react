@@ -15,6 +15,7 @@ export const DevToolsTracks = {
       ComputeSelectionCount: 'Computing selection count',
       ComputeSelectionCountLazy: 'Computing selection count (lazy)',
       PrepareRowInfo: 'Preparing row info array',
+      DiffRowInfoInStore: 'setDataArray diffing in RowInfoStore',
     },
   },
   InfiniteTable: {

@@ -13,7 +13,10 @@ import { stripVar } from '../../../../utils/stripVar';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { InternalVars } from '../../internalVars.css';
-import { InfiniteColumnEditorContextType } from '../../types';
+import {
+  InfiniteColumnEditorContextType,
+  InfiniteTableRowInfo,
+} from '../../types';
 
 import type {
   InfiniteTableColumnCellContextType,
@@ -26,7 +29,6 @@ import type {
 import { InfiniteTableRowContext } from '../../types/InfiniteTableContextValue';
 import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
 import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
-import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import {
   CellEditorContextComponent,
   RenderCellHookComponent,
@@ -53,7 +55,7 @@ import {
 import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
 import { TreeColumnCellExpanderCls } from './row.css';
 import { InfiniteTableColumnCellClassName } from './InfiniteTableColumnCellClassNames';
-import { useDataSourceContextValue } from '../../../DataSource/publicHooks/useDataSourceState';
+import { objectValuesExcept } from '../../utils/objectValuesExcept';
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
@@ -195,6 +197,7 @@ function applyColumnStyle<T>(
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
+    dataSourceStatePartialForCell,
     rowInfoStore,
     rowStyle,
     rowClassName,
@@ -253,9 +256,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     ),
   );
 
-  // Use EMPTY_ROW_INFO as fallback to allow all hooks to be called unconditionally
-
   const isEmptyRowInfo = !rowInfoFromStore;
+  const isEmptyColumn = !column;
 
   const htmlElementRef = React.useRef<HTMLElement | null>(null);
   const domRef = useCallback(
@@ -268,15 +270,27 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     [initialDomRef],
   );
 
-  if (!column) {
-    return <div ref={domRef}>no column</div>;
-  }
-
-  if (!rowInfoFromStore) {
-    console.warn('no rowInfo at index', rowIndex);
-    return <div ref={domRef}>no rowInfo</div>;
-  }
-  const rowInfo = rowInfoFromStore;
+  // Use fallbacks to ensure all hooks are called in the same order
+  // The actual early return happens at the end after all hooks
+  const rowInfo =
+    rowInfoFromStore ??
+    ({
+      id: '',
+      indexInAll: rowIndex,
+      rowSelected: false,
+      rowDisabled: false,
+      isCellSelected: () => false,
+      hasSelectedCells: () => false,
+      isGroupRow: false,
+      isTreeNode: false,
+      isParentNode: false,
+      treeNesting: 0,
+      nodePath: [],
+      collapsed: false,
+      dataSourceHasGrouping: false,
+      selfLoaded: true,
+      data: {} as T,
+    } as InfiniteTableRowInfo<T>);
 
   const { rowSelected } = rowInfo;
 
@@ -393,7 +407,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   );
 
   // Use getDataSourceState() to avoid subscribing to context changes
-  const { selectionMode, cellSelection, isNodeReadOnly } = getDataSourceState();
+  const { selectionMode, cellSelection, isNodeReadOnly } =
+    dataSourceStatePartialForCell;
 
   const cellSelected = renderParam.cellSelected;
 
@@ -882,7 +897,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     >;
 
   // Return empty div for missing column or rowInfo (after all hooks have been called)
-  if (!column || isEmptyRowInfo) {
+  if (isEmptyColumn || isEmptyRowInfo) {
     return <div ref={domRef} style={{ display: 'none' }} />;
   }
 

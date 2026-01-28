@@ -69,6 +69,11 @@ export interface InfiniteTableColumnCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
+  dataSourceStatePartialForCell: {
+    isNodeReadOnly: DataSourceState<T>['isNodeReadOnly'];
+    selectionMode: DataSourceState<T>['selectionMode'];
+    cellSelection: DataSourceState<T>['cellSelection'];
+  };
   rowDetailState: false | 'collapsed' | 'expanded';
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
@@ -106,6 +111,12 @@ export interface InfiniteTableColumnCellProps<T>
   getDataSourceMasterContext: () =>
     | DataSourceMasterDetailContextValue
     | undefined;
+
+  /**
+   * Whether this cell is currently being edited.
+   * Passed as a prop to ensure the cell re-renders when editing state changes.
+   */
+  inEditMode: boolean;
 }
 
 export interface InfiniteTableHeaderCellProps<T>

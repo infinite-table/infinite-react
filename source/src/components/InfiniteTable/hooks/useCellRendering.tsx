@@ -67,7 +67,13 @@ export function useCellRendering<T>(
     api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
-  const { dataArray, rowInfoStore } = dataSourceState;
+  const {
+    dataArray,
+    rowInfoStore,
+    selectionMode,
+    cellSelection,
+    isNodeReadOnly,
+  } = dataSourceState;
 
   const getData = useLatest(dataArray);
   const {
@@ -95,6 +101,7 @@ export function useCellRendering<T>(
     wrapRowsHorizontally,
     updatedAt: componentStateUpdatedAt,
     ready,
+    editingCell,
   } = state;
 
   const repaintId = dataSourceState.updatedAt;
@@ -194,6 +201,14 @@ export function useCellRendering<T>(
     rerender(); // TODO check this is still needed
   }, [dataSourceState]);
 
+  const dataSourceStatePartialForCell = useMemo(() => {
+    return {
+      isNodeReadOnly,
+      selectionMode,
+      cellSelection,
+    };
+  }, [isNodeReadOnly, selectionMode, cellSelection]);
+
   const renderCell: TableRenderCellFn = useCallback(
     (params: TableRenderCellFnParam) => {
       const {
@@ -248,6 +263,13 @@ export function useCellRendering<T>(
         ? brain.getPageIndexForRow(rowIndex)
         : null;
 
+      // Calculate if this specific cell is in edit mode
+      // This is passed as a prop to ensure the cell re-renders when editing state changes
+      const inEditMode = imperativeApi.isEditorVisibleForCell({
+        rowIndex,
+        columnId: column.id,
+      });
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
@@ -277,7 +299,9 @@ export function useCellRendering<T>(
         cellStyle,
         cellClassName,
 
-        // repaintId: componentStateUpdatedAt,
+        // Whether this specific cell is in edit mode
+        // Passed as prop to trigger re-render when editing state changes
+        inEditMode,
 
         // DataSource context values passed as props to avoid context re-renders
         getDataSourceState,
@@ -291,6 +315,7 @@ export function useCellRendering<T>(
 
         getComputed,
         getDataSourceMasterContext,
+        dataSourceStatePartialForCell,
       };
 
       return <InfiniteTableColumnCell<T> {...cellProps} />;
@@ -330,6 +355,8 @@ export function useCellRendering<T>(
       getDataSourceMasterContext,
 
       componentStateUpdatedAt,
+      editingCell,
+      dataSourceStatePartialForCell,
     ],
   );
 

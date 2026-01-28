@@ -1,15 +1,15 @@
-import { InfiniteTableRowInfo } from '../../utils/groupAndPivot';
-
-// Properties to skip during comparison
-const SKIP_PROPERTIES = new Set([
-  // Function properties (recreated every time)
-  'isCellSelected',
-  'hasSelectedCells',
-  // Recursive/derived properties (would cause circular refs)
-  'parents',
-  'deepRowInfoArray',
-  'parentNodes',
-]);
+import { PerfMarker } from '../../utils/devTools';
+import {
+  InfiniteTableRowInfo,
+  InfiniteTable_HasGrouping_RowInfoNormal,
+  InfiniteTable_HasGrouping_RowInfoGroup,
+  InfiniteTable_NoGrouping_RowInfoNormal,
+  InfiniteTable_Tree_RowInfoLeafNode,
+  InfiniteTable_Tree_RowInfoParentNode,
+  InfiniteTable_RowInfoBase,
+  InfiniteTable_HasGrouping_RowInfoBase,
+  InfiniteTable_Tree_RowInfoBase,
+} from '../../utils/groupAndPivot';
 
 /**
  * Deep equality check for two values
@@ -27,7 +27,7 @@ function deepEqual(a: any, b: any): boolean {
   // Arrays
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
+    for (let i = 0, len = a.length; i < len; i++) {
       if (!deepEqual(a[i], b[i])) return false;
     }
     return true;
@@ -51,6 +51,179 @@ function deepEqual(a: any, b: any): boolean {
   return false;
 }
 
+function isSameRowInfoType<T>(
+  one: InfiniteTableRowInfo<T> | undefined,
+  two: InfiniteTableRowInfo<T> | undefined,
+): boolean {
+  if (one === undefined || two === undefined) return false;
+  if (one.isGroupRow !== two.isGroupRow) return false;
+  if (one.dataSourceHasGrouping !== two.dataSourceHasGrouping) return false;
+  if (one.isTreeNode !== two.isTreeNode) return false;
+
+  if (one.isTreeNode) {
+    if (
+      one.isParentNode !==
+      (two as InfiniteTable_Tree_RowInfoParentNode<T>).isParentNode
+    )
+      return false;
+  }
+
+  return true;
+}
+
+const rowInfoBase_KeysRecord: Record<
+  keyof InfiniteTable_RowInfoBase<any>,
+  boolean
+> = {
+  id: true,
+  value: true,
+  indexInAll: true,
+  rowSelected: true,
+  rowDisabled: true,
+  isCellSelected: false,
+  hasSelectedCells: false,
+};
+
+const rowInfo_NoGrouping_RowInfoNormal_KeysRecord: Record<
+  keyof InfiniteTable_NoGrouping_RowInfoNormal<any>,
+  boolean
+> = {
+  ...rowInfoBase_KeysRecord,
+  dataSourceHasGrouping: true,
+  isTreeNode: true,
+  data: false,
+  isGroupRow: true,
+  selfLoaded: true,
+};
+
+const rowInfo_HasGrouping_RowInfoBase_KeysRecord: Record<
+  keyof InfiniteTable_HasGrouping_RowInfoBase<any>,
+  boolean
+> = {
+  indexInGroup: true,
+  groupKeys: true,
+  groupBy: true,
+  rootGroupBy: true,
+  parents: false,
+  indexInParentGroups: true,
+  groupCount: true,
+  groupNesting: true,
+  collapsed: true,
+  selfLoaded: true,
+};
+
+const rowInfo_HasGrouping_RowInfoGroup_KeysRecord: Record<
+  keyof InfiniteTable_HasGrouping_RowInfoGroup<any>,
+  boolean
+> = {
+  ...rowInfoBase_KeysRecord,
+  ...rowInfo_HasGrouping_RowInfoBase_KeysRecord,
+  dataSourceHasGrouping: true,
+  isTreeNode: true,
+  data: false,
+  reducerData: true,
+  isGroupRow: true,
+  duplicateOf: false,
+  deepRowInfoArray: false,
+  error: true,
+  reducerResults: true,
+  groupCount: true,
+  groupData: true,
+  selectedChildredCount: true,
+  deselectedChildredCount: true,
+  totalChildrenCount: true,
+  collapsedChildrenCount: true,
+  collapsedGroupsCount: true,
+  directChildrenCount: true,
+  directChildrenLoadedCount: true,
+  pivotValuesMap: true,
+  childrenAvailable: true,
+  childrenLoading: true,
+};
+
+const rowInfo_Tree_RowInfoBase_KeysRecord: Record<
+  keyof InfiniteTable_Tree_RowInfoBase<any>,
+  boolean
+> = {
+  isTreeNode: true,
+  isParentNode: true,
+  indexInParent: true,
+
+  nodePath: true,
+  parentNodes: false,
+
+  indexInParentNodes: true,
+
+  totalLeafNodesCount: true,
+
+  collapsedLeafNodesCount: true,
+  treeNesting: true,
+  selfLoaded: true,
+};
+
+const rowInfo_Tree_RowInfoLeafNode_KeysRecord: Record<
+  keyof InfiniteTable_Tree_RowInfoLeafNode<any>,
+  boolean
+> = {
+  ...rowInfoBase_KeysRecord,
+  ...rowInfo_Tree_RowInfoBase_KeysRecord,
+  dataSourceHasGrouping: true,
+  isTreeNode: true,
+  isGroupRow: true,
+  isParentNode: true,
+  data: false,
+};
+
+const rowInfo_Tree_RowInfoParentNode_KeysRecord: Record<
+  keyof InfiniteTable_Tree_RowInfoParentNode<any>,
+  boolean
+> = {
+  ...rowInfoBase_KeysRecord,
+  ...rowInfo_Tree_RowInfoBase_KeysRecord,
+  dataSourceHasGrouping: true,
+
+  isParentNode: true,
+  isGroupRow: true,
+
+  nodeExpanded: true,
+  selfExpanded: true,
+  data: false,
+
+  selectedLeafNodesCount: true,
+  deepRowInfoArray: false,
+  deselectedLeafNodesCount: true,
+  duplicateOf: false,
+};
+
+const rowInfoKeys_noGrouping = Object.entries(
+  rowInfo_NoGrouping_RowInfoNormal_KeysRecord,
+)
+  .map(([key, value]) => (value ? key : undefined))
+  .filter(Boolean) as (keyof InfiniteTable_NoGrouping_RowInfoNormal<any>)[];
+const rowInfoKeys_hasGrouping_normalRow = Object.entries(
+  rowInfo_NoGrouping_RowInfoNormal_KeysRecord,
+).map(([key, value]) =>
+  value ? key : undefined,
+) as (keyof InfiniteTable_HasGrouping_RowInfoNormal<any>)[];
+
+const rowInfoKeys_hasGrouping_groupRow = Object.entries(
+  rowInfo_HasGrouping_RowInfoGroup_KeysRecord,
+).map(([key, value]) =>
+  value ? key : undefined,
+) as (keyof InfiniteTable_HasGrouping_RowInfoGroup<any>)[];
+
+const rowInfoKeys_tree_leafNode = Object.entries(
+  rowInfo_Tree_RowInfoLeafNode_KeysRecord,
+).map(([key, value]) =>
+  value ? key : undefined,
+) as (keyof InfiniteTable_Tree_RowInfoLeafNode<any>)[];
+
+const rowInfoKeys_tree_parentNode = Object.entries(
+  rowInfo_Tree_RowInfoParentNode_KeysRecord,
+).map(([key, value]) =>
+  value ? key : undefined,
+) as (keyof InfiniteTable_Tree_RowInfoParentNode<any>)[];
+
 /**
  * Check if two rowInfo objects are equal (for change detection)
  * Returns true if they are EQUAL (no change needed)
@@ -63,7 +236,13 @@ function deepEqualRowInfo<T>(
   if (oldRowInfo === newRowInfo) return true;
 
   // One is undefined = not equal
-  if (!oldRowInfo || !newRowInfo) return false;
+  if (!oldRowInfo || !newRowInfo) {
+    return false;
+  }
+
+  if (!isSameRowInfoType(oldRowInfo, newRowInfo)) {
+    return false;
+  }
 
   // Early exit: check id first (fast primitive comparison)
   if (oldRowInfo.id !== newRowInfo.id) return false;
@@ -75,14 +254,22 @@ function deepEqualRowInfo<T>(
     }
   }
 
-  // Compare all other properties except skipped ones
-  const allKeys = new Set([
-    ...Object.keys(oldRowInfo),
-    ...Object.keys(newRowInfo),
-  ]);
-  allKeys.delete('id');
-  allKeys.delete('data');
-  SKIP_PROPERTIES.forEach((key) => allKeys.delete(key));
+  let allKeys: string[] = [];
+
+  if (!oldRowInfo.dataSourceHasGrouping) {
+    if (oldRowInfo.isTreeNode) {
+      allKeys =
+        oldRowInfo.isTreeNode && oldRowInfo.isParentNode
+          ? rowInfoKeys_tree_parentNode
+          : rowInfoKeys_tree_leafNode;
+    } else {
+      allKeys = rowInfoKeys_noGrouping;
+    }
+  } else {
+    allKeys = oldRowInfo.isGroupRow
+      ? rowInfoKeys_hasGrouping_groupRow
+      : rowInfoKeys_hasGrouping_normalRow;
+  }
 
   for (const key of allKeys) {
     const oldValue = (oldRowInfo as any)[key];
@@ -94,11 +281,6 @@ function deepEqualRowInfo<T>(
     }
 
     if (!deepEqual(oldValue, newValue)) {
-      // DEBUG: Log which property caused the mismatch
-      // console.log(`rowInfo[${oldRowInfo.id}] mismatch on key "${key}":`, {
-      //   old: oldValue,
-      //   new: newValue,
-      // });
       return false;
     }
   }
@@ -111,7 +293,10 @@ export interface RowInfoStore<T> {
    * Update the entire dataArray (called from reducer)
    * Compares old vs new rowInfo at each index and notifies subscribers for changed indices
    */
-  setDataArray(newDataArray: InfiniteTableRowInfo<T>[]): void;
+  notifyDataArray(
+    newDataArray: InfiniteTableRowInfo<T>[],
+    params?: { marker?: PerfMarker },
+  ): void;
 
   /**
    * Get current rowInfo at index (snapshot for useSyncExternalStore)
@@ -141,50 +326,54 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
   let dataArray: InfiniteTableRowInfo<T>[] = [];
   const subscribers: RowSubscribers = new Map();
 
-  const setDataArray = (newDataArray: InfiniteTableRowInfo<T>[]) => {
+  const notifyDataArray = (
+    newDataArray: InfiniteTableRowInfo<T>[],
+    params?: { marker?: PerfMarker },
+  ) => {
     const oldDataArray = dataArray;
+    const marker = params?.marker;
 
-    // Determine the max length to check
-    const maxLength = Math.max(oldDataArray.length, newDataArray.length);
+    if (marker) {
+      marker.start({
+        details: [
+          { name: 'new dataArray length', value: newDataArray.length },
+          {
+            name: 'old dataArray length',
+            value: oldDataArray.length,
+          },
+        ],
+      });
+    }
 
     // Find all indices that have changed
     const changedIndices: number[] = [];
 
-    // Build the merged array, preserving old references for unchanged rows
-    // This is critical for useSyncExternalStore which uses Object.is() comparison
-    const mergedArray: InfiniteTableRowInfo<T>[] = new Array(
-      newDataArray.length,
-    );
+    const subscribedRowIndexes = getSubscribedRowIndexes();
 
-    for (let i = 0; i < maxLength; i++) {
-      const oldRowInfo = oldDataArray[i];
-      const newRowInfo = newDataArray[i];
+    for (const index of subscribedRowIndexes) {
+      const oldRowInfo = oldDataArray[index];
+      const newRowInfo = newDataArray[index];
 
-      // If the row was removed (newRowInfo is undefined), don't add to merged array
+      // If the row was removed (newRowInfo is undefined)
       if (newRowInfo === undefined) {
         // This index existed in old but not in new - it's a removed row
-        changedIndices.push(i);
+        changedIndices.push(index);
         continue;
       }
 
       // If not equal, this index changed - use new reference
       if (!deepEqualRowInfo(oldRowInfo, newRowInfo)) {
-        changedIndices.push(i);
-        mergedArray[i] = newRowInfo;
-      } else {
-        // Equal - preserve the old reference so useSyncExternalStore doesn't re-render
-        mergedArray[i] = oldRowInfo!;
+        changedIndices.push(index);
       }
     }
-
-    // Update dataArray with the merged result
-    dataArray = mergedArray;
+    dataArray = newDataArray;
 
     // Notify subscribers only for changed indices
     // Use queueMicrotask to defer notifications and avoid
     // "Cannot update a component while rendering a different component" error
     if (changedIndices.length > 0) {
       queueMicrotask(() => {
+        console.log('notify', changedIndices);
         for (let i = 0, len = changedIndices.length; i < len; i++) {
           const index = changedIndices[i];
           const indexSubscribers = subscribers.get(index);
@@ -194,6 +383,12 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
             }
           }
         }
+      });
+    }
+
+    if (marker) {
+      marker.end({
+        details: [{ name: 'updated row infos', value: changedIndices.length }],
       });
     }
   };
@@ -228,6 +423,10 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
     };
   };
 
+  const getSubscribedRowIndexes = (): number[] => {
+    return Array.from(subscribers.keys());
+  };
+
   const getDataArray = (): InfiniteTableRowInfo<T>[] => {
     return dataArray;
   };
@@ -238,9 +437,10 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
   };
 
   return {
-    setDataArray,
+    notifyDataArray,
     getRowInfoAtIndex,
     subscribeToRowIndex,
+
     getDataArray,
     clear,
   };

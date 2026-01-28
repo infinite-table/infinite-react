@@ -70,6 +70,7 @@ export class HeaderTestingModel {
     const cell = this.getHeaderCellLocator(colLocation);
 
     await cell.click();
+    await this.page.evaluate(() => new Promise(requestAnimationFrame));
 
     return cell;
   }
