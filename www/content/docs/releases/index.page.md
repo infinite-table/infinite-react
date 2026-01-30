@@ -3,6 +3,12 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.5.0
+
+Improve perf for data updates by 35% in certain scenarios.
+Previously, updating a row would re-render the whole visible viewport.
+Starting with this version, only the updated row will re-render.
+
 ## 7.4.2
 
 Improve perf by leveraging React async flushing whenever possible.
