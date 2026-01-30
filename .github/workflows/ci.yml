@@ -125,6 +125,8 @@ jobs:
     # needs: npm-install
     name: Run tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push performance baseline updates
     env:
       NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
       NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
@@ -134,6 +136,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -189,3 +193,17 @@ jobs:
         with:
           path: '~/.cache/ms-playwright'
           key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
+      - name: Commit updated performance baselines
+        # if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: |
+          cd examples
+          if [ -n "$(git status --porcelain perf-baselines.ci.json)" ]; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add perf-baselines.ci.json
+            git commit -m "chore: update CI performance baselines [skip ci]"
+            git push
+          else
+            echo "No changes to performance baselines"
+          fi
