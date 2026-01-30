@@ -216,7 +216,7 @@ export const InfiniteTableComponent = React.memo(
       if (__DEV__) {
         (globalThis as any).infiniteApi = context.api;
       }
-    }, [componentState.ready]);
+    }, [componentState.ready, context.api]);
 
     const debugId = useDebugMode();
 

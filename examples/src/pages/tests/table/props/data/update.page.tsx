@@ -31,13 +31,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
   salary: { field: 'salary' },
   age: { field: 'age' },
   firstName: { field: 'firstName' },
-  // preferredLanguage: { field: 'preferredLanguage' },
-  // lastName: { field: 'lastName' },
-  // country: { field: 'country' },
-  // city: { field: 'city' },
-  // currency: { field: 'currency' },
-  // stack: { field: 'stack' },
-  // canDesign: { field: 'canDesign' },
+  preferredLanguage: { field: 'preferredLanguage' },
+  lastName: { field: 'lastName' },
+  country: { field: 'country' },
+  city: { field: 'city' },
+  currency: { field: 'currency' },
+  stack: { field: 'stack' },
+  canDesign: { field: 'canDesign' },
 };
 
 const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
@@ -48,7 +48,7 @@ const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
         setTimeout(() => {
           // console.log(data, 'data');
           // data.length = 1;
-          const newData = [...data.data.slice(0, 2)];
+          const newData = [...data.data.slice(0, 20)];
           // const newData = data;
 
           resolve(newData);
@@ -66,7 +66,7 @@ export default function DataTestPage() {
     React.useState<DataSourceApi<Developer>>();
   const [activeCellIndex, setActiveCellIndex] = React.useState<
     [number, number] | null
-  >(null);
+  >([0, 2]);
   const [api, setApi] = React.useState<InfiniteTableApi<Developer>>();
   const [header, setHeader] = React.useState<boolean>(false);
 
@@ -133,6 +133,19 @@ export default function DataTestPage() {
         </Button>
         <Button
           onClick={() => {
+            if (!dataSourceApi || !api) {
+              return;
+            }
+
+            const [activeRow] = activeCellIndex || [];
+            const rowId = dataSourceApi.getPrimaryKeyByIndex(activeRow);
+            dataSourceApi.removeData({ id: rowId });
+          }}
+        >
+          remove row
+        </Button>
+        <Button
+          onClick={() => {
             setDs(dataSourceFn.bind(null));
           }}
         >
@@ -153,6 +166,7 @@ export default function DataTestPage() {
             onActiveCellIndexChange={setActiveCellIndex}
             debugId="test"
             onReady={onReady}
+            defaultActiveCellIndex={activeCellIndex}
             domProps={domProps}
             columns={columns}
           />

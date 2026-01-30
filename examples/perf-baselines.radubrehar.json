@@ -1,0 +1,9 @@
+{
+  "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 1419.78,
+    "renderingTime": 10.85,
+    "paintingTime": 5.62,
+    "totalTime": 1436.25,
+    "threshold": 10
+  }
+}

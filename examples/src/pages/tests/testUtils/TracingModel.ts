@@ -1,6 +1,16 @@
 import { Browser } from '@playwright/test';
 import { Page } from '@testing';
-const fs = require('fs');
+import {
+  parseTraceFile,
+  compareAgainstBaseline,
+  formatTestName,
+  saveBaseline,
+  getBaseline,
+  PerfMetrics,
+  PerfComparisonResult,
+  isCI,
+  devName,
+} from './perfUtils';
 
 type TracingModelOptions = {
   page: Page;
@@ -8,6 +18,13 @@ type TracingModelOptions = {
   title: string;
   filePathNoExt: string;
 };
+
+export interface TracingResult {
+  tracePath: string;
+  metrics: PerfMetrics;
+  comparison: PerfComparisonResult | null;
+  testName: string;
+}
 
 export class TracingModel {
   static get(options: TracingModelOptions) {
@@ -18,6 +35,8 @@ export class TracingModel {
   private filePathNoExt: string;
   private browser: Browser;
   private title: string;
+  private tracePath: string | null = null;
+
   constructor(options: TracingModelOptions) {
     this.page = options.page;
     this.filePathNoExt = options.filePathNoExt;
@@ -26,16 +45,9 @@ export class TracingModel {
   }
 
   async start() {
-    let index = 0;
-    const name = `${this.filePathNoExt}-${this.title}-${new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', '_')}`;
-    let tracePath = `${name}.trace.json`;
-    while (fs.existsSync(tracePath)) {
-      index++;
-      tracePath = `${name}-${index}.trace.json`;
-    }
+    const tracePath = `${this.filePathNoExt}-${this.title}.trace.json`;
+
+    this.tracePath = tracePath;
 
     await this.browser.startTracing(this.page, {
       path: tracePath,
@@ -44,7 +56,92 @@ export class TracingModel {
     return async () => this.stop();
   }
 
-  async stop() {
+  async stop(): Promise<TracingResult> {
     await this.browser.stopTracing();
+
+    if (!this.tracePath) {
+      throw new Error('Tracing was not started');
+    }
+
+    const testName = formatTestName(this.filePathNoExt, this.title);
+    const metrics = parseTraceFile(this.tracePath);
+    const comparison = compareAgainstBaseline(testName, metrics);
+
+    const result: TracingResult = {
+      tracePath: this.tracePath,
+      metrics,
+      comparison,
+      testName,
+    };
+
+    // Log metrics
+    const env = isCI ? '[CI]' : `[${devName}]`;
+    console.log(`\n📊 ${env} Performance metrics for "${this.title}":`);
+    console.log(`   Scripting: ${metrics.scriptingTime}ms`);
+    console.log(`   Rendering: ${metrics.renderingTime}ms`);
+    console.log(`   Painting:  ${metrics.paintingTime}ms`);
+    console.log(`   Total:     ${metrics.totalTime}ms`);
+
+    // CI mode: compare against baseline and fail if regression
+    if (comparison) {
+      const icon = comparison.passed ? '✅' : '❌';
+      console.log(`\n${icon} ${comparison.message}`);
+
+      if (!comparison.passed) {
+        const errMessage =
+          `Performance regression: ${comparison.message}\n` +
+          `If this is expected, update perf-baselines.${
+            isCI ? 'ci' : devName
+          }.json`;
+
+        throw new Error(errMessage);
+      }
+    } else {
+      console.log(
+        `\n⚠️  No ${isCI ? 'CI' : 'local'} baseline found for this test.`,
+      );
+    }
+
+    // Only save baseline when total time is lower than previous (or no baseline exists)
+    const existingBaseline = getBaseline(testName);
+    if (!existingBaseline || metrics.totalTime < existingBaseline.totalTime) {
+      saveBaseline(testName, metrics);
+      console.log(
+        `📝 Updated ${isCI ? 'CI' : 'local'} baseline: ${metrics.totalTime}ms`,
+      );
+    }
+
+    return result;
+  }
+
+  /**
+   * Stop tracing and save the current metrics as the new baseline
+   */
+  async stopAndSaveBaseline(threshold: number = 10): Promise<TracingResult> {
+    await this.browser.stopTracing();
+
+    if (!this.tracePath) {
+      throw new Error('Tracing was not started');
+    }
+
+    const testName = formatTestName(this.filePathNoExt, this.title);
+    const metrics = parseTraceFile(this.tracePath);
+
+    // Save as baseline
+    saveBaseline(testName, metrics, threshold);
+
+    console.log(`\n📊 Performance metrics for "${this.title}":`);
+    console.log(`   Scripting: ${metrics.scriptingTime}ms`);
+    console.log(`   Rendering: ${metrics.renderingTime}ms`);
+    console.log(`   Painting:  ${metrics.paintingTime}ms`);
+    console.log(`   Total:     ${metrics.totalTime}ms`);
+    console.log(`\n✅ Saved as baseline with ${threshold}% threshold`);
+
+    return {
+      tracePath: this.tracePath,
+      metrics,
+      comparison: null,
+      testName,
+    };
   }
 }

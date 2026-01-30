@@ -62,6 +62,7 @@ import { normalizeSortInfo } from './normalizeSortInfo';
 import { RowDisabledState } from '../RowDisabledState';
 import { TreeDataSourceProps } from '../../TreeGrid/types/TreeDataSourceProps';
 import { NodePath, TreeExpandState } from '../TreeExpandState';
+import { createRowInfoStore } from '../RowInfoStore';
 import {
   TreeSelectionState,
   TreeSelectionStateObject,
@@ -109,6 +110,7 @@ export function initSetupState<T>(
     debugWarnings: new Map<DataSourceDebugWarningKey, DebugWarningPayload>(),
 
     devToolsDetected: !!(globalThis as any).__INFINITE_TABLE_DEVTOOLS_HOOK__,
+    rowInfoStore: createRowInfoStore<T>(),
     // TODO cleanup indexer on unmount
     indexer: new Indexer<T, any>(),
     totalLeafNodesCount: 0,
@@ -237,6 +239,7 @@ export const cleanupDataSource = <T>(state: DataSourceState<T>) => {
   state.treeSelectionState?.destroy();
   state.idToPathMap.clear();
   state.idToIndexMap.clear();
+  state.rowInfoStore.clear();
 };
 
 export const forwardProps = <T>(

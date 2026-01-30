@@ -10,7 +10,7 @@ export const ExpanderIconCls = style([
   {
     fill: ThemeVars.components.ExpandCollapseIcon.color,
     display: 'inline-block',
-    verticalAlign: 'bottom',
+    verticalAlign: 'sub',
   },
 ]);
 

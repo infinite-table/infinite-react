@@ -1,0 +1,16 @@
+{
+  "tests/table/perf/default:horizontal-scrolling": {
+    "scriptingTime": 224.64,
+    "renderingTime": 18.96,
+    "paintingTime": 6.4,
+    "totalTime": 250.01,
+    "threshold": 10
+  },
+  "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 814.51,
+    "renderingTime": 25.75,
+    "paintingTime": 27.53,
+    "totalTime": 867.78,
+    "threshold": 10
+  }
+}

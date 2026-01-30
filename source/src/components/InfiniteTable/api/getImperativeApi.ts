@@ -1191,7 +1191,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
   set scrollLeft(scrollLeft: number) {
     const state = this.getState();
-    state.scrollerDOMRef.current!.scrollLeft = Math.max(scrollLeft, 0);
+    if (state.scrollerDOMRef.current) {
+      state.scrollerDOMRef.current.scrollLeft = Math.max(scrollLeft, 0);
+    }
   }
 
   get scrollTop() {
@@ -1200,7 +1202,9 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
   set scrollTop(scrollTop: number) {
     const state = this.getState();
-    state.scrollerDOMRef.current!.scrollTop = Math.max(scrollTop, 0);
+    if (state.scrollerDOMRef.current) {
+      state.scrollerDOMRef.current.scrollTop = Math.max(scrollTop, 0);
+    }
   }
   scrollRowIntoView(
     rowIndex: number,

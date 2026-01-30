@@ -18,6 +18,8 @@
     "test:debug": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path} --debug'",
     "test:watch": "chokidar '**/*.spec.ts' '**/*.page.tsx' -c 'test_file_path=$(echo {path} | sed s/page.tsx/spec.ts/) && npm run play:test -- --retries=0 ${test_file_path}'",
     "ci:test": "concurrently -s first --kill-others \"npm run start-server -- -s\" \"npm run play:test\"",
+    "perf:list": "node scripts/perf-baseline.js list",
+    "perf:copy-to-ci": "node scripts/perf-baseline.js copy-to-ci",
     "tsc": "tsc --project tsconfig.json",
     "tscw": "tsc --watch --project tsconfig.json"
   },

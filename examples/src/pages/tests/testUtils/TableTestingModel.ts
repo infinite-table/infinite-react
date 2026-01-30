@@ -96,7 +96,9 @@ export class TableTestingModel {
       },
       clickToSort: async ({ ctrlKey } = { ctrlKey: false }) => {
         await this.headerModel.clickToSortColumn(colLocation, { ctrlKey });
-        return;
+
+        // wait for the next animation frame
+        await this.page.evaluate(() => new Promise(requestAnimationFrame));
       },
       getValues: async () => {
         return await this.rowModel.getTextForColumnCells(colLocation);

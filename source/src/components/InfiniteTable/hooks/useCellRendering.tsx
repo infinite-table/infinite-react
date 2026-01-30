@@ -44,7 +44,8 @@ export function useCellRendering<T>(
 ): CellRenderingResult {
   const { computed, bodySize, imperativeApi } = param;
 
-  const { actions, state, getState } = useInfiniteTable<T>();
+  const { actions, state, getState, getComputed, getDataSourceMasterContext } =
+    useInfiniteTable<T>();
 
   const {
     computedPinnedStartColumns,
@@ -66,7 +67,13 @@ export function useCellRendering<T>(
     api: dataSourceApi,
   } = useDataSourceContextValue<T>();
 
-  const { dataArray, isNodeReadOnly } = dataSourceState;
+  const {
+    dataArray,
+    rowInfoStore,
+    selectionMode,
+    cellSelection,
+    isNodeReadOnly,
+  } = dataSourceState;
 
   const getData = useLatest(dataArray);
   const {
@@ -92,7 +99,9 @@ export function useCellRendering<T>(
     onScrollStop,
     scrollToBottomOffset,
     wrapRowsHorizontally,
+    updatedAt: componentStateUpdatedAt,
     ready,
+    editingCell,
   } = state;
 
   const repaintId = dataSourceState.updatedAt;
@@ -192,6 +201,14 @@ export function useCellRendering<T>(
     rerender(); // TODO check this is still needed
   }, [dataSourceState]);
 
+  const dataSourceStatePartialForCell = useMemo(() => {
+    return {
+      isNodeReadOnly,
+      selectionMode,
+      cellSelection,
+    };
+  }, [isNodeReadOnly, selectionMode, cellSelection]);
+
   const renderCell: TableRenderCellFn = useCallback(
     (params: TableRenderCellFnParam) => {
       const {
@@ -246,6 +263,13 @@ export function useCellRendering<T>(
         ? brain.getPageIndexForRow(rowIndex)
         : null;
 
+      // Calculate if this specific cell is in edit mode
+      // This is passed as a prop to ensure the cell re-renders when editing state changes
+      const inEditMode = imperativeApi.isEditorVisibleForCell({
+        rowIndex,
+        columnId: column.id,
+      });
+
       const cellProps: InfiniteTableColumnCellProps<T> = {
         getData,
         virtualized: true,
@@ -255,7 +279,7 @@ export function useCellRendering<T>(
         horizontalLayoutPageIndex,
 
         rowIndex,
-        rowInfo,
+        rowInfoStore,
         hidden,
         toggleGroupRow,
         rowHeight,
@@ -274,6 +298,24 @@ export function useCellRendering<T>(
         rowClassName,
         cellStyle,
         cellClassName,
+
+        // Whether this specific cell is in edit mode
+        // Passed as prop to trigger re-render when editing state changes
+        inEditMode,
+
+        // DataSource context values passed as props to avoid context re-renders
+        getDataSourceState,
+        dataSourceApi,
+        dataSourceActions,
+
+        // InfiniteTable context values passed as props to avoid context re-renders
+        getState,
+        imperativeApi,
+        componentActions: actions,
+
+        getComputed,
+        getDataSourceMasterContext,
+        dataSourceStatePartialForCell,
       };
 
       return <InfiniteTableColumnCell<T> {...cellProps} />;
@@ -296,11 +338,25 @@ export function useCellRendering<T>(
       showZebraRows,
       brain,
       repaintId,
-      isNodeReadOnly,
+      rowInfoStore,
       rowStyle,
       rowClassName,
       cellClassName,
       cellStyle,
+      getDataSourceState,
+      dataSourceApi,
+      dataSourceActions,
+
+      getState,
+      imperativeApi,
+      actions,
+
+      getComputed,
+      getDataSourceMasterContext,
+
+      componentStateUpdatedAt,
+      editingCell,
+      dataSourceStatePartialForCell,
     ],
   );
 

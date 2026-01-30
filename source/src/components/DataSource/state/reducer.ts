@@ -1097,6 +1097,7 @@ export function concludeReducer<T>(params: {
   }
 
   state.dataArray = rowInfoDataArray;
+
   state.reducedAt = now;
 
   if (state.selectionMode === 'multi-row') {
@@ -1169,6 +1170,14 @@ export function concludeReducer<T>(params: {
       treeMutations: treeMutations?.size ? treeMutations : undefined,
     };
   }
+
+  // Update the RowInfoStore - this will compare old vs new rowInfo at each index
+  // and notify subscribers only for changed indices
+  state.rowInfoStore.notifyDataArray(rowInfoDataArray, {
+    marker: debugId
+      ? getMarker(debugId).track.DataSource.label.DiffRowInfoInStore
+      : undefined,
+  });
 
   if (rootMarker) {
     rootMarker?.track.DataSource.label.PrepareData.end({

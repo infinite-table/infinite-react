@@ -22,6 +22,10 @@ type Developer = {
 
   age: number;
   reposCount: number;
+  hobby: string;
+  monthlyBonus: number;
+  country: string;
+  city: string;
 };
 
 const dataSource = () => {
@@ -66,21 +70,31 @@ const updateRow = (api: DataSourceApi<Developer>, data: Developer) => {
   api.updateData(newData);
 };
 
-let STARTED = false;
+let RUNNING = false;
 
-const randomlyUpdateData = (
+let intervalId: any | null = null;
+
+const stopRandomUpdates = () => {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+  RUNNING = false;
+};
+const startRandomUpdates = (
   api: InfiniteTableApi<Developer>,
   dataSourceApi: DataSourceApi<Developer>,
 ) => {
   if (!api || !dataSourceApi) {
     return;
   }
-  if (STARTED) {
+
+  if (RUNNING) {
     return;
   }
-  STARTED = true;
-  setInterval(() => {
-    if (!STARTED) {
+  RUNNING = true;
+  intervalId = setInterval(() => {
+    if (!RUNNING) {
       return;
     }
     const numberOfRowsToUpdate = 2;
@@ -102,6 +116,19 @@ const randomlyUpdateData = (
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
+  },
+  hobby: {
+    field: 'hobby',
+  },
+  monthlyBonus: {
+    field: 'monthlyBonus',
+    type: 'number',
+  },
+  country: {
+    field: 'country',
+  },
+  city: {
+    field: 'city',
   },
   firstName: {
     field: 'firstName',
@@ -146,6 +173,7 @@ export default () => {
   const [api, setApi] = React.useState<InfiniteTableApi<Developer> | null>(
     null,
   );
+  const [running, setRunning] = React.useState(false);
   const [dataSourceApi, setDataSourceApi] =
     React.useState<DataSourceApi<Developer> | null>(null);
   return (
@@ -154,15 +182,36 @@ export default () => {
         <button
           className="bg-blue-500 text-white p-2 rounded-md cursor-pointer"
           onClick={() => {
-            STARTED = !STARTED;
-
-            console.log('STARTED', STARTED);
-            if (STARTED) {
-              randomlyUpdateData(api!, dataSourceApi!);
+            if (running) {
+              stopRandomUpdates();
+              setRunning(false);
+              return;
             }
+            setRunning(true);
+            startRandomUpdates(api!, dataSourceApi!);
           }}
         >
           Toggle updates
+        </button>
+        <button
+          onClick={() => {
+            const numberOfRowsToUpdate = 10;
+            const { renderStartIndex, renderEndIndex } =
+              api!.getVerticalRenderRange();
+            const dataArray = dataSourceApi!.getRowInfoArray();
+            const data = dataArray
+              .slice(renderStartIndex, renderEndIndex)
+              .map((x) => x.data as Developer);
+
+            for (let i = 0; i < numberOfRowsToUpdate; i++) {
+              const row = data[getRandomInt(0, data.length - 1)];
+              if (row) {
+                updateRow(dataSourceApi!, row);
+              }
+            }
+          }}
+        >
+          Update once
         </button>
         <DataSource<Developer>
           data={dataSource}
@@ -183,7 +232,7 @@ export default () => {
             onReady={({ api, dataSourceApi }) => {
               setApi(api);
               setDataSourceApi(dataSourceApi);
-              randomlyUpdateData(api, dataSourceApi);
+              // startRandomUpdates(api, dataSourceApi);
             }}
             columnDefaultWidth={100}
             columnMinWidth={50}
