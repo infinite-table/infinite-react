@@ -3,17 +3,15 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 7.5.1
-
-Improve scrolling performance generally, by a lot, by doing async updates.
-
-For scrolling in a horizontal layout configuration, the scrolling flushes cells synchronously.
-
 ## 7.5.0
 
 Improve perf for data updates by 35% in certain scenarios.
 Previously, updating a row would re-render the whole visible viewport.
 Starting with this version, only the updated row will re-render.
+
+Improve scrolling performance generally, by a lot, by doing async updates.
+For scrolling in a horizontal layout configuration, the scrolling flushes cells synchronously.
+
 
 ## 7.4.2
 
