@@ -108,3 +108,5 @@ tsconfig.tsbuildinfo
 .parcel-cache
 
 /www/src/.gen
+
+examples/**/*.trace.json

@@ -77,6 +77,7 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
   }
 
   // Scripting events (as categorized by Chrome DevTools)
+  // Based on Chrome DevTools source: TimelineModel.js
   const scriptingEvents = new Set([
     'EvaluateScript',
     'FunctionCall',
@@ -89,10 +90,24 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
     'XHRLoad',
     'CompileScript',
     'CompileCode',
+    'CompileModule',
     'OptimizeCode',
     'RunMicrotasks',
     'FireIdleCallback',
     'FireAnimationFrame',
+    'ParseHTML',
+    'ParseAuthorStyleSheet',
+    'v8.compile',
+    'v8.compileModule',
+    'v8.optimize',
+    'v8.wasm.streamFromResponseCallback',
+    'v8.wasm.compiledModule',
+    'v8.wasm.cachedModule',
+    'v8.wasm.moduleCacheHit',
+    'v8.wasm.moduleCacheInvalid',
+    'StreamingCompileScript',
+    'StreamingCompileScriptWaiting',
+    'StreamingCompileScriptParsing',
   ]);
 
   // Rendering events
@@ -104,6 +119,8 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
     'ScheduleStyleRecalculation',
     'InvalidateLayout',
     'ScrollLayer',
+    'PrePaint',
+    'Layerize',
   ]);
 
   // Painting events
@@ -118,6 +135,8 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
     'ResizeImage',
     'UpdateLayer',
     'UpdateLayerTree',
+    'Commit',
+    'GPUTask',
   ]);
 
   // Collect events by category with their time ranges
@@ -130,9 +149,26 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
   const renderingRanges: TimeRange[] = [];
   const paintingRanges: TimeRange[] = [];
 
+  // Track trace bounds for total time calculation (only from main renderer thread)
+  let traceStart = Infinity;
+  let traceEnd = -Infinity;
+
   for (const event of events) {
-    // Only process events on main renderer thread with duration
-    if (event.pid !== mainPid || event.tid !== mainTid || !event.dur) continue;
+    // Only process events on main renderer thread
+    if (event.pid !== mainPid || event.tid !== mainTid) continue;
+
+    // Track trace bounds from main thread events
+    if (event.ts !== undefined && event.ts > 0) {
+      traceStart = Math.min(traceStart, event.ts);
+      if (event.dur) {
+        traceEnd = Math.max(traceEnd, event.ts + event.dur);
+      } else {
+        traceEnd = Math.max(traceEnd, event.ts);
+      }
+    }
+
+    // Skip events without duration for category calculation
+    if (!event.dur) continue;
 
     const name = event.name;
     const range: TimeRange = {
@@ -187,12 +223,17 @@ export function parseTraceFile(tracePath: string): PerfMetrics {
   const renderingTime = calculateMergedTime(renderingRanges);
   const paintingTime = calculateMergedTime(paintingRanges);
 
+  // Total time is the wall-clock duration of the trace
+  const totalTime =
+    traceStart !== Infinity && traceEnd !== -Infinity
+      ? (traceEnd - traceStart) / 1000
+      : scriptingTime + renderingTime + paintingTime;
+
   return {
     scriptingTime: Math.round(scriptingTime * 100) / 100,
     renderingTime: Math.round(renderingTime * 100) / 100,
     paintingTime: Math.round(paintingTime * 100) / 100,
-    totalTime:
-      Math.round((scriptingTime + renderingTime + paintingTime) * 100) / 100,
+    totalTime: Math.round(totalTime * 100) / 100,
   };
 }
 
