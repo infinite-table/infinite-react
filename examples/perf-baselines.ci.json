@@ -1,1 +1,23 @@
-{}
+{
+  "tests/table/perf/default:horizontal-scrolling": {
+    "scriptingTime": 111.42,
+    "renderingTime": 26.61,
+    "paintingTime": 8.89,
+    "totalTime": 714.34,
+    "threshold": 10
+  },
+  "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 464.3,
+    "renderingTime": 107.5,
+    "paintingTime": 24.69,
+    "totalTime": 902.55,
+    "threshold": 10
+  },
+  "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 870.87,
+    "renderingTime": 48.68,
+    "paintingTime": 64.49,
+    "totalTime": 3648.69,
+    "threshold": 10
+  }
+}
