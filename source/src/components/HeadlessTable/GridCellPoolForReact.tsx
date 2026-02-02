@@ -26,7 +26,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
   private mounted: boolean = false;
 
-  private IS_UPDATED_WHILE_SCROLLING = false;
+  private IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT = false;
 
   private mountSubscription =
     buildSubscriptionCallback<GridCellInterface<T_ADDITIONAL_CELL_INFO>>();
@@ -62,7 +62,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
   }
 
   isUpdatedWhileScrolling = () => {
-    return this.IS_UPDATED_WHILE_SCROLLING;
+    return this.IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT;
   };
 
   isMounted() {
@@ -97,10 +97,12 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     additionalInfo?: T_ADDITIONAL_CELL_INFO,
     scrollingObjectParam?: {
       scrolling: boolean;
+      isHorizontalLayout: boolean;
     },
   ): void {
-    this.IS_UPDATED_WHILE_SCROLLING = scrollingObjectParam
-      ? scrollingObjectParam.scrolling
+    this.IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT = scrollingObjectParam
+      ? scrollingObjectParam.scrolling &&
+        scrollingObjectParam.isHorizontalLayout
       : false;
     this.updater(content);
     this.cellInfo = additionalInfo;

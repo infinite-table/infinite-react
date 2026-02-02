@@ -26,6 +26,10 @@ export interface TracingResult {
   testName: string;
 }
 
+type TraceStopOptions = {
+  compare: 'scriptingTime' | 'renderingTime' | 'paintingTime' | 'totalTime';
+};
+
 export class TracingModel {
   static get(options: TracingModelOptions) {
     return new TracingModel(options);
@@ -53,10 +57,10 @@ export class TracingModel {
       path: tracePath,
     });
 
-    return async () => this.stop();
+    return async (options?: TraceStopOptions) => this.stop(options);
   }
 
-  async stop(): Promise<TracingResult> {
+  async stop(options?: TraceStopOptions): Promise<TracingResult> {
     await this.browser.stopTracing();
 
     if (!this.tracePath) {
@@ -65,7 +69,11 @@ export class TracingModel {
 
     const testName = formatTestName(this.filePathNoExt, this.title);
     const metrics = parseTraceFile(this.tracePath);
-    const comparison = compareAgainstBaseline(testName, metrics);
+
+    const compare = options?.compare ?? 'scriptingTime';
+    const comparison = compareAgainstBaseline(testName, metrics, {
+      compare,
+    });
 
     const result: TracingResult = {
       tracePath: this.tracePath,
@@ -89,7 +97,7 @@ export class TracingModel {
 
       if (!comparison.passed) {
         const errMessage =
-          `Performance regression: ${comparison.message}\n` +
+          `Performance regression: ${comparison.message}\n (comparing ${compare})` +
           `If this is expected, update perf-baselines.${
             isCI ? 'ci' : devName
           }.json`;
@@ -104,10 +112,12 @@ export class TracingModel {
 
     // Only save baseline when total time is lower than previous (or no baseline exists)
     const existingBaseline = getBaseline(testName);
-    if (!existingBaseline || metrics.totalTime < existingBaseline.totalTime) {
+    if (!existingBaseline || metrics[compare] < existingBaseline[compare]) {
       saveBaseline(testName, metrics);
       console.log(
-        `📝 Updated ${isCI ? 'CI' : 'local'} baseline: ${metrics.totalTime}ms`,
+        `📝 Updated ${isCI ? 'CI' : 'local'} baseline: ${
+          metrics[compare]
+        }ms (for ${compare})`,
       );
     }
 

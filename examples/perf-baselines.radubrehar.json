@@ -5,5 +5,19 @@
     "paintingTime": 13.42,
     "totalTime": 3736.29,
     "threshold": 10
+  },
+  "tests/table/props/data/scrolling:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 1919.15,
+    "renderingTime": 24.01,
+    "paintingTime": 13.54,
+    "totalTime": 4110.57,
+    "threshold": 10
+  },
+  "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 546.06,
+    "renderingTime": 33.65,
+    "paintingTime": 17.5,
+    "totalTime": 679.69,
+    "threshold": 10
   }
 }

@@ -299,6 +299,11 @@ export interface PerfComparisonResult {
 export function compareAgainstBaseline(
   testName: string,
   currentMetrics: PerfMetrics,
+  options: {
+    compare: 'scriptingTime' | 'renderingTime' | 'paintingTime' | 'totalTime';
+  } = {
+    compare: 'totalTime',
+  },
 ): PerfComparisonResult | null {
   const baseline = getBaseline(testName);
 
@@ -307,12 +312,13 @@ export function compareAgainstBaseline(
     return null;
   }
 
-  const { totalTime: baselineTotalTime, threshold } = baseline;
-  const currentTime = currentMetrics.totalTime;
+  const compare = options?.compare ?? 'totalTime';
+
+  const { threshold, [compare]: baselineValue } = baseline;
+  const currentValue = currentMetrics[compare];
 
   // Calculate percentage difference (positive = slower, negative = faster)
-  const difference =
-    ((currentTime - baselineTotalTime) / baselineTotalTime) * 100;
+  const difference = ((currentValue - baselineValue) / baselineValue) * 100;
   const passed = difference <= threshold;
 
   let message: string;
@@ -320,24 +326,24 @@ export function compareAgainstBaseline(
     if (difference < 0) {
       message = `Performance improved by ${Math.abs(difference).toFixed(
         1,
-      )}% (${currentTime}ms vs baseline ${baselineTotalTime}ms)`;
+      )}% (${currentValue}ms vs baseline ${baselineValue}ms - comparing ${compare})`;
     } else if (difference === 0) {
-      message = `Performance unchanged (${currentTime}ms)`;
+      message = `Performance unchanged (${currentValue}ms - comparing ${compare})`;
     } else {
       message = `Performance within threshold: +${difference.toFixed(
         1,
-      )}% (${currentTime}ms vs baseline ${baselineTotalTime}ms, threshold: ${threshold}%)`;
+      )}% (${currentValue}ms vs baseline ${baselineValue}ms, threshold: ${threshold}% - comparing ${compare})`;
     }
   } else {
     message = `Performance regression detected: +${difference.toFixed(
       1,
-    )}% exceeds ${threshold}% threshold (${currentTime}ms vs baseline ${baselineTotalTime}ms)`;
+    )}% exceeds ${threshold}% threshold (${currentValue}ms vs baseline ${baselineValue}ms - comparing ${compare})`;
   }
 
   return {
     passed,
-    baseline: baselineTotalTime,
-    current: currentTime,
+    baseline: baselineValue,
+    current: currentValue,
     difference: Math.round(difference * 100) / 100,
     threshold,
     message,

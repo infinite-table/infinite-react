@@ -44,6 +44,7 @@ export const columnOffsetAtIndexWhileReordering = stripVar(
 
 const SCROLLING_OBJECT_PARAM_FLYWEIGHT = {
   scrolling: false,
+  isHorizontalLayout: false,
 };
 
 export class GridRenderer extends Logger {
@@ -1359,8 +1360,9 @@ export class GridRenderer extends Logger {
         }
       : undefined;
 
+    const isHorizontalLayout = this.brain.isHorizontalLayoutBrain;
     if (!renderedNode) {
-      if (this.brain.isHorizontalLayoutBrain) {
+      if (isHorizontalLayout) {
         // we're rendering a cell that's in the range but actually there's no matching
         // cell for it.
         // TODO: radu - see http://localhost:5555/tests/table/virtualization/perf-demo
@@ -1381,6 +1383,8 @@ export class GridRenderer extends Logger {
       return;
     }
     SCROLLING_OBJECT_PARAM_FLYWEIGHT.scrolling = this.scrolling;
+    SCROLLING_OBJECT_PARAM_FLYWEIGHT.isHorizontalLayout = isHorizontalLayout;
+
     this.cellManager.renderNodeAtCell(
       renderedNode,
       cell,

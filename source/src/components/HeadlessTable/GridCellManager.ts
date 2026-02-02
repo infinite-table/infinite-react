@@ -187,6 +187,7 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     additionalInfo?: T_ADDITIONAL_CELL_INFO,
     scrollingObjectParam?: {
       scrolling: boolean;
+      isHorizontalLayout: boolean;
     },
   ) {
     const currentCellAtPos = this.getCellAt(cellPos);
