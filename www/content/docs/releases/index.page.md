@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 7.5.1
+
+Minor fixes
+
 ## 7.5.0
 
 Improve perf for data updates by 35% in certain scenarios.
