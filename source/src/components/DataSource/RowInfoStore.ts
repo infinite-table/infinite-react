@@ -373,7 +373,6 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
     // "Cannot update a component while rendering a different component" error
     if (changedIndices.length > 0) {
       queueMicrotask(() => {
-        console.log('notify', changedIndices);
         for (let i = 0, len = changedIndices.length; i < len; i++) {
           const index = changedIndices[i];
           const indexSubscribers = subscribers.get(index);
