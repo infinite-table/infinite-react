@@ -7,17 +7,17 @@
     "threshold": 10
   },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
-    "scriptingTime": 410.82,
-    "renderingTime": 101.58,
-    "paintingTime": 29.3,
-    "totalTime": 797.04,
+    "scriptingTime": 304.86,
+    "renderingTime": 94.59,
+    "paintingTime": 49.87,
+    "totalTime": 652.31,
     "threshold": 10
   },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
-    "scriptingTime": 738.91,
-    "renderingTime": 40.45,
-    "paintingTime": 48.23,
-    "totalTime": 3452.65,
+    "scriptingTime": 579.33,
+    "renderingTime": 36.93,
+    "paintingTime": 51.26,
+    "totalTime": 3089.28,
     "threshold": 10
   }
 }
