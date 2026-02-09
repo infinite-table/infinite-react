@@ -19,5 +19,47 @@
     "paintingTime": 17.5,
     "totalTime": 679.69,
     "threshold": 10
+  },
+  "tests/table/perf/flashing/default:should not degrade": {
+    "scriptingTime": 2225.64,
+    "renderingTime": 23.41,
+    "paintingTime": 11.7,
+    "totalTime": 4376.9,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:should be fine when single click": {
+    "scriptingTime": 217.3,
+    "renderingTime": 0.67,
+    "paintingTime": 0.35,
+    "totalTime": 233.24,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:should remain stable for 50 clicks": {
+    "scriptingTime": 2275.28,
+    "renderingTime": 27.29,
+    "paintingTime": 17.8,
+    "totalTime": 4564.7,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:perf should be fine when single click": {
+    "scriptingTime": 218,
+    "renderingTime": 0.25,
+    "paintingTime": 0.07,
+    "totalTime": 242.04,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
+    "scriptingTime": 430.84,
+    "renderingTime": 28.22,
+    "paintingTime": 3.43,
+    "totalTime": 588.94,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
+    "scriptingTime": 2295.78,
+    "renderingTime": 34.03,
+    "paintingTime": 25.31,
+    "totalTime": 4599.49,
+    "threshold": 10
   }
 }
