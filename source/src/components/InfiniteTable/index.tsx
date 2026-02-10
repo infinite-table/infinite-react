@@ -396,7 +396,6 @@ function InfiniteTableContextProvider<T>({
     children,
   };
 
-  // Update the snapshot on every render (synchronous, no notification yet)
   store.setSnapshot(contextValue);
 
   // Notify subscribers before the browser paints so that
