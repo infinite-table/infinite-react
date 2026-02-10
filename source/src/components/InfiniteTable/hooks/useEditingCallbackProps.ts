@@ -2,15 +2,23 @@ import { useEffect } from 'react';
 
 import { usePrevious } from '../../hooks/usePrevious';
 import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
-import { InfiniteTableContextValue } from '../types';
+import { InfiniteTableState } from '../types';
 
-import { useInfiniteTable } from './useInfiniteTable';
+import {
+  useInfiniteTableSelector,
+  useInfiniteTableStableContext,
+} from './useInfiniteTableSelector';
+import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 
 function useOnEditCancelled<T>() {
-  const context = useInfiniteTable<T>();
+  const context = useInfiniteTableStableContext<T>();
 
-  const { getState } = context;
-  const { editingCell } = getState();
+  const { getState, editingCell } = useInfiniteTableSelector((ctx) => {
+    return {
+      getState: ctx.getState as () => InfiniteTableState<T>,
+      editingCell: ctx.state.editingCell,
+    };
+  });
 
   const cancelled =
     editingCell && !editingCell.active ? editingCell.cancelled : undefined;
@@ -33,12 +41,15 @@ function useOnEditCancelled<T>() {
 }
 
 function useOnEditRejected<T>() {
-  const context: InfiniteTableContextValue<T> = useInfiniteTable<T>();
+  const context: InfiniteTableStableContextValue<T> =
+    useInfiniteTableStableContext<T>();
 
-  const {
-    getState,
-    state: { editingCell },
-  } = context;
+  const { getState, editingCell } = useInfiniteTableSelector((ctx) => {
+    return {
+      getState: ctx.getState as () => InfiniteTableState<T>,
+      editingCell: ctx.state.editingCell,
+    };
+  });
 
   const rejected =
     editingCell && !editingCell.active && editingCell.accepted instanceof Error
@@ -66,11 +77,14 @@ function useOnEditRejected<T>() {
 }
 
 function useFocusOnEditStop<T>() {
-  const context: InfiniteTableContextValue<T> = useInfiniteTable<T>();
+  const context: InfiniteTableStableContextValue<T> =
+    useInfiniteTableStableContext<T>();
 
-  const {
-    state: { editingCell },
-  } = context;
+  const { editingCell } = useInfiniteTableSelector((ctx) => {
+    return {
+      editingCell: ctx.state.editingCell,
+    };
+  });
 
   const active = editingCell?.active;
   const prevActive = usePrevious(active);
@@ -83,12 +97,15 @@ function useFocusOnEditStop<T>() {
 }
 
 function useOnEditAccepted<T>() {
-  const context: InfiniteTableContextValue<T> = useInfiniteTable<T>();
+  const context: InfiniteTableStableContextValue<T> =
+    useInfiniteTableStableContext<T>();
 
-  const {
-    state: { editingCell },
-    getState,
-  } = context;
+  const { editingCell, getState } = useInfiniteTableSelector((ctx) => {
+    return {
+      editingCell: ctx.state.editingCell,
+      getState: ctx.getState as () => InfiniteTableState<T>,
+    };
+  });
 
   const accepted =
     editingCell &&
@@ -118,12 +135,15 @@ function useOnEditAccepted<T>() {
 }
 
 function useOnEditPersisted<T>() {
-  const context: InfiniteTableContextValue<T> = useInfiniteTable<T>();
+  const context: InfiniteTableStableContextValue<T> =
+    useInfiniteTableStableContext<T>();
 
-  const {
-    state: { editingCell },
-    getState,
-  } = context;
+  const { editingCell, getState } = useInfiniteTableSelector((ctx) => {
+    return {
+      editingCell: ctx.state.editingCell,
+      getState: ctx.getState as () => InfiniteTableState<T>,
+    };
+  });
 
   const persisted = editingCell ? editingCell.persisted : undefined;
 

@@ -4,16 +4,15 @@ import { useEffect, useLayoutEffect } from 'react';
 import { useManagedComponentState } from '../hooks/useComponentState';
 import { useLatest } from '../hooks/useLatest';
 
-import { getDataSourceContext } from './DataSourceContext';
+import { getDataSourceStoreContext } from './DataSourceContext';
+import { createDataSourceStore } from './DataSourceStore';
 
 import { getDataSourceApi } from './getDataSourceApi';
 
 import { useLoadData } from './privateHooks/useLoadData';
-import {
-  useDataSourceContextValue,
-  useMasterDetailContext,
-} from './publicHooks/useDataSourceState';
+import { useMasterDetailContext } from './publicHooks/useDataSourceState';
 import { DataSourceContextValue, DataSourceState } from './types';
+import { useDataSourceSelector } from './publicHooks/useDataSourceSelector';
 
 export type DataSourceChildren<T> =
   | React.ReactNode
@@ -22,14 +21,21 @@ export type DataSourceChildren<T> =
 function DataSourceWithContext<T>(props: { children: DataSourceChildren<T> }) {
   let { children } = props;
 
-  const { api, componentState } = useDataSourceContextValue<T>();
-
+  const { dataSourceApi, dataSourceState, onReady } = useDataSourceSelector(
+    (ctx) => {
+      return {
+        dataSourceApi: ctx.dataSourceApi,
+        dataSourceState: ctx.dataSourceState,
+        onReady: ctx.dataSourceState.onReady,
+      };
+    },
+  );
   if (typeof children === 'function') {
-    children = children(componentState);
+    children = children(dataSourceState);
   }
 
   useEffect(() => {
-    componentState.onReady?.(api);
+    onReady?.(dataSourceApi);
   }, []);
 
   return <>{children}</>;
@@ -41,7 +47,9 @@ export function DataSourceCmp<T>({
   children: DataSourceChildren<T>;
   isDetail: boolean;
 }) {
-  const DataSourceContext = getDataSourceContext<T>();
+  const DataSourceStoreContext = getDataSourceStoreContext<T>();
+
+  const [store] = React.useState(() => createDataSourceStore<T>());
 
   const masterContext = useMasterDetailContext();
   const getDataSourceMasterContext = useLatest(masterContext);
@@ -58,12 +66,12 @@ export function DataSourceCmp<T>({
     return getDataSourceApi({ getState, actions: componentActions });
   });
   const contextValue: DataSourceContextValue<T> = {
-    componentState,
-    componentActions,
+    dataSourceState: componentState,
+    dataSourceActions: componentActions,
     getDataSourceMasterContext,
-    getState,
+    getDataSourceState: getState,
     assignState,
-    api,
+    dataSourceApi: api,
   };
 
   useLayoutEffect(() => {
@@ -93,10 +101,10 @@ export function DataSourceCmp<T>({
     };
   }
 
-  useLoadData({
-    componentActions,
-    componentState,
-    getComponentState: getState,
+  useLoadData<T>({
+    dataSourceActions: componentActions,
+    dataSourceState: componentState,
+    getDataSourceState: getState,
   });
 
   useEffect(() => {
@@ -122,9 +130,15 @@ export function DataSourceCmp<T>({
     }
   }, [componentState.originalDataArrayChangedInfo]);
 
+  store.setSnapshot(contextValue);
+
+  React.useLayoutEffect(() => {
+    store.notify();
+  });
+
   return (
-    <DataSourceContext.Provider value={contextValue}>
+    <DataSourceStoreContext.Provider value={store}>
       <DataSourceWithContext children={children} />
-    </DataSourceContext.Provider>
+    </DataSourceStoreContext.Provider>
   );
 }

@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Menu } from '../../Menu';
 import { MenuState } from '../../Menu/MenuState';
 import { getColumnApiForColumn } from '../api/getColumnApi';
-import { InfiniteTableContextValue } from '../types';
 import { defaultGetColumnMenuItems } from './defaultGetColumnMenuItems';
+import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 
 export function getMenuForColumn<T>(
   columnId: string | null,
-  context: InfiniteTableContextValue<T>,
+  context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
   if (columnId == null) {

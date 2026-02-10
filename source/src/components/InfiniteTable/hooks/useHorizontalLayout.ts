@@ -1,10 +1,17 @@
 import { useEffect } from 'react';
 
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 export function useHorizontalLayout() {
   const { getState, actions, dataSourceActions, getDataSourceState } =
-    useInfiniteTable();
+    useInfiniteTableSelector((ctx) => {
+      return {
+        getState: ctx.getState,
+        actions: ctx.actions,
+        dataSourceActions: ctx.dataSourceActions,
+        getDataSourceState: ctx.getDataSourceState,
+      };
+    });
 
   const { groupBy, isTree } = getDataSourceState();
   const state = getState();

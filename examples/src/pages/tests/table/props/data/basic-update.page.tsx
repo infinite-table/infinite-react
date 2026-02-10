@@ -28,7 +28,13 @@ type Developer = {
 
 const columns: InfiniteTablePropColumns<Developer> = {
   // id: { field: 'id' },
-  salary: { field: 'salary' },
+  salary: {
+    field: 'salary',
+    header: () => {
+      return <div>Salary {Date.now()}</div>;
+    },
+    defaultWidth: 250,
+  },
   age: { field: 'age' },
   firstName: { field: 'firstName' },
   // preferredLanguage: { field: 'preferredLanguage' },
@@ -48,8 +54,8 @@ const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
         setTimeout(() => {
           // console.log(data, 'data');
           // data.length = 1;
-          // const newData = [...data.data.slice(0, 2)];
-          const newData = data;
+          const newData = [...data.data.slice(0, 2)];
+          // const newData = data;
 
           resolve(newData);
         }, 20);
@@ -68,7 +74,7 @@ export default function DataTestPage() {
     [number, number] | null
   >(null);
   const [api, setApi] = React.useState<InfiniteTableApi<Developer>>();
-  const [header, setHeader] = React.useState<boolean>(false);
+  const [header, setHeader] = React.useState<boolean>(true);
 
   const onReady = React.useCallback(
     ({
@@ -107,26 +113,26 @@ export default function DataTestPage() {
             const { start, end } = api.getVisibleRenderRange();
             const [startRow, startCol] = start;
             const [endRow, endCol] = end;
-            // console.log(start, end);
 
             const randomRow =
-              Math.floor(Math.random() * (endRow - startRow + 1)) + startRow;
+              Math.floor(Math.random() * (endRow - 1 - startRow + 1)) +
+              startRow;
             const randomCol =
-              Math.floor(Math.random() * (endCol - startCol + 1)) + startCol;
+              Math.floor(Math.random() * (endCol - 1 - startCol + 1)) +
+              startCol;
 
             const [activeRow, activeCol] = activeCellIndex || [];
 
             const updateRow = activeRow ?? randomRow;
             const updateCol = activeCol ?? randomCol;
+
+            console.log('updating', updateRow, updateCol);
             const colId = Object.keys(columns)[updateCol];
             const rowId = dataSourceApi.getPrimaryKeyByIndex(updateRow);
             dataSourceApi.updateData({
               [colId]: Math.floor(Math.random() * 10000),
               id: rowId,
             });
-
-            // dataSourceApi.get
-            // dataSourceApi.;
           }}
         >
           update

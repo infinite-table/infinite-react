@@ -84,7 +84,7 @@ export function buildDataSourceDataParams<T>(
   componentState: DataSourceStateForDataParams<T>,
   overrides?: Partial<DataSourceDataParams<T>>,
   masterContext?: {
-    masterRowInfo: DataSourceMasterDetailContextValue['masterRowInfo'];
+    masterRowInfo: DataSourceMasterDetailContextValue<any>['masterRowInfo'];
   },
 ): DataSourceDataParams<T> {
   const sortInfo = componentState.multiSort
@@ -175,7 +175,7 @@ export function loadData<T>(
   componentState: DataSourceState<T>,
   actions: ComponentStateGeneratedActions<DataSourceState<T>>,
   overrides?: Partial<DataSourceDataParams<T>>,
-  masterContext?: DataSourceMasterDetailContextValue | undefined,
+  masterContext?: DataSourceMasterDetailContextValue<any> | undefined,
 ) {
   const dataParams = buildDataSourceDataParams(
     componentState,
@@ -468,16 +468,12 @@ function getDetailReady(
 }
 
 type LoadDataOptions<T> = {
-  componentActions: DataSourceComponentActions<T>;
-  componentState: DataSourceState<T>;
-  getComponentState: () => DataSourceState<T>;
+  dataSourceActions: DataSourceComponentActions<T>;
+  dataSourceState: DataSourceState<T>;
+  getDataSourceState: () => DataSourceState<T>;
 };
 export function useLoadData<T>(options: LoadDataOptions<T>) {
-  const {
-    getComponentState,
-    componentActions: actions,
-    componentState,
-  } = options;
+  const { getDataSourceState, dataSourceActions, dataSourceState } = options;
 
   const {
     data,
@@ -494,7 +490,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
     livePaginationCursor,
     filterTypes,
     cursorId: stateCursorId,
-  } = componentState;
+  } = dataSourceState;
 
   const [scrollbars, setScrollbars] = useState<Scrollbars>({
     vertical: false,
@@ -526,7 +522,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
           // this line makes it so that when we have live pagination, with a livePaginationCursor,
           // if the data that was loaded does not fill the whole viewport, we need to keep requesting the new
           // batch of data - so this assignment here does that
-          actions.cursorId = livePaginationCursor;
+          dataSourceActions.cursorId = livePaginationCursor;
         }
       }
     });
@@ -548,7 +544,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
         // #useDataArrayLengthAsCursor ref
 
         if (stateCursorId != null && dataArray.length) {
-          actions.cursorId = dataArray.length;
+          dataSourceActions.cursorId = dataArray.length;
         }
       }
     });
@@ -557,7 +553,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
   }, [dataArray.length, livePaginationCursor]);
 
   useEffect(() => {
-    const state = getComponentState();
+    const state = getDataSourceState();
 
     const { livePaginationCursor, livePagination, dataArray } = state;
 
@@ -570,13 +566,13 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
       if (livePaginationCursor) {
         // only do this if livePaginationCursor is defined and not zero
-        actions.cursorId = livePaginationCursor;
+        dataSourceActions.cursorId = livePaginationCursor;
       } else if (livePaginationCursor === undefined && dataArray.length) {
         // there is no cursor passed as a prop, so we use dataArray.length as a cursor
         // so only do this if the length > 0
         // #useDataArrayLengthAsCursor ref
 
-        actions.cursorId = dataArray.length;
+        dataSourceActions.cursorId = dataArray.length;
       }
     }
   }, [scrollbars.vertical]);
@@ -614,12 +610,12 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
   const dataChangeTimestampsRef = useRef<number[]>([]);
   useEffectWithChanges(
     () => {
-      const componentState = getComponentState();
+      const componentState = getDataSourceState();
       const masterContext = getMasterContext();
 
       const { isDetail, isDetailReady } = getDetailReady(
         masterContext,
-        getComponentState,
+        getDataSourceState,
       );
       if (isDetail && !isDetailReady) {
         return;
@@ -646,7 +642,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
         loadData(
           componentState.data,
           componentState,
-          actions,
+          dataSourceActions,
           undefined,
           masterContext,
         );
@@ -663,13 +659,16 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
       if (keys.length === 1) {
         appendWhenLivePagination = !!changes.cursorId;
 
-        if (changes.filterValue && getComponentState().filterMode === 'local') {
+        if (
+          changes.filterValue &&
+          getDataSourceState().filterMode === 'local'
+        ) {
           // if filter value has changed and filter mode is local
           // then we don't need to do a remote call
           return;
         }
 
-        const originalData = getComponentState().data;
+        const originalData = getDataSourceState().data;
         if (Array.isArray(originalData) && changes.refetchKey) {
           // the data is an array, but the refetchKey has changed
           // so let's assign originalDataArray to the data array
@@ -678,7 +677,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
           // because it's needed in a edge case that's not easy to reproduce
 
           //@ts-ignore ignore
-          actions.originalDataArray = originalData;
+          dataSourceActions.originalDataArray = originalData;
           return;
         }
       }
@@ -686,14 +685,14 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
       const masterContext = getMasterContext();
       const { isDetail, isDetailReady } = getDetailReady(
         masterContext,
-        getComponentState,
+        getDataSourceState,
       );
 
       if (isDetail && !isDetailReady) {
         return;
       }
 
-      const componentState = getComponentState();
+      const componentState = getDataSourceState();
       if (typeof componentState.data === 'function') {
         let marker: DevToolsMarker | undefined;
 
@@ -705,7 +704,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
         loadData(
           componentState.data,
           componentState,
-          actions,
+          dataSourceActions,
           {
             append: appendWhenLivePagination,
           },
@@ -720,16 +719,18 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
   // only for initial triggering `onDataParamsChange`
   useEffectWithChanges(() => {
-    const componentState = getComponentState();
+    const componentState = getDataSourceState();
     if (initialRef.current) {
       initialRef.current = false;
 
       const dataParams = buildDataSourceDataParams(
         componentState,
         undefined,
-        getMasterContext(),
+        getMasterContext() as
+          | DataSourceMasterDetailContextValue<any>
+          | undefined,
       );
-      actions.dataParams = dataParams;
+      dataSourceActions.dataParams = dataParams;
     }
   }, depsObject);
 }
@@ -746,15 +747,14 @@ function useLazyLoadRange<T>(
   options: LoadDataOptions<T>,
   dependencies: LazyLoadDeps<T>,
 ) {
-  const {
-    getComponentState,
-    componentActions: actions,
-    componentState,
-  } = options;
+  const { getDataSourceState, dataSourceActions, dataSourceState } = options;
 
   useEffect(() => {
-    actions.lazyLoadCacheOfLoadedBatches = new DeepMap<string, true>();
-  }, [componentState.data, componentState.dataParams]);
+    dataSourceActions.lazyLoadCacheOfLoadedBatches = new DeepMap<
+      string,
+      true
+    >();
+  }, [dataSourceState.data, dataSourceState.dataParams]);
 
   // const loadingCache = useMemo<Map<string, true>>(() => {
   //   return new Map();
@@ -768,17 +768,17 @@ function useLazyLoadRange<T>(
     dataArray,
     groupRowsState,
     scrollStopDelayUpdatedByTable,
-  } = componentState;
+  } = dataSourceState;
 
   const latestRenderRangeRef = useRef<RenderRange | null>(null);
 
   const loadRange = (
     renderRange?: RenderRange | null,
     options?: { dismissLoadedRows?: boolean },
-    cache: DeepMap<string, true> = getComponentState()
+    cache: DeepMap<string, true> = getDataSourceState()
       .lazyLoadCacheOfLoadedBatches,
   ) => {
-    const componentState = getComponentState();
+    const componentState = getDataSourceState();
     renderRange = renderRange || latestRenderRangeRef.current;
     if (!renderRange) {
       return;
@@ -811,7 +811,7 @@ function useLazyLoadRange<T>(
         endIndex,
         lazyLoadBatchSize,
         componentState,
-        componentActions: actions,
+        componentActions: dataSourceActions,
         dismissLoadedRows: options?.dismissLoadedRows ?? false,
       },
       cache,
@@ -837,13 +837,13 @@ function useLazyLoadRange<T>(
           // clear the cache of loaded batches
           // as the changes in sorting/filtering/grouping/pivoting
           // need to reload new data, but they won't if we don't clear the cache
-          getComponentState().lazyLoadCacheOfLoadedBatches.clear();
+          getDataSourceState().lazyLoadCacheOfLoadedBatches.clear();
 
           // it's crucial to also clear the originalLazyGroupData
           // as otherwise, previously loaded data will be kept in memory
           // eg - from another sort/group configuration
           // see #make-sure-old-lazy-data-is-cleared
-          getComponentState().originalLazyGroupData.clear();
+          getDataSourceState().originalLazyGroupData.clear();
           //
           loadRange(notifyRenderRangeChange.get(), {
             dismissLoadedRows: true,

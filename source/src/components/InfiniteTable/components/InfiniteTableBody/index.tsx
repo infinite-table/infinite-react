@@ -1,11 +1,6 @@
 import * as React from 'react';
-import {
-  useDataSourceContextValue,
-  useMasterDetailContext,
-} from '../../../DataSource/publicHooks/useDataSourceState';
 import { HeadlessTable } from '../../../HeadlessTable';
 import { useCellRendering } from '../../hooks/useCellRendering';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { useToggleWrapRowsHorizontally } from '../../hooks/useToggleWrapRowsHorizontally';
 import {
   CellContextMenuLocationWithEvent,
@@ -19,6 +14,12 @@ import { selectParentUntil } from '../../../../utils/selectParent';
 import { getCellSelector } from '../../state/getInitialState';
 import { LoadMask } from '../LoadMask';
 import { useMemo } from 'react';
+import {
+  useInfiniteTableStableContext,
+  useInfiniteTableSelector,
+} from '../../hooks/useInfiniteTableSelector';
+import { useDataSourceSelector } from '../../../DataSource';
+import { useDataSourceMasterRowInfo } from '../../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const _HOVERED_CLASS_NAMES = [
   RowHoverCls,
@@ -37,10 +38,10 @@ function toClassNameArray(str: string | string[]) {
 }
 
 function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
-  const context = useInfiniteTable<T>();
+  const context = useInfiniteTableStableContext<T>();
 
-  const masterContext = useMasterDetailContext();
-  const { state: componentState, getComputed, api } = context;
+  const masterRowInfo = useDataSourceMasterRowInfo();
+  const { getComputed, api } = context;
   const {
     renderer,
     onRenderUpdater,
@@ -48,6 +49,7 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
     keyboardNavigation,
     activeRowIndex,
     loadingText,
+    columnReorderDragColumnId,
     scrollStopDelay,
     brain,
     scrollerDOMRef,
@@ -59,8 +61,34 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
     wrapRowsHorizontally,
     domProps,
     domRef,
+    forceBodyRerenderTimestamp,
     rowHoverClassName,
-  } = componentState;
+    ready,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      ready: ctx.state.ready,
+      columnReorderDragColumnId: ctx.state.columnReorderDragColumnId,
+      forceBodyRerenderTimestamp: ctx.state.forceBodyRerenderTimestamp,
+      renderer: ctx.state.renderer,
+      onRenderUpdater: ctx.state.onRenderUpdater,
+      debugId: ctx.state.debugId,
+      keyboardNavigation: ctx.state.keyboardNavigation,
+      activeRowIndex: ctx.state.activeRowIndex,
+      loadingText: ctx.state.loadingText,
+      scrollStopDelay: ctx.state.scrollStopDelay,
+      brain: ctx.state.brain,
+      scrollerDOMRef: ctx.state.scrollerDOMRef,
+      components: ctx.state.components,
+      bodySize: ctx.state.bodySize,
+      activeCellIndex: ctx.state.activeCellIndex,
+      rowDetailRenderer: ctx.state.rowDetailRenderer,
+      showHoverRows: ctx.state.showHoverRows,
+      wrapRowsHorizontally: ctx.state.wrapRowsHorizontally,
+      domProps: ctx.state.domProps,
+      domRef: ctx.state.domRef,
+      rowHoverClassName: ctx.state.rowHoverClassName,
+    };
+  });
 
   const LoadMaskCmp = components?.LoadMask ?? LoadMask;
 
@@ -70,20 +98,22 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
   const activeCellRowHeight =
     computedRowSizeCacheForDetails?.getRowHeight || computedRowHeight;
 
-  const {
-    componentState: { loading },
-  } = useDataSourceContextValue<T>();
+  const { loading } = useDataSourceSelector((ctx) => {
+    return {
+      loading: ctx.dataSourceState.loading,
+    };
+  });
 
   const onContextMenu = React.useCallback((event: React.MouseEvent) => {
     const state = context.getState();
     const target = event.target as HTMLElement;
 
-    if (!masterContext && (event as any)._from_row_detail) {
+    if (!masterRowInfo && (event as any)._from_row_detail) {
       // originating from detail grid.
       return;
     }
 
-    if (masterContext) {
+    if (masterRowInfo) {
       (event as any)._from_row_detail = true;
     }
 
@@ -164,20 +194,18 @@ function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
   return (
     <InfiniteTableBodyContainer onContextMenu={onContextMenu}>
       <HeadlessTable
-        forceRerenderTimestamp={componentState.forceBodyRerenderTimestamp}
+        forceRerenderTimestamp={forceBodyRerenderTimestamp}
         debugId={debugId}
         tabIndex={tabIndex ?? 0}
         autoFocus={autoFocus ?? undefined}
         activeRowIndex={
-          componentState.ready && keyboardNavigation === 'row'
-            ? activeRowIndex
-            : null
+          ready && keyboardNavigation === 'row' ? activeRowIndex : null
         }
         activeCellIndex={
-          componentState.ready &&
+          ready &&
           keyboardNavigation === 'cell' &&
           // we want to hide the active cell indicator while column reodering is happening
-          !componentState.columnReorderDragColumnId
+          !columnReorderDragColumnId
             ? activeCellIndex
             : null
         }

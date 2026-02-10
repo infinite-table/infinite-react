@@ -3,13 +3,16 @@ import * as React from 'react';
 import {
   DataSource,
   DataSourceData,
-  useDataSourceState,
+  useDataSourceSelector,
 } from '@infinite-table/infinite-react';
 
 const Cmp = () => {
-  const ds = useDataSourceState<Developer>();
-
-  const { dataArray, loading } = ds;
+  const { dataArray, loading } = useDataSourceSelector((ctx) => {
+    return {
+      dataArray: ctx.dataSourceState.dataArray,
+      loading: ctx.dataSourceState.loading,
+    };
+  });
 
   return (
     <div>

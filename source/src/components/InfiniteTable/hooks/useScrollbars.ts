@@ -1,19 +1,16 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
-import { useManagedComponentState } from '../../hooks/useComponentState';
-import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableState, Scrollbars } from '../types';
+import { useDataSourceStableContext } from '../../DataSource/publicHooks/useDataSourceSelector';
 
 const INITIAL_SCROLLBARS: Scrollbars = {
   vertical: false,
   horizontal: false,
 };
 
-export function useScrollbars<T>(brain: MatrixBrain) {
-  const { getComponentState: getInfiniteTableState } =
-    useManagedComponentState<InfiniteTableState<T>>();
-  const { getState: getDataSourceState } = useDataSourceContextValue<T>();
+export function useScrollbars<T>(getState: () => InfiniteTableState<T>) {
+  const brain = getState().brain;
+  const { getDataSourceState } = useDataSourceStableContext<T>();
 
   const [scrollbars, setScrollbars] = useState(INITIAL_SCROLLBARS);
 
@@ -21,9 +18,14 @@ export function useScrollbars<T>(brain: MatrixBrain) {
     return brain.onRenderCountChange(() => {
       const { scrollTopMax, scrollLeftMax } = brain;
 
-      setScrollbars({
-        vertical: scrollTopMax > 0,
-        horizontal: scrollLeftMax > 0,
+      const vertical = scrollTopMax > 0;
+      const horizontal = scrollLeftMax > 0;
+
+      setScrollbars((prev) => {
+        if (prev.vertical === vertical && prev.horizontal === horizontal) {
+          return prev;
+        }
+        return { vertical, horizontal };
       });
     });
   }, [brain]);
@@ -32,7 +34,7 @@ export function useScrollbars<T>(brain: MatrixBrain) {
     // this needs to be useLayoutEffect
     // on live Pagination cursor change we need this - ref #lvpgn
     const dataSourceState = getDataSourceState();
-    const { onScrollbarsChange } = getInfiniteTableState();
+    const { onScrollbarsChange } = getState();
     const { notifyScrollbarsChange } = dataSourceState;
 
     if (

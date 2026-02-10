@@ -22,7 +22,7 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     let dataSourceCalls = await getCalls({ page });
     let arg = dataSourceCalls[CALL_COUNT - 1].args[0];
 
-    expect(await page.getGlobalValue('state.dataArray.length')).toBe(20);
+    expect(await page.getGlobalValue('dataArrayLength')).toBe(20);
     expect(await getCallCount({ page })).toEqual(CALL_COUNT);
 
     expect({

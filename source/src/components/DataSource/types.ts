@@ -307,15 +307,15 @@ export interface DataSourceSetupState<T> {
   debugTimings: Map<DebugTimingKey, number>;
   debugWarnings: Map<DataSourceDebugWarningKey, DebugWarningPayload>;
   indexer: Indexer<T, any>;
-  getDataSourceMasterContextRef: React.MutableRefObject<
-    () => DataSourceMasterDetailContextValue | undefined
+  getDataSourceMasterContextRef: React.RefObject<
+    () => DataSourceMasterDetailContextValue<any> | undefined
   >;
-  __apiRef: React.MutableRefObject<DataSourceApi<T> | null>;
-  lastSelectionUpdatedNodePathRef: React.MutableRefObject<{
+  __apiRef: React.RefObject<DataSourceApi<T> | null>;
+  lastSelectionUpdatedNodePathRef: React.RefObject<{
     nodePath: NodePath;
     selected: boolean;
   } | null>;
-  lastExpandStateInfoRef: React.MutableRefObject<{
+  lastExpandStateInfoRef: React.RefObject<{
     state: 'collapsed' | 'expanded';
     nodePath: NodePath | null;
   }>;
@@ -1044,15 +1044,18 @@ export type DataSourceComponentActions<T> = ComponentStateActions<
   DataSourceState<T>
 >;
 
-export interface DataSourceContextValue<T> {
-  api: DataSourceApi<T>;
-  getState: () => DataSourceState<T>;
+export interface DataSourceStableContextValue<T> {
+  dataSourceApi: DataSourceApi<T>;
+  getDataSourceState: () => DataSourceState<T>;
   assignState: (state: Partial<DataSourceState<T>>) => void;
   getDataSourceMasterContext: () =>
     | DataSourceMasterDetailContextValue<any>
     | undefined;
-  componentState: DataSourceState<T>;
-  componentActions: DataSourceComponentActions<T>;
+  dataSourceActions: DataSourceComponentActions<T>;
+}
+export interface DataSourceContextValue<T>
+  extends DataSourceStableContextValue<T> {
+  dataSourceState: DataSourceState<T>;
 }
 
 export interface DataSourceMasterDetailContextValue<MASTER_TYPE = any> {

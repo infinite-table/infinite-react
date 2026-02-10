@@ -29,6 +29,7 @@ import { InfiniteTableRowInfo } from '../InfiniteTable';
 import { useDataSourceInternal } from './privateHooks/useDataSource';
 import { DataSourceProps } from './types';
 import { RowDisabledState } from './RowDisabledState';
+import { useDataSourceSelector } from './publicHooks/useDataSourceSelector';
 
 const {
   // ManagedComponentContextProvider: ManagedDataSourceContextProvider,
@@ -61,7 +62,11 @@ function DataSource<T>(props: DataSourceProps<T>) {
 
 // TODO document this
 function useRowInfoReducers() {
-  const { rowInfoReducerResults } = useDataSourceState();
+  const { rowInfoReducerResults } = useDataSourceSelector((ctx) => {
+    return {
+      rowInfoReducerResults: ctx.dataSourceState.rowInfoReducerResults,
+    };
+  });
 
   return rowInfoReducerResults;
 }
@@ -78,6 +83,7 @@ function useMasterRowInfo<T = any>(): InfiniteTableRowInfo<T> | undefined {
 
 export {
   useManagedDataSource,
+  useDataSourceSelector,
   useDataSourceState,
   DataSource,
   GroupRowsState,

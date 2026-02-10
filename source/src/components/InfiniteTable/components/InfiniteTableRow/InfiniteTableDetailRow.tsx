@@ -7,10 +7,14 @@ import { InternalVars } from '../../internalVars.css';
 import { InfiniteTableProps, InfiniteTableRowInfo } from '../../types';
 import { RowDetailRecipe } from '../rowDetail.css';
 
-import { getDataSourceMasterDetailContext } from '../../../../components/DataSource/DataSourceMasterDetailContext';
+import {
+  getDataSourceMasterDetailContext,
+  getDataSourceMasterDetailStoreContext,
+} from '../../../../components/DataSource/DataSourceMasterDetailContext';
 
 import { NonUndefined } from '../../../types/NonUndefined';
 import { useRegisterDetail } from './useRegisterDetail';
+import { createDataSourceMasterDetailStore } from '../../../DataSource/DataSourceMasterDetailStore';
 
 type InfiniteTableDetailRowProps<T> = {
   rowInfo: InfiniteTableRowInfo<T>;
@@ -42,23 +46,41 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
     rowInfo,
   });
 
+  const DataSourceMasterDetailStoreContext =
+    getDataSourceMasterDetailStoreContext<T>();
+
+  const [masterDetailStore] = React.useState(() =>
+    createDataSourceMasterDetailStore<T>(),
+  );
+
+  masterDetailStore.setSnapshot(masterDetailContextValue);
+
+  React.useLayoutEffect(() => {
+    masterDetailStore.notify();
+  }, [masterDetailContextValue]);
+
   return (
-    <DataSourceMasterDetailContext.Provider value={masterDetailContextValue}>
-      <div
-        ref={domRef}
-        className={join(InfiniteTableRowDetailsClassName, RowDetailRecipe({}))}
-        style={{
-          position: 'absolute',
-          top: `${detailOffset}px`,
-          left: 0,
-          // TODO see #rowDetailWidth
-          width: `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`,
-          height: rowDetailHeight,
-        }}
-      >
-        {rowDetailRenderer(rowInfo, currentRowCache)}
-      </div>
-    </DataSourceMasterDetailContext.Provider>
+    <DataSourceMasterDetailStoreContext.Provider value={masterDetailStore}>
+      <DataSourceMasterDetailContext.Provider value={masterDetailContextValue}>
+        <div
+          ref={domRef}
+          className={join(
+            InfiniteTableRowDetailsClassName,
+            RowDetailRecipe({}),
+          )}
+          style={{
+            position: 'absolute',
+            top: `${detailOffset}px`,
+            left: 0,
+            // TODO see #rowDetailWidth
+            width: `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`,
+            height: rowDetailHeight,
+          }}
+        >
+          {rowDetailRenderer(rowInfo, currentRowCache)}
+        </div>
+      </DataSourceMasterDetailContext.Provider>
+    </DataSourceMasterDetailStoreContext.Provider>
   );
 }
 

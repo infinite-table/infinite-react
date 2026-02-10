@@ -10,7 +10,7 @@ export function useDataSourceState<T>(): DataSourceState<T> {
   const DataSourceContext = getDataSourceContext<T>();
   const contextValue = React.useContext(DataSourceContext);
 
-  return contextValue.componentState;
+  return contextValue.dataSourceState;
 }
 export function useDataSourceContextValue<T>(): DataSourceContextValue<T> {
   const DataSourceContext = getDataSourceContext<T>();
@@ -19,8 +19,8 @@ export function useDataSourceContextValue<T>(): DataSourceContextValue<T> {
   return contextValue;
 }
 
-export function useMasterDetailContext():
-  | DataSourceMasterDetailContextValue
+export function useMasterDetailContext<T>():
+  | DataSourceMasterDetailContextValue<T>
   | undefined {
   const masterDetailContext = getDataSourceMasterDetailContext();
   const contextValue = React.useContext(masterDetailContext);

@@ -4,12 +4,12 @@ import type { Scrollbars } from '../..';
 import { useMatrixBrain } from '../../../HeadlessTable';
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 
 import { buildColumnAndGroupTree } from './buildColumnAndGroupTree';
 import { HeaderScrollbarPlaceholderCls, HeaderWrapperCls } from './header.css';
 import { InfiniteTableHeaderWrapperClassName } from './headerClassName';
 import { InfiniteTableInternalHeader } from './InfiniteTableHeader';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 export type TableHeaderWrapperProps = {
   headerBrain: MatrixBrain;
@@ -17,27 +17,38 @@ export type TableHeaderWrapperProps = {
   scrollbars: Scrollbars;
   wrapRowsHorizontally: boolean;
 };
-export function TableHeaderWrapper<T>(props: TableHeaderWrapperProps) {
+export function TableHeaderWrapper<_T>(props: TableHeaderWrapperProps) {
   const { headerBrain, bodyBrain, scrollbars } = props;
-
-  const tableContextValue = useInfiniteTable<T>();
 
   const {
     computedPinnedStartColumns,
     computedPinnedEndColumns,
     computedVisibleColumns,
     columnSize,
-  } = tableContextValue.computed;
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      computedPinnedStartColumns: ctx.computed.computedPinnedStartColumns,
+      computedPinnedEndColumns: ctx.computed.computedPinnedEndColumns,
+      computedVisibleColumns: ctx.computed.computedVisibleColumns,
+      columnSize: ctx.computed.columnSize,
+    };
+  });
 
   const {
-    state: {
-      columnHeaderHeight,
-      columnGroupsDepthsMap,
-      columnGroupsMaxDepth,
-      computedColumnGroups,
-      showColumnFilters,
-    },
-  } = tableContextValue;
+    columnHeaderHeight,
+    columnGroupsDepthsMap,
+    columnGroupsMaxDepth,
+    computedColumnGroups,
+    showColumnFilters,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      columnHeaderHeight: ctx.state.columnHeaderHeight,
+      columnGroupsDepthsMap: ctx.state.columnGroupsDepthsMap,
+      columnGroupsMaxDepth: ctx.state.columnGroupsMaxDepth,
+      computedColumnGroups: ctx.state.computedColumnGroups,
+      showColumnFilters: ctx.state.showColumnFilters,
+    };
+  });
 
   const rows =
     !computedColumnGroups || !Object.keys(computedColumnGroups).length

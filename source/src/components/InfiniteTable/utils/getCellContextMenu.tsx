@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { Menu } from '../../Menu';
 import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
-import type { InfiniteTableContextValue } from '../types';
 
 import {
   CellContextMenuLocationWithEvent,
@@ -13,10 +12,11 @@ import {
   getMenuDefaultProps,
   getMenuItemsAndColumns,
 } from './contextMenuUtils';
+import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 
 export function getCellContextMenu<T>(
   cellLocation: CellContextMenuLocationWithEvent,
-  context: InfiniteTableContextValue<T>,
+  context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
   const { columnId, rowIndex, event } = cellLocation;
@@ -83,7 +83,7 @@ export function getCellContextMenu<T>(
 
 export function getTableContextMenu<T>(
   menuLocation: ContextMenuLocationWithEvent,
-  context: InfiniteTableContextValue<T>,
+  context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
   const { getState, getComputed } = context;

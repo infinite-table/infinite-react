@@ -11,14 +11,19 @@ import { OnCellClickContext } from '../eventHandlers/onCellClick';
 import { InfiniteTableComputedColumn } from './InfiniteTableColumn';
 import { InfiniteTableRowInfoDataDiscriminator } from '../../../utils/groupAndPivot';
 
-export interface InfiniteTableContextValue<T> {
+export interface InfiniteTableContextValue<T>
+  extends InfiniteTableStableContextValue<T> {
+  state: InfiniteTableState<T>;
+  computed: InfiniteTableComputedValues<T>;
   children?: React.ReactNode;
+}
+
+export interface InfiniteTableStableContextValue<T> {
   api: InfiniteTableApi<T>;
   dataSourceApi: DataSourceApi<T>;
-  state: InfiniteTableState<T>;
+
   actions: InfiniteTableActions<T>;
   dataSourceActions: DataSourceComponentActions<T>;
-  computed: InfiniteTableComputedValues<T>;
   getComputed: () => InfiniteTableComputedValues<T>;
   getState: () => InfiniteTableState<T>;
   getDataSourceState: () => DataSourceState<T>;

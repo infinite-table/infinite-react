@@ -7,7 +7,7 @@ import {
 import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-import { useInfiniteTable } from '@infinite-table/infinite-react/components/InfiniteTable/hooks/useInfiniteTable';
+import { useInfiniteTableSelector } from '@infinite-table/infinite-react/components/InfiniteTable/hooks/useInfiniteTableSelector';
 import { MatrixBrain } from '@infinite-table/infinite-react/components/VirtualBrain/MatrixBrain';
 
 type Developer = {
@@ -43,9 +43,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     type: 'number',
     render: ({ value }) => {
-      const { state } = useInfiniteTable();
+      const { brain } = useInfiniteTableSelector((ctx) => {
+        return {
+          brain: ctx.state.brain,
+        };
+      });
 
-      setBrain(state.brain);
+      setBrain(brain);
       return value;
     },
   },

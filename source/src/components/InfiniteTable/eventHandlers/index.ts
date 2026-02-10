@@ -1,29 +1,26 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useCallback, useMemo, useEffect } from 'react';
 import { cloneTreeSelection } from '../../DataSource/TreeApi';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { getColumnApiForColumn } from '../api/getColumnApi';
 import { cloneRowSelection } from '../api/getRowSelectionApi';
-import { useInfiniteTable } from '../hooks/useInfiniteTable';
 import { InfiniteTableEventHandlerContext } from './eventHandlerTypes';
 import { onCellClick } from './onCellClick';
 import { onCellMouseDown } from './onCellMouseDown';
 import { onKeyDown } from './onKeyDown';
+import {
+  useInfiniteTableSelector,
+  useInfiniteTableStableContext,
+} from '../hooks/useInfiniteTableSelector';
+import { InfiniteTableState } from '../types';
+import { useDataSourceStableContext } from '../../DataSource/publicHooks/useDataSourceSelector';
 
 function useEventHandlersContext<T>() {
-  const {
-    getState,
-    actions: actions,
-    api,
-    getComputed,
-    getDataSourceMasterContext,
-  } = useInfiniteTable<T>();
-  const {
-    getState: getDataSourceState,
-    componentActions: dataSourceActions,
-    api: dataSourceApi,
-  } = useDataSourceContextValue<T>();
+  const { getState, actions, api, getComputed, getDataSourceMasterContext } =
+    useInfiniteTableStableContext<T>();
+
+  const { getDataSourceState, dataSourceActions, dataSourceApi } =
+    useDataSourceStableContext<T>();
 
   const context = useMemo(() => {
     const context: InfiniteTableEventHandlerContext<T> = {
@@ -124,7 +121,11 @@ function handleDOMEvents<T>() {
 }
 
 function subscribeToDOMEvents<T>() {
-  const { getState } = useInfiniteTable<T>();
+  const { getState } = useInfiniteTableSelector((ctx) => {
+    return {
+      getState: ctx.getState as () => InfiniteTableState<T>,
+    };
+  });
 
   const onKeyDown = useCallback((event: KeyboardEvent<Element>) => {
     getState().keyDown(event);

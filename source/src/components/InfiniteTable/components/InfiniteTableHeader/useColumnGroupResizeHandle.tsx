@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { computeGroupResize } from '../../../flexbox';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import {
   InfiniteTableComputedColumn,
   InfiniteTablePropColumnSizing,
@@ -10,6 +9,7 @@ import {
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 import { GroupResizeHandle } from './ResizeHandle/GroupResizeHandle';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 export function useColumnGroupResizeHandle<T>(
   groupColumns: InfiniteTableComputedColumn<T>[],
@@ -21,12 +21,16 @@ export function useColumnGroupResizeHandle<T>(
   },
 ) {
   const { bodyBrain, groupHeight, columnGroup, columnGroupsMaxDepth } = config;
-  const {
-    computed: { computedVisibleColumns },
-    getState,
-    getComputed,
-    actions,
-  } = useInfiniteTable<T>();
+  const { computedVisibleColumns, getState, getComputed, actions } =
+    useInfiniteTableSelector((ctx) => {
+      return {
+        computedVisibleColumns: ctx.computed
+          .computedVisibleColumns as InfiniteTableComputedColumn<T>[],
+        getState: ctx.getState,
+        getComputed: ctx.getComputed,
+        actions: ctx.actions,
+      };
+    });
 
   const lastColumnInGroup = groupColumns[groupColumns.length - 1];
 

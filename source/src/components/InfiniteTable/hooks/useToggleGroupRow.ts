@@ -2,19 +2,25 @@ import { useCallback } from 'react';
 
 import { DeepMap } from '../../../utils/DeepMap';
 import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
-import { GroupRowsState } from '../../DataSource';
+import {
+  DataSourceState,
+  GroupRowsState,
+  useDataSourceSelector,
+} from '../../DataSource';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/useLoadData';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 
 export type ToggleGroupRowFn = (groupKeys: any[]) => void;
 
 export function useToggleGroupRow<T>() {
-  const {
-    getState: getDataSourceState,
-    componentActions: dataSourceActions,
-    getDataSourceMasterContext,
-  } = useDataSourceContextValue<T>();
+  const { getDataSourceState, dataSourceActions, getDataSourceMasterContext } =
+    useDataSourceSelector((ctx) => {
+      return {
+        getDataSourceState: ctx.getDataSourceState as () => DataSourceState<T>,
+        dataSourceActions: ctx.dataSourceActions,
+        getDataSourceMasterContext: ctx.getDataSourceMasterContext,
+      };
+    });
 
   const toggleGroupRow = useCallback<ToggleGroupRowFn>((groupKeys: any[]) => {
     // todo this  is duplicated in imperative api

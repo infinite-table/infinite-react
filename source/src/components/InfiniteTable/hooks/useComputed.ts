@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
-import { useManagedComponentState } from '../../hooks/useComponentState';
 import { useLatest } from '../../hooks/useLatest';
 import type { InfiniteTableState, InfiniteTableComputedValues } from '../types';
 import { MultiCellSelector } from '../utils/MultiCellSelector';
@@ -13,20 +11,27 @@ import { useColumnsWhen } from './useColumnsWhen';
 import { useComputedColumns } from './useComputedColumns';
 import { useComputedRowHeight } from './useComputedRowHeight';
 import { useScrollbars } from './useScrollbars';
+import { DataSourceState, useDataSourceSelector } from '../../DataSource';
+import { InfiniteTableActions } from '../types/InfiniteTableState';
 
-export function useComputed<T>(): InfiniteTableComputedValues<T> {
-  const { componentActions, componentState } =
-    useManagedComponentState<InfiniteTableState<T>>();
-
-  const {
-    componentActions: dataSourceActions,
-    componentState: dataSourceState,
-    getState: getDataSourceState,
-    api: dataSourceApi,
-  } = useDataSourceContextValue<T>();
-
+export function useComputed<T>(options: {
+  state: InfiniteTableState<T>;
+  actions: InfiniteTableActions<T>;
+  getState: () => InfiniteTableState<T>;
+}): InfiniteTableComputedValues<T> {
+  const { state, actions, getState } = options;
   const {
     columnOrder,
+    columnCssEllipsis,
+    columnHeaderCssEllipsis,
+    columnMinWidth,
+    columnMaxWidth,
+    columnDefaultWidth,
+    columnDefaultFlex,
+    columnDefaultSortable,
+    columnDefaultDraggable,
+    pinnedStartMaxWidth,
+    pinnedEndMaxWidth,
     columnVisibility,
     columnPinning,
     columnSizing,
@@ -39,37 +44,67 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     rowDetailHeight,
     isRowDetailExpanded: isRowDetailsExpanded,
     isRowDetailEnabled: isRowDetailsEnabled,
-    brain,
     bodySize,
     showSeparatePivotColumnForSingleAggregation,
-  } = componentState;
+    onRowHeightCSSVarChange,
+    onFlashingDurationCSSVarChange,
+    onRowDetailHeightCSSVarChange,
+    onColumnHeaderHeightCSSVarChange,
+
+    computedColumns,
+    viewportReservedWidth,
+    resizableColumns,
+    sortable,
+    draggableColumns,
+  } = state;
+
+  const componentActions = actions;
+
+  const {
+    multiSort,
+    filterValue,
+    filterTypes,
+    groupBy,
+    sortInfo,
+    dataSourceActions,
+    getDataSourceState,
+    dataSourceApi,
+  } = useDataSourceSelector((ctx) => {
+    return {
+      dataSourceActions: ctx.dataSourceActions,
+      getDataSourceState: ctx.getDataSourceState as () => DataSourceState<T>,
+      dataSourceApi: ctx.dataSourceApi,
+      sortInfo: ctx.dataSourceState.sortInfo as DataSourceState<T>['sortInfo'],
+      multiSort: ctx.dataSourceState.multiSort,
+      filterValue: ctx.dataSourceState
+        .filterValue as DataSourceState<T>['filterValue'],
+      filterTypes: ctx.dataSourceState.filterTypes,
+      groupBy: ctx.dataSourceState.groupBy as DataSourceState<T>['groupBy'],
+    };
+  });
 
   useState(() => {
-    componentState.onRowHeightCSSVarChange.onChange((rowHeight) => {
+    onRowHeightCSSVarChange.onChange((rowHeight) => {
       if (rowHeight) {
         componentActions.rowHeight = rowHeight;
       }
     });
-    componentState.onFlashingDurationCSSVarChange.onChange(
-      (flashingDuration) => {
-        const num = flashingDuration ? flashingDuration * 1 : null;
-        if (num != null && !isNaN(num)) {
-          componentActions.flashingDurationCSSVarValue = num;
-        }
-      },
-    );
-    componentState.onRowDetailHeightCSSVarChange.onChange((rowDetailHeight) => {
+    onFlashingDurationCSSVarChange.onChange((flashingDuration) => {
+      const num = flashingDuration ? flashingDuration * 1 : null;
+      if (num != null && !isNaN(num)) {
+        componentActions.flashingDurationCSSVarValue = num;
+      }
+    });
+    onRowDetailHeightCSSVarChange.onChange((rowDetailHeight) => {
       if (rowDetailHeight) {
         componentActions.rowDetailHeight = rowDetailHeight;
       }
     });
-    componentState.onColumnHeaderHeightCSSVarChange.onChange(
-      (columnHeaderHeight) => {
-        if (columnHeaderHeight) {
-          componentActions.columnHeaderHeight = columnHeaderHeight;
-        }
-      },
-    );
+    onColumnHeaderHeightCSSVarChange.onChange((columnHeaderHeight) => {
+      if (columnHeaderHeight) {
+        componentActions.columnHeaderHeight = columnHeaderHeight;
+      }
+    });
   });
 
   useEffect(() => {
@@ -77,11 +112,11 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       showSeparatePivotColumnForSingleAggregation;
   }, [showSeparatePivotColumnForSingleAggregation]);
 
-  const { multiSort, filterValue, filterTypes, groupBy } = dataSourceState;
+  // const { multiSort, filterValue, filterTypes, groupBy } = dataSourceState;
 
-  const { toggleGroupRow } = useColumnsWhen<T>();
+  const { toggleGroupRow } = useColumnsWhen<T>(state, actions);
 
-  const columns = componentState.computedColumns;
+  const columns = computedColumns;
 
   const {
     computedColumnOrder,
@@ -112,24 +147,24 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
     // can cause a horizontal scrollbar which in turn causes a vertical scrollbar and the scenario
     // can loop so it's safer for now to always reserve space for the scrollbar
     scrollbarWidth: undefined,
-    columnCssEllipsis: componentState.columnCssEllipsis,
-    columnHeaderCssEllipsis: componentState.columnHeaderCssEllipsis,
-    columnMinWidth: componentState.columnMinWidth,
-    columnMaxWidth: componentState.columnMaxWidth,
-    columnDefaultWidth: componentState.columnDefaultWidth,
-    columnDefaultFlex: componentState.columnDefaultFlex,
-    columnDefaultSortable: componentState.columnDefaultSortable,
-    columnDefaultDraggable: componentState.columnDefaultDraggable,
-    pinnedStartMaxWidth: componentState.pinnedStartMaxWidth,
-    pinnedEndMaxWidth: componentState.pinnedEndMaxWidth,
+    columnCssEllipsis,
+    columnHeaderCssEllipsis,
+    columnMinWidth,
+    columnMaxWidth,
+    columnDefaultWidth,
+    columnDefaultFlex,
+    columnDefaultSortable,
+    columnDefaultDraggable,
+    pinnedStartMaxWidth,
+    pinnedEndMaxWidth,
     bodySize,
 
-    viewportReservedWidth: componentState.viewportReservedWidth,
-    resizableColumns: componentState.resizableColumns,
+    viewportReservedWidth,
+    resizableColumns,
 
-    sortable: componentState.sortable,
-    draggableColumns: componentState.draggableColumns,
-    sortInfo: dataSourceState.sortInfo ?? undefined,
+    sortable,
+    draggableColumns,
+    sortInfo: sortInfo ?? undefined,
     multiSort,
 
     groupBy,
@@ -152,7 +187,7 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
 
   const rowspan = useColumnRowspan(computedVisibleColumns);
   const columnSize = useColumnSizeFn<T>(computedVisibleColumns);
-  const scrollbars = useScrollbars<T>(brain);
+  const scrollbars = useScrollbars<T>(getState);
 
   const computedPinnedStartOverflow = computedPinnedStartWidth
     ? computedPinnedStartColumnsWidth > computedPinnedStartWidth
@@ -197,35 +232,67 @@ export function useComputed<T>(): InfiniteTableComputedValues<T> {
       getDataSourceState,
     });
 
-  return {
-    multiRowSelector,
-    multiCellSelector,
-    computedRowSizeCacheForDetails,
-    computedRowHeight,
-    scrollbars,
-    columnSize,
-    rowspan,
-    toggleGroupRow,
-    computedColumnsMap,
-    computedColumnsMapInInitialOrder,
-    renderSelectionCheckBox,
-    computedPinnedStartOverflow,
-    computedPinnedEndOverflow,
-    computedPinnedStartWidth,
-    computedPinnedEndWidth,
-    computedVisibleColumns,
-    computedColumnOrder,
-    computedRemainingSpace,
-    computedVisibleColumnsMap,
-    // computedColumnVisibility: columnVisibility,
-    computedPinnedStartColumns,
-    computedPinnedEndColumns,
-    computedUnpinnedColumns,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
-    computedUnpinnedColumnsWidth,
-    computedUnpinnedOffset,
-    computedPinnedEndOffset,
-    fieldsToColumn,
-  };
+  return useMemo(
+    () => ({
+      multiRowSelector,
+      multiCellSelector,
+      computedRowSizeCacheForDetails,
+      computedRowHeight,
+      scrollbars,
+      columnSize,
+      rowspan,
+      toggleGroupRow,
+      computedColumnsMap,
+      computedColumnsMapInInitialOrder,
+      renderSelectionCheckBox,
+      computedPinnedStartOverflow,
+      computedPinnedEndOverflow,
+      computedPinnedStartWidth,
+      computedPinnedEndWidth,
+      computedVisibleColumns,
+      computedColumnOrder,
+      computedRemainingSpace,
+      computedVisibleColumnsMap,
+      // computedColumnVisibility: columnVisibility,
+      computedPinnedStartColumns,
+      computedPinnedEndColumns,
+      computedUnpinnedColumns,
+      computedPinnedStartColumnsWidth,
+      computedPinnedEndColumnsWidth,
+      computedUnpinnedColumnsWidth,
+      computedUnpinnedOffset,
+      computedPinnedEndOffset,
+      fieldsToColumn,
+    }),
+    [
+      multiRowSelector,
+      multiCellSelector,
+      computedRowSizeCacheForDetails,
+      computedRowHeight,
+      scrollbars,
+      columnSize,
+      rowspan,
+      toggleGroupRow,
+      computedColumnsMap,
+      computedColumnsMapInInitialOrder,
+      renderSelectionCheckBox,
+      computedPinnedStartOverflow,
+      computedPinnedEndOverflow,
+      computedPinnedStartWidth,
+      computedPinnedEndWidth,
+      computedVisibleColumns,
+      computedColumnOrder,
+      computedRemainingSpace,
+      computedVisibleColumnsMap,
+      computedPinnedStartColumns,
+      computedPinnedEndColumns,
+      computedUnpinnedColumns,
+      computedPinnedStartColumnsWidth,
+      computedPinnedEndColumnsWidth,
+      computedUnpinnedColumnsWidth,
+      computedUnpinnedOffset,
+      computedPinnedEndOffset,
+      fieldsToColumn,
+    ],
+  );
 }

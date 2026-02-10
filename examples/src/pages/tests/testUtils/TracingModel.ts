@@ -112,7 +112,11 @@ export class TracingModel {
 
     // Only save baseline when total time is lower than previous (or no baseline exists)
     const existingBaseline = getBaseline(testName);
-    if (!existingBaseline || metrics[compare] < existingBaseline[compare]) {
+    if (
+      !existingBaseline ||
+      metrics[compare] <
+        existingBaseline[compare] * (1 - existingBaseline.threshold / 100)
+    ) {
       saveBaseline(testName, metrics);
       console.log(
         `📝 Updated ${isCI ? 'CI' : 'local'} baseline: ${

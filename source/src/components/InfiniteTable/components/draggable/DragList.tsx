@@ -519,10 +519,6 @@ export const DragList = (props: DragListProps) => {
     ],
   );
 
-  const isDragging = (id: string | number | undefined) => {
-    return id === undefined ? dragItemId != null : `${id}` === dragItemId;
-  };
-
   const dragging = !!dragItemId;
 
   const contextValue = React.useMemo(() => {
@@ -540,7 +536,6 @@ export const DragList = (props: DragListProps) => {
   }, [
     dragItemId,
     onDragItemPointerDown,
-    isDragging,
     dragging,
     dragSourceListId,
     dropTargetListId,

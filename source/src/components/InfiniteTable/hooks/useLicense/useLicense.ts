@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useMasterDetailContext } from '../../../DataSource/publicHooks/useDataSourceState';
 import { isValidLicense } from './decode';
+import { useDataSourceMasterRowInfo } from '../../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const SANDPACK_REGEX =
   /(https):\/\/\d+\-\d+\-\d+\-(sandpack\.codesandbox\.io)/g;
@@ -25,8 +25,8 @@ const isInsideSandbox = () => {
 const isInsidePlayground = isInsideSandbox() || isInsideSandpack();
 
 export const useLicense = (licenseKey: string = '') => {
-  const masterContext = useMasterDetailContext();
-  const isDetail = !!masterContext;
+  const masterRowInfo = useDataSourceMasterRowInfo();
+  const isDetail = !!masterRowInfo;
 
   const valid = useMemo(() => {
     if (isDetail) {

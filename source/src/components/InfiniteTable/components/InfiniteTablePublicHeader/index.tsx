@@ -6,8 +6,8 @@ import {
 } from '../../state/getInfiniteHeaderState';
 import { InfiniteTableHeaderProps } from './types';
 import { getInfiniteTableHeaderContext } from './context';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { TableHeaderWrapper } from '../InfiniteTableHeader/InfiniteTableHeaderWrapper';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 const { ManagedComponentContextProvider: InfiniteTableHeaderRoot } =
   buildManagedComponent({
@@ -18,10 +18,17 @@ const { ManagedComponentContextProvider: InfiniteTableHeaderRoot } =
   });
 
 export function InfiniteTableHeader<T>(props: InfiniteTableHeaderProps<T>) {
-  const context = useInfiniteTable<T>();
+  const { getComputed, header, brain, headerBrain, wrapRowsHorizontally } =
+    useInfiniteTableSelector((ctx) => {
+      return {
+        getComputed: ctx.getComputed,
+        header: ctx.state.header,
+        brain: ctx.state.brain,
+        headerBrain: ctx.state.headerBrain,
+        wrapRowsHorizontally: ctx.state.wrapRowsHorizontally,
+      };
+    });
 
-  const { state: componentState, getComputed } = context;
-  const { header, brain, headerBrain, wrapRowsHorizontally } = componentState;
   const { scrollbars } = getComputed();
 
   return header ? (

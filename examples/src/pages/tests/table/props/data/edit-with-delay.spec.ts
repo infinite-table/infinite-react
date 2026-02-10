@@ -2,8 +2,10 @@ import { test, expect } from '@testing';
 
 export default test.describe
   .parallel('Immediate edit works on lazy editable columns', () => {
-  test('on string column', async ({ page, rowModel }) => {
+  test('on string column', async ({ page, rowModel, tracingModel }) => {
     await page.waitForInfinite();
+    const stop = await tracingModel.start();
+
     const editor = page.locator('input');
     const cell = {
       colId: 'firstName',
@@ -38,5 +40,7 @@ export default test.describe
     // just wait a bit more to make sure the editor is not showing again
     await page.waitForTimeout(1150);
     expect(await editor.count()).toBe(0);
+
+    await stop();
   });
 });
