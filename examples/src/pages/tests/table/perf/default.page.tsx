@@ -23,12 +23,7 @@ const getColumns = (count: number) => {
       field: colName,
       // defaultWidth: Math.max(COL_DEFAULT_WIDTH + index, 40),
       render: ((i: number, { rowIndex, column }: any) => {
-        // console.log('render', { rowIndex, columnName: column.id });
-        return (
-          <span>
-            Row {rowIndex}, col {column.field} = {i}
-          </span>
-        );
+        return <span>{`Row ${rowIndex}, col ${column.field} = ${i}`}</span>;
       }).bind(null, i),
     };
     columns[colName] = column;

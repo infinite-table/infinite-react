@@ -456,6 +456,5 @@ export function useCellRendering<T>(
   return {
     renderCell,
     renderDetailRow,
-    // repaintId,
   };
 }

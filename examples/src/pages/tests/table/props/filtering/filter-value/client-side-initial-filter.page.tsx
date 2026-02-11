@@ -61,7 +61,7 @@ const domProps: React.HTMLAttributes<HTMLDivElement> = {
 function UnfilterdCount() {
   const { unfilteredCount } = useDataSourceSelector((ctx) => {
     return {
-      unfilteredCount: ctx.dataSourceState.dataArray.length,
+      unfilteredCount: ctx.dataSourceState.unfilteredCount,
     };
   });
   return (
