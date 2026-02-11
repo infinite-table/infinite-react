@@ -1,11 +1,4 @@
 {
-  "tests/table/perf/default:horizontal-scrolling": {
-    "scriptingTime": 111.42,
-    "renderingTime": 26.61,
-    "paintingTime": 8.89,
-    "totalTime": 714.34,
-    "threshold": 10
-  },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
     "scriptingTime": 304.86,
     "renderingTime": 94.59,
