@@ -7,8 +7,8 @@
     "threshold": 10
   },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
-    "scriptingTime": 304.86,
-    "renderingTime": 94.59,
+    "scriptingTime": 304.8,
+    "renderingTime": 94.5,
     "paintingTime": 49.87,
     "totalTime": 652.31,
     "threshold": 10
