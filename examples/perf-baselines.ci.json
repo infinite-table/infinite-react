@@ -1,16 +1,16 @@
 {
-  "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
-    "scriptingTime": 304.86,
-    "renderingTime": 94.59,
-    "paintingTime": 49.87,
-    "totalTime": 652.31,
-    "threshold": 10
-  },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
     "scriptingTime": 579.33,
     "renderingTime": 36.93,
     "paintingTime": 51.26,
     "totalTime": 3089.28,
+    "threshold": 10
+  },
+  "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 304.86,
+    "renderingTime": 94.59,
+    "paintingTime": 49.87,
+    "totalTime": 652.31,
     "threshold": 10
   }
 }
