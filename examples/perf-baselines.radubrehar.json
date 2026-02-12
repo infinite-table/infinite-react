@@ -110,5 +110,19 @@
     "paintingTime": 12.36,
     "totalTime": 3216.48,
     "threshold": 10
+  },
+  "tests/table/perf/default:horizontal-scrolling.": {
+    "scriptingTime": 293.15,
+    "renderingTime": 10.42,
+    "paintingTime": 2.43,
+    "totalTime": 734.17,
+    "threshold": 10
+  },
+  "tests/table/perf/default:horizontal-scrolling with tracing": {
+    "scriptingTime": 290.12,
+    "renderingTime": 10.42,
+    "paintingTime": 2.46,
+    "totalTime": 797.07,
+    "threshold": 10
   }
 }
