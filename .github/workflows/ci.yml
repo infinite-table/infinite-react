@@ -7,6 +7,7 @@ on:
       - 'source/src/**'
       - 'examples/src/**/*.spec.ts'
       - 'examples/src/**/*.page.tsx'
+      - 'examples/src/**/*.ts'
 
 concurrency:
   group: ${{ github.workflow }}
