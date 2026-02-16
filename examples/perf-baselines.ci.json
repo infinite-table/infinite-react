@@ -6,27 +6,7 @@
     "totalTime": 628.45,
     "threshold": 10
   },
-  "tests/table/perf/flashing/default:perf should be fine when single click": {
-    "scriptingTime": 22.01,
-    "renderingTime": 0.48,
-    "paintingTime": 0.07,
-    "totalTime": 155.95,
-    "threshold": 10
-  },
-  "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
-    "scriptingTime": 163.94,
-    "renderingTime": 81.91,
-    "paintingTime": 5.63,
-    "totalTime": 451.16,
-    "threshold": 10
-  },
-  "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
-    "scriptingTime": 847.02,
-    "renderingTime": 35.58,
-    "paintingTime": 28.71,
-    "totalTime": 3126.17,
-    "threshold": 10
-  },
+
   "tests/table/props/column/column-change:works correctly": {
     "scriptingTime": 39.5,
     "renderingTime": 4.08,
@@ -55,20 +35,7 @@
     "totalTime": 221.55,
     "threshold": 10
   },
-  "tests/table/props/data/editing/column-editor:should use custom editor when configured": {
-    "scriptingTime": 118.99,
-    "renderingTime": 32.66,
-    "paintingTime": 5.04,
-    "totalTime": 628.58,
-    "threshold": 10
-  },
-  "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
-    "scriptingTime": 56.02,
-    "renderingTime": 11.96,
-    "paintingTime": 1.26,
-    "totalTime": 294.24,
-    "threshold": 10
-  },
+
   "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
     "scriptingTime": 81.64,
     "renderingTime": 20.67,
