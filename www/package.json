@@ -10,7 +10,7 @@
     "touch-slug-pages": "npm run touch-docs-slug-page && npm run touch-blog-slug-page",
     "touch-docs-slug-page": "touch ./src/app/\\(docs\\)/docs/[...docsPages]/page.tsx",
     "touch-blog-slug-page": "touch ./src/app/blog/[...blogpost]/page.tsx",
-    "next-dev": "rm -fr .next && next dev -p 3001",
+    "next-dev": "rm -fr .next && next dev -p 3001 --turbopack",
     "build": "npm run copy-license && npm run index-content && npm --prefix dataserver install && npm run generate-lib-dts && npm run update-css-vars-list && npm run next-build",
     "next-build": "next build --turbopack",
     "update-css-vars-list": "node build/create-css-vars-list.js",

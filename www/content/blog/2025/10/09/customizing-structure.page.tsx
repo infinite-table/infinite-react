@@ -5,6 +5,7 @@ import {
   DataSourceGroupBy,
   components,
   useDataSourceState,
+  DataSourceState,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -104,7 +105,9 @@ export default function App() {
 }
 
 function AppGrid() {
-  const { dataArray } = useDataSourceState();
+  const dataLength = useDataSourceState(
+    (state: DataSourceState<Developer>) => state.dataArray.length,
+  );
   return (
     <div className="flex-1 flex flex-col gap-1 ">
       <InfiniteTable<Developer>
@@ -117,7 +120,7 @@ function AppGrid() {
           <div className="flex flex-1 flex-col">
             <InfiniteTable.Body />
             <div className="text-foreground text-lg p-3">
-              Showing {dataArray.length} rows
+              Showing {dataLength} rows
             </div>
             <InfiniteTable.Header />
           </div>

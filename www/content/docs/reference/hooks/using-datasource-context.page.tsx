@@ -5,6 +5,7 @@ import {
   DataSource,
   useDataSourceState,
   type InfiniteTableColumn,
+  DataSourceState,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -52,7 +53,9 @@ export default function App() {
 }
 
 function AppGrid() {
-  const { dataArray } = useDataSourceState();
+  const dataLength = useDataSourceState(
+    (state: DataSourceState<Developer>) => state.dataArray.length,
+  );
   return (
     <div
       style={{
@@ -66,8 +69,8 @@ function AppGrid() {
     >
       <h1>Your DataGrid</h1>
       <p>
-        Displaying {dataArray.length} rows. Collapse/expand rows to see this
-        number change.
+        Displaying {dataLength} rows. Collapse/expand rows to see this number
+        change.
       </p>
 
       <InfiniteTable<Developer>
