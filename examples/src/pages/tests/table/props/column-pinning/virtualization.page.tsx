@@ -4,8 +4,8 @@ import {
   InfiniteTable,
   InfiniteTableApi,
   InfiniteTablePropColumnPinning,
+  DataSource,
 } from '@infinite-table/infinite-react';
-import { DataSource } from '@infinite-table/infinite-react';
 
 import { rowData, Car } from '../column-visibility/rowData';
 

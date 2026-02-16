@@ -42,7 +42,7 @@ export function useInfiniteTableSingleValue<R>(
  * @param selector  Function that extracts an object from the context.
  *                  Does NOT need to be memoized by the caller.
  */
-export function useInfiniteTableSelector<R extends object>(
+export function useInfiniteTableSelector<R extends unknown>(
   selector: (ctx: InfiniteTableContextValue<any>) => R,
 ): R {
   const StoreContext = getInfiniteTableStoreContext<any>();

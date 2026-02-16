@@ -119,7 +119,7 @@ export function useComponentStoreSingleValue<CTX, R>(
  * @param selector  Function that extracts an object from the context.
  *                  Does NOT need to be memoized by the caller.
  */
-export function useComponentStoreSelector<CTX, R extends object>(
+export function useComponentStoreSelector<CTX, R extends unknown>(
   componentStore: ComponentStore<CTX>,
   selector: (ctx: CTX) => R,
 ): R {

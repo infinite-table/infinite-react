@@ -4,7 +4,6 @@ import { RefObject } from 'react';
 import { join } from '../../utils/join';
 import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 
-import { useDataSourceState } from '../DataSource/publicHooks/useDataSourceState';
 import { useMasterDetailStore } from '../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 import {
@@ -87,6 +86,7 @@ import {
   useDataSourceSelector,
   useDataSourceStableContext,
 } from '../DataSource/publicHooks/useDataSourceSelector';
+import { useDataSourceState } from '../DataSource';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -110,9 +110,7 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
     mappedCallbacks: getMappedCallbacks(),
 
     getParentState: () => {
-      const contextValue = useDataSourceState();
-
-      return contextValue;
+      return useDataSourceState<any>((state) => state);
     },
     debugName: (props: { debugId?: string }) => {
       return getDebugChannel(props.debugId, DEBUG_NAME);

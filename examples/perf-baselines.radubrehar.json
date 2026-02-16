@@ -27,13 +27,6 @@
     "totalTime": 114.46,
     "threshold": 10
   },
-  "tests/table/props/column-pinning/virtualization:should work correctly": {
-    "scriptingTime": 13.21,
-    "renderingTime": 2.95,
-    "paintingTime": 0.31,
-    "totalTime": 93.6,
-    "threshold": 10
-  },
   "tests/table/props/column/column-change:works correctly": {
     "scriptingTime": 81.79,
     "renderingTime": 2.38,
@@ -84,31 +77,31 @@
     "threshold": 10
   },
   "tests/table/perf/flashing/default:perf should be fine when single click": {
-    "scriptingTime": 202.74,
-    "renderingTime": 0.76,
-    "paintingTime": 0.34,
-    "totalTime": 234.22,
+    "scriptingTime": 71.41,
+    "renderingTime": 0.39,
+    "paintingTime": 0.06,
+    "totalTime": 89.04,
     "threshold": 10
   },
   "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
-    "scriptingTime": 439.85,
-    "renderingTime": 25.64,
-    "paintingTime": 2.89,
-    "totalTime": 545.17,
+    "scriptingTime": 152.55,
+    "renderingTime": 25.5,
+    "paintingTime": 2.65,
+    "totalTime": 257.12,
     "threshold": 10
   },
   "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
-    "scriptingTime": 1705.11,
-    "renderingTime": 31.73,
-    "paintingTime": 25.01,
-    "totalTime": 4403.5,
+    "scriptingTime": 638.96,
+    "renderingTime": 23.08,
+    "paintingTime": 11,
+    "totalTime": 2647.44,
     "threshold": 10
   },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
-    "scriptingTime": 1021.06,
-    "renderingTime": 20.84,
-    "paintingTime": 12.36,
-    "totalTime": 3216.48,
+    "scriptingTime": 382.65,
+    "renderingTime": 22.89,
+    "paintingTime": 12.41,
+    "totalTime": 2626.64,
     "threshold": 10
   },
   "tests/table/perf/default:horizontal-scrolling.": {
@@ -119,10 +112,10 @@
     "threshold": 10
   },
   "tests/table/perf/default:horizontal-scrolling with tracing": {
-    "scriptingTime": 290.12,
-    "renderingTime": 10.42,
-    "paintingTime": 2.46,
-    "totalTime": 797.07,
+    "scriptingTime": 121.15,
+    "renderingTime": 11.14,
+    "paintingTime": 3,
+    "totalTime": 645.6,
     "threshold": 10
   }
 }

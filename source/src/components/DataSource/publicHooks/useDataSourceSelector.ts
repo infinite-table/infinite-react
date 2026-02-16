@@ -43,7 +43,7 @@ export function useDataSourceSingleValue<R>(
  * @param selector  Function that extracts an object from the DataSource context.
  *                  Does NOT need to be memoized by the caller.
  */
-export function useDataSourceSelector<R extends object>(
+export function useDataSourceSelector<R extends unknown>(
   selector: (ctx: DataSourceContextValue<any>) => R,
 ): R {
   const StoreContext = getDataSourceStoreContext<any>();

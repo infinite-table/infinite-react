@@ -5,9 +5,11 @@ import {
   InfiniteTable,
   DataSource,
   InfiniteTablePropColumns,
-  InfiniteTableRowInfo,
   DataSourceProps,
   useMasterRowInfo,
+  useDataSourceState,
+  DataSourceState,
+  useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -28,28 +30,24 @@ type Developer = {
   streetPrefix: string;
 };
 
+function HeaderWithCount() {
+  const dataArray = useDataSourceState(
+    (state: DataSourceState<Developer>) => state.dataArray,
+  );
+
+  const { column } = useInfiniteHeaderCell<Developer>();
+  const length = dataArray.length;
+  return (
+    <div>
+      {column.id} {length}
+    </div>
+  );
+}
 const columns: InfiniteTablePropColumns<Developer> = {
   id: {
     field: 'id',
-
-    // render: ({ value, toggleCurrentRowDetails }) => {
-    //   return (
-    //     <div>
-    //       {value}{' '}
-    //       <button onClick={() => toggleCurrentRowDetails()}>toggle</button>
-    //     </div>
-    //   );
-    // },
-    components: {
-      HeaderCell: () => {
-        const masterRowInfo = useMasterRowInfo<Developer>();
-
-        if (masterRowInfo) {
-          return <div>Hello {masterRowInfo.data?.firstName}</div>;
-        }
-
-        return <div>Hello</div>;
-      },
+    renderHeader: () => {
+      return <HeaderWithCount />;
     },
   },
 
@@ -125,22 +123,28 @@ const detailDataSource: DataSourceProps<Developer>['data'] = ({
       const { data } = response;
 
       return new Promise<Developer[]>((resolve) => {
-        setTimeout(() => {
-          resolve(
-            data.map((x) => {
-              return {
-                ...x,
-                id: `000${x.id}` as any as number,
-              } as Developer;
-            }),
-          );
-        }, 1000);
+        // setTimeout(() => {
+        resolve(
+          data.map((x) => {
+            return {
+              ...x,
+              id: `000${x.id}` as any as number,
+            } as Developer;
+          }),
+        );
+        // }, 1000);
       });
     });
 };
 
 const detailCols: InfiniteTablePropColumns<Developer> = {
-  firstName: { field: 'firstName' },
+  firstNameChildColumn: {
+    field: 'firstName',
+
+    renderHeader: () => {
+      return <HeaderWithCount />;
+    },
+  },
   age: { field: 'age' },
   salary: { field: 'salary' },
   canDesign: { field: 'canDesign' },
@@ -162,24 +166,19 @@ const detailsDOMProps = {
 function RowDetail() {
   const rowInfo = useMasterRowInfo<Developer>();
 
-  console.log(rowInfo, 'rowInfo');
   if (!rowInfo) {
     return null;
   }
   return (
-    <div
-      style={{
-        background: 'tomato',
-        padding: 20,
-        height: '100%',
-        display: 'flex',
-        flexFlow: 'column',
-      }}
-    >
-      <form style={{ padding: 20 }}>
+    <div className="flex flex-col gap-2 p-[20px] bg-[tomato] h-full">
+      <form className="flex flex-row gap-2 items-center">
         <label>
           First name:
-          <input name="first name" defaultValue={rowInfo.data?.firstName} />
+          <input
+            name="first name"
+            className="bg-white text-black border border-gray-300 rounded-md p-2"
+            defaultValue={rowInfo.data?.firstName}
+          />
         </label>
         <label>
           Age:
