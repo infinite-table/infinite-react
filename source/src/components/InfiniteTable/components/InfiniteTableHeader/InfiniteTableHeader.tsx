@@ -67,7 +67,6 @@ function InfiniteTableInternalHeaderFn<T>(
         string,
         InfiniteTableComputedColumn<T>
       >,
-      computed: ctx.computed,
       getState: ctx.getState,
       headerOptions: ctx.state.headerOptions,
       headerRenderer: ctx.state.headerRenderer,

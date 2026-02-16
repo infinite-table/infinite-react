@@ -78,7 +78,6 @@ export function useCellRendering<T>(
   } = useInfiniteTableSelector((ctx) => {
     return {
       actions: ctx.actions,
-      state: ctx.state,
       getState: ctx.getState,
       getComputed: ctx.getComputed,
       getDataSourceMasterContext: ctx.getDataSourceMasterContext,

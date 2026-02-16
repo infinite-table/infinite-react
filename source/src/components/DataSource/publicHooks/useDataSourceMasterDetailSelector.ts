@@ -3,12 +3,20 @@ import { useCallback, useContext } from 'react';
 import type { DataSourceMasterDetailContextValue } from '../types';
 
 import {
+  createComponentStore,
   useComponentStoreSelector,
   useComponentStoreSingleValue,
 } from '../../../utils/ComponentStore';
 import { getDataSourceMasterDetailStoreContext } from '../DataSourceMasterDetailContext';
 import { DataSourceMasterDetailStore } from '../DataSourceMasterDetailStore';
 import { InfiniteTableRowInfo } from '../../InfiniteTable';
+
+/**
+ * A stable no-op store used as a fallback so that hooks are called
+ * unconditionally (Rules of Hooks) even when outside a detail context.
+ */
+const NOOP_STORE = createComponentStore<any>();
+const NOOP_SELECTOR = () => undefined;
 
 /**
  * Returns the raw master-detail store (or undefined when outside a detail row).
@@ -79,10 +87,15 @@ export function useDataSourceMasterDetailSelector<R extends object>(
   const StoreContext = getDataSourceMasterDetailStoreContext<any>();
   const store = useContext(StoreContext) as DataSourceMasterDetailStore<any>;
 
-  if (!store) {
-    return undefined;
-  }
-  return useComponentStoreSelector(store, selector) ?? undefined;
+  // Always call the hook to satisfy the Rules of Hooks.
+  // When no store exists, use a no-op store + no-op selector so
+  // useSyncExternalStore is still invoked unconditionally.
+  const result = useComponentStoreSelector(
+    store || NOOP_STORE,
+    store ? selector : (NOOP_SELECTOR as unknown as typeof selector),
+  );
+
+  return store ? result ?? undefined : undefined;
 }
 
 export function useMasterRowInfo<T = any>():
@@ -91,11 +104,15 @@ export function useMasterRowInfo<T = any>():
   const StoreContext = getDataSourceMasterDetailStoreContext<any>();
   const store = useContext(StoreContext) as DataSourceMasterDetailStore<any>;
 
-  if (!store) {
-    return undefined;
-  }
-  return useComponentStoreSingleValue(
-    store,
-    (ctx) => ctx.masterRowInfo as InfiniteTableRowInfo<T>,
+  // Always call the hook to satisfy the Rules of Hooks.
+  const masterRowInfoSelector = store
+    ? (ctx: any) => ctx.masterRowInfo as InfiniteTableRowInfo<T>
+    : (NOOP_SELECTOR as unknown as (ctx: any) => InfiniteTableRowInfo<T>);
+
+  const result = useComponentStoreSingleValue(
+    store || NOOP_STORE,
+    masterRowInfoSelector,
   );
+
+  return store ? result : undefined;
 }

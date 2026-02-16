@@ -53,6 +53,9 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
 
   React.useLayoutEffect(() => {
     masterDetailStore.notify();
+    // this value is different whenever masterRowInfo.id changes
+    // so we're fine with this not triggering a notification
+    // on all renders
   }, [masterDetailContextValue]);
 
   return (

@@ -106,7 +106,6 @@ function Cmp() {
   const { dataArrayLength } = useDataSourceSelector((ctx) => {
     return {
       dataArrayLength: ctx.dataSourceState.dataArray.length,
-      loading: ctx.dataSourceState.loading,
     };
   });
   (globalThis as any).dataArrayLength = dataArrayLength;
