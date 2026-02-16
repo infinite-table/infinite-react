@@ -1,12 +1,11 @@
 {
   "tests/table/perf/default:horizontal-scrolling with tracing": {
-    "scriptingTime": 135.73,
-    "renderingTime": 23.92,
-    "paintingTime": 8.11,
-    "totalTime": 628.45,
+    "scriptingTime": 120.12,
+    "renderingTime": 21.44,
+    "paintingTime": 7.27,
+    "totalTime": 701.2,
     "threshold": 10
   },
-
   "tests/table/props/column/column-change:works correctly": {
     "scriptingTime": 39.5,
     "renderingTime": 4.08,
@@ -22,53 +21,87 @@
     "threshold": 10
   },
   "tests/table/props/data/basic-add-data:insert data": {
-    "scriptingTime": 198.43,
-    "renderingTime": 4.35,
-    "paintingTime": 1.37,
-    "totalTime": 301.11,
+    "scriptingTime": 43.25,
+    "renderingTime": 4.47,
+    "paintingTime": 1.65,
+    "totalTime": 248.13,
     "threshold": 10
   },
   "tests/table/props/data/basic-update:via API should not rerender header": {
-    "scriptingTime": 23.61,
-    "renderingTime": 2.46,
-    "paintingTime": 0.97,
-    "totalTime": 221.55,
+    "scriptingTime": 16.67,
+    "renderingTime": 2.16,
+    "paintingTime": 0.45,
+    "totalTime": 179.06,
     "threshold": 10
   },
-
   "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
-    "scriptingTime": 81.64,
-    "renderingTime": 20.67,
-    "paintingTime": 2.25,
-    "totalTime": 575.84,
+    "scriptingTime": 66.34,
+    "renderingTime": 12.46,
+    "paintingTime": 1.61,
+    "totalTime": 516.01,
     "threshold": 10
   },
   "tests/table/props/data/edit-with-delay:on string column": {
-    "scriptingTime": 322.51,
-    "renderingTime": 24.6,
-    "paintingTime": 17.67,
-    "totalTime": 4084.08,
+    "scriptingTime": 123.19,
+    "renderingTime": 19.3,
+    "paintingTime": 7.6,
+    "totalTime": 3905.13,
     "threshold": 10
   },
   "tests/table/props/filtering/filter-value/client-side:Filters correctly": {
-    "scriptingTime": 254.35,
-    "renderingTime": 29.37,
-    "paintingTime": 7.81,
-    "totalTime": 455.72,
+    "scriptingTime": 121.06,
+    "renderingTime": 23.98,
+    "paintingTime": 7.53,
+    "totalTime": 422.73,
     "threshold": 10
   },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
-    "scriptingTime": 473.23,
-    "renderingTime": 141,
-    "paintingTime": 57.1,
-    "totalTime": 906.55,
+    "scriptingTime": 395.93,
+    "renderingTime": 127.16,
+    "paintingTime": 50.7,
+    "totalTime": 765.05,
     "threshold": 10
   },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
-    "scriptingTime": 642.03,
-    "renderingTime": 43.1,
-    "paintingTime": 45.53,
-    "totalTime": 3284.21,
+    "scriptingTime": 575.61,
+    "renderingTime": 45.68,
+    "paintingTime": 46.33,
+    "totalTime": 3129.27,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:perf should be fine when single click": {
+    "scriptingTime": 162.92,
+    "renderingTime": 1.27,
+    "paintingTime": 0.88,
+    "totalTime": 199.94,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
+    "scriptingTime": 264.69,
+    "renderingTime": 103.77,
+    "paintingTime": 7.97,
+    "totalTime": 588.6,
+    "threshold": 10
+  },
+  "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
+    "scriptingTime": 1158.85,
+    "renderingTime": 48.04,
+    "paintingTime": 50.35,
+    "totalTime": 4326.3,
+    "threshold": 10
+  },
+  "tests/table/props/data/editing/column-editor:should use custom editor when configured": {
+    "scriptingTime": 114.93,
+    "renderingTime": 27.04,
+    "paintingTime": 3.7,
+    "totalTime": 586.72,
+    "threshold": 10
+  },
+  "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
+    "scriptingTime": 153.16,
+    "renderingTime": 41.66,
+    "paintingTime": 5.08,
+    "totalTime": 516.94,
     "threshold": 10
   }
 }
