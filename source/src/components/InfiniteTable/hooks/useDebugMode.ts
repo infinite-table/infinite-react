@@ -6,7 +6,6 @@ import { debug } from '../../../utils/debugPackage';
 import { stripVar } from '../../../utils/stripVar';
 
 import { CSS_LOADED_VALUE, ThemeVars } from '../vars.css';
-import { useInfiniteTable } from './useInfiniteTable';
 import {
   DataSourceDebugWarningKey,
   ErrorCodeKey,
@@ -44,6 +43,7 @@ import {
   DevToolsOverlayBg,
   DevToolsOverlayText,
 } from './debugModeDevToolsOverlay.css';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 const cssFileLoadedVarName = stripVar(ThemeVars.loaded);
 const messageBase = {
@@ -211,7 +211,13 @@ const setupHook = once<any, DevToolsHookFn>(() => {
 
 export function useDebugMode() {
   const { getState, getDataSourceState, dataSourceActions } =
-    useInfiniteTable();
+    useInfiniteTableSelector((ctx) => {
+      return {
+        getState: ctx.getState,
+        getDataSourceState: ctx.getDataSourceState,
+        dataSourceActions: ctx.dataSourceActions,
+      };
+    });
 
   const state = getState();
   const { domRef, debugId } = state;
@@ -510,7 +516,17 @@ export function useDevTools() {
     actions,
     dataSourceApi,
     api,
-  } = useInfiniteTable();
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      getState: ctx.getState,
+      getComputed: ctx.getComputed,
+      getDataSourceState: ctx.getDataSourceState,
+      dataSourceActions: ctx.dataSourceActions,
+      actions: ctx.actions,
+      dataSourceApi: ctx.dataSourceApi,
+      api: ctx.api,
+    };
+  });
 
   const state = getState();
 

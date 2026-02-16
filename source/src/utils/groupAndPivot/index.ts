@@ -145,6 +145,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoNormal<T> = {
   isGroupRow: false;
   isTreeNode: false;
   isParentNode: false;
+  nodeExpanded: false;
   rowActive: boolean;
   rowDetailState: false | 'expanded' | 'collapsed';
   rowInfo:
@@ -194,6 +195,7 @@ export type InfiniteTableRowInfoDataDiscriminator_RowInfoGroup<T> = {
   isGroupRow: true;
   isTreeNode: false;
   isParentNode: false;
+  nodeExpanded: false;
   field?: keyof T;
   value: any;
   rawValue: any;

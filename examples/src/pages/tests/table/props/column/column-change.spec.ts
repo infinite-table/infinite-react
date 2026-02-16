@@ -6,10 +6,12 @@ export default test.describe.parallel('Column change', () => {
     columnModel,
     rowModel,
     headerModel,
+    tracingModel,
   }) => {
     await page.waitForInfinite();
     await page.waitForTimeout(20);
 
+    const stop = await tracingModel.start();
     let widths = (
       await columnModel.getColumnWidths(['firstName', 'salary', 'stack'])
     ).list;
@@ -42,5 +44,7 @@ export default test.describe.parallel('Column change', () => {
     expect(widths).toEqual([500, 100, 100]);
     expect(headerText).toEqual('lastName');
     expect(cellText).toContain('!!!');
+
+    await stop();
   });
 });

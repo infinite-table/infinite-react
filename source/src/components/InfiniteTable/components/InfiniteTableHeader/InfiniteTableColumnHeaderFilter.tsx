@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { join } from '../../../../utils/join';
 
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
-import { useInfiniteTableState } from '../../hooks/useInfiniteTableState';
 import { height } from '../../utilities.css';
 import { FilterIcon } from '../icons/FilterIcon';
 
@@ -22,6 +20,10 @@ import {
   InfiniteTableColumnHeaderFilterProps,
 } from './InfiniteTableColumnHeaderFilterContext';
 import { useInfiniteHeaderCell } from './InfiniteTableHeaderCell';
+import {
+  useInfiniteTableSelector,
+  useInfiniteTableStableContext,
+} from '../../hooks/useInfiniteTableSelector';
 
 const InfiniteTableColumnHeaderFilterInputClassName = `${InfiniteTableColumnHeaderFilterClassName}__input`;
 
@@ -30,7 +32,14 @@ const stopPropagation = (e: React.PointerEvent<any>) => e.stopPropagation();
 export function InfiniteTableColumnHeaderFilter<T>(
   props: InfiniteTableColumnHeaderFilterProps<T>,
 ) {
-  const { filterOperatorMenuVisibleForColumnId } = useInfiniteTableState();
+  const { filterOperatorMenuVisibleForColumnId } = useInfiniteTableSelector(
+    (ctx) => {
+      return {
+        filterOperatorMenuVisibleForColumnId:
+          ctx.state.filterOperatorMenuVisibleForColumnId,
+      };
+    },
+  );
   const { column } = useInfiniteHeaderCell();
 
   const FilterEditor = props.filterEditor;
@@ -116,7 +125,7 @@ export function InfiniteTableColumnHeaderFilterEmpty() {
 }
 
 export function useInfiniteColumnFilterEditor<T>() {
-  const context = useInfiniteTable<T>();
+  const context = useInfiniteTableStableContext<T>();
 
   const { column, columnApi } = useInfiniteHeaderCell<T>();
 

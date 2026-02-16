@@ -1,14 +1,19 @@
 import { useEffect, useLayoutEffect, useMemo } from 'react';
 
-import type { InfiniteTableColumn, InfiniteTableState } from '..';
-import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import type {
-  DataSourceGroupBy,
-  DataSourcePivotBy,
-  DataSourcePropGroupBy,
-  DataSourcePropSelectionMode,
+  InfiniteTableColumn,
+  InfiniteTableRowInfo,
+  InfiniteTableState,
+} from '..';
+import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
+import {
+  DataSourceState,
+  useDataSourceSelector,
+  type DataSourceGroupBy,
+  type DataSourcePivotBy,
+  type DataSourcePropGroupBy,
+  type DataSourcePropSelectionMode,
 } from '../../DataSource';
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { useManagedComponentState } from '../../hooks/useComponentState';
 import { getGroupByMap } from '../state/getInitialState';
 import {
@@ -25,7 +30,7 @@ import type {
   InfiniteTablePropGroupRenderStrategy,
   InfiniteTableProps,
 } from '../types/InfiniteTableProps';
-import { GroupByMap } from '../types/InfiniteTableState';
+import { GroupByMap, InfiniteTableActions } from '../types/InfiniteTableState';
 import {
   getColumnForGroupBy,
   getGroupColumnRender,
@@ -34,24 +39,28 @@ import {
 } from '../utils/getColumnForGroupBy';
 
 import { ToggleGroupRowFn, useToggleGroupRow } from './useToggleGroupRow';
+import { useLatest } from '../../hooks/useLatest';
 
 function useGroupByMap<T>(groupBy: DataSourcePropGroupBy<T>) {
   return useMemo(() => getGroupByMap(groupBy), [groupBy]);
 }
 
-export function useColumnsWhen<T>() {
-  const {
-    componentState: { groupBy },
-    componentActions: dataSourceActions,
-  } = useDataSourceContextValue<T>();
+export function useColumnsWhen<T>(
+  state: InfiniteTableState<T>,
+  actions: InfiniteTableActions<T>,
+) {
+  const { groupBy, dataSourceActions } = useDataSourceSelector((ctx) => {
+    return {
+      groupBy: ctx.dataSourceState.groupBy as DataSourceGroupBy<T>[],
+      dataSourceActions: ctx.dataSourceActions,
+    };
+  });
 
   const {
-    componentState: {
-      groupRenderStrategy,
-      pivotTotalColumnPosition,
-      pivotGrandTotalColumnPosition,
-    },
-  } = useManagedComponentState<InfiniteTableState<T>>();
+    groupRenderStrategy,
+    pivotTotalColumnPosition,
+    pivotGrandTotalColumnPosition,
+  } = state;
 
   useEffect(() => {
     dataSourceActions.generateGroupRows = groupRenderStrategy !== 'inline';
@@ -70,21 +79,24 @@ export function useColumnsWhen<T>() {
 
   const groupByMap = useGroupByMap(groupBy);
 
-  useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap);
+  useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap, state, actions);
   const { toggleGroupRow } = useColumnsWhenGrouping<T>();
 
-  useHideColumns<T>(groupByMap);
+  useHideColumns<T>(groupByMap, state, actions);
 
   return { toggleGroupRow };
 }
 
-function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
+function useColumnsWhenInlineGroupRenderStrategy<T>(
+  groupByMap: GroupByMap<T>,
+  state: InfiniteTableState<T>,
+  actions: InfiniteTableActions<T>,
+) {
   const toggleGroupRow = useToggleGroupRow();
 
-  const {
-    componentActions,
-    componentState: { columns, groupRenderStrategy, isTree },
-  } = useManagedComponentState<InfiniteTableState<T>>();
+  const { columns, groupRenderStrategy, isTree } = state;
+
+  const componentActions = actions;
 
   function computeColumnsWhenInlineGroupRenderStrategy(
     columns: Record<string, InfiniteTableColumn<T>>,
@@ -194,9 +206,13 @@ function useColumnsWhenInlineGroupRenderStrategy<T>(groupByMap: GroupByMap<T>) {
 }
 
 function useColumnsWhenGrouping<T>() {
-  const {
-    componentState: { groupBy, pivotBy, selectionMode },
-  } = useDataSourceContextValue<T>();
+  const { groupBy, pivotBy, selectionMode } = useDataSourceSelector((ctx) => {
+    return {
+      groupBy: ctx.dataSourceState.groupBy as DataSourceGroupBy<T>[],
+      pivotBy: ctx.dataSourceState.pivotBy as DataSourcePivotBy<T>[],
+      selectionMode: ctx.dataSourceState.selectionMode,
+    };
+  });
 
   const {
     componentActions,
@@ -279,31 +295,44 @@ function useColumnsWhenGrouping<T>() {
   return { toggleGroupRow };
 }
 
-function useHideColumns<T>(groupByMap: GroupByMap<T>) {
+function useHideColumns<T>(
+  groupByMap: GroupByMap<T>,
+  state: InfiniteTableState<T>,
+  actions: InfiniteTableActions<T>,
+) {
   const {
-    componentState: {
-      dataArray,
-      groupRowsIndexesInDataArray,
-      groupBy,
-      groupRowsState,
-      originalLazyGroupDataChangeDetect,
-    },
-    getState: getDataSourceState,
-  } = useDataSourceContextValue<T>();
+    dataArray,
+    groupRowsIndexesInDataArray,
+    groupBy,
+    groupRowsState,
+    originalLazyGroupDataChangeDetect,
+    getDataSourceState,
+  } = useDataSourceSelector((ctx) => {
+    return {
+      getDataSourceState: ctx.getDataSourceState,
+      dataArray: ctx.dataSourceState.dataArray as InfiniteTableRowInfo<T>[],
+      groupRowsIndexesInDataArray:
+        ctx.dataSourceState.groupRowsIndexesInDataArray,
+      groupBy: ctx.dataSourceState.groupBy as DataSourceState<T>['groupBy'],
+      groupRowsState: ctx.dataSourceState.groupRowsState,
+      originalLazyGroupDataChangeDetect:
+        ctx.dataSourceState.originalLazyGroupDataChangeDetect,
+    };
+  });
 
   const {
-    getComponentState,
-    componentActions,
-    componentState: {
-      columnTypes,
-      computedColumns,
+    columnTypes,
+    computedColumns,
 
-      hideColumnWhenGrouped,
-      hideEmptyGroupColumns,
+    hideColumnWhenGrouped,
+    hideEmptyGroupColumns,
 
-      groupRenderStrategy,
-    },
-  } = useManagedComponentState<InfiniteTableState<T>>();
+    groupRenderStrategy,
+  } = state;
+
+  const componentActions = actions;
+
+  const getComponentState = useLatest(state);
 
   // implements hideEmptyGroupColumns
   useLayoutEffect(() => {
@@ -317,7 +346,7 @@ function useHideColumns<T>(groupByMap: GroupByMap<T>) {
       groupByMap,
     );
 
-    const newColumnVisibility = getColumnVisibilityForHideEmptyGroupColumns({
+    const newColumnVisibility = getColumnVisibilityForHideEmptyGroupColumns<T>({
       computedGroupColumns,
       columnVisibility: currentState.columnVisibility,
       hideEmptyGroupColumns,

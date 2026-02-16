@@ -1,7 +1,11 @@
 import { test } from '@testing';
 
 export default test.describe.parallel('Tracing', () => {
-  test('horizontal-scrolling', async ({ page, apiModel, tracingModel }) => {
+  test('horizontal-scrolling with tracing', async ({
+    page,
+    apiModel,
+    tracingModel,
+  }) => {
     await page.waitForInfinite();
 
     const stop = await tracingModel.start();

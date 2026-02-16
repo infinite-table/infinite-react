@@ -1,16 +1,17 @@
 import { createContext } from 'react';
-import { InfiniteTableContextValue } from './types/InfiniteTableContextValue';
 
-let TableContext: any;
+import type { InfiniteTableStore } from './InfiniteTableStore';
 
-export function getInfiniteTableContext<T>(): React.Context<
-  InfiniteTableContextValue<T>
+let InfiniteTableStoreContext: any;
+
+export function getInfiniteTableStoreContext<T>(): React.Context<
+  InfiniteTableStore<T>
 > {
-  if (TableContext as React.Context<InfiniteTableContextValue<T>>) {
-    return TableContext;
+  if (InfiniteTableStoreContext as React.Context<InfiniteTableStore<T>>) {
+    return InfiniteTableStoreContext;
   }
 
-  return (TableContext = createContext<InfiniteTableContextValue<T>>(
-    null as any as InfiniteTableContextValue<T>,
+  return (InfiniteTableStoreContext = createContext<InfiniteTableStore<T>>(
+    null as any as InfiniteTableStore<T>,
   ));
 }

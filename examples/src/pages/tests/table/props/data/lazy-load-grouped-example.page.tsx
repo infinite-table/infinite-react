@@ -4,7 +4,7 @@ import {
   InfiniteTablePropColumns,
   DataSourceProps,
   DataSource,
-  useDataSourceState,
+  useDataSourceSelector,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -103,7 +103,12 @@ const dataSource: DataSourceData<Developer> = ({
 const spiedDataSource = sinon.spy(dataSource);
 
 function Cmp() {
-  (globalThis as any).state = useDataSourceState();
+  const { dataArrayLength } = useDataSourceSelector((ctx) => {
+    return {
+      dataArrayLength: ctx.dataSourceState.dataArray.length,
+    };
+  });
+  (globalThis as any).dataArrayLength = dataArrayLength;
   return null;
 }
 

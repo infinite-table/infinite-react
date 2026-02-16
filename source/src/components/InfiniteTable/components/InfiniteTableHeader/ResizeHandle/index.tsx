@@ -11,7 +11,7 @@ import {
   ResizeHandleDraggerClsRecipe,
   ResizeHandleRecipeCls,
 } from './ResizeHandle.css';
-import { useInfiniteTable } from '../../../hooks/useInfiniteTable';
+import { useInfiniteTableSelector } from '../../../hooks/useInfiniteTableSelector';
 
 type ResizeHandleProps<T> = {
   horizontalLayoutPageIndex: number | null;
@@ -44,9 +44,12 @@ const { rootClassName } = internalProps;
 export const InfiniteTableHeaderCellResizeHandleCls = `${rootClassName}HeaderCell_ResizeHandle`;
 
 function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
-  const {
-    state: { brain, headerBrain },
-  } = useInfiniteTable();
+  const { brain, headerBrain } = useInfiniteTableSelector((ctx) => {
+    return {
+      brain: ctx.state.brain,
+      headerBrain: ctx.state.headerBrain,
+    };
+  });
   const domRef = useRef<HTMLDivElement>(null);
   const [constrained, setConstrained] = useState(false);
   const constrainedRef = useRef<boolean>(constrained);

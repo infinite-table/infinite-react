@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { AlignPositionOptions } from '../../../utils/pageGeometry/alignment';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
 import { useOverlay } from '../../hooks/useOverlay';
 import {
   getCellContextMenu,
   getTableContextMenu,
 } from '../utils/getCellContextMenu';
 
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableStableContext } from './useInfiniteTableSelector';
+import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const OFFSET = 5;
 
@@ -24,17 +24,20 @@ const ALIGN_POSITIONS: AlignPositionOptions['alignPosition'] = [
 ];
 
 export function useCellContextMenu<T>() {
-  const context = useInfiniteTable<T>();
-  const masterContext = useMasterDetailContext();
+  const context = useInfiniteTableStableContext<T>();
+  const { portalDOMRef } =
+    useDataSourceMasterDetailSelector((ctx) => {
+      return {
+        portalDOMRef: ctx.getMasterState().portalDOMRef,
+      };
+    }) || {};
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: masterContext
-      ? masterContext.getMasterState().portalDOMRef.current
-      : false,
+    portalContainer: portalDOMRef?.current ?? false,
   });
 
   useEffect(() => {
@@ -127,17 +130,21 @@ export function useCellContextMenu<T>() {
 }
 
 export function useTableContextMenu<T>() {
-  const context = useInfiniteTable<T>();
-  const masterContext = useMasterDetailContext();
+  const context = useInfiniteTableStableContext<T>();
+
+  const { portalDOMRef } =
+    useDataSourceMasterDetailSelector((ctx) => {
+      return {
+        portalDOMRef: ctx.getMasterState().portalDOMRef,
+      };
+    }) || {};
   const { getState, actions } = context;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: masterContext
-      ? masterContext.getMasterState().portalDOMRef.current
-      : false,
+    portalContainer: portalDOMRef?.current ?? false,
   });
 
   useEffect(() => {

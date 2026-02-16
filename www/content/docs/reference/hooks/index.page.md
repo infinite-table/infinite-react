@@ -29,7 +29,7 @@ The details for each city shows a DataGrid with developers in that city.
 </Sandpack>
 </Prop>
 
-<Prop name="useDataSourceState" returnTypeLink="DataSourceState">
+<Prop name="useDataSourceState"  type="(selector: (DataSourceState) => any)">
 
 > You can use it in your app components that are nested inside the `<DataSource />`
 
@@ -38,6 +38,18 @@ import { useDataSourceState } from '@infinite-table/infinite-react'
 ```
 
 Using it gives you access to the underlying data that InfiniteTable is using.
+
+<Note>
+
+Call this hook with a `selector` function, which accepts the current `DataSourceState` as the first parameter.
+
+```ts title="Example usage - selecting the length of the data array"
+
+const length = useDataSourceState(state => state.dataArray.length)
+
+```
+
+</Note>
 
 <Note>
 

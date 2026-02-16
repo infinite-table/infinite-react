@@ -9,9 +9,10 @@ import {
 } from './filterFn';
 
 export default test.describe.parallel('Client side filterFunction', () => {
-  test('Filters correctly', async ({ page }) => {
+  test('Filters correctly', async ({ page, tracingModel }) => {
     await page.waitForInfinite();
 
+    const stop = await tracingModel.start();
     expect(await getRowCount({ page })).toEqual(employees.length);
 
     const unfiltered = page.getByLabel('unfiltered-count');
@@ -36,5 +37,7 @@ export default test.describe.parallel('Client side filterFunction', () => {
     await page.click('button[data-name="none"]');
     expect(await getRowCount({ page })).toEqual(employees.length);
     expect(await unfiltered.textContent()).toEqual(expectedUnfilteredCount);
+
+    await stop();
   });
 });

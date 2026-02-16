@@ -4,9 +4,9 @@ import { useEffectWhen } from '../../../hooks/useEffectWhen';
 import { useInfiniteColumnCell } from './InfiniteTableColumnCell';
 import { join } from '../../../../utils/join';
 import { FlashingColumnCellRecipe } from '../cell.css';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { InternalVars } from '../../internalVars.css';
 import { stripVar } from '../../../../utils/stripVar';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 export type FlashingCellOptions = {
   flashDuration?: number;
@@ -61,9 +61,13 @@ export const createFlashingColumnCellComponent = (
     ) => {
       const cellContext = useInfiniteColumnCell<any>();
 
-      const {
-        state: { flashingDurationCSSVarValue },
-      } = useInfiniteTable();
+      const { flashingDurationCSSVarValue } = useInfiniteTableSelector(
+        (ctx) => {
+          return {
+            flashingDurationCSSVarValue: ctx.state.flashingDurationCSSVarValue,
+          };
+        },
+      );
 
       const duration =
         typeof flashingDurationCSSVarValue === 'number'

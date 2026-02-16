@@ -4,11 +4,7 @@ import { RefObject } from 'react';
 import { join } from '../../utils/join';
 import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 
-import {
-  useDataSourceState,
-  useDataSourceContextValue,
-  useMasterDetailContext,
-} from '../DataSource/publicHooks/useDataSourceState';
+import { useMasterDetailStore } from '../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 import {
   buildManagedComponent,
@@ -31,13 +27,16 @@ import { getImperativeApi } from './api/getImperativeApi';
 import { useAutoSizeColumns } from './hooks/useAutoSizeColumns';
 import { useComputed } from './hooks/useComputed';
 import { useDOMProps } from './hooks/useDOMProps';
-import { useInfiniteTable } from './hooks/useInfiniteTable';
 import { useLicense } from './hooks/useLicense/useLicense';
 
 import { useScrollToActiveCell } from './hooks/useScrollToActiveCell';
 import { useScrollToActiveRow } from './hooks/useScrollToActiveRow';
 
-import { getInfiniteTableContext } from './InfiniteTableContext';
+import { getInfiniteTableStoreContext } from './InfiniteTableContext';
+import {
+  createInfiniteTableStore,
+  InfiniteTableStore,
+} from './InfiniteTableStore';
 import { internalProps, rootClassName } from './internalProps';
 
 import {
@@ -82,6 +81,12 @@ import { DragDropProvider } from './components/draggable';
 import { InfiniteTableHeader } from './components/InfiniteTablePublicHeader';
 import { InfiniteTableHeaderProps } from './components/InfiniteTablePublicHeader/types';
 import { InfiniteTableBody } from './components/InfiniteTableBody';
+import { useInfiniteTableSelector } from './hooks/useInfiniteTableSelector';
+import {
+  useDataSourceSelector,
+  useDataSourceStableContext,
+} from '../DataSource/publicHooks/useDataSourceSelector';
+import { useDataSourceState } from '../DataSource';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -103,8 +108,10 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
 
     //@ts-ignore
     mappedCallbacks: getMappedCallbacks(),
-    // @ts-ignore
-    getParentState: () => useDataSourceState(),
+
+    getParentState: () => {
+      return useDataSourceState<any>((state) => state);
+    },
     debugName: (props: { debugId?: string }) => {
       return getDebugChannel(props.debugId, DEBUG_NAME);
     },
@@ -115,15 +122,29 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const context = useInfiniteTable<T>();
-
-    const masterContext = useMasterDetailContext();
-    const { state: componentState, api, children: initialChildren } = context;
+    const masterDetailStore = useMasterDetailStore();
+    const { componentState, api, initialChildren } = useInfiniteTableSelector(
+      (ctx) => {
+        return {
+          componentState: ctx.state,
+          api: ctx.api,
+          initialChildren: ctx.children,
+        };
+      },
+    );
     const {
-      componentState: { dataArray },
-      getState: getDataSourceState,
-      componentActions: dataSourceActions,
-    } = useDataSourceContextValue<T>();
+      dataArrayLength,
+      getDataSourceState,
+      dataSourceActions,
+      dataSourceApi,
+    } = useDataSourceSelector((ctx) => {
+      return {
+        dataArrayLength: ctx.dataSourceState.dataArray.length,
+        getDataSourceState: ctx.getDataSourceState,
+        dataSourceActions: ctx.dataSourceActions,
+        dataSourceApi: ctx.dataSourceApi,
+      };
+    });
 
     const {
       domRef,
@@ -147,8 +168,8 @@ export const InfiniteTableComponent = React.memo(
       licenseKey = InfiniteTable.licenseKey;
     }
 
-    useScrollToActiveRow(activeRowIndex, dataArray.length, api);
-    useScrollToActiveCell(activeCellIndex, dataArray.length, api);
+    useScrollToActiveRow(activeRowIndex, dataArrayLength, api);
+    useScrollToActiveCell(activeCellIndex, dataArrayLength, api);
     // useRowSelection();
 
     const { onKeyDown } = useDOMEventHandlers<T>();
@@ -208,15 +229,15 @@ export const InfiniteTableComponent = React.memo(
         ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
           componentState.id,
           componentState.ready,
-          context.api,
-          context,
+          api,
+          { dataSourceApi },
         );
       }
 
       if (__DEV__) {
-        (globalThis as any).infiniteApi = context.api;
+        (globalThis as any).infiniteApi = api;
       }
-    }, [componentState.ready, context.api]);
+    }, [componentState.ready, api, dataSourceApi]);
 
     const debugId = useDebugMode();
 
@@ -226,7 +247,8 @@ export const InfiniteTableComponent = React.memo(
       // if we are a detail grid, we want to use the master grid's portal
       // so menus are rendered in the container of the top-most (master) grid - since we can
       // have multiple levels of nesting
-      if (masterContext) {
+      if (masterDetailStore) {
+        const masterContext = masterDetailStore.getSnapshot();
         portalDOMRef.current =
           masterContext.getMasterState().portalDOMRef.current;
       }
@@ -299,20 +321,26 @@ export const InfiniteTableComponent = React.memo(
 );
 function InfiniteTableContextProvider<T>({
   children,
+  store,
 }: {
   children?: Renderable;
+  store: InfiniteTableStore<T>;
 }) {
   const { componentActions, componentState } =
     useManagedComponentState<InfiniteTableState<T>>();
 
   const { scrollerDOMRef, scrollTopKey } = componentState;
 
-  const computed = useComputed<T>();
-  const getComputed = useLatest(computed);
   const getState = useLatest(componentState);
+  const computed = useComputed<T>({
+    state: componentState,
+    actions: componentActions,
+    getState,
+  });
+  const getComputed = useLatest(computed);
 
-  const masterContext = useMasterDetailContext();
-  if (__DEV__ && !masterContext) {
+  const masterDetailStore = useMasterDetailStore();
+  if (__DEV__ && !masterDetailStore) {
     (globalThis as any).getState = getState;
     (globalThis as any).getComputed = getComputed;
     (globalThis as any).componentActions = componentActions;
@@ -333,11 +361,11 @@ function InfiniteTableContextProvider<T>({
   }
 
   const {
-    getState: getDataSourceState,
-    componentActions: dataSourceActions,
+    getDataSourceState,
+    dataSourceActions,
     getDataSourceMasterContext,
-    api: dataSourceApi,
-  } = useDataSourceContextValue<T>();
+    dataSourceApi,
+  } = useDataSourceStableContext<T>();
 
   const [imperativeApi] = React.useState(() => {
     return getImperativeApi({
@@ -365,6 +393,18 @@ function InfiniteTableContextProvider<T>({
     children,
   };
 
+  store.setSnapshot(contextValue);
+
+  // Notify subscribers before the browser paints so that
+  // selector-based components re-render in the same frame,
+  // avoiding visual tearing.
+  React.useLayoutEffect(() => {
+    store.notify();
+  });
+  // queueMicrotask(() => {
+  //   store.notify();
+  // });
+
   useResizeObserver(
     scrollerDOMRef,
     (size) => {
@@ -387,13 +427,7 @@ function InfiniteTableContextProvider<T>({
     }
   }, [scrollTopKey, scrollerDOMRef]);
 
-  const TableContext = getInfiniteTableContext<T>();
-
-  return (
-    <TableContext.Provider value={contextValue}>
-      <InfiniteTableComponent />
-    </TableContext.Provider>
-  );
+  return <InfiniteTableComponent />;
 }
 
 const DEFAULT_ROW_HEIGHT = 40;
@@ -413,6 +447,10 @@ type InfiniteTableComponent = {
 const InfiniteTable: InfiniteTableComponent = function <T>(
   props: InfiniteTableProps<T>,
 ) {
+  // Store for useSyncExternalStore-based selectors.
+  // The store reference is stable (created once), only the snapshot updates.
+  const [store] = React.useState(() => createInfiniteTableStore<T>());
+  const TableStoreContext = getInfiniteTableStoreContext<T>();
   const table = (
     //@ts-ignore
     <InfiniteTableRoot
@@ -422,7 +460,12 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
       {...props}
     >
       <DragDropProvider>
-        <InfiniteTableContextProvider children={props.children} />
+        <TableStoreContext.Provider value={store}>
+          <InfiniteTableContextProvider
+            children={props.children}
+            store={store}
+          />
+        </TableStoreContext.Provider>
       </DragDropProvider>
     </InfiniteTableRoot>
   );

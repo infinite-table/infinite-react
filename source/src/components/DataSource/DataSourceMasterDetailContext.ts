@@ -1,21 +1,19 @@
 import * as React from 'react';
 
-import { DataSourceMasterDetailContextValue } from './types';
+import { DataSourceMasterDetailStore } from './DataSourceMasterDetailStore';
 
-let DSMasterDetailContext: any;
+let DSMasterDetailStoreContext: any;
 
-export function getDataSourceMasterDetailContext(): React.Context<
-  DataSourceMasterDetailContextValue | undefined
+export function getDataSourceMasterDetailStoreContext<T>(): React.Context<
+  DataSourceMasterDetailStore<T>
 > {
   if (
-    DSMasterDetailContext as React.Context<
-      DataSourceMasterDetailContextValue | undefined
-    >
+    DSMasterDetailStoreContext as React.Context<DataSourceMasterDetailStore<T>>
   ) {
-    return DSMasterDetailContext;
+    return DSMasterDetailStoreContext;
   }
 
-  return (DSMasterDetailContext = React.createContext<
-    DataSourceMasterDetailContextValue | undefined
-  >(undefined));
+  return (DSMasterDetailStoreContext = React.createContext<
+    DataSourceMasterDetailStore<T>
+  >(null as any as DataSourceMasterDetailStore<T>));
 }

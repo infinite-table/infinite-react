@@ -4,8 +4,8 @@ import {
   DataSourceMasterDetailContextValue,
   DataSourceState,
   RowDetailCache,
+  useDataSourceSelector,
 } from '../../../../components/DataSource';
-import { useDataSourceContextValue } from '../../../../components/DataSource/publicHooks/useDataSourceState';
 import { useMemo, useRef } from 'react';
 
 import {
@@ -15,7 +15,7 @@ import {
 } from '../../../../components/DataSource/state/getInitialState';
 import { InfiniteTableRowInfo } from '../../types';
 import { once } from '../../../../utils/DeepMap/once';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 type UseRegisterDetailProps<T> = {
   rowDetailsCache: RowDetailCache;
@@ -107,11 +107,20 @@ function useCurrentRowCache(
 export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
   const { rowDetailsCache, rowInfo } = props;
   const {
-    getState: getMasterDataSourceState,
-    componentActions: masterActions,
-  } = useDataSourceContextValue<T>();
+    getDataSourceState: getMasterDataSourceState,
+    dataSourceActions: masterActions,
+  } = useDataSourceSelector((ctx) => {
+    return {
+      getDataSourceState: ctx.getDataSourceState as () => DataSourceState<T>,
+      dataSourceActions: ctx.dataSourceActions,
+    };
+  });
 
-  const { getState: getMasterState } = useInfiniteTable<T>();
+  const { getMasterState } = useInfiniteTableSelector((ctx) => {
+    return {
+      getMasterState: ctx.getState,
+    };
+  });
 
   const { currentRowCache, cacheCalledByRowDetailRenderer } =
     useCurrentRowCache(rowInfo.id, rowDetailsCache);
@@ -139,10 +148,10 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
             // to be set - if we won't, they can trigger a data load,
             // which we want to avoid
             requestAnimationFrame(() => {
-              if (detailContext.componentState.destroyedRef.current) {
+              if (detailContext.dataSourceState.destroyedRef.current) {
                 return;
               }
-              detailContext.componentActions.stateReadyAsDetails = true;
+              detailContext.dataSourceActions.stateReadyAsDetails = true;
             });
             return;
           }
@@ -157,13 +166,13 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
           // to be set - if we won't, they can trigger a data load,
           // which we want to avoid
           requestAnimationFrame(() => {
-            if (detailContext.componentState.destroyedRef.current) {
+            if (detailContext.dataSourceState.destroyedRef.current) {
               return;
             }
-            detailContext.componentActions.stateReadyAsDetails = true;
+            detailContext.dataSourceActions.stateReadyAsDetails = true;
           });
 
-          detailContext.componentState.onCleanup.onChange(() => {
+          detailContext.dataSourceState.onCleanup.onChange(() => {
             const cacheEntryForRow = currentRowCache.get();
 
             if (!cacheEntryForRow) {
@@ -173,7 +182,7 @@ export function useRegisterDetail<T>(props: UseRegisterDetailProps<T>) {
             }
 
             updateDetailStateToRestoreForRowId(rowInfo.id, {
-              detailState: detailContext.getState(),
+              detailState: detailContext.getDataSourceState(),
               masterActions,
               masterState: getMasterDataSourceState(),
               cacheEntryForRow,

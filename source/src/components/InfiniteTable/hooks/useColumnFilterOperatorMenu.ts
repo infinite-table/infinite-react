@@ -1,29 +1,31 @@
 import { useEffect } from 'react';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
 import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableStableContext } from './useInfiniteTableSelector';
+import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const OFFSET = 10;
 
 export function useColumnFilterOperatorMenu<T>() {
-  const context = useInfiniteTable<T>();
-  const masterContext = useMasterDetailContext();
-  const { getState, actions } = context;
+  const { portalDOMRef } =
+    useDataSourceMasterDetailSelector((ctx) => {
+      return {
+        portalDOMRef: ctx.getMasterState().portalDOMRef,
+      };
+    }) || {};
+  const stableContext = useInfiniteTableStableContext<T>();
+  const { getState, actions } = stableContext;
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: masterContext
-      ? masterContext.getMasterState().portalDOMRef.current
-      : false,
+    portalContainer: portalDOMRef?.current ?? false,
   });
 
   useEffect(() => {
-    const { actions: actions, getState } = context;
     const state = getState();
 
     return state.onFilterOperatorMenuClick.onChange((info) => {
@@ -50,7 +52,12 @@ export function useColumnFilterOperatorMenu<T>() {
       rect.height += 2 * OFFSET;
 
       showOverlay(
-        () => getFilterOperatorMenuForColumn(column.id, context, onHideIntent),
+        () =>
+          getFilterOperatorMenuForColumn(
+            column.id,
+            stableContext,
+            onHideIntent,
+          ),
         {
           constrainTo: getState().domRef.current!,
           id: 'filter-operator-menu',

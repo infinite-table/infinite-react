@@ -73,6 +73,7 @@ export const test = base.extend<
     }
 >({
   tracingModel: async ({ page, browser }, use, testInfo) => {
+    testInfo.setTimeout(10_000);
     const { filePathNoExt } = getFileInfoFromTestInfo(testInfo);
 
     await use(

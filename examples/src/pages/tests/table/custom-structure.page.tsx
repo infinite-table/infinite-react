@@ -4,7 +4,7 @@ import {
   InfiniteTableColumn,
   DataSourceGroupBy,
   components,
-  useDataSourceState,
+  useDataSourceSelector,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
@@ -98,7 +98,11 @@ export default function App() {
 }
 
 function AppGrid() {
-  const { dataArray } = useDataSourceState();
+  const { dataArray } = useDataSourceSelector((ctx) => {
+    return {
+      dataArray: ctx.dataSourceState.dataArray,
+    };
+  });
   return (
     <div
       style={{

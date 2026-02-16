@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { computeResize } from '../../../flexbox';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 import {
   InfiniteTableComputedColumn,
   InfiniteTablePropColumnSizing,
@@ -14,12 +14,15 @@ export function useColumnResizeHandle<T>(
     horizontalLayoutPageIndex: number | null;
   },
 ) {
-  const {
-    computed: { computedVisibleColumns },
-    getState,
-    getComputed,
-    actions,
-  } = useInfiniteTable<T>();
+  const { computedVisibleColumns, getState, getComputed, actions } =
+    useInfiniteTableSelector((ctx) => {
+      return {
+        computedVisibleColumns: ctx.computed.computedVisibleColumns,
+        getState: ctx.getState,
+        getComputed: ctx.getComputed,
+        actions: ctx.actions,
+      };
+    });
   const computeResizeForDiff = useCallback(
     ({
       diff,
@@ -112,7 +115,7 @@ export function useColumnResizeHandle<T>(
 
       return result;
     },
-    [column],
+    [column, getState, getComputed],
   );
 
   const onColumnResize = useCallback(
@@ -133,7 +136,7 @@ export function useColumnResizeHandle<T>(
       }
       actions.columnSizing = columnSizing;
     },
-    [computeResizeForDiff],
+    [computeResizeForDiff, actions],
   );
 
   const resizeHandle = column.computedResizable ? (

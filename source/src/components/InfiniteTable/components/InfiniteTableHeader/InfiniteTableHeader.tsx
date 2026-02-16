@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { join } from '../../../../utils/join';
 import { RawTable } from '../../../HeadlessTable/RawTable';
@@ -9,7 +9,6 @@ import {
   TableRenderCellFnParam,
 } from '../../../HeadlessTable/rendererTypes';
 
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { internalProps } from '../../internalProps';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 import { CELL_DETACHED_CLASSNAMES } from '../cellDetachedCls';
@@ -20,6 +19,12 @@ import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableInternalHeaderProps } from './InfiniteTableHeaderTypes';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
 import { DragList } from '../draggable';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
+import { InfiniteTableComputedColumn } from '../../types';
+import {
+  useDataSourceSelector,
+  useDataSourceStableContext,
+} from '../../../DataSource/publicHooks/useDataSourceSelector';
 
 const { rootClassName } = internalProps;
 
@@ -39,6 +44,7 @@ function InfiniteTableInternalHeaderFn<T>(
 ) {
   const {
     bodyBrain,
+    headerBrain,
     columns,
     style,
     className,
@@ -49,18 +55,25 @@ function InfiniteTableInternalHeaderFn<T>(
   } = props;
 
   const {
-    computed,
     getState,
-    state: {
-      headerBrain,
-      headerOptions,
-      showColumnFilters,
-      headerRenderer,
-      headerOnRenderUpdater,
-    },
-  } = useInfiniteTable<T>();
-
-  const { computedColumnsMap } = computed;
+    headerOptions,
+    headerRenderer,
+    headerOnRenderUpdater,
+    showColumnFilters,
+    computedColumnsMap,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      computedColumnsMap: ctx.computed.computedColumnsMap as Map<
+        string,
+        InfiniteTableComputedColumn<T>
+      >,
+      getState: ctx.getState,
+      headerOptions: ctx.state.headerOptions,
+      headerRenderer: ctx.state.headerRenderer,
+      headerOnRenderUpdater: ctx.state.headerOnRenderUpdater,
+      showColumnFilters: ctx.state.showColumnFilters,
+    };
+  });
 
   const domRef = useRef<HTMLDivElement | null>(null);
   const updateDOMTransform = useCallback((scrollPosition: ScrollPosition) => {
@@ -90,6 +103,33 @@ function InfiniteTableInternalHeaderFn<T>(
     ),
     style: { ...style, height: columnHeaderHeight },
   };
+
+  const { getDataSourceState, dataSourceApi, dataSourceActions } =
+    useDataSourceStableContext<T>();
+
+  const {
+    allRowsSelected,
+    someRowsSelected,
+    selectionMode,
+    filterTypes,
+    filterDelay,
+  } = useDataSourceSelector((ctx) => {
+    return {
+      allRowsSelected: ctx.dataSourceState.allRowsSelected,
+      someRowsSelected: ctx.dataSourceState.someRowsSelected,
+      selectionMode: ctx.dataSourceState.selectionMode,
+      filterTypes: ctx.dataSourceState.filterTypes,
+      filterDelay: ctx.dataSourceState.filterDelay,
+    };
+  });
+
+  const dataSourceStatePartialForHeaderCell = useMemo(() => {
+    return {
+      allRowsSelected,
+      someRowsSelected,
+      selectionMode,
+    };
+  }, [allRowsSelected, someRowsSelected, selectionMode]);
 
   const renderCell: TableRenderCellFn = useCallback(
     (params: TableRenderCellFnParam) => {
@@ -148,6 +188,14 @@ function InfiniteTableInternalHeaderFn<T>(
           column={column}
           horizontalLayoutPageIndex={horizontalLayoutPageIndex}
           headerOptions={headerOptions}
+          dataSourceStatePartialForHeaderCell={
+            dataSourceStatePartialForHeaderCell
+          }
+          filterTypes={filterTypes}
+          filterDelay={filterDelay}
+          getDataSourceState={getDataSourceState}
+          dataSourceApi={dataSourceApi}
+          dataSourceActions={dataSourceActions}
           width={widthWithColspan}
           height={heightWithRowspan}
           columnsMap={computedColumnsMap}
@@ -166,6 +214,12 @@ function InfiniteTableInternalHeaderFn<T>(
       columnGroupsMaxDepth,
       showColumnFilters,
       headerBrain,
+      getDataSourceState,
+      dataSourceApi,
+      dataSourceActions,
+      filterTypes,
+      filterDelay,
+      dataSourceStatePartialForHeaderCell,
     ],
   );
 

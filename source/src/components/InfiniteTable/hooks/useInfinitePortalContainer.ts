@@ -1,13 +1,19 @@
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
-import { useInfiniteTable } from './useInfiniteTable';
+import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 export function useInfinitePortalContainer() {
-  const masterContext = useMasterDetailContext();
+  const { masterPortalDOMRef } =
+    useDataSourceMasterDetailSelector((ctx) => {
+      return {
+        masterPortalDOMRef: ctx.getMasterState().portalDOMRef,
+      };
+    }) ?? {};
 
-  const masterState = masterContext ? masterContext.getMasterState() : null;
-  const infiniteState = useInfiniteTable().getState();
+  const portalDOMRef = useInfiniteTableSelector(
+    (ctx) => ctx.state.portalDOMRef,
+  );
 
-  const portalContainer = (masterState || infiniteState).portalDOMRef.current;
+  const portalContainer = masterPortalDOMRef?.current ?? portalDOMRef?.current;
 
   return portalContainer;
 }

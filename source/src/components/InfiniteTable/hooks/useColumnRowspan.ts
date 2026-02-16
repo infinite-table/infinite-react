@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumn } from '../types';
+import { DataSourceState, useDataSourceSelector } from '../../DataSource';
 
 export function useColumnRowspan<T>(
   computedVisibleColumns: InfiniteTableComputedColumn<T>[],
 ) {
-  const { getState: getDataSourceState } = useDataSourceContextValue<T>();
+  const { getDataSourceState } = useDataSourceSelector((ctx) => {
+    return {
+      getDataSourceState: ctx.getDataSourceState as () => DataSourceState<T>,
+    };
+  });
 
   const rowspan = useMemo<MatrixBrainOptions['rowspan']>(() => {
     const colsWithRowspan = computedVisibleColumns.filter(

@@ -7,10 +7,11 @@ import { InternalVars } from '../../internalVars.css';
 import { InfiniteTableProps, InfiniteTableRowInfo } from '../../types';
 import { RowDetailRecipe } from '../rowDetail.css';
 
-import { getDataSourceMasterDetailContext } from '../../../../components/DataSource/DataSourceMasterDetailContext';
+import { getDataSourceMasterDetailStoreContext } from '../../../../components/DataSource/DataSourceMasterDetailContext';
 
 import { NonUndefined } from '../../../types/NonUndefined';
 import { useRegisterDetail } from './useRegisterDetail';
+import { createDataSourceMasterDetailStore } from '../../../DataSource/DataSourceMasterDetailStore';
 
 type InfiniteTableDetailRowProps<T> = {
   rowInfo: InfiniteTableRowInfo<T>;
@@ -27,7 +28,6 @@ const { rootClassName } = internalProps;
 export const InfiniteTableRowDetailsClassName = `${rootClassName}RowDetail`;
 
 function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
-  const DataSourceMasterDetailContext = getDataSourceMasterDetailContext();
   const {
     domRef,
     rowDetailRenderer,
@@ -42,8 +42,24 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
     rowInfo,
   });
 
+  const DataSourceMasterDetailStoreContext =
+    getDataSourceMasterDetailStoreContext<T>();
+
+  const [masterDetailStore] = React.useState(() =>
+    createDataSourceMasterDetailStore<T>(),
+  );
+
+  masterDetailStore.setSnapshot(masterDetailContextValue);
+
+  React.useLayoutEffect(() => {
+    masterDetailStore.notify();
+    // this value is different whenever masterRowInfo.id changes
+    // so we're fine with this not triggering a notification
+    // on all renders
+  }, [masterDetailContextValue]);
+
   return (
-    <DataSourceMasterDetailContext.Provider value={masterDetailContextValue}>
+    <DataSourceMasterDetailStoreContext.Provider value={masterDetailStore}>
       <div
         ref={domRef}
         className={join(InfiniteTableRowDetailsClassName, RowDetailRecipe({}))}
@@ -58,7 +74,7 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
       >
         {rowDetailRenderer(rowInfo, currentRowCache)}
       </div>
-    </DataSourceMasterDetailContext.Provider>
+    </DataSourceMasterDetailStoreContext.Provider>
   );
 }
 

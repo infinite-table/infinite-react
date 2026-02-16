@@ -1,21 +1,26 @@
 import { useEffect } from 'react';
-import { useMasterDetailContext } from '../../DataSource/publicHooks/useDataSourceState';
+
 import { ShowOverlayFn, useOverlay } from '../../hooks/useOverlay';
 import {
   MenuIconDataAttributes,
   MenuIconDataAttributesValues,
 } from '../components/icons/MenuIcon';
 import { InfiniteHeaderCellDataAttributes } from '../components/InfiniteTableHeader/InfiniteTableHeaderCell';
-import { InfiniteTableContextValue } from '../types';
 import { getMenuForColumn } from '../utils/getMenuForColumn';
-import { useInfiniteTable } from './useInfiniteTable';
+
+import {
+  useInfiniteTableSelector,
+  useInfiniteTableStableContext,
+} from './useInfiniteTableSelector';
+import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
+import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const menuIconSelector = `[${MenuIconDataAttributes['data-name']}="${MenuIconDataAttributesValues['data-name']}"]`;
 
 function showMenuForColumn<T>(options: {
   columnId: string;
   target?: HTMLElement;
-  context: InfiniteTableContextValue<T>;
+  context: InfiniteTableStableContextValue<T>;
   clearAll: VoidFunction;
   showOverlay: ShowOverlayFn;
 }) {
@@ -67,22 +72,37 @@ function showMenuForColumn<T>(options: {
 }
 
 export function useColumnMenu<T>() {
-  const context = useInfiniteTable<T>();
+  const context = useInfiniteTableStableContext<T>();
+  const {
+    getState,
+    actions,
+    columnMenuVisibleForColumnId,
+    columnMenuVisibleKey,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      getState: ctx.getState,
+      actions: ctx.actions,
 
-  const masterContext = useMasterDetailContext();
-  const { getState, actions } = context;
+      columnMenuVisibleForColumnId: ctx.state.columnMenuVisibleForColumnId,
+      columnMenuVisibleKey: ctx.state.columnMenuVisibleKey,
+    };
+  });
+
+  const { portalDOMRef } =
+    useDataSourceMasterDetailSelector((ctx) => {
+      return {
+        portalDOMRef: ctx.getMasterState().portalDOMRef,
+      };
+    }) || {};
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: masterContext
-      ? masterContext.getMasterState().portalDOMRef.current
-      : false,
+    portalContainer: portalDOMRef?.current ?? false,
   });
 
   useEffect(() => {
-    const { actions: actions, getState } = context;
     const state = getState();
 
     return state.onColumnMenuClick.onChange((info) => {
@@ -97,8 +117,6 @@ export function useColumnMenu<T>() {
       actions.columnMenuVisibleForColumnId = info.column.id;
     });
   }, []);
-
-  const { columnMenuVisibleForColumnId, columnMenuVisibleKey } = getState();
 
   useEffect(() => {
     const { columnMenuVisibleForColumnId, columnMenuTargetRef } = getState();

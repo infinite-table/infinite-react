@@ -1275,12 +1275,11 @@ export class GridRenderer extends Logger {
   }
 
   protected onMouseEnterNotBound = (event: React.MouseEvent<HTMLElement>) => {
-    const rowIndex = Number((event.target as HTMLElement).dataset.rowIndex);
+    const rowIndex = Number(event.currentTarget.dataset.rowIndex);
     this.onMouseEnter(rowIndex);
   };
   protected onMouseLeaveNotBound = (event: React.MouseEvent<HTMLElement>) => {
-    const rowIndex = Number((event.target as HTMLElement).dataset.rowIndex);
-
+    const rowIndex = Number(event.currentTarget.dataset.rowIndex);
     this.onMouseLeave(rowIndex);
   };
 

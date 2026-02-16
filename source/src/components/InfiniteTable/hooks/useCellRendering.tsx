@@ -2,7 +2,6 @@ import { Ref, useMemo } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import * as React from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
 import {
   TableRenderCellFn,
   TableRenderCellFnParam,
@@ -10,16 +9,20 @@ import {
   TableRenderDetailRowFnParam,
 } from '../../HeadlessTable/rendererTypes';
 import { useLatest } from '../../hooks/useLatest';
-import { useRerender } from '../../hooks/useRerender';
 import type { Size } from '../../types/Size';
 import { InfiniteTableColumnCellProps } from '../components/InfiniteTableRow/InfiniteTableCellTypes';
 import { InfiniteTableColumnCell } from '../components/InfiniteTableRow/InfiniteTableColumnCell';
-import type { InfiniteTableComputedValues, InfiniteTableApi } from '../types';
+import type {
+  InfiniteTableComputedValues,
+  InfiniteTableApi,
+  InfiniteTableProps,
+} from '../types';
 
-import { useInfiniteTable } from './useInfiniteTable';
 import { useYourBrain } from './useYourBrain';
 import { InfiniteTableDetailRow } from '../components/InfiniteTableRow/InfiniteTableDetailRow';
 import { visibility } from '../utilities.css';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
+import { DataSourceState, useDataSourceSelector } from '../../DataSource';
 
 type CellRenderingParam<T> = {
   computed: InfiniteTableComputedValues<T>;
@@ -44,8 +47,72 @@ export function useCellRendering<T>(
 ): CellRenderingResult {
   const { computed, bodySize, imperativeApi } = param;
 
-  const { actions, state, getState, getComputed, getDataSourceMasterContext } =
-    useInfiniteTable<T>();
+  const {
+    actions,
+    getState,
+    getComputed,
+    getDataSourceMasterContext,
+    rowHeight,
+    rowDetailHeight,
+    onRowMouseEnter,
+    onRowMouseLeave,
+    groupRenderStrategy,
+    brain,
+    showZebraRows,
+    rowDetailRenderer,
+    isRowDetailsExpanded,
+    isRowDetailsEnabled,
+    cellClassName,
+    cellStyle,
+    rowStyle,
+    rowDetailCache,
+    rowClassName,
+    onScrollToTop,
+    onScrollToBottom,
+    onScrollStop,
+    scrollToBottomOffset,
+    wrapRowsHorizontally,
+    updatedAt,
+    ready,
+    editingCell,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      actions: ctx.actions,
+      getState: ctx.getState,
+      getComputed: ctx.getComputed,
+      getDataSourceMasterContext: ctx.getDataSourceMasterContext,
+      rowHeight: ctx.state.rowHeight,
+      rowDetailHeight: ctx.state.rowDetailHeight,
+
+      onRowMouseEnter: ctx.state
+        .onRowMouseEnter as InfiniteTableProps<T>['onRowMouseEnter'],
+      onRowMouseLeave: ctx.state
+        .onRowMouseLeave as InfiniteTableProps<T>['onRowMouseLeave'],
+
+      groupRenderStrategy: ctx.state.groupRenderStrategy,
+      brain: ctx.state.brain,
+      showZebraRows: ctx.state.showZebraRows,
+      rowDetailRenderer: ctx.state
+        .rowDetailRenderer as InfiniteTableProps<T>['rowDetailRenderer'],
+      isRowDetailsExpanded: ctx.state
+        .isRowDetailExpanded as InfiniteTableProps<T>['isRowDetailExpanded'],
+      isRowDetailsEnabled: ctx.state
+        .isRowDetailEnabled as InfiniteTableProps<T>['isRowDetailEnabled'],
+      cellClassName: ctx.state.cellClassName,
+      cellStyle: ctx.state.cellStyle,
+      rowStyle: ctx.state.rowStyle,
+      rowDetailCache: ctx.state.rowDetailCache,
+      rowClassName: ctx.state.rowClassName,
+      onScrollToTop: ctx.state.onScrollToTop,
+      onScrollToBottom: ctx.state.onScrollToBottom,
+      onScrollStop: ctx.state.onScrollStop,
+      scrollToBottomOffset: ctx.state.scrollToBottomOffset,
+      wrapRowsHorizontally: ctx.state.wrapRowsHorizontally,
+      updatedAt: ctx.state.updatedAt,
+      ready: ctx.state.ready,
+      editingCell: ctx.state.editingCell,
+    };
+  });
 
   const {
     computedPinnedStartColumns,
@@ -61,50 +128,29 @@ export function useCellRendering<T>(
   } = computed;
 
   const {
-    componentState: dataSourceState,
-    getState: getDataSourceState,
-    componentActions: dataSourceActions,
-    api: dataSourceApi,
-  } = useDataSourceContextValue<T>();
-
-  const {
     dataArray,
     rowInfoStore,
     selectionMode,
     cellSelection,
     isNodeReadOnly,
-  } = dataSourceState;
+    getDataSourceState,
+    dataSourceApi,
+    dataSourceActions,
+  } = useDataSourceSelector((ctx) => {
+    return {
+      dataSourceApi: ctx.dataSourceApi,
+      dataSourceActions: ctx.dataSourceActions,
+      getDataSourceState: ctx.getDataSourceState,
+      dataArray: ctx.dataSourceState
+        .dataArray as DataSourceState<T>['dataArray'],
+      rowInfoStore: ctx.dataSourceState.rowInfoStore,
+      selectionMode: ctx.dataSourceState.selectionMode,
+      cellSelection: ctx.dataSourceState.cellSelection,
+      isNodeReadOnly: ctx.dataSourceState.isNodeReadOnly,
+    };
+  });
 
   const getData = useLatest(dataArray);
-  const {
-    rowHeight,
-    rowDetailHeight,
-
-    onRowMouseEnter,
-    onRowMouseLeave,
-
-    groupRenderStrategy,
-    brain,
-    showZebraRows,
-    rowDetailRenderer,
-    isRowDetailExpanded: isRowDetailsExpanded,
-    isRowDetailEnabled: isRowDetailsEnabled,
-    cellClassName,
-    cellStyle,
-    rowStyle,
-    rowDetailCache: rowDetailsCache,
-    rowClassName,
-    onScrollToTop,
-    onScrollToBottom,
-    onScrollStop,
-    scrollToBottomOffset,
-    wrapRowsHorizontally,
-    updatedAt: componentStateUpdatedAt,
-    ready,
-    editingCell,
-  } = state;
-
-  const repaintId = dataSourceState.updatedAt;
 
   useYourBrain<T>({
     columnSize,
@@ -195,11 +241,11 @@ export function useCellRendering<T>(
     }
   }, [ready]);
 
-  const [, rerender] = useRerender();
+  // const [, rerender] = useRerender();
 
-  useEffect(() => {
-    rerender(); // TODO check this is still needed
-  }, [dataSourceState]);
+  // useEffect(() => {
+  //   rerender(); // TODO check this is still needed
+  // }, [dataSourceState]);
 
   const dataSourceStatePartialForCell = useMemo(() => {
     return {
@@ -337,7 +383,6 @@ export function useCellRendering<T>(
       toggleGroupRow,
       showZebraRows,
       brain,
-      repaintId,
       rowInfoStore,
       rowStyle,
       rowClassName,
@@ -354,7 +399,7 @@ export function useCellRendering<T>(
       getComputed,
       getDataSourceMasterContext,
 
-      componentStateUpdatedAt,
+      updatedAt,
       editingCell,
       dataSourceStatePartialForCell,
     ],
@@ -389,7 +434,7 @@ export function useCellRendering<T>(
       return (
         <InfiniteTableDetailRow<T>
           rowInfo={rowInfo}
-          rowDetailsCache={rowDetailsCache}
+          rowDetailsCache={rowDetailCache}
           rowIndex={rowIndex}
           domRef={domRef}
           detailOffset={rowHeight}
@@ -404,12 +449,11 @@ export function useCellRendering<T>(
     rowDetailRenderer,
     rowDetailHeight,
     isRowDetailsExpanded,
-    rowDetailsCache,
+    rowDetailCache,
   ]);
 
   return {
     renderCell,
     renderDetailRow,
-    // repaintId,
   };
 }

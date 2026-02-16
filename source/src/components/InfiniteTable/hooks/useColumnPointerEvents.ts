@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 import {
   clearInfiniteColumnReorderDuration,
@@ -62,7 +61,7 @@ export const useColumnPointerEvents = ({
 }: {
   allowColumnHideOnDrag: boolean;
   columnId: string;
-  domRef: React.MutableRefObject<HTMLElement | null>;
+  domRef: React.RefObject<HTMLElement | null>;
   horizontalLayoutPageIndex: number | null;
 }) => {
   const [proxyPosition, setProxyPosition] = useState<TopLeftOrNull>(null);
@@ -70,14 +69,19 @@ export const useColumnPointerEvents = ({
 
   const { getCurrentDragSourceAndTarget } = useDragDropProvider();
 
-  const {
-    actions,
-    computed,
-    getComputed,
-    getState,
-    api,
-    state: { domRef: rootRef },
-  } = useInfiniteTable();
+  const { getComputed, getState, api, computedDraggable, rootRef, actions } =
+    useInfiniteTableSelector((ctx) => {
+      return {
+        actions: ctx.actions,
+        getComputed: ctx.getComputed,
+        getState: ctx.getState,
+        api: ctx.api,
+        computedDraggable:
+          ctx.computed.computedVisibleColumnsMap.get(columnId)
+            ?.computedDraggable,
+        rootRef: ctx.state.domRef,
+      };
+    });
 
   const defaultPointerDown = useCallback((e: React.PointerEvent) => {
     const computedCol = getComputed().computedVisibleColumnsMap.get(columnId);
@@ -363,10 +367,7 @@ export const useColumnPointerEvents = ({
   );
 
   return {
-    onPointerDown: computed.computedVisibleColumnsMap.get(columnId)
-      ?.computedDraggable
-      ? onPointerDown
-      : defaultPointerDown,
+    onPointerDown: computedDraggable ? onPointerDown : defaultPointerDown,
 
     dragColumnOutside,
 

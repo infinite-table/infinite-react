@@ -3,7 +3,7 @@ import {
   InfiniteTable,
   DataSource,
   DataSourcePropFilterValue,
-  useDataSourceState,
+  useDataSourceSelector,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 import { useState } from 'react';
@@ -54,7 +54,11 @@ const domProps: React.HTMLAttributes<HTMLDivElement> = {
 };
 
 function UnfilterdCount() {
-  const { unfilteredCount } = useDataSourceState<Employee>();
+  const { unfilteredCount } = useDataSourceSelector((ctx) => {
+    return {
+      unfilteredCount: ctx.dataSourceState.unfilteredCount,
+    };
+  });
   return (
     <p style={{ color: 'magenta' }} aria-label="unfiltered-count">
       unfiltered count: {unfilteredCount}

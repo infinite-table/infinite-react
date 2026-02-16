@@ -7,6 +7,7 @@ import {
   InfiniteTablePropColumns,
   InfiniteTableRowInfo,
   DataSourceProps,
+  useMasterRowInfo,
 } from '@infinite-table/infinite-react';
 
 type Developer = {
@@ -39,6 +40,17 @@ const columns: InfiniteTablePropColumns<Developer> = {
     //     </div>
     //   );
     // },
+    components: {
+      HeaderCell: () => {
+        const masterRowInfo = useMasterRowInfo<Developer>();
+
+        if (masterRowInfo) {
+          return <div>Hello {masterRowInfo.data?.firstName}</div>;
+        }
+
+        return <div>Hello</div>;
+      },
+    },
   },
 
   firstName: { field: 'firstName' },

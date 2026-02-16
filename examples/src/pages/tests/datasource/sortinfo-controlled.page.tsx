@@ -1,15 +1,18 @@
 import {
   DataSource,
   DataSourceSortInfo,
-  useDataSourceState,
+  useDataSourceSelector,
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
 import { Person, persons } from './sortPersons';
 const Cmp = () => {
-  const ds = useDataSourceState<Person>();
-
-  const { dataArray, loading } = ds;
+  const { dataArray, loading } = useDataSourceSelector((ctx) => {
+    return {
+      dataArray: ctx.dataSourceState.dataArray,
+      loading: ctx.dataSourceState.loading,
+    };
+  });
 
   return (
     <div>

@@ -2,10 +2,16 @@ import { useEffect } from 'react';
 import { usePrevious } from '../../hooks/usePrevious';
 import { DEBUG_NAME } from '../InfiniteDebugName';
 import { createBrains } from '../state/getInitialState';
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 export function useToggleWrapRowsHorizontally() {
-  const { state, getState, actions } = useInfiniteTable();
+  const { state, getState, actions } = useInfiniteTableSelector((ctx) => {
+    return {
+      state: ctx.state,
+      getState: ctx.getState,
+      actions: ctx.actions,
+    };
+  });
 
   const { wrapRowsHorizontally } = state;
   const oldWrapRowsHorizontally = usePrevious(wrapRowsHorizontally);

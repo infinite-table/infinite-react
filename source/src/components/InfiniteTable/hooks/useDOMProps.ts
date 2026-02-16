@@ -14,7 +14,7 @@ import { InfiniteTableComputedColumn } from '../types';
 import { InternalVarUtils } from '../utils/infiniteDOMUtils';
 import { rafFn } from '../utils/rafFn';
 import { ThemeVars } from '../vars.css';
-import { useInfiniteTable } from './useInfiniteTable';
+import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 const publicRuntimeVars: Record<
   keyof typeof ThemeVars.runtime,
@@ -104,8 +104,10 @@ export function useDOMProps<T>(
 ) {
   const scrollbarWidth = getScrollbarWidth();
 
-  const { computed, state, actions, getState } = useInfiniteTable<T>();
   const {
+    actions,
+    getState,
+
     focused,
     focusedWithin,
     domRef,
@@ -117,8 +119,6 @@ export function useDOMProps<T>(
     bodySize,
     activeCellIndex,
     wrapRowsHorizontally,
-  } = state;
-  const {
     computedPinnedStartColumnsWidth,
     computedPinnedEndColumnsWidth,
     computedPinnedStartColumns,
@@ -126,7 +126,57 @@ export function useDOMProps<T>(
     computedVisibleColumns,
     computedUnpinnedColumnsWidth,
     scrollbars,
-  } = computed;
+
+    focusedClassName,
+    focusedWithinClassName,
+    computedPinnedStartOverflow,
+    computedPinnedEndOverflow,
+
+    focusedStyle,
+    focusedWithinStyle,
+
+    brain,
+  } = useInfiniteTableSelector((ctx) => {
+    const { state, computed } = ctx;
+    return {
+      brain: state.brain,
+      actions: ctx.actions,
+      getState: ctx.getState,
+      focused: state.focused,
+      focusedWithin: state.focusedWithin,
+      domRef: state.domRef,
+      scrollerDOMRef: state.scrollerDOMRef,
+      onBlurWithin: state.onBlurWithin,
+      onFocusWithin: state.onFocusWithin,
+      onSelfFocus: state.onSelfFocus,
+      onSelfBlur: state.onSelfBlur,
+      bodySize: state.bodySize,
+      activeCellIndex: state.activeCellIndex,
+      wrapRowsHorizontally: state.wrapRowsHorizontally,
+
+      computedPinnedStartColumnsWidth: computed.computedPinnedStartColumnsWidth,
+      computedPinnedEndColumnsWidth: computed.computedPinnedEndColumnsWidth,
+
+      computedPinnedStartColumns:
+        computed.computedPinnedStartColumns as InfiniteTableComputedColumn<T>[],
+      computedPinnedEndColumns:
+        computed.computedPinnedEndColumns as InfiniteTableComputedColumn<T>[],
+
+      computedVisibleColumns:
+        computed.computedVisibleColumns as InfiniteTableComputedColumn<T>[],
+
+      computedUnpinnedColumnsWidth: computed.computedUnpinnedColumnsWidth,
+
+      scrollbars: computed.scrollbars,
+
+      focusedClassName: ctx.state.focusedClassName,
+      focusedWithinClassName: ctx.state.focusedWithinClassName,
+      computedPinnedStartOverflow: computed.computedPinnedStartOverflow,
+      computedPinnedEndOverflow: computed.computedPinnedEndOverflow,
+      focusedStyle: ctx.state.focusedStyle,
+      focusedWithinStyle: ctx.state.focusedWithinStyle,
+    };
+  });
 
   const prevPinnedEndCols: InfiniteTableComputedColumn<T>[] = [];
   const cssVars: CSSProperties = computedVisibleColumns.reduce(
@@ -212,8 +262,8 @@ export function useDOMProps<T>(
     const defaultActiveCellColOffset = InternalVarUtils.columnOffsets.get(
       activeCellIndex[1],
     );
-    if (state.brain.isHorizontalLayoutBrain) {
-      const pageIndex = state.brain.getPageIndexForRow(activeCellIndex[0]);
+    if (brain.isHorizontalLayoutBrain) {
+      const pageIndex = brain.getPageIndexForRow(activeCellIndex[0]);
 
       //@ts-ignore
       cssVars[activeCellColOffset] = pageIndex
@@ -347,14 +397,12 @@ export function useDOMProps<T>(
     focused ? `${InfiniteTableClassName}--focused` : null,
     focusedWithin ? `${InfiniteTableClassName}--focused-within` : null,
 
-    focused && state.focusedClassName ? state.focusedClassName : null,
-    focusedWithin && state.focusedWithinClassName
-      ? state.focusedWithinClassName
-      : null,
-    computed.computedPinnedStartOverflow
+    focused && focusedClassName ? focusedClassName : null,
+    focusedWithin && focusedWithinClassName ? focusedWithinClassName : null,
+    computedPinnedStartOverflow
       ? `${InfiniteTableClassName}--has-pinned-start-overflow`
       : null,
-    computed.computedPinnedEndOverflow
+    computedPinnedEndOverflow
       ? `${InfiniteTableClassName}--has-pinned-end-overflow`
       : null,
 
@@ -376,13 +424,13 @@ export function useDOMProps<T>(
     ...cssVars,
   };
   if (focused) {
-    if (state.focusedStyle) {
-      Object.assign(domProps.style, state.focusedStyle);
+    if (focusedStyle) {
+      Object.assign(domProps.style, focusedStyle);
     }
   }
   if (focusedWithin) {
-    if (state.focusedWithinStyle) {
-      Object.assign(domProps.style, state.focusedWithinStyle);
+    if (focusedWithinStyle) {
+      Object.assign(domProps.style, focusedWithinStyle);
     }
   }
 

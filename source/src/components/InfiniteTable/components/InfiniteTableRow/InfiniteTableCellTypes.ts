@@ -124,6 +124,17 @@ export interface InfiniteTableHeaderCellProps<T>
     InfiniteTableCellProps<T>,
     'children' | 'cellType' | 'renderChildren'
   > {
+  // DataSource context values passed as props to avoid context re-renders
+  getDataSourceState: () => DataSourceState<T>;
+  dataSourceApi: DataSourceApi<T>;
+  dataSourceActions: DataSourceComponentActions<T>;
+  dataSourceStatePartialForHeaderCell: {
+    allRowsSelected: DataSourceState<T>['allRowsSelected'];
+    someRowsSelected: DataSourceState<T>['someRowsSelected'];
+    selectionMode: DataSourceState<T>['selectionMode'];
+  };
+  filterTypes: DataSourceState<T>['filterTypes'];
+  filterDelay: DataSourceState<T>['filterDelay'];
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   height: number;
   headerOptions: InfiniteTablePropHeaderOptions;

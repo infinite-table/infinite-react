@@ -6,17 +6,13 @@ import { keyMirror } from '../../../../utils/keyMirror';
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 import { defaultFilterTypes } from '../../../DataSource/defaultFilterTypes';
-import {
-  useDataSourceState,
-  useDataSourceContextValue,
-} from '../../../DataSource/publicHooks/useDataSourceState';
 import { DataSourcePropFilterTypes } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
 import { debounce } from '../../../utils/debounce';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 import { InternalVars } from '../../internalVars.css';
 import { ThemeVars } from '../../vars.css';
 
@@ -154,43 +150,65 @@ export const InfiniteHeaderCellDataAttributes = keyMirror({
   [DRAG_ITEM_ATTRIBUTE]: '',
 });
 
-export function InfiniteTableHeaderCell<T>(
-  props: InfiniteTableHeaderCellProps<T>,
-) {
+function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
   const column: InfiniteTableComputedColumn<T> = props.column;
 
   const { allowColumnHideWhileDragging: ALLOW_COLUMN_HIDE_ON_DRAG } =
     useInfiniteTableHeaderState();
 
+  const {
+    dataSourceStatePartialForHeaderCell,
+    horizontalLayoutPageIndex,
+
+    // DataSource context values passed as props
+    getDataSourceState,
+    dataSourceApi,
+    dataSourceActions,
+
+    filterTypes,
+    filterDelay,
+  } = props;
+
+  const { allRowsSelected, someRowsSelected, selectionMode } =
+    dataSourceStatePartialForHeaderCell;
+
   const { onDragItemPointerDown } = useDragListContext();
+
+  // Use selector hooks instead of useInfiniteTable() to avoid
+  // re-rendering on every context change. Each selector only
+  // triggers a re-render when its specific value changes.
+  // Stable refs (same reference every render):
+
   const {
     api,
     getComputed,
     getState,
     actions,
-    state: {
-      showColumnFilters,
-      components,
-      portalDOMRef,
-      columnHeaderHeight,
-      columnReorderDragColumnId,
-      columnMenuVisibleForColumnId,
-      columnReorderInPageIndex,
-    },
     getDataSourceMasterContext,
-  } = useInfiniteTable<T>();
+    showColumnFilters,
+    components,
+    portalDOMRef,
+    columnHeaderHeight,
+    columnReorderDragColumnId,
+    columnMenuVisibleForColumnId,
+    columnReorderInPageIndex,
+  } = useInfiniteTableSelector((ctx) => {
+    return {
+      api: ctx.api,
+      getComputed: ctx.getComputed,
+      getState: ctx.getState,
+      actions: ctx.actions,
+      getDataSourceMasterContext: ctx.getDataSourceMasterContext,
+      showColumnFilters: ctx.state.showColumnFilters,
+      components: ctx.state.components,
+      portalDOMRef: ctx.state.portalDOMRef,
+      columnHeaderHeight: ctx.state.columnHeaderHeight,
+      columnReorderDragColumnId: ctx.state.columnReorderDragColumnId,
+      columnMenuVisibleForColumnId: ctx.state.columnMenuVisibleForColumnId,
+      columnReorderInPageIndex: ctx.state.columnReorderInPageIndex,
+    };
+  });
 
-  const {
-    api: dataSourceApi,
-    componentActions: dataSourceActions,
-    getState: getDataSourceState,
-    componentState: { filterDelay, filterTypes },
-  } = useDataSourceContextValue<T>();
-
-  const { allRowsSelected, someRowsSelected, selectionMode } =
-    useDataSourceState<T>();
-
-  const horizontalLayoutPageIndex = props.horizontalLayoutPageIndex;
   const dragging = columnReorderDragColumnId === column.id;
 
   const insideDisabledDraggingPage =
@@ -224,7 +242,7 @@ export function InfiniteTableHeaderCell<T>(
       ? column.verticalAlign({ isHeader: true, column })
       : column.verticalAlign) ?? 'center';
 
-  const columnApi = getColumnApiForColumn(column, {
+  const columnApi = getColumnApiForColumn<T>(column, {
     actions,
     api,
     dataSourceActions,
@@ -722,6 +740,10 @@ export function InfiniteTableHeaderCell<T>(
     </ContextProvider>
   );
 }
+
+export const InfiniteTableHeaderCell = React.memo(
+  InfiniteTableHeaderCellFn,
+) as typeof InfiniteTableHeaderCellFn;
 
 export function useInfiniteHeaderCell<T>() {
   const result = useContext(

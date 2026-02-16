@@ -2,11 +2,14 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { GroupingToolbarRecipe, GroupingToolbarItemRecipe } from './index.css';
 
-import { DataSourcePropGroupBy, useDataSourceState } from '../../../DataSource';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
+import { DataSourceApi, DataSourcePropGroupBy } from '../../../DataSource';
 import { DragList } from '../draggable';
 import { join } from '../../../../utils/join';
-import { InfiniteTableComputedColumn } from '../../types';
+import {
+  InfiniteTableApi,
+  InfiniteTableComputedColumn,
+  InfiniteTableComputedValues,
+} from '../../types';
 import { useDragDropProvider } from '../draggable/DragDropProvider';
 import { DragListProps, useDragListContext } from '../draggable/DragList';
 import { getColumnLabel } from '../InfiniteTableHeader/getColumnLabel';
@@ -19,6 +22,11 @@ import {
 } from './components';
 import { SortIcon } from '../icons/SortIcon';
 import { getGlobal } from '../../../../utils/getGlobal';
+import {
+  useInfiniteTableSelector,
+  useInfiniteTableStableContext,
+} from '../../hooks/useInfiniteTableSelector';
+import { useDataSourceSelector } from '../../../DataSource/publicHooks/useDataSourceSelector';
 
 export type GroupingToolbarProps = {
   orientation?: 'horizontal' | 'vertical';
@@ -91,7 +99,7 @@ export function GroupingToolbarItem<T = any>(props: {
 
   const draggingInProgress = dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
 
-  const context = useInfiniteTable<T>();
+  const context = useInfiniteTableStableContext<T>();
 
   const columnHeader: React.ReactNode =
     (column ? getColumnLabel(column.id, context, 'grouping-toolbar') : field) ??
@@ -152,8 +160,20 @@ export function GroupingToolbarItem<T = any>(props: {
 const GROUPING_TOOLBAR_DRAG_LIST_ID = 'grouping-toolbar';
 
 export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
-  const { groupBy } = useDataSourceState<T>();
-  const { getComputed, dataSourceApi, api } = useInfiniteTable<T>();
+  const { groupBy } = useDataSourceSelector((ctx) => {
+    return {
+      groupBy: ctx.dataSourceState.groupBy as DataSourcePropGroupBy<T>,
+    };
+  });
+  const { getComputed, dataSourceApi, api } = useInfiniteTableSelector(
+    (ctx) => {
+      return {
+        getComputed: ctx.getComputed as () => InfiniteTableComputedValues<T>,
+        dataSourceApi: ctx.dataSourceApi as DataSourceApi<T>,
+        api: ctx.api as InfiniteTableApi<T>,
+      };
+    },
+  );
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
   const { fieldsToColumn, computedColumnsMap } = getComputed();
 

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { CSSProperties, useCallback } from 'react';
 
-import { useDataSourceContextValue } from '../../DataSource/publicHooks/useDataSourceState';
-import { useInfiniteTable } from '../hooks/useInfiniteTable';
-
 import { focusLastFocusableCell } from '../utils/cellFocusUtils';
+import { useInfiniteTableStableContext } from '../hooks/useInfiniteTableSelector';
+import { useDataSourceStableContext } from '../../DataSource/publicHooks/useDataSourceSelector';
 
 const style: CSSProperties = {
   width: 0,
@@ -23,9 +22,9 @@ export function FocusDetect<T>() {
     getComputed,
     dataSourceApi,
     dataSourceActions,
-  } = useInfiniteTable<T>();
-  const { getState: getDataSourceState, getDataSourceMasterContext } =
-    useDataSourceContextValue<T>();
+  } = useInfiniteTableStableContext<T>();
+  const { getDataSourceState, getDataSourceMasterContext } =
+    useDataSourceStableContext<T>();
 
   const { focusDetectDOMRef } = getState();
 

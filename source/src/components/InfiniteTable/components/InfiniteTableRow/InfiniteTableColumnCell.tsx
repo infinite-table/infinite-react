@@ -11,7 +11,6 @@ import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 
 import { useCellClassName } from '../../hooks/useCellClassName';
-import { useInfiniteTable } from '../../hooks/useInfiniteTable';
 import { InternalVars } from '../../internalVars.css';
 import {
   InfiniteColumnEditorContextType,
@@ -56,6 +55,7 @@ import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
 import { TreeColumnCellExpanderCls } from './row.css';
 import { InfiniteTableColumnCellClassName } from './InfiniteTableColumnCellClassNames';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
+import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
@@ -929,10 +929,15 @@ export function useInfiniteColumnCell<T>() {
 export function useInfiniteColumnEditor<
   T,
 >(): InfiniteColumnEditorContextType<T> {
-  const {
-    api,
-    state: { editingValueRef, editingCell },
-  } = useInfiniteTable<T>();
+  const { api, editingValueRef, editingCell } = useInfiniteTableSelector(
+    (ctx) => {
+      return {
+        api: ctx.api,
+        editingCell: ctx.state.editingCell,
+        editingValueRef: ctx.state.editingValueRef,
+      };
+    },
+  );
 
   const { column, rowInfo } = useInfiniteColumnCell<T>();
 

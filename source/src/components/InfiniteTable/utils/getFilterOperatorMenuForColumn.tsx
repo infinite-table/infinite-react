@@ -7,11 +7,11 @@ import { ClearIcon } from '../components/icons/ClearIcon';
 import { DoneIcon } from '../components/icons/DoneIcon';
 import { FilterIcon } from '../components/icons/FilterIcon';
 
-import { InfiniteTableContextValue } from '../types';
+import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 
 export function getFilterOperatorMenuForColumn<T>(
   columnId: string | null,
-  context: InfiniteTableContextValue<T>,
+  context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
   if (columnId == null) {

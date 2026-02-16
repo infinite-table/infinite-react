@@ -62,6 +62,8 @@ export default function DataTestPage() {
   const [ds, setDs] = React.useState<DataSourceDataFn<Developer>>(
     () => dataSourceFn,
   );
+
+  const [showGrid, setShowGrid] = React.useState(true);
   const [dataSourceApi, setDataSourceApi] =
     React.useState<DataSourceApi<Developer>>();
   const [activeCellIndex, setActiveCellIndex] = React.useState<
@@ -158,18 +160,27 @@ export default function DataTestPage() {
         >
           toggle header
         </Button>
+        <Button
+          onClick={() => {
+            setShowGrid((showGrid) => !showGrid);
+          }}
+        >
+          toggle grid
+        </Button>
       </div>
       {active[0] && (
         <DataSource<Developer> data={ds} primaryKey="id">
-          <InfiniteTable<Developer>
-            header={header}
-            onActiveCellIndexChange={setActiveCellIndex}
-            debugId="test"
-            onReady={onReady}
-            defaultActiveCellIndex={activeCellIndex}
-            domProps={domProps}
-            columns={columns}
-          />
+          {showGrid ? (
+            <InfiniteTable<Developer>
+              header={header}
+              onActiveCellIndexChange={setActiveCellIndex}
+              debugId="test"
+              onReady={onReady}
+              defaultActiveCellIndex={activeCellIndex}
+              domProps={domProps}
+              columns={columns}
+            />
+          ) : null}
         </DataSource>
       )}
     </React.StrictMode>

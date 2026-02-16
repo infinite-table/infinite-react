@@ -5,8 +5,11 @@ export default test.describe.parallel('Inline Edit', () => {
     page,
     editModel,
     rowModel,
+    tracingModel,
   }) => {
     await page.waitForInfinite();
+
+    const stop = await tracingModel.start();
 
     const cellEditable1 = {
       colId: 'firstName',
@@ -41,14 +44,18 @@ export default test.describe.parallel('Inline Edit', () => {
     );
 
     expect(persistSuccessCalls).toBe(1);
+
+    await stop();
   });
 
   test('should not persist changes to the id column', async ({
     page,
     editModel,
     rowModel,
+    tracingModel,
   }) => {
     await page.waitForInfinite();
+    const stop = await tracingModel.start();
     const cellEditable1 = {
       colId: 'id',
       rowIndex: 0,
@@ -70,5 +77,6 @@ export default test.describe.parallel('Inline Edit', () => {
     );
 
     expect(persistErrorCalls).toBe(1);
+    await stop();
   });
 });
