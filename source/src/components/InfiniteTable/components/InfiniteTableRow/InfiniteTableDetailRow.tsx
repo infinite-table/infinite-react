@@ -7,10 +7,7 @@ import { InternalVars } from '../../internalVars.css';
 import { InfiniteTableProps, InfiniteTableRowInfo } from '../../types';
 import { RowDetailRecipe } from '../rowDetail.css';
 
-import {
-  getDataSourceMasterDetailContext,
-  getDataSourceMasterDetailStoreContext,
-} from '../../../../components/DataSource/DataSourceMasterDetailContext';
+import { getDataSourceMasterDetailStoreContext } from '../../../../components/DataSource/DataSourceMasterDetailContext';
 
 import { NonUndefined } from '../../../types/NonUndefined';
 import { useRegisterDetail } from './useRegisterDetail';
@@ -31,7 +28,6 @@ const { rootClassName } = internalProps;
 export const InfiniteTableRowDetailsClassName = `${rootClassName}RowDetail`;
 
 function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
-  const DataSourceMasterDetailContext = getDataSourceMasterDetailContext();
   const {
     domRef,
     rowDetailRenderer,
@@ -61,25 +57,20 @@ function InfiniteTableDetailRowFn<T>(props: InfiniteTableDetailRowProps<T>) {
 
   return (
     <DataSourceMasterDetailStoreContext.Provider value={masterDetailStore}>
-      <DataSourceMasterDetailContext.Provider value={masterDetailContextValue}>
-        <div
-          ref={domRef}
-          className={join(
-            InfiniteTableRowDetailsClassName,
-            RowDetailRecipe({}),
-          )}
-          style={{
-            position: 'absolute',
-            top: `${detailOffset}px`,
-            left: 0,
-            // TODO see #rowDetailWidth
-            width: `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`,
-            height: rowDetailHeight,
-          }}
-        >
-          {rowDetailRenderer(rowInfo, currentRowCache)}
-        </div>
-      </DataSourceMasterDetailContext.Provider>
+      <div
+        ref={domRef}
+        className={join(InfiniteTableRowDetailsClassName, RowDetailRecipe({}))}
+        style={{
+          position: 'absolute',
+          top: `${detailOffset}px`,
+          left: 0,
+          // TODO see #rowDetailWidth
+          width: `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`,
+          height: rowDetailHeight,
+        }}
+      >
+        {rowDetailRenderer(rowInfo, currentRowCache)}
+      </div>
     </DataSourceMasterDetailStoreContext.Provider>
   );
 }

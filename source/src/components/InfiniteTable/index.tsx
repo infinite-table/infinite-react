@@ -4,10 +4,8 @@ import { RefObject } from 'react';
 import { join } from '../../utils/join';
 import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch';
 
-import {
-  useDataSourceState,
-  useMasterDetailContext,
-} from '../DataSource/publicHooks/useDataSourceState';
+import { useDataSourceState } from '../DataSource/publicHooks/useDataSourceState';
+import { useMasterDetailStore } from '../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 import {
   buildManagedComponent,
@@ -126,7 +124,7 @@ const { ManagedComponentContextProvider: InfiniteTableRoot } =
 // ) => {
 export const InfiniteTableComponent = React.memo(
   function InfiniteTableComponent<T>() {
-    const masterContext = useMasterDetailContext();
+    const masterDetailStore = useMasterDetailStore();
     const { componentState, api, initialChildren } = useInfiniteTableSelector(
       (ctx) => {
         return {
@@ -251,7 +249,8 @@ export const InfiniteTableComponent = React.memo(
       // if we are a detail grid, we want to use the master grid's portal
       // so menus are rendered in the container of the top-most (master) grid - since we can
       // have multiple levels of nesting
-      if (masterContext) {
+      if (masterDetailStore) {
+        const masterContext = masterDetailStore.getSnapshot();
         portalDOMRef.current =
           masterContext.getMasterState().portalDOMRef.current;
       }
@@ -342,8 +341,8 @@ function InfiniteTableContextProvider<T>({
   });
   const getComputed = useLatest(computed);
 
-  const masterContext = useMasterDetailContext();
-  if (__DEV__ && !masterContext) {
+  const masterDetailStore = useMasterDetailStore();
+  if (__DEV__ && !masterDetailStore) {
     (globalThis as any).getState = getState;
     (globalThis as any).getComputed = getComputed;
     (globalThis as any).componentActions = componentActions;

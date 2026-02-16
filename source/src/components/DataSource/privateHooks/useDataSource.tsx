@@ -21,15 +21,16 @@ import {
 import { createDataSourceStore } from '../DataSourceStore';
 import { getDataSourceApi } from '../getDataSourceApi';
 import { useLoadData } from './useLoadData';
-import { useMasterDetailContext } from '../publicHooks/useDataSourceState';
-import { useDataSourceMasterRowInfo } from '../publicHooks/useDataSourceMasterDetailSelector';
+import {
+  useMasterRowInfo,
+  useGetMasterDetailContext,
+} from '../publicHooks/useDataSourceMasterDetailSelector';
 
 export function useDataSourceInternal<T, PROPS_TYPE = DataSourceProps<T>>(
   props: Omit<PROPS_TYPE, 'children'>,
 ) {
-  const masterRowInfo = useDataSourceMasterRowInfo<T>();
-  const masterContext = useMasterDetailContext<T>();
-  const getDataSourceMasterContext = useLatest(masterContext);
+  const masterRowInfo = useMasterRowInfo<T>();
+  const getDataSourceMasterContext = useGetMasterDetailContext<T>();
 
   const isDetail = !!masterRowInfo;
   // when we are in a detail DataSource, we want to have a key
@@ -113,6 +114,7 @@ export function useDataSourceInternal<T, PROPS_TYPE = DataSourceProps<T>>(
   );
 
   useLayoutEffect(() => {
+    const masterContext = getDataSourceMasterContext();
     if (masterContext) {
       masterContext.registerDetail(contextValue);
     }

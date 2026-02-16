@@ -10,7 +10,7 @@ import { createDataSourceStore } from './DataSourceStore';
 import { getDataSourceApi } from './getDataSourceApi';
 
 import { useLoadData } from './privateHooks/useLoadData';
-import { useMasterDetailContext } from './publicHooks/useDataSourceState';
+import { useGetMasterDetailContext } from './publicHooks/useDataSourceMasterDetailSelector';
 import { DataSourceContextValue, DataSourceState } from './types';
 import { useDataSourceSelector } from './publicHooks/useDataSourceSelector';
 
@@ -51,8 +51,7 @@ export function DataSourceCmp<T>({
 
   const [store] = React.useState(() => createDataSourceStore<T>());
 
-  const masterContext = useMasterDetailContext();
-  const getDataSourceMasterContext = useLatest(masterContext);
+  const getDataSourceMasterContext = useGetMasterDetailContext();
 
   const { componentState, componentActions, assignState } =
     useManagedComponentState<DataSourceState<T>>();
@@ -75,6 +74,7 @@ export function DataSourceCmp<T>({
   };
 
   useLayoutEffect(() => {
+    const masterContext = getDataSourceMasterContext();
     if (masterContext) {
       masterContext.registerDetail(contextValue);
     }

@@ -7,10 +7,7 @@ import { defaultFilterTypes } from './defaultFilterTypes';
 
 import { GroupRowsState } from './GroupRowsState';
 
-import {
-  useDataSourceState,
-  useMasterDetailContext,
-} from './publicHooks/useDataSourceState';
+import { useDataSourceState } from './publicHooks/useDataSourceState';
 import { RowSelectionState } from './RowSelectionState';
 import { CellSelectionState } from './CellSelectionState';
 import {
@@ -24,12 +21,12 @@ import {
 } from './state/getInitialState';
 import { concludeReducer, filterDataArray } from './state/reducer';
 
-import { InfiniteTableRowInfo } from '../InfiniteTable';
 // import { DataSourceCmp } from './DataSourceCmp';
 import { useDataSourceInternal } from './privateHooks/useDataSource';
 import { DataSourceProps } from './types';
 import { RowDisabledState } from './RowDisabledState';
 import { useDataSourceSelector } from './publicHooks/useDataSourceSelector';
+import { useMasterRowInfo } from './publicHooks/useDataSourceMasterDetailSelector';
 
 const {
   // ManagedComponentContextProvider: ManagedDataSourceContextProvider,
@@ -69,16 +66,6 @@ function useRowInfoReducers() {
   });
 
   return rowInfoReducerResults;
-}
-
-function useMasterRowInfo<T = any>(): InfiniteTableRowInfo<T> | undefined {
-  const context = useMasterDetailContext();
-
-  if (!context) {
-    return undefined;
-  }
-
-  return context.masterRowInfo as InfiniteTableRowInfo<T>;
 }
 
 export {

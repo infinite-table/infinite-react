@@ -19,7 +19,7 @@ import {
   useInfiniteTableSelector,
 } from '../../hooks/useInfiniteTableSelector';
 import { useDataSourceSelector } from '../../../DataSource';
-import { useDataSourceMasterRowInfo } from '../../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
+import { useMasterRowInfo } from '../../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
 
 const _HOVERED_CLASS_NAMES = [
   RowHoverCls,
@@ -40,7 +40,7 @@ function toClassNameArray(str: string | string[]) {
 function InfiniteTableBody<T>(props: InfiniteTableBodyProps<T>) {
   const context = useInfiniteTableStableContext<T>();
 
-  const masterRowInfo = useDataSourceMasterRowInfo();
+  const masterRowInfo = useMasterRowInfo();
   const { getComputed, api } = context;
   const {
     renderer,

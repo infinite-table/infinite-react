@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
 import type { DataSourceMasterDetailContextValue } from '../types';
 
@@ -9,6 +9,39 @@ import {
 import { getDataSourceMasterDetailStoreContext } from '../DataSourceMasterDetailContext';
 import { DataSourceMasterDetailStore } from '../DataSourceMasterDetailStore';
 import { InfiniteTableRowInfo } from '../../InfiniteTable';
+
+/**
+ * Returns the raw master-detail store (or undefined when outside a detail row).
+ *
+ * Use this when you need on-demand access to the master-detail context
+ * (e.g. inside effects or callbacks) without subscribing the component
+ * to re-renders.  Call `store.getSnapshot()` to read the current value.
+ */
+export function useMasterDetailStore<T = any>():
+  | DataSourceMasterDetailStore<T>
+  | undefined {
+  const StoreContext = getDataSourceMasterDetailStoreContext<T>();
+  const store = useContext(StoreContext) as DataSourceMasterDetailStore<T>;
+
+  return store || undefined;
+}
+
+/**
+ * Returns a stable getter `() => DataSourceMasterDetailContextValue | undefined`
+ * that always returns the latest master-detail context snapshot.
+ *
+ * This is the store-based replacement for the old
+ * `useLatest(useMasterDetailContext())` pattern: the component does NOT
+ * re-render when the master-detail context changes, but calling the
+ * returned function will always give you the most recent value.
+ */
+export function useGetMasterDetailContext<T = any>(): () =>
+  | DataSourceMasterDetailContextValue<T>
+  | undefined {
+  const store = useMasterDetailStore<T>();
+
+  return useCallback(() => store?.getSnapshot(), [store]);
+}
 
 /**
  * A selector hook that reads a single value from the DataSource store.
@@ -52,7 +85,7 @@ export function useDataSourceMasterDetailSelector<R extends object>(
   return useComponentStoreSelector(store, selector) ?? undefined;
 }
 
-export function useDataSourceMasterRowInfo<T = any>():
+export function useMasterRowInfo<T = any>():
   | InfiniteTableRowInfo<T>
   | undefined {
   const StoreContext = getDataSourceMasterDetailStoreContext<any>();

@@ -158,6 +158,64 @@ const detailsDOMProps = {
     flex: 1,
   },
 };
+
+function RowDetail() {
+  const rowInfo = useMasterRowInfo<Developer>();
+
+  console.log(rowInfo, 'rowInfo');
+  if (!rowInfo) {
+    return null;
+  }
+  return (
+    <div
+      style={{
+        background: 'tomato',
+        padding: 20,
+        height: '100%',
+        display: 'flex',
+        flexFlow: 'column',
+      }}
+    >
+      <form style={{ padding: 20 }}>
+        <label>
+          First name:
+          <input name="first name" defaultValue={rowInfo.data?.firstName} />
+        </label>
+        <label>
+          Age:
+          <input
+            name="last name"
+            type="number"
+            defaultValue={rowInfo.data?.age}
+          />
+        </label>
+      </form>
+      <DataSource<Developer>
+        debugId={`datasource-detail-${rowInfo.id}`}
+        data={detailDataSource}
+        shouldReloadData={{
+          filterValue: true,
+          sortInfo: true,
+        }}
+        primaryKey="id"
+        defaultGroupBy={[
+          {
+            field: 'stack',
+          },
+        ]}
+        defaultFilterValue={[]}
+        key={rowInfo.id}
+      >
+        <InfiniteTable<Developer>
+          debugId={`infinite-detail-${rowInfo.id}`}
+          domProps={detailsDOMProps}
+          columns={detailCols}
+        />
+      </DataSource>
+    </div>
+  );
+}
+
 export default function DataTestPage() {
   return (
     <React.StrictMode>
@@ -171,61 +229,8 @@ export default function DataTestPage() {
             collapsedRows: true,
           }}
           rowDetailCache={false}
-          rowDetailRenderer={(
-            rowInfo: InfiniteTableRowInfo<Developer>,
-            _cache,
-          ) => {
-            return (
-              <div
-                style={{
-                  background: 'tomato',
-                  padding: 20,
-                  height: '100%',
-                  display: 'flex',
-                  flexFlow: 'column',
-                }}
-              >
-                <form style={{ padding: 20 }}>
-                  <label>
-                    First name:
-                    <input
-                      name="first name"
-                      defaultValue={rowInfo.data?.firstName}
-                    />
-                  </label>
-                  <label>
-                    Age:
-                    <input
-                      name="last name"
-                      type="number"
-                      defaultValue={rowInfo.data?.age}
-                    />
-                  </label>
-                </form>
-                <DataSource<Developer>
-                  debugId={`datasource-detail-${rowInfo.id}`}
-                  data={detailDataSource}
-                  shouldReloadData={{
-                    filterValue: true,
-                    sortInfo: true,
-                  }}
-                  primaryKey="id"
-                  defaultGroupBy={[
-                    {
-                      field: 'stack',
-                    },
-                  ]}
-                  defaultFilterValue={[]}
-                  key={rowInfo.id}
-                >
-                  <InfiniteTable<Developer>
-                    debugId={`infinite-detail-${rowInfo.id}`}
-                    domProps={detailsDOMProps}
-                    columns={detailCols}
-                  />
-                </DataSource>
-              </div>
-            );
+          components={{
+            RowDetail,
           }}
           domProps={{
             className: styles.CustomRowHeight,

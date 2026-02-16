@@ -16,12 +16,11 @@ import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { raf } from '../../../utils/raf';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { useEffectWithChanges } from '../../hooks/useEffectWithChanges';
-import { useLatest } from '../../hooks/useLatest';
 import { Scrollbars } from '../../InfiniteTable';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { debounce } from '../../utils/debounce';
 import type { RenderRange } from '../../VirtualBrain';
-import { useMasterDetailContext } from '../publicHooks/useDataSourceState';
+import { useGetMasterDetailContext } from '../publicHooks/useDataSourceMasterDetailSelector';
 import { cleanupEmptyFilterValues } from '../state/reducer';
 import {
   DataSourceDataParams,
@@ -605,7 +604,7 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
     cursorId: livePagination ? stateCursorId : null,
   });
 
-  const getMasterContext = useLatest(useMasterDetailContext());
+  const getMasterContext = useGetMasterDetailContext();
 
   const dataChangeTimestampsRef = useRef<number[]>([]);
   useEffectWithChanges(
