@@ -15,7 +15,6 @@ const path = require('path');
 const withMDX = require('@next/mdx')();
 
 // const withMDX = (x) => x;
-
 const spawnSync = require('child_process').spawnSync;
 
 const exec = (cmd, args = []) => spawnSync(cmd, args, { stdio: 'pipe' });
