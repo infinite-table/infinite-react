@@ -116,7 +116,7 @@ export class TracingModel {
     if (
       !existingBaseline ||
       metrics[compare] <
-        existingBaseline[compare] * (1 - existingBaseline.threshold / 100)
+        existingBaseline[compare] * (1 - DEFAULT_THRESHOLD / 100)
     ) {
       saveBaseline(testName, metrics);
       console.log(
