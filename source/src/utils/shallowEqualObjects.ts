@@ -11,6 +11,16 @@ export function shallowEqualObjects<T extends object | null>(
     return false;
   }
 
+  const typeA = typeof objA;
+  const typeB = typeof objB;
+  if (typeA !== typeB) {
+    return false;
+  }
+
+  if (typeA !== 'object') {
+    return false;
+  }
+
   var aKeys = Object.keys(objA) as (keyof T)[];
   var bKeys = Object.keys(objB) as (keyof T)[];
 
