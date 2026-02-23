@@ -1,15 +1,15 @@
 {
   "tests/table/perf/flashing/default:perf should be fine when single click": {
-    "scriptingTime": 178.53,
-    "renderingTime": 4.6,
-    "paintingTime": 4.3,
-    "totalTime": 218.86
+    "scriptingTime": 32.67,
+    "renderingTime": 1.44,
+    "paintingTime": 1.39,
+    "totalTime": 200.47
   },
   "tests/table/perf/default:horizontal-scrolling with tracing": {
-    "scriptingTime": 503.45,
-    "renderingTime": 52.04,
-    "paintingTime": 25.37,
-    "totalTime": 850.79
+    "scriptingTime": 199.9,
+    "renderingTime": 42.6,
+    "paintingTime": 18.79,
+    "totalTime": 777.05
   },
   "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
     "scriptingTime": 433.34,
@@ -48,10 +48,10 @@
     "totalTime": 692.85
   },
   "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
-    "scriptingTime": 258.5,
-    "renderingTime": 18.42,
-    "paintingTime": 2.74,
-    "totalTime": 360.4
+    "scriptingTime": 88.33,
+    "renderingTime": 17.26,
+    "paintingTime": 2.53,
+    "totalTime": 382.55
   },
   "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
     "scriptingTime": 105.76,
@@ -66,10 +66,10 @@
     "totalTime": 4070.01
   },
   "tests/table/props/filtering/filter-value/client-side:Filters correctly": {
-    "scriptingTime": 191.88,
-    "renderingTime": 23,
-    "paintingTime": 6.82,
-    "totalTime": 557.92
+    "scriptingTime": 89.35,
+    "renderingTime": 18.27,
+    "paintingTime": 4.28,
+    "totalTime": 349.23
   },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
     "scriptingTime": 446.82,
@@ -78,9 +78,9 @@
     "totalTime": 894.38
   },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
-    "scriptingTime": 822.8,
-    "renderingTime": 50.21,
-    "paintingTime": 66.78,
-    "totalTime": 3655.5
+    "scriptingTime": 396.9,
+    "renderingTime": 30.9,
+    "paintingTime": 29.81,
+    "totalTime": 2669.75
   }
 }
