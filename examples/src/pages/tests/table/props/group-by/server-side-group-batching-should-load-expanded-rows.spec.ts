@@ -24,6 +24,8 @@ export default test.describe
     // wait for france to be requested
     await page.waitForRequest(condition);
 
+    await page.waitForTimeout(50);
+
     const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
 
     const paramsForRequests = queryStrings.map((query) => {
