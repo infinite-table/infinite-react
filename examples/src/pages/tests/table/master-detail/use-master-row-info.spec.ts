@@ -7,6 +7,8 @@ export default test.describe.parallel('Master-detail', () => {
   }) => {
     await page.waitForInfinite();
 
+    await page.waitForTimeout(100);
+
     const firstChildColumn = tableModel.withColumn('firstNameChildColumn');
     expect(await firstChildColumn.getHeader()).toBe('firstNameChildColumn 13');
 
