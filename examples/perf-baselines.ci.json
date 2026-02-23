@@ -1,1 +1,86 @@
-{}
+{
+  "tests/table/perf/flashing/default:perf should be fine when single click": {
+    "scriptingTime": 178.53,
+    "renderingTime": 4.6,
+    "paintingTime": 4.3,
+    "totalTime": 218.86
+  },
+  "tests/table/perf/default:horizontal-scrolling with tracing": {
+    "scriptingTime": 503.45,
+    "renderingTime": 52.04,
+    "paintingTime": 25.37,
+    "totalTime": 850.79
+  },
+  "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
+    "scriptingTime": 433.34,
+    "renderingTime": 161.39,
+    "paintingTime": 7.77,
+    "totalTime": 681.6
+  },
+  "tests/table/props/column/column-change:works correctly": {
+    "scriptingTime": 77.4,
+    "renderingTime": 7.66,
+    "paintingTime": 2.65,
+    "totalTime": 435.22
+  },
+  "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
+    "scriptingTime": 1451.97,
+    "renderingTime": 61.16,
+    "paintingTime": 56.45,
+    "totalTime": 4947.42
+  },
+  "tests/table/props/data/basic-add-data:insert data": {
+    "scriptingTime": 259.35,
+    "renderingTime": 4.59,
+    "paintingTime": 3.24,
+    "totalTime": 407.06
+  },
+  "tests/table/props/data/basic-update:via API should not rerender header": {
+    "scriptingTime": 22.74,
+    "renderingTime": 2.54,
+    "paintingTime": 2.12,
+    "totalTime": 282.04
+  },
+  "tests/table/props/data/editing/column-editor:should use custom editor when configured": {
+    "scriptingTime": 181.66,
+    "renderingTime": 33.02,
+    "paintingTime": 6.63,
+    "totalTime": 692.85
+  },
+  "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
+    "scriptingTime": 258.5,
+    "renderingTime": 18.42,
+    "paintingTime": 2.74,
+    "totalTime": 360.4
+  },
+  "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
+    "scriptingTime": 105.76,
+    "renderingTime": 24.74,
+    "paintingTime": 5.91,
+    "totalTime": 686.1
+  },
+  "tests/table/props/data/edit-with-delay:on string column": {
+    "scriptingTime": 130.89,
+    "renderingTime": 21.45,
+    "paintingTime": 5.16,
+    "totalTime": 4070.01
+  },
+  "tests/table/props/filtering/filter-value/client-side:Filters correctly": {
+    "scriptingTime": 191.88,
+    "renderingTime": 23,
+    "paintingTime": 6.82,
+    "totalTime": 557.92
+  },
+  "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 446.82,
+    "renderingTime": 138.84,
+    "paintingTime": 22.99,
+    "totalTime": 894.38
+  },
+  "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 822.8,
+    "renderingTime": 50.21,
+    "paintingTime": 66.78,
+    "totalTime": 3655.5
+  }
+}
