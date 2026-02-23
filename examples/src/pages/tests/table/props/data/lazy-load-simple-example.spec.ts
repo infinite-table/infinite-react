@@ -25,7 +25,7 @@ export default test.describe.parallel('Lazy Load Data', () => {
 
     expect(await getCallCount({ page })).toEqual(CALL_COUNT);
 
-    // scroll to row 50
+    // scroll to row 50.
     await page.evaluate(() => {
       (window as any).api.scrollRowIntoView(50, {
         scrollAdjustPosition: 'start',
