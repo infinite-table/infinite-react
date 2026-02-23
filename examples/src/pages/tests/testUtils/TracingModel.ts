@@ -6,6 +6,7 @@ import {
   formatTestName,
   saveBaseline,
   getBaseline,
+  DEFAULT_THRESHOLD,
   PerfMetrics,
   PerfComparisonResult,
   isCI,
@@ -131,7 +132,7 @@ export class TracingModel {
   /**
    * Stop tracing and save the current metrics as the new baseline
    */
-  async stopAndSaveBaseline(threshold: number = 10): Promise<TracingResult> {
+  async stopAndSaveBaseline(): Promise<TracingResult> {
     await this.browser.stopTracing();
 
     if (!this.tracePath) {
@@ -142,14 +143,14 @@ export class TracingModel {
     const metrics = parseTraceFile(this.tracePath);
 
     // Save as baseline
-    saveBaseline(testName, metrics, threshold);
+    saveBaseline(testName, metrics);
 
     console.log(`\n📊 Performance metrics for "${this.title}":`);
     console.log(`   Scripting: ${metrics.scriptingTime}ms`);
     console.log(`   Rendering: ${metrics.renderingTime}ms`);
     console.log(`   Painting:  ${metrics.paintingTime}ms`);
     console.log(`   Total:     ${metrics.totalTime}ms`);
-    console.log(`\n✅ Saved as baseline with ${threshold}% threshold`);
+    console.log(`\n✅ Saved as baseline (threshold: ${DEFAULT_THRESHOLD}%)`);
 
     return {
       tracePath: this.tracePath,

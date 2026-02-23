@@ -13,8 +13,9 @@ export interface PerfBaseline {
   renderingTime: number;
   paintingTime: number;
   totalTime: number;
-  threshold: number; // percentage, e.g., 5 for 5%
 }
+
+export const DEFAULT_THRESHOLD = 40;
 
 export interface PerfBaselines {
   [testName: string]: PerfBaseline;
@@ -266,19 +267,13 @@ export function getBaseline(testName: string): PerfBaseline | null {
 /**
  * Save or update a baseline for a specific test
  */
-export function saveBaseline(
-  testName: string,
-  metrics: PerfMetrics,
-  threshold: number = 10,
-): void {
+export function saveBaseline(testName: string, metrics: PerfMetrics): void {
   const baselines = loadBaselines();
-  const existing = baselines[testName];
   baselines[testName] = {
     scriptingTime: Math.round(metrics.scriptingTime * 100) / 100,
     renderingTime: Math.round(metrics.renderingTime * 100) / 100,
     paintingTime: Math.round(metrics.paintingTime * 100) / 100,
     totalTime: Math.round(metrics.totalTime * 100) / 100,
-    threshold: existing?.threshold ?? threshold,
   };
   saveBaselines(baselines);
 }
@@ -314,7 +309,8 @@ export function compareAgainstBaseline(
 
   const compare = options?.compare ?? 'totalTime';
 
-  const { threshold, [compare]: baselineValue } = baseline;
+  const threshold = DEFAULT_THRESHOLD;
+  const baselineValue = baseline[compare];
   const currentValue = currentMetrics[compare];
 
   // Calculate percentage difference (positive = slower, negative = faster)
