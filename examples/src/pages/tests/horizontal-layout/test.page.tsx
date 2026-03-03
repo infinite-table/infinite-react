@@ -28,15 +28,24 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'id',
     type: 'number',
     defaultWidth: 100,
+    style: {
+      background: 'rgba(255, 99, 71, 0.4)',
+    },
   },
   canDesign: {
     field: 'canDesign',
     defaultWidth: 200,
+    style: {
+      background: 'rgba(211, 119, 171, 0.3)',
+    },
   },
   salary: {
     field: 'salary',
     type: 'number',
     defaultWidth: 300,
+    style: {
+      background: 'rgba(55, 99, 171, 0.3)',
+    },
   },
   // firstName: {
   //   field: 'firstName',
