@@ -44,12 +44,15 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultWidth: 300,
     style: {
-      background: 'rgba(55, 99, 171, 0.3)',
+      background: 'rgba(55, 99, 171, 0.5)',
     },
   },
-  // firstName: {
-  //   field: 'firstName',
-  // },
+  firstName: {
+    field: 'firstName',
+    style: {
+      background: 'rgb(111 255 72 / 48%)',
+    },
+  },
   // age: {
   //   field: 'age',
   //   type: 'number',
@@ -62,10 +65,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const domProps = {
   // style: { height: 420 /*30px header, 420 body*/, width: 230 },
-  style: { height: '50vh' /*30px header, 420 body*/, width: '80vw' },
+  style: { height: '50vh' /*30px header, 420 body*/, width: '100vw' },
 };
 
-const data = Array.from({ length: 100 }, (_, i) => ({
+const data = Array.from({ length: 1000 }, (_, i) => ({
   id: i,
   preferredLanguage: `Lang ${i}`,
   age: i * 10,
