@@ -29,14 +29,14 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultWidth: 100,
     style: {
-      background: 'rgba(255, 99, 71, 0.4)',
+      // background: 'rgba(255, 99, 71, 0.4)',
     },
   },
   canDesign: {
     field: 'canDesign',
     defaultWidth: 200,
     style: {
-      background: 'rgba(211, 119, 171, 0.3)',
+      // background: 'rgba(211, 119, 171, 0.3)',
     },
   },
   salary: {
@@ -44,13 +44,13 @@ const columns: InfiniteTablePropColumns<Developer> = {
     type: 'number',
     defaultWidth: 300,
     style: {
-      background: 'rgba(55, 99, 171, 0.5)',
+      // background: 'rgba(55, 99, 171, 0.5)',
     },
   },
   firstName: {
     field: 'firstName',
     style: {
-      background: 'rgb(111 255 72 / 48%)',
+      // background: 'rgb(111 255 72 / 48%)',
     },
   },
   // age: {

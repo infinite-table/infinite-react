@@ -31,6 +31,7 @@ import { GridCellInterface } from './GridCellInterface';
 
 import { setFilter, setIntersection } from '../../utils/setUtils';
 import { ListRowInterface, ListRowManager } from './ListRowManager';
+import type { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
 
@@ -1270,13 +1271,24 @@ export class GridRenderer extends Logger {
   }
 
   protected onMouseEnterNotBound = (event: React.MouseEvent<HTMLElement>) => {
-    const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+    const rowIndex = this.getMatrixRowIndexFromElement(event.currentTarget);
     this.onMouseEnter(rowIndex);
   };
   protected onMouseLeaveNotBound = (event: React.MouseEvent<HTMLElement>) => {
-    const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+    const rowIndex = this.getMatrixRowIndexFromElement(event.currentTarget);
     this.onMouseLeave(rowIndex);
   };
+
+  private getMatrixRowIndexFromElement(element: HTMLElement): number {
+    const renderedRowIndex = Number(element.dataset.rowIndex);
+
+    if (this.brain.isHorizontalLayoutBrain) {
+      return (
+        this.brain as unknown as HorizontalLayoutMatrixBrain
+      ).getRowIndexInPage(renderedRowIndex);
+    }
+    return renderedRowIndex;
+  }
 
   protected renderCellAt(
     rowIndex: number,
