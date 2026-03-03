@@ -12,10 +12,10 @@
     "totalTime": 777.05
   },
   "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
-    "scriptingTime": 433.34,
-    "renderingTime": 161.39,
-    "paintingTime": 7.77,
-    "totalTime": 681.6
+    "scriptingTime": 202.25,
+    "renderingTime": 68.28,
+    "paintingTime": 6.67,
+    "totalTime": 456.38
   },
   "tests/table/props/column/column-change:works correctly": {
     "scriptingTime": 77.4,
@@ -36,16 +36,16 @@
     "totalTime": 407.06
   },
   "tests/table/props/data/basic-update:via API should not rerender header": {
-    "scriptingTime": 22.74,
-    "renderingTime": 2.54,
-    "paintingTime": 2.12,
-    "totalTime": 282.04
+    "scriptingTime": 10.79,
+    "renderingTime": 1.51,
+    "paintingTime": 0.22,
+    "totalTime": 166.63
   },
   "tests/table/props/data/editing/column-editor:should use custom editor when configured": {
-    "scriptingTime": 181.66,
-    "renderingTime": 33.02,
-    "paintingTime": 6.63,
-    "totalTime": 692.85
+    "scriptingTime": 108.94,
+    "renderingTime": 22.22,
+    "paintingTime": 3,
+    "totalTime": 584.08
   },
   "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
     "scriptingTime": 88.33,
