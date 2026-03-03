@@ -18,10 +18,10 @@
     "totalTime": 456.38
   },
   "tests/table/props/column/column-change:works correctly": {
-    "scriptingTime": 77.4,
-    "renderingTime": 7.66,
-    "paintingTime": 2.65,
-    "totalTime": 435.22
+    "scriptingTime": 45.07,
+    "renderingTime": 6.85,
+    "paintingTime": 2.45,
+    "totalTime": 300.33
   },
   "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
     "scriptingTime": 1451.97,
@@ -30,10 +30,10 @@
     "totalTime": 4947.42
   },
   "tests/table/props/data/basic-add-data:insert data": {
-    "scriptingTime": 259.35,
-    "renderingTime": 4.59,
-    "paintingTime": 3.24,
-    "totalTime": 407.06
+    "scriptingTime": 62.92,
+    "renderingTime": 4.03,
+    "paintingTime": 1.15,
+    "totalTime": 348.59
   },
   "tests/table/props/data/basic-update:via API should not rerender header": {
     "scriptingTime": 10.79,
