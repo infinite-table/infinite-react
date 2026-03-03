@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { flushSync } from 'react-dom';
 import { useLayoutEffect, useRef, useState } from 'react';
 
 import type { Renderable } from '../types/Renderable';
@@ -9,18 +8,16 @@ export type AvoidReactDiffProps = {
   name?: string;
   useraf?: boolean;
   updater: SubscriptionCallback<Renderable>;
-  shouldFlushSync?: () => boolean;
+  afterCommit?: () => void;
 };
-
-const SHOULD_FLUSH_SYNC = () => false;
 
 function AvoidReactDiffFn(props: AvoidReactDiffProps) {
   const [children, setChildren] = useState<Renderable>(props.updater.get);
 
   const rafId = useRef<any>(null);
 
-  // const shouldFlushSync = SHOULD_FLUSH_SYNC;
-  const shouldFlushSync = props.shouldFlushSync ?? SHOULD_FLUSH_SYNC;
+  const afterCommitRef = useRef(props.afterCommit);
+  afterCommitRef.current = props.afterCommit;
 
   // prev react 19 we had useEffect here
   // but there are situations when the updater would be called
@@ -29,36 +26,15 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
   // so we use useLayoutEffect here to ensure we pick up those changes
   useLayoutEffect(() => {
     function onChange(children: Renderable) {
-      // so when updater triggers a change
-      // we can re-render and set the children
-
-      let FLUSH_SYNC = shouldFlushSync();
-
       if (props.useraf) {
         if (rafId.current != null) {
           cancelAnimationFrame(rafId.current);
         }
         rafId.current = requestAnimationFrame(() => {
-          if (FLUSH_SYNC) {
-            queueMicrotask(() => {
-              flushSync(() => {
-                setChildren(children);
-              });
-            });
-          } else {
-            setChildren(children);
-          }
+          setChildren(children);
         });
       } else {
-        if (FLUSH_SYNC) {
-          queueMicrotask(() => {
-            flushSync(() => {
-              setChildren(children);
-            });
-          });
-        } else {
-          setChildren(children);
-        }
+        setChildren(children);
       }
     }
     const remove = props.updater.onChange(onChange);
@@ -69,7 +45,13 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
       }
       remove();
     };
-  }, [props.updater, props.useraf, shouldFlushSync]);
+  }, [props.updater, props.useraf]);
+
+  // Fires synchronously after React commits DOM changes but before browser paint.
+  // Used to sync direct DOM work (like transforms) with React's commit cycle.
+  useLayoutEffect(() => {
+    afterCommitRef.current?.();
+  });
 
   return (children as React.ReactNode) ?? null;
 }

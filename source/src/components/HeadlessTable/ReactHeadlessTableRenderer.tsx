@@ -42,11 +42,6 @@ export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
 );
 
-const SCROLLING_OBJECT_PARAM_FLYWEIGHT = {
-  scrolling: false,
-  isHorizontalLayout: false,
-};
-
 export class GridRenderer extends Logger {
   protected brain: MatrixBrain;
 
@@ -1381,15 +1376,11 @@ export class GridRenderer extends Logger {
 
       return;
     }
-    SCROLLING_OBJECT_PARAM_FLYWEIGHT.scrolling = this.scrolling;
-    SCROLLING_OBJECT_PARAM_FLYWEIGHT.isHorizontalLayout = isHorizontalLayout;
-
     this.cellManager.renderNodeAtCell(
       renderedNode,
       cell,
       [rowIndex, colIndex],
       cellAdditionalInfo,
-      SCROLLING_OBJECT_PARAM_FLYWEIGHT,
     );
 
     this.updateElementPosition(cell, { hidden, rowspan, colspan });
@@ -1501,45 +1492,53 @@ export class GridRenderer extends Logger {
     const { x, y } = itemPosition;
 
     if (itemElement) {
-      this.updateHoverClassNamesForRow(rowIndex);
+      const applyPosition = () => {
+        this.updateHoverClassNamesForRow(rowIndex);
+        // itemElement.style.gridColumn = `${colIndex} / span 1`;
+        // itemElement.style.gridRow = `${rowIndex} / span 1`;
 
-      // itemElement.style.gridColumn = `${colIndex} / span 1`;
-      // itemElement.style.gridRow = `${rowIndex} / span 1`;
+        // (itemElement.dataset as any).elementIndex = elementIndex;
+        const realCoords = this.getCellRealCoordinates(rowIndex, colIndex);
+        (itemElement.dataset as any).rowIndex = realCoords.rowIndex;
 
-      // (itemElement.dataset as any).elementIndex = elementIndex;
-      const realCoords = this.getCellRealCoordinates(rowIndex, colIndex);
-      (itemElement.dataset as any).rowIndex = realCoords.rowIndex;
+        (itemElement.dataset as any).colIndex = realCoords.colIndex;
 
-      (itemElement.dataset as any).colIndex = realCoords.colIndex;
+        if (ITEM_POSITION_WITH_TRANSFORM) {
+          this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);
 
-      if (ITEM_POSITION_WITH_TRANSFORM) {
-        this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);
+          itemElement.style.willChange = 'transform';
+          itemElement.style.backfaceVisibility = 'hidden';
+          // need to set it to auto
+          // in case some fixed cells are reused
+          // as the fixed cells had a zIndex
+          const hidden = options
+            ? options.hidden
+            : !!this.isCellCovered(rowIndex, colIndex);
 
-        itemElement.style.willChange = 'transform';
-        itemElement.style.backfaceVisibility = 'hidden';
-        // need to set it to auto
-        // in case some fixed cells are reused
-        // as the fixed cells had a zIndex
-        const hidden = options
-          ? options.hidden
-          : !!this.isCellCovered(rowIndex, colIndex);
+          const zIndex = hidden
+            ? '-1'
+            : // #updatezindex - we need to allow elements use their own zIndex, so we
+              // resort to allowing them to have it as a data-z-index attribute
+              itemElement.dataset.zIndex || 'auto';
 
-        const zIndex = hidden
-          ? '-1'
-          : // #updatezindex - we need to allow elements use their own zIndex, so we
-            // resort to allowing them to have it as a data-z-index attribute
-            itemElement.dataset.zIndex || 'auto';
-
-        //@ts-ignore
-        if (itemElement.__zIndex !== zIndex) {
           //@ts-ignore
-          itemElement.__zIndex = zIndex;
-          itemElement.style.zIndex = zIndex;
+          if (itemElement.__zIndex !== zIndex) {
+            //@ts-ignore
+            itemElement.__zIndex = zIndex;
+            itemElement.style.zIndex = zIndex;
+          }
+        } else {
+          itemElement.style.display = '';
+          itemElement.style.left = `${x}px`;
+          itemElement.style.top = `${y}px`;
         }
+      };
+
+      // if (this.scrolling && this.brain.isHorizontalLayoutBrain) {
+      if (this.scrolling && this.brain.isHorizontalLayoutBrain) {
+        cell.setPendingAfterCommitWork(applyPosition);
       } else {
-        itemElement.style.display = '';
-        itemElement.style.left = `${x}px`;
-        itemElement.style.top = `${y}px`;
+        applyPosition();
       }
     }
   };

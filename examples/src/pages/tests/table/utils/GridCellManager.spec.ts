@@ -10,6 +10,7 @@ const createCell = (node?: string): GridCellInterface<any> => {
     update: (newNode: string) => {
       node = newNode;
     },
+    setPendingAfterCommitWork: () => {},
     getElement: () => null,
     getNode: () => node,
     destroy: () => {},

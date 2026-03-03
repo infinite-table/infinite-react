@@ -26,7 +26,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
   private mounted: boolean = false;
 
-  private IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT = false;
+  private pendingAfterCommitWork: (() => void) | null = null;
 
   private mountSubscription =
     buildSubscriptionCallback<GridCellInterface<T_ADDITIONAL_CELL_INFO>>();
@@ -46,7 +46,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
         key={key}
         name={key}
         updater={this.updater}
-        shouldFlushSync={this.isUpdatedWhileScrolling}
+        afterCommit={this.afterCommit}
       />
     );
 
@@ -61,8 +61,16 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     };
   }
 
-  isUpdatedWhileScrolling = () => {
-    return this.IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT;
+  setPendingAfterCommitWork(fn: (() => void) | null) {
+    this.pendingAfterCommitWork = fn;
+  }
+
+  private afterCommit = () => {
+    if (this.pendingAfterCommitWork) {
+      const work = this.pendingAfterCommitWork;
+      this.pendingAfterCommitWork = null;
+      work();
+    }
   };
 
   isMounted() {
@@ -83,6 +91,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     this.mountSubscription.destroy();
     this.updater.destroy();
 
+    this.pendingAfterCommitWork = null;
     this.ref = emptyFn;
     this.element = null;
     this.node = null;
@@ -92,18 +101,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     return this.node;
   }
 
-  update(
-    content: Renderable,
-    additionalInfo?: T_ADDITIONAL_CELL_INFO,
-    scrollingObjectParam?: {
-      scrolling: boolean;
-      isHorizontalLayout: boolean;
-    },
-  ): void {
-    this.IS_UPDATED_WHILE_SCROLLING_IN_HORIZONTAL_LAYOUT = scrollingObjectParam
-      ? scrollingObjectParam.scrolling &&
-        scrollingObjectParam.isHorizontalLayout
-      : false;
+  update(content: Renderable, additionalInfo?: T_ADDITIONAL_CELL_INFO): void {
     this.updater(content);
     this.cellInfo = additionalInfo;
   }
