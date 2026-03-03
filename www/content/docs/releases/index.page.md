@@ -3,9 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 8.0.0-canary.1
+## 8.0.0
 
 Perf improvements by refactoring the usage of React context.
+Dramatically improve scrolling performance in horizontal layout scenarios, by avoiding React `flushSync` operations.
 
 ## 7.5.1
 
