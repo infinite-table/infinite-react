@@ -427,8 +427,8 @@ export default function DndSourceTargetExample() {
                   onAcceptDrop={onAcceptDropSource}
                   removeOnDropOutside
                   acceptDropsFrom={['source', 'target']}
-                  // dragStrategy="proxy"
-                  // renderDragProxy={renderSourceProxy}
+                  dragStrategy="proxy"
+                  renderDragProxy={renderSourceProxy}
                   // onDragProxySetup={({ dragItemNode }) => {
                   //   dragItemNode.style.visibility = 'visible';
                   // }}
@@ -610,7 +610,7 @@ export default function DndSourceTargetExample() {
                   acceptDropsFrom={[]}
                   dragStrategy="proxy"
                   preserveDragSpace
-                  onDragProxySetup={({ dragItemNode, proxyElement }) => {
+                  onDragProxySetup={({ proxyElement }) => {
                     proxyElement.style.opacity = '0.85';
                     proxyElement.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
                     // queueMicrotask(() => {
