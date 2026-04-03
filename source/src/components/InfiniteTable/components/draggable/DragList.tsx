@@ -180,8 +180,23 @@ const getDraggableItemId = (node: HTMLElement) => {
   return `${node.getAttribute(DRAG_ITEM_ATTRIBUTE)}`;
 };
 
-function getDraggableItems(domRef: React.RefObject<HTMLElement | null>) {
+function getDraggableItemNodes(
+  domRef: React.RefObject<HTMLElement | null>,
+  dragListId: string,
+) {
   const dragItems = domRef.current?.querySelectorAll(DRAG_ITEM_SELECTOR) ?? [];
+
+  const result = Array.from(dragItems).filter(
+    (item) => item.getAttribute(DRAG_ITEM_LIST_ATTRIBUTE) === `${dragListId}`,
+  ) as HTMLElement[];
+  return result;
+}
+
+function getDraggableItems(
+  domRef: React.RefObject<HTMLElement | null>,
+  dragListId: string,
+) {
+  const dragItems = getDraggableItemNodes(domRef, dragListId);
   if (!dragItems || dragItems.length === 0) {
     // console.log('No draggable items found in', domRef.current);
   }
@@ -211,7 +226,7 @@ function getInteractionTargetData(params: {
 }): DragInteractionTargetData {
   const { domRef, orientation, dragListId } = params;
 
-  const draggableItems = getDraggableItems(domRef);
+  const draggableItems = getDraggableItems(domRef, dragListId);
   const domRect = domRef.current!.getBoundingClientRect();
 
   // Expand the list rectangle to encompass all draggable items,
@@ -654,15 +669,13 @@ export const DragList = (props: DragListProps) => {
     let dragItems: HTMLElement[] = dragItemsRef.current;
 
     if (!dragItems || dragItems.length === 0) {
-      dragItems = Array.from(
-        domRef.current?.querySelectorAll(DRAG_ITEM_SELECTOR) ?? [],
-      ) as HTMLElement[];
+      dragItems = getDraggableItemNodes(domRef, props.dragListId);
 
       dragItemsRef.current = dragItems;
     }
 
     return dragItems;
-  }, []);
+  }, [props.dragListId]);
 
   const onDragItemPointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -689,9 +702,7 @@ export const DragList = (props: DragListProps) => {
 
       let dragOperation: DragOperation | null = null;
 
-      const dragItems = Array.from(
-        domRef.current?.querySelectorAll(DRAG_ITEM_SELECTOR) ?? [],
-      ) as HTMLElement[];
+      const dragItems = getDraggableItemNodes(domRef, props.dragListId);
 
       dragItemsRef.current = dragItems;
 
@@ -991,6 +1002,7 @@ type DragItemContextValue = {
 
 type DraggableItemProps = {
   id: string | number;
+  dragListId?: string;
   children:
     | React.ReactNode
     | ((
@@ -1001,6 +1013,7 @@ type DraggableItemProps = {
 
 const DRAG_LIST_ATTRIBUTE = 'data-drag-list-id';
 export const DRAG_ITEM_ATTRIBUTE = 'data-drag-item-id';
+export const DRAG_ITEM_LIST_ATTRIBUTE = 'data-drag-item-list-id';
 const DRAG_ITEM_SELECTOR = `[${DRAG_ITEM_ATTRIBUTE}]`;
 
 const DragItemContext = React.createContext<DragItemContextValue>({
@@ -1022,24 +1035,33 @@ const DraggableItem = (props: DraggableItemProps) => {
     dropTargetListId,
   } = useDragListContext();
 
+  const dragItemListId = props.dragListId ?? dragListId;
   const active =
-    dragSourceListId === dragListId && dragItemId === `${props.id}`;
+    dragSourceListId === dragItemListId && dragItemId === `${props.id}`;
 
   const contextValue = React.useMemo(
     () => ({
       dragItemId: props.id,
       active,
-      dragListId,
+      dragListId: dragItemListId,
       draggingInProgress,
       dragSourceListId,
       dropTargetListId,
     }),
-    [props.id, active, draggingInProgress, dragSourceListId, dropTargetListId],
+    [
+      props.id,
+      active,
+      dragItemListId,
+      draggingInProgress,
+      dragSourceListId,
+      dropTargetListId,
+    ],
   );
 
   const domProps: React.HTMLAttributes<HTMLDivElement> = {
     // @ts-ignore
-    'data-drag-item-id': `${props.id}`,
+    [DRAG_ITEM_ATTRIBUTE]: `${props.id}`,
+    [DRAG_ITEM_LIST_ATTRIBUTE]: dragItemListId,
     onPointerDown: onDragItemPointerDown,
     className: join(
       'DraggableItem',

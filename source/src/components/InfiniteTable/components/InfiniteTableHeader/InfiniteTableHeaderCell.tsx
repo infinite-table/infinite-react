@@ -99,7 +99,11 @@ export const InfiniteTableHeaderCellContext = React.createContext<
 >(null as any as InfiniteTableHeaderCellContextType<any>);
 
 import { InfiniteTableHeaderCellClassName } from './headerClassName';
-import { DRAG_ITEM_ATTRIBUTE, useDragListContext } from '../draggable/DragList';
+import {
+  DRAG_ITEM_ATTRIBUTE,
+  DRAG_ITEM_LIST_ATTRIBUTE,
+  useDragListContext,
+} from '../draggable/DragList';
 import { HiddenIcon } from '../icons/HiddenIcon';
 import { useInfiniteTableHeaderState } from '../InfiniteTablePublicHeader';
 export { InfiniteTableHeaderCellClassName };
@@ -148,6 +152,7 @@ export const InfiniteHeaderCellDataAttributes = keyMirror({
   'data-sort': '',
   'data-sort-index': '',
   [DRAG_ITEM_ATTRIBUTE]: '',
+  [DRAG_ITEM_LIST_ATTRIBUTE]: '',
 });
 
 function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
@@ -612,6 +617,7 @@ function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
     'data-field': `${column.field || ''}`,
     'data-column-id': column.id,
     [DRAG_ITEM_ATTRIBUTE]: column.id,
+    [DRAG_ITEM_LIST_ATTRIBUTE]: 'header',
     'data-header-align': align,
     'data-name': 'HeaderCell',
     'data-sort': column.computedSortedAsc
