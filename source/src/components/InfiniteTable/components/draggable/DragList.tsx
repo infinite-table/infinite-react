@@ -126,8 +126,8 @@ export type DragListProps = {
   /**
    * Controls how the dragged item is rendered during a drag operation.
    *
-   * - `'inline'` (default): the item stays in the DOM flow and moves via CSS transforms.
-   * - `'proxy'`: a fixed-position clone is created outside scroll containers so it is
+   * - `'inline'`: the item stays in the DOM flow and moves via CSS transforms.
+   * - `'proxy'`: (default) a fixed-position clone is created outside scroll containers so it is
    *   never clipped by overflow. The original item is visually hidden during the drag.
    */
   dragStrategy?: 'inline' | 'proxy';

@@ -275,7 +275,6 @@ function makeRenderDragProxy(getItems: () => Item[]) {
         proxyRef={ref}
         style={{
           position: 'fixed',
-          background: 'red',
           top: initialRect.top + dy,
           left: initialRect.left + dx,
           width: initialRect.width,
