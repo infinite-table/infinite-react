@@ -4,11 +4,11 @@ export default test.describe.parallel('Inline Edit', () => {
     page,
     editModel,
     rowModel,
-    tracingModel,
+    // tracingModel,
   }) => {
     await page.waitForInfinite();
 
-    const stop = await tracingModel.start();
+    // const stop = await tracingModel.start();
 
     const cellEditable1 = {
       colId: 'firstName',
@@ -45,6 +45,6 @@ export default test.describe.parallel('Inline Edit', () => {
     // make sure this second column was using default editor
     expect(await rowModel.getTextForCell(cellEditable2)).toBe('test');
 
-    await stop();
+    // await stop();
   });
 });

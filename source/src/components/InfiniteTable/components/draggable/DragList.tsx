@@ -5,7 +5,7 @@ import {
   DragManager,
   DragOperation,
 } from './DragManager';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DraggableItemRecipe, DragListRecipe } from './DragList.css';
 import { join } from '../../../../utils/join';
 import { Rectangle } from '../../../../utils/pageGeometry/Rectangle';
@@ -17,6 +17,7 @@ import {
 } from './DragInteractionTarget';
 import { getGlobal } from '../../../../utils/getGlobal';
 import { selectParent } from '../../../../utils/selectParent';
+import { AutoScroller } from './AutoScroller';
 
 type DragListContextValue = {
   dragItemId: string | number | null;
@@ -39,6 +40,45 @@ const DragListContext = React.createContext<DragListContextValue>({
 
 export const useDragListContext = () => {
   return React.useContext(DragListContext);
+};
+
+export type DragProxySetupParams = {
+  dragItemNode: HTMLElement;
+  dragItemId: string;
+  initialRect: DOMRect;
+  initialCoords: { left: number; top: number };
+  /**
+   * Lazy getter. On first access it creates the default proxy: clones the
+   * drag item node, applies fixed-position styles, and appends it to
+   * document.body. Subsequent accesses return the same element.
+   */
+  readonly proxyElement: HTMLElement;
+};
+
+export type DragProxySetupResult = {
+  /** If omitted, the default proxy (from params.proxyElement) is used. */
+  proxyElement?: HTMLElement;
+  /** Called on drop/cancel with a reference to the proxy element. */
+  cleanup?: (params: { proxyElement: HTMLElement }) => void;
+};
+
+export type DragProxyMoveParams = {
+  proxyElement: HTMLElement;
+  dx: number;
+  dy: number;
+};
+
+export type DragProxyRenderParams = {
+  /**
+   * The id of the item being dragged. `null` on the final cleanup call
+   * (drop/cancel) — return null to unmount the proxy.
+   */
+  dragItemId: string | null;
+  initialRect: DOMRect;
+  dx: number;
+  dy: number;
+  /** Must be passed to the root element of the rendered proxy. */
+  ref: React.RefCallback<HTMLElement>;
 };
 
 export type DragListProps = {
@@ -82,6 +122,48 @@ export type DragListProps = {
     node: HTMLElement;
     offset: null | { left: number; top: number };
   }) => void;
+
+  /**
+   * Controls how the dragged item is rendered during a drag operation.
+   *
+   * - `'inline'`: the item stays in the DOM flow and moves via CSS transforms.
+   * - `'proxy'`: (default) a fixed-position clone is created outside scroll containers so it is
+   *   never clipped by overflow. The original item is visually hidden during the drag.
+   */
+  dragStrategy?: 'inline' | 'proxy';
+
+  /**
+   * Called once on the first pointer move to create the drag proxy.
+   * Access params.proxyElement to get (and lazily create) the default proxy,
+   * or build your own and return it.
+   * If the returned object omits proxyElement, the default is used.
+   * Only called when dragStrategy is 'proxy' and renderDragProxy is not provided.
+   */
+  onDragProxySetup?: (
+    params: DragProxySetupParams,
+  ) => DragProxySetupResult | void;
+
+  /**
+   * Called on every pointer move to reposition the proxy.
+   * The default implementation sets transform: translate3d(dx, dy, 0).
+   * Only called when dragStrategy is 'proxy' and renderDragProxy is not provided.
+   */
+  onDragProxyMove?: (params: DragProxyMoveParams) => void;
+
+  /**
+   * Render a custom React element as the drag proxy. The function should
+   * call createPortal() itself and attach params.ref to the root element.
+   * When provided, onDragProxySetup and onDragProxyMove are ignored.
+   * The original DOM node is hidden automatically.
+   * Called with dragItemId: null on drop/cancel — return null to unmount.
+   */
+  renderDragProxy?: (params: DragProxyRenderParams) => React.ReactNode;
+
+  /**
+   * When true, the space occupied by the dragged item in the source list
+   * is preserved (not collapsed) while dragging outside the list.
+   */
+  preserveDragSpace?: boolean;
 };
 
 const defaultUpdatePosition: DragListProps['updatePosition'] = (options) => {
@@ -125,19 +207,46 @@ function getInteractionTargetData(params: {
   acceptDropsFrom?: string[];
   removeOnDropOutside?: boolean;
   shouldAcceptDrop?: (event: DragInteractionTargetMoveEvent) => boolean;
+  preserveDragSpace?: boolean;
 }): DragInteractionTargetData {
   const { domRef, orientation, dragListId } = params;
 
-  const listRectangle = Rectangle.from(domRef.current!.getBoundingClientRect());
+  const draggableItems = getDraggableItems(domRef);
+  const domRect = domRef.current!.getBoundingClientRect();
+
+  // Expand the list rectangle to encompass all draggable items,
+  // including those scrolled out of view. This is necessary because
+  // during drag+scroll the pointer position is adjusted by scroll offset,
+  // and the containment check must still pass for those virtual positions.
+  let top = domRect.top;
+  let left = domRect.left;
+  let bottom = domRect.bottom;
+  let right = domRect.right;
+
+  for (const item of draggableItems) {
+    const r = item.rect;
+    if (r.top < top) top = r.top;
+    if (r.left < left) left = r.left;
+    if (r.bottom > bottom) bottom = r.bottom;
+    if (r.right > right) right = r.right;
+  }
+
+  const listRectangle = Rectangle.from({
+    top,
+    left,
+    width: right - left,
+    height: bottom - top,
+  });
 
   const options: DragInteractionTargetData = {
-    draggableItems: getDraggableItems(domRef),
+    draggableItems,
     orientation,
     listId: dragListId,
     listRectangle,
     acceptDropsFrom: params.acceptDropsFrom,
     shouldAcceptDrop: params.shouldAcceptDrop,
     initial: params.initial,
+    preserveDragSpace: params.preserveDragSpace,
   };
 
   return options;
@@ -221,8 +330,72 @@ function useInteractionTarget(
   };
 }
 
+/**
+ * Creates the default proxy element: clones the node, applies fixed-position
+ * styles, and appends it to document.body.
+ */
+export function createDefaultProxy(
+  dragItemNode: HTMLElement,
+  initialRect: DOMRect,
+): HTMLElement {
+  const proxy = dragItemNode.cloneNode(true) as HTMLElement;
+  proxy.removeAttribute(DRAG_ITEM_ATTRIBUTE);
+  proxy.style.position = 'fixed';
+  proxy.style.top = `${initialRect.top}px`;
+  proxy.style.left = `${initialRect.left}px`;
+  proxy.style.width = `${initialRect.width}px`;
+  proxy.style.height = `${initialRect.height}px`;
+  proxy.style.zIndex = '999999';
+  proxy.style.pointerEvents = 'none';
+  proxy.style.margin = '0';
+  proxy.style.boxSizing = 'border-box';
+  proxy.style.transform = 'none';
+  document.body.appendChild(proxy);
+  return proxy;
+}
+
+export function defaultDragProxyMove({
+  proxyElement,
+  dx,
+  dy,
+}: DragProxyMoveParams) {
+  proxyElement.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+}
+
+type ProxyState = {
+  proxyElement: HTMLElement;
+  originalNode: HTMLElement;
+  dragItemId: string;
+  initialRect: DOMRect;
+  cleanup?: (params: { proxyElement: HTMLElement }) => void;
+};
+
+function cleanupProxy(proxyStateRef: React.RefObject<ProxyState | null>) {
+  const state = proxyStateRef.current;
+  if (!state) return;
+
+  if (state.cleanup) {
+    state.cleanup({ proxyElement: state.proxyElement });
+  } else {
+    state.proxyElement.remove();
+  }
+  state.originalNode.style.visibility = '';
+  proxyStateRef.current = null;
+}
+
 export const DragList = (props: DragListProps) => {
   const domRef = React.useRef<HTMLElement | null>(null);
+  const proxyStateRef = React.useRef<ProxyState | null>(null);
+
+  const [dragProxyRenderState, setDragProxyRenderState] = useState<Omit<
+    DragProxyRenderParams,
+    'ref'
+  > | null>(null);
+  const sourceScrollOffsetRef = React.useRef({ top: 0, left: 0 });
+  const proxyPortalNodeRef = React.useRef<HTMLElement | null>(null);
+  const proxyRefCallback = React.useCallback((node: HTMLElement | null) => {
+    proxyPortalNodeRef.current = node;
+  }, []);
 
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
 
@@ -271,7 +444,7 @@ export const DragList = (props: DragListProps) => {
 
       const removeOnDragMove = interactionTarget.on(
         'move',
-        ({ offsetsForItems, items, status }) => {
+        ({ offsetsForItems, items, status, dragItem }) => {
           if (status === 'rejected') {
             return;
           }
@@ -279,14 +452,28 @@ export const DragList = (props: DragListProps) => {
           const dragItems = getDragItems();
 
           const updatePosition = getUpdatePosition();
+          const proxyState = proxyStateRef.current;
 
           items.forEach((item, index) => {
-            const offset = offsetsForItems[index];
+            let offset = offsetsForItems[index];
             const node = dragItems![index] as HTMLElement;
 
             if (!node) {
               return;
             }
+
+            if (proxyState && item.id === proxyState.dragItemId) {
+              return;
+            }
+
+            if (!proxyState && item.id === dragItem.id) {
+              const scrollOffset = sourceScrollOffsetRef.current;
+              offset = {
+                left: offset.left + scrollOffset.left,
+                top: offset.top + scrollOffset.top,
+              };
+            }
+
             updatePosition({
               id: item.id,
               node,
@@ -329,6 +516,14 @@ export const DragList = (props: DragListProps) => {
             node,
             offset: null,
           });
+        });
+
+        cleanupProxy(proxyStateRef);
+
+        setDragProxyRenderState((prev) => {
+          if (!prev) return prev;
+          requestAnimationFrame(() => setDragProxyRenderState(null));
+          return { ...prev, dragItemId: null };
         });
 
         const accepted = status === 'accepted';
@@ -379,10 +574,74 @@ export const DragList = (props: DragListProps) => {
         }
       });
 
+      // For target lists (non-initial), set up auto-scrolling so that
+      // dragging near the target's scroll container edge scrolls it.
+      // Source list auto-scroll is handled separately in onDragItemPointerDown.
+      let targetAutoScroller: AutoScroller | null = null;
+      let targetScrollContainer: HTMLElement | null = null;
+      let targetScrollHandler: (() => void) | null = null;
+      let targetPointermoveHandler: ((e: PointerEvent) => void) | null = null;
+
+      if (!interactionTarget.getData().initial && domRef.current) {
+        targetAutoScroller = new AutoScroller({
+          orientation: props.orientation,
+          onScroll: () => {},
+        });
+        targetAutoScroller.start(domRef.current);
+        targetScrollContainer = targetAutoScroller.getScrollContainer();
+
+        if (targetScrollContainer) {
+          let lastScroll =
+            props.orientation === 'vertical'
+              ? targetScrollContainer.scrollTop
+              : targetScrollContainer.scrollLeft;
+
+          targetScrollHandler = () => {
+            const current =
+              props.orientation === 'vertical'
+                ? targetScrollContainer!.scrollTop
+                : targetScrollContainer!.scrollLeft;
+            const delta = current - lastScroll;
+            lastScroll = current;
+
+            if (delta !== 0) {
+              interactionTarget.adjustForScroll(delta);
+              DragManager.retriggerMove();
+            }
+          };
+
+          targetScrollContainer.addEventListener('scroll', targetScrollHandler);
+        }
+
+        targetPointermoveHandler = (e: PointerEvent) => {
+          targetAutoScroller!.updatePointer({
+            left: e.clientX,
+            top: e.clientY,
+          });
+        };
+        getGlobal().addEventListener('pointermove', targetPointermoveHandler);
+      }
+
       return () => {
         removeOnDragStart();
         removeOnDragMove();
         removeOnDragDrop();
+
+        if (targetAutoScroller) {
+          targetAutoScroller.stop();
+        }
+        if (targetScrollContainer && targetScrollHandler) {
+          targetScrollContainer.removeEventListener(
+            'scroll',
+            targetScrollHandler,
+          );
+        }
+        if (targetPointermoveHandler) {
+          getGlobal().removeEventListener(
+            'pointermove',
+            targetPointermoveHandler,
+          );
+        }
       };
     }
 
@@ -442,6 +701,7 @@ export const DragList = (props: DragListProps) => {
         dragListId: props.dragListId,
         acceptDropsFrom: props.acceptDropsFrom,
         initial: true,
+        preserveDragSpace: props.preserveDragSpace,
       });
 
       const draggableItems = interactionTarget.getData().draggableItems;
@@ -450,6 +710,15 @@ export const DragList = (props: DragListProps) => {
         (item) => item.id === dragItemId,
       );
       const dragItem = draggableItems[dragIndex];
+
+      const dragItemNode =
+        dragItems[dragIndex].getAttribute(DRAG_ITEM_ATTRIBUTE) ===
+        `${dragItemId}`
+          ? dragItems[dragIndex]
+          : dragItems.find(
+              (node) =>
+                node.getAttribute(DRAG_ITEM_ATTRIBUTE) === `${dragItemId}`,
+            );
 
       setInteractionTarget(interactionTarget);
 
@@ -475,7 +744,65 @@ export const DragList = (props: DragListProps) => {
         top: e.clientY,
       };
 
+      let lastPointer = { left: e.clientX, top: e.clientY };
+      sourceScrollOffsetRef.current = { top: 0, left: 0 };
+
+      const autoScroller = new AutoScroller({
+        orientation: props.orientation,
+        onScroll: () => {},
+      });
+
+      if (domRef.current) {
+        autoScroller.start(domRef.current);
+      }
+
+      const scrollContainer = autoScroller.getScrollContainer();
+
+      let lastSourceScroll = scrollContainer
+        ? props.orientation === 'vertical'
+          ? scrollContainer.scrollTop
+          : scrollContainer.scrollLeft
+        : 0;
+
+      function fireDragMove() {
+        if (!dragOperation) return;
+        dragOperation.move({
+          left: lastPointer.left,
+          top: lastPointer.top,
+        });
+      }
+
+      const onContainerScroll = () => {
+        if (!scrollContainer) return;
+        const current =
+          props.orientation === 'vertical'
+            ? scrollContainer.scrollTop
+            : scrollContainer.scrollLeft;
+        const delta = current - lastSourceScroll;
+        lastSourceScroll = current;
+
+        if (delta !== 0) {
+          interactionTarget.adjustForScroll(delta);
+          if (props.orientation === 'vertical') {
+            sourceScrollOffsetRef.current.top += delta;
+          } else {
+            sourceScrollOffsetRef.current.left += delta;
+          }
+        }
+
+        fireDragMove();
+      };
+      scrollContainer?.addEventListener('scroll', onContainerScroll);
+
+      const dragStrategy = props.dragStrategy ?? 'proxy';
+      const useProxy = dragStrategy === 'proxy' && !props.renderDragProxy;
+      const useRenderProxy =
+        dragStrategy === 'proxy' && !!props.renderDragProxy;
+      const proxyMove = props.onDragProxyMove ?? defaultDragProxyMove;
+
       const onPointerMove = (e: PointerEvent) => {
+        lastPointer = { left: e.clientX, top: e.clientY };
+
         if (!dragOperation) {
           dragOperation = DragManager.startDrag(
             {
@@ -485,21 +812,98 @@ export const DragList = (props: DragListProps) => {
             },
             initialCoords,
           );
-          // return;
+
+          if (dragItemNode && useProxy) {
+            const rect = dragItemNode.getBoundingClientRect();
+
+            let cachedProxy: HTMLElement | null = null;
+            const setupParams: DragProxySetupParams = {
+              dragItemNode,
+              dragItemId: `${dragItemId}`,
+              initialRect: rect,
+              initialCoords,
+              get proxyElement() {
+                if (!cachedProxy) {
+                  cachedProxy = createDefaultProxy(dragItemNode, rect);
+                }
+                return cachedProxy;
+              },
+            };
+
+            const setupResult = props.onDragProxySetup?.(setupParams);
+            const proxyElement =
+              setupResult?.proxyElement ?? setupParams.proxyElement;
+
+            dragItemNode.style.visibility = 'hidden';
+            proxyStateRef.current = {
+              proxyElement,
+              originalNode: dragItemNode,
+              dragItemId: `${dragItemId}`,
+              initialRect: rect,
+              cleanup: setupResult?.cleanup,
+            };
+          }
+
+          if (dragItemNode && useRenderProxy) {
+            const rect = dragItemNode.getBoundingClientRect();
+            dragItemNode.style.visibility = 'hidden';
+
+            proxyStateRef.current = {
+              proxyElement: dragItemNode,
+              originalNode: dragItemNode,
+              dragItemId: `${dragItemId}`,
+              initialRect: rect,
+              // Portal handles its own DOM; only restore visibility.
+              cleanup: () => {},
+            };
+
+            setDragProxyRenderState({
+              dragItemId: `${dragItemId}`,
+              initialRect: rect,
+              dx: 0,
+              dy: 0,
+            });
+          }
         }
 
-        dragOperation!.move({
+        const dx = e.clientX - initialCoords.left;
+        const dy = e.clientY - initialCoords.top;
+
+        if (useRenderProxy) {
+          setDragProxyRenderState((prev) =>
+            prev ? { ...prev, dx, dy } : prev,
+          );
+        } else {
+          const proxyState = proxyStateRef.current;
+          if (proxyState) {
+            proxyMove({ proxyElement: proxyState.proxyElement, dx, dy });
+          }
+        }
+
+        autoScroller.updatePointer({
           left: e.clientX,
           top: e.clientY,
         });
+
+        fireDragMove();
       };
 
       const onPointerUp = () => {
+        autoScroller.stop();
+        scrollContainer?.removeEventListener('scroll', onContainerScroll);
         getGlobal().removeEventListener('pointermove', onPointerMove);
+
+        if (useRenderProxy) {
+          setDragProxyRenderState((prev) =>
+            prev ? { ...prev, dragItemId: null } : prev,
+          );
+          requestAnimationFrame(() => {
+            setDragProxyRenderState(null);
+          });
+        }
+
         if (!dragOperation) {
-          // we didn't have an pointer move
-          // so we need to discard the interaction target
-          // as we won't have a drop event triggered
+          cleanupProxy(proxyStateRef);
           setInteractionTarget(null);
           return;
         }
@@ -516,6 +920,10 @@ export const DragList = (props: DragListProps) => {
       props.dragListId,
       props.acceptDropsFrom,
       props.removeOnDropOutside,
+      props.dragStrategy,
+      props.renderDragProxy,
+      props.onDragProxySetup,
+      props.onDragProxyMove,
     ],
   );
 
@@ -562,6 +970,12 @@ export const DragList = (props: DragListProps) => {
   return (
     <DragListContext.Provider value={contextValue}>
       {children}
+      {dragProxyRenderState && props.renderDragProxy
+        ? props.renderDragProxy({
+            ...dragProxyRenderState,
+            ref: proxyRefCallback,
+          })
+        : null}
     </DragListContext.Provider>
   );
 };

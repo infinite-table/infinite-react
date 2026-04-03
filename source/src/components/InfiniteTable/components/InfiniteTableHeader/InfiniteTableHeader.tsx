@@ -227,6 +227,7 @@ function InfiniteTableInternalHeaderFn<T>(
     <DragList
       orientation="horizontal"
       dragListId="header"
+      dragStrategy="inline"
       onDrop={emptyFn}
       updatePosition={emptyFn}
     >

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useInfiniteTableSelector } from './useInfiniteTableSelector';
 
 import {
@@ -196,14 +197,6 @@ export const useColumnPointerEvents = ({
         const currentComputedColumnOrder = getComputed().computedColumnOrder;
 
         if (JSON.stringify(columnOrder, currentComputedColumnOrder)) {
-          computedVisibleColumns.forEach((col) => {
-            setInfiniteColumnOffsetWhileReordering(
-              col.computedVisibleIndex,
-              '',
-              rootRef.current,
-            );
-          });
-
           // componentActions.columnOrder = columnOrder;
           // we can't simply do the above line
           // as it would discard non visible columns from the column order
@@ -283,7 +276,8 @@ export const useColumnPointerEvents = ({
         requestAnimationFrame(() => {
           const { multiSortBehavior } = getState();
           const target = domRef.current!;
-          rootRef.current?.classList.remove(InfiniteClsShiftingColumns);
+          const rootNode = rootRef.current;
+          rootNode?.classList.remove(InfiniteClsShiftingColumns);
 
           dragger.stop();
 
@@ -292,34 +286,6 @@ export const useColumnPointerEvents = ({
           });
           discardAlwaysRenderedColumn?.();
           restoreRenderRange?.();
-
-          computedVisibleColumns.forEach((col) => {
-            clearInfiniteColumnReorderDuration(
-              col.computedVisibleIndex,
-              rootRef.current,
-            );
-            setInfiniteColumnVisibility(
-              col.computedVisibleIndex,
-              '',
-              rootRef.current,
-            );
-            setInfiniteColumnOffsetWhileReordering(
-              col.computedVisibleIndex,
-              '',
-              rootRef.current,
-            );
-          });
-
-          // setInfiniteColumnVisibility(dragColumnIndex, '', rootRef.current);
-
-          setInfiniteColumnZIndex(
-            dragColumnIndex,
-            getColumnZIndex(dragColumn, {
-              pinnedStartColsCount: computedPinnedStartColumns.length,
-              visibleColsCount: computedVisibleColumns.length,
-            }),
-            rootRef.current,
-          );
 
           target.style.cursor = initialCursor as string;
           target.releasePointerCapture(pointerId);
@@ -341,20 +307,44 @@ export const useColumnPointerEvents = ({
             });
           }
 
-          if (reorderDragResult) {
-            persistColumnOrder(reorderDragResult);
-          } else if (didDragAtLeastOnce) {
-            if (allowColumnHideOnDrag) {
-              // the column was dropped outside
-              // so we need to hide it
-              api.setVisibilityForColumn(dragColumn.id, false);
+          // Make sure state commit happens before we clear drag-only CSS vars.
+          flushSync(() => {
+            if (reorderDragResult) {
+              persistColumnOrder(reorderDragResult);
+            } else if (didDragAtLeastOnce) {
+              if (allowColumnHideOnDrag) {
+                // the column was dropped outside
+                // so we need to hide it
+                api.setVisibilityForColumn(dragColumn.id, false);
+              }
             }
-          }
+            actions.columnReorderDragColumnId = false;
+            if (horizontalLayoutPageIndex != null) {
+              actions.columnReorderInPageIndex = null;
+            }
+          });
 
-          actions.columnReorderDragColumnId = false;
-          if (horizontalLayoutPageIndex != null) {
-            actions.columnReorderInPageIndex = null;
-          }
+          computedVisibleColumns.forEach((col) => {
+            clearInfiniteColumnReorderDuration(
+              col.computedVisibleIndex,
+              rootNode,
+            );
+            setInfiniteColumnVisibility(col.computedVisibleIndex, '', rootNode);
+            setInfiniteColumnOffsetWhileReordering(
+              col.computedVisibleIndex,
+              '',
+              rootNode,
+            );
+          });
+
+          setInfiniteColumnZIndex(
+            dragColumnIndex,
+            getColumnZIndex(dragColumn, {
+              pinnedStartColsCount: computedPinnedStartColumns.length,
+              visibleColsCount: computedVisibleColumns.length,
+            }),
+            rootNode,
+          );
         });
       };
 
