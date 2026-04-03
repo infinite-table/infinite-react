@@ -16,6 +16,7 @@ export type DragInteractionTargetData = {
   acceptDropsFrom?: string[];
   shouldAcceptDrop?: (event: DragInteractionTargetMoveEvent) => boolean;
   initial: boolean;
+  preserveDragSpace?: boolean;
 };
 export type DraggableItem = {
   id: string;
@@ -139,6 +140,22 @@ export class DragInteractionTarget extends EventEmitter<DragInteractionTargetEve
     }
 
     return result;
+  }
+
+  /**
+   * Adjusts breakpoints and listRectangle to compensate for container scroll.
+   * When the container scrolls by `scrollDelta`, items shift in the viewport
+   * but the pointer (in the source-adjusted coordinate space) doesn't change.
+   * Shifting breakpoints keeps the drop index calculation correct.
+   */
+  adjustForScroll(scrollDelta: number) {
+    this.breakpoints = this.breakpoints.map((bp) => bp - scrollDelta);
+
+    if (this.data.orientation === 'vertical') {
+      this.data.listRectangle.shift({ top: -scrollDelta, left: 0 });
+    } else {
+      this.data.listRectangle.shift({ top: 0, left: -scrollDelta });
+    }
   }
 
   move(params: DragInteractionTargetMoveEvent) {

@@ -192,7 +192,10 @@ export const handleOutsideOperation = (
             return { left: 0, top: 0 };
           }
 
-          if (index > dragIndex) {
+          if (
+            index > dragIndex &&
+            !interactionTarget.getData().preserveDragSpace
+          ) {
             return orientation === 'horizontal'
               ? { left: -dragItem.rect.width, top: 0 }
               : { left: 0, top: -dragItem.rect.height };

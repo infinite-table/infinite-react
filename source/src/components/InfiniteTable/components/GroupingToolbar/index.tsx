@@ -283,6 +283,7 @@ export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
       dragListId={GROUPING_TOOLBAR_DRAG_LIST_ID}
       acceptDropsFrom={['header', GROUPING_TOOLBAR_DRAG_LIST_ID]}
       onDrop={onDrop}
+      dragStrategy="inline"
       onAcceptDrop={onAcceptDrop}
       shouldAcceptDrop={shouldAcceptDrop}
     >

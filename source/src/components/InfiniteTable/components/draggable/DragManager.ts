@@ -49,6 +49,8 @@ export class DragManager {
   public static dragInteractionTargetsMap: Map<string, DragInteractionTarget> =
     new Map();
 
+  private static currentDragOperation: DragOperation | null = null;
+
   public static startDrag(
     dragSource: ActiveDragSource | ActiveDragSourceData,
     startPoint: PointCoords,
@@ -62,6 +64,8 @@ export class DragManager {
       startPoint,
     });
 
+    DragManager.currentDragOperation = dragOperation;
+
     dragOperation.on('start', DragManager.onDragStart);
     dragOperation.on('move', DragManager.onDragMove);
     dragOperation.on('drop', DragManager.onDragDrop);
@@ -69,6 +73,18 @@ export class DragManager {
     dragOperation.start();
 
     return dragOperation;
+  }
+
+  /**
+   * Re-evaluates the current drag position against all interaction targets.
+   * Used when a target list scrolls and its breakpoints change, requiring
+   * the drop index to be recalculated without a new pointer move.
+   */
+  public static retriggerMove() {
+    const op = DragManager.currentDragOperation;
+    if (op && op.phase === 'move') {
+      DragManager.onDragMove(op);
+    }
   }
 
   private static emitter = new EventEmitter<DragManagerEvents>();
@@ -304,6 +320,7 @@ export class DragManager {
       dropIndex: event?.dropIndex ?? -1,
     });
 
+    DragManager.currentDragOperation = null;
     DragManager.unregisterAll();
   }
 }
