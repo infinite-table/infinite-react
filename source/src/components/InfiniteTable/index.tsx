@@ -87,6 +87,8 @@ import {
   useDataSourceStableContext,
 } from '../DataSource/publicHooks/useDataSourceSelector';
 import { useDataSourceState } from '../DataSource';
+import { useInfiniteTableApi } from './hooks/useInfiniteTableApi';
+import { useInfiniteColumnApi } from './hooks/useInfiniteColumnApi';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -488,6 +490,8 @@ export * from './types';
 export {
   useInfiniteColumnCell,
   useInfiniteHeaderCell,
+  useInfiniteTableApi,
+  useInfiniteColumnApi,
   useInfiniteColumnEditor,
   useInfiniteColumnFilterEditor,
   useInfinitePortalContainer,

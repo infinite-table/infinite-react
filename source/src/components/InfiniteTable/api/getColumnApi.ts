@@ -206,6 +206,14 @@ export function getColumnApiForColumn<T>(
     clearSort() {
       this.setSort(null);
     },
+
+    getColumnId() {
+      return column.id;
+    },
+
+    getComputedColumn() {
+      return column;
+    },
   };
 
   return columnApi;

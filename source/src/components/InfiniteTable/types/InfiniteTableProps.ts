@@ -207,6 +207,8 @@ export type ColumnCellValues = {
   formattedValue: any;
 };
 export type InfiniteTableColumnApi<_T> = {
+  getColumnId(): string | null;
+  getComputedColumn(): InfiniteTableComputedColumn<_T> | null;
   showContextMenu: (target: EventTarget | HTMLElement) => void;
   toggleContextMenu: (target: EventTarget | HTMLElement) => void;
   hideContextMenu: () => void;

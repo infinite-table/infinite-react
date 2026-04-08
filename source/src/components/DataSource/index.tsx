@@ -27,6 +27,7 @@ import { DataSourceProps } from './types';
 import { RowDisabledState } from './RowDisabledState';
 import { useDataSourceSelector } from './publicHooks/useDataSourceSelector';
 import { useMasterRowInfo } from './publicHooks/useDataSourceMasterDetailSelector';
+import { useDataSourceApi } from './publicHooks/useDataSourceApi';
 
 const {
   // ManagedComponentContextProvider: ManagedDataSourceContextProvider,
@@ -72,6 +73,7 @@ export {
   useManagedDataSource,
   useDataSourceSelector,
   useDataSourceState,
+  useDataSourceApi,
   DataSource,
   GroupRowsState,
   RowSelectionState,

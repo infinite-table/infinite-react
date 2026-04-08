@@ -74,6 +74,7 @@ function isSortInfoForColumn<T>(
 
 class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   private context: GetImperativeApiParam<T>;
+  private columnApiById = new Map<string, InfiniteTableColumnApi<T>>();
   public rowSelectionApi: InfiniteTableRowSelectionApi;
   public cellSelectionApi: InfiniteTableCellSelectionApi<T>;
   public rowDetailApi: InfiniteTableRowDetailApi;
@@ -546,10 +547,26 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   getColumnApi = (
     columnIdOrIndex: string | number,
   ): InfiniteTableColumnApi<T> | null => {
-    return getColumnApiForColumn(columnIdOrIndex, {
+    const colId =
+      typeof columnIdOrIndex === 'string'
+        ? columnIdOrIndex
+        : this.getComputed().computedVisibleColumns[columnIdOrIndex]?.id;
+
+    const existingApi = this.columnApiById.get(colId);
+    if (existingApi) {
+      return existingApi;
+    }
+
+    const columnApi = getColumnApiForColumn(columnIdOrIndex, {
       ...this.context,
       api: this,
     });
+
+    if (columnApi) {
+      this.columnApiById.set(columnApi.getColumnId()!, columnApi);
+    }
+
+    return columnApi;
   };
 
   isColumnSortable = (columnId: string) => {
