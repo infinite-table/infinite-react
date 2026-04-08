@@ -3,11 +3,10 @@ import {
   DataSource,
   InfiniteTablePropRowStyle,
   InfiniteTableRowInfo,
-  DataSourceApi,
   type InfiniteTableColumn,
   useDataSourceApi,
 } from '@infinite-table/infinite-react';
-import React, { useState } from 'react';
+import React from 'react';
 
 export type Employee = {
   id: number;
