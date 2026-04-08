@@ -6,10 +6,10 @@
     "totalTime": 200.47
   },
   "tests/table/perf/default:horizontal-scrolling with tracing": {
-    "scriptingTime": 199.9,
-    "renderingTime": 42.6,
-    "paintingTime": 18.79,
-    "totalTime": 777.05
+    "scriptingTime": 112.31,
+    "renderingTime": 21.44,
+    "paintingTime": 8.53,
+    "totalTime": 676.63
   },
   "tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
     "scriptingTime": 202.25,
@@ -24,10 +24,10 @@
     "totalTime": 300.33
   },
   "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
-    "scriptingTime": 1451.97,
-    "renderingTime": 61.16,
-    "paintingTime": 56.45,
-    "totalTime": 4947.42
+    "scriptingTime": 756.19,
+    "renderingTime": 38.27,
+    "paintingTime": 29.01,
+    "totalTime": 3257.69
   },
   "tests/table/props/data/basic-add-data:insert data": {
     "scriptingTime": 62.92,
