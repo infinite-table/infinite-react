@@ -720,10 +720,15 @@ export const DragList = (props: DragListProps) => {
       const dragIndex = draggableItems.findIndex(
         (item) => item.id === dragItemId,
       );
+
+      if (dragIndex === -1) {
+        return;
+      }
+
       const dragItem = draggableItems[dragIndex];
 
       const dragItemNode =
-        dragItems[dragIndex].getAttribute(DRAG_ITEM_ATTRIBUTE) ===
+        dragItems[dragIndex]?.getAttribute(DRAG_ITEM_ATTRIBUTE) ===
         `${dragItemId}`
           ? dragItems[dragIndex]
           : dragItems.find(

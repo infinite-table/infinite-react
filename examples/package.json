@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5555",
+    "dev": "concurrently --names \"next,test-runner\" -c \"blue,magenta\" \"npm:dev:next\" \"npm:dev:test-runner\"",
+    "dev:next": "next dev -p 5555",
+    "dev:test-runner": "node scripts/test-runner-server.js",
+    "generate-index-pages": "node scripts/generate-index-pages.js",
     "dev-no-output": "next dev &> /dev/null",
     "build": "rimraf .next && NODE_ENV=production next build",
     "build-local": "NODE_ENV=production next build",
