@@ -6,8 +6,6 @@ import {
   TreeGrid,
 } from '@infinite-table/infinite-react';
 
-import { useCallback, useState } from 'react';
-
 export type FileSystemNode = {
   name: string;
   type: 'file' | 'folder';

@@ -128,7 +128,7 @@ export function CustomPreset({
   const descriptionBlock = description ? (
     <div
       className={
-        'leading-base w-full border-b border-gray-60 bg-darkcustom pt-2 '
+        'leading-base w-full border-b border-gray-60 bg-brand-dark pt-2 '
       }
     >
       <div
@@ -143,7 +143,7 @@ export function CustomPreset({
   return (
     <>
       <div
-        className="shadow-lgdark rounded-md overflow-hidden border-1"
+        className=" rounded-md overflow-hidden border"
         ref={containerRef}
         style={
           fullScreen
