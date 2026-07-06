@@ -49,7 +49,11 @@ export default function CssEllipsis() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={200} />
+        <InfiniteTable<Developer>
+          debugId="columns-cssEllipsis-example"
+          columns={columns}
+          columnDefaultWidth={200}
+        />
       </DataSource>
     </>
   );

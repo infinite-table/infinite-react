@@ -94,6 +94,7 @@ export default function App() {
         selectionMode="multi-cell"
       >
         <InfiniteTable<Developer>
+          debugId="controlled-cell-selection-with-api-example"
           columns={columns}
           columnDefaultWidth={100}
           onReady={({ api }) => {

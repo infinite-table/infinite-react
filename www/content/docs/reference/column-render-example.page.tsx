@@ -95,6 +95,7 @@ export default function ColumnCustomRenderExample() {
         defaultGroupBy={defaultGroupBy}
       >
         <InfiniteTable<Developer>
+          debugId="column-render-example"
           groupColumn={groupColumn}
           columns={columns}
           columnDefaultWidth={200}

@@ -136,6 +136,7 @@ export default function App() {
         primaryKey="id"
       >
         <InfiniteTable<Developer>
+          debugId="controlled-multi-row-selection-example-with-group-keys"
           onReady={onReady}
           columns={columns}
           domProps={domProps}

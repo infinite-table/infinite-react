@@ -152,6 +152,7 @@ export default () => {
     <React.StrictMode>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          debugId="live-updates-example"
           domProps={domProps}
           onReady={randomlyUpdateData}
           columnDefaultWidth={130}

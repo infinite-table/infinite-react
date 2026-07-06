@@ -39,7 +39,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
 export default function App() {
   return (
     <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        debugId="row-grouping-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

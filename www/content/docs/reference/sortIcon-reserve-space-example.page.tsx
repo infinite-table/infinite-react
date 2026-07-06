@@ -42,6 +42,7 @@ export default function App() {
       </div>
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
+          debugId="sortIcon-reserve-space-example"
           headerOptions={{
             alwaysReserveSpaceForSortIcon: reserveSpaceForSortIcon,
           }}

@@ -210,6 +210,7 @@ const Example = () => {
         livePaginationCursor={livePaginationCursorFn}
       >
         <InfiniteTable<Employee>
+          debugId="live-pagination-example"
           scrollTopKey={scrollTopId}
           columnDefaultWidth={200}
           columns={columns}

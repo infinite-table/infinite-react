@@ -68,6 +68,7 @@ export default function App() {
         refetchKey={refetchKey}
       >
         <InfiniteTable<Developer>
+          debugId="refetchKey-example"
           columns={columns}
           columnDefaultWidth={150}
           loadingText={`Refetching with key ${refetchKey}`}

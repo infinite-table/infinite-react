@@ -33,7 +33,11 @@ export default function App() {
       selectionMode="multi-row"
       primaryKey="id"
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
+      <InfiniteTable<Developer>
+        debugId="default-checkbox-selection-multi-row-example"
+        columns={columns}
+        columnDefaultWidth={150}
+      />
     </DataSource>
   );
 }

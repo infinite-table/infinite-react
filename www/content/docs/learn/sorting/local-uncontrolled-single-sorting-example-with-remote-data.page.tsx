@@ -56,7 +56,11 @@ export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
         defaultSortInfo={{ field: 'salary', dir: -1 }}
         shouldReloadData={shouldReloadData}
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
+        <InfiniteTable<Developer>
+          debugId="local-uncontrolled-single-sorting-example-with-remote-data"
+          columns={columns}
+          columnDefaultWidth={220}
+        />
       </DataSource>
     </>
   );

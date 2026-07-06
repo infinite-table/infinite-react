@@ -50,6 +50,7 @@ export default function KeyboardShortcuts() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="keyboard-shortcuts-instant-edit-example"
           columns={columns}
           columnDefaultEditable
           keyboardShortcuts={[keyboardShortcuts.instantEdit]}

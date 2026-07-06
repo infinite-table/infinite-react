@@ -149,6 +149,7 @@ export default () => {
         ]}
       >
         <InfiniteTable<City>
+          debugId="master-detail-chart-detail-example"
           domProps={domProps}
           columnDefaultWidth={150}
           defaultRowDetailState={defaultRowDetailState}

@@ -93,6 +93,7 @@ export default function App() {
       groupBy={groupBy}
     >
       <InfiniteTable<Developer>
+        debugId="aggregations-simple-example"
         groupRenderStrategy="multi-column"
         columns={columns}
         columnDefaultWidth={250}

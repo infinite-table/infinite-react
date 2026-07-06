@@ -111,6 +111,7 @@ export default () => {
           shouldReloadData={shouldReloadData}
         >
           <InfiniteTable<Developer>
+            debugId="server-side-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}

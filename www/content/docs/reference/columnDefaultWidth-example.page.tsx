@@ -22,7 +22,11 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> columns={columns} columnDefaultWidth={120} />
+      <InfiniteTable<Person>
+        debugId="columnDefaultWidth-example"
+        columns={columns}
+        columnDefaultWidth={120}
+      />
     </DataSource>
   );
 }

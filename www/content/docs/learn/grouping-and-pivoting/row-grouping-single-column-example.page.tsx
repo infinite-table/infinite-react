@@ -39,6 +39,7 @@ export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id" groupBy={groupBy}>
       <InfiniteTable<Employee>
+        debugId="row-grouping-single-column-example"
         groupRenderStrategy="single-column"
         groupColumn={groupColumn}
         columns={columns}

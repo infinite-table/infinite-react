@@ -70,6 +70,7 @@ export default function App() {
       primaryKey="id"
     >
       <InfiniteTable<Developer>
+        debugId="columnDefaultHiddenWhenGroupedBy-example"
         columns={columns}
         columnDefaultWidth={250}
         columnSizing={columnSizing}

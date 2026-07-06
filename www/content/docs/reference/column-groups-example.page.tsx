@@ -71,6 +71,7 @@ export default function ColumnValueGetterExample() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="column-groups-example"
           columnGroups={columnGrous}
           columns={columns}
           columnDefaultWidth={100}

@@ -93,7 +93,11 @@ const dataSource = () => {
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee> columns={columns} columnDefaultWidth={150} />
+      <InfiniteTable<Employee>
+        debugId="using-sparklines-example"
+        columns={columns}
+        columnDefaultWidth={150}
+      />
     </DataSource>
   );
 }

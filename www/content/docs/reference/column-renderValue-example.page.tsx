@@ -76,6 +76,7 @@ export default function ColumnValueGetterExample() {
         defaultGroupBy={defaultGroupBy}
       >
         <InfiniteTable<Developer>
+          debugId="column-renderValue-example"
           groupColumn={groupColumn}
           columns={columns}
           columnDefaultWidth={200}

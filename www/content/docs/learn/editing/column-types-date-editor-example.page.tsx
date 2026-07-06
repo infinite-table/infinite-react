@@ -114,6 +114,7 @@ export default function LocalUncontrolledSingleSortingExample() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DataSource<Developer> primaryKey="id" data={dataSource}>
             <InfiniteTable<Developer>
+              debugId="column-types-date-editor-example"
               columnTypes={columnTypes}
               columns={columns}
               columnDefaultWidth={120}

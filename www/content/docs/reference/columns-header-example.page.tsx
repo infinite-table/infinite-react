@@ -25,7 +25,10 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> columns={columns} />
+      <InfiniteTable<Person>
+        debugId="columns-header-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

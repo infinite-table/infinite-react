@@ -136,6 +136,7 @@ export default () => {
           }}
         >
           <InfiniteTable<Developer>
+            debugId="checkbox-filter-editor-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}

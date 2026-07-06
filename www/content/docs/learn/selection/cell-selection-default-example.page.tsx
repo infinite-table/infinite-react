@@ -45,7 +45,11 @@ export default function App() {
       data={dataSource}
       selectionMode="multi-cell"
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={100} />
+      <InfiniteTable<Developer>
+        debugId="cell-selection-default-example"
+        columns={columns}
+        columnDefaultWidth={100}
+      />
     </DataSource>
   );
 }

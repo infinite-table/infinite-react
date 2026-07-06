@@ -40,6 +40,7 @@ export default function App() {
       </div>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          debugId="column-vertical-align-example"
           columns={columns}
           columnDefaultWidth={250}
           rowHeight={80}

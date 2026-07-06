@@ -61,6 +61,7 @@ export default function App() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="onScrollStop-example"
           onScrollStop={onScrollStop}
           columns={columns}
           columnDefaultWidth={250}

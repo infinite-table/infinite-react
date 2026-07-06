@@ -21,7 +21,11 @@ export default function App() {
       }
     >
       <DataSource<Person> data={data} primaryKey="Id">
-        <InfiniteTable<Person> rowHeight={'--row-height'} columns={columns} />
+        <InfiniteTable<Person>
+          debugId="rowHeight-cssvar-example"
+          rowHeight={'--row-height'}
+          columns={columns}
+        />
       </DataSource>
     </div>
   );

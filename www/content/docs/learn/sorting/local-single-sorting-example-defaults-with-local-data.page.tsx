@@ -35,7 +35,11 @@ export default function LocalUncontrolledSingleSortingExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={120} />
+        <InfiniteTable<Developer>
+          debugId="local-single-sorting-example-defaults-with-local-data"
+          columns={columns}
+          columnDefaultWidth={120}
+        />
       </DataSource>
     </>
   );

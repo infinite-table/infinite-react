@@ -139,6 +139,7 @@ export default () => {
           onReady={setDataSourceApi}
         >
           <InfiniteTable<Developer>
+            debugId="simple-updateData-example"
             activeRowIndex={activeIndex}
             onActiveRowIndexChange={setActiveIndex}
             keyboardNavigation="row"

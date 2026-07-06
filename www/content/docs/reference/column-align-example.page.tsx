@@ -38,6 +38,7 @@ export default function App() {
       </div>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          debugId="column-align-example"
           columns={columns}
           columnDefaultWidth={250}
           headerOptions={{

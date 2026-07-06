@@ -121,6 +121,7 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
         shouldReloadData={shouldReloadData}
       >
         <InfiniteTable<Developer>
+          debugId="master-detail-3-levels-example"
           columnDefaultWidth={150}
           columnMinWidth={50}
           columns={detailColumns}
@@ -155,6 +156,7 @@ export default () => {
         ]}
       >
         <InfiniteTable<City>
+          debugId="master-detail-3-levels-example-2"
           domProps={domProps}
           columnDefaultWidth={150}
           defaultRowDetailState={defaultRowDetailState}

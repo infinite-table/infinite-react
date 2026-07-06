@@ -77,6 +77,7 @@ export default function App() {
       </div>
       <DataSource<Employee> data={dataSource} primaryKey="id" groupBy={groupBy}>
         <InfiniteTable<Employee>
+          debugId="groupRenderStrategy-example"
           domProps={domProps}
           groupRenderStrategy={groupRenderStrategy}
           groupColumn={groupColumn}

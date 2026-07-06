@@ -106,6 +106,7 @@ export default function PivotByExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="pivoting-customize-column-example"
               columns={columns}
               hideEmptyGroupColumns
               pivotColumns={pivotColumns}

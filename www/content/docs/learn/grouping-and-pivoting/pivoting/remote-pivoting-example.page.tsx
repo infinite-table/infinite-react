@@ -170,6 +170,7 @@ export default function RemotePivotExample() {
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>
+            debugId="remote-pivoting-example"
             defaultColumnPinning={defaultColumnPinning}
             columns={columns}
             hideEmptyGroupColumns

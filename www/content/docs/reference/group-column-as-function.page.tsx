@@ -59,6 +59,7 @@ export default function App() {
   return (
     <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
       <InfiniteTable<Developer>
+        debugId="group-column-as-function"
         groupColumn={groupColumn}
         columns={columns}
         columnDefaultWidth={250}

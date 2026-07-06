@@ -79,6 +79,7 @@ export default () => {
           filterMode="local"
         >
           <InfiniteTable<Developer>
+            debugId="filter-column-with-id-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}

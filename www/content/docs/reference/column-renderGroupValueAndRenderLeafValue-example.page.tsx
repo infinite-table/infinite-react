@@ -65,7 +65,10 @@ const groupBy: DataSourcePropGroupBy<Developer> = [
 export default function App() {
   return (
     <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        debugId="column-renderGroupValueAndRenderLeafValue-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

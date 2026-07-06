@@ -180,6 +180,7 @@ export default () => {
           }}
         >
           <InfiniteTable<Developer>
+            debugId="custom-column-filter-display-example"
             showColumnFilters={false}
             columnDefaultWidth={150}
             columnMinWidth={50}

@@ -51,6 +51,7 @@ export default function App() {
       groupBy={groupBy}
     >
       <InfiniteTable<Employee>
+        debugId="groupBy-multi-with-column-example"
         columns={columns}
         defaultColumnSizing={columnSizing}
       />

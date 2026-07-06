@@ -39,7 +39,11 @@ export default function App() {
         defaultRowSelection={defaultRowSelection}
         primaryKey="id"
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
+        <InfiniteTable<Developer>
+          debugId="uncontrolled-multiple-row-selection-example"
+          columns={columns}
+          columnDefaultWidth={150}
+        />
       </DataSource>
     </>
   );

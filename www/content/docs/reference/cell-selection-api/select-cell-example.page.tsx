@@ -91,6 +91,7 @@ export default function App() {
         selectionMode="multi-cell"
       >
         <InfiniteTable<Developer>
+          debugId="select-cell-example"
           onReady={({ api }) => {
             setApi(api);
           }}

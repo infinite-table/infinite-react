@@ -27,6 +27,7 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
+        debugId="invalid-license"
         licenseKey="<INVALID>"
         columnDefaultWidth={130}
         columns={columns}

@@ -126,7 +126,11 @@ export default function InlineEditingExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnDefaultEditable />
+        <InfiniteTable<Developer>
+          debugId="custom-editor-example"
+          columns={columns}
+          columnDefaultEditable
+        />
       </DataSource>
     </>
   );

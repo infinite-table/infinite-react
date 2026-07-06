@@ -42,7 +42,11 @@ const domProps = {
 export default function App() {
   return (
     <DataSource<Developer> primaryKey="id" data={dataSource}>
-      <InfiniteTable<Developer> domProps={domProps} columns={columns} />
+      <InfiniteTable<Developer>
+        debugId="column-className-string-example"
+        domProps={domProps}
+        columns={columns}
+      />
     </DataSource>
   );
 }

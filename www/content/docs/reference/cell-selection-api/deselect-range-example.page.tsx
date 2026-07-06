@@ -98,6 +98,7 @@ export default function App() {
         }}
       >
         <InfiniteTable<Developer>
+          debugId="deselect-range-example"
           onReady={({ api }) => {
             setApi(api);
           }}

@@ -51,7 +51,7 @@ const data: Person[] = [
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> columns={columns} />
+      <InfiniteTable<Person> debugId="meet-the-code" columns={columns} />
     </DataSource>
   );
 }

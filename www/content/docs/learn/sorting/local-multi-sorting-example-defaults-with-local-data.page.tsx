@@ -76,6 +76,7 @@ export default function LocalUncontrolledSingleSortingExample() {
         defaultSortInfo={[]}
       >
         <InfiniteTable<Developer>
+          debugId="local-multi-sorting-example-defaults-with-local-data"
           columns={columns}
           columnDefaultWidth={120}
           multiSortBehavior={multiSortBehavior}

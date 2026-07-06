@@ -69,7 +69,11 @@ export default function App() {
       defaultGroupBy={defaultGroupBy}
       primaryKey="id"
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={250} />
+      <InfiniteTable<Developer>
+        debugId="column-rowspan-example"
+        columns={columns}
+        columnDefaultWidth={250}
+      />
     </DataSource>
   );
 }

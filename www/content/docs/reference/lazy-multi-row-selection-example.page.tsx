@@ -123,6 +123,7 @@ export default function GroupByExample() {
       useGroupKeysForMultiRowSelection
     >
       <InfiniteTable<Developer>
+        debugId="lazy-multi-row-selection-example"
         domProps={domProps}
         columns={columns}
         keyboardNavigation="row"

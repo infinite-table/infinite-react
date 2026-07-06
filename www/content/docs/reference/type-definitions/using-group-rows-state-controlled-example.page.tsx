@@ -82,7 +82,10 @@ export default function App() {
         groupRowsState={groupRowsState}
         onGroupRowsStateChange={setGroupRowsState}
       >
-        <InfiniteTable<Developer> columns={columns} />
+        <InfiniteTable<Developer>
+          debugId="using-group-rows-state-controlled-example"
+          columns={columns}
+        />
       </DataSource>
     </>
   );

@@ -157,6 +157,7 @@ export default () => {
       </button>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          debugId="insert-example"
           domProps={domProps}
           onReady={onReady}
           columnDefaultWidth={130}

@@ -81,6 +81,7 @@ export default function HorizontalLayout() {
         ]}
       >
         <InfiniteTable<Developer>
+          debugId="horizontal-layout-repeat-wrapped-groups-example"
           wrapRowsHorizontally
           repeatWrappedGroupRows={repeatWrappedGroupRows}
           columns={columns}

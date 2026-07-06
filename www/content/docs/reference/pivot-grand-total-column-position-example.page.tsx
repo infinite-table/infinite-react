@@ -84,6 +84,7 @@ export default function ColumnValueGetterExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="pivot-grand-total-column-position-example"
               groupRenderStrategy="single-column"
               columns={columns}
               columnDefaultWidth={200}

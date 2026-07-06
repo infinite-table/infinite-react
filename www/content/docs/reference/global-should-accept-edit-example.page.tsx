@@ -85,6 +85,7 @@ export default function InlineEditingExample() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="global-should-accept-edit-example"
           columns={columns}
           columnDefaultEditable={false}
           shouldAcceptEdit={shouldAcceptEdit}

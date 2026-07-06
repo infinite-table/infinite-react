@@ -50,6 +50,7 @@ export default function App() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="table-context-menu-example"
           columns={columns}
           getContextMenuItems={({ data, column }) => {
             if (!data)

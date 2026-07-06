@@ -69,6 +69,7 @@ export default function App() {
       primaryKey="id"
     >
       <InfiniteTable<Developer>
+        debugId="column-header-selection-checkbox-example"
         columns={columns}
         domProps={domProps}
         groupColumn={groupColumn}

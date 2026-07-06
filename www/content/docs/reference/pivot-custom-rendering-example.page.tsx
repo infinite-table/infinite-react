@@ -110,6 +110,7 @@ export default function ColumnValueGetterExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="pivot-custom-rendering-example"
               groupRenderStrategy="single-column"
               groupColumn={groupColumn}
               columns={columns}

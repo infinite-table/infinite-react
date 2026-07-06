@@ -76,7 +76,11 @@ export default function App() {
         onCellSelectionChange={setCellSelection}
         selectionMode="multi-cell"
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={100} />
+        <InfiniteTable<Developer>
+          debugId="controlled-cell-selection-example"
+          columns={columns}
+          columnDefaultWidth={100}
+        />
       </DataSource>
     </div>
   );

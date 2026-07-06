@@ -306,6 +306,7 @@ export default function App() {
         onDataArrayChange={updateSelectedValues}
       >
         <InfiniteTable<Developer>
+          debugId="cell-selection-mapping-example"
           domProps={{
             style: {
               flex: 1,

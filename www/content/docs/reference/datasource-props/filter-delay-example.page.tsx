@@ -62,6 +62,7 @@ export default () => {
           filterMode="local"
         >
           <InfiniteTable<Developer>
+            debugId="filter-delay-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}

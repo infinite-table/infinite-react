@@ -33,7 +33,10 @@ export default function App() {
       }}
     >
       <DataSource<Employee> data={dataSource} primaryKey="id">
-        <InfiniteTable<Employee> columns={columns} />
+        <InfiniteTable<Employee>
+          debugId="theme-switching-minimalist-theme-default-example"
+          columns={columns}
+        />
       </DataSource>
 
       <div style={{ margin: 10 }}>

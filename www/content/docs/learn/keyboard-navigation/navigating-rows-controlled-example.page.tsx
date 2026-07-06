@@ -60,6 +60,7 @@ export default function KeyboardNavigationForRows() {
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-rows-controlled-example"
           keyboardNavigation="row"
           activeRowIndex={activeRowIndex}
           onActiveRowIndexChange={setActiveRowIndex}

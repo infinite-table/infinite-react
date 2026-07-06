@@ -87,6 +87,7 @@ export default function App() {
           </button>
         </div>
         <InfiniteTable<Developer>
+          debugId="goto-cell-example"
           // keyboardNavigation="cell" is the default, so no need to specify it
           columns={columns}
           defaultActiveCellIndex={[0, 0]}

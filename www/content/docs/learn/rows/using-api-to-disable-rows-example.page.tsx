@@ -78,6 +78,7 @@ export default () => {
         }}
       >
         <InfiniteTable<Developer>
+          debugId="using-api-to-disable-rows-example"
           getCellContextMenuItems={({ rowInfo }, { dataSourceApi }) => {
             return {
               columns: [{ name: 'label' }],

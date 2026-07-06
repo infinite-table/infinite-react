@@ -94,6 +94,7 @@ export default function KeyboardNavigationForRows() {
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-rows-customize-color-example"
           domProps={domProps}
           columns={columns}
           defaultActiveRowIndex={0}

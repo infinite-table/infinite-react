@@ -37,6 +37,7 @@ export default function App() {
   return (
     <DataSource<Employee> loading data={employees} primaryKey="id">
       <InfiniteTable<Employee>
+        debugId="load-mask-example"
         components={{
           LoadMask,
         }}

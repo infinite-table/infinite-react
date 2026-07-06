@@ -38,6 +38,7 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="id">
       <InfiniteTable<Person>
+        debugId="column-groups-example"
         columnGroups={columnGroups}
         columnDefaultWidth={130}
         columnMinWidth={50}

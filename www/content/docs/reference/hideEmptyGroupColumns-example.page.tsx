@@ -73,6 +73,7 @@ export default function App() {
         groupBy={groupBy}
       >
         <InfiniteTable<Developer>
+          debugId="hideEmptyGroupColumns-example"
           domProps={domProps}
           hideEmptyGroupColumns={hideEmptyGroupColumns}
           groupRenderStrategy={'multi-column'}

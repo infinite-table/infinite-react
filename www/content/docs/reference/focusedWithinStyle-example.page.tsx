@@ -14,6 +14,7 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
+        debugId="focusedWithinStyle-example"
         focusedWithinStyle={focusedWithinStyle}
         columns={columns}
       />

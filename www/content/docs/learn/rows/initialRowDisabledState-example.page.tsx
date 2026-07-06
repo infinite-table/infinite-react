@@ -57,6 +57,7 @@ export default () => {
         }}
       >
         <InfiniteTable<Developer>
+          debugId="initialRowDisabledState-example"
           columnDefaultWidth={120}
           columnMinWidth={50}
           columns={columns}

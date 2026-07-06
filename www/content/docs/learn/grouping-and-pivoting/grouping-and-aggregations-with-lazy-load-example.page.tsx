@@ -82,6 +82,7 @@ export default function RemotePivotExample() {
       lazyLoad={true}
     >
       <InfiniteTable<Developer>
+        debugId="grouping-and-aggregations-with-lazy-load-example"
         scrollStopDelay={10}
         groupRenderStrategy="single-column"
         hideEmptyGroupColumns

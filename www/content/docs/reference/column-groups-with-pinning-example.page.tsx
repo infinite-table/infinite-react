@@ -75,6 +75,7 @@ export default function ColumnGroupsWithPinningExample() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="column-groups-with-pinning-example"
           columnGroups={columnGrous}
           columns={columns}
           columnDefaultWidth={100}

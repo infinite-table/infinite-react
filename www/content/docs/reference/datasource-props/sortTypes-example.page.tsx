@@ -125,7 +125,7 @@ export default function DataTestPage() {
         }}
         sortTypes={newSortTypes}
       >
-        <InfiniteTable<CarSale> columns={columns} />
+        <InfiniteTable<CarSale> debugId="sortTypes-example" columns={columns} />
       </DataSource>
     </>
   );

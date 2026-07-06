@@ -44,7 +44,11 @@ export default function App() {
         onRowSelectionChange={setRowSelection}
         primaryKey="id"
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
+        <InfiniteTable<Developer>
+          debugId="controlled-single-row-selection-example"
+          columns={columns}
+          columnDefaultWidth={150}
+        />
       </DataSource>
     </>
   );

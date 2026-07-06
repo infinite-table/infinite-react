@@ -15,7 +15,11 @@ export default function App() {
     <>
       <button autoFocus>Button before - to help with focus navigation</button>
       <DataSource<Person> data={data} primaryKey="Id">
-        <InfiniteTable<Person> focusedStyle={focusedStyle} columns={columns} />
+        <InfiniteTable<Person>
+          debugId="focusedStyle-example"
+          focusedStyle={focusedStyle}
+          columns={columns}
+        />
       </DataSource>
       <button>Button after - to help with focus navigation</button>
     </>

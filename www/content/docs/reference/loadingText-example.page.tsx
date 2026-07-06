@@ -9,6 +9,7 @@ export default function App() {
   return (
     <DataSource<Employee> loading data={employees} primaryKey="id">
       <InfiniteTable<Employee>
+        debugId="loadingText-example"
         loadingText="Please wait ..."
         columnDefaultWidth={130}
         columns={columns}

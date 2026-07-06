@@ -31,6 +31,7 @@ export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
       <InfiniteTable<Employee>
+        debugId="column-defaultWidth-defaultFlex-example"
         columns={columns}
         columnDefaultWidth={100}
         columnMinWidth={30}

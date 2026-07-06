@@ -49,6 +49,7 @@ export default function KeyboardNavigationForCells() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-cells-uncontrolled-example"
           defaultActiveCellIndex={[2, 0]}
           columns={columns}
         />

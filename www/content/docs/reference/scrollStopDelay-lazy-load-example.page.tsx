@@ -49,6 +49,7 @@ export default function App() {
       lazyLoad={lazyLoad}
     >
       <InfiniteTable<Developer>
+        debugId="scrollStopDelay-lazy-load-example"
         columns={columns}
         columnDefaultWidth={130}
         scrollStopDelay={50}

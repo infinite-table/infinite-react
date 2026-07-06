@@ -83,6 +83,7 @@ export default function App() {
       aggregationReducers={aggregationReducers}
     >
       <InfiniteTable<Developer>
+        debugId="grouped-lazy-load-example"
         columns={columns}
         columnDefaultWidth={130}
         groupColumn={{

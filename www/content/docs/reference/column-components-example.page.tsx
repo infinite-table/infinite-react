@@ -112,7 +112,11 @@ export default function ColumnValueGetterExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnTypes={columnTypes} />
+        <InfiniteTable<Developer>
+          debugId="column-components-example"
+          columns={columns}
+          columnTypes={columnTypes}
+        />
       </DataSource>
     </>
   );

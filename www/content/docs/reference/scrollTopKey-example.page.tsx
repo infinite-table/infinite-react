@@ -53,6 +53,7 @@ export default function GroupByExample() {
 
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="scrollTopKey-example"
           scrollTopKey={scrollTopKey}
           columns={columns}
           columnDefaultWidth={200}

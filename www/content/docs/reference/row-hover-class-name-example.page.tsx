@@ -31,6 +31,7 @@ export default function App() {
   return (
     <DataSource<Developer> primaryKey="id" data={dataSource}>
       <InfiniteTable<Developer>
+        debugId="row-hover-class-name-example"
         columns={columns}
         columnDefaultWidth={200}
         rowHoverClassName="bg-orange-800!"

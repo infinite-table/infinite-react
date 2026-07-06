@@ -36,6 +36,7 @@ export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
       <InfiniteTable<Employee>
+        debugId="defaultColumnSizing-example"
         columns={columns}
         columnDefaultWidth={50}
         defaultColumnSizing={defaultColumnSizing}

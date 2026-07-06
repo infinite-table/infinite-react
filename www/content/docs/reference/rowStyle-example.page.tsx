@@ -31,7 +31,11 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = (param: {
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee> columns={columns} rowStyle={rowStyle} />
+      <InfiniteTable<Employee>
+        debugId="rowStyle-example"
+        columns={columns}
+        rowStyle={rowStyle}
+      />
     </DataSource>
   );
 }

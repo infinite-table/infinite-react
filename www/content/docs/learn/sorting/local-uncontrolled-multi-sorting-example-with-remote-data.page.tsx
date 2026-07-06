@@ -63,6 +63,7 @@ export default function LocalUncontrolledMultiSortingExampleWithRemoteData() {
         shouldReloadData={shouldReloadData}
       >
         <InfiniteTable<Developer>
+          debugId="local-uncontrolled-multi-sorting-example-with-remote-data"
           domProps={domProps}
           columns={columns}
           columnDefaultWidth={120}

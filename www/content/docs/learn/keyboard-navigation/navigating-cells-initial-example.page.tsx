@@ -49,6 +49,7 @@ export default function KeyboardNavigationForCells() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-cells-initial-example"
           // keyboardNavigation="cell" is the default, so no need to specify it
           columns={columns}
         />

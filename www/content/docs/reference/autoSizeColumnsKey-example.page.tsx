@@ -80,6 +80,7 @@ export default function GroupByExample() {
 
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="autoSizeColumnsKey-example"
           autoSizeColumnsKey={autoSizeColumnsKey}
           columns={columns}
           columnDefaultWidth={200}

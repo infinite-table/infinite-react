@@ -172,6 +172,7 @@ export default function App() {
       </button>
       <DataSource<Developer> data={dataSource} primaryKey="id">
         <InfiniteTable<Developer>
+          debugId="realtime-updates-example"
           domProps={domProps}
           onReady={onReady}
           columnDefaultWidth={130}

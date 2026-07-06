@@ -74,6 +74,7 @@ function renderDetail(rowInfo: InfiniteTableRowInfo<City>) {
       shouldReloadData={shouldReloadData}
     >
       <InfiniteTable<Developer>
+        debugId="master-detail-caching-with-default-expanded-example"
         columnDefaultWidth={150}
         columnMinWidth={50}
         columns={detailColumns}
@@ -105,6 +106,7 @@ export default () => {
         ]}
       >
         <InfiniteTable<City>
+          debugId="master-detail-caching-with-default-expanded-example-2"
           domProps={domProps}
           columnDefaultWidth={150}
           defaultRowDetailState={defaultRowDetailState}

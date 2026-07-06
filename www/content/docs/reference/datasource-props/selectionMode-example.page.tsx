@@ -92,6 +92,7 @@ export default function App() {
         selectionMode={selectionMode}
       >
         <InfiniteTable<Developer>
+          debugId="selectionMode-example"
           columns={currentColumns}
           columnDefaultWidth={100}
         />

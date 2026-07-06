@@ -64,6 +64,7 @@ export default () => {
         }}
       >
         <InfiniteTable<Developer>
+          debugId="rowDisabledState-example"
           getCellContextMenuItems={({ rowInfo }, { dataSourceApi }) => {
             const rowDisabled = dataSourceApi.isRowDisabledAt(
               rowInfo.indexInAll,

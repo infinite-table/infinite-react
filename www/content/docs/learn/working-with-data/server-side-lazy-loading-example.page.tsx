@@ -82,7 +82,10 @@ export default function App() {
         aggregationReducers={reducers}
         primaryKey="id"
       >
-        <InfiniteTable<Developer> columns={columns} />
+        <InfiniteTable<Developer>
+          debugId="server-side-lazy-loading-example"
+          columns={columns}
+        />
       </DataSource>
     </>
   );

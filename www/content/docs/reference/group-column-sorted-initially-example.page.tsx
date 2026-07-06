@@ -67,6 +67,7 @@ export default function App() {
       groupBy={groupBy}
     >
       <InfiniteTable<Developer>
+        debugId="group-column-sorted-initially-example"
         groupColumn={groupColumn}
         columns={columns}
         hideColumnWhenGrouped

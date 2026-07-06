@@ -78,6 +78,7 @@ export default () => {
         }}
       >
         <InfiniteTable<Developer>
+          debugId="custom-rendering-for-disabled-rows-example"
           columnDefaultWidth={120}
           columnMinWidth={50}
           columns={columns}

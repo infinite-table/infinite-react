@@ -55,6 +55,7 @@ export default function App() {
       </div>
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
+          debugId="viewportReservedWidth-example"
           columns={columns}
           columnDefaultWidth={50}
           viewportReservedWidth={viewportReservedWidth}

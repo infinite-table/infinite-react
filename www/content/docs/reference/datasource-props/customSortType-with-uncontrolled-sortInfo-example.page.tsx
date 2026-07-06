@@ -124,7 +124,10 @@ export default function DataTestPage() {
       }}
       sortTypes={newSortTypes}
     >
-      <InfiniteTable<CarSale> columns={columns} />
+      <InfiniteTable<CarSale>
+        debugId="customSortType-with-uncontrolled-sortInfo-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

@@ -89,6 +89,7 @@ export default function ColumnContextMenuItems() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="getColumnMenuItems-example"
           columnHeaderHeight={70}
           columns={columns}
           getColumnMenuItems={(items, { column }) => {

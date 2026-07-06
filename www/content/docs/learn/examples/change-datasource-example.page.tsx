@@ -178,6 +178,7 @@ export default function App() {
       </div>
       <DataSource<any> data={dataSource} primaryKey="id">
         <InfiniteTable<any>
+          debugId="change-datasource-example"
           columns={type === 'developer' ? developerColumns : employeeColumns}
           columnDefaultWidth={150}
         />

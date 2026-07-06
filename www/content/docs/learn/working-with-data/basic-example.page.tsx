@@ -62,7 +62,11 @@ const data = new Promise<Employee[]>((resolve) => {
 export default function App() {
   return (
     <DataSource<Employee> data={data} primaryKey="id">
-      <InfiniteTable<Employee> columnDefaultWidth={130} columns={columns} />
+      <InfiniteTable<Employee>
+        debugId="basic-example"
+        columnDefaultWidth={130}
+        columns={columns}
+      />
     </DataSource>
   );
 }

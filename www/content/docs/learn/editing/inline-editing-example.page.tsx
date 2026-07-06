@@ -56,7 +56,11 @@ export default function ColumnValueGetterExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnDefaultEditable />
+        <InfiniteTable<Developer>
+          debugId="inline-editing-example"
+          columns={columns}
+          columnDefaultEditable
+        />
       </DataSource>
     </>
   );

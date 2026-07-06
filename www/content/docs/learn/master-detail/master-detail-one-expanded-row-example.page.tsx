@@ -78,6 +78,7 @@ function RowDetail() {
       shouldReloadData={shouldReloadData}
     >
       <InfiniteTable<Developer>
+        debugId="master-detail-one-expanded-row-example"
         columnDefaultWidth={150}
         columnMinWidth={50}
         columns={detailColumns}
@@ -131,6 +132,7 @@ export default () => {
         ]}
       >
         <InfiniteTable<City>
+          debugId="master-detail-one-expanded-row-example-2"
           domProps={domProps}
           onReady={({ api }) => {
             console.log(api.rowDetailApi);

@@ -66,7 +66,11 @@ const groupColumn: InfiniteTableColumn<Developer> = {
 export default function App() {
   return (
     <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
-      <InfiniteTable<Developer> columns={columns} groupColumn={groupColumn} />
+      <InfiniteTable<Developer>
+        debugId="column-renderGroupIcon-example"
+        columns={columns}
+        groupColumn={groupColumn}
+      />
     </DataSource>
   );
 }

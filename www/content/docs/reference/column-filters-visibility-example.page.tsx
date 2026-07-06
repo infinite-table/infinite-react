@@ -62,6 +62,7 @@ export default () => {
           filterMode="local"
         >
           <InfiniteTable<Developer>
+            debugId="column-filters-visibility-example"
             columnDefaultWidth={150}
             columnMinWidth={50}
             columns={columns}

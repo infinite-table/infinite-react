@@ -84,7 +84,11 @@ export default function RemoteControlledMultiSortingExample() {
         shouldReloadData={shouldReloadData}
         onSortInfoChange={setSortInfo}
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
+        <InfiniteTable<Developer>
+          debugId="remote-controlled-multi-sorting-example"
+          columns={columns}
+          columnDefaultWidth={220}
+        />
       </DataSource>
     </>
   );

@@ -18,6 +18,7 @@ export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person>
+        debugId="onBlurWithin-example"
         onBlurWithin={onBlurWithin}
         focusedWithinStyle={focusedWithinStyle}
         columns={columns}

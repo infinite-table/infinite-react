@@ -60,6 +60,7 @@ export default function App() {
       primaryKey="id"
     >
       <InfiniteTable<Developer>
+        debugId="keyboard-toggle-group-rows"
         columns={columns}
         domProps={domProps}
         keyboardNavigation="row"

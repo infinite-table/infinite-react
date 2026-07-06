@@ -105,6 +105,7 @@ export default function KeyboardNavigationForCells() {
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-cells-theming-example"
           defaultActiveCellIndex={[5, 0]}
           domProps={domProps}
           columns={columns}

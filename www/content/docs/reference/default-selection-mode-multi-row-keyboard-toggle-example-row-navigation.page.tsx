@@ -52,6 +52,7 @@ export default function App() {
         primaryKey="id"
       >
         <InfiniteTable<Developer>
+          debugId="default-selection-mode-multi-row-keyboard-toggle-example-row-navigation"
           keyboardNavigation="row"
           keyboardSelection={keyboardSelection}
           columns={columns}

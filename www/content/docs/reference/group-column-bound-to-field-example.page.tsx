@@ -62,6 +62,7 @@ export default function App() {
       primaryKey="id"
     >
       <InfiniteTable<Developer>
+        debugId="group-column-bound-to-field-example"
         columns={columns}
         domProps={domProps}
         groupColumn={groupColumn}

@@ -22,7 +22,11 @@ const columns: Record<string, InfiniteTableColumn<Person>> = {
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id" defaultFilterValue={[]}>
-      <InfiniteTable<Person> columns={columns} columnHeaderHeight={60} />
+      <InfiniteTable<Person>
+        debugId="columnHeaderHeight-example"
+        columns={columns}
+        columnHeaderHeight={60}
+      />
     </DataSource>
   );
 }

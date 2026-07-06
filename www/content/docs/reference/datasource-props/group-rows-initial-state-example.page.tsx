@@ -42,7 +42,10 @@ export default function App() {
       groupBy={groupBy}
       defaultGroupRowsState={defaultGroupRowsState}
     >
-      <InfiniteTable<Developer> columns={columns} />
+      <InfiniteTable<Developer>
+        debugId="group-rows-initial-state-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

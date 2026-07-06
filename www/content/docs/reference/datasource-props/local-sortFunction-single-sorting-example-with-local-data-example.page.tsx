@@ -68,7 +68,11 @@ export default function LocalUncontrolledSingleSortingExample() {
         defaultSortInfo={defaultSortInfo}
         sortFunction={sortFunction}
       >
-        <InfiniteTable<Developer> columns={columns} columnDefaultWidth={220} />
+        <InfiniteTable<Developer>
+          debugId="local-sortFunction-single-sorting-example-with-local-data-example"
+          columns={columns}
+          columnDefaultWidth={220}
+        />
       </DataSource>
     </>
   );

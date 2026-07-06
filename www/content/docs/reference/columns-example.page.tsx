@@ -22,7 +22,7 @@ const columns: InfiniteTablePropColumns<Person> = {
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> columns={columns} />
+      <InfiniteTable<Person> debugId="columns-example" columns={columns} />
     </DataSource>
   );
 }

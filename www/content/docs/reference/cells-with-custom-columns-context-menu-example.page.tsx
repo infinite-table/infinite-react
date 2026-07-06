@@ -55,6 +55,7 @@ export default function App() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="cells-with-custom-columns-context-menu-example"
           columns={columns}
           columnDefaultEditable
           getCellContextMenuItems={({ data, column }) => {

@@ -126,6 +126,7 @@ export default () => {
           }}
         >
           <InfiniteTable<Developer>
+            debugId="column-filterType-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}

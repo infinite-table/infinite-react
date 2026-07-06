@@ -59,7 +59,10 @@ export default function ColumnValueGetterExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} />
+        <InfiniteTable<Developer>
+          debugId="column-contentFocusable-example"
+          columns={columns}
+        />
       </DataSource>
     </>
   );

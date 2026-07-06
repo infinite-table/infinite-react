@@ -115,7 +115,11 @@ export default function App() {
         </select>
       </div>
       <DataSource<Employee> data={dataSource} primaryKey="id">
-        <InfiniteTable<Employee> columns={columns} columnDefaultWidth={150} />
+        <InfiniteTable<Employee>
+          debugId="many-rows-and-columns-example"
+          columns={columns}
+          columnDefaultWidth={150}
+        />
       </DataSource>
     </div>
   );

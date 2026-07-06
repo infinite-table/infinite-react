@@ -7,7 +7,10 @@ import { columns, Employee } from './columns';
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee> columns={columns} />
+      <InfiniteTable<Employee>
+        debugId="using-fetch-example"
+        columns={columns}
+      />
     </DataSource>
   );
 }

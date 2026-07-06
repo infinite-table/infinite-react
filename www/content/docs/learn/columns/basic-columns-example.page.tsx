@@ -63,7 +63,11 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
 export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
-      <InfiniteTable<Employee> columns={columns} columnDefaultWidth={200} />
+      <InfiniteTable<Employee>
+        debugId="basic-columns-example"
+        columns={columns}
+        columnDefaultWidth={200}
+      />
     </DataSource>
   );
 }

@@ -50,6 +50,7 @@ export default function App() {
   return (
     <DataSource<Developer> data={dataSource} primaryKey="id" groupBy={groupBy}>
       <InfiniteTable<Developer>
+        debugId="hide-columns-when-grouping-example"
         groupColumn={groupColumn}
         columns={columns}
         hideColumnWhenGrouped

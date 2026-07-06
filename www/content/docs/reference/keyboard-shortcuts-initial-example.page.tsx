@@ -49,6 +49,7 @@ export default function KeyboardShortcuts() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="keyboard-shortcuts-initial-example"
           columns={columns}
           keyboardShortcuts={[
             {

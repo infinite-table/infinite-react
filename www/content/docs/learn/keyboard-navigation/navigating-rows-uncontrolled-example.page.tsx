@@ -51,6 +51,7 @@ export default function KeyboardNavigationForRows() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-rows-uncontrolled-example"
           domProps={domProps}
           columns={columns}
           keyboardNavigation="row"

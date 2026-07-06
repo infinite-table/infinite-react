@@ -114,6 +114,7 @@ export default function App() {
 
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
+          debugId="columnOrder-advanced-example"
           columns={columns}
           columnOrder={columnOrder}
           onColumnOrderChange={setColumnOrder}

@@ -222,6 +222,7 @@ export default function GroupByExample(props: GroupByExampleProps<any>) {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="dynamic-advanced-pivoting-example"
               domProps={domProps}
               columns={columns}
               columnTypes={preparedColumnTypes}

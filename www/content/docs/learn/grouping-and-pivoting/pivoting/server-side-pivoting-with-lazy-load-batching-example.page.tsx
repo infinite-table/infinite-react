@@ -143,6 +143,7 @@ export default function RemotePivotExample() {
       {({ pivotColumns, pivotColumnGroups }) => {
         return (
           <InfiniteTable<Developer>
+            debugId="server-side-pivoting-with-lazy-load-batching-example"
             scrollStopDelay={10}
             columnPinning={columnPinning}
             columns={columns}

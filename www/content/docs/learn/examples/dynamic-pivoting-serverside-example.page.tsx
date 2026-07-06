@@ -209,6 +209,7 @@ export default function GroupByExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="dynamic-pivoting-serverside-example"
               columns={columns}
               columnPinning={defaultColumnPinning}
               columnTypes={preparedColumnTypes}

@@ -75,6 +75,7 @@ export default function App() {
   return (
     <DataSource<Employee> data={dataSource} primaryKey="id">
       <InfiniteTable<Employee>
+        debugId="defaultColumnOrder-example"
         columns={columns}
         defaultColumnOrder={columnOrder}
         columnDefaultWidth={200}

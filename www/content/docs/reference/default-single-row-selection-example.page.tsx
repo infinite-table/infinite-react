@@ -28,7 +28,11 @@ export default function App() {
       defaultRowSelection={3}
       primaryKey="id"
     >
-      <InfiniteTable<Developer> columns={columns} columnDefaultWidth={150} />
+      <InfiniteTable<Developer>
+        debugId="default-single-row-selection-example"
+        columns={columns}
+        columnDefaultWidth={150}
+      />
     </DataSource>
   );
 }

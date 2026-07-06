@@ -21,7 +21,11 @@ const domProps = {
 export default function App() {
   return (
     <DataSource<Person> data={data} primaryKey="Id">
-      <InfiniteTable<Person> domProps={domProps} columns={columns} />
+      <InfiniteTable<Person>
+        debugId="domprops-example"
+        domProps={domProps}
+        columns={columns}
+      />
     </DataSource>
   );
 }

@@ -81,6 +81,7 @@ export default function HorizontalLayout() {
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="horizontal-layout-with-column-set-index-in-header-example"
           wrapRowsHorizontally={wrapRowsHorizontally}
           columns={columns}
           columnDefaultWidth={100}

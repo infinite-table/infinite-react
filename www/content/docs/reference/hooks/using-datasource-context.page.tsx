@@ -74,6 +74,7 @@ function AppGrid() {
       </p>
 
       <InfiniteTable<Developer>
+        debugId="using-datasource-context"
         groupRenderStrategy="single-column"
         defaultActiveRowIndex={0}
         domProps={domProps}

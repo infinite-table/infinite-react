@@ -88,6 +88,7 @@ export default function ColumnValueGetterExample() {
       </p>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="onColumnSizingChange-example"
           columnSizing={columnSizing}
           onColumnSizingChange={setColumnSizing}
           columnGroups={columnGrous}

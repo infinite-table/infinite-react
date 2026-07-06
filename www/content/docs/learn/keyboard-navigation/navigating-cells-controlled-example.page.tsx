@@ -62,6 +62,7 @@ export default function KeyboardNavigationForCells() {
       </div>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigating-cells-controlled-example"
           activeCellIndex={activeCellIndex}
           onActiveCellIndexChange={setActiveCellIndex}
           columns={columns}

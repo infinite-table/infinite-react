@@ -125,6 +125,7 @@ export default () => {
           onReady={setDataSourceApi}
         >
           <InfiniteTable<Developer>
+            debugId="addData-example"
             columnDefaultWidth={100}
             columnMinWidth={50}
             columns={columns}

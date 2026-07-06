@@ -48,6 +48,7 @@ export default function App() {
       </div>
       <DataSource<Employee> data={dataSource} primaryKey="id">
         <InfiniteTable<Employee>
+          debugId="resizableColumns-example"
           resizableColumns={resizableColumns}
           columns={columns}
           columnDefaultWidth={100}

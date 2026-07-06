@@ -52,6 +52,7 @@ export default function KeyboardNavigationForRows() {
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="navigation-disabled-example"
           keyboardNavigation={false}
           columns={columns}
         />

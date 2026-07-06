@@ -80,7 +80,11 @@ export default function InlineEditingExample() {
   return (
     <>
       <DataSource<Developer> primaryKey="id" data={dataSource}>
-        <InfiniteTable<Developer> columns={columns} columnDefaultEditable />
+        <InfiniteTable<Developer>
+          debugId="inline-editing-custom-edit-value-example"
+          columns={columns}
+          columnDefaultEditable
+        />
       </DataSource>
     </>
   );

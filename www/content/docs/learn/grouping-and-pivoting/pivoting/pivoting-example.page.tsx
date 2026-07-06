@@ -103,6 +103,7 @@ export default function GroupByExample() {
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<Developer>
+              debugId="pivoting-example"
               columns={columns}
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}

@@ -101,6 +101,7 @@ export default function App() {
         primaryKey="id"
       >
         <InfiniteTable<Developer>
+          debugId="controlled-multi-row-selection-example"
           columns={columns}
           domProps={domProps}
           groupColumn={groupColumn}

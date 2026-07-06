@@ -110,6 +110,7 @@ export default function InlineEditingExample() {
 
       <DataSource<Developer> primaryKey="id" data={dataSource}>
         <InfiniteTable<Developer>
+          debugId="api-inline-editing-custom-edit-value-example"
           onReady={onReady}
           columns={columns}
           columnDefaultEditable

@@ -108,6 +108,7 @@ export default function App() {
       groupBy={groupBy}
     >
       <InfiniteTable<Developer>
+        debugId="grouping-with-aggregations-discard-expand-example"
         groupRenderStrategy="multi-column"
         groupColumn={groupColumn}
         columns={columns}

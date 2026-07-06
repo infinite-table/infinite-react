@@ -136,6 +136,7 @@ export default () => {
           }}
         >
           <InfiniteTable<Developer>
+            debugId="custom-filter-editor-hooks-example"
             domProps={domProps}
             columnDefaultWidth={150}
             columnMinWidth={50}
