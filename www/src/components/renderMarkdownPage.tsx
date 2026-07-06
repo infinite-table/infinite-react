@@ -22,8 +22,7 @@ export async function renderMarkdownPage(options: {
   const env = {
     ...options.env,
     NEXT_PUBLIC_BASE_URL:
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      'https://infinite-table.com/.netlify/functions/json-server',
+      process.env.NEXT_PUBLIC_BASE_URL || 'https://data.infinite-table.com',
   };
 
   let fileKey = '/' + slug.join('/');
