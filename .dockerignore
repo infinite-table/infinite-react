@@ -1,0 +1,13 @@
+**/node_modules
+**/.next
+**/dist
+**/dist-dev
+**/out
+.git
+examples
+devtools
+devtools-ui
+devtools-www
+source/dist
+www/.next
+www/out
