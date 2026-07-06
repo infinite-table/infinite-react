@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getPageUrlOfCurrentTab } from '../lib/getCurrentPageUrl';
+import { getPageUrlOfInspectedTab } from '../lib/getCurrentPageUrl';
 import { type PageData } from 'devtools-ui';
 
 import { sendMessageToBackgroundScript } from '../lib/messagingUtils';
@@ -42,21 +42,65 @@ export function useOnPageStorageChange<T>(
     [pageData],
   );
 
+  const [pageUrl, setPageUrl] = useState('');
+
   useEffect(() => {
+    const inspectedTabId = chrome.devtools?.inspectedWindow?.tabId;
+    let cancelled = false;
+
+    const syncPageUrl = async () => {
+      const nextPageUrl = await getPageUrlOfInspectedTab();
+      if (cancelled) {
+        return;
+      }
+      setPageUrl((prev) => (prev === nextPageUrl ? prev : nextPageUrl));
+    };
+
+    void syncPageUrl();
+
+    const onTabUpdated = (
+      updatedTabId: number,
+      info: chrome.tabs.TabChangeInfo,
+    ) => {
+      if (inspectedTabId != null && updatedTabId !== inspectedTabId) {
+        return;
+      }
+      if (info.url != null || info.status === 'complete') {
+        void syncPageUrl();
+      }
+    };
+    chrome.tabs.onUpdated.addListener(onTabUpdated);
+
+    const onNavigated = chrome.devtools?.network?.onNavigated;
+    const navigatedListener = () => void syncPageUrl();
+    onNavigated?.addListener(navigatedListener);
+
+    return () => {
+      cancelled = true;
+      chrome.tabs.onUpdated.removeListener(onTabUpdated);
+      onNavigated?.removeListener(navigatedListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!pageUrl) {
+      return;
+    }
+
     let listener: (changes: any) => void = () => {};
 
     async function init() {
-      const PAGE_URL = await getPageUrlOfCurrentTab();
-
-      storageArea.get(PAGE_URL).then((result) => {
-        const storageForPage = result[PAGE_URL];
+      storageArea.get(pageUrl).then((result) => {
+        const storageForPage = result[pageUrl];
         if (storageForPage) {
           setPageData(storageForPage);
+        } else {
+          setPageData(getEmptyPageData());
         }
       });
 
       listener = (changes: any) => {
-        const storageForPage = changes[PAGE_URL];
+        const storageForPage = changes[pageUrl];
 
         if (storageForPage) {
           setPageData(storageForPage.newValue);
@@ -67,10 +111,23 @@ export function useOnPageStorageChange<T>(
 
     init();
 
+    const runtimeListener = (message: { type?: string; pageUrl?: string }) => {
+      if (message?.type === 'PAGE_DATA_UPDATED' && message.pageUrl === pageUrl) {
+        storageArea.get(pageUrl).then((result) => {
+          const storageForPage = result[pageUrl];
+          if (storageForPage) {
+            setPageData(storageForPage);
+          }
+        });
+      }
+    };
+    chrome.runtime.onMessage.addListener(runtimeListener);
+
     return () => {
       storageArea.onChanged.removeListener(listener);
+      chrome.runtime.onMessage.removeListener(runtimeListener);
     };
-  }, [storageArea]);
+  }, [pageUrl, storageArea, setPageData]);
 
   return {
     clearLogs,

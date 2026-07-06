@@ -3,6 +3,63 @@ import type {
   DevToolsMessageAddress,
 } from '@infinite-table/infinite-react';
 
+function getPageUrlOfWindow(): string {
+  try {
+    const parsed = new URL(window.location.href);
+    return parsed.origin + parsed.pathname;
+  } catch {
+    return window.location.href;
+  }
+}
+
+function getTopFramePageUrl(): string | null {
+  try {
+    if (window.top && window.top !== window) {
+      const parsed = new URL(window.top.location.href);
+      return parsed.origin + parsed.pathname;
+    }
+  } catch {
+    // Cross-origin iframe: cannot read top.location from the page.
+  }
+  return null;
+}
+
+function consumeLastError(): void {
+  void chrome.runtime.lastError;
+}
+
+function requestTabPageUrlFromBackground(): Promise<string> {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(
+      {
+        source: 'infinite-table-devtools-contentscript',
+        target: 'infinite-table-devtools-background',
+        type: 'get-tab-page-url',
+      },
+      (response: { pageUrl?: string } | undefined) => {
+        if (chrome.runtime.lastError) {
+          consumeLastError();
+          resolve(getPageUrlOfWindow());
+          return;
+        }
+        resolve(response?.pageUrl || getPageUrlOfWindow());
+      },
+    );
+  });
+}
+
+/** Page URL key used for devtools storage (always the inspected tab, not an iframe path). */
+function resolveStoragePageUrl(): Promise<string> {
+  const topFrameUrl = getTopFramePageUrl();
+  if (topFrameUrl) {
+    return Promise.resolve(topFrameUrl);
+  }
+  if (window.top === window) {
+    return Promise.resolve(getPageUrlOfWindow());
+  }
+  return requestTabPageUrlFromBackground();
+}
+
 type MessageForPage = DevToolsGenericMessage & {
   target: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
   payload: any;
@@ -15,43 +72,113 @@ type MessageForBackground = DevToolsGenericMessage & {
   type: string;
 };
 
-const port = chrome.runtime.connect({ name: 'infinite-table-devtools' });
+let port: chrome.runtime.Port | null = null;
+let portDisconnected = false;
+const storagePageUrlPromise = resolveStoragePageUrl();
 
-let PORT_DISCONNECTED = false;
+function connectPort(): chrome.runtime.Port {
+  if (port) {
+    try {
+      port.disconnect();
+    } catch {
+      // already closed
+    }
+  }
+
+  const next = chrome.runtime.connect({ name: 'infinite-table-devtools' });
+  next.onDisconnect.addListener(() => {
+    portDisconnected = true;
+    port = null;
+    consumeLastError();
+    window.removeEventListener('message', onWindowMessage);
+  });
+  port = next;
+  portDisconnected = false;
+  return next;
+}
+
+function getPort(): chrome.runtime.Port {
+  if (!port) {
+    return connectPort();
+  }
+  return port;
+}
+
+function postToBackground(message: object): void {
+  if (portDisconnected) {
+    return;
+  }
+  try {
+    getPort().postMessage(message);
+  } catch {
+    portDisconnected = true;
+    port = null;
+    consumeLastError();
+  }
+}
 
 const onWindowMessage = (event: MessageEvent) => {
-  if (event.data.source === 'infinite-table-page' && !PORT_DISCONNECTED) {
-    // all messages from the page
-    // will be forwarded to the background script
-    port.postMessage({
-      url: event.data.url,
-      source: event.data.source,
-      target: 'infinite-table-devtools-background',
-      payload: event.data.payload,
-      type: event.data.type,
+  if (event.data.source === 'infinite-table-page' && !portDisconnected) {
+    void storagePageUrlPromise.then((pageUrl) => {
+      postToBackground({
+        url: pageUrl,
+        source: event.data.source,
+        target: 'infinite-table-devtools-background',
+        payload: event.data.payload,
+        type: event.data.type,
+      });
     });
   }
 };
-
-window.addEventListener('message', onWindowMessage);
-
-port.onDisconnect.addListener(() => {
-  PORT_DISCONNECTED = true;
-  window.removeEventListener('message', onWindowMessage);
-});
 
 function onMessageForPage(message: MessageForPage) {
   window.postMessage(message);
 }
 
 function onMessageForBackground(message: MessageForBackground) {
-  if (PORT_DISCONNECTED) {
-    return;
-  }
-  port.postMessage(message);
+  postToBackground(message);
 }
 
-// listen for messages from devtools panels
+function attachWindowMessageListener() {
+  window.removeEventListener('message', onWindowMessage);
+  window.addEventListener('message', onWindowMessage);
+}
+
+function restoreAfterBackForwardCache() {
+  portDisconnected = false;
+  connectPort();
+  attachWindowMessageListener();
+  registerDevToolsHook();
+}
+
+connectPort();
+attachWindowMessageListener();
+
+// Only the top frame reload should clear instance data for the tab.
+if (window.top === window) {
+  void storagePageUrlPromise.then((pageUrl) => {
+    postToBackground({
+      source: 'infinite-table-devtools-contentscript',
+      target: 'infinite-table-devtools-background',
+      type: 'clear-page-instances',
+      payload: { pageUrl },
+    });
+  });
+}
+
+window.addEventListener('pagehide', (event) => {
+  if (event.persisted) {
+    portDisconnected = true;
+    window.removeEventListener('message', onWindowMessage);
+  }
+});
+
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    restoreAfterBackForwardCache();
+  }
+});
+
 chrome.runtime.onMessage.addListener((message) => {
   if (message.target === 'infinite-table-page') {
     onMessageForPage(message as MessageForPage);
@@ -62,7 +189,6 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 const registerDevToolsHook = () => {
-  // post message to trigger page to register the __INFINITE_TABLE_DEVTOOLS_HOOK__ fn
   window.postMessage({
     source: 'infinite-table-devtools-contentscript',
     target: 'infinite-table-page',

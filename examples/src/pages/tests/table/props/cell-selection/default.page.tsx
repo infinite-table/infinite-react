@@ -85,6 +85,7 @@ export default function GroupByExample() {
               // firstName: 'start',
             }
           }
+          debugId="test"
           domProps={domProps}
           columns={columns}
           keyboardSelection={true}

@@ -7,6 +7,7 @@ import type {
 import { type DevToolsLogEntry, IGNORE_DEBUG_IDS } from 'devtools-ui';
 
 import { dataUtils } from './dataUtils';
+import { getPageUrlOfInspectedTab, normalizePageUrl } from '../lib/getCurrentPageUrl';
 
 type MessageFromPageToBackground = {
   source: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
@@ -20,10 +21,40 @@ type MessageForPage = DevToolsGenericMessage & {
   target: Extract<DevToolsMessageAddress, 'infinite-table-page'>;
   payload: any;
   type: string;
+  tabId?: number;
 };
+
+function consumeLastError(): void {
+  void chrome.runtime.lastError;
+}
+
+function broadcastPageDataUpdated(pageUrl: string) {
+  const normalized = normalizePageUrl(pageUrl);
+  void chrome.runtime
+    .sendMessage({
+      type: 'PAGE_DATA_UPDATED',
+      pageUrl: normalized,
+    })
+    .catch(() => {
+      // No devtools panel listening
+    });
+}
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log('Infinite Table DevTools Extension installed');
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (
+    message?.source === 'infinite-table-devtools-contentscript' &&
+    message?.target === 'infinite-table-devtools-background' &&
+    message?.type === 'get-tab-page-url'
+  ) {
+    const tabUrl = sender.tab?.url ?? '';
+    sendResponse({ pageUrl: tabUrl ? normalizePageUrl(tabUrl) : '' });
+    return true;
+  }
+  return false;
 });
 
 // Example: Listen for connections from the DevTools page
@@ -34,10 +65,26 @@ chrome.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener((message: DevToolsGenericMessage) => {
       messageRouter(message);
     });
+    port.onDisconnect.addListener(() => {
+      consumeLastError();
+    });
   }
 });
 
 function messageRouter(message: DevToolsGenericMessage) {
+  if (
+    message.source === 'infinite-table-devtools-contentscript' &&
+    message.target === 'infinite-table-devtools-background' &&
+    message.type === 'clear-page-instances'
+  ) {
+    const { pageUrl } = message.payload as { pageUrl: string };
+    if (pageUrl) {
+      void dataUtils.clearPageInstances(pageUrl).then(() => {
+        broadcastPageDataUpdated(pageUrl);
+      });
+    }
+    return;
+  }
   if (
     message.source === 'infinite-table-page' &&
     message.target === 'infinite-table-devtools-background'
@@ -45,7 +92,7 @@ function messageRouter(message: DevToolsGenericMessage) {
     onMessageFromPage(message as MessageFromPageToBackground);
   }
   if (message.target === 'infinite-table-page') {
-    onMessageForPage(message as MessageForPage);
+    void onMessageForPage(message as MessageForPage);
   }
   if (
     message.source === 'infinite-table-devtools-contentscript-panel' &&
@@ -60,7 +107,11 @@ function onMessageFromPanel(message: DevToolsGenericMessage) {
     clearLogs: async (message: DevToolsGenericMessage) => {
       const { debugId } = message.payload;
 
-      dataUtils.logs.clear(debugId);
+      await dataUtils.logs.clear(debugId);
+      const pageUrl = await getPageUrlOfInspectedTab();
+      if (pageUrl) {
+        broadcastPageDataUpdated(pageUrl);
+      }
     },
   };
 
@@ -73,12 +124,33 @@ function onMessageFromPanel(message: DevToolsGenericMessage) {
   }
 }
 
-function onMessageForPage(message: MessageForPage) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    const tabId = tabs[0]!.id!;
-    // Send a message to the content script in the active tab
-    chrome.tabs.sendMessage(tabId, message);
-  });
+async function onMessageForPage(message: MessageForPage) {
+  let tabId = message.tabId;
+  if (tabId == null) {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    tabId = tabs[0]?.id;
+  }
+  if (tabId == null) {
+    return;
+  }
+
+  try {
+    const frames = await chrome.webNavigation.getAllFrames({ tabId });
+    const frameIds =
+      frames && frames.length > 0
+        ? frames.map((frame) => frame.frameId)
+        : [0];
+
+    await Promise.all(
+      frameIds.map((frameId) =>
+        chrome.tabs
+          .sendMessage(tabId, message, { frameId })
+          .catch(() => undefined),
+      ),
+    );
+  } catch {
+    await chrome.tabs.sendMessage(tabId, message).catch(() => undefined);
+  }
 }
 
 async function onMessageFromPage(message: MessageFromPageToBackground) {
@@ -111,20 +183,23 @@ async function onMessageFromPage(message: MessageFromPageToBackground) {
         return;
       }
 
-      dataUtils.logs.addLog({ url }, logEntry);
+      await dataUtils.logs.addLog({ url }, logEntry);
+      broadcastPageDataUpdated(url);
     },
     unmount: async (message: MessageFromPageToBackground) => {
       const { debugId } = message.payload;
 
-      dataUtils.instance.remove({ debugId, url });
+      await dataUtils.instance.remove({ debugId, url });
+      broadcastPageDataUpdated(url);
     },
     update: async (message: MessageFromPageToBackground) => {
       const debugId: string = message.payload.debugId;
 
-      dataUtils.instance.update(
+      await dataUtils.instance.update(
         { debugId, url },
         message.payload as DevToolsHostPageMessagePayload,
       );
+      broadcastPageDataUpdated(url);
     },
   };
 
@@ -137,7 +212,7 @@ async function onMessageFromPage(message: MessageFromPageToBackground) {
     const handler = messageTypes[messageType];
 
     if (handler) {
-      handler(message);
+      await handler(message);
     }
   }
 }

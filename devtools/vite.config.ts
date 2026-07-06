@@ -100,6 +100,10 @@ export default defineConfig({
           transform: (contents) => {
             const manifest = JSON.parse(contents.toString());
 
+            if (DEV) {
+              manifest.name = `DEV ${manifest.name}`;
+            }
+
             // Update paths to reference the compiled files
             if (manifest.background && manifest.background.service_worker) {
               const serviceWorkerFile = manifest.background.service_worker;

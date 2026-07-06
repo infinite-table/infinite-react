@@ -81,6 +81,15 @@ function getPageData(pageUrl: string): PageData {
   return pageData;
 }
 
+function clearPageInstances(pageUrl: string) {
+  DATABASE[pageUrl] = {
+    instances: {},
+    logsPerInstance: {},
+    allLogs: [],
+  };
+  return chrome.storage.session.set(DATABASE);
+}
+
 function clearLogs(pageUrl: string, debugId?: string) {
   const pageData = getPageData(pageUrl);
   if (!debugId) {
@@ -140,6 +149,7 @@ export type InstanceOptions = {
 };
 export const dataUtils = {
   forPage,
+  clearPageInstances,
 
   logs: {
     clear: async (debugId?: string) => {
