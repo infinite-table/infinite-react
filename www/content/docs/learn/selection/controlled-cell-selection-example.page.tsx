@@ -4,7 +4,6 @@ import {
   InfiniteTablePropColumns,
   DataSourcePropCellSelection_MultiCell,
 } from '@infinite-table/infinite-react';
-
 import * as React from 'react';
 
 type Developer = {

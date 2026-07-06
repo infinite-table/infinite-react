@@ -129,7 +129,7 @@ jobs:
     permissions:
       contents: write # Needed to push performance baseline updates
     env:
-      NEXT_PUBLIC_BASE_URL: https://infinite-table.com/.netlify/functions/json-server
+      NEXT_PUBLIC_BASE_URL: https://data.infinite-table.com
       NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
     strategy:
       matrix:
