@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 8.0.5 — 06.07.2026 
+
+Fix [column drag issue](https://github.com/infinite-table/infinite-react/issues/288) 
+
 ## 8.0.4 — 08.04.2026 
 
 Add `useDataSourceApi`, `useInfiniteTableApi` and `useInfiniteColumnApi` hooks
