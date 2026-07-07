@@ -6,15 +6,21 @@ author: radu
 tags: realtime, datasource, performance
 ---
 
-Most data grids are not showing static data anymore. Dashboards receive fresh metrics, trading screens react to price changes, logistics apps track moving assets, and admin tools often need to reflect edits made by other users.
+Most data grids are not showing static data. Dashboards receive fresh metrics, trading screens react to price changes, logistics apps track moving assets, and admin tools often need to reflect edits made by other users.
 
-Infinite Table already has a focused docs page for [updating data in real time](/docs/learn/working-with-data/updating-data-in-realtime), so let's highlight the core idea: update the `DataSource`, not the whole grid.
+Infinite Table already has a [dedicated for for updating data in real time](/docs/learn/working-with-data/updating-data-in-realtime), and this article adds more guide on how you can update the `DataSource`, not the whole grid.
 
 ## The DataSource API owns row updates
 
 The `DataSource` component is responsible for loading, processing, and preparing data for `<InfiniteTable />`. When you need to change rows after the grid is mounted, use the [DataSource API](/docs/reference/datasource-api).
 
-You can get access to it from `DataSource.onReady`:
+<Note>
+
+The `<InfiniteTable />` component doesn't need to be a direct child of the `<DataSource />`
+
+</Note>
+
+You can get access to the [DataSource API](/docs/reference/datasource-api) from `DataSource.onReady`:
 
 ```tsx
 const onReady = (dataSourceApi) => {
@@ -111,7 +117,7 @@ Click **Start updates** to update visible rows in real time. The example uses th
 
 Reach for the DataSource API when data changes after initial load:
 
-- websocket or SSE feeds
+- websocket or Server-Sent Events feeds
 - polling that returns changed records
 - optimistic updates after user edits
 - background imports that append or remove rows
