@@ -3,8 +3,8 @@ title: Debugging your DataGrid performance with custom tracks in Chrome DevTools
 description: Infinite Table will now add custom tracks to Chrome DevTools performance profiler to help you debug the performance of your DataGrid
 date: 2025-10-20
 author: radu
-tags: devtools, perf
-thumbnail: debugging-your-datagrid-performance-with-custom-tracks-in-chrome-devtools-performance-profiler.png
+tags: devtools, performance
+thumbnail: ./debugging-your-datagrid-performance-with-custom-tracks-in-chrome-devtools-performance-profiler.png
 ---
 
 > We want to make sure Infinite Table is the top React DataGrid in terms of performance. And we also want to give you the right tools to track down any slowness you might find in your app.

@@ -26,6 +26,69 @@ const buildParentHref = (segments: string[]): string | null => {
   return buildHref(segments.slice(0, -1));
 };
 
+const buildSubtreeEntries = (
+  dir: string,
+  routeSegments: string[],
+  pathPrefix: string,
+  depth: number,
+): IndexEntry[] => {
+  const dirEntries = fs.readdirSync(dir, { withFileTypes: true });
+  const result: IndexEntry[] = [];
+
+  const folders = dirEntries
+    .filter((entry) => entry.isDirectory() && isListableFolder(entry.name))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const pages = dirEntries
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        entry.name.endsWith(PAGE_SUFFIX) &&
+        entry.name !== `index${PAGE_SUFFIX}` &&
+        !entry.name.startsWith('_'),
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const folder of folders) {
+    const childRouteSegments = [...routeSegments, folder.name];
+    const entryPath = pathPrefix
+      ? `${pathPrefix}/${folder.name}`
+      : folder.name;
+
+    result.push({
+      type: 'folder',
+      name: folder.name,
+      path: entryPath,
+      href: buildHref(childRouteSegments),
+      depth,
+    });
+
+    result.push(
+      ...buildSubtreeEntries(
+        path.join(dir, folder.name),
+        childRouteSegments,
+        entryPath,
+        depth + 1,
+      ),
+    );
+  }
+
+  for (const page of pages) {
+    const baseName = page.name.slice(0, -PAGE_SUFFIX.length);
+    const entryPath = pathPrefix ? `${pathPrefix}/${baseName}` : baseName;
+
+    result.push({
+      type: 'page',
+      name: baseName,
+      path: entryPath,
+      href: buildHref(routeSegments, baseName),
+      depth,
+    });
+  }
+
+  return result;
+};
+
 /**
  * Derive the route-relative path of a test pages index from any of:
  *   - a Next.js compiled `__filename`, e.g. `<cwd>/.next/server/pages/foo/bar.js`
@@ -58,6 +121,9 @@ const inferRelativePath = (input: string): string => {
  * under `src/pages/` to list — so callers don't need to hardcode their own
  * path.
  *
+ * Lists the full subtree under the current folder so nested test pages are
+ * visible and filterable without drilling into each subfolder.
+ *
  * This file is intentionally separate from the React component so Next.js can
  * keep it out of the client bundle: only reference it from `getStaticProps`.
  */
@@ -67,39 +133,10 @@ export const buildTestPagesIndexProps = (
   const relativePath = inferRelativePath(pathOrFilename);
   const segments = relativePath.split('/').filter(Boolean);
   const dir = path.join(process.cwd(), 'src', 'pages', ...segments);
-  const dirEntries = fs.readdirSync(dir, { withFileTypes: true });
-
-  const folders: IndexEntry[] = dirEntries
-    .filter((entry) => entry.isDirectory() && isListableFolder(entry.name))
-    .map((entry) => ({
-      type: 'folder' as const,
-      name: entry.name,
-      href: buildHref(segments, entry.name),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  const pages: IndexEntry[] = dirEntries
-    .filter(
-      (entry) =>
-        entry.isFile() &&
-        entry.name.endsWith(PAGE_SUFFIX) &&
-        entry.name !== `index${PAGE_SUFFIX}` &&
-        // ignore the next.js _app / _document files
-        !entry.name.startsWith('_'),
-    )
-    .map((entry) => {
-      const baseName = entry.name.slice(0, -PAGE_SUFFIX.length);
-      return {
-        type: 'page' as const,
-        name: baseName,
-        href: buildHref(segments, baseName),
-      };
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   return {
     segments,
     parentHref: buildParentHref(segments),
-    entries: [...folders, ...pages],
+    entries: buildSubtreeEntries(dir, segments, '', 0),
   };
 };

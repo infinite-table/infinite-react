@@ -8,6 +8,7 @@ import {
   InfiniteTableApi,
   DataSourceDataFn,
   InfiniteTableProps,
+  useInfiniteColumnCell,
 } from '@infinite-table/infinite-react';
 import { Button } from '@/components/ui/button';
 
@@ -26,6 +27,23 @@ type Developer = {
   age: number;
 };
 
+const RenderCountColumnCell = React.forwardRef(
+  (props: React.HTMLProps<HTMLDivElement>, _ref: React.Ref<HTMLDivElement>) => {
+    const { domRef } = useInfiniteColumnCell<Developer>();
+    const renderCountRef = React.useRef(0);
+
+    renderCountRef.current += 1;
+
+    return (
+      <div
+        ref={domRef}
+        {...props}
+        data-render-count={renderCountRef.current}
+      />
+    );
+  },
+);
+
 const columns: InfiniteTablePropColumns<Developer> = {
   // id: { field: 'id' },
   salary: {
@@ -34,9 +52,22 @@ const columns: InfiniteTablePropColumns<Developer> = {
       return <div>Salary {Date.now()}</div>;
     },
     defaultWidth: 250,
+    components: {
+      ColumnCell: RenderCountColumnCell,
+    },
   },
-  age: { field: 'age' },
-  firstName: { field: 'firstName' },
+  age: {
+    field: 'age',
+    components: {
+      ColumnCell: RenderCountColumnCell,
+    },
+  },
+  firstName: {
+    field: 'firstName',
+    components: {
+      ColumnCell: RenderCountColumnCell,
+    },
+  },
   // preferredLanguage: { field: 'preferredLanguage' },
   // lastName: { field: 'lastName' },
   // country: { field: 'country' },
@@ -65,6 +96,7 @@ const dataSourceFn: DataSourceDataFn<Developer> = ({}) => {
 
 export default function DataTestPage() {
   const [active] = React.useState([true, true]);
+  const updateCountRef = React.useRef(0);
   const [ds, setDs] = React.useState<DataSourceDataFn<Developer>>(
     () => dataSourceFn,
   );
@@ -129,8 +161,14 @@ export default function DataTestPage() {
             console.log('updating', updateRow, updateCol);
             const colId = Object.keys(columns)[updateCol];
             const rowId = dataSourceApi.getPrimaryKeyByIndex(updateRow);
+            const updateCount = updateCountRef.current++;
+            const nextValue =
+              colId === 'firstName'
+                ? `Updated ${updateCount}`
+                : 100_000 + updateCount;
+
             dataSourceApi.updateData({
-              [colId]: Math.floor(Math.random() * 10000),
+              [colId]: nextValue,
               id: rowId,
             });
           }}

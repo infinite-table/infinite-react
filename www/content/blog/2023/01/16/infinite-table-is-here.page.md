@@ -3,6 +3,7 @@ title: '📣 Infinite Table is Here 🎉'
 description: "Infinite Table is ready for prime time. With version 1.0.0 we're releasing a DataGrid that's feature packed and ready to be used in enterprise-grade apps"
 author: [admin]
 date: 2023-01-16
+tags: product
 ---
 
 _Infinite Table React is ready for prime time._

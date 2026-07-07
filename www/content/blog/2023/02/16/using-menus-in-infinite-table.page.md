@@ -3,6 +3,7 @@ title: 'Using Menus in Infinite Table'
 description: 'Find out how to use menus in Infinite Table to customise the DataGrid to fit your needs: custom context menus, column menus and more.'
 author: [admin]
 date: 2023-02-16
+tags: menus
 ---
 
 _With version 1.1.0, our DataGrid now includes support for context menus, which are fully configurable so you can create custom menus for any cell in the table._
