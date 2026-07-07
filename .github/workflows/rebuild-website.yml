@@ -5,8 +5,7 @@ on:
     paths:
       - 'www/**'
     branches:
-      - master
-      - dev
+      - '**'
   workflow_call:
   issues:
     types: [opened, edited, milestoned, closed]
@@ -97,3 +96,7 @@ jobs:
           repository: infinite-table/infinite-www-dist
           commit_message: ${{ github.event.head_commit.message }}
           branch: ${{github.ref_name}}
+          # the dist repo is always checked out at master and its contents fully
+          # replaced, so force-push to keep non-master preview branches in sync
+          # (a plain push would be rejected as non-fast-forward on the 2nd build)
+          force: true
