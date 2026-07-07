@@ -28,6 +28,7 @@ import {
   DEV_TOOLS_DATASOURCE_OVERRIDES,
   DEV_TOOLS_INFINITE_INITIALS,
   DEV_TOOLS_DATASOURCE_INITIALS,
+  DEV_TOOLS_CSS_VAR_OVERRIDES,
 } from '../../../DEV_TOOLS_OVERRIDES';
 
 import {
@@ -38,6 +39,7 @@ import {
   setDevToolInfinitePropertyOverride,
   updateDevToolsForInstance,
 } from '../../../utils/debugModeUtils';
+import { readThemeVars } from '../../../utils/themeVarsUtils';
 import {
   DevToolsOverlay,
   DevToolsOverlayBg,
@@ -127,6 +129,10 @@ function buildMessageForExtension(
           ErrorCodeKey,
           DebugWarningPayload
         >),
+      },
+      themeVars: readThemeVars(state.domRef.current),
+      themeVarOverrides: {
+        ...(DEV_TOOLS_CSS_VAR_OVERRIDES.get(debugId) || {}),
       },
     },
   };
@@ -413,6 +419,57 @@ const DEVTOOLS_MESSAGES = {
       'multiSort',
       payload.multiSort,
     );
+  },
+  setCssVar: (payload: { debugId: string; name: string; value: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    const domNode = instance?.getState().domRef.current;
+
+    if (!instance || !domNode || !payload.name?.startsWith('--infinite-')) {
+      return;
+    }
+
+    domNode.style.setProperty(payload.name, payload.value);
+
+    DEV_TOOLS_CSS_VAR_OVERRIDES.set(payload.debugId, {
+      ...(DEV_TOOLS_CSS_VAR_OVERRIDES.get(payload.debugId) || {}),
+      [payload.name]: payload.value,
+    });
+
+    updateDevToolsForInstance(payload.debugId);
+  },
+  revertCssVar: (payload: { debugId: string; name: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    const domNode = instance?.getState().domRef.current;
+
+    if (!instance || !domNode) {
+      return;
+    }
+
+    domNode.style.removeProperty(payload.name);
+
+    const overrides = {
+      ...(DEV_TOOLS_CSS_VAR_OVERRIDES.get(payload.debugId) || {}),
+    };
+    delete overrides[payload.name];
+    DEV_TOOLS_CSS_VAR_OVERRIDES.set(payload.debugId, overrides);
+
+    updateDevToolsForInstance(payload.debugId);
+  },
+  revertAllCssVars: (payload: { debugId: string }) => {
+    const instance = INSTANCES.get(payload.debugId);
+    const domNode = instance?.getState().domRef.current;
+
+    if (!instance || !domNode) {
+      return;
+    }
+
+    const overrides = DEV_TOOLS_CSS_VAR_OVERRIDES.get(payload.debugId) || {};
+    Object.keys(overrides).forEach((name) => {
+      domNode.style.removeProperty(name);
+    });
+    DEV_TOOLS_CSS_VAR_OVERRIDES.delete(payload.debugId);
+
+    updateDevToolsForInstance(payload.debugId);
   },
   highlight: (payload: { debugId: string }) => {
     const instance = INSTANCES.get(payload.debugId);

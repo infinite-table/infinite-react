@@ -6,12 +6,21 @@ description: Reference list of CSS variables that can be used to style the Infin
 Below you can find the complete list of CSS variables that can be used to style the component.
 
 {/* START VARS */}
+
 ### Accent color
 
 Brand-specific accent color. This probably needs override to match your app.
 
 ```css
 --infinite-accent-color
+```
+
+### Success color
+
+
+
+```css
+--infinite-success-color
 ```
 
 ### Error color
@@ -206,6 +215,14 @@ The text color inside the component
 --infinite-border-radius
 ```
 
+### Focus outline
+
+
+
+```css
+--infinite-focus-outline
+```
+
 ### Background
 
 The background color for the whole component.
@@ -222,6 +239,126 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-icon-size
+```
+
+### Grouping toolbar color
+
+
+
+```css
+--infinite-grouping-toolbar-color
+```
+
+### Grouping toolbar background
+
+
+
+```css
+--infinite-grouping-toolbar-background
+```
+
+### Grouping toolbar reject background
+
+
+
+```css
+--infinite-grouping-toolbar-reject-background
+```
+
+### Grouping toolbar active background
+
+
+
+```css
+--infinite-grouping-toolbar-active-background
+```
+
+### Grouping toolbar active background alpha
+
+
+
+```css
+--infinite-grouping-toolbar-active-background-alpha
+```
+
+### Grouping toolbar padding
+
+
+
+```css
+--infinite-grouping-toolbar-padding
+```
+
+### Grouping toolbar border
+
+
+
+```css
+--infinite-grouping-toolbar-border
+```
+
+### Grouping toolbar reject border
+
+
+
+```css
+--infinite-grouping-toolbar-reject-border
+```
+
+### Grouping toolbar gap
+
+
+
+```css
+--infinite-grouping-toolbar-gap
+```
+
+### Grouping toolbar item border
+
+
+
+```css
+--infinite-grouping-toolbar-item-border
+```
+
+### Grouping toolbar item border radius
+
+
+
+```css
+--infinite-grouping-toolbar-item-border-radius
+```
+
+### Grouping toolbar item active border
+
+
+
+```css
+--infinite-grouping-toolbar-item-active-border
+```
+
+### Grouping toolbar item background
+
+
+
+```css
+--infinite-grouping-toolbar-item-background
+```
+
+### Grouping toolbar item active background
+
+
+
+```css
+--infinite-grouping-toolbar-item-active-background
+```
+
+### Grouping toolbar item active background alpha
+
+
+
+```css
+--infinite-grouping-toolbar-item-active-background-alpha
 ```
 
 ### Load mask padding
@@ -318,6 +455,14 @@ Overriden in the `dark` theme.
 --infinite-header-cell-hover-background
 ```
 
+### Header cell border
+
+
+
+```css
+--infinite-header-cell-border
+```
+
 ### Header cell padding
 
 
@@ -364,6 +509,14 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-header-cell-sort-icon-margin
+```
+
+### Header cell border right
+
+
+
+```css
+--infinite-header-cell-border-right
 ```
 
 ### Resize handle active area width
@@ -490,6 +643,62 @@ The color of the column resize handle when it has reached a min/max constraint.
 --infinite-filter-editor-color
 ```
 
+### Active cell indicator inset
+
+
+
+```css
+--infinite-active-cell-indicator-inset
+```
+
+### Flashing duration
+
+
+
+```css
+--infinite-flashing-duration
+```
+
+### Flashing animation name
+
+
+
+```css
+--infinite-flashing-animation-name
+```
+
+### Flashing overlay z index
+
+
+
+```css
+--infinite-flashing-overlay-z-index
+```
+
+### Flashing background
+
+
+
+```css
+--infinite-flashing-background
+```
+
+### Flashing up background
+
+
+
+```css
+--infinite-flashing-up-background
+```
+
+### Flashing down background
+
+
+
+```css
+--infinite-flashing-down-background
+```
+
 ### Cell padding
 
 
@@ -506,6 +715,14 @@ The color of the column resize handle when it has reached a min/max constraint.
 --infinite-cell-border-width
 ```
 
+### Cell border color
+
+
+
+```css
+--infinite-cell-border-color
+```
+
 ### Cell border
 
 Specifies the border for cells.
@@ -514,6 +731,30 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 
 ```css
 --infinite-cell-border
+```
+
+### Cell border left
+
+
+
+```css
+--infinite-cell-border-left
+```
+
+### Cell border right
+
+
+
+```css
+--infinite-cell-border-right
+```
+
+### Cell border top
+
+
+
+```css
+--infinite-cell-border-top
 ```
 
 ### Cell border invisible
@@ -546,6 +787,14 @@ Overriden in the `dark` theme - eg: `1px solid #2a323d`
 
 ```css
 --infinite-pinned-cell-border
+```
+
+### Horizontal layout column reorder disabled page opacity
+
+
+
+```css
+--infinite-horizontal-layout-column-reorder-disabled-page-opacity
 ```
 
 ### Cell color
@@ -714,6 +963,14 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 --infinite-selection-checkbox-margin-inline
 ```
 
+### Expand collapse icon color
+
+
+
+```css
+--infinite-expand-collapse-icon-color
+```
+
 ### Menu background
 
 
@@ -728,6 +985,14 @@ Specifies the border for the active cell. Defaults to `var(--infinite-active-cel
 
 ```css
 --infinite-menu-color
+```
+
+### Menu separator color
+
+
+
+```css
+--infinite-menu-separator-color
 ```
 
 ### Menu padding
@@ -870,12 +1135,36 @@ Overriden in `dark` theme.
 --infinite-row-odd-background
 ```
 
+### Row disabled background
+
+
+
+```css
+--infinite-row-disabled-background
+```
+
+### Row odd disabled background
+
+Background color for disabled rows. For setting the background of disabled even rows, use [`--infinite-row-disabled-background`](#row-disabled-background).
+
+```css
+--infinite-row-odd-disabled-background
+```
+
 ### Row selected background
 
 
 
 ```css
 --infinite-row-selected-background
+```
+
+### Row disabled opacity
+
+Opacity for disabled rows. Defaults to 0.5
+
+```css
+--infinite-row-disabled-opacity
 ```
 
 ### Active row background
@@ -965,6 +1254,14 @@ Overriden in the `dark` theme.
 --infinite-row-selected-hover-background
 ```
 
+### Row selected disabled background
+
+
+
+```css
+--infinite-row-selected-disabled-background
+```
+
 ### Group row background
 
 
@@ -987,4 +1284,6 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-row-pointer-events-while-scrolling
-```{/* END VARS */}
+```
+
+{/* END VARS */}

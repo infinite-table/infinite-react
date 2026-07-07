@@ -14,6 +14,9 @@ export const APIManagerContext = createContext<{
   setGroupRenderStrategy: (groupRenderStrategy: string) => void;
   setSortInfo: (sortInfo: { field: string; dir: 1 | -1 }[]) => void;
   setMultiSort: (multiSort: boolean) => void;
+  setCssVar: (name: string, value: string) => void;
+  revertCssVar: (name: string) => void;
+  revertAllCssVars: () => void;
   revertProperty: (property: keyof DevToolsOverrides) => void;
   revertAll: () => void;
   overridenProperties: Set<keyof DevToolsOverrides>;
@@ -30,6 +33,9 @@ export const APIManagerContext = createContext<{
   setGroupRenderStrategy: () => {},
   setSortInfo: () => {},
   setMultiSort: () => {},
+  setCssVar: () => {},
+  revertCssVar: () => {},
+  revertAllCssVars: () => {},
   revertProperty: () => {},
   revertAll: () => {},
   overridenProperties: new Set(),

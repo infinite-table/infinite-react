@@ -4,6 +4,7 @@
   "scripts": {
     "build": "rm -fr dist && npm run tsup",
     "tsup": "tsup",
+    "generate-theme-vars": "node ../scripts/generate-theme-vars.cjs",
     "watch": "npm run tsup -- --watch ./src --watch ../source/dist"
   },
   "author": "Infinite Table",

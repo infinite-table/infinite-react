@@ -4,12 +4,9 @@ import Link from 'next/link';
 export default () => {
   return (
     <React.StrictMode>
-      <Link href="./table/orders">
-        <a>orders</a>
-      </Link>
-      <Link href="./table/perf">
-        <a>perf</a>
-      </Link>
+      <Link href="./orders">orders</Link>
+      <br />
+      <Link href="./perf">perf</Link>
     </React.StrictMode>
   );
 };

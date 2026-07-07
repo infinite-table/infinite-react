@@ -91,6 +91,15 @@ export type DevToolsHostPageMessagePayload = {
   devToolsDetected: InfiniteTableState<any>['devToolsDetected'];
   debugTimings: Record<DebugTimingKey, number>;
   debugWarnings: Record<ErrorCodeKey, DebugWarningPayload>;
+  /**
+   * Computed values for all public `--infinite-*` theme CSS variables,
+   * read from the table root DOM node.
+   */
+  themeVars: Record<string, string>;
+  /**
+   * CSS variable overrides currently applied by the devtools theme builder.
+   */
+  themeVarOverrides: Record<string, string>;
 };
 
 export type DevToolsHostPageMessageType = 'update' | 'unmount' | 'log';

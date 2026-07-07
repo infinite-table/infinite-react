@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChevronRight, File, Folder, Table } from 'lucide-react';
+import { ChevronRight, File, Folder, Paintbrush, Table } from 'lucide-react';
 
 import {
   Collapsible,
@@ -20,6 +20,7 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { useDevToolsMessagingContext } from '../lib/DevToolsMessagingContext';
+import { useDevToolsView } from '../lib/DevToolsViewContext';
 import { cn } from '../lib/utils';
 import { useHighlight } from '../hooks/useHighlight';
 
@@ -70,6 +71,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { detectedDebugIds, setActiveDebugId, activeDebugId } =
     useDevToolsMessagingContext();
+  const { view, setView } = useDevToolsView();
 
   const highlight = useHighlight();
   return (
@@ -85,12 +87,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton
                       className={cn(
                         'cursor-pointer ',
-                        activeDebugId === debugId && 'bg-accent',
+                        activeDebugId === debugId &&
+                          view === 'components' &&
+                          'bg-accent',
                       )}
                       onClick={(event) => {
                         const deselect =
                           (event.ctrlKey || event.metaKey) && activeDebugId;
 
+                        setView('components');
                         if (deselect) {
                           setActiveDebugId(null);
                         } else {
@@ -129,6 +134,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </p>
                 </div>
               )}
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel>Tools</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className={cn(
+                      'cursor-pointer',
+                      view === 'theme' && 'bg-accent',
+                    )}
+                    onClick={() => {
+                      // the theme builder targets an instance, so make sure one is selected
+                      if (!activeDebugId && detectedDebugIds.length) {
+                        setActiveDebugId(detectedDebugIds[0]);
+                      }
+                      setView('theme');
+                    }}
+                  >
+                    <Paintbrush />
+                    Theme Builder
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
 
