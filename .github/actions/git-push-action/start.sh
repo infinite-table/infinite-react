@@ -27,9 +27,11 @@ git config user.email "action@github.com"
 git config user.name "SHIP IT"
 
 git add -A
-git commit -m "${INPUT_COMMIT_MESSAGE}"
+# --allow-empty so the target branch still gets created/pushed even when
+# the build output is identical to what was checked out
+git commit --allow-empty -m "${INPUT_COMMIT_MESSAGE}"
 
 git log;
 git status;
 
-git push "${remote_repo}" HEAD:${INPUT_BRANCH}
+git push ${_FORCE_OPTION} "${remote_repo}" HEAD:${INPUT_BRANCH}

@@ -10,6 +10,7 @@ import type {
 } from '../components/InfiniteTable/types/DevTools';
 
 import {
+  DEV_TOOLS_CSS_VAR_OVERRIDES,
   DEV_TOOLS_DATASOURCE_INITIALS,
   DEV_TOOLS_DATASOURCE_OVERRIDES,
   DEV_TOOLS_INFINITE_INITIALS,
@@ -30,6 +31,7 @@ export const deleteInstanceFromDevTools = (debugId: string) => {
   DEV_TOOLS_INFINITE_OVERRIDES.delete(debugId);
   DEV_TOOLS_DATASOURCE_INITIALS.delete(debugId);
   DEV_TOOLS_DATASOURCE_OVERRIDES.delete(debugId);
+  DEV_TOOLS_CSS_VAR_OVERRIDES.delete(debugId);
 };
 
 export function setDevToolInfinitePropertyOverride(

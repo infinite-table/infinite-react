@@ -11,6 +11,17 @@ const DATABASE: Record<string, PageData> = {
   // },
 };
 
+// The MV3 service worker is routinely terminated and restarted, which empties
+// DATABASE. Rehydrate from session storage so accumulated logs/instances survive.
+// Keys already written before hydration resolves win over the stored values.
+void chrome.storage.session.get(null).then((stored) => {
+  for (const [key, value] of Object.entries(stored)) {
+    if (!DATABASE[key] && value && typeof value === 'object') {
+      DATABASE[key] = value as PageData;
+    }
+  }
+});
+
 function updatePageData(pageUrl: string, pageData: Partial<PageData>) {
   const dataForPage = DATABASE[pageUrl] || {};
 

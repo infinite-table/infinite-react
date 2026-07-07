@@ -158,6 +158,26 @@ export const APIManagerWithContext = function ({
     [activeDebugId, sendMessage],
   );
 
+  // CSS variable overrides are tracked page-side (via the `themeVarOverrides`
+  // payload sent back on each update), so they don't use the `property` mechanism
+  const setCssVar = useCallback(
+    (name: string, value: string) => {
+      sendMessage({ type: 'setCssVar' }, { name, value, debugId: activeDebugId });
+    },
+    [activeDebugId, sendMessage],
+  );
+
+  const revertCssVar = useCallback(
+    (name: string) => {
+      sendMessage({ type: 'revertCssVar' }, { name, debugId: activeDebugId });
+    },
+    [activeDebugId, sendMessage],
+  );
+
+  const revertAllCssVars = useCallback(() => {
+    sendMessage({ type: 'revertAllCssVars' }, { debugId: activeDebugId });
+  }, [activeDebugId, sendMessage]);
+
   return (
     <APIManagerContext.Provider
       value={{
@@ -169,6 +189,9 @@ export const APIManagerWithContext = function ({
         setGroupRenderStrategy,
         setSortInfo,
         setMultiSort,
+        setCssVar,
+        revertCssVar,
+        revertAllCssVars,
         revertProperty,
         revertAll,
         rerender,

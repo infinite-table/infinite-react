@@ -73,10 +73,28 @@ type MessageForBackground = DevToolsGenericMessage & {
 };
 
 let port: chrome.runtime.Port | null = null;
-let portDisconnected = false;
+/** True only when the extension itself is gone (reloaded/uninstalled) — not on service worker restarts. */
+let extensionContextInvalidated = false;
 const storagePageUrlPromise = resolveStoragePageUrl();
 
-function connectPort(): chrome.runtime.Port {
+function isExtensionContextValid(): boolean {
+  try {
+    return Boolean(chrome.runtime?.id);
+  } catch {
+    return false;
+  }
+}
+
+function markExtensionContextInvalidated(): void {
+  extensionContextInvalidated = true;
+  port = null;
+  window.removeEventListener('message', onWindowMessage);
+}
+
+function connectPort(): chrome.runtime.Port | null {
+  if (extensionContextInvalidated) {
+    return null;
+  }
   if (port) {
     try {
       port.disconnect();
@@ -85,40 +103,59 @@ function connectPort(): chrome.runtime.Port {
     }
   }
 
-  const next = chrome.runtime.connect({ name: 'infinite-table-devtools' });
+  if (!isExtensionContextValid()) {
+    markExtensionContextInvalidated();
+    return null;
+  }
+
+  let next: chrome.runtime.Port;
+  try {
+    next = chrome.runtime.connect({ name: 'infinite-table-devtools' });
+  } catch {
+    markExtensionContextInvalidated();
+    return null;
+  }
   next.onDisconnect.addListener(() => {
-    portDisconnected = true;
-    port = null;
+    // The MV3 background service worker is routinely terminated after ~30s of
+    // inactivity, which disconnects this port. Drop the port reference but keep
+    // listening — the next message will reconnect (and wake the worker).
+    if (port === next) {
+      port = null;
+    }
     consumeLastError();
-    window.removeEventListener('message', onWindowMessage);
+    if (!isExtensionContextValid()) {
+      markExtensionContextInvalidated();
+    }
   });
   port = next;
-  portDisconnected = false;
   return next;
 }
 
-function getPort(): chrome.runtime.Port {
-  if (!port) {
-    return connectPort();
-  }
-  return port;
+function getPort(): chrome.runtime.Port | null {
+  return port ?? connectPort();
 }
 
 function postToBackground(message: object): void {
-  if (portDisconnected) {
+  if (extensionContextInvalidated) {
     return;
   }
   try {
-    getPort().postMessage(message);
+    getPort()?.postMessage(message);
   } catch {
-    portDisconnected = true;
+    // Port died between checks (e.g. worker terminated mid-flight): reconnect and retry once.
     port = null;
     consumeLastError();
+    try {
+      getPort()?.postMessage(message);
+    } catch {
+      port = null;
+      consumeLastError();
+    }
   }
 }
 
 const onWindowMessage = (event: MessageEvent) => {
-  if (event.data.source === 'infinite-table-page' && !portDisconnected) {
+  if (event.data.source === 'infinite-table-page' && !extensionContextInvalidated) {
     void storagePageUrlPromise.then((pageUrl) => {
       postToBackground({
         url: pageUrl,
@@ -145,7 +182,6 @@ function attachWindowMessageListener() {
 }
 
 function restoreAfterBackForwardCache() {
-  portDisconnected = false;
   connectPort();
   attachWindowMessageListener();
   registerDevToolsHook();
@@ -168,7 +204,14 @@ if (window.top === window) {
 
 window.addEventListener('pagehide', (event) => {
   if (event.persisted) {
-    portDisconnected = true;
+    if (port) {
+      try {
+        port.disconnect();
+      } catch {
+        // already closed
+      }
+      port = null;
+    }
     window.removeEventListener('message', onWindowMessage);
   }
 });

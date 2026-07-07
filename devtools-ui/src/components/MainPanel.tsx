@@ -3,6 +3,10 @@ import { InfiniteTable } from '@infinite-table/infinite-react';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from './ui/sidebar';
 
 import { useDevToolsMessagingContext } from '../lib/DevToolsMessagingContext';
+import {
+  DevToolsViewProvider,
+  useDevToolsView,
+} from '../lib/DevToolsViewContext';
 
 import { APIManagerWithContext } from './APIManagerWithContext';
 import { WarningsSection } from './sections/WarningsSection';
@@ -10,6 +14,7 @@ import { ColumnVisibilitySection } from './sections/ColumnVisibilitySection';
 import { DebugTimingsSection } from './sections/DebugTimingsSection';
 import { GroupBySection } from './sections/GroupBySection';
 import { SortInfoSection } from './sections/SortInfoSection';
+import { ThemeSection } from './sections/ThemeSection';
 import { InstanceTitle } from './InstanceTitle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { LogsList } from './LogsList';
@@ -19,19 +24,42 @@ import { AppSidebar } from './app-sidebar';
 const LICENSE_KEY = process.env.NEXT_PUBLIC_INFINITE_TABLE_LICENSE_KEY;
 InfiniteTable.licenseKey = LICENSE_KEY;
 
+function NoInstanceSelected({ action }: { action: string }) {
+  return (
+    <div className="flex flex-row flex-1">
+      <SidebarTrigger />
+      <div className="flex-1 flex items-center justify-center text-muted-foreground text-base italic">
+        <p>Please select an</p>
+        <pre className="inline-block">{` <InfiniteTable /> `}</pre>
+        <p>instance on the left to {action}</p>
+      </div>
+    </div>
+  );
+}
+
 function MainContent() {
   const { currentInstance } = useDevToolsMessagingContext();
+  const { view } = useDevToolsView();
 
   if (!currentInstance) {
     return (
-      <div className="flex flex-row flex-1">
-        <SidebarTrigger />
-        <div className="flex-1 flex items-center justify-center text-muted-foreground text-base italic">
-          <p>Please select an</p>
-          <pre className="inline-block">{` <InfiniteTable /> `}</pre>
-          <p>instance on the left to inspect</p>
+      <NoInstanceSelected
+        action={view === 'theme' ? 'edit its theme' : 'inspect'}
+      />
+    );
+  }
+
+  if (view === 'theme') {
+    return (
+      <SidebarInset>
+        <div className="flex flex-col flex-1 gap-2 pb-2 overflow-hidden">
+          <InstanceTitle />
+
+          <div className="text-sm text-muted-foreground px-2 flex flex-col flex-1 gap-2 overflow-auto">
+            <ThemeSection />
+          </div>
         </div>
-      </div>
+      </SidebarInset>
     );
   }
 
@@ -81,17 +109,19 @@ function PanelRoot() {
 export default function () {
   return (
     <APIManagerWithContext>
-      <SidebarProvider
-        defaultOpen={true}
-        style={{
-          fontSize: 12,
-          //@ts-ignore
-          '--sidebar-width': 'calc(200px)',
-          '--sidebar-width-mobile': 'calc(200px)',
-        }}
-      >
-        <PanelRoot />
-      </SidebarProvider>
+      <DevToolsViewProvider>
+        <SidebarProvider
+          defaultOpen={true}
+          style={{
+            fontSize: 12,
+            //@ts-ignore
+            '--sidebar-width': 'calc(200px)',
+            '--sidebar-width-mobile': 'calc(200px)',
+          }}
+        >
+          <PanelRoot />
+        </SidebarProvider>
+      </DevToolsViewProvider>
     </APIManagerWithContext>
   );
 }
