@@ -3,6 +3,7 @@ title: 'Quarterly Update - Autumn 2022'
 description: 'Infinite Table update for Autumn 2022 - grid menus and new website'
 author: [admin]
 date: 2022-11-01
+tags: product, menus
 ---
 
 _In the autumn our focus was implementing a dedicated Menu component so it can be used for column menus and row context menu._

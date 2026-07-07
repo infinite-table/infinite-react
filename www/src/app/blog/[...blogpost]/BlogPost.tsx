@@ -70,7 +70,7 @@ export function BlogPost({
                   <img
                     src={post.thumbnail}
                     alt={post.title || 'Blog post thumbnail'}
-                    className="w-full h-full object-contain rounded-lg shadow-lg"
+                    className="w-full h-full object-contain rounded-lg shadow-lg mx-auto"
                   />
                 </div>
               )}

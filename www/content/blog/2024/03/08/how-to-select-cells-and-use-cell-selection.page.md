@@ -2,6 +2,7 @@
 title: How to use multiple cell selection in the DataGrid
 author: admin
 date: 2024-03-08
+tags: cell-selection
 ---
 
 The article will cover some popular cell-selection scenarios in Infinite React DataGrid.

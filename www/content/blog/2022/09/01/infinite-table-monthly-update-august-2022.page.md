@@ -3,6 +3,7 @@ title: 'Quarterly Update - Summer 2022'
 description: 'Infinite Table update for Summper 2022 - row selection, column rendering, group columns'
 author: [admin]
 date: 2022-09-01
+tags: product
 ---
 
 Over the summer, we continued our work on preparing for our official release, focusing mainly on adding new functionalities and documenting them thoroughly, together with enhancements to existing features.

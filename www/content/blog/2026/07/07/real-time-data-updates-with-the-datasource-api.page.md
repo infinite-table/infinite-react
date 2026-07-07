@@ -4,6 +4,7 @@ description: Use the Infinite Table DataSource API to stream row updates, batch 
 date: 2026-07-07
 author: radu
 tags: realtime, datasource, performance
+thumbnail: ./real-time-data-updates-with-the-datasource-api.png
 ---
 
 Most data grids are not showing static data. Dashboards receive fresh metrics, trading screens react to price changes, logistics apps track moving assets, and admin tools often need to reflect edits made by other users.

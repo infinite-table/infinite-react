@@ -1,0 +1,17 @@
+## Architecture
+
+## Tests
+
+For tests, we have this setup:
+
+our /examples folder is a nextjs app
+
+our tests are in /examples/src/pages/tests - a test is a .page.tsx file served by nextjs that has a sibling .spec.ts file
+which is a playwright file 
+
+the /examples need `npm run serve:data` script running (from the /www folder)
+
+for running a test, I run `npm run dev` in examples and `npm run test:watch` and then hit save in either the spec file or the corresponding page.
+this runs the test in dev - first start could take a bit of time when initially compiling the page.
+
+for running the whole suite, run `npm run test` in /examples folder - but make sure www runs the `npm run serve:data`

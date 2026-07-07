@@ -2,6 +2,7 @@
 title: Master detail is now available in the Infinite React DataGrid
 author: admin
 date: 2024-02-26
+tags: master-detail, product
 ---
 
 Today is a big day for the Infinite React DataGrid - we're excited to announce that the master detail feature is now available!

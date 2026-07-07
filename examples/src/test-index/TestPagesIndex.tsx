@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 export type IndexEntry = {
   type: 'folder' | 'page';
   name: string;
+  /** Path relative to the current index folder, e.g. `filter-value/client-side` */
+  path: string;
   href: string;
+  depth: number;
 };
 
 export type TestPagesIndexProps = {
@@ -17,6 +20,111 @@ const STORAGE_KEY = 'infinite-tests:index-search';
 
 // Muted, low-contrast palette tuned for the dark (black) page background.
 const ACCENT = '#8faecd';
+const GUIDE_WIDTH = 18;
+const GUIDE_COLOR = 'rgba(255, 255, 255, 0.22)';
+
+type TreeMeta = {
+  isLast: boolean;
+  ancestorHasNext: boolean[];
+};
+
+const computeTreeMeta = (entries: IndexEntry[]): TreeMeta[] =>
+  entries.map((entry, index) => {
+    const { depth } = entry;
+
+    let isLast = true;
+    for (let i = index + 1; i < entries.length; i++) {
+      if (entries[i].depth <= depth) {
+        isLast = entries[i].depth < depth;
+        break;
+      }
+    }
+
+    const ancestorHasNext: boolean[] = [];
+    for (let level = 0; level < depth; level++) {
+      let ancestorIdx = index;
+      while (ancestorIdx >= 0 && entries[ancestorIdx].depth !== level) {
+        ancestorIdx--;
+      }
+
+      let hasNextSibling = false;
+      if (ancestorIdx >= 0) {
+        for (let i = ancestorIdx + 1; i < entries.length; i++) {
+          if (entries[i].depth === level) {
+            hasNextSibling = true;
+            break;
+          }
+          if (entries[i].depth < level) {
+            break;
+          }
+        }
+      }
+
+      ancestorHasNext.push(hasNextSibling);
+    }
+
+    return { isLast, ancestorHasNext };
+  });
+
+const TreeGuides = ({
+  depth,
+  isLast,
+  ancestorHasNext,
+}: TreeMeta & { depth: number }) => {
+  if (depth === 0) {
+    return null;
+  }
+
+  return (
+    <span
+      aria-hidden
+      style={{
+        display: 'inline-flex',
+        flexShrink: 0,
+        alignSelf: 'stretch',
+      }}
+    >
+      {Array.from({ length: depth }).map((_, level) => {
+        const isBranch = level === depth - 1;
+        const showVertical = isBranch ? true : ancestorHasNext[level];
+
+        return (
+          <span
+            key={level}
+            style={{
+              width: GUIDE_WIDTH,
+              position: 'relative',
+              flexShrink: 0,
+            }}
+          >
+            {showVertical ? (
+              <span
+                style={{
+                  position: 'absolute',
+                  left: GUIDE_WIDTH / 2 - 0.5,
+                  top: 0,
+                  bottom: isBranch && isLast ? '50%' : 0,
+                  borderLeft: `1px dotted ${GUIDE_COLOR}`,
+                }}
+              />
+            ) : null}
+            {isBranch ? (
+              <span
+                style={{
+                  position: 'absolute',
+                  left: GUIDE_WIDTH / 2 - 0.5,
+                  top: '50%',
+                  width: GUIDE_WIDTH / 2 + 2,
+                  borderBottom: `1px dotted ${GUIDE_COLOR}`,
+                }}
+              />
+            ) : null}
+          </span>
+        );
+      })}
+    </span>
+  );
+};
 
 const highlight = (text: string, query: string) => {
   if (!query) {
@@ -105,10 +213,14 @@ export const TestPagesIndex: React.FC<TestPagesIndexProps> = ({
     if (!trimmed) {
       return entries;
     }
-    return entries.filter((entry) =>
-      entry.name.toLowerCase().includes(trimmed),
+    return entries.filter(
+      (entry) =>
+        entry.path.toLowerCase().includes(trimmed) ||
+        entry.name.toLowerCase().includes(trimmed),
     );
   }, [entries, query]);
+
+  const treeMeta = useMemo(() => computeTreeMeta(filtered), [filtered]);
 
   // The query is persisted to sessionStorage so that re-rendering the same
   // index (e.g. after a re-mount) keeps the user's typed filter. When the
@@ -178,8 +290,8 @@ export const TestPagesIndex: React.FC<TestPagesIndexProps> = ({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Filter… (press / to focus)"
-            aria-label="Filter test pages in this folder"
+            placeholder="Filter subtree… (press / to focus)"
+            aria-label="Filter test pages in this folder and subfolders"
             style={{
               flex: '1 1 240px',
               maxWidth: 360,
@@ -209,23 +321,33 @@ export const TestPagesIndex: React.FC<TestPagesIndexProps> = ({
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 8,
-            paddingLeft: 20,
+            gap: 2,
+            paddingLeft: 0,
             margin: 0,
+            listStyle: 'none',
           }}
         >
-          {filtered.map((entry) => (
-            <li key={`${entry.type}:${entry.href}`}>
+          {filtered.map((entry, index) => (
+            <li
+              key={`${entry.type}:${entry.href}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: 26,
+              }}
+            >
+              <TreeGuides depth={entry.depth} {...treeMeta[index]} />
               <a
                 href={entry.href}
                 onClick={clearPersistedQuery}
                 style={{
                   color: ACCENT,
                   textDecoration: 'none',
+                  paddingLeft: entry.depth === 0 ? 0 : 4,
                 }}
               >
                 {entry.type === 'folder' ? '📁 ' : ''}
-                {highlight(entry.name, query.trim())}
+                {highlight(entry.path, query.trim())}
                 {entry.type === 'folder' ? '/' : ''}
               </a>
             </li>

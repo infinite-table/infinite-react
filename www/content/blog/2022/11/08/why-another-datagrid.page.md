@@ -3,6 +3,7 @@ title: 'Why Another React DataGrid?'
 description: 'Why is another DataGrid needed? A short history of datagrids and why Infinite Table is different'
 author: [admin]
 date: 2022-11-08
+tags: product
 ---
 
 We've been working on finding better ways to display tabular data for over 2 decades now and collectively we have 35+ years of experience working on this.
