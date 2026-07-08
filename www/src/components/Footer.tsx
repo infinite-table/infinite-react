@@ -83,6 +83,7 @@ export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
             <FooterLink isHeader>API Reference</FooterLink>
             <FooterLink href="/docs/reference">Props</FooterLink>
             <FooterLink href="/docs/reference/api">API</FooterLink>
+            <FooterLink href="/llms.txt">llms.txt</FooterLink>
           </div>
 
           <div className="flex flex-col items-start ">

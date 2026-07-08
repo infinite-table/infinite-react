@@ -111,3 +111,6 @@ tsconfig.tsbuildinfo
 /www/src/.gen
 
 examples/**/*.trace.json
+
+# plans & prompts live in a separate private repo, nested in this folder
+/plans/
