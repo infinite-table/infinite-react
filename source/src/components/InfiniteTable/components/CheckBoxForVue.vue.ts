@@ -37,8 +37,12 @@ export const InfiniteCheckBox = defineComponent({
   setup(props) {
     const isControlled = () => props.checked !== undefined;
 
+    // null is a valid value (indeterminate), so only undefined falls back
+    const initialChecked = isControlled()
+      ? props.checked
+      : props.defaultChecked;
     const checked = ref<InfiniteCheckBoxPropChecked>(
-      (isControlled() ? props.checked : props.defaultChecked) ?? false,
+      initialChecked === undefined ? false : initialChecked,
     );
     const inputRef = ref<HTMLInputElement | null>(null);
 
@@ -54,7 +58,7 @@ export const InfiniteCheckBox = defineComponent({
       () => props.checked,
       (value) => {
         if (isControlled()) {
-          checked.value = value ?? false;
+          checked.value = value === undefined ? false : value;
           syncIndeterminate();
         }
       },

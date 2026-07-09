@@ -63,14 +63,21 @@ export function useInfiniteColumnEditor<
 export const InfiniteTableColumnEditor = defineComponent({
   name: 'InfiniteTableColumnEditor',
   setup() {
+    const { state } = useInfiniteTableContext();
     const editorContext = useInfiniteColumnEditor();
     const { initialValue, setValue, confirmEdit, cancelEdit } = editorContext;
 
     // Track if edit was cancelled via Escape to prevent blur from confirming
     let cancelled = false;
 
+    let mounted = false;
     const refCallback = (node: any) => {
-      if (node) {
+      if (node && !mounted) {
+        mounted = true;
+        // uncontrolled input, like React's defaultValue: set the value once
+        // on mount and never patch it on re-renders (re-renders happen when
+        // editingCell changes, e.g. to flip readonly while persisting)
+        (node as HTMLInputElement).value = initialValue ?? '';
         (node as HTMLInputElement).focus();
       }
     };
@@ -88,8 +95,11 @@ export const InfiniteTableColumnEditor = defineComponent({
     };
 
     const onBlur = () => {
-      // Don't confirm if edit was cancelled via Escape
-      if (!cancelled) {
+      // confirm on blur only while the edit is still active - when the edit
+      // was already confirmed (Enter) or cancelled (Escape), the input blurs
+      // as part of teardown and must not restart the confirm cycle (unlike
+      // React, Vue's teardown can fire the native blur listener)
+      if (!cancelled && state.value.editingCell?.active) {
         confirmEdit();
       }
     };
@@ -98,16 +108,19 @@ export const InfiniteTableColumnEditor = defineComponent({
       setValue((event.target as HTMLInputElement).value);
     };
 
-    return () =>
-      h('input', {
-        readonly: editorContext.readOnly,
+    return () => {
+      // track the state ref so the render re-runs when editingCell changes
+      // (readOnly is true only while a lazy editable check is pending)
+      void state.value.editingCell;
+      return h('input', {
+        readonly: editorContext.readOnly || undefined,
         ref: refCallback,
         onKeydown,
         onBlur,
         onInput,
         class: join(absoluteCover, outline.none),
         type: 'text',
-        value: initialValue,
       });
+    };
   },
 });

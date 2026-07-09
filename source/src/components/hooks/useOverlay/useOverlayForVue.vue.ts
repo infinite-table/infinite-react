@@ -12,6 +12,7 @@ import {
   defineComponent,
   h,
   isVNode,
+  nextTick,
   onBeforeUnmount,
   onMounted,
   shallowRef,
@@ -180,8 +181,10 @@ export function useOverlay(params: OverlayParams) {
 
       const skipRealign = !!options?.skipRealign;
       if (!skipRealign) {
-        // realign after the content re-renders
-        requestAnimationFrame(() => {
+        // realign after the content re-renders. nextTick (not raf) so the
+        // realign lands in the same task as the update - the same timing as
+        // React's useEffect-based realign
+        nextTick(() => {
           if (handle && handles.get(handle.key) === handle) {
             handle.realign(handle);
           }

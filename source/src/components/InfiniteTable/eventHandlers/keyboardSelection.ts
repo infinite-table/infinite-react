@@ -116,7 +116,15 @@ export function handleKeyboardSelection<T>(
     } else {
       // no grouping, but space should be treated like a mouse click
 
-      const event = { ...keyboardEvent };
+      // explicit copy instead of a spread: native DOM events (Vue) keep
+      // their props on the prototype, so a spread would lose them
+      const event = {
+        key: keyboardEvent.key,
+        metaKey: keyboardEvent.metaKey,
+        ctrlKey: keyboardEvent.ctrlKey,
+        shiftKey: keyboardEvent.shiftKey,
+        preventDefault: () => keyboardEvent.preventDefault(),
+      };
       const { renderSelectionCheckBox } = context.getComputed();
 
       // if we have a selection checkbox column, then we wont allow shift be used with the space key

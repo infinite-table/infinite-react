@@ -39,6 +39,7 @@
     "update-md": "npm run --prefix .. doctoc",
     "esbuild": "tsup --config dev-bundle.tsup.config.ts && tsup",
     "esbuild:vue": "tsup --config tsup.vue.config.ts",
+    "esbuild:vue:dev": "INFINITE_DEV=true tsup --config tsup.vue.config.ts",
     "esbuild-theming": "tsup --config tsup-theming.config.ts",
     "esbuild-watch": "tsup --watch",
     "esbuild-deepmap": "npm run esbuild-deepmap-esm && npm run esbuild-deepmap-cjs",

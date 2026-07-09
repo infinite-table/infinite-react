@@ -3,12 +3,17 @@ import type { PropType } from 'vue';
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
+import { computeGroupResize } from '../../../flexbox';
 import { rootClassName } from '../../internalProps';
 import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName } from '../../utilities.css';
 
 import type { InfiniteTableComputedColumn } from '../../types';
+import type { InfiniteTablePropColumnSizing } from '../../types';
 import type { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
+
+import { useInfiniteTableContext } from '../../InfiniteTableContextForVue.vue';
+import { GroupResizeHandle } from './ResizeHandle/GroupResizeHandleForVue.vue';
 
 import { HeaderGroupCls } from './header.css';
 
@@ -19,8 +24,8 @@ const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
 
 /**
  * Vue sibling of InfiniteTableHeaderGroup - same DOM (data-group-id, widths
- * computed from the column width CSS vars). Column group resize handles are
- * deferred (they come with the resizing slice).
+ * computed from the column width CSS vars), including the column group
+ * resize handle (ports useColumnGroupResizeHandle).
  */
 export const InfiniteTableHeaderGroup = defineComponent({
   name: 'InfiniteTableHeaderGroup',
@@ -46,8 +51,68 @@ export const InfiniteTableHeaderGroup = defineComponent({
     },
   },
   setup(props) {
+    const { getState, getComputed, actions } = useInfiniteTableContext();
+
     const domRefCallback = (el: any) => {
       props.domRef((el as HTMLElement) ?? null);
+    };
+
+    // ports computeResizeForDiff from useColumnGroupResizeHandle
+    const computeResizeForDiff = (diff: number) => {
+      const state = getState();
+      const { columnSizing, viewportReservedWidth, bodySize } = state;
+
+      const columns = getComputed().computedVisibleColumns;
+      const groupColumns = props.columns;
+      const lastColumnInGroup = groupColumns[groupColumns.length - 1];
+
+      let atLeastOneFlex = false;
+
+      const columnSizingWithFlex = columns.reduce((acc, col) => {
+        if (col.computedFlex) {
+          // we explicitly need `{ flex: col.computedWidth }` and not
+          // `{ flex: col.computedFlex }` - see #advancedcolumnresizing
+          acc[col.id] = { ...columnSizing[col.id], flex: col.computedWidth };
+          atLeastOneFlex = true;
+        }
+        return acc;
+      }, {} as InfiniteTablePropColumnSizing);
+
+      const columnSizingForResize = atLeastOneFlex
+        ? {
+            // #advancedcolumnresizing-important - this order is correct:
+            // first the current columnSizing from state, then for flex
+            // columns override with actual computed widths
+            ...columnSizing,
+            ...columnSizingWithFlex,
+          }
+        : columnSizing;
+
+      return computeGroupResize({
+        availableSize: bodySize.width,
+        reservedWidth: viewportReservedWidth || 0,
+        dragHandleOffset: diff,
+        dragHandlePositionAfter: lastColumnInGroup.computedVisibleIndex,
+        columnSizing: columnSizingForResize,
+        columnGroupSize: groupColumns.length,
+        items: columns.map((c) => {
+          return {
+            id: c.id,
+            resizable: c.computedResizable,
+            computedFlex: c.computedFlex,
+            computedWidth: c.computedWidth,
+            computedMinWidth: c.computedMinWidth,
+            computedMaxWidth: c.computedMaxWidth,
+          };
+        }),
+      });
+    };
+
+    const onColumnResize = (diff: number) => {
+      const { columnSizing, reservedWidth } = computeResizeForDiff(diff);
+
+      actions.viewportReservedWidth = reservedWidth;
+      actions.columnSizing = columnSizing;
     };
 
     return () => {
@@ -94,6 +159,22 @@ export const InfiniteTableHeaderGroup = defineComponent({
       (style as Record<string, any>).width = width;
       (style as Record<string, any>).height = `${height}px`;
 
+      const groupResizable = columns.some((c) => c.computedResizable);
+      const resizeHandle = groupResizable
+        ? h(GroupResizeHandle, {
+            brain: getState().brain,
+            draggerStyle: {
+              height: `${
+                height * (columnGroupsMaxDepth - columnGroup.depth + 2)
+              }px`,
+            },
+            columns: getComputed().computedVisibleColumns,
+            groupColumns: columns,
+            computeResize: computeResizeForDiff,
+            onResize: onColumnResize,
+          })
+        : null;
+
       return h(
         'div',
         {
@@ -114,6 +195,7 @@ export const InfiniteTableHeaderGroup = defineComponent({
             },
             [header as any],
           ),
+          resizeHandle,
         ],
       );
     };

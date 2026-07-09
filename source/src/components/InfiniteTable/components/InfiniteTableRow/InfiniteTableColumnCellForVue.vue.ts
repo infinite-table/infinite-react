@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   h,
   onBeforeUnmount,
@@ -139,8 +140,35 @@ export const defaultRenderSelectionCheckBox = (params: any): VNodeChild => {
   });
 };
 
+/**
+ * Vue sibling of RenderCellHookComponent: the render hook result is wrapped
+ * in a component that provides the STAGED renderParam (with the renderBag
+ * copy as it was when the hook ran). Without this, component vnodes returned
+ * by hooks (e.g. renderValue: () => h(MyCmp)) would execute later and read
+ * the final renderBag - which already contains their own output, causing
+ * infinite recursion.
+ */
+const RenderCellHookWrapper = defineComponent({
+  name: 'RenderCellHook',
+  props: {
+    renderParam: { type: Object as PropType<any>, required: true },
+    content: { type: null as unknown as PropType<VNodeChild>, default: null },
+  },
+  setup(props) {
+    provide(
+      InfiniteColumnCellInjectionKey,
+      computed(() => props.renderParam) as any,
+    );
+    return () => props.content as any;
+  },
+});
+
 function renderCellHook(render: Function, renderParam: any): VNodeChild {
-  return render(renderParam) as VNodeChild;
+  const result = render(renderParam) as VNodeChild;
+  if (result == null) {
+    return result;
+  }
+  return h(RenderCellHookWrapper, { renderParam, content: result });
 }
 
 export type InfiniteTableColumnCellVueProps<T = any> = {

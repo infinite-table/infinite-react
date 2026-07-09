@@ -87,6 +87,7 @@ node_modules
 .npmrc
 /source/examples/out
 /examples/out
+/examples/out-vue
 /source/out
 /www/out
 react-test

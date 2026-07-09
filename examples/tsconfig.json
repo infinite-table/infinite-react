@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig.root.json",
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "src/vue-app", "vite.config.ts"],
   "include": [
     "next-env.d.ts",
     "src/**/*.ts",

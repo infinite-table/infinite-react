@@ -211,10 +211,8 @@ function useLazyLoadRangeForVue<T>(options: {
   state: ShallowRef<DataSourceState<T>>;
   getDataSourceState: () => DataSourceState<T>;
   dataSourceActions: DataSourceComponentActions<T>;
-  getDepsObject: () => Record<string, any>;
 }) {
-  const { state, getDataSourceState, dataSourceActions, getDepsObject } =
-    options;
+  const { state, getDataSourceState, dataSourceActions } = options;
 
   // cache reset on data/dataParams changes
   watchWithChanges(
@@ -295,15 +293,19 @@ function useLazyLoadRangeForVue<T>(options: {
 
   watchWithChanges(
     () => {
-      const deps = getDepsObject();
       const s = state.value;
+      // NOTE: unlike the data-loading effect (which uses getDepsObject and
+      // nulls out deps when shouldReloadData.* is false), the lazy-range
+      // effect uses the RAW sortInfo/groupBy/pivotBy/filterValue - just like
+      // React's useLazyLoadRange - since lazily loaded data must always be
+      // refetched on such changes, even when eg sortMode is 'local'
       return {
-        sortInfo: deps.sortInfo,
-        filterValue: deps.filterValue,
-        groupBy: deps.groupBy,
-        pivotBy: deps.pivotBy,
-        refetchKey: deps.refetchKey,
-        cursorId: deps.cursorId,
+        sortInfo: s.sortInfo,
+        filterValue: s.filterValue,
+        groupBy: s.groupBy,
+        pivotBy: s.pivotBy,
+        refetchKey: s.refetchKey,
+        cursorId: s.livePagination ? s.cursorId : null,
         lazyLoadBatchSize: s.lazyLoadBatchSize,
         lazyLoad: s.lazyLoad,
         originalLazyGroupDataChangeDetect: s.originalLazyGroupDataChangeDetect,
@@ -545,7 +547,6 @@ function useLoadDataForVue<T>(options: {
     state,
     getDataSourceState,
     dataSourceActions,
-    getDepsObject,
   });
 
   // DS001 devtools warning: too many data changes in a short time

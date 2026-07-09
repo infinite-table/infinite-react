@@ -40,6 +40,11 @@ export {
 export { InfiniteTableDetailRow } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableDetailRowForVue.vue';
 export { useGetMasterDetailContextForVue } from './components/DataSource/DataSourceMasterDetailContextForVue.vue';
 export { useInfiniteHeaderCell } from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderCellForVue.vue';
+export { useInfiniteColumnFilterEditor } from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableColumnHeaderFilterForVue.vue';
+export {
+  StringFilterEditor,
+  NumberFilterEditor,
+} from './components/InfiniteTable/components/FilterEditorsForVue.vue';
 
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForVue.vue';
 import { LoadMask } from './components/InfiniteTable/components/LoadMaskForVue.vue';
@@ -54,14 +59,18 @@ export const components = {
 export { group, flatten } from './utils/groupAndPivot';
 export { DeepMap } from './utils/DeepMap';
 
+export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
+export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
+
+// framework-neutral state classes, same as the React entry
+export { RowSelectionState } from './components/DataSource/RowSelectionState';
+export { CellSelectionState } from './components/DataSource/CellSelectionState';
+export { RowDetailState } from './components/DataSource/RowDetailState';
+export { TreeExpandState } from './components/DataSource/TreeExpandState';
+export { TreeSelectionState } from './components/DataSource/TreeSelectionState';
+export { GroupRowsState } from './components/DataSource/GroupRowsState';
+
 // type-only star export: the types barrel has runtime imports that reach
 // React-only modules, so it must be fully erased from the Vue bundle
 export type * from './components/InfiniteTable/types';
-export type {
-  DataSourceApi,
-  DataSourceData,
-  DataSourcePropGroupBy,
-  DataSourcePropSortInfo,
-  DataSourceSingleSortInfo,
-  DataSourceState,
-} from './components/DataSource/types';
+export type * from './components/DataSource/types';

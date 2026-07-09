@@ -79,7 +79,12 @@ export const tsupVueConfig: Options = {
 
   esbuildOptions: (options) => {
     options.define = {
-      __DEV__: JSON.stringify(false),
+      // the published package is a prod build; the examples/Playwright flow
+      // needs the dev build (INFINITE_DEV=true) because test pages rely on
+      // __DEV__-only hooks (e.g. globalThis.state set by the DataSource
+      // reducer) - the React examples get this implicitly since they compile
+      // the source with __DEV__ true
+      __DEV__: JSON.stringify(process.env.INFINITE_DEV === 'true'),
       __VERSION__: JSON.stringify(require('./package.json').version),
       __VERSION_TIMESTAMP__: JSON.stringify(
         require('./package.json').publishedAt,

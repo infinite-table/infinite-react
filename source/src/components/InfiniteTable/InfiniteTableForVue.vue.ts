@@ -6,6 +6,7 @@ import {
   onBeforeUnmount,
   onMounted,
   provide,
+  ref,
   shallowRef,
   watch,
   watchEffect,
@@ -28,7 +29,14 @@ import {
   initSetupState,
   cleanupState,
   createBrains,
+  getGroupByMap,
 } from './state/getInitialState';
+import {
+  getColumnVisibilityForHideEmptyGroupColumns,
+  getGroupColumnsForComputedColumns,
+} from './state/getColumnVisibilityForHideEmptyGroupColumns';
+import { shallowEqualObjects } from '../../utils/shallowEqualObjects';
+import { getColumnContentMaxWidths } from './utils/getColumnContentMaxWidths';
 import { DEBUG_NAME } from './InfiniteDebugName';
 import { getComputedColumns } from './utils/getComputedColumns';
 import { getColumnsWhenGrouping } from './utils/getColumnsWhenGrouping';
@@ -160,8 +168,10 @@ export const DATA_GRID_PROP_NAMES = [
   'multiSortBehavior',
   'editable',
   'rowHeight',
+  'onRowHeightChange',
   'rowDetailHeight',
   'columnHeaderHeight',
+  'onColumnGroupVisibilityChange',
   'header',
   'headerOptions',
   'showColumnFilters',
@@ -433,6 +443,278 @@ export const InfiniteTable = defineComponent({
       (groupRenderStrategy) => {
         dataSourceContext.dataSourceActions.generateGroupRows =
           groupRenderStrategy !== 'inline';
+      },
+      { immediate: true },
+    );
+
+    // mirrors useComputed: the DataSource pivot pipeline needs this flag to
+    // decide whether single-aggregation pivots get their own column group
+    watch(
+      () => state.value.showSeparatePivotColumnForSingleAggregation,
+      (showSeparatePivotColumnForSingleAggregation) => {
+        dataSourceContext.dataSourceActions.showSeparatePivotColumnForSingleAggregation =
+          showSeparatePivotColumnForSingleAggregation;
+      },
+      { immediate: true },
+    );
+
+    // mirrors useColumnsWhen: push the totals column positions into the
+    // DataSource, which generates the pivot total/grand-total columns
+    watch(
+      () => state.value.pivotTotalColumnPosition,
+      (pivotTotalColumnPosition) => {
+        dataSourceContext.dataSourceActions.pivotTotalColumnPosition =
+          pivotTotalColumnPosition;
+      },
+      { immediate: true },
+    );
+    watch(
+      () => state.value.pivotGrandTotalColumnPosition,
+      (pivotGrandTotalColumnPosition) => {
+        if (pivotGrandTotalColumnPosition != undefined) {
+          dataSourceContext.dataSourceActions.pivotGrandTotalColumnPosition =
+            pivotGrandTotalColumnPosition;
+        }
+      },
+      { immediate: true },
+    );
+
+    // ---- ports useAutoSizeColumns ----
+    const autoSizeRefreshId = ref(0);
+    let lastExecutedAutoSizeKey: string | number | null = null;
+    let removeAutoSizeRangeListener: (() => void) | null = null;
+
+    const getAutoSizeKey = () => {
+      const { autoSizeColumnsKey } = state.value;
+      return typeof autoSizeColumnsKey === 'object'
+        ? autoSizeColumnsKey.key
+        : autoSizeColumnsKey;
+    };
+
+    watch(
+      () => state.value.brain,
+      (brain) => {
+        removeAutoSizeRangeListener?.();
+        removeAutoSizeRangeListener = brain.onRenderRangeChange(() => {
+          if (getAutoSizeKey() == null) {
+            return;
+          }
+          if (state.value.autoSizeColumnsKey !== lastExecutedAutoSizeKey) {
+            autoSizeRefreshId.value += 1;
+          }
+        });
+      },
+      { immediate: true },
+    );
+    onBeforeUnmount(() => {
+      removeAutoSizeRangeListener?.();
+    });
+
+    watch(
+      [getAutoSizeKey, () => state.value.ready, autoSizeRefreshId],
+      () => {
+        const theKey = getAutoSizeKey();
+        if (theKey == null) {
+          return;
+        }
+
+        const { autoSizeColumnsKey, domRef } = state.value;
+
+        let columnsToResize: Set<string> | undefined;
+        let columnsToSkip: Set<string> | undefined;
+
+        let includeHeader = true;
+
+        if (typeof autoSizeColumnsKey === 'object') {
+          if (autoSizeColumnsKey.columnsToResize) {
+            columnsToResize = new Set(autoSizeColumnsKey.columnsToResize);
+          }
+          if (autoSizeColumnsKey.columnsToSkip) {
+            columnsToSkip = new Set(autoSizeColumnsKey.columnsToSkip);
+          }
+          includeHeader = autoSizeColumnsKey.includeHeader ?? includeHeader;
+        }
+
+        lastExecutedAutoSizeKey = theKey;
+
+        const measuredMaxWidths = getColumnContentMaxWidths(domRef, {
+          includeHeader,
+          columnsToResize,
+          columnsToSkip,
+        });
+
+        const colIds = Object.keys(measuredMaxWidths);
+
+        if (!colIds.length) {
+          return;
+        }
+
+        const columnSizing = state.value.columnSizing;
+        const newColumnSizing: Record<string, { width: number }> = {
+          ...columnSizing,
+        } as any;
+
+        let changed = false;
+
+        colIds.forEach((colId) => {
+          newColumnSizing[colId] = {
+            width: measuredMaxWidths[colId],
+          };
+          changed =
+            changed ||
+            newColumnSizing[colId].width !==
+              (columnSizing as any)[colId]?.width;
+        });
+
+        if (changed) {
+          actions.columnSizing = newColumnSizing;
+        }
+      },
+      { immediate: true, flush: 'post' },
+    );
+
+    // ---- ports useHideColumns (useColumnsWhen.ts) ----
+    const groupByMapRef = computed(() =>
+      getGroupByMap(dataSourceState.value.groupBy),
+    );
+
+    // implements hideEmptyGroupColumns (React: useLayoutEffect)
+    watch(
+      [
+        () => state.value.groupRenderStrategy,
+        () => dataSourceState.value.originalLazyGroupDataChangeDetect,
+        () => dataSourceState.value.groupBy,
+        groupByMapRef,
+        () => state.value.computedColumns,
+        () =>
+          state.value.hideEmptyGroupColumns
+            ? dataSourceState.value.dataArray
+            : null,
+        () =>
+          state.value.hideEmptyGroupColumns
+            ? dataSourceState.value.groupRowsState
+            : null,
+        () =>
+          state.value.hideEmptyGroupColumns
+            ? dataSourceState.value.groupRowsIndexesInDataArray
+            : null,
+        () => state.value.hideEmptyGroupColumns,
+      ],
+      () => {
+        const s = state.value;
+        const ds = dataSourceState.value;
+        if (s.groupRenderStrategy !== 'multi-column') {
+          return;
+        }
+        const groupByMap = groupByMapRef.value;
+
+        const computedGroupColumns = getGroupColumnsForComputedColumns(
+          s.computedColumns,
+          groupByMap,
+        );
+
+        const newColumnVisibility =
+          getColumnVisibilityForHideEmptyGroupColumns<any>({
+            computedGroupColumns,
+            columnVisibility: s.columnVisibility,
+            hideEmptyGroupColumns: s.hideEmptyGroupColumns,
+            groupRowsIndexesInDataArray: ds.groupRowsIndexesInDataArray,
+            dataArray: ds.dataArray,
+            groupBy: ds.groupBy,
+            groupByMap,
+          });
+
+        if (!shallowEqualObjects(s.columnVisibility, newColumnVisibility)) {
+          actions.columnVisibility = newColumnVisibility;
+        }
+      },
+      { immediate: true },
+    );
+
+    // implements column.defaultHiddenWhenGroupedBy and hideColumnWhenGrouped
+    watch(
+      [
+        () => state.value.computedColumns,
+        () => state.value.columnTypes,
+        () => dataSourceState.value.groupBy,
+        groupByMapRef,
+        () => state.value.hideColumnWhenGrouped,
+      ],
+      () => {
+        const s = state.value;
+        const groupByMap = groupByMapRef.value;
+        const isGrouped = dataSourceState.value.groupBy.length > 0;
+
+        const {
+          columnVisibility,
+          columnVisibilityForGrouping,
+          hideColumnWhenGrouped,
+          computedColumns,
+        } = s;
+
+        const newColumnVisibility = { ...columnVisibility };
+        const newColumnVisibilityForGrouping = {
+          ...columnVisibilityForGrouping,
+        };
+
+        let updatedVisibilityWhenGrouping = false;
+
+        const newlyHiddenColumns = new Set<string>();
+        const newlyDisplayedColumns = new Set<string>();
+
+        Object.keys(computedColumns).forEach((id) => {
+          const col = computedColumns[id];
+          if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped != null) {
+            const hideWhenGrouped =
+              (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
+              ((col.defaultHiddenWhenGroupedBy === true ||
+                hideColumnWhenGrouped) &&
+                col.field &&
+                groupByMap.get(col.field)) ||
+              (typeof col.defaultHiddenWhenGroupedBy === 'string' &&
+                groupByMap.get(col.defaultHiddenWhenGroupedBy as any)) ||
+              (typeof col.defaultHiddenWhenGroupedBy === 'object' &&
+                Object.keys(col.defaultHiddenWhenGroupedBy).reduce(
+                  (acc: boolean, field) => acc || groupByMap.has(field as any),
+                  false,
+                ));
+
+            if (hideWhenGrouped) {
+              if (newColumnVisibilityForGrouping[id] !== false) {
+                if (columnVisibility[id] === false) {
+                  // if the column is already specified as invisible,
+                  // dont put it in the list of cols made invisible due to grouping rules
+                  return;
+                }
+                // should be hidden and was not already
+                newColumnVisibilityForGrouping[id] = false;
+                updatedVisibilityWhenGrouping = true;
+                newlyHiddenColumns.add(id);
+              }
+            } else {
+              if (newColumnVisibilityForGrouping[id] === false) {
+                //should be visible and was not already
+                delete newColumnVisibilityForGrouping[id];
+                updatedVisibilityWhenGrouping = true;
+                newlyDisplayedColumns.add(id);
+              }
+            }
+          }
+        });
+
+        if (updatedVisibilityWhenGrouping) {
+          actions.columnVisibilityForGrouping = newColumnVisibilityForGrouping;
+
+          newlyDisplayedColumns.forEach((colId) => {
+            delete newColumnVisibility[colId];
+          });
+
+          newlyHiddenColumns.forEach((colId) => {
+            newColumnVisibility[colId] = false;
+          });
+
+          actions.columnVisibility = newColumnVisibility;
+        }
       },
       { immediate: true },
     );
@@ -1173,6 +1455,36 @@ export const InfiniteTable = defineComponent({
       { immediate: true },
     );
 
+    // notify the testing/tooling readiness hook (same contract as React's
+    // index.tsx effect) - the Playwright fixtures rely on this
+    watch(
+      () => state.value.ready,
+      (ready) => {
+        if (
+          typeof (globalThis as any)
+            .__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY ===
+          'function'
+        ) {
+          (
+            globalThis as any
+          ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
+            state.value.id,
+            ready,
+            api,
+            { dataSourceApi: dataSourceContext.dataSourceApi },
+          );
+        }
+
+        // same contract as React (useCellRendering): the onReady prop fires
+        // on every `ready` transition, including the initial one
+        const { onReady } = getState();
+        if (onReady) {
+          onReady({ api: api as any, dataSourceApi });
+        }
+      },
+      { immediate: true, flush: 'post' },
+    );
+
     watch(
       () => !!state.value.bodySize.height,
       (hasHeight) => {
@@ -1185,6 +1497,8 @@ export const InfiniteTable = defineComponent({
 
     // notifyRenderRangeChange -> DataSource (lazy loading contract)
     let removeRenderRangeChange: VoidFunction | null = null;
+    // the onRenderRangeChange PROP callback (mirrors useCellRendering)
+    let removeRenderRangeChangeCallback: VoidFunction | null = null;
     watch(
       () => state.value.brain,
       (brain) => {
@@ -1197,6 +1511,11 @@ export const InfiniteTable = defineComponent({
             });
           },
         );
+
+        removeRenderRangeChangeCallback?.();
+        removeRenderRangeChangeCallback = brain.onRenderRangeChange((range) => {
+          getState().onRenderRangeChange?.(range);
+        });
       },
       { immediate: true },
     );
@@ -1305,6 +1624,7 @@ export const InfiniteTable = defineComponent({
     onBeforeUnmount(() => {
       removeScrollerResizeObserver?.();
       removeRenderRangeChange?.();
+      removeRenderRangeChangeCallback?.();
       removeOnKeyDown();
       removeOnCellClick();
       removeOnCellMouseDown();

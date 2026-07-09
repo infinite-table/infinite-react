@@ -9,24 +9,20 @@ export default test.describe
   }) => {
     const urls: string[] = [];
 
-    const condition = (request: Request) => {
-      const ok =
-        request.url().includes('developers10') && request.method() === 'GET';
-
-      if (ok) {
+    // record every matching request exactly once - using page.waitForRequest
+    // with a side-effecting predicate is racy, as the predicate runs once per
+    // pending waiter, so the same request can be recorded multiple times
+    page.on('request', (request: Request) => {
+      if (request.url().includes('developers10') && request.method() === 'GET') {
         urls.push(request.url());
       }
-
-      return ok;
-    };
-
-    // wait for initial request
-    page.waitForRequest(condition);
+    });
 
     await page.load();
 
-    // wait for Canada to be loaded as well, from the remote location
-    await page.waitForRequest(condition);
+    // wait for the initial request + for Canada to be loaded as well, from
+    // the remote location
+    await expect.poll(() => urls.length).toBeGreaterThanOrEqual(2);
     // also wait for node to be expanded
     await page.waitForTimeout(150);
 
