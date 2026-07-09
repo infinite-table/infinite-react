@@ -21,10 +21,7 @@ const getBodyCellRenderCounts = async (page: Page) => {
 };
 
 export default test.describe.parallel('Basic data update', () => {
-  test.only('via API should not rerender header', async ({
-    page,
-    headerModel,
-  }) => {
+  test('via API should not rerender header', async ({ page, headerModel }) => {
     await page.waitForInfinite();
 
     const salaryHeader = headerModel.getHeaderCellLocator({ colId: 'salary' });
