@@ -27,7 +27,7 @@ const data: Developer[] = Array.from({ length: 1000 }, (_, i) => ({
 }));
 
 const columns = {
-  id: { field: 'id', header: 'ID', defaultWidth: 80 },
+  id: { field: 'id', header: 'ID', defaultWidth: 80, renderRowDetailIcon: true },
   firstName: { field: 'firstName', header: 'First Name' },
   lastName: { field: 'lastName', header: 'Last Name' },
   age: { field: 'age', header: 'Age', type: 'number', defaultWidth: 100 },
@@ -40,6 +40,20 @@ const App = defineComponent({
   setup() {
     const groupByStack = ref(false);
     const showFilters = ref(true);
+    const rowDetails = ref(false);
+
+    const rowDetailRenderer = (rowInfo: any) =>
+      h(
+        'div',
+        {
+          style: {
+            padding: '10px',
+            height: '100%',
+            background: 'var(--infinite-background, #f5f5f5)',
+          },
+        },
+        `Details for ${rowInfo.data?.firstName} ${rowInfo.data?.lastName} — ${rowInfo.data?.stack}, salary ${rowInfo.data?.salary}`,
+      );
 
     return () => [
       h('div', { style: { display: 'flex', gap: '10px', alignItems: 'center' } }, [
@@ -72,6 +86,20 @@ const App = defineComponent({
             'Column filters',
           ],
         ),
+        h(
+          'label',
+          { style: { display: 'flex', gap: '6px', alignItems: 'center' } },
+          [
+            h('input', {
+              type: 'checkbox',
+              checked: rowDetails.value,
+              onChange: (e: Event) => {
+                rowDetails.value = (e.target as HTMLInputElement).checked;
+              },
+            }),
+            'Row details',
+          ],
+        ),
       ]),
       h('div', { style: { flex: 1, minHeight: 0 } }, [
         h(
@@ -91,6 +119,16 @@ const App = defineComponent({
                 columnDefaultWidth: 150,
                 keyboardNavigation: 'cell',
                 showColumnFilters: showFilters.value,
+                ...(rowDetails.value
+                  ? {
+                      rowDetailHeight: 100,
+                      rowDetailRenderer,
+                      defaultRowDetailState: {
+                        expandedRows: [],
+                        collapsedRows: true as const,
+                      },
+                    }
+                  : {}),
                 style: { height: '100%' },
               }),
           },

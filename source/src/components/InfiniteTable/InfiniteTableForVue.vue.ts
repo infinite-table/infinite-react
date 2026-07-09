@@ -27,7 +27,9 @@ import {
   mapPropsToState,
   initSetupState,
   cleanupState,
+  createBrains,
 } from './state/getInitialState';
+import { DEBUG_NAME } from './InfiniteDebugName';
 import { getComputedColumns } from './utils/getComputedColumns';
 import { getColumnsWhenGrouping } from './utils/getColumnsWhenGrouping';
 import { getInfiniteCSSVars } from './utils/getInfiniteCSSVars';
@@ -58,7 +60,7 @@ import {
   useCellContextMenu,
   useTableContextMenu,
 } from './hooks/useContextMenuForVue.vue';
-import { position, top, left, zIndex } from './utilities.css';
+import { position, top, left, zIndex, visibility } from './utilities.css';
 import { getColumnApiForColumn } from './api/getColumnApi';
 import { cloneRowSelection } from './api/getRowSelectionApi';
 import { cloneTreeSelection } from '../DataSource/TreeApi';
@@ -69,6 +71,8 @@ import { HeadlessTable } from '../HeadlessTable/HeadlessTableForVue.vue';
 import { InfiniteBodyCls } from './components/InfiniteTableBody/body.css';
 import { InfiniteTableBodyClassName } from './components/InfiniteTableBody/bodyClassName';
 import { InfiniteTableColumnCell } from './components/InfiniteTableRow/InfiniteTableColumnCellForVue.vue';
+import { InfiniteTableDetailRow } from './components/InfiniteTableRow/InfiniteTableDetailRowForVue.vue';
+import { computeRowHeightWithCache } from './hooks/computedRowHeightShared';
 import { InfiniteTableColumnCellClassName } from './components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/TableHeaderWrapperForVue.vue';
@@ -80,6 +84,8 @@ import type { MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import type {
   TableRenderCellFn,
   TableRenderCellFnParam,
+  TableRenderDetailRowFn,
+  TableRenderDetailRowFnParam,
 } from '../HeadlessTable/rendererTypes';
 import type { Renderable } from '../types/Renderable';
 import type {
@@ -233,6 +239,9 @@ export const DATA_GRID_PROP_NAMES = [
   'rowDetailRenderer',
   'isRowDetailExpanded',
   'isRowDetailEnabled',
+  'rowDetailState',
+  'defaultRowDetailState',
+  'onRowDetailStateChange',
 ] as const;
 
 const {
@@ -525,15 +534,43 @@ export const InfiniteTable = defineComponent({
       ds.notifyScrollbarsChange(scrollbars);
     });
 
-    const getComputedRowHeight = () => {
+    // mirrors React's useComputedRowHeight: memoized on the same inputs so
+    // the RowSizeCache instance survives data changes (the brain populates it
+    // when measuring rows, renderDetailRow reads it back)
+    let rowHeightMemo: {
+      deps: readonly unknown[];
+      value: ReturnType<typeof computeRowHeightWithCache>;
+    } | null = null;
+
+    const getComputedRowHeightResult = () => {
       const s = state.value;
-      return typeof s.rowHeight === 'function'
-        ? (index: number) => {
-            const item = getDSState().dataArray[index];
-            return item ? (s.rowHeight as any)(item) : 0;
-          }
-        : s.rowHeight;
+      const deps = [
+        s.rowHeight,
+        s.rowDetailHeight,
+        s.isRowDetailExpanded,
+        s.isRowDetailEnabled,
+      ] as const;
+
+      if (
+        !rowHeightMemo ||
+        rowHeightMemo.deps.some((dep, index) => dep !== deps[index])
+      ) {
+        rowHeightMemo = {
+          deps,
+          value: computeRowHeightWithCache({
+            rowHeight: s.rowHeight,
+            rowDetailHeight: s.rowDetailHeight,
+            isRowDetailsExpanded: s.isRowDetailExpanded,
+            isRowDetailsEnabled: s.isRowDetailEnabled,
+            getDataSourceState: getDSState,
+          }),
+        };
+      }
+      return rowHeightMemo.value;
     };
+
+    const getComputedRowHeight = () =>
+      getComputedRowHeightResult().computedRowHeight;
 
     const getComputed = (): InfiniteTableComputedValues<any> => {
       const cc = computedColumnsResult.value;
@@ -549,7 +586,8 @@ export const InfiniteTable = defineComponent({
         multiRowSelector,
         multiCellSelector,
         computedRowHeight: getComputedRowHeight(),
-        computedRowSizeCacheForDetails: undefined,
+        computedRowSizeCacheForDetails:
+          getComputedRowHeightResult().computedRowSizeCacheForDetails,
         rowspan: getRowspanFn(cc.computedVisibleColumns, getDSState),
         computedPinnedStartOverflow: computedPinnedStartWidth
           ? cc.computedPinnedStartColumnsWidth > computedPinnedStartWidth
@@ -988,15 +1026,10 @@ export const InfiniteTable = defineComponent({
         fixedColsEnd: computedPinnedEndColumns.length,
       });
 
-      // rowHeight given as fn(rowInfo) is adapted to fn(index) - the
-      // simplified version of useComputedRowHeight (row details come later)
-      const rowHeight =
-        typeof s.rowHeight === 'function'
-          ? (index: number) => {
-              const item = getDataSourceState().dataArray[index];
-              return item ? (s.rowHeight as any)(item) : 0;
-            }
-          : s.rowHeight;
+      // rowHeight given as fn(rowInfo) is adapted to fn(index); when row
+      // details are used, the height includes the expanded detail height
+      // (state.value is a shallowRef, so any state commit re-runs this)
+      const rowHeight = getComputedRowHeight();
 
       brain.update({
         colWidth: getColumnSizeFn(computedVisibleColumns),
@@ -1006,6 +1039,125 @@ export const InfiniteTable = defineComponent({
         rowspan: getRowspanFn(computedVisibleColumns, getDataSourceState),
       });
     });
+
+    // ports useToggleWrapRowsHorizontally: toggling the horizontal layout
+    // needs brand new brains + renderers (the brain type differs)
+    watch(
+      () => state.value.wrapRowsHorizontally,
+      (wrapRowsHorizontally, oldWrapRowsHorizontally) => {
+        if (oldWrapRowsHorizontally === wrapRowsHorizontally) {
+          return;
+        }
+        const { brain, headerBrain, renderer, onRenderUpdater } = getState();
+
+        brain.destroy();
+        headerBrain.destroy();
+        renderer.destroy();
+        onRenderUpdater.destroy();
+
+        const newBrains = createBrains(DEBUG_NAME, !!wrapRowsHorizontally);
+
+        actions.brain = newBrains.brain;
+        actions.headerBrain = newBrains.headerBrain;
+
+        actions.renderer = newBrains.renderer;
+        actions.onRenderUpdater = newBrains.onRenderUpdater;
+
+        actions.headerRenderer = newBrains.headerRenderer;
+        actions.headerOnRenderUpdater = newBrains.headerOnRenderUpdater;
+      },
+      { flush: 'post' },
+    );
+
+    // ports useHorizontalLayout: keeps the DataSource rowsPerPage +
+    // repeatWrappedGroupRows in sync with the brain when rows are wrapped
+    // horizontally
+    let horizontalLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    let removeVerticalRenderRangeSub: VoidFunction | null = null;
+
+    const cleanupHorizontalLayout = () => {
+      if (horizontalLayoutTimeoutId) {
+        clearTimeout(horizontalLayoutTimeoutId);
+        horizontalLayoutTimeoutId = null;
+      }
+      removeVerticalRenderRangeSub?.();
+      removeVerticalRenderRangeSub = null;
+    };
+
+    watch(
+      [
+        () => state.value.brain,
+        () => state.value.wrapRowsHorizontally,
+        () => dataSourceState.value.groupBy,
+        () => dataSourceState.value.isTree,
+        () =>
+          state.value.wrapRowsHorizontally
+            ? state.value.repeatWrappedGroupRows
+            : false,
+      ] as const,
+      ([
+        brain,
+        wrapRowsHorizontally,
+        groupBy,
+        isTree,
+        repeatWrappedGroupRows,
+      ]) => {
+        cleanupHorizontalLayout();
+
+        const dsActions = dataSourceContext.dataSourceActions;
+
+        if (!wrapRowsHorizontally) {
+          if (getDataSourceState().repeatWrappedGroupRows) {
+            dsActions.repeatWrappedGroupRows = false;
+          }
+          return;
+        }
+
+        const onVerticalRenderRangeChange = () => {
+          const {
+            rowsPerPage: currentRowsPerPage,
+            repeatWrappedGroupRows: currentRepeatWrappedGroupRows,
+          } = getDataSourceState();
+
+          let changes = false;
+
+          const rowsPerPage = brain.rowsPerPage;
+          const newRowsPerPage =
+            ((groupBy && groupBy.length > 0) || isTree) && rowsPerPage > 0
+              ? rowsPerPage
+              : null;
+
+          if (currentRowsPerPage != newRowsPerPage) {
+            dsActions.rowsPerPage = newRowsPerPage;
+            changes = true;
+          }
+
+          if (currentRepeatWrappedGroupRows != repeatWrappedGroupRows) {
+            dsActions.repeatWrappedGroupRows = repeatWrappedGroupRows ?? false;
+            changes = true;
+          }
+
+          return changes;
+        };
+
+        onVerticalRenderRangeChange();
+
+        removeVerticalRenderRangeSub = brain.onVerticalRenderRangeChange(() => {
+          if (onVerticalRenderRangeChange()) {
+            horizontalLayoutTimeoutId = setTimeout(() => {
+              // unfortunately, we need to force a rerender of the body
+              // because by the time the render range changes, the DataSource
+              // has not finished recomputing the artificial group rows, so we
+              // need to trigger this re-render
+              actions.forceBodyRerenderTimestamp = Date.now();
+            });
+          }
+        });
+      },
+      { immediate: true, flush: 'post' },
+    );
+
+    onBeforeUnmount(cleanupHorizontalLayout);
 
     // ready flag + scroll stop delay wiring (React does this in effects).
     // These write back into managed state, so they must be precise watchers
@@ -1272,6 +1424,59 @@ export const InfiniteTable = defineComponent({
       };
     });
 
+    // mirrors renderDetailRow from React's useCellRendering
+    const renderDetailRowComputed = computed<
+      TableRenderDetailRowFn | undefined
+    >(() => {
+      const s = state.value;
+      const isRowDetailsExpanded = s.isRowDetailExpanded;
+      const rowDetailRenderer = s.rowDetailRenderer;
+
+      if (!isRowDetailsExpanded || !rowDetailRenderer) {
+        return undefined;
+      }
+
+      const rowDetailCache = s.rowDetailCache;
+
+      return (params: TableRenderDetailRowFnParam) => {
+        const { rowIndex, domRef } = params;
+
+        const dataArray = getData();
+        const rowInfo = dataArray[rowIndex];
+        const computedRowSizeCacheForDetails =
+          getComputedRowHeightResult().computedRowSizeCacheForDetails;
+
+        if (
+          !rowInfo ||
+          !isRowDetailsExpanded(rowInfo) ||
+          !computedRowSizeCacheForDetails
+        ) {
+          // normally we would have returned `null`
+          // but if we return null, the headless renderer will lose track
+          // of the HTMLElement, and then when we scroll down and want
+          // to reuse the HTMLElement, it will be gone, and the rendering
+          // will break
+          return h('div', {
+            ref: domRef as any,
+            class: visibility.hidden,
+          }) as unknown as Renderable;
+        }
+
+        const { rowDetailHeight, rowHeight } =
+          computedRowSizeCacheForDetails.getSize(rowIndex);
+
+        return h(InfiniteTableDetailRow, {
+          rowInfo,
+          rowDetailsCache: rowDetailCache,
+          rowIndex,
+          domRef: domRef as any,
+          detailOffset: rowHeight,
+          rowDetailHeight,
+          rowDetailRenderer: rowDetailRenderer as any,
+        }) as unknown as Renderable;
+      };
+    });
+
     const contextValue: InfiniteTableContextValueForVue = {
       state,
       getState,
@@ -1438,6 +1643,7 @@ export const InfiniteTable = defineComponent({
                 renderer: s.renderer as any,
                 onRenderUpdater: s.onRenderUpdater,
                 renderCell: renderCellComputed.value,
+                renderDetailRow: renderDetailRowComputed.value,
                 cellHoverClassNames: hoverClassNames.value,
                 scrollStopDelay: s.scrollStopDelay,
                 forceRerenderTimestamp: s.forceBodyRerenderTimestamp,
@@ -1455,7 +1661,9 @@ export const InfiniteTable = defineComponent({
                   !s.columnReorderDragColumnId
                     ? s.activeCellIndex ?? null
                     : null,
-                activeCellRowHeight: getComputedRowHeight(),
+                activeCellRowHeight:
+                  getComputedRowHeightResult().computedRowSizeCacheForDetails
+                    ?.getRowHeight || getComputedRowHeight(),
               }),
               h(LoadMask, { visible: !!loading }, () => s.loadingText),
             ],

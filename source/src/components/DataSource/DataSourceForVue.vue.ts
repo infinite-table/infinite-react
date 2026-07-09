@@ -38,9 +38,11 @@ import type { Scrollbars } from '../InfiniteTable/types/InfiniteTableProps';
 import type {
   DataSourceApi,
   DataSourceComponentActions,
+  DataSourceContextValue,
   DataSourceMasterDetailContextValue,
   DataSourceState,
 } from './types';
+import { useGetMasterDetailContextForVue } from './DataSourceMasterDetailContextForVue.vue';
 
 /**
  * All public DataSource props (camelCase). Declared explicitly so Vue
@@ -662,6 +664,12 @@ function useLoadDataForVue<T>(options: {
  * value) or through the DataSource component below.
  */
 export function useDataSourceForVue<T>(props: any) {
+  // when rendered inside a row-detail, the InfiniteTableDetailRow sibling
+  // provides the master-detail context - the master DataSource gets the
+  // default () => undefined
+  const getDataSourceMasterContext = useGetMasterDetailContextForVue();
+  const isDetail = !!getDataSourceMasterContext();
+
   const { contextValue: managedContextValue } = useManagedDataSourceVue(props);
 
   const state = managedContextValue.state as unknown as ShallowRef<
@@ -671,8 +679,8 @@ export function useDataSourceForVue<T>(props: any) {
     managedContextValue.componentActions as unknown as DataSourceComponentActions<T>;
   const getDataSourceState = () => state.value;
 
-  // no master-detail support yet in the Vue port
-  state.value.getDataSourceMasterContextRef.current = () => undefined;
+  state.value.getDataSourceMasterContextRef.current =
+    getDataSourceMasterContext;
 
   const dataSourceApi = getDataSourceApi<T>({
     getState: getDataSourceState,
@@ -693,6 +701,24 @@ export function useDataSourceForVue<T>(props: any) {
     DataSourceInjectionKeyForVue,
     contextValue as DataSourceContextValueForVue<any>,
   );
+
+  // register with the master (mirrors the React useLayoutEffect in
+  // useDataSourceInternal) - registerDetail restores cached detail state
+  // and flips stateReadyAsDetails so data loading can start
+  onMounted(() => {
+    const masterContext = getDataSourceMasterContext();
+    if (masterContext) {
+      const reactShapedContextValue: DataSourceContextValue<T> = {
+        dataSourceState: state.value,
+        dataSourceActions,
+        getDataSourceMasterContext,
+        getDataSourceState,
+        assignState: contextValue.assignState,
+        dataSourceApi,
+      };
+      masterContext.registerDetail(reactShapedContextValue);
+    }
+  });
 
   useLoadDataForVue<T>({ state, getDataSourceState, dataSourceActions });
 
@@ -751,11 +777,12 @@ export function useDataSourceForVue<T>(props: any) {
     dataSourceState.onCleanup(dataSourceState);
   });
 
-  if (__DEV__) {
+  if (__DEV__ && !isDetail) {
     (globalThis as any).getDataSourceState = getDataSourceState;
     (globalThis as any).dataSourceActions = dataSourceActions;
     (globalThis as any).dataSourceApi = dataSourceApi;
-
+  }
+  if (__DEV__) {
     if (state.value.debugId) {
       (globalThis as any).dataSources = (globalThis as any).dataSources || {};
       (globalThis as any).dataSources[state.value.debugId] = {

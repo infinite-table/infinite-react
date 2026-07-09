@@ -31,6 +31,14 @@ export {
   createFlashingColumnCellComponent,
   FlashingColumnCell,
 } from './components/InfiniteTable/components/InfiniteTableRow/FlashingColumnCellForVue.vue';
+export {
+  TreeGrid,
+  TreeDataSource,
+  toTreeDataArray,
+  withSelectedLeafNodesOnly,
+} from './components/TreeGrid/TreeGridForVue.vue';
+export { InfiniteTableDetailRow } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableDetailRowForVue.vue';
+export { useGetMasterDetailContextForVue } from './components/DataSource/DataSourceMasterDetailContextForVue.vue';
 export { useInfiniteHeaderCell } from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderCellForVue.vue';
 
 import { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForVue.vue';
