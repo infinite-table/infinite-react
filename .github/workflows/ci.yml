@@ -5,6 +5,10 @@ on:
     paths:
       - 'devtools-ui/src/**'
       - 'source/src/**'
+      - 'source/tsconfig*.json'
+      - 'source/*.config.ts'
+      - 'source/framework-resolve-plugin.ts'
+      - 'source/jest.config.js'
       - 'examples/src/**/*.spec.ts'
       - 'examples/src/**/*.page.tsx'
       - 'examples/src/**/*.ts'

@@ -3,6 +3,10 @@ import {
   ListRowManager,
   ListRowInterface,
 } from '@src/components/HeadlessTable/ListRowManager';
+import { ListRowPoolForReact } from '@src/components/HeadlessTable/ListRowPoolForReact';
+
+const createManager = () =>
+  new ListRowManager('test', new ListRowPoolForReact('test'));
 
 const createRow = (node?: string): ListRowInterface => {
   node = node || '';
@@ -21,7 +25,7 @@ const createRow = (node?: string): ListRowInterface => {
 };
 export default test.describe('ListRowManager', () => {
   test('ListRowManager.discardRowsStartingWith', async () => {
-    const manager = new ListRowManager('test');
+    const manager = createManager();
 
     const a = createRow('a');
     const b = createRow('b');

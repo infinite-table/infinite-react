@@ -1,17 +1,8 @@
 import * as React from 'react';
 import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
 import { once } from '../../../../utils/DeepMap/once';
-import {
-  InfiniteTableRowInfoDataDiscriminator,
-  InfiniteTable_Tree_RowInfoBase,
-} from '../../../../utils/groupAndPivot';
+import { InfiniteTableRowInfoDataDiscriminator } from '../../../../utils/groupAndPivot';
 
-import { join } from '../../../../utils/join';
-
-import { stripVar } from '../../../../utils/stripVar';
-
-import { useCellClassName } from '../../hooks/useCellClassName';
-import { InternalVars } from '../../internalVars.css';
 import {
   InfiniteColumnEditorContextType,
   InfiniteTableRowInfo,
@@ -20,59 +11,30 @@ import {
 import type {
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
-  InfiniteTableColumnClassName,
-  InfiniteTableColumnStylingFnParams,
-  InfiniteTableColumnStyle,
   InfiniteTableColumn,
 } from '../../types/InfiniteTableColumn';
 import { InfiniteTableRowContext } from '../../types/InfiniteTableContextValue';
-import { InfiniteTableRowStylingFnParams } from '../../types/InfiniteTableProps';
-import { styleForGroupColumn } from '../../utils/getColumnForGroupBy';
 import {
   CellEditorContextComponent,
   RenderCellHookComponent,
 } from '../../utils/RenderHookComponentForInfinite';
-import { ThemeVars } from '../../vars.css';
-import {
-  ColumnCellRecipe,
-  ColumnCellSelectionIndicatorRecipe,
-  SelectionCheckboxCls,
-} from '../cell.css';
+import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
 import { ExpandCollapseIcon } from '../icons/ExpandCollapseIcon';
 import { getColumnRenderingParams } from './columnRendering';
+import { getColumnCellStyling, styleForTreeColumn } from './columnCellStyling';
 import { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 
-import {
-  InfiniteTableCell,
-  InfiniteTableCellClassName,
-} from './InfiniteTableCell';
+import { InfiniteTableCell } from './InfiniteTableCell';
 import {
   InfiniteTableCellProps,
   InfiniteTableColumnCellProps,
 } from './InfiniteTableCellTypes';
 import { InfiniteTableColumnEditor } from './InfiniteTableColumnEditor';
-import { TreeColumnCellExpanderCls } from './row.css';
-import { InfiniteTableColumnCellClassName } from './InfiniteTableColumnCellClassNames';
 import { objectValuesExcept } from '../../utils/objectValuesExcept';
 import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
-const columnZIndexAtIndex = stripVar(InternalVars.columnZIndexAtIndex);
-const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
-
-export function styleForTreeColumn<T>({
-  rowInfo,
-}: {
-  rowInfo: InfiniteTable_Tree_RowInfoBase<T>;
-}) {
-  return {
-    [stripVar(ThemeVars.components.Row.groupNesting)]: rowInfo.isTreeNode
-      ? rowInfo.isParentNode
-        ? rowInfo.treeNesting
-        : rowInfo.treeNesting + 1
-      : 0,
-  };
-}
+export { styleForTreeColumn };
 
 export const InfiniteTableColumnCellContext = React.createContext<
   InfiniteTableColumnCellContextType<any>
@@ -171,29 +133,6 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
     />
   );
 };
-
-function applyColumnClassName<T>(
-  columnClassName: InfiniteTableColumnClassName<T>,
-  param: InfiniteTableColumnStylingFnParams<T>,
-) {
-  const colClassName: undefined | string = columnClassName
-    ? typeof columnClassName === 'function'
-      ? columnClassName(param)
-      : columnClassName
-    : undefined;
-
-  return colClassName;
-}
-
-function applyColumnStyle<T>(
-  existingStyle: React.CSSProperties | undefined,
-  columnStyle: InfiniteTableColumnStyle<T>,
-  param: InfiniteTableColumnStylingFnParams<T>,
-) {
-  return typeof columnStyle === 'function'
-    ? { ...existingStyle, ...columnStyle(param) }
-    : { ...existingStyle, ...columnStyle };
-}
 
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
@@ -678,164 +617,38 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     ],
   );
 
-  const visibleColumnIds = computed.computedVisibleColumns.map((x) => x.id);
-  const allColumnIds = computed.computedColumnOrder;
-  const rowPropsAndStyleArgs: InfiniteTableRowStylingFnParams<T> = {
-    ...formattedValueContext,
-    visibleColumnIds,
-    allColumnIds,
+  const { style, className } = getColumnCellStyling({
+    column,
+    rowInfo,
     rowIndex,
-    // we put it as false by default
-    rowHasSelectedCells: false,
-  };
-
-  // and then make it a getter
-  // so it can be computed lazily - just when the user calls and needs this
-  Object.defineProperty(rowPropsAndStyleArgs, 'rowHasSelectedCells', {
-    get() {
-      return rowInfo.hasSelectedCells(visibleColumnIds);
-    },
+    rowHeight,
+    rowIndexInHorizontalLayoutPage,
+    horizontalLayoutPageIndex,
+    align,
+    verticalAlign,
+    stylingParam,
+    formattedValueContext,
+    groupByColumnReference,
+    rowStyle,
+    rowClassName,
+    cellStyle,
+    cellClassName,
+    showZebraRows,
+    rowActive,
+    rowDisabled,
+    rowSelected,
+    cellSelected,
+    cellSelection,
+    getData,
+    computedVisibleColumns: computed.computedVisibleColumns,
+    computedColumnOrder: computed.computedColumnOrder,
+    columnReorderInPageIndex,
   });
-
-  const columnIsTree =
-    rowInfo.isTreeNode &&
-    (column.renderTreeIcon ||
-      column.renderTreeIconForLeafNode ||
-      column.renderTreeIconForParentNode);
-
-  const rowComputedClassName =
-    typeof rowClassName === 'function'
-      ? rowClassName(rowPropsAndStyleArgs)
-      : rowClassName;
-
-  let colClassName: string | undefined = undefined;
-
-  if (groupByColumnReference?.className) {
-    colClassName = applyColumnClassName(
-      groupByColumnReference.className,
-      stylingParam,
-    );
-  }
-  if (cellClassName) {
-    colClassName = join(
-      colClassName,
-      applyColumnClassName(cellClassName, stylingParam),
-    );
-  }
-  if (column.className) {
-    colClassName = join(
-      colClassName,
-      applyColumnClassName(column.className, stylingParam),
-    );
-  }
-
-  if (columnIsTree) {
-    colClassName = join(
-      colClassName,
-      TreeColumnCellExpanderCls({
-        align,
-      }),
-    );
-  }
-
-  let style: React.CSSProperties | undefined;
-
-  if (rowInfo.dataSourceHasGrouping && column.groupByForColumn) {
-    style = styleForGroupColumn({ rowInfo });
-  }
-
-  if (columnIsTree) {
-    style = styleForTreeColumn({ rowInfo });
-  }
-
-  if (rowStyle) {
-    style =
-      typeof rowStyle === 'function'
-        ? { ...style, ...rowStyle(rowPropsAndStyleArgs) }
-        : { ...style, ...rowStyle };
-  }
-
-  if (cellStyle) {
-    style = applyColumnStyle(style, cellStyle, stylingParam);
-  }
-
-  if (groupByColumnReference?.style) {
-    style = applyColumnStyle(style, groupByColumnReference.style, stylingParam);
-  }
-  if (column.style) {
-    style = applyColumnStyle(style, column.style, stylingParam);
-  }
-  style = style || {};
-
-  style.height = rowHeight;
-  style.zIndex = `var(${columnZIndexAtIndex}-${column.computedVisibleIndex})`;
-  // @ts-ignore
-  style.visibility = `var(${columnVisibilityAtIndex}-${column.computedVisibleIndex}, visible)`;
 
   const memoizedStyle = useMemo(
     () => style,
     [!style ? null : JSON.stringify(style)],
   );
-
-  const odd =
-    rowIndexInHorizontalLayoutPage != null
-      ? rowIndexInHorizontalLayoutPage % 2 === 1
-      : (rowInfo.indexInAll != null ? rowInfo.indexInAll : rowIndex) % 2 === 1;
-
-  const zebra = showZebraRows ? (odd ? 'odd' : 'even') : false;
-
-  let topSelectionBorder = false;
-  let leftSelectionBorder = false;
-  let rightSelectionBorder = false;
-  let bottomSelectionBorder = false;
-
-  if (cellSelection && cellSelected) {
-    const arr = getData();
-    const topRowInfo = arr[rowInfo.indexInAll - 1];
-    const bottomRowInfo = arr[rowInfo.indexInAll + 1];
-    const nextColumn =
-      computed.computedVisibleColumns[column.computedVisibleIndex + 1];
-    const prevColumn =
-      computed.computedVisibleColumns[column.computedVisibleIndex - 1];
-
-    topSelectionBorder = topRowInfo
-      ? !cellSelection.isCellSelected(topRowInfo.id, column.id)
-      : true;
-
-    if (column.computedPinned === 'end' && column.computedFirstInCategory) {
-      leftSelectionBorder = true;
-    } else {
-      leftSelectionBorder = prevColumn
-        ? !cellSelection.isCellSelected(rowInfo.id, prevColumn.id)
-        : true;
-    }
-
-    if (column.computedPinned === 'start' && column.computedLastInCategory) {
-      rightSelectionBorder = true;
-    } else {
-      rightSelectionBorder = nextColumn
-        ? !cellSelection.isCellSelected(rowInfo.id, nextColumn.id)
-        : true;
-    }
-    bottomSelectionBorder = bottomRowInfo
-      ? !cellSelection.isCellSelected(bottomRowInfo.id, column.id)
-      : true;
-  }
-
-  const cellSelectionBorders =
-    cellSelection && cellSelected
-      ? {
-          top: topSelectionBorder,
-          left: leftSelectionBorder,
-          right: rightSelectionBorder,
-          bottom: bottomSelectionBorder,
-        }
-      : null;
-
-  const insideDisabledDraggingPage =
-    columnReorderInPageIndex != null
-      ? horizontalLayoutPageIndex !== columnReorderInPageIndex
-      : false;
 
   const afterChildren = editor;
   const theChildren = renderChildren();
@@ -855,39 +668,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     afterChildren,
     onMouseDown,
     cssEllipsis: column.cssEllipsis ?? true,
-    className: join(
-      cellSelectionBorders
-        ? ColumnCellSelectionIndicatorRecipe(cellSelectionBorders)
-        : '',
-      useCellClassName(
-        column,
-        [InfiniteTableColumnCellClassName, InfiniteTableCellClassName],
-        ColumnCellRecipe,
-        {
-          dragging: false,
-          insideDisabledDraggingPage,
-          zebra,
-          align,
-          verticalAlign,
-          rowDisabled,
-          rowActive,
-          cellSelected,
-          rowSelected,
-          treeNode: rowInfo.isTreeNode
-            ? rowInfo.isParentNode
-              ? 'parent'
-              : 'leaf'
-            : false,
-          firstRow: rowInfo.indexInAll === 0,
-          firstRowInHorizontalLayoutPage: rowIndexInHorizontalLayoutPage === 0,
-          groupRow: rowInfo.isGroupRow,
-          groupCell: rowInfo.isGroupRow ? !!column.groupByForColumn : false,
-          rowExpanded: rowInfo.isGroupRow ? !rowInfo.collapsed : false,
-        },
-      ),
-      colClassName,
-      rowComputedClassName,
-    ),
+    className,
     renderChildren: useCallback(() => theChildren, [renderChildren]),
   };
 

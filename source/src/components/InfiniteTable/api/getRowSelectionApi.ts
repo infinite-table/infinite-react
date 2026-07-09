@@ -1,11 +1,11 @@
 import { InfiniteTable_RowInfoBase } from '../../../utils/groupAndPivot';
 import { getGroupKeysForDataItem } from '../../../utils/groupAndPivot/getGroupKeysForDataItem';
 
-import {
+import type {
   DataSourceComponentActions,
   DataSourceState,
-  RowSelectionState,
 } from '../../DataSource';
+import { RowSelectionState } from '../../DataSource/RowSelectionState';
 
 import {
   GetRowSelectionStateConfig,

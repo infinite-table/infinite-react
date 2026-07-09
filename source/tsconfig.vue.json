@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    // sibling-file resolution: `./Foo` resolves Foo.vue.tsx/.vue.ts before Foo.tsx/.ts.
+    // Keep in sync with framework-resolve-plugin.ts (the esbuild counterpart).
+    "moduleSuffixes": [".vue", ""],
+    "noEmit": true
+  },
+  // Graph-based checking: roots are the Vue siblings only; everything they
+  // (transitively) import — the shared framework-agnostic code — is pulled
+  // into the program automatically. React-only files that are NOT reachable
+  // from Vue code are intentionally not checked here (they'd fail once a
+  // sibling swaps a module out from under them, e.g. `./RawTable` resolving
+  // to RawTable.vue.ts inside HeadlessTable/index.tsx). As the Vue tree grows
+  // toward the public entry (src/index.vue.tsx), this program converges on
+  // the full Vue build graph.
+  "include": ["src/**/*.vue.ts", "src/**/*.vue.tsx", "globals.d.ts"]
+}

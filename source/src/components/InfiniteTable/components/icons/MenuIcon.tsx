@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { keyMirror } from '../../../../utils/keyMirror';
 
 import { join } from '../../../../utils/join';
 import { ThemeVars } from '../../vars.css';
 
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
+import {
+  MenuIconDataAttributes,
+  MenuIconDataAttributesValues,
+} from './menuIconAttributes';
+
+export { MenuIconDataAttributes, MenuIconDataAttributesValues };
 
 export type MenuIconProps = {
   lineWidth?: number;
@@ -24,16 +29,6 @@ const defaultLineStyle: React.CSSProperties = {
 };
 
 const lineClassName = `${InfiniteIconClassName}-menu`;
-
-export const MenuIconDataAttributes = keyMirror({
-  'data-name': '',
-});
-
-export const MenuIconDataAttributesValues: {
-  [K in keyof typeof MenuIconDataAttributes]: string;
-} = {
-  [MenuIconDataAttributes['data-name']]: 'menu-icon',
-};
 
 export function MenuIcon(props: MenuIconProps) {
   const {

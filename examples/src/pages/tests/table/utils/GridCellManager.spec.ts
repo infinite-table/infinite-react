@@ -3,6 +3,10 @@ import {
   GridCellManager,
   GridCellInterface,
 } from '@src/components/HeadlessTable/GridCellManager';
+import { GridCellPoolForReact } from '@src/components/HeadlessTable/GridCellPoolForReact';
+
+const createManager = () =>
+  new GridCellManager('test', new GridCellPoolForReact('test'));
 
 const createCell = (node?: string): GridCellInterface<any> => {
   node = node || '';
@@ -23,7 +27,7 @@ const createCell = (node?: string): GridCellInterface<any> => {
 };
 export default test.describe('GridCellManager', () => {
   test('GridCellManager.discardRowsStartingWith', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     manager.renderNodeAtCell('a', createCell(), [0, 0]);
     manager.renderNodeAtCell('b', createCell(), [0, 1]);
@@ -48,7 +52,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getColumnsWithCells', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     manager.renderNodeAtCell('a', createCell(), [0, 0]);
     // manager.renderNodeAtCell('b', createCell(), [0, 1]);
@@ -76,7 +80,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getCellFor', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -119,7 +123,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.detachCellsStartingAt', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -142,7 +146,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.detachCol', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -165,7 +169,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.detachRow', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -191,7 +195,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getCellFor - second test', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -227,7 +231,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('getColumnsWithCells', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -239,7 +243,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.renderNodeAtCell, for a detached cell, at same position', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -281,7 +285,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager render an attached cell to another position', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -319,7 +323,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getCellFor - third test', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -370,7 +374,7 @@ export default test.describe('GridCellManager', () => {
     expect(manager.getCellFor([2, 2], 'row')).toBe(d);
   });
   test('GridCellManager.getCellFor - check correct return after multiple detaches', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = createCell('a');
     const b = createCell('b');
@@ -406,7 +410,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.isCellRendered', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     manager.renderNodeAtCell('a', createCell(), [0, 0]);
     manager.renderNodeAtCell('b', createCell(), [0, 1]);
@@ -444,7 +448,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getCellsOutsideRenderRange', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     manager.renderNodeAtCell('a', createCell(), [0, 0]);
     manager.renderNodeAtCell('b', createCell(), [0, 1]);
@@ -470,7 +474,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.getCellFromListForRow', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     const a = manager.renderNodeAtCell('a', createCell(), [0, 0]);
     const b = manager.renderNodeAtCell('b', createCell(), [0, 1]);
@@ -508,7 +512,7 @@ export default test.describe('GridCellManager', () => {
   });
 
   test('GridCellManager.discardColsStartingWith', async () => {
-    const manager = new GridCellManager('test');
+    const manager = createManager();
 
     manager.renderNodeAtCell('a', createCell(), [0, 0]);
     manager.renderNodeAtCell('b', createCell(), [0, 1]);

@@ -1,12 +1,16 @@
 import { Renderable } from '@src/components/types/Renderable';
 import { buildSubscriptionCallback } from '@src/components/utils/buildSubscriptionCallback';
 import { GridCellManager } from '@src/components/HeadlessTable/GridCellManager';
+import { GridCellPoolForReact } from '@src/components/HeadlessTable/GridCellPoolForReact';
 import { AvoidReactDiff } from '@src/components/RawList/AvoidReactDiff';
 import { useEffect, useState } from 'react';
 
 export default function CellManagerPage() {
   const [cellManager] = useState<GridCellManager<any>>(() => {
-    const cellManager = new GridCellManager('test');
+    const cellManager = new GridCellManager(
+      'test',
+      new GridCellPoolForReact('test'),
+    );
 
     // @ts-ignore
     globalThis.cellManager = cellManager;

@@ -7,7 +7,7 @@ export type ManagedComponentStateContextValue<T_STATE, T_ACTIONS> = {
 };
 
 export type ComponentStateGeneratedActions<T_STATE> = {
-  [k in keyof T_STATE]: T_STATE[k] | React.SetStateAction<T_STATE[k]>;
+  [k in keyof T_STATE]: T_STATE[k] | ((prevState: T_STATE[k]) => T_STATE[k]);
 };
 
 export type ComponentInterceptedActions<T_STATE> = {

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { DeepMap } from '../../utils/DeepMap';
 import {
   AggregationReducerResult,
@@ -34,6 +32,8 @@ import {
   InfiniteTableState,
 } from '../InfiniteTable/types/InfiniteTableState';
 import { TreeDataSourceProps } from '../TreeGrid/types/TreeDataSourceProps';
+import { MutableRef } from '../types/DOMTypes';
+import { Renderable } from '../types/Renderable';
 import { NonUndefined } from '../types/NonUndefined';
 import { SubscriptionCallback } from '../types/SubscriptionCallback';
 import { RenderRange } from '../VirtualBrain';
@@ -307,15 +307,15 @@ export interface DataSourceSetupState<T> {
   debugTimings: Map<DebugTimingKey, number>;
   debugWarnings: Map<DataSourceDebugWarningKey, DebugWarningPayload>;
   indexer: Indexer<T, any>;
-  getDataSourceMasterContextRef: React.RefObject<
+  getDataSourceMasterContextRef: MutableRef<
     () => DataSourceMasterDetailContextValue<any> | undefined
   >;
-  __apiRef: React.RefObject<DataSourceApi<T> | null>;
-  lastSelectionUpdatedNodePathRef: React.RefObject<{
+  __apiRef: MutableRef<DataSourceApi<T> | null>;
+  lastSelectionUpdatedNodePathRef: MutableRef<{
     nodePath: NodePath;
     selected: boolean;
   } | null>;
-  lastExpandStateInfoRef: React.RefObject<{
+  lastExpandStateInfoRef: MutableRef<{
     state: 'collapsed' | 'expanded';
     nodePath: NodePath | null;
   }>;
@@ -333,7 +333,7 @@ export interface DataSourceSetupState<T> {
    */
   rowsPerPage: number | null;
   totalLeafNodesCount: number;
-  destroyedRef: React.MutableRefObject<boolean>;
+  destroyedRef: MutableRef<boolean>;
   idToIndexMap: Map<any, number>;
   idToPathMap: Map<any, NodePath>;
   pathToIndexMap: DeepMap<any, number>;
@@ -712,9 +712,7 @@ export type TreeExpandStateValue = TreeExpandState | TreeExpandStateObject<any>;
 export type DataSourceProps<T> = {
   nodesKey?: never;
   debugId?: string;
-  children?:
-    | React.ReactNode
-    | ((contextData: DataSourceState<T>) => React.ReactNode);
+  children?: Renderable | ((contextData: DataSourceState<T>) => Renderable);
   // TODO important #introduce-primaryKey-field-even-with-primaryKeyFn
   // even when we have primaryKey as fn, it would be useful to specify a `primaryKeyField`
   // so when we compute the primary key (via a fn), it can be assigned to the `primaryKeyField` field in
@@ -935,8 +933,8 @@ export type DataSourceFilterType<T> = {
   defaultOperator: string;
   valueGetter?: DataSourceFilterValueItemValueGetter<T>;
   components?: {
-    FilterEditor?: () => React.JSX.Element | null;
-    FilterOperatorSwitch?: () => React.JSX.Element | null;
+    FilterEditor?: () => Renderable;
+    FilterOperatorSwitch?: () => Renderable;
   };
   operators: DataSourceFilterOperator<T>[];
 };
@@ -946,8 +944,8 @@ export type DataSourceFilterOperator<T> = {
   label?: string;
 
   components?: {
-    FilterEditor?: () => React.JSX.Element | null;
-    Icon?: (props: any) => React.JSX.Element | null;
+    FilterEditor?: () => Renderable;
+    Icon?: (props: any) => Renderable;
   };
 
   fn: DataSourceFilterOperatorFunction<T>;
