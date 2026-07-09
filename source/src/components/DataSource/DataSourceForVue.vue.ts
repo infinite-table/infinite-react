@@ -678,7 +678,12 @@ export function useDataSourceForVue<T>(props: any) {
   >;
   const dataSourceActions =
     managedContextValue.componentActions as unknown as DataSourceComponentActions<T>;
-  const getDataSourceState = () => state.value;
+  // non-tracking getter (NOT `() => state.value`): getDataSourceState is the
+  // imperative accessor handed to cells/api/event handlers - reading the
+  // reactive ref here would subscribe every calling component to ALL state
+  // changes. Reactive consumers read `state.value` directly instead.
+  const getDataSourceState =
+    managedContextValue.getComponentState as () => DataSourceState<T>;
 
   state.value.getDataSourceMasterContextRef.current =
     getDataSourceMasterContext;

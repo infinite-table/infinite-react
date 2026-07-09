@@ -7,7 +7,19 @@ export default test.describe.parallel('DataSource', () => {
     page,
   }) => {
     await page.load();
-    page.waitForLoadState('domcontentloaded');
+    // wait for the app to mount and for the DataSource to finish loading
+    // (#source renders "loading" until the data promise resolves)
+    await page.waitForFunction(() => {
+      const el = document.querySelector('#source') as HTMLElement | null;
+      if (!el) {
+        return false;
+      }
+      try {
+        return Array.isArray(JSON.parse(el.innerText));
+      } catch {
+        return false;
+      }
+    });
     let result = await page.evaluate(() => {
       return JSON.parse(
         (document.querySelector('#source') as HTMLElement).innerText,

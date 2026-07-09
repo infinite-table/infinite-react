@@ -3,6 +3,7 @@ import {
   defineComponent,
   h,
   onBeforeUnmount,
+  onRenderTriggered,
   provide,
   shallowRef,
   watch,
@@ -182,6 +183,7 @@ export type InfiniteTableColumnCellVueProps<T = any> = {
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   showZebraRows: boolean;
   rowDetailState: false | 'collapsed' | 'expanded';
+  inEditMode?: boolean;
   rowIndexInHorizontalLayoutPage: number | null;
   horizontalLayoutPageIndex: number | null;
   rowStyle?: InfiniteTablePropRowStyle<T>;
@@ -193,6 +195,11 @@ export type InfiniteTableColumnCellVueProps<T = any> = {
   renderingContext: InfiniteTableColumnRenderingContext<T>;
   getComputedVisibleColumns: () => InfiniteTableComputedColumn<T>[];
   getComputedColumnOrder: () => string[];
+  dataSourceStatePartial?: {
+    isNodeReadOnly: unknown;
+    selectionMode: unknown;
+    cellSelection: unknown;
+  };
   onMouseEnter?: (event: GridMouseEvent) => void;
   onMouseLeave?: (event: GridMouseEvent) => void;
 };
@@ -219,6 +226,11 @@ export const InfiniteTableColumnCell = defineComponent({
       type: [Boolean, String] as PropType<false | 'collapsed' | 'expanded'>,
       default: false,
     },
+    // not read directly - the cell derives inEdit live via
+    // getColumnRenderingParams. Passed as a prop (same as React) so the
+    // prop diff makes exactly the affected cell re-render when editing
+    // starts/stops.
+    inEditMode: { type: Boolean, default: false },
     rowIndexInHorizontalLayoutPage: {
       type: Number as PropType<number | null>,
       default: null,
@@ -245,6 +257,14 @@ export const InfiniteTableColumnCell = defineComponent({
       type: Function as PropType<() => string[]>,
       required: true,
     },
+    // not read directly - the cell reads the live values via
+    // getDataSourceState during render. Passed as a prop (same as React's
+    // dataSourceStatePartialForCell) so the prop diff re-renders the cell
+    // when isNodeReadOnly / selectionMode / cellSelection change
+    dataSourceStatePartial: {
+      type: Object as PropType<any>,
+      default: undefined,
+    },
     // the renderer's row-hover handlers (add/remove hover classnames on the
     // row's cells) - declared as props so Vue doesn't treat them as emits
     onMouseEnter: {
@@ -257,6 +277,20 @@ export const InfiniteTableColumnCell = defineComponent({
     },
   },
   setup(props) {
+    if (__DEV__ && (globalThis as any).__INFINITE_DEBUG_CELL__) {
+      onRenderTriggered((e) => {
+        // eslint-disable-next-line no-console
+        console.log(
+          '[cell render triggered]',
+          props.rowIndex,
+          props.column?.id,
+          e.type,
+          (e as any).key,
+          e.target,
+        );
+      });
+    }
+
     const htmlElementRef: { current: HTMLElement | null } = { current: null };
     const domRefCallback = (el: any) => {
       // when a custom ColumnCell component is used, the ref is the component

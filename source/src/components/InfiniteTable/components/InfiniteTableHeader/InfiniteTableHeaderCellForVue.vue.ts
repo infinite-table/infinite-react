@@ -1,7 +1,9 @@
 import {
+  computed,
   defineComponent,
   h,
   inject,
+  onRenderTriggered,
   provide,
   ref,
   shallowRef,
@@ -251,6 +253,45 @@ export const InfiniteTableHeaderCell = defineComponent({
       dragColumnOutside,
     });
 
+    // fine-grained reactive selections (like React's useInfiniteTableSelector
+    // with equality check): a computed only re-triggers the render effect
+    // when its VALUE changes - reading state.value directly in the render
+    // would make every header cell re-render on EVERY state change
+    const columnMenuVisibleForColumnIdRef = computed(
+      () => tableContext.state.value.columnMenuVisibleForColumnId,
+    );
+    const columnReorderDragColumnIdRef = computed(
+      () => tableContext.state.value.columnReorderDragColumnId,
+    );
+    const columnReorderInPageIndexRef = computed(
+      () => tableContext.state.value.columnReorderInPageIndex,
+    );
+    const showColumnFiltersRef = computed(
+      () => tableContext.state.value.showColumnFilters,
+    );
+    const columnHeaderHeightRef = computed(
+      () => tableContext.state.value.columnHeaderHeight,
+    );
+    const componentsRef = computed(() => tableContext.state.value.components);
+    // React receives filterTypes as a prop from the header renderCell -
+    // in Vue we select it reactively so filter UI updates when it changes
+    const filterTypesRef = computed(
+      () => dataSourceContext.state.value.filterTypes,
+    );
+
+    if (__DEV__ && (globalThis as any).__INFINITE_DEBUG_HEADER_CELL__) {
+      onRenderTriggered((event) => {
+        // eslint-disable-next-line no-console
+        console.log(
+          '[header cell render triggered]',
+          props.column.id,
+          event.type,
+          String(event.key),
+          (event.target as any)?.constructor?.name,
+        );
+      });
+    }
+
     return () => {
       const { column, columnsMap, horizontalLayoutPageIndex, headerOptions } =
         props;
@@ -307,13 +348,11 @@ export const InfiniteTableHeaderCell = defineComponent({
       // reactive read: the render effect re-runs when the column menu
       // opens/closes for this column
       const columnMenuVisibleForColumnId =
-        tableContext.state.value.columnMenuVisibleForColumnId;
+        columnMenuVisibleForColumnIdRef.value;
 
       // reactive reads for drag-to-reorder state
-      const columnReorderDragColumnId =
-        tableContext.state.value.columnReorderDragColumnId;
-      const columnReorderInPageIndex =
-        tableContext.state.value.columnReorderInPageIndex;
+      const columnReorderDragColumnId = columnReorderDragColumnIdRef.value;
+      const columnReorderInPageIndex = columnReorderInPageIndexRef.value;
 
       const dragging = columnReorderDragColumnId === column.id;
       const insideDisabledDraggingPage =
@@ -344,14 +383,13 @@ export const InfiniteTableHeaderCell = defineComponent({
       };
       const MenuIconCmp =
         (column.components?.MenuIcon as any) ||
-        (getState().components?.MenuIcon as any) ||
+        (componentsRef.value?.MenuIcon as any) ||
         MenuIcon;
       const menuIcon = h(MenuIconCmp, menuIconProps);
 
       // ------- header filter (mirrors the React header cell) -------
-      const showColumnFilters = getState().showColumnFilters;
-      const dataSourceState = getDataSourceState();
-      const filterTypes = dataSourceState.filterTypes;
+      const showColumnFilters = showColumnFiltersRef.value;
+      const filterTypes = filterTypesRef.value;
 
       const filterTypeKey = column.computedFilterType;
       const filterType = filterTypes[filterTypeKey];
@@ -388,7 +426,7 @@ export const InfiniteTableHeaderCell = defineComponent({
               columnFilterType: filterTypeKey,
               columnLabel: column.field || column.name || column.id,
               columnFilterValue: column.computedFilterValue,
-              columnHeaderHeight: getState().columnHeaderHeight,
+              columnHeaderHeight: columnHeaderHeightRef.value,
             },
           })
         : h(InfiniteTableColumnHeaderFilterEmpty);

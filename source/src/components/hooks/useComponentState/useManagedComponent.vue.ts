@@ -210,40 +210,47 @@ export function buildManagedVueComponent<
       return parentStateSource;
     };
 
+    // rawState is a non-reactive mirror of state.value: getComponentState
+    // reads it so imperative getters (getState/getDataSourceState) NEVER set
+    // up reactive tracking - the same contract as React, where getState() is
+    // a plain getter. Reactive consumers must read `state.value` directly.
+    // Without this, every component calling getState() during render (eg
+    // each cell) re-renders on EVERY state change.
+    let rawState: COMPONENT_STATE = initManagedState<
+      T_PROPS,
+      COMPONENT_MAPPED_STATE,
+      COMPONENT_SETUP_STATE,
+      COMPONENT_DERIVED_STATE,
+      T_PARENT_STATE
+    >({
+      props: snapshotProps(),
+      initialSetupState,
+      propsToForward,
+      parentState: readParentState(),
+      mapPropsToState: config.mapPropsToState as any,
+      propsToStateSet,
+    });
+
     // annotated explicitly: shallowRef's overloads otherwise widen the
     // generic object type
-    const state: ShallowRef<COMPONENT_STATE> = shallowRef(
-      initManagedState<
-        T_PROPS,
-        COMPONENT_MAPPED_STATE,
-        COMPONENT_SETUP_STATE,
-        COMPONENT_DERIVED_STATE,
-        T_PARENT_STATE
-      >({
-        props: snapshotProps(),
-        initialSetupState,
-        propsToForward,
-        parentState: readParentState(),
-        mapPropsToState: config.mapPropsToState as any,
-        propsToStateSet,
-      }),
-    );
+    const state: ShallowRef<COMPONENT_STATE> = shallowRef(rawState);
 
-    const getComponentState = () => state.value;
+    const getComponentState = () => rawState;
     const getProps = snapshotProps;
 
     const dispatch = (action: any) => {
-      state.value = managedComponentReducer<
+      rawState = managedComponentReducer<
         T_PROPS,
         COMPONENT_STATE,
         T_PARENT_STATE
-      >(state.value, action, {
+      >(rawState, action, {
         getProps,
         getParentState: readParentState,
         mapPropsToState: config.mapPropsToState as any,
         concludeReducer: config.concludeReducer as any,
         propsToStateSet,
       });
+      state.value = rawState;
     };
 
     const notify = createVueNotifyChange(

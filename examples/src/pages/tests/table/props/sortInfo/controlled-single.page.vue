@@ -63,7 +63,7 @@ const columns = {
 <template>
   <div>
     <p>Currently the sorting is {{ enabled ? 'enabled' : 'disabled' }}</p>
-    <button @click="toggleEnabled">
+    <button id="toggle-sortInfo" @click="toggleEnabled">
       Toggle - click the toggle to
       {{ enabled ? 'disable' : 'enable' }} sortInfo
     </button>

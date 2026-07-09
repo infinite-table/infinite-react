@@ -15,6 +15,7 @@ import type { ShallowRef } from 'vue';
 
 import { join } from '../../utils/join';
 import { buildManagedVueComponent } from '../hooks/useComponentState/useManagedComponent.vue';
+import { computedWithDeps } from '../hooks/computedWithDeps.vue';
 import { setupResizeObserver } from '../ResizeObserver/setupResizeObserver';
 
 import {
@@ -364,7 +365,12 @@ export const InfiniteTable = defineComponent({
     >;
     const actions =
       managedContextValue.componentActions as unknown as InfiniteTableActions<any>;
-    const getState = () => state.value;
+    // non-tracking getter (NOT `() => state.value`): getState is the
+    // imperative accessor handed to cells/api/event handlers - reading the
+    // reactive ref here would subscribe every calling component to ALL state
+    // changes. Reactive consumers read `state.value` directly instead.
+    const getState =
+      managedContextValue.getComponentState as () => InfiniteTableState<any>;
 
     const { state: dataSourceState, getDataSourceState } = dataSourceContext;
 
@@ -719,46 +725,89 @@ export const InfiniteTable = defineComponent({
       { immediate: true },
     );
 
-    // shared column-computation pipeline (what useComputedColumns memoizes)
-    const computedColumnsResult = computed(() => {
-      const s = state.value;
-      const ds = dataSourceState.value;
+    // shared column-computation pipeline (what useComputedColumns memoizes).
+    // Memoized on the same deps as React's useComputedColumns so column
+    // identities survive unrelated state changes (eg data updates) - cells
+    // and header cells rely on stable `column` prop identities to skip
+    // re-rendering.
+    const computedColumnsResult = computedWithDeps(
+      () => {
+        const s = state.value;
+        const ds = dataSourceState.value;
+        return [
+          s.computedColumns,
+          s.bodySize.width,
+          s.columnMinWidth,
+          s.columnMaxWidth,
+          s.columnDefaultWidth,
+          s.columnDefaultFlex,
+          s.columnCssEllipsis,
+          s.columnHeaderCssEllipsis,
+          s.viewportReservedWidth,
+          s.resizableColumns,
+          ds.filterValue,
+          ds.filterTypes,
+          s.sortable,
+          ds.sortInfo,
+          ds.multiSort,
+          s.pinnedEndMaxWidth,
+          s.pinnedStartMaxWidth,
+          s.draggableColumns,
+          s.columnDefaultDraggable,
+          s.columnOrder,
+          s.columnPinning,
+          s.columnDefaultEditable,
+          s.columnDefaultFilterable,
+          s.columnDefaultGroupable,
+          s.columnDefaultSortable,
+          s.editable,
+          s.columnSizing,
+          s.columnTypes,
+          s.columnVisibility,
+          ds.groupBy,
+        ];
+      },
+      () => {
+        const s = state.value;
+        const ds = dataSourceState.value;
 
-      return getComputedColumns({
-        columns: s.computedColumns,
-        scrollbarWidth: undefined,
-        bodySize: s.bodySize,
-        columnMinWidth: s.columnMinWidth,
-        columnMaxWidth: s.columnMaxWidth,
-        columnDefaultWidth: s.columnDefaultWidth,
-        columnDefaultFlex: s.columnDefaultFlex,
-        columnCssEllipsis: s.columnCssEllipsis,
-        columnHeaderCssEllipsis: s.columnHeaderCssEllipsis,
-        viewportReservedWidth: s.viewportReservedWidth,
-        resizableColumns: s.resizableColumns,
-        filterValue: ds.filterValue,
-        filterTypes: ds.filterTypes,
-        sortable: s.sortable,
-        sortInfo: ds.sortInfo ?? undefined,
-        multiSort: ds.multiSort,
-        pinnedEndMaxWidth: s.pinnedEndMaxWidth,
-        pinnedStartMaxWidth: s.pinnedStartMaxWidth,
-        draggableColumns: s.draggableColumns,
-        columnDefaultDraggable: s.columnDefaultDraggable,
-        columnOrder: s.columnOrder,
-        columnPinning: s.columnPinning,
-        columnDefaultEditable: s.columnDefaultEditable,
-        columnDefaultFilterable: s.columnDefaultFilterable,
-        columnDefaultGroupable: s.columnDefaultGroupable,
-        columnDefaultSortable: s.columnDefaultSortable,
-        editable: s.editable,
-        columnSizing: s.columnSizing,
-        columnTypes: s.columnTypes,
-        columnVisibility: s.columnVisibility,
-        columnVisibilityAssumeVisible: true,
-        groupBy: ds.groupBy,
-      });
-    });
+        return getComputedColumns({
+          columns: s.computedColumns,
+          scrollbarWidth: undefined,
+          bodySize: s.bodySize,
+          columnMinWidth: s.columnMinWidth,
+          columnMaxWidth: s.columnMaxWidth,
+          columnDefaultWidth: s.columnDefaultWidth,
+          columnDefaultFlex: s.columnDefaultFlex,
+          columnCssEllipsis: s.columnCssEllipsis,
+          columnHeaderCssEllipsis: s.columnHeaderCssEllipsis,
+          viewportReservedWidth: s.viewportReservedWidth,
+          resizableColumns: s.resizableColumns,
+          filterValue: ds.filterValue,
+          filterTypes: ds.filterTypes,
+          sortable: s.sortable,
+          sortInfo: ds.sortInfo ?? undefined,
+          multiSort: ds.multiSort,
+          pinnedEndMaxWidth: s.pinnedEndMaxWidth,
+          pinnedStartMaxWidth: s.pinnedStartMaxWidth,
+          draggableColumns: s.draggableColumns,
+          columnDefaultDraggable: s.columnDefaultDraggable,
+          columnOrder: s.columnOrder,
+          columnPinning: s.columnPinning,
+          columnDefaultEditable: s.columnDefaultEditable,
+          columnDefaultFilterable: s.columnDefaultFilterable,
+          columnDefaultGroupable: s.columnDefaultGroupable,
+          columnDefaultSortable: s.columnDefaultSortable,
+          editable: s.editable,
+          columnSizing: s.columnSizing,
+          columnTypes: s.columnTypes,
+          columnVisibility: s.columnVisibility,
+          columnVisibilityAssumeVisible: true,
+          groupBy: ds.groupBy,
+        });
+      },
+      'computedColumnsResult',
+    );
 
     const getComputedVisibleColumns = () =>
       computedColumnsResult.value.computedVisibleColumns;
@@ -825,7 +874,10 @@ export const InfiniteTable = defineComponent({
     } | null = null;
 
     const getComputedRowHeightResult = () => {
-      const s = state.value;
+      // non-tracking read: getComputed() is called from cell/header render
+      // functions - a reactive `state.value` read here would subscribe them
+      // to every state change
+      const s = getState();
       const deps = [
         s.rowHeight,
         s.rowDetailHeight,
@@ -1648,154 +1700,229 @@ export const InfiniteTable = defineComponent({
     ];
 
     // mirrors the hoverClassNames useMemo in the React InfiniteTableBody
-    const hoverClassNames = computed<string[] | undefined>(() => {
-      const s = state.value;
-      if (!s.showHoverRows) {
-        return undefined;
-      }
-
-      let result: string[] = [];
-
-      if (s.rowHoverClassName) {
-        result = result.concat(s.rowHoverClassName);
-      }
-
-      result = result.concat(HOVERED_CLASS_NAMES);
-
-      return result
-        .join(' ')
-        .split(' ')
-        .map((str) => str.trim())
-        .filter(Boolean);
-    });
-
-    const renderCellComputed = computed<TableRenderCellFn>(() => {
-      const dataArray = dataSourceState.value.dataArray;
-      const { computedVisibleColumns, computedColumnsMap, fieldsToColumn } =
-        computedColumnsResult.value;
-      const s = state.value;
-      const showZebraRows = s.showZebraRows;
-      const rowInfoStore = dataSourceState.value.rowInfoStore;
-
-      return (params: TableRenderCellFnParam) => {
-        const {
-          rowIndex,
-          colIndex,
-          domRef,
-          hidden,
-          width,
-          heightWithRowspan,
-          onMouseEnter,
-          onMouseLeave,
-        } = params;
-
-        const rowInfo = dataArray[rowIndex];
-        const column = computedVisibleColumns[colIndex];
-
-        if (!rowInfo || !column) {
-          return null;
+    const hoverClassNames = computedWithDeps<string[] | undefined>(
+      () => {
+        const s = state.value;
+        return [s.showHoverRows, s.rowHoverClassName];
+      },
+      () => {
+        const s = state.value;
+        if (!s.showHoverRows) {
+          return undefined;
         }
 
-        let rowDetailState: false | 'collapsed' | 'expanded' = false;
-        const isRowDetailsEnabled = s.isRowDetailEnabled;
-        const isRowDetailsExpanded = s.isRowDetailExpanded;
-        if (
-          !isRowDetailsEnabled ||
-          (typeof isRowDetailsEnabled === 'function' &&
-            !isRowDetailsEnabled(rowInfo))
-        ) {
-          rowDetailState = false;
-        } else if (isRowDetailsExpanded) {
-          rowDetailState = isRowDetailsExpanded(rowInfo)
-            ? 'expanded'
-            : 'collapsed';
+        let result: string[] = [];
+
+        if (s.rowHoverClassName) {
+          result = result.concat(s.rowHoverClassName);
         }
 
-        return h(InfiniteTableColumnCell, {
-          key: `${rowIndex}:${column.id}`,
-          rowIndex,
-          rowHeight: heightWithRowspan,
-          width,
-          hidden,
-          domRef: domRef as any,
-          column,
-          columnsMap: computedColumnsMap,
-          fieldsToColumn,
-          showZebraRows,
-          rowDetailState,
-          rowIndexInHorizontalLayoutPage: s.wrapRowsHorizontally
-            ? s.brain.getRowIndexInPage(rowIndex)
-            : null,
-          horizontalLayoutPageIndex: s.wrapRowsHorizontally
-            ? s.brain.getPageIndexForRow(rowIndex)
-            : null,
-          rowStyle: s.rowStyle as any,
-          rowClassName: s.rowClassName as any,
-          cellStyle: s.cellStyle as any,
-          cellClassName: s.cellClassName as any,
-          getData,
-          rowInfoStore,
-          renderingContext,
-          getComputedVisibleColumns,
-          getComputedColumnOrder,
-          onMouseEnter,
-          onMouseLeave,
-        }) as unknown as Renderable;
-      };
-    });
+        result = result.concat(HOVERED_CLASS_NAMES);
+
+        return result
+          .join(' ')
+          .split(' ')
+          .map((str) => str.trim())
+          .filter(Boolean);
+      },
+      'hoverClassNames',
+    );
+
+    // mirrors React's dataSourceStatePartialForCell useMemo: passed as a cell
+    // prop purely so the prop diff re-renders all cells when one of these
+    // DataSource state slices changes (the cell reads the live values
+    // imperatively via getDataSourceState during render)
+    const dataSourceStatePartialForCell = computedWithDeps(
+      () => {
+        const ds = dataSourceState.value;
+        return [ds.isNodeReadOnly, ds.selectionMode, ds.cellSelection];
+      },
+      () => {
+        const ds = getDSState();
+        return {
+          isNodeReadOnly: ds.isNodeReadOnly,
+          selectionMode: ds.selectionMode,
+          cellSelection: ds.cellSelection,
+        };
+      },
+      'dataSourceStatePartialForCell',
+    );
+
+    // memoized on the same deps as React's useCellRendering renderCell
+    // useCallback: NOT on dataArray (read lazily via getData, like React's
+    // useLatest getter) - so a data update does not produce a new renderCell
+    // identity and does not force-rerender every cell. Per-row updates reach
+    // the cells through their rowInfoStore subscriptions instead.
+    const renderCellComputed = computedWithDeps<TableRenderCellFn>(
+      () => {
+        const s = state.value;
+        const ds = dataSourceState.value;
+        return [
+          computedColumnsResult.value,
+          s.rowHeight,
+          s.rowDetailHeight,
+          s.onRowMouseEnter,
+          s.onRowMouseLeave,
+          s.isRowDetailExpanded,
+          s.isRowDetailEnabled,
+          s.groupRenderStrategy,
+          s.wrapRowsHorizontally,
+          s.showZebraRows,
+          s.brain,
+          s.rowStyle,
+          s.rowClassName,
+          s.cellStyle,
+          s.cellClassName,
+          s.editingCell,
+          s.updatedAt,
+          ds.rowInfoStore,
+          dataSourceStatePartialForCell.value,
+        ];
+      },
+      () => {
+        const { computedVisibleColumns, computedColumnsMap, fieldsToColumn } =
+          computedColumnsResult.value;
+        const s = getState();
+        const showZebraRows = s.showZebraRows;
+        const rowInfoStore = getDSState().rowInfoStore;
+        const dataSourceStatePartial = dataSourceStatePartialForCell.value;
+
+        return (params: TableRenderCellFnParam) => {
+          const {
+            rowIndex,
+            colIndex,
+            domRef,
+            hidden,
+            width,
+            heightWithRowspan,
+            onMouseEnter,
+            onMouseLeave,
+          } = params;
+
+          const rowInfo = getData()[rowIndex];
+          const column = computedVisibleColumns[colIndex];
+
+          if (!rowInfo || !column) {
+            return null;
+          }
+
+          let rowDetailState: false | 'collapsed' | 'expanded' = false;
+          const isRowDetailsEnabled = s.isRowDetailEnabled;
+          const isRowDetailsExpanded = s.isRowDetailExpanded;
+          if (
+            !isRowDetailsEnabled ||
+            (typeof isRowDetailsEnabled === 'function' &&
+              !isRowDetailsEnabled(rowInfo))
+          ) {
+            rowDetailState = false;
+          } else if (isRowDetailsExpanded) {
+            rowDetailState = isRowDetailsExpanded(rowInfo)
+              ? 'expanded'
+              : 'collapsed';
+          }
+
+          // whether THIS cell is in edit mode - passed as a prop (like React)
+          // so an editing start/stop re-renders exactly the affected cell
+          const inEditMode = api.isEditorVisibleForCell({
+            rowIndex,
+            columnId: column.id,
+          });
+
+          return h(InfiniteTableColumnCell, {
+            key: `${rowIndex}:${column.id}`,
+            rowIndex,
+            rowHeight: heightWithRowspan,
+            width,
+            hidden,
+            domRef: domRef as any,
+            column,
+            columnsMap: computedColumnsMap,
+            fieldsToColumn,
+            showZebraRows,
+            rowDetailState,
+            inEditMode,
+            rowIndexInHorizontalLayoutPage: s.wrapRowsHorizontally
+              ? s.brain.getRowIndexInPage(rowIndex)
+              : null,
+            horizontalLayoutPageIndex: s.wrapRowsHorizontally
+              ? s.brain.getPageIndexForRow(rowIndex)
+              : null,
+            rowStyle: s.rowStyle as any,
+            rowClassName: s.rowClassName as any,
+            cellStyle: s.cellStyle as any,
+            cellClassName: s.cellClassName as any,
+            getData,
+            rowInfoStore,
+            renderingContext,
+            getComputedVisibleColumns,
+            getComputedColumnOrder,
+            dataSourceStatePartial,
+            onMouseEnter,
+            onMouseLeave,
+          }) as unknown as Renderable;
+        };
+      },
+      'body.renderCell',
+    );
 
     // mirrors renderDetailRow from React's useCellRendering
-    const renderDetailRowComputed = computed<
+    const renderDetailRowComputed = computedWithDeps<
       TableRenderDetailRowFn | undefined
-    >(() => {
-      const s = state.value;
-      const isRowDetailsExpanded = s.isRowDetailExpanded;
-      const rowDetailRenderer = s.rowDetailRenderer;
+    >(
+      () => {
+        const s = state.value;
+        return [s.isRowDetailExpanded, s.rowDetailRenderer, s.rowDetailCache];
+      },
+      () => {
+        const s = getState();
+        const isRowDetailsExpanded = s.isRowDetailExpanded;
+        const rowDetailRenderer = s.rowDetailRenderer;
 
-      if (!isRowDetailsExpanded || !rowDetailRenderer) {
-        return undefined;
-      }
-
-      const rowDetailCache = s.rowDetailCache;
-
-      return (params: TableRenderDetailRowFnParam) => {
-        const { rowIndex, domRef } = params;
-
-        const dataArray = getData();
-        const rowInfo = dataArray[rowIndex];
-        const computedRowSizeCacheForDetails =
-          getComputedRowHeightResult().computedRowSizeCacheForDetails;
-
-        if (
-          !rowInfo ||
-          !isRowDetailsExpanded(rowInfo) ||
-          !computedRowSizeCacheForDetails
-        ) {
-          // normally we would have returned `null`
-          // but if we return null, the headless renderer will lose track
-          // of the HTMLElement, and then when we scroll down and want
-          // to reuse the HTMLElement, it will be gone, and the rendering
-          // will break
-          return h('div', {
-            ref: domRef as any,
-            class: visibility.hidden,
-          }) as unknown as Renderable;
+        if (!isRowDetailsExpanded || !rowDetailRenderer) {
+          return undefined;
         }
 
-        const { rowDetailHeight, rowHeight } =
-          computedRowSizeCacheForDetails.getSize(rowIndex);
+        const rowDetailCache = s.rowDetailCache;
 
-        return h(InfiniteTableDetailRow, {
-          rowInfo,
-          rowDetailsCache: rowDetailCache,
-          rowIndex,
-          domRef: domRef as any,
-          detailOffset: rowHeight,
-          rowDetailHeight,
-          rowDetailRenderer: rowDetailRenderer as any,
-        }) as unknown as Renderable;
-      };
-    });
+        return (params: TableRenderDetailRowFnParam) => {
+          const { rowIndex, domRef } = params;
+
+          const dataArray = getData();
+          const rowInfo = dataArray[rowIndex];
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+
+          if (
+            !rowInfo ||
+            !isRowDetailsExpanded(rowInfo) ||
+            !computedRowSizeCacheForDetails
+          ) {
+            // normally we would have returned `null`
+            // but if we return null, the headless renderer will lose track
+            // of the HTMLElement, and then when we scroll down and want
+            // to reuse the HTMLElement, it will be gone, and the rendering
+            // will break
+            return h('div', {
+              ref: domRef as any,
+              class: visibility.hidden,
+            }) as unknown as Renderable;
+          }
+
+          const { rowDetailHeight, rowHeight } =
+            computedRowSizeCacheForDetails.getSize(rowIndex);
+
+          return h(InfiniteTableDetailRow, {
+            rowInfo,
+            rowDetailsCache: rowDetailCache,
+            rowIndex,
+            domRef: domRef as any,
+            detailOffset: rowHeight,
+            rowDetailHeight,
+            rowDetailRenderer: rowDetailRenderer as any,
+          }) as unknown as Renderable;
+        };
+      },
+    );
 
     const contextValue: InfiniteTableContextValueForVue = {
       state,

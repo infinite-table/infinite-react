@@ -9,6 +9,7 @@ import {
 import type { PropType } from 'vue';
 
 import { join } from '../../../../utils/join';
+import { computedWithDeps } from '../../../hooks/computedWithDeps.vue';
 import { getScrollbarWidth } from '../../../utils/getScrollbarWidth';
 import type { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
@@ -80,22 +81,37 @@ export const TableHeaderWrapper = defineComponent({
       );
     });
 
-    const columnAndGroupTreeInfoRef = computed(() => {
-      const s = state.value;
-      const { computedColumnGroups, columnGroupsDepthsMap } = s;
-      const { computedVisibleColumns } = getComputed();
+    const columnAndGroupTreeInfoRef = computedWithDeps(
+      () => {
+        const s = state.value;
+        return [
+          s.computedColumnGroups,
+          s.columnGroupsDepthsMap,
+          s.columnGroupsMaxDepth,
+          getComputed().computedVisibleColumns,
+        ];
+      },
+      () => {
+        const s = getState();
+        const { computedColumnGroups, columnGroupsDepthsMap } = s;
+        const { computedVisibleColumns } = getComputed();
 
-      if (!computedColumnGroups || !Object.keys(computedColumnGroups).length) {
-        return undefined;
-      }
+        if (
+          !computedColumnGroups ||
+          !Object.keys(computedColumnGroups).length
+        ) {
+          return undefined;
+        }
 
-      return buildColumnAndGroupTree(
-        computedVisibleColumns,
-        computedColumnGroups,
-        columnGroupsDepthsMap,
-        s.columnGroupsMaxDepth,
-      );
-    });
+        return buildColumnAndGroupTree(
+          computedVisibleColumns,
+          computedColumnGroups,
+          columnGroupsDepthsMap,
+          s.columnGroupsMaxDepth,
+        );
+      },
+      'header.treeInfo',
+    );
 
     // what useMatrixBrain does for the header brain in TableHeaderWrapper
     watchEffect(() => {
@@ -217,85 +233,109 @@ export const TableHeaderWrapper = defineComponent({
     });
 
     // ------- internal header: virtualized header cells -------
-    const renderCellComputed = computed<TableRenderCellFn>(() => {
-      const s = state.value;
-      const ds = dataSourceContext.state.value;
-      const { computedVisibleColumns, computedColumnsMap } = getComputed();
+    // memoized on the same deps as the React InfiniteTableHeader renderCell
+    // useCallback - a data update must not produce a new renderCell identity
+    // (which would force-rerender every header cell)
+    const renderCellComputed = computedWithDeps<TableRenderCellFn>(
+      () => {
+        const s = state.value;
+        const ds = dataSourceContext.state.value;
+        const { computedVisibleColumns, computedColumnsMap } = getComputed();
+        return [
+          s.headerOptions,
+          s.columnHeaderHeight,
+          s.columnGroupsMaxDepth,
+          s.showColumnFilters,
+          computedVisibleColumns,
+          computedColumnsMap,
+          columnAndGroupTreeInfoRef.value,
+          props.headerBrain,
+          ds.allRowsSelected,
+          ds.someRowsSelected,
+          ds.selectionMode,
+          ds.filterTypes,
+          ds.filterDelay,
+        ];
+      },
+      () => {
+        const s = getState();
+        const ds = dataSourceContext.getDataSourceState();
+        const { computedVisibleColumns, computedColumnsMap } = getComputed();
 
-      const headerBrain = props.headerBrain;
-      const columnAndGroupTreeInfo = columnAndGroupTreeInfoRef.value;
-      const columnGroupsMaxDepth = s.columnGroupsMaxDepth;
-      const headerOptions = s.headerOptions;
-      // track so a filters toggle re-wires the header cells (same dep as React)
-      void s.showColumnFilters;
+        const headerBrain = props.headerBrain;
+        const columnAndGroupTreeInfo = columnAndGroupTreeInfoRef.value;
+        const columnGroupsMaxDepth = s.columnGroupsMaxDepth;
+        const headerOptions = s.headerOptions;
 
-      const { allRowsSelected, someRowsSelected, selectionMode } = ds;
+        const { allRowsSelected, someRowsSelected, selectionMode } = ds;
 
-      return (params: TableRenderCellFnParam) => {
-        const {
-          rowIndex,
-          colIndex,
-          domRef,
-          height,
-          widthWithColspan,
-          heightWithRowspan,
-          hidden,
-        } = params;
+        return (params: TableRenderCellFnParam) => {
+          const {
+            rowIndex,
+            colIndex,
+            domRef,
+            height,
+            widthWithColspan,
+            heightWithRowspan,
+            hidden,
+          } = params;
 
-        const column = computedVisibleColumns[colIndex];
-        if (!column || hidden) {
-          return null;
-        }
-        const horizontalLayoutPageIndex = headerBrain.isHorizontalLayoutBrain
-          ? headerBrain.getPageIndexForRow(rowIndex)
-          : null;
-        const colGroupItem = columnAndGroupTreeInfo
-          ? columnAndGroupTreeInfo.pathsToCells.get([rowIndex, colIndex])
-          : null;
-
-        if (colGroupItem && colGroupItem.type === 'group') {
-          const columns = colGroupItem.columnItems.map((item) => item.ref);
-          const computedColumnGroup: InfiniteTableComputedColumnGroup = {
-            ...colGroupItem.ref,
-            id: colGroupItem.id,
-            uniqueGroupId: colGroupItem.uniqueGroupId,
-            depth: colGroupItem.depth,
-            columns: columns.map((c) => c.id),
-            computedWidth: colGroupItem.computedWidth,
-            groupOffset: colGroupItem.groupOffset,
-          };
-          const visible =
-            getState().columnGroupVisibility[colGroupItem.id] !== false;
-
-          return visible
-            ? (h(InfiniteTableHeaderGroup, {
-                key: colGroupItem.uniqueGroupId.join('/'),
-                horizontalLayoutPageIndex,
-                columnGroupsMaxDepth,
-                domRef: domRef as any,
-                columns,
-                width: widthWithColspan,
-                height,
-                columnGroup: computedColumnGroup,
-              }) as any)
+          const column = computedVisibleColumns[colIndex];
+          if (!column || hidden) {
+            return null;
+          }
+          const horizontalLayoutPageIndex = headerBrain.isHorizontalLayoutBrain
+            ? headerBrain.getPageIndexForRow(rowIndex)
             : null;
-        }
+          const colGroupItem = columnAndGroupTreeInfo
+            ? columnAndGroupTreeInfo.pathsToCells.get([rowIndex, colIndex])
+            : null;
 
-        return h(InfiniteTableHeaderCell, {
-          key: column.id,
-          domRef: domRef as any,
-          column,
-          columnsMap: computedColumnsMap,
-          horizontalLayoutPageIndex,
-          headerOptions,
-          width: widthWithColspan,
-          height: heightWithRowspan,
-          allRowsSelected,
-          someRowsSelected,
-          selectionMode,
-        }) as any;
-      };
-    });
+          if (colGroupItem && colGroupItem.type === 'group') {
+            const columns = colGroupItem.columnItems.map((item) => item.ref);
+            const computedColumnGroup: InfiniteTableComputedColumnGroup = {
+              ...colGroupItem.ref,
+              id: colGroupItem.id,
+              uniqueGroupId: colGroupItem.uniqueGroupId,
+              depth: colGroupItem.depth,
+              columns: columns.map((c) => c.id),
+              computedWidth: colGroupItem.computedWidth,
+              groupOffset: colGroupItem.groupOffset,
+            };
+            const visible =
+              getState().columnGroupVisibility[colGroupItem.id] !== false;
+
+            return visible
+              ? (h(InfiniteTableHeaderGroup, {
+                  key: colGroupItem.uniqueGroupId.join('/'),
+                  horizontalLayoutPageIndex,
+                  columnGroupsMaxDepth,
+                  domRef: domRef as any,
+                  columns,
+                  width: widthWithColspan,
+                  height,
+                  columnGroup: computedColumnGroup,
+                }) as any)
+              : null;
+          }
+
+          return h(InfiniteTableHeaderCell, {
+            key: column.id,
+            domRef: domRef as any,
+            column,
+            columnsMap: computedColumnsMap,
+            horizontalLayoutPageIndex,
+            headerOptions,
+            width: widthWithColspan,
+            height: heightWithRowspan,
+            allRowsSelected,
+            someRowsSelected,
+            selectionMode,
+          }) as any;
+        };
+      },
+      'header.renderCell',
+    );
 
     return () => {
       const height = heightRef.value;

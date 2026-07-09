@@ -86,6 +86,15 @@ export const InfiniteTableColumnEditor = defineComponent({
       const { key } = event;
       if (key === 'Enter' || key === 'Tab') {
         confirmEdit();
+        // unlike React (where dispatch is async, so the grid keydown handler
+        // still sees the edit as in progress when the event bubbles up), Vue
+        // state updates are synchronous - letting this event reach the grid
+        // handler would immediately start a NEW edit on the active cell
+        event.stopPropagation();
+        if (key === 'Tab') {
+          // the grid handler normally does this while an edit is in progress
+          event.preventDefault();
+        }
       } else if (key === 'Escape') {
         cancelled = true;
         cancelEdit();
