@@ -3,43 +3,7 @@ import { computed, ref } from 'vue';
 
 import { DataSource, InfiniteTable } from '@infinite-table/infinite-vue';
 
-type Developer = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  country: string;
-  city: string;
-  currency: string;
-  preferredLanguage: string;
-  stack: string;
-  canDesign: 'yes' | 'no';
-  hobby: string;
-  salary: number;
-  age: number;
-};
-
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + `/developers1k-sql?`)
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
-
-const columns: Record<string, any> = {
-  preferredLanguage: { field: 'preferredLanguage' },
-  country: { field: 'country' },
-  salary: {
-    field: 'salary',
-    type: 'number',
-  },
-  age: { field: 'age' },
-  canDesign: { field: 'canDesign' },
-  firstName: { field: 'firstName' },
-  stack: { field: 'stack' },
-  id: { field: 'id' },
-  hobby: { field: 'hobby' },
-  city: { field: 'city' },
-  currency: { field: 'currency' },
-};
+import { columns, developers1kDataSource } from './common';
 
 const color = ref({
   r: 77,
@@ -87,7 +51,7 @@ const onColorChange = (event: any) => {
       <input type="color" @change="onColorChange" :value="defaultColor" />
     </div>
 
-    <DataSource primaryKey="id" :data="dataSource">
+    <DataSource primaryKey="id" :data="developers1kDataSource">
       <InfiniteTable :domProps="domProps" :columns="columns" />
     </DataSource>
     <input />

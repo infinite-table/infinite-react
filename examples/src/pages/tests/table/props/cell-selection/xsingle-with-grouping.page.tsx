@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {
+  InfiniteTablePropColumns,
   InfiniteTable,
   DataSource,
   DataSourcePropRowSelection_MultiRow,
@@ -8,7 +9,6 @@ import {
   RowSelectionState,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
 

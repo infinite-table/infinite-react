@@ -42,9 +42,10 @@ const inferPaths = (pathname) => {
     .filter(Boolean);
   const base = parts.length === 0 ? PAGES_DIR : path.join(PAGES_DIR, ...parts);
   return {
-    // Page-mode (leaf): foo/bar.spec.ts + foo/bar.page.tsx
+    // Page-mode (leaf): foo/bar.spec.ts + foo/bar.page.tsx|.page.vue
     specPath: parts.length === 0 ? null : base + '.spec.ts',
-    pagePath: parts.length === 0 ? null : base + '.page.tsx',
+    pagePathTsx: parts.length === 0 ? null : base + '.page.tsx',
+    pagePathVue: parts.length === 0 ? null : base + '.page.vue',
     // Folder-mode (index): the directory itself, when it exists
     folderPath: base,
   };
@@ -87,7 +88,10 @@ const walkFiles = (root, match) => {
 const isSpecFile = (name) =>
   name.endsWith('.spec.ts') || name.endsWith('.spec.tsx');
 const isWatchableFile = (name) =>
-  isSpecFile(name) || name.endsWith('.page.tsx') || name.endsWith('.page.ts');
+  isSpecFile(name) ||
+  name.endsWith('.page.tsx') ||
+  name.endsWith('.page.vue') ||
+  name.endsWith('.page.ts');
 
 /**
  * Decide which mode the request maps to:
@@ -140,17 +144,40 @@ const readBody = (req) =>
     req.on('error', reject);
   });
 
+const getFrameworkSiblingInfo = (pathname) => {
+  const parts = String(pathname || '').split('/').filter(Boolean);
+  const base = parts.length === 0 ? PAGES_DIR : path.join(PAGES_DIR, ...parts);
+  let pagePathTsx = base + '.page.tsx';
+  let pagePathVue = base + '.page.vue';
+  if (!fs.existsSync(pagePathTsx) && !fs.existsSync(pagePathVue)) {
+    pagePathTsx = path.join(base, 'index.page.tsx');
+    pagePathVue = path.join(base, 'index.page.vue');
+  }
+  return {
+    hasReactPage: fs.existsSync(pagePathTsx),
+    hasVuePage: fs.existsSync(pagePathVue),
+  };
+};
+
 const handleCheck = (req, res, url) => {
-  const paths = inferPaths(url.searchParams.get('pathname'));
+  const pathname = url.searchParams.get('pathname') || '';
+  const paths = inferPaths(pathname);
+  const framework = getFrameworkSiblingInfo(pathname);
   const resolved = resolveMode(paths);
   if (!resolved) {
-    return sendJson(res, 200, { exists: false, spec: null, mode: null });
+    return sendJson(res, 200, {
+      exists: false,
+      spec: null,
+      mode: null,
+      ...framework,
+    });
   }
   if (resolved.mode === 'page') {
     return sendJson(res, 200, {
       exists: true,
       mode: 'page',
       spec: path.relative(EXAMPLES_ROOT, resolved.target),
+      ...framework,
     });
   }
   return sendJson(res, 200, {
@@ -158,6 +185,7 @@ const handleCheck = (req, res, url) => {
     mode: 'folder',
     spec: path.relative(EXAMPLES_ROOT, resolved.target),
     specCount: resolved.specs.length,
+    ...framework,
   });
 };
 
@@ -255,9 +283,15 @@ const handleRun = async (req, res) => {
     return sendJson(res, 400, { error: 'Invalid JSON' });
   }
 
-  const { pathname, watch = true } = parsed;
+  const { pathname, watch = true, project = 'react' } = parsed;
   if (typeof pathname !== 'string') {
     return sendJson(res, 400, { error: 'pathname required' });
+  }
+
+  const playwrightProject =
+    project === 'vue' ? 'vue' : project === 'react' ? 'react' : null;
+  if (!playwrightProject) {
+    return sendJson(res, 400, { error: 'project must be react or vue' });
   }
 
   const paths = inferPaths(pathname);
@@ -285,7 +319,9 @@ const handleRun = async (req, res) => {
   // Page mode: spec + page file. Folder mode: every spec/page under the folder.
   const watchedFiles =
     resolved.mode === 'page'
-      ? [paths.specPath, paths.pagePath].filter((f) => f && fs.existsSync(f))
+      ? [paths.specPath, paths.pagePathTsx, paths.pagePathVue].filter(
+          (f) => f && fs.existsSync(f),
+        )
       : walkFiles(resolved.target, isWatchableFile);
   let currentProc = null;
   let stopped = false;
@@ -305,12 +341,15 @@ const handleRun = async (req, res) => {
       ts: Date.now(),
     });
     const cmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+    // Test file path must come before `--project` (or use `--project=name`);
+    // otherwise Playwright treats the spec path as a project name.
     const args = [
       'playwright',
       'test',
+      relTarget,
       '--retries=0',
       '--reporter=list',
-      relTarget,
+      `--project=${playwrightProject}`,
     ];
     currentProc = spawn(cmd, args, {
       cwd: EXAMPLES_ROOT,

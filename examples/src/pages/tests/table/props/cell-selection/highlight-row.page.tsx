@@ -1,8 +1,11 @@
 import * as React from 'react';
 
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+import {
+  InfiniteTablePropColumns,
+  InfiniteTable,
+  DataSource,
+} from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 type Developer = {
   id: number;

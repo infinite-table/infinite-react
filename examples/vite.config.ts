@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+import { testPagesIndexPlugin } from './scripts/vite-plugin-test-pages-index.js';
 
 /**
  * The Vue examples app. Lives in the same folder as the Next.js (React)
@@ -17,7 +18,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, 'NEXT_PUBLIC_');
 
   return {
-    plugins: [vue()],
+    plugins: [vue(), testPagesIndexPlugin()],
     define: {
       __DEV__: JSON.stringify(true),
       __VERSION__: JSON.stringify(require('../package.json').version),
@@ -30,6 +31,10 @@ export default defineConfig(({ mode }) => {
       'process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY': JSON.stringify(
         env.NEXT_PUBLIC_INFINITE_LICENSE_KEY,
       ),
+      'import.meta.env.VITE_TEST_RUNNER_PORT': JSON.stringify(
+        process.env.TEST_RUNNER_PORT || '5599',
+      ),
+      'import.meta.env.VITE_TEST_PROJECT': JSON.stringify('vue'),
     },
     resolve: {
       // array form: more specific entries first

@@ -1,20 +1,9 @@
 <script setup lang="ts">
 import { DataSource, InfiniteTable } from '@infinite-table/infinite-vue';
 
-type Developer = {
-  id: number;
+import { type Developer as BaseDeveloper, height100DomProps } from './common';
 
-  firstName: string;
-  lastName: string;
-
-  currency: string;
-  preferredLanguage: string;
-  stack: string;
-  canDesign: 'yes' | 'no';
-  salary: string;
-
-  age: number;
-};
+type Developer = BaseDeveloper & { salary: string };
 
 const data: Developer[] = [
   {
@@ -100,17 +89,12 @@ const columns: Record<string, any> = {
   currency: { field: 'currency' },
 };
 
-const domProps = {
-  style: {
-    height: '100%',
-  },
-};
 </script>
 
 <template>
   <DataSource :data="data" primaryKey="id">
     <InfiniteTable
-      :domProps="domProps"
+      :domProps="height100DomProps"
       keyboardNavigation="cell"
       :columnDefaultEditable="true"
       :columnDefaultWidth="150"

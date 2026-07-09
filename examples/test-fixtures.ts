@@ -97,7 +97,7 @@ export const test = base.extend<
   },
   //@ts-ignore
   page: async ({ baseURL, page }, use, testInfo) => {
-    const { fileName, filePath, exists } = getFileInfoFromTestInfo(testInfo);
+    const { fileName, exists } = getFileInfoFromTestInfo(testInfo);
 
     // parity gate: specs without a .page.vue sibling yet are skipped on the
     // vue project instead of failing
