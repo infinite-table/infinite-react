@@ -185,10 +185,7 @@ const renderTreeIcon = ({ rowInfo, toggleCurrentTreeNode }) => {
   }
 
   return (
-    <FolderIcon
-      open={rowInfo.nodeExpanded}
-      onClick={toggleCurrentTreeNode}
-    />
+    <FolderIcon open={rowInfo.nodeExpanded} onClick={toggleCurrentTreeNode} />
   );
 };
 ```
