@@ -1,5 +1,5 @@
 import { asMeta } from '@www/utils/asMeta';
-import { CopyMarkdownButton } from '@www/components/CopyMarkdownButton';
+
 import RecentPosts from './RecentPosts';
 import { sortedPosts } from './sortedPosts';
 
