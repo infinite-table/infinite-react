@@ -8,7 +8,7 @@ import { ClipboardCopy } from './ClipboardCopy';
 type BasicCodeBlockProps = {
   className?: string;
   inline?: boolean;
-  highlightLines?: string;
+  highlightLines?: number[];
   title?: string;
   children?: string;
   lang?: string;
@@ -44,7 +44,10 @@ function CodeBlockCmp(props: Omit<BasicCodeBlockProps, 'file'>) {
       <div className={`${props.className || ''} text-base group`} style={style}>
         <>
           {/* @ts-ignore */}
-          <SyntaxHighlight highlightLines={props.highlightLines}>
+          <SyntaxHighlight
+            className={`language-${props.lang || 'js'}`}
+            highlightLines={props.highlightLines}
+          >
             {props.children}
           </SyntaxHighlight>
           <ClipboardCopy text={props.children ?? ''} />
