@@ -37,13 +37,13 @@ const pivotBy = [{ field: 'team' }];
 </DataSource>;
 ```
 
-That render prop is the important handoff. The `DataSource` looks at the configured <DataSourcePropLink name="pivotBy" /> and <DataSourcePropLink name="aggregationReducers" />, then gives the table the generated `pivotColumns` and `pivotColumnGroups`.
+The `children` render prop of the `DataSource` is an important handoff in the Pivot DataGrid. The `DataSource` looks at the configured <DataSourcePropLink name="pivotBy" /> and <DataSourcePropLink name="aggregationReducers" />, does all the data grouping and computations and then gives the table the generated `pivotColumns` and `pivotColumnGroups`.
 
 Without that split, you would have to scan the dataset yourself, discover every pivot value, construct matching columns, wire column groups, and keep the result in sync as grouping or pivoting changes.
 
 ## A practical example: grouping by role, pivoting by geography
 
-Imagine a people analytics grid where rows are grouped by `preferredLanguage` and `stack`, then pivoted by `country` and whether a developer can design. Instead of showing one salary column, the grid can show aggregated salary columns for each country/design combination.
+Imagine a developers analytics grid where rows are grouped by `preferredLanguage` and `stack`, then pivoted by `country` and whether a developer can design. Instead of showing one salary column, the grid can show aggregated salary columns for each country/design combination.
 
 The docs example below does exactly that. It groups developers, pivots the salary aggregation into generated columns, and starts with all groups collapsed so the cross-tab shape is easy to scan.
 
@@ -51,7 +51,7 @@ The docs example below does exactly that. It groups developers, pivots the salar
 
 <Description>
 
-This demo is pulled from the Infinite Table pivoting docs. Expand a group to see the aggregated salary values distributed across generated pivot columns.
+You can find this demo in our [pivoting docs](/docs/learn/grouping-and-pivoting/pivoting/overview). Expand a group to see the aggregated salary values distributed across generated pivot columns.
 
 </Description>
 
@@ -73,15 +73,16 @@ const columns: InfiniteTablePropColumns<Developer> = {
     field: 'salary',
     type: 'number',
     style: { color: 'red' },
-  },
-};
+  }
+}
 
 const aggregationReducers = {
   avgSalary: {
     field: 'salary',
     reducer: 'avg',
-  },
-};
+  }
+}
+
 ```
 
 That means your formatting, sizing, and column behavior can stay close to the original field definition.
