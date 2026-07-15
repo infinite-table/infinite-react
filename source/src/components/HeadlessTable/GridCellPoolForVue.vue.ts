@@ -69,12 +69,16 @@ class GridCellForVue<T_ADDITIONAL_CELL_INFO = any>
     this.pendingAfterCommitWork = fn;
   }
 
-  private afterCommit = () => {
+  flushPendingAfterCommitWork() {
     if (this.pendingAfterCommitWork) {
       const work = this.pendingAfterCommitWork;
       this.pendingAfterCommitWork = null;
       work();
     }
+  }
+
+  private afterCommit = () => {
+    this.flushPendingAfterCommitWork();
   };
 
   isMounted() {

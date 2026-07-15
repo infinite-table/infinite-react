@@ -41,14 +41,7 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
 
     this.updater = buildSubscriptionCallback<Renderable>();
 
-    this.node = (
-      <AvoidReactDiff
-        key={key}
-        name={key}
-        updater={this.updater}
-        afterCommit={this.afterCommit}
-      />
-    );
+    this.node = <AvoidReactDiff key={key} name={key} updater={this.updater} />;
 
     this.ref = (htmlElement) => {
       this.element = htmlElement;
@@ -65,13 +58,13 @@ class GridCellForReact<T_ADDITIONAL_CELL_INFO = any>
     this.pendingAfterCommitWork = fn;
   }
 
-  private afterCommit = () => {
+  flushPendingAfterCommitWork() {
     if (this.pendingAfterCommitWork) {
       const work = this.pendingAfterCommitWork;
       this.pendingAfterCommitWork = null;
       work();
     }
-  };
+  }
 
   isMounted() {
     return this.mounted;

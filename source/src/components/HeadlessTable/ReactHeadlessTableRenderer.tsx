@@ -1925,6 +1925,13 @@ export class GridRenderer extends Logger {
     }
   };
 
+  flushPendingAfterCommitWork = () => {
+    if (this.destroyed) {
+      return;
+    }
+    this.cellManager.flushPendingAfterCommitWork();
+  };
+
   destroy = () => {
     if (this.destroyed) {
       return;

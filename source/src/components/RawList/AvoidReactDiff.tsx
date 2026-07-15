@@ -8,16 +8,12 @@ export type AvoidReactDiffProps = {
   name?: string;
   useraf?: boolean;
   updater: SubscriptionCallback<Renderable>;
-  afterCommit?: () => void;
 };
 
 function AvoidReactDiffFn(props: AvoidReactDiffProps) {
   const [children, setChildren] = useState<Renderable>(props.updater.get);
 
   const rafId = useRef<any>(null);
-
-  const afterCommitRef = useRef(props.afterCommit);
-  afterCommitRef.current = props.afterCommit;
 
   // prev react 19 we had useEffect here
   // but there are situations when the updater would be called
@@ -46,12 +42,6 @@ function AvoidReactDiffFn(props: AvoidReactDiffProps) {
       remove();
     };
   }, [props.updater, props.useraf]);
-
-  // Fires synchronously after React commits DOM changes but before browser paint.
-  // Used to sync direct DOM work (like transforms) with React's commit cycle.
-  useLayoutEffect(() => {
-    afterCommitRef.current?.();
-  });
 
   return (children as React.ReactNode) ?? null;
 }

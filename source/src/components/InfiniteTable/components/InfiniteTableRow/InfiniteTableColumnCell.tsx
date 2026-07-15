@@ -144,6 +144,8 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowIndexInHorizontalLayoutPage,
     horizontalLayoutPageIndex,
     getData,
+    visibleColumnIds,
+    computedColumnOrder,
     cellStyle,
     cellClassName,
 
@@ -253,7 +255,6 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
 
   const rowDisabled = rowInfo.rowDisabled;
 
-  const visibleColumnsIds = computed.computedVisibleColumns.map((x) => x.id);
   const colRenderingParams = getColumnRenderingParams({
     horizontalLayoutPageIndex,
     rowIndexInHorizontalLayoutPage,
@@ -261,7 +262,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     rowInfo,
     rowDetailState: rowDetailState,
     columnsMap,
-    visibleColumnsIds,
+    visibleColumnIds,
     fieldsToColumn,
     context: renderingContext,
   });
@@ -640,8 +641,9 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     cellSelected,
     cellSelection,
     getData,
+    visibleColumnIds,
     computedVisibleColumns: computed.computedVisibleColumns,
-    computedColumnOrder: computed.computedColumnOrder,
+    computedColumnOrder,
     columnReorderInPageIndex,
   });
 

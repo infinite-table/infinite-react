@@ -485,6 +485,10 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     return this.matrix.size;
   }
 
+  flushPendingAfterCommitWork() {
+    this.pool.flushPendingAfterCommitWork();
+  }
+
   destroy() {
     this.reset();
   }

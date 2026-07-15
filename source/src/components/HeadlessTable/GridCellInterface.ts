@@ -14,6 +14,7 @@ export interface GridCellInterface<T_ADDITIONAL_CELL_INFO = any> {
   isMounted(): boolean;
   ref: ElementRefCallback;
   setPendingAfterCommitWork(fn: (() => void) | null): void;
+  flushPendingAfterCommitWork(): void;
 }
 
 /**
@@ -50,4 +51,5 @@ export interface GridCellPool<T_ADDITIONAL_CELL_INFO = any> {
 
   reset(): void;
   destroy(): void;
+  flushPendingAfterCommitWork(): void;
 }

@@ -237,6 +237,12 @@ export abstract class GridCellPoolBase<T_ADDITIONAL_CELL_INFO>
     return this.allCellsOrdered.size;
   }
 
+  flushPendingAfterCommitWork() {
+    for (const cell of this.attachedCells) {
+      cell.flushPendingAfterCommitWork();
+    }
+  }
+
   set poolSize(value: number) {
     value =
       Math.ceil(value / GridCellPoolBase.POOL_SIZE_INCREMENT) *

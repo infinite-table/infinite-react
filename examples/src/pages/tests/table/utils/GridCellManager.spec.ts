@@ -23,6 +23,7 @@ const createCell = (node?: string): GridCellInterface<any> => {
     ref: () => {},
     getAdditionalInfo: () => node,
     isMounted: () => true,
+    flushPendingAfterCommitWork: () => {},
   };
 };
 export default test.describe('GridCellManager', () => {

@@ -1,4 +1,4 @@
-import { FocusEvent } from 'react';
+import { FocusEvent, useMemo } from 'react';
 import { InfiniteTableClassName } from '..';
 import { join } from '../../../utils/join';
 import {
@@ -91,18 +91,33 @@ export function useDOMProps<T>(
     };
   });
 
-  const cssVars = getInfiniteCSSVars({
-    computedVisibleColumns,
-    computedPinnedStartColumns,
-    computedPinnedEndColumns,
-    computedPinnedStartColumnsWidth,
-    computedPinnedEndColumnsWidth,
-    computedUnpinnedColumnsWidth,
-    bodySize,
-    activeCellIndex,
-    brain,
-    scrollbars,
-  });
+  const cssVars = useMemo(
+    () =>
+      getInfiniteCSSVars({
+        computedVisibleColumns,
+        computedPinnedStartColumns,
+        computedPinnedEndColumns,
+        computedPinnedStartColumnsWidth,
+        computedPinnedEndColumnsWidth,
+        computedUnpinnedColumnsWidth,
+        bodySize,
+        activeCellIndex,
+        brain,
+        scrollbars,
+      }),
+    [
+      computedVisibleColumns,
+      computedPinnedStartColumns,
+      computedPinnedEndColumns,
+      computedPinnedStartColumnsWidth,
+      computedPinnedEndColumnsWidth,
+      computedUnpinnedColumnsWidth,
+      bodySize,
+      activeCellIndex,
+      brain,
+      scrollbars,
+    ],
+  );
 
   const setFocused = rafFn((focused: boolean) => {
     actions.focused = focused;

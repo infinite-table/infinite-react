@@ -391,7 +391,7 @@ export const InfiniteTableColumnCell = defineComponent({
       const rowDisabled = rowInfo.rowDisabled;
       const { rowSelected } = rowInfo;
 
-      const visibleColumnsIds = props
+      const visibleColumnIds = props
         .getComputedVisibleColumns()
         .map((x: any) => x.id);
 
@@ -402,7 +402,7 @@ export const InfiniteTableColumnCell = defineComponent({
         rowInfo,
         rowDetailState,
         columnsMap: props.columnsMap,
-        visibleColumnsIds,
+        visibleColumnIds,
         fieldsToColumn: props.fieldsToColumn,
         context: renderingContext,
       });

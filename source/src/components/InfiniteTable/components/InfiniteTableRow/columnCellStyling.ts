@@ -133,6 +133,7 @@ export type ColumnCellStylingOptions<T> = {
   } | null;
   getData: () => InfiniteTableRowInfo<T>[];
   computedVisibleColumns: InfiniteTableComputedColumn<T>[];
+  visibleColumnIds?: string[];
   computedColumnOrder: string[];
 
   columnReorderInPageIndex: number | null;
@@ -177,28 +178,28 @@ export function getColumnCellStyling<T>(
     cellSelection,
     getData,
     computedVisibleColumns,
+    visibleColumnIds: visibleColumnIdsOption,
     computedColumnOrder,
     columnReorderInPageIndex,
   } = options;
 
-  const visibleColumnIds = computedVisibleColumns.map((x) => x.id);
+  const visibleColumnIds =
+    visibleColumnIdsOption ?? computedVisibleColumns.map((x) => x.id);
   const allColumnIds = computedColumnOrder;
+  let rowHasSelectedCellsComputed: boolean | undefined;
   const rowPropsAndStyleArgs: InfiniteTableRowStylingFnParams<T> = {
     ...formattedValueContext,
     visibleColumnIds,
     allColumnIds,
     rowIndex,
-    // we put it as false by default
-    rowHasSelectedCells: false,
-  };
-
-  // and then make it a getter
-  // so it can be computed lazily - just when the user calls and needs this
-  Object.defineProperty(rowPropsAndStyleArgs, 'rowHasSelectedCells', {
-    get() {
-      return rowInfo.hasSelectedCells(visibleColumnIds);
+    get rowHasSelectedCells() {
+      if (rowHasSelectedCellsComputed === undefined) {
+        rowHasSelectedCellsComputed =
+          rowInfo.hasSelectedCells(visibleColumnIds);
+      }
+      return rowHasSelectedCellsComputed;
     },
-  });
+  };
 
   const columnIsTree = !!(
     rowInfo.isTreeNode &&
