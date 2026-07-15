@@ -1,9 +1,9 @@
 {
   "tests/table/perf/flashing/default:perf should be fine when single click": {
-    "scriptingTime": 32.67,
-    "renderingTime": 1.44,
-    "paintingTime": 1.39,
-    "totalTime": 200.47
+    "scriptingTime": 16.21,
+    "renderingTime": 0.33,
+    "paintingTime": 0.06,
+    "totalTime": 129.84
   },
   "tests/table/perf/default:horizontal-scrolling with tracing": {
     "scriptingTime": 112.31,
@@ -18,10 +18,10 @@
     "totalTime": 456.38
   },
   "tests/table/props/column/column-change:works correctly": {
-    "scriptingTime": 45.07,
-    "renderingTime": 6.85,
-    "paintingTime": 2.45,
-    "totalTime": 300.33
+    "scriptingTime": 23.68,
+    "renderingTime": 3.16,
+    "paintingTime": 0.96,
+    "totalTime": 227.96
   },
   "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
     "scriptingTime": 756.19,
@@ -30,10 +30,10 @@
     "totalTime": 3257.69
   },
   "tests/table/props/data/basic-add-data:insert data": {
-    "scriptingTime": 62.92,
-    "renderingTime": 4.03,
-    "paintingTime": 1.15,
-    "totalTime": 348.59
+    "scriptingTime": 31.43,
+    "renderingTime": 3.49,
+    "paintingTime": 2.12,
+    "totalTime": 218.43
   },
   "tests/table/props/data/basic-update:via API should not rerender header": {
     "scriptingTime": 10.79,
@@ -48,10 +48,10 @@
     "totalTime": 584.08
   },
   "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
-    "scriptingTime": 88.33,
-    "renderingTime": 17.26,
-    "paintingTime": 2.53,
-    "totalTime": 382.55
+    "scriptingTime": 42.04,
+    "renderingTime": 7.81,
+    "paintingTime": 1.16,
+    "totalTime": 235.33
   },
   "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
     "scriptingTime": 105.76,
@@ -72,10 +72,10 @@
     "totalTime": 349.23
   },
   "tests/table/props/data/scrolling:scrolls the table with performance tracing": {
-    "scriptingTime": 446.82,
-    "renderingTime": 138.84,
-    "paintingTime": 22.99,
-    "totalTime": 894.38
+    "scriptingTime": 174.75,
+    "renderingTime": 46.27,
+    "paintingTime": 34.52,
+    "totalTime": 419.97
   },
   "tests/table/props/data/update:clicks update button 30 times with performance tracing": {
     "scriptingTime": 396.9,
