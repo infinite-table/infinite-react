@@ -31,6 +31,7 @@
   "typings": "index.d.ts",
   "scripts": {
     "build": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} npm-run-all -s rm-out-folder tsc esbuild esbuild-theming generate-dts-file api-extract update-md copy-license-and-readme",
+    "build:vue": "INFINITE_OUT_FOLDER=dist-vue npm-run-all -s rm-out-folder tsc:vue esbuild:vue esbuild-theming generate-dts-file:vue copy-license-and-readme",
     "rm-out-folder": "rimraf $INFINITE_OUT_FOLDER",
     "api-extract": "npm run tsc-api-extract && npm run api-extractor",
     "api-extractor": "api-extractor run --local --verbose --diagnostics",
@@ -55,6 +56,7 @@
     "tsc-api-extract": "tsc --project api-extract.tsconfig.json",
     "////*****": "////",
     "generate-dts-file": "tsup --config dts.tsup.config.ts --dts-only",
+    "generate-dts-file:vue": "tsup --config dts.vue.tsup.config.ts --dts-only",
     "generate-dts-file-watch": "tsup --config dts.tsup.config.ts --dts-only --watch",
     "////************xxx": "////",
     "tscw": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} && tsc --watch --project tsconfig.dev.json --outDir $INFINITE_OUT_FOLDER",
