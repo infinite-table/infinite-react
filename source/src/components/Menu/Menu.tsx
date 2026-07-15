@@ -21,7 +21,10 @@ import type {
   MenuRuntimeItemSelectable,
 } from './MenuProps';
 import { useOverlay } from '../hooks/useOverlay';
-import { selectParent } from '../../utils/selectParent';
+import {
+  getFirstCheckBoxInsideMenuItem,
+  getMenuItemRect,
+} from './menuDomUtils';
 
 import { MenuTriangleContext } from './MenuTriangleContext';
 
@@ -93,60 +96,6 @@ function renderSubmenuForItem(
     />
   );
 }
-/**
- *
- * @param menuId The menu id
- * @param itemKey the item key
- * @returns Rectangle
- */
-function getMenuItemRect(menuId: string, itemKey: string) {
-  const cells = getMenuItemNodes(menuId, itemKey);
-  if (!cells.length) {
-    return null;
-  }
-  const first = Rectangle.from(cells[0]?.getBoundingClientRect());
-  const last = Rectangle.from(cells[cells.length - 1].getBoundingClientRect());
-
-  const rect = first;
-  rect.width = last.left + last.width - first.left;
-
-  return rect;
-}
-
-function getMenuItemNodes(menuId: string, itemKey: string): HTMLDivElement[] {
-  const menuNode = selectParent(
-    document.querySelector(
-      `[data-menu-id="${menuId}"] [data-menu-item-key="${itemKey}"]`,
-    ) as HTMLElement,
-    `[data-menu-id="${menuId}"]`,
-  );
-
-  if (!menuNode) {
-    return [];
-  }
-
-  const cells = menuNode.querySelectorAll(`[data-menu-item-key="${itemKey}"]`);
-
-  return Array.from(cells) as HTMLDivElement[];
-}
-
-function getFirstCheckBoxInsideMenuItem(menuId: string, itemKey: string) {
-  const cells = getMenuItemNodes(menuId, itemKey);
-  if (!cells.length) {
-    return null;
-  }
-
-  for (const cell of cells) {
-    const input = cell.querySelector(
-      'input[type="checkbox"]',
-    ) as HTMLInputElement | null;
-    if (input) {
-      return input;
-    }
-  }
-  return null;
-}
-
 function useSubmenus({
   onItemActivate,
 }: {

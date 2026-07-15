@@ -5,14 +5,13 @@ import { setFind } from '../../utils/setUtils';
 import { Renderable } from '../types/Renderable';
 import { TableRenderRange } from '../VirtualBrain/IBrain';
 
-import { GridCellInterface } from './GridCellInterface';
-import { GridCellPoolForReact } from './GridCellPoolForReact';
+import { GridCellInterface, GridCellPool } from './GridCellInterface';
 
 const ASC_SORT = (a: number, b: number) => a - b;
 
 type CellPos = [number, number];
 
-export type { GridCellInterface };
+export type { GridCellInterface, GridCellPool };
 
 export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
   private matrix: DeepMap<number, GridCellInterface<T_ADDITIONAL_CELL_INFO>> =
@@ -32,17 +31,17 @@ export class GridCellManager<T_ADDITIONAL_CELL_INFO> extends Logger {
     CellPos
   > = new WeakMap();
 
-  private pool: GridCellPoolForReact<T_ADDITIONAL_CELL_INFO>;
+  private pool: GridCellPool<T_ADDITIONAL_CELL_INFO>;
 
   public debugId: string;
 
   private offRemoveCell: VoidFunction;
 
-  constructor(debugId: string) {
+  constructor(debugId: string, pool: GridCellPool<T_ADDITIONAL_CELL_INFO>) {
     super(`${debugId}:GridCellManager`);
 
     this.debugId = debugId;
-    this.pool = new GridCellPoolForReact<T_ADDITIONAL_CELL_INFO>(debugId);
+    this.pool = pool;
 
     this.offRemoveCell = this.pool.onRemoveCell((cell) =>
       this.onRemoveCell(cell),

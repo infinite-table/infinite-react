@@ -36,7 +36,7 @@ export default test.describe.parallel('Table', () => {
     expect(values).toEqual(expected);
 
     // now click the button to enable onSortInfoChange
-    await page.locator('button').click();
+    await page.locator('#toggle-sortInfo').click();
     await headerModel.clickColumnHeader({ colId: 'CompanyName' });
 
     await page.waitForTimeout(20);

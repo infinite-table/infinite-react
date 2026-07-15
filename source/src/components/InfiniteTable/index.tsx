@@ -46,7 +46,7 @@ import {
   initSetupState,
   cleanupState,
 } from './state/getInitialState';
-import { columnHeaderHeightName, ThemeVars } from './vars.css';
+import { ThemeVars } from './vars.css';
 
 import type {
   InfiniteTableContextValue,
@@ -54,7 +54,6 @@ import type {
   InfiniteTableState,
 } from './types';
 import { position, zIndex, top, left } from './utilities.css';
-import { toCSSVarName } from './utils/toCSSVarName';
 import { useDOMEventHandlers } from './eventHandlers';
 import { useColumnMenu } from './hooks/useColumnMenu';
 import { FocusDetect } from './components/FocusDetect';
@@ -89,6 +88,7 @@ import {
 import { useDataSourceState } from '../DataSource';
 import { useInfiniteTableApi } from './hooks/useInfiniteTableApi';
 import { useInfiniteColumnApi } from './hooks/useInfiniteColumnApi';
+import { DEFAULT_COLUMN_HEADER_HEIGHT, DEFAULT_ROW_HEIGHT } from './shared';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -431,9 +431,6 @@ function InfiniteTableContextProvider<T>({
 
   return <InfiniteTableComponent />;
 }
-
-const DEFAULT_ROW_HEIGHT = 40;
-const DEFAULT_COLUMN_HEADER_HEIGHT = toCSSVarName(columnHeaderHeightName);
 
 type InfiniteTableComponent = {
   <T>(props: InfiniteTableProps<T>): React.JSX.Element;

@@ -10,6 +10,7 @@ import {
   setInfiniteScrollPosition,
 } from '../InfiniteTable/utils/infiniteDOMUtils';
 
+import { GridMouseEvent } from '../types/DOMTypes';
 import { Renderable } from '../types/Renderable';
 import { ScrollPosition } from '../types/ScrollPosition';
 import {
@@ -27,13 +28,31 @@ import {
 } from './rendererTypes';
 
 import { GridCellManager } from './GridCellManager';
-import { GridCellInterface } from './GridCellInterface';
+import { GridCellInterface, GridCellPool } from './GridCellInterface';
 
 import { setFilter, setIntersection } from '../../utils/setUtils';
-import { ListRowInterface, ListRowManager } from './ListRowManager';
+import {
+  ListRowInterface,
+  ListRowManager,
+  ListRowPool,
+} from './ListRowManager';
 import type { HorizontalLayoutMatrixBrain } from '../VirtualBrain/HorizontalLayoutMatrixBrain';
 
 const ITEM_POSITION_WITH_TRANSFORM = true;
+
+export type GridCellAdditionalInfo = {
+  renderRowIndex: number;
+  renderColIndex: number;
+};
+
+/**
+ * The framework-specific pools the renderer works with.
+ * The composition point that builds these (per framework) is createRenderer.
+ */
+export type GridRendererPools = {
+  cellPool: GridCellPool<GridCellAdditionalInfo>;
+  rowPool: ListRowPool;
+};
 
 export const currentTransformY = stripVar(InternalVars.y);
 
@@ -55,10 +74,7 @@ export class GridRenderer extends Logger {
 
   public cellDetachedClassNames: string[] = [];
 
-  public cellManager: GridCellManager<{
-    renderRowIndex: number;
-    renderColIndex: number;
-  }>;
+  public cellManager: GridCellManager<GridCellAdditionalInfo>;
   protected rowManager: ListRowManager;
 
   private lastEnteredRow = -1;
@@ -159,16 +175,20 @@ export class GridRenderer extends Logger {
     }
   };
 
-  constructor(brain: MatrixBrain, debugId?: string) {
+  constructor(
+    brain: MatrixBrain,
+    debugId: string | undefined,
+    pools: GridRendererPools,
+  ) {
     debugId = debugId || 'ReactHeadlessTableRenderer';
     super(debugId);
     this.brain = brain;
     this.debugId = debugId;
 
-    this.cellManager = new GridCellManager<{
-      renderRowIndex: number;
-      renderColIndex: number;
-    }>(debugId);
+    this.cellManager = new GridCellManager<GridCellAdditionalInfo>(
+      debugId,
+      pools.cellPool,
+    );
 
     this.cellManager.onCellAttachmentChange((cell, attached) => {
       if (attached) {
@@ -177,7 +197,7 @@ export class GridRenderer extends Logger {
         this.onCellDetached(cell);
       }
     });
-    this.rowManager = new ListRowManager(debugId);
+    this.rowManager = new ListRowManager(debugId, pools.rowPool);
 
     this.rowManager.onRowAttachmentChange((row, attached) => {
       if (attached) {
@@ -1270,11 +1290,11 @@ export class GridRenderer extends Logger {
     };
   }
 
-  protected onMouseEnterNotBound = (event: React.MouseEvent<HTMLElement>) => {
+  protected onMouseEnterNotBound = (event: GridMouseEvent) => {
     const rowIndex = this.getMatrixRowIndexFromElement(event.currentTarget);
     this.onMouseEnter(rowIndex);
   };
-  protected onMouseLeaveNotBound = (event: React.MouseEvent<HTMLElement>) => {
+  protected onMouseLeaveNotBound = (event: GridMouseEvent) => {
     const rowIndex = this.getMatrixRowIndexFromElement(event.currentTarget);
     this.onMouseLeave(rowIndex);
   };

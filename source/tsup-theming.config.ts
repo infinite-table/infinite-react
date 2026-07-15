@@ -8,7 +8,9 @@ import fs from 'fs';
 import { vanillaConfig } from './tsup-vanilla-extract-config';
 
 const { config } = packageJSON;
-const outDir = config.outdir + '/theme/';
+// themes are framework-agnostic - the react build (INFINITE_OUT_FOLDER=dist)
+// and the vue build (INFINITE_OUT_FOLDER=dist-vue) both include them
+const outDir = (process.env.INFINITE_OUT_FOLDER || config.outdir) + '/theme/';
 
 export const tsupConfig: Options = {
   entry: {

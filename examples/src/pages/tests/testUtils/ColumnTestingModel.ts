@@ -122,5 +122,14 @@ export class ColumnTestingModel {
       box.y + box.height / 2,
     );
     await this.page.mouse.up();
+
+    // the pointerup handler that persists the new column order is deferred
+    // via requestAnimationFrame, so wait two frames for it to run + render
+    await this.page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
   }
 }

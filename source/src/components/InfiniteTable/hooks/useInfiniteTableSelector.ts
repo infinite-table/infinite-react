@@ -10,7 +10,7 @@ import type { InfiniteTableStore } from '../InfiniteTableStore';
 import {
   useComponentStoreSelector,
   useComponentStoreSingleValue,
-} from '../../../utils/ComponentStore';
+} from '../../../utils/ComponentStoreHooks';
 
 /**
  * A selector hook that reads a single value from the InfiniteTable store.

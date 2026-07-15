@@ -1,0 +1,68 @@
+import * as React from 'react';
+import { useState } from 'react';
+
+import { join } from '../../../../../utils/join';
+import { isControlled } from '../../../../utils/isControlled';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
+import {
+  ExpanderIconCls,
+  ExpanderIconClsVariants,
+} from './ExpandCollapseIcon.css';
+import { expandCollapseIconPath } from './shared';
+import type { ExpandCollapseIconProps } from './shared';
+
+const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
+
+export function ExpandCollapseIcon(
+  props: ExpandCollapseIconProps<React.CSSProperties>,
+) {
+  const { size = 24, direction = 'start', disabled = false } = props;
+
+  const [expanded, setExpanded] = useState(
+    props.expanded ?? props.defaultExpanded,
+  );
+
+  const onClick = () => {
+    props.onChange?.(!expanded);
+    if (!isControlled('expanded', props)) {
+      setExpanded(!expanded);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isControlled('expanded', props)) {
+      setExpanded(props.expanded);
+    }
+  }, [props.expanded]);
+
+  const currentState = expanded ? 'expanded' : 'collapsed';
+  return (
+    <svg
+      data-name="expand-collapse-icon"
+      data-state={currentState}
+      data-disabled={disabled}
+      xmlns="http://www.w3.org/2000/svg"
+      height={`${size}px`}
+      viewBox="0 0 24 24"
+      width={`${size}px`}
+      style={props.style}
+      onClick={disabled ? undefined : onClick}
+      className={join(
+        props.className,
+        ExpanderIconCls,
+        ExpanderIconClsVariants({
+          direction: direction || 'start',
+          expanded,
+          disabled,
+        }),
+        `${InfiniteIconClassName}`,
+        `${THIS_ICON}`,
+        `${THIS_ICON}--${currentState}`,
+        `${THIS_ICON}--${direction === 'end' ? 'end' : 'start'}`,
+        disabled ? `${THIS_ICON}--disabled` : '',
+      )}
+    >
+      <path d={expandCollapseIconPath} />
+    </svg>
+  );
+}

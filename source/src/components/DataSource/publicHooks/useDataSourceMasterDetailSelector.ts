@@ -2,11 +2,11 @@ import { useCallback, useContext } from 'react';
 
 import type { DataSourceMasterDetailContextValue } from '../types';
 
+import { createComponentStore } from '../../../utils/ComponentStore';
 import {
-  createComponentStore,
   useComponentStoreSelector,
   useComponentStoreSingleValue,
-} from '../../../utils/ComponentStore';
+} from '../../../utils/ComponentStoreHooks';
 import { getDataSourceMasterDetailStoreContext } from '../DataSourceMasterDetailContext';
 import { DataSourceMasterDetailStore } from '../DataSourceMasterDetailStore';
 import { InfiniteTableRowInfo } from '../../InfiniteTable';

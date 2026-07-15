@@ -1,13 +1,12 @@
 import binarySearch from 'binary-search';
 import { Logger } from '../../utils/debugLoggers';
 import { Renderable } from '../types/Renderable';
-import { ListRowInterface } from './ListRowInterface';
-import { ListRowPoolForReact } from './ListRowPoolForReact';
+import { ListRowInterface, ListRowPool } from './ListRowInterface';
 
-export type { ListRowInterface };
+export type { ListRowInterface, ListRowPool };
 
 export class ListRowManager extends Logger {
-  private pool: ListRowPoolForReact;
+  private pool: ListRowPool;
 
   private indexToRow: Map<number, ListRowInterface> = new Map();
   private rowToIndex: WeakMap<ListRowInterface, number> = new WeakMap();
@@ -15,11 +14,11 @@ export class ListRowManager extends Logger {
   public debugId: string;
   private offRemoveRow: VoidFunction;
 
-  constructor(debugId: string) {
+  constructor(debugId: string, pool: ListRowPool) {
     super(`${debugId}:ListRowManager`);
     this.debugId = debugId;
 
-    this.pool = new ListRowPoolForReact(debugId);
+    this.pool = pool;
 
     this.offRemoveRow = this.pool.onRemoveRow((row) => this.onRemoveRow(row));
   }

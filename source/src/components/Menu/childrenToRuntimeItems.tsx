@@ -1,74 +1,17 @@
 import * as React from 'react';
 import { MenuItem } from './MenuItem';
-import { MenuSeparatorCls } from './MenuCls.css';
-import {
-  MenuDecoration,
-  MenuItemDefinition,
-  MenuItemObject,
-  MenuRuntimeItem,
-} from './MenuProps';
+import { MenuItemDefinition, MenuRuntimeItem } from './MenuProps';
 import { MenuRuntimeItemContext } from './MenuState';
+import { toRuntimeItemShared } from './menuStateShared';
+import { MenuSeparator, reactMenuRenderAdapters } from './reactMenuAdapters';
 
-const SEPARATOR: MenuItemDefinition = '-';
-
-function MenuSeparator() {
-  return <hr className={MenuSeparatorCls} />;
-}
+export { MenuSeparator };
 
 export const toRuntimeItem = (
-  {
-    columns,
-    keyboardActiveItemKey,
-    activeItemKey,
-    menuId,
-  }: MenuRuntimeItemContext,
+  context: MenuRuntimeItemContext,
   item: MenuItemDefinition,
-) => {
-  const menuItem =
-    item &&
-    ((item as MenuItemObject).key != null ||
-      (item as MenuItemObject).label != null)
-      ? (item as MenuItemObject)
-      : null;
-
-  const menuDecoration =
-    menuItem === null ? (
-      item === SEPARATOR ? (
-        <MenuSeparator />
-      ) : (
-        (item as MenuDecoration)
-      )
-    ) : null;
-
-  const runtimeItem: MenuRuntimeItem =
-    menuItem != null
-      ? {
-          type: 'item',
-          parentMenuId: menuId,
-          disabled: !!menuItem.disabled,
-          keyboardActive: menuItem.key === keyboardActiveItemKey,
-          active: menuItem.key === activeItemKey,
-          value: menuItem,
-          span: menuItem.span || 1,
-          key: menuItem.key,
-          menu: menuItem.menu || null,
-          style: menuItem.style,
-          className: menuItem.className,
-          originalMenuItem: menuItem,
-        }
-      : {
-          type: 'decoration',
-          value: menuDecoration,
-          span: columns.length,
-          style: {
-            gridColumnStart: 1,
-            gridColumnEnd: columns.length + 10, // it should have been +1, but we might introduce an additional col for submenu icons
-            // so we make this bigger
-          },
-        };
-
-  return runtimeItem;
-};
+): MenuRuntimeItem =>
+  toRuntimeItemShared(context, item, reactMenuRenderAdapters);
 
 export function childrenToRuntimeItems(
   context: MenuRuntimeItemContext,

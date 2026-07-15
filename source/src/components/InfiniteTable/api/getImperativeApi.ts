@@ -3,13 +3,13 @@ import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { SortDir } from '../../../utils/multisort';
 import { GroupBy } from '../../../utils/groupAndPivot/types';
 
-import {
+import type {
   DataSourceFilterValueItem,
   DataSourceSingleSortInfo,
-  GroupRowsState,
 } from '../../DataSource';
+import { GroupRowsState } from '../../DataSource/GroupRowsState';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
-import { loadData } from '../../DataSource/privateHooks/useLoadData';
+import { loadData } from '../../DataSource/privateHooks/loadDataShared';
 import {
   getColumnValueToEdit,
   getCellContext,

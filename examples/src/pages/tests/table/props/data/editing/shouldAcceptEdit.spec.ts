@@ -87,7 +87,6 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
     };
 
     let text = await rowModel.getTextForCell(cellEditable1);
-
     expect(text).toBe('John');
 
     await editModel.startEdit({
@@ -142,6 +141,10 @@ export default test.describe.parallel('Inline Edit - shouldAcceptEdit', () => {
 
     await editModel.confirmEdit(cellEditable1);
 
-    expect(await rowModel.getTextForCell(cellEditable1)).toBe('fullstack');
+    // the new value is rendered asynchronously (on the re-render after the
+    // edit is persisted), so poll instead of reading the text right away
+    await expect
+      .poll(() => rowModel.getTextForCell(cellEditable1))
+      .toBe('fullstack');
   });
 });

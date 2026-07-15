@@ -7,15 +7,17 @@ export default test.describe('Add data to empty tree', () => {
     const button = page.locator('button:has-text("Add data")');
 
     await button.click();
-    expect(await rowModel.getRenderedRowCount()).toBe(7);
+    // poll: rendering after a data update is not synchronous with the click
+    // (Vue flushes on the next tick)
+    await expect.poll(() => rowModel.getRenderedRowCount()).toBe(7);
 
     await button.click();
-    expect(await rowModel.getRenderedRowCount()).toBe(8);
+    await expect.poll(() => rowModel.getRenderedRowCount()).toBe(8);
 
     const row7 = tableModel.withCell({ rowIndex: 7, colIndex: 0 });
     expect(await row7.getValue()).toBe('1 - inserted - 1');
     await button.click();
-    expect(await rowModel.getRenderedRowCount()).toBe(9);
+    await expect.poll(() => rowModel.getRenderedRowCount()).toBe(9);
 
     const row8 = tableModel.withCell({ rowIndex: 8, colIndex: 0 });
     expect(await row7.getValue()).toBe('1 - inserted - 1');

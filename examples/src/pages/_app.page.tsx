@@ -12,8 +12,7 @@ import '../../../source/dist/theme/balsam.css';
 
 import { InfiniteTable } from '@infinite-table/infinite-react';
 
-import { BackLink } from '../test-index/BackLink';
-import { RunTestButton } from '../test-index/RunTestButton';
+import { PageDevChrome } from '../test-index/PageDevChrome';
 
 InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
@@ -21,8 +20,7 @@ function MyApp({ Component, pageProps }: any) {
   return (
     <>
       <Component {...pageProps} />
-      <BackLink />
-      <RunTestButton />
+      <PageDevChrome />
     </>
   );
 }

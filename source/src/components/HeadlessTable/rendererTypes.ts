@@ -1,10 +1,9 @@
-import type { RefCallback } from 'react';
-
+import type { ElementRefCallback, GridMouseEvent } from '../types/DOMTypes';
 import type { Renderable } from '../types/Renderable';
 import type { FixedPosition } from '../VirtualBrain/MatrixBrain';
 
 export type TableRenderCellFnParam = {
-  domRef: RefCallback<HTMLElement>;
+  domRef: ElementRefCallback;
   rowIndex: number;
   colIndex: number;
   rowspan: number;
@@ -16,18 +15,18 @@ export type TableRenderCellFnParam = {
   heightWithRowspan: number;
   rowFixed: FixedPosition;
   colFixed: FixedPosition;
-  onMouseEnter: (event: React.MouseEvent<HTMLElement>) => void;
-  onMouseLeave: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseEnter: (event: GridMouseEvent) => void;
+  onMouseLeave: (event: GridMouseEvent) => void;
 };
 
 export type TableRenderDetailRowFnParam = {
-  domRef: RefCallback<HTMLElement>;
+  domRef: ElementRefCallback;
   rowIndex: number;
   hidden: boolean;
   height: number;
   rowFixed: FixedPosition;
-  onMouseEnter: (event: React.MouseEvent<HTMLElement>) => void;
-  onMouseLeave: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseEnter: (event: GridMouseEvent) => void;
+  onMouseLeave: (event: GridMouseEvent) => void;
 };
 export type TableRenderCellFn = (param: TableRenderCellFnParam) => Renderable;
 export type TableRenderDetailRowFn = (
