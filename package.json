@@ -44,7 +44,7 @@
     "examples-dev": "npm run --prefix examples dev",
     "examples-dev-no-output": "npm run --prefix examples dev-no-output",
     "examples-test": "npm run --prefix examples test",
-    "examples-test:build": "npm run --prefix examples build",
+    "examples-test:build": "npm run --prefix examples build && npm run --prefix examples build:vue",
     "examples-test:ci": "npm run --prefix examples ci:test",
     "examples-test:watch": "npm run --prefix examples test:watch",
     "www-dev": "npm run --prefix www dev",

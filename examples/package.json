@@ -24,7 +24,7 @@
     "test:debug": "chokidar '**/*.spec.ts'  -c 'echo \"\n{path} was modified\n\" && npm run play:test -- --retries=0 {path} --debug'",
     "test:watch": "chokidar '**/*.spec.ts' '**/*.page.tsx' -c 'test_file_path=$(echo {path} | sed s/page.tsx/spec.ts/) && npm run play:test -- --retries=0 --project=react ${test_file_path}'",
     "test:watch:vue": "chokidar '**/*.spec.ts' '**/*.page.vue' -c 'test_file_path=$(echo {path} | sed s/page.vue/spec.ts/) && npm run play:test -- --retries=0 --project=vue ${test_file_path}'",
-    "ci:test": "concurrently -s first --kill-others \"npm run start-server -- -s\" \"npm run start-server:vue -- -s\" \"npm run play:test\"",
+    "ci:test": "concurrently -s first --kill-others \"npm run start-server\" \"npm run start-server:vue\" \"npm run play:test\"",
     "perf:list": "node scripts/perf-baseline.js list",
     "perf:copy-to-ci": "node scripts/perf-baseline.js copy-to-ci",
     "tsc": "tsc --project tsconfig.json",
