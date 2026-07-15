@@ -47,7 +47,7 @@ import { MultiRowSelector } from './utils/MultiRowSelector';
 import { MultiCellSelector } from './utils/MultiCellSelector';
 import { internalProps, rootClassName } from './internalProps';
 import { ThemeVars } from './vars.css';
-import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch/CSSNumericVariableWatchForVue.vue.js';
+import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch/CSSNumericVariableWatchForVue.vue';
 
 import { rafFn } from './utils/rafFn';
 import {
