@@ -114,7 +114,11 @@ Pivoted reports usually need totals. Infinite Table supports both:
 - <PropLink name="pivotTotalColumnPosition" /> for totals inside pivot groups
 - <PropLink name="pivotGrandTotalColumnPosition" /> for grand-total columns across the configured aggregations
 
+Pivot total columns only appear when you pivot by two or more fields (`pivotBy.length > 1`). With a single pivot field, enabling <PropLink name="pivotTotalColumnPosition" /> has no effect — the totals would be the same as the already displayed values. The example below uses two pivot levels (`stack` and `canDesign`) so both kinds of totals are visible.
+
 ```tsx
+const pivotBy = [{ field: 'stack' }, { field: 'canDesign' }];
+
 <InfiniteTable<Developer>
   columns={columns}
   pivotColumns={pivotColumns}
@@ -130,7 +134,7 @@ This gives you the spreadsheet-like summary columns people expect from a pivot v
 
 <Description>
 
-This docs example places regular pivot totals at the end of each pivot group and grand-total columns at the start of the grid.
+This docs example pivots by `stack` and `canDesign`, so pivot total columns are shown at the end of each stack group. Grand-total columns are placed at the start of the grid.
 
 </Description>
 

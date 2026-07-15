@@ -117,6 +117,13 @@ const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
 
 In <DPropLink name="pivotBy" nocode>pivot mode</DPropLink> you can configure both <PropLink name="pivotTotalColumnPosition" nocode>total columns</PropLink> and <PropLink name="pivotGrandTotalColumnPosition" nocode>grand-total columns</PropLink>. By default, grand-total columns are not displayed, so you have to explicitly set the <PropLink name="pivotGrandTotalColumnPosition" /> prop for them to be visible.
 
+<Note> 
+Pivot total columns are only displayed when <DPropLink name="pivotBy" nocode>pivotBy</DPropLink> has two or more fields (`pivotBy.length > 1`). With a single pivot field only grand-total columns can be shown, and naving <PropLink name="pivotTotalColumnPosition" /> has no effect  — the totals would be the same as the already displayed values.
+
+The example below pivots by `stack` and `canDesign` so both total and grand-total columns are visible.
+
+</Note>
+
 <Sandpack title="Pivoting with customized position for totals and grand-total columns">
 
 ```ts file="$DOCS/reference/pivot-grand-total-column-position-example.page.tsx"

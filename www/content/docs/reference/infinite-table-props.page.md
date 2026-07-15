@@ -3280,6 +3280,12 @@ If specified as `false`, the pivot grand-total columns are not displayed.
 
 For normal pivot total columns, see <PropLink name="pivotTotalColumnPosition"/>.
 
+<Note>
+
+Pivot total columns only display when <DataSourcePropLink name="pivotBy"/> has two or more fields (`pivotBy.length > 1`). With a single pivot field, enabling <PropLink name="pivotTotalColumnPosition" /> has no effect — the totals would be the same as the already displayed values. The example below pivots by `stack` and `canDesign` so both pivot totals and grand totals are visible.
+
+</Note>
+
 <Sandpack title="Pivoting with pivotGrandTotalColumnPosition=start">
 
 ```ts file="pivot-grand-total-column-position-example.page.tsx"
