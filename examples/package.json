@@ -11,7 +11,7 @@
     "dev-no-output": "next dev &> /dev/null",
     "build": "rimraf .next && NODE_ENV=production next build",
     "build-local": "NODE_ENV=production next build",
-    "build:vue": "vite build",
+    "build:vue": "npm run --prefix ../source esbuild:vue:dev && vite build",
     "start": "mkdir -p .logs && next start 2>&1 | tee -a .logs/next-start.log",
     "test": "npm run build && npm run build:vue && npm run run-test",
     "test-local": "npm run build-local && npm run build:vue && npm run run-test",
