@@ -1,30 +1,19 @@
 import { defineComponent, h, onBeforeUnmount, onMounted, ref } from 'vue';
-import type { CSSProperties, PropType } from 'vue';
+import type { CSSProperties } from 'vue';
 
-import { join } from '../../../../utils/join';
-import { HeaderFilterIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { join } from '../../../../../utils/join';
+import { HeaderFilterIconIndexCls } from '../../InfiniteTableHeader/header.css';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import { FilterIconCls } from './FilterIcon.css';
-
-const defaultLineStyle: CSSProperties = {
-  transition: `width 0.25s, opacity 0.25s`,
-};
+import { defaultLineStyle, filterIconPropNames } from './shared';
+import type { FilterIconProps } from './shared';
 
 /**
  * Vue sibling of FilterIcon - same DOM (data-name="filter-icon", three lines
  * with decreasing widths) and the same fade-in behavior.
  */
-export const FilterIcon = defineComponent({
-  name: 'FilterIcon',
-  props: {
-    size: { type: Number, default: undefined },
-    lineWidth: { type: Number, default: 1 },
-    lineStyle: { type: Object as PropType<CSSProperties>, default: undefined },
-    style: { type: Object as PropType<CSSProperties>, default: undefined },
-    className: { type: String, default: undefined },
-    index: { type: Number, default: undefined },
-  },
-  setup(props) {
+export const FilterIcon = defineComponent(
+  (props: FilterIconProps<CSSProperties>) => {
     const opacity = ref(0);
     let rafId: number | null = null;
 
@@ -42,7 +31,7 @@ export const FilterIcon = defineComponent({
     });
 
     return () => {
-      const { lineWidth, className, index } = props;
+      const { lineWidth = 1, className, index } = props;
 
       const showIndex = index != null && index > 0;
 
@@ -51,7 +40,7 @@ export const FilterIcon = defineComponent({
       const sizes = [size - 1 * part, size - 2 * part, size - 3 * part];
 
       const lineStyle: CSSProperties = {
-        ...defaultLineStyle,
+        ...(defaultLineStyle as CSSProperties),
         borderTop: `${lineWidth}px solid currentColor`,
         ...props.lineStyle,
         opacity: opacity.value,
@@ -84,4 +73,8 @@ export const FilterIcon = defineComponent({
       );
     };
   },
-});
+  {
+    name: 'FilterIcon',
+    props: [...filterIconPropNames],
+  },
+);

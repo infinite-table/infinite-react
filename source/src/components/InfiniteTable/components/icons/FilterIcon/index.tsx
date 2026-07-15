@@ -1,27 +1,14 @@
 import * as React from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
-import { join } from '../../../../utils/join';
-import { HeaderFilterIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { join } from '../../../../../utils/join';
+import { HeaderFilterIconIndexCls } from '../../InfiniteTableHeader/header.css';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import { FilterIconCls } from './FilterIcon.css';
+import { defaultLineStyle } from './shared';
+import type { FilterIconProps } from './shared';
 
-type FilterIconProps = {
-  size?: number;
-  lineWidth?: number;
-  lineStyle?: React.CSSProperties;
-  style?: React.CSSProperties;
-  className?: string;
-  index?: number;
-};
-
-const defaultLineStyle: React.CSSProperties = {
-  // marginTop: 4,
-  // marginBottom: 1,
-  transition: `width 0.25s, opacity 0.25s`,
-};
-
-export function FilterIcon(props: FilterIconProps) {
+export function FilterIcon(props: FilterIconProps<React.CSSProperties>) {
   const [rendered, setRendered] = useState(true);
   const [opacity, setOpacity] = useState(0);
 
@@ -34,7 +21,7 @@ export function FilterIcon(props: FilterIconProps) {
   const sizes = [size - 1 * part, size - 2 * part, size - 3 * part];
 
   const lineStyle = {
-    ...defaultLineStyle,
+    ...(defaultLineStyle as React.CSSProperties),
     borderTop: `${lineWidth}px solid currentColor`,
     ...props.lineStyle,
     opacity,

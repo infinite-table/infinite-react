@@ -1,35 +1,22 @@
 import { defineComponent, h, ref, watch, onBeforeUnmount } from 'vue';
-import type { CSSProperties, PropType } from 'vue';
+import type { CSSProperties } from 'vue';
 
-import { join } from '../../../../utils/join';
-import { HeaderSortIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { join } from '../../../../../utils/join';
+import { HeaderSortIconIndexCls } from '../../InfiniteTableHeader/header.css';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import { SortIconCls } from './SortIcon.css';
-
-const defaultLineStyle: CSSProperties = {
-  transition: `width 0.25s, opacity 0.25s`,
-};
+import { defaultLineStyle, sortIconPropNames } from './shared';
+import type { SortIconProps } from './shared';
 
 /**
  * Vue sibling of SortIcon - same DOM (data-name="sort-icon", three lines with
  * animated widths + optional sort index) and the same fade in/out behavior.
+ * Functional defineComponent signature so the props type is the same
+ * SortIconProps the React sibling uses (runtime prop names come from
+ * sortIconPropNames, kept in sync with the type via `satisfies`).
  */
-export const SortIcon = defineComponent({
-  name: 'SortIcon',
-  props: {
-    direction: {
-      type: Number as PropType<1 | -1 | 0>,
-      required: true,
-    },
-    size: { type: Number, default: undefined },
-    lineWidth: { type: Number, default: 1 },
-    lineStyle: { type: Object as PropType<CSSProperties>, default: undefined },
-    style: { type: Object as PropType<CSSProperties>, default: undefined },
-    className: { type: String, default: undefined },
-    index: { type: Number, default: undefined },
-    forceSize: { type: Boolean, default: false },
-  },
-  setup(props) {
+export const SortIcon = defineComponent(
+  (props: SortIconProps<CSSProperties>) => {
     const rendered = ref(true);
     const opacity = ref(0);
 
@@ -71,7 +58,9 @@ export const SortIcon = defineComponent({
     };
 
     return () => {
-      const { direction, lineWidth, className, index } = props;
+      // lineWidth default lived in the runtime props object before; now the
+      // props are declared via the shared type, so it's defaulted here
+      const { direction, lineWidth = 1, className, index } = props;
 
       if (!rendered.value && !props.forceSize) {
         return null;
@@ -90,8 +79,8 @@ export const SortIcon = defineComponent({
         sizes.reverse();
       }
 
-      const lineStyle: CSSProperties = {
-        ...defaultLineStyle,
+      const lineStyle = {
+        ...(defaultLineStyle as CSSProperties),
         borderTop: `${lineWidth}px solid currentColor`,
         ...props.lineStyle,
         opacity: opacity.value,
@@ -136,4 +125,8 @@ export const SortIcon = defineComponent({
       );
     };
   },
-});
+  {
+    name: 'SortIcon',
+    props: [...sortIconPropNames],
+  },
+);

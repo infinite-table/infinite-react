@@ -19,7 +19,7 @@ import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName, overflow } from '../../utilities.css';
 import { ColumnCellCls, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBoxForVue.vue';
-import { ExpandCollapseIcon } from '../icons/ExpandCollapseIconForVue.vue';
+import { ExpandCollapseIcon } from '../icons/ExpandCollapseIcon/ExpandCollapseIconForVue.vue';
 
 import type {
   InfiniteTableColumnCellContextType,

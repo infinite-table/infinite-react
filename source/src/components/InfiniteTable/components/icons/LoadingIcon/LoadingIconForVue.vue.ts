@@ -1,31 +1,32 @@
 import { defineComponent, h } from 'vue';
+import type { CSSProperties } from 'vue';
 
-import { join } from '../../../../utils/join';
-import { LoadingIconCls } from './LoadingIcon.css';
+import { join } from '../../../../../utils/join';
+import { LoadingIconCls } from './loading.css';
+import {
+  loadingIconPropNames,
+  loadingIconStrokeDasharray,
+  loadingIconSvgStyle,
+} from './shared';
+import type { LoadingIconProps } from './shared';
 
 /**
  * Vue sibling of LoadingIcon - same DOM (svg spinner, same classnames).
  */
-export const LoadingIcon = defineComponent({
-  name: 'LoadingIcon',
-  props: {
-    size: { type: Number, default: 24 },
-    className: { type: String, default: undefined },
-  },
-  setup(props) {
+export const LoadingIcon = defineComponent(
+  (props: LoadingIconProps<CSSProperties>) => {
     return () =>
       h(
         'svg',
         {
           xmlns: 'http://www.w3.org/2000/svg',
           style: {
-            margin: 'auto',
-            display: 'block',
-            shapeRendering: 'auto',
+            ...(loadingIconSvgStyle as CSSProperties),
+            ...props.style,
           },
           width: '24px',
           height: '24px',
-          viewBox: '0 0 100 100',
+          viewBox: props.viewBox ?? '0 0 100 100',
           preserveAspectRatio: 'xMidYMid',
           class: join(
             props.className,
@@ -43,7 +44,7 @@ export const LoadingIcon = defineComponent({
               fill: 'none',
               'stroke-width': '10',
               r: '35',
-              'stroke-dasharray': '164.93361431346415 56.97787143782138',
+              'stroke-dasharray': loadingIconStrokeDasharray,
             },
             [
               h('animateTransform', {
@@ -59,4 +60,8 @@ export const LoadingIcon = defineComponent({
         ],
       );
   },
-});
+  {
+    name: 'LoadingIcon',
+    props: [...loadingIconPropNames],
+  },
+);

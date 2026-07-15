@@ -46,9 +46,9 @@ import { getImperativeApi } from './api/getImperativeApi';
 import { MultiRowSelector } from './utils/MultiRowSelector';
 import { MultiCellSelector } from './utils/MultiCellSelector';
 import { internalProps, rootClassName } from './internalProps';
-import { columnHeaderHeightName, ThemeVars } from './vars.css';
-import { CSSNumericVariableWatch } from '../CSSNumericVariableWatchForVue.vue';
-import { toCSSVarName } from './utils/toCSSVarName';
+import { ThemeVars } from './vars.css';
+import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch/CSSNumericVariableWatchForVue.vue.js';
+
 import { rafFn } from './utils/rafFn';
 import {
   InfiniteCls,
@@ -105,25 +105,18 @@ import type {
 } from './types';
 import type { InfiniteTableActions } from './types/InfiniteTableState';
 import type { InfiniteTableColumnRenderingContext } from './components/InfiniteTableRow/columnRenderingContextType';
+import { DEFAULT_COLUMN_HEADER_HEIGHT, DEFAULT_ROW_HEIGHT } from './shared';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
-
-const DEFAULT_ROW_HEIGHT = 40;
-const DEFAULT_COLUMN_HEADER_HEIGHT = toCSSVarName(columnHeaderHeightName);
 
 /**
  * Vue sibling of the InfiniteTable root (Phase 3 walking skeleton).
  *
- * What works: the shared managed-state machine (same
  * initSetupState/forwardProps/mapPropsToState/cleanup config as React), the
  * shared column-computation pipeline (getComputedColumns), brain wiring and
  * the fully virtualized body rendered through the Vue rendering bridge, fed
  * by the Vue DataSource (parent state propagation included).
  *
- * Not yet ported (upcoming Phase 3 slices): header, the full
- * InfiniteTableColumnCell tree (selection, editing, context menus, styling
- * fns), keyboard navigation, active row/cell indicators, load mask, menus
- * and portals, master-detail, horizontal layout.
  */
 export const DATA_GRID_PROP_NAMES = [
   'debugId',

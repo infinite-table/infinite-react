@@ -1,20 +1,21 @@
-import { TableIconProps } from './Icon';
 import * as React from 'react';
-import { join } from '../../../../utils/join';
-import { LoadingIconCls } from './LoadingIcon.css';
 
-export const LoadingIcon = (props: Omit<TableIconProps, 'children'>) => {
+import { join } from '../../../../../utils/join';
+import { LoadingIconCls } from './loading.css';
+import { loadingIconStrokeDasharray, loadingIconSvgStyle } from './shared';
+import type { LoadingIconProps } from './shared';
+
+export const LoadingIcon = (props: LoadingIconProps<React.CSSProperties>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       style={{
-        margin: 'auto',
-        display: 'block',
-        shapeRendering: 'auto',
+        ...loadingIconSvgStyle,
+        ...props.style,
       }}
       width="24px"
       height="24px"
-      viewBox="0 0 100 100"
+      viewBox={props.viewBox ?? '0 0 100 100'}
       preserveAspectRatio="xMidYMid"
       className={join(
         props.className,
@@ -29,7 +30,7 @@ export const LoadingIcon = (props: Omit<TableIconProps, 'children'>) => {
         fill="none"
         strokeWidth="10"
         r="35"
-        strokeDasharray="164.93361431346415 56.97787143782138"
+        strokeDasharray={loadingIconStrokeDasharray}
       >
         <animateTransform
           attributeName="transform"

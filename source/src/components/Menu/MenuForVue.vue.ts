@@ -19,7 +19,7 @@ import { raf } from '../../utils/raf';
 import { Rectangle } from '../../utils/pageGeometry/Rectangle';
 
 import { display } from '../InfiniteTable/utilities.css';
-import { ExpandCollapseIcon } from '../InfiniteTable/components/icons/ExpandCollapseIconForVue.vue';
+import { ExpandCollapseIcon } from '../InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForVue.vue';
 
 import { buildManagedVueComponent } from '../hooks/useComponentState/useManagedComponent.vue';
 import { useOverlay } from '../hooks/useOverlay/useOverlayForVue.vue';

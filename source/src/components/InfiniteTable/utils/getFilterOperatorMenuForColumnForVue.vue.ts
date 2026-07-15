@@ -9,7 +9,7 @@ import type { VNodeChild } from 'vue';
 import { Menu } from '../../Menu/MenuForVue.vue';
 import { MenuState } from '../../Menu/MenuState';
 import { ClearIcon, DoneIcon } from '../components/icons/IconForVue.vue';
-import { FilterIcon } from '../components/icons/FilterIconForVue.vue';
+import { FilterIcon } from '../components/icons/FilterIcon/FilterIconForVue.vue';
 
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 

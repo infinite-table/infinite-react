@@ -6,6 +6,7 @@
     "src/vite-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
+
     "../source/globals.d.ts"
   ],
   "compilerOptions": {
@@ -19,6 +20,7 @@
       "@/*": ["./src/*"],
       "@infinite-table/infinite-react": ["../source/src"],
       "@infinite-table/infinite-react/*": ["../source/src/*"],
+      "@infinite-table/infinite-vue": ["../source/src/index.vue.tsx"],
 
       "@examples/*": ["./src/*"],
       "@components/*": ["../source/src/components/*"],

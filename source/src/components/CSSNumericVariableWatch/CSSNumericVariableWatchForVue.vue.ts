@@ -6,21 +6,8 @@
 import { defineComponent, h, onBeforeUnmount, onMounted } from 'vue';
 import type { CSSProperties, PropType } from 'vue';
 
-import { dbg, err } from '../utils/debugLoggers';
-import { setupResizeObserver } from './ResizeObserver/setupResizeObserver';
-
-const error = err('CSSVariableWatch');
-const debug = dbg('CSSVariableWatch');
-
-const WRAPPER_STYLE: CSSProperties = {
-  position: 'absolute',
-  pointerEvents: 'none',
-  width: '0px',
-  height: '0px',
-  lineHeight: 0,
-  fontSize: 0,
-  overflow: 'hidden',
-};
+import { setupResizeObserver } from '../ResizeObserver/setupResizeObserver';
+import { error, debug, WRAPPER_STYLE } from './shared';
 
 export const CSSNumericVariableWatch = defineComponent({
   name: 'CSSNumericVariableWatch',
@@ -77,7 +64,7 @@ export const CSSNumericVariableWatch = defineComponent({
         {
           'data-name': 'css-variable-watcher',
           'data-var': props.varName,
-          style: WRAPPER_STYLE,
+          style: WRAPPER_STYLE as CSSProperties,
         },
         [
           h('div', {

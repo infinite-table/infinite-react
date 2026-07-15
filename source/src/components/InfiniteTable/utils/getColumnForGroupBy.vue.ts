@@ -6,8 +6,8 @@ import type { InfiniteTable_HasGrouping_RowInfoGroup } from '../../../utils/grou
 import { join } from '../../../utils/join';
 import type { DataSourceGroupBy } from '../../DataSource';
 import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
-import { ExpandCollapseIcon } from '../components/icons/ExpandCollapseIconForVue.vue';
-import { LoadingIcon } from '../components/icons/LoadingIconForVue.vue';
+import { ExpandCollapseIcon } from '../components/icons/ExpandCollapseIcon/ExpandCollapseIconForVue.vue';
+import { LoadingIcon } from '../components/icons/LoadingIcon/LoadingIconForVue.vue';
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 

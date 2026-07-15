@@ -1,26 +1,13 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { dbg, err } from '../utils/debugLoggers';
 
-import { useResizeObserver } from './ResizeObserver';
-
-const error = err('CSSVariableWatch');
-const debug = dbg('CSSVariableWatch');
+import { useResizeObserver } from '../ResizeObserver';
+import { error, debug, WRAPPER_STYLE } from './shared';
 
 type CSSVariableWatcherProps = {
   varName: string;
   onChange: (value: number) => void;
   allowInts?: boolean;
-};
-
-const WRAPPER_STYLE: React.CSSProperties = {
-  position: 'absolute',
-  pointerEvents: 'none',
-  width: 0,
-  height: 0,
-  lineHeight: 0,
-  fontSize: 0,
-  overflow: 'hidden',
 };
 
 export const useCSSVariableWatch = (
@@ -74,7 +61,7 @@ export const CSSNumericVariableWatch = (props: CSSVariableWatcherProps) => {
     <div
       data-name="css-variable-watcher"
       data-var={props.varName}
-      style={WRAPPER_STYLE}
+      style={WRAPPER_STYLE as React.CSSProperties}
     >
       <div
         ref={domRef}

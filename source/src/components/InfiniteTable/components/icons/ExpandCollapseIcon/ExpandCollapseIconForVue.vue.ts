@@ -1,12 +1,14 @@
 import { defineComponent, h, ref, watch } from 'vue';
-import type { PropType, CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 
-import { join } from '../../../../utils/join';
+import { join } from '../../../../../utils/join';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import {
   ExpanderIconCls,
   ExpanderIconClsVariants,
 } from './ExpandCollapseIcon.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { expandCollapseIconPath, expandCollapseIconPropNames } from './shared';
+import type { ExpandCollapseIconProps } from './shared';
 
 const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
 
@@ -14,28 +16,8 @@ const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
  * Vue sibling of ExpandCollapseIcon - same DOM (svg + data attributes,
  * same classnames) so all css and Playwright selectors work unchanged.
  */
-export const ExpandCollapseIcon = defineComponent({
-  name: 'ExpandCollapseIcon',
-  props: {
-    size: { type: Number, default: 24 },
-    expanded: { type: Boolean, default: undefined },
-    defaultExpanded: { type: Boolean, default: undefined },
-    onChange: {
-      type: Function as PropType<(expanded: boolean) => void>,
-      default: undefined,
-    },
-    style: {
-      type: Object as PropType<CSSProperties>,
-      default: undefined,
-    },
-    disabled: { type: Boolean, default: false },
-    className: { type: String, default: undefined },
-    direction: {
-      type: String as PropType<'end' | 'start'>,
-      default: 'start',
-    },
-  },
-  setup(props) {
+export const ExpandCollapseIcon = defineComponent(
+  (props: ExpandCollapseIconProps<CSSProperties>) => {
     const isControlled = () => props.expanded !== undefined;
 
     const expanded = ref(props.expanded ?? props.defaultExpanded ?? false);
@@ -58,7 +40,7 @@ export const ExpandCollapseIcon = defineComponent({
 
     return () => {
       const currentState = expanded.value ? 'expanded' : 'collapsed';
-      const { size, direction, disabled } = props;
+      const { size = 24, direction = 'start', disabled = false } = props;
 
       return h(
         'svg',
@@ -89,10 +71,14 @@ export const ExpandCollapseIcon = defineComponent({
         },
         [
           h('path', {
-            d: 'M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z',
+            d: expandCollapseIconPath,
           }),
         ],
       );
     };
   },
-});
+  {
+    name: 'ExpandCollapseIcon',
+    props: [...expandCollapseIconPropNames],
+  },
+);

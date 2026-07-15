@@ -25,7 +25,7 @@ import type {
 } from '../../../DataSource/types';
 import type { Renderable } from '../../../types/Renderable';
 import { height } from '../../utilities.css';
-import { FilterIcon } from '../icons/FilterIconForVue.vue';
+import { FilterIcon } from '../icons/FilterIcon/FilterIconForVue.vue';
 
 import { getColumnLabel } from './getColumnLabel';
 import {

@@ -1,28 +1,21 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { join } from '../../../../utils/join';
-import { isControlled } from '../../../utils/isControlled';
+import { join } from '../../../../../utils/join';
+import { isControlled } from '../../../../utils/isControlled';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import {
   ExpanderIconCls,
   ExpanderIconClsVariants,
 } from './ExpandCollapseIcon.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
-
-type ExpandCollapseIconProps = {
-  size?: number;
-  expanded?: boolean;
-  defaultExpanded?: boolean;
-  onChange?: (expanded: boolean) => void;
-  style?: React.CSSProperties;
-  disabled?: boolean;
-  className?: string;
-  direction?: 'end' | 'start';
-};
+import { expandCollapseIconPath } from './shared';
+import type { ExpandCollapseIconProps } from './shared';
 
 const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
 
-export function ExpandCollapseIcon(props: ExpandCollapseIconProps) {
+export function ExpandCollapseIcon(
+  props: ExpandCollapseIconProps<React.CSSProperties>,
+) {
   const { size = 24, direction = 'start', disabled = false } = props;
 
   const [expanded, setExpanded] = useState(
@@ -69,7 +62,7 @@ export function ExpandCollapseIcon(props: ExpandCollapseIconProps) {
         disabled ? `${THIS_ICON}--disabled` : '',
       )}
     >
-      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+      <path d={expandCollapseIconPath} />
     </svg>
   );
 }

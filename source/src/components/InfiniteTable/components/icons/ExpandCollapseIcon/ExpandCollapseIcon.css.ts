@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { cursor, flex, transform, verticalAlign } from '../../utilities.css';
-import { ThemeVars } from '../../vars.css';
+import { cursor, flex, transform, verticalAlign } from '../../../utilities.css';
+import { ThemeVars } from '../../../vars.css';
 
 export const ExpanderIconCls = style([
   flex.none,

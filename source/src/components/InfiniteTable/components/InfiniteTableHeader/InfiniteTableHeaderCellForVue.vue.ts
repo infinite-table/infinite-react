@@ -41,9 +41,9 @@ import {
 } from '../../utilities.css';
 import { ColumnCellCls, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBoxForVue.vue';
-import { FilterIcon } from '../icons/FilterIconForVue.vue';
+import { FilterIcon } from '../icons/FilterIcon/FilterIconForVue.vue';
 import { MenuIcon } from '../icons/MenuIconForVue.vue';
-import { SortIcon } from '../icons/SortIconForVue.vue';
+import { SortIcon } from '../icons/SortIcon/SortIconForVue.vue.js';
 import {
   InfiniteTableCellClassName,
   InfiniteTableCellContentClassName,

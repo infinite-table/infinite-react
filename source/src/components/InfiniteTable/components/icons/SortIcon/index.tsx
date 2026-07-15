@@ -1,29 +1,14 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import { join } from '../../../../utils/join';
-import { HeaderSortIconIndexCls } from '../InfiniteTableHeader/header.css';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { join } from '../../../../../utils/join';
+import { HeaderSortIconIndexCls } from '../../InfiniteTableHeader/header.css';
+import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import { SortIconCls } from './SortIcon.css';
+import { defaultLineStyle } from './shared';
+import type { SortIconProps } from './shared';
 
-type SortIconProps = {
-  direction: 1 | -1 | 0;
-  size?: number;
-  lineWidth?: number;
-  lineStyle?: React.CSSProperties;
-  style?: React.CSSProperties;
-  className?: string;
-  index?: number;
-  forceSize?: boolean;
-};
-
-const defaultLineStyle: React.CSSProperties = {
-  // marginTop: 4,
-  // marginBottom: 1,
-  transition: `width 0.25s, opacity 0.25s`,
-};
-
-export function SortIcon(props: SortIconProps) {
+export function SortIcon(props: SortIconProps<React.CSSProperties>) {
   const [rendered, setRendered] = useState(true);
   const [opacity, setOpacity] = useState(0);
 
@@ -44,7 +29,7 @@ export function SortIcon(props: SortIconProps) {
   }
 
   const lineStyle = {
-    ...defaultLineStyle,
+    ...(defaultLineStyle as React.CSSProperties),
     borderTop: `${lineWidth}px solid currentColor`,
     ...props.lineStyle,
     opacity,
