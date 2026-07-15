@@ -18,10 +18,10 @@
     "totalTime": 456.38
   },
   "tests/table/props/column/column-change:works correctly": {
-    "scriptingTime": 45.07,
-    "renderingTime": 6.85,
-    "paintingTime": 2.45,
-    "totalTime": 300.33
+    "scriptingTime": 25.25,
+    "renderingTime": 3.76,
+    "paintingTime": 0.86,
+    "totalTime": 168.92
   },
   "tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
     "scriptingTime": 756.19,
@@ -30,10 +30,10 @@
     "totalTime": 3257.69
   },
   "tests/table/props/data/basic-add-data:insert data": {
-    "scriptingTime": 62.92,
-    "renderingTime": 4.03,
-    "paintingTime": 1.15,
-    "totalTime": 348.59
+    "scriptingTime": 36.51,
+    "renderingTime": 2.84,
+    "paintingTime": 0.98,
+    "totalTime": 322.61
   },
   "tests/table/props/data/basic-update:via API should not rerender header": {
     "scriptingTime": 10.79,
@@ -48,10 +48,10 @@
     "totalTime": 584.08
   },
   "tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
-    "scriptingTime": 88.33,
-    "renderingTime": 17.26,
-    "paintingTime": 2.53,
-    "totalTime": 382.55
+    "scriptingTime": 40.47,
+    "renderingTime": 5.68,
+    "paintingTime": 5.37,
+    "totalTime": 240.89
   },
   "tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
     "scriptingTime": 105.76,
