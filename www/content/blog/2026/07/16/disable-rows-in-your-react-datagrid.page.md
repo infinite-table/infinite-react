@@ -27,10 +27,7 @@ The uncontrolled version uses <DataSourcePropLink name="defaultRowDisabledState"
     disabledRows: [1, 3, 4, 5],
   }}
 >
-  <InfiniteTable<Developer>
-    columns={columns}
-    keyboardNavigation="row"
-  />
+  <InfiniteTable<Developer> columns={columns} keyboardNavigation="row" />
 </DataSource>
 ```
 
