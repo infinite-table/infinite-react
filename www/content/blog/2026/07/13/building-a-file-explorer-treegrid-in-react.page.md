@@ -1,14 +1,14 @@
 ---
-title: Build file explorer style React DataGrids with TreeGrid
+title: Building a file explorer TreeGrid in React
 description: Use Infinite Table TreeGrid and TreeDataSource to render nested data with expand state, selection, and custom tree icons.
 date: 2026-07-13
 author: radu
 tags: tree-grid, tree-data, react-datagrid
 ---
 
-Not every dataset is flat. Product catalogs have categories, file managers have folders, teams have reporting lines, and permissions screens often need to show resources nested under resources.
+An important use-case for Infinite Table is handling tree data. There's a log of scenarios where you need handling hierarchical data: product catalogs with categories, file managers, CRMs, permissions screens often need to show resources nested under resources.
 
-Infinite Table's [TreeGrid docs](/docs/learn/tree-grid/overview) cover this shape of data with two dedicated components: `<TreeDataSource />` and `<TreeGrid />`. They give tree data its own types and state model while keeping the same column, styling, sizing, and virtualization patterns you already use in the regular DataGrid.
+Infinite Table's [TreeGrid docs](/docs/learn/tree-grid/overview) cover this shape of data with two dedicated components: `<TreeDataSource />` and `<TreeGrid />`. They give tree data its own types and state model while keeping the rest of the DataGrid the same - same columns, styling, sizing, and virtualization patterns you already use in the regular DataGrid.
 
 ## Start with nested data
 
@@ -41,7 +41,7 @@ const dataSource = [
 
 Once the data has a nested structure, choose the column that should render the expand/collapse affordance by setting <PropLink name="columns.renderTreeIcon" />.
 
-```tsx {3}
+```tsx {4}
 const columns = {
   name: {
     field: 'name',
@@ -50,9 +50,9 @@ const columns = {
 };
 ```
 
-That is enough to get an interactive tree grid.
+With this setup, you're already good to go and have an interactive tree grid.
 
-<Sandpack title="Basic TreeGrid example" size="lg" viewMode="preview">
+<Sandpack title="Basic TreeGrid example" >
 
 <Description>
 
@@ -68,7 +68,11 @@ This example is reused from the TreeGrid docs. Expand and collapse folders to in
 
 ## Treat nodes by path, not only by id
 
-The TreeGrid docs use the term `node` for a rendered item in the tree, and `node path` for the route from the root node to the current node.
+The TreeGrid docs use the term `node` for a rendered item/row in the tree, and `node path` for the route from the root node to the current node.
+
+<Note>
+The top-level of your `TreeDataSource` doesn't need to be only one item - you can have multiple roots that are siblings to each other.
+</Note>
 
 ```tsx title="Node path example"
 const data = [
@@ -88,6 +92,16 @@ const data = [
       },
     ],
   },
+  {
+    id: '2', // path: ['2']
+    name: 'Media',
+    children: [
+      {
+        id: '20', // path: ['2','20']
+        name: 'FamilyTrip.mpeg'
+      }
+    ]
+  }
 ];
 ```
 

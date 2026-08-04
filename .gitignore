@@ -111,3 +111,6 @@ tsconfig.tsbuildinfo
 /www/src/.gen
 
 examples/**/*.trace.json
+
+dist-vue
+out-vue
