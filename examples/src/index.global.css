@@ -4,7 +4,10 @@ body {
   font-size: 16px;
 }
 #__next,
-.__next {
+.__next,
+/* the Vue app shell mirrors the Next.js #__next element so pages
+   using height 100% behave the same in both apps */
+.vue-examples-app {
   height: 100vh;
   width: 100vw;
   overflow: auto;

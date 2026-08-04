@@ -119,6 +119,7 @@ export function useCellRendering<T>(
     computedPinnedEndColumns,
     computedVisibleColumns,
     computedColumnsMap,
+    computedColumnOrder,
     computedRowHeight,
     computedRowSizeCacheForDetails,
     fieldsToColumn,
@@ -126,6 +127,11 @@ export function useCellRendering<T>(
     toggleGroupRow,
     columnSize,
   } = computed;
+
+  const visibleColumnIds = useMemo(
+    () => computedVisibleColumns.map((column) => column.id),
+    [computedVisibleColumns],
+  );
 
   const {
     dataArray,
@@ -345,6 +351,9 @@ export function useCellRendering<T>(
         cellStyle,
         cellClassName,
 
+        visibleColumnIds,
+        computedColumnOrder,
+
         // Whether this specific cell is in edit mode
         // Passed as prop to trigger re-render when editing state changes
         inEditMode,
@@ -399,6 +408,8 @@ export function useCellRendering<T>(
       getComputed,
       getDataSourceMasterContext,
 
+      visibleColumnIds,
+      computedColumnOrder,
       updatedAt,
       editingCell,
       dataSourceStatePartialForCell,

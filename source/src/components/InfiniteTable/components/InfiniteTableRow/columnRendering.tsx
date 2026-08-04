@@ -206,12 +206,12 @@ export function getColumnRenderingParams<T>(options: {
   horizontalLayoutPageIndex: number | null;
   rowInfo: InfiniteTableRowInfo<T>;
   rowDetailState: 'expanded' | 'collapsed' | false;
-  visibleColumnsIds: string[];
+  visibleColumnIds: string[];
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
   context: InfiniteTableColumnRenderingContext<T>;
 }) {
-  const { column, context, rowInfo, visibleColumnsIds } = options;
+  const { column, context, rowInfo, visibleColumnIds } = options;
   const groupByColumnReference = getGroupByColumnReference({
     rowInfo,
     column,
@@ -256,7 +256,7 @@ export function getColumnRenderingParams<T>(options: {
   // so it can be computed lazily - just when the user calls and needs this
   Object.defineProperty(stylingParam, 'rowHasSelectedCells', {
     get() {
-      return rowInfo.hasSelectedCells(visibleColumnsIds);
+      return rowInfo.hasSelectedCells(visibleColumnIds);
     },
   });
   const align =
@@ -294,7 +294,7 @@ export function getColumnRenderingParams<T>(options: {
       horizontalLayoutPageIndex: options.horizontalLayoutPageIndex,
       column: options.column,
       rowInfo: options.rowInfo,
-      visibleColumnsIds: options.visibleColumnsIds,
+      visibleColumnIds: options.visibleColumnIds,
       columnsMap: options.columnsMap,
       fieldsToColumn: options.fieldsToColumn,
       context: options.context,
@@ -315,7 +315,7 @@ export function getColumnRenderParam<T>(options: {
   align: InfiniteTableColumnAlignValues;
   verticalAlign: InfiniteTableColumnVerticalAlignValues;
   rowInfo: InfiniteTableRowInfo<T>;
-  visibleColumnsIds: string[];
+  visibleColumnIds: string[];
   formattedValueContext: InfiniteTableColumnValueFormatterParams<T>;
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
@@ -328,7 +328,7 @@ export function getColumnRenderParam<T>(options: {
     rowInfo,
     align,
     verticalAlign,
-    visibleColumnsIds,
+    visibleColumnIds: visibleColumnsIds,
     columnsMap,
     fieldsToColumn,
     formattedValueContext,

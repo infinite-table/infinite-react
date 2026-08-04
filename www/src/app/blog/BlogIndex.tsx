@@ -167,9 +167,11 @@ function TimelinePost({ post }: { post: BlogPost }) {
 export default function BlogIndex({
   posts,
   selectedTag,
+  childrenAfterHeader,
 }: {
   posts: BlogPost[];
   selectedTag?: string;
+  childrenAfterHeader?: React.ReactNode;
 }) {
   const publishedPosts = useMemo(
     () => posts.filter((post) => !post.draft),
@@ -223,13 +225,16 @@ export default function BlogIndex({
         >
           Infinite Blog
         </h1>
+        {childrenAfterHeader}
         <p className="text-content-color opacity-70 text-xl leading-large">
           News, announcements and release notes on Infinite Table.
           {selectedTag ? (
             <>
               {' '}
               Showing posts tagged{' '}
-              <span className="text-content-color capitalize">{selectedTag}</span>
+              <span className="text-content-color capitalize">
+                {selectedTag}
+              </span>
               .
             </>
           ) : null}

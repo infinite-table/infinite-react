@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    // sibling-file resolution: `./Foo` resolves Foo.react.tsx before Foo.tsx.
+    // Keep in sync with framework-resolve-plugin.ts (the esbuild counterpart).
+    "moduleSuffixes": [".react", ""]
+  }
+}

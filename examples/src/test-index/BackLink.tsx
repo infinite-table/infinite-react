@@ -21,7 +21,9 @@ const computeParentHref = (pathname: string): string | null => {
  * environments (e.g. Playwright) so it never interferes with tests, and is
  * positioned in the bottom-right corner with a low z-index footprint.
  */
-export const BackLink: React.FC = () => {
+export const BackLink: React.FC<{ embedded?: boolean }> = ({
+  embedded = false,
+}) => {
   const [parentHref, setParentHref] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,10 +47,14 @@ export const BackLink: React.FC = () => {
       data-testid="infinite-page-back-link"
       title={`Back to ${parentHref}`}
       style={{
-        position: 'fixed',
-        bottom: 6,
-        right: 6,
-        zIndex: 10000,
+        ...(embedded
+          ? {}
+          : {
+              position: 'fixed',
+              bottom: 6,
+              right: 6,
+              zIndex: 10000,
+            }),
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',

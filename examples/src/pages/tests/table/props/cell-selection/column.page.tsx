@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 import {
+  InfiniteTablePropColumns,
   InfiniteTable,
   DataSource,
   DataSourcePropCellSelection_MultiCell,
   RowSelectionState,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
 type Developer = {

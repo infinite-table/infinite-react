@@ -6,12 +6,17 @@ import {
   columnOffsetAtIndexWhileReordering,
   currentTransformY,
   GridRenderer,
+  GridRendererPools,
 } from './ReactHeadlessTableRenderer';
 
 export class HorizontalLayoutTableRenderer extends GridRenderer {
   protected brain: HorizontalLayoutMatrixBrain;
-  constructor(brain: HorizontalLayoutMatrixBrain, debugId?: string) {
-    super(brain, debugId);
+  constructor(
+    brain: HorizontalLayoutMatrixBrain,
+    debugId: string | undefined,
+    pools: GridRendererPools,
+  ) {
+    super(brain, debugId, pools);
     this.brain = brain;
   }
 

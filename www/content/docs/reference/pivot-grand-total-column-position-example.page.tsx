@@ -49,6 +49,16 @@ const defaultPivotBy: DataSourcePivotBy<Developer>[] = [
   {
     field: 'stack',
   },
+  {
+    field: 'canDesign',
+    columnGroup: ({ columnGroup }) => {
+      return {
+        ...columnGroup,
+        header:
+          columnGroup.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer',
+      };
+    },
+  },
 ];
 
 const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {

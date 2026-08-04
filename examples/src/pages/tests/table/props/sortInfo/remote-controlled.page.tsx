@@ -1,10 +1,10 @@
 import {
+  InfiniteTablePropColumns,
   InfiniteTable,
   DataSource,
   DataSourceData,
   DataSourcePropSortInfo,
 } from '@infinite-table/infinite-react';
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
 type Developer = {

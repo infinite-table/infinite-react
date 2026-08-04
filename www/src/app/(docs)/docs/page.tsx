@@ -10,6 +10,7 @@ import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
 import { MarkdownDocsPage } from '@www/components/MarkdownDocsPage';
+import { CopyMarkdownButton } from '@www/components/CopyMarkdownButton';
 import { siteContent } from '../../../content';
 import { MarkdownFileInfo } from '../../../utils/MarkdownFileInfo';
 
@@ -38,6 +39,7 @@ export default function Docs() {
         {page ? (
           <>
             <PageHeading title={page.frontmatter.title}></PageHeading>
+            <CopyMarkdownButton mdPath="/docs/index.md" />
             <MarkdownDocsPage params={{ slug: [] }}></MarkdownDocsPage>
           </>
         ) : (

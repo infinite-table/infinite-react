@@ -1,6 +1,7 @@
 import { BlogPost } from '@www/utils/blogUtils';
 import BlogIndex from './BlogIndex';
 import { CenterContent } from '../CenterContent';
+import { CopyMarkdownButton } from '../../components/CopyMarkdownButton';
 
 export default function RecentPosts({
   posts,
@@ -11,7 +12,11 @@ export default function RecentPosts({
 }) {
   return (
     <CenterContent>
-      <BlogIndex posts={posts} selectedTag={selectedTag} />
+      <BlogIndex
+        posts={posts}
+        selectedTag={selectedTag}
+        childrenAfterHeader={<CopyMarkdownButton mdPath="/blog/index.md" />}
+      />
     </CenterContent>
   );
 }

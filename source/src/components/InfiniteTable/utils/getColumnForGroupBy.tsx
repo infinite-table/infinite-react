@@ -1,12 +1,8 @@
 import * as React from 'react';
 
 import { InfiniteTableColumnCellContextType } from '..';
-import {
-  InfiniteTableRowInfo,
-  InfiniteTable_HasGrouping_RowInfoGroup,
-} from '../../../utils/groupAndPivot';
+import { InfiniteTable_HasGrouping_RowInfoGroup } from '../../../utils/groupAndPivot';
 import { join } from '../../../utils/join';
-import { stripVar } from '../../../utils/stripVar';
 import { DataSourceGroupBy } from '../../DataSource';
 import { showLoadingIcon } from '../../DataSource/state/rowInfoStatus';
 import { Renderable } from '../../types/Renderable';
@@ -15,7 +11,6 @@ import { LoadingIcon } from '../components/icons/LoadingIcon';
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 import { GroupRowExpanderCls } from '../components/InfiniteTableRow/row.css';
 
-import { ThemeVars } from '../vars.css';
 import {
   InfiniteTableColumn,
   InfiniteTableGeneratedGroupColumn,
@@ -33,21 +28,14 @@ import {
 } from '../utilities.css';
 
 import { RenderCellHookComponent } from './RenderHookComponentForInfinite';
+import {
+  buildColumnForGroupBy,
+  buildSingleGroupColumn,
+  GroupColumnRenderers,
+} from './buildGroupColumn';
 
-export function styleForGroupColumn<T>({
-  rowInfo,
-}: {
-  rowInfo: InfiniteTableRowInfo<T>;
-}) {
-  return {
-    [stripVar(ThemeVars.components.Row.groupNesting)]:
-      rowInfo.dataSourceHasGrouping
-        ? rowInfo.isGroupRow
-          ? rowInfo.groupNesting - 1
-          : rowInfo.groupNesting
-        : 0,
-  };
-}
+export { styleForGroupColumn } from '../components/InfiniteTableRow/columnCellStyling';
+
 export function getGroupColumnRender<T>({
   groupIndexForColumn,
   groupRenderStrategy,
@@ -219,6 +207,13 @@ export function getGroupColumnRenderGroupIcon<T>({
     return icon;
   };
 }
+function getReactGroupColumnRenderers<T>(): GroupColumnRenderers<T> {
+  return {
+    getGroupColumnRender,
+    getGroupColumnRenderGroupIcon,
+  };
+}
+
 export function getColumnForGroupBy<T>(
   options: InfiniteTableGroupColumnGetterOptions<T> & {
     groupIndexForColumn: number;
@@ -227,53 +222,12 @@ export function getColumnForGroupBy<T>(
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ): InfiniteTableGeneratedGroupColumn<T> {
-  const { groupByForColumn, groupIndexForColumn, groupRenderStrategy } =
-    options;
-
-  let userDefinedGroupColumn: Partial<InfiniteTableColumn<T>> =
-    groupByForColumn.column ? { ...groupByForColumn.column } : {};
-  // typeof groupColumnFromProps === 'function'
-  //   ? groupColumnFromProps(options, toggleGroupRow)
-  //   : { ...groupColumnFromProps };
-
-  // if (groupByForColumn.column) {
-  //   userDefinedGroupColumn = {
-  //     ...userDefinedGroupColumn,
-  //     ...groupByForColumn.column,
-  //   };
-  // }
-
-  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
-    header: `Group by ${groupByForColumn.field || groupByForColumn.groupField}`,
-    groupByForColumn,
-
-    render: getGroupColumnRender({
-      groupIndexForColumn,
-      groupRenderStrategy,
-    }),
-    ...userDefinedGroupColumn,
-    renderGroupIcon: getGroupColumnRenderGroupIcon({
-      initialRenderGroupIcon: userDefinedGroupColumn?.renderGroupIcon,
-      groupIndexForColumn,
-      toggleGroupRow,
-      groupRenderStrategy,
-    }),
-  };
-
-  if (groupColumnFromProps) {
-    if (typeof groupColumnFromProps === 'function') {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps(options, toggleGroupRow),
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    } else {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps,
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    }
-  }
-  return generatedGroupColumn;
+  return buildColumnForGroupBy<T>(
+    options,
+    toggleGroupRow,
+    groupColumnFromProps,
+    getReactGroupColumnRenderers<T>(),
+  );
 }
 
 export function getSingleGroupColumn<T>(
@@ -281,34 +235,10 @@ export function getSingleGroupColumn<T>(
   toggleGroupRow: (groupRowKeys: any[]) => void,
   groupColumnFromProps?: Partial<InfiniteTablePropGroupColumn<T>>,
 ) {
-  const theGroupColumnFromProps =
-    typeof groupColumnFromProps === 'function'
-      ? groupColumnFromProps(options, toggleGroupRow)
-      : groupColumnFromProps;
-
-  const base: { sortable?: boolean } = {};
-
-  if (options.sortable != undefined) {
-    base.sortable = options.sortable;
-  }
-  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
-    ...base,
-    header: `Group`,
-    groupByForColumn: options.groupBy,
-    renderSelectionCheckBox: options.selectionMode === 'multi-row',
-
-    render: getGroupColumnRender({
-      groupIndexForColumn: 0,
-      groupRenderStrategy: 'single-column',
-    }),
-    ...theGroupColumnFromProps,
-    renderGroupIcon: getGroupColumnRenderGroupIcon({
-      initialRenderGroupIcon: theGroupColumnFromProps?.renderGroupIcon,
-      groupIndexForColumn: 0,
-      toggleGroupRow,
-      groupRenderStrategy: 'single-column',
-    }),
-  };
-
-  return generatedGroupColumn;
+  return buildSingleGroupColumn<T>(
+    options,
+    toggleGroupRow,
+    groupColumnFromProps,
+    getReactGroupColumnRenderers<T>(),
+  );
 }

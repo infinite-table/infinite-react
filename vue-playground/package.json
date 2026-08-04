@@ -1,0 +1,17 @@
+{
+  "name": "@infinite-table/vue-playground",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Minimal Vite playground for the Vue build of Infinite Table (source/dist-vue). Temporary until Phase 4 adds .page.vue siblings to /examples.",
+  "scripts": {
+    "predev": "npm run --prefix ../source esbuild:vue",
+    "dev": "vite --port 5557",
+    "dev:no-build": "vite --port 5557"
+  },
+  "dependencies": {
+    "vue": "^3.5.39"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

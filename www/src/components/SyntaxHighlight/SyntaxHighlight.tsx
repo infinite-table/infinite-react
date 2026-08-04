@@ -28,11 +28,11 @@ function Mermaid({ chart }: { chart: string }) {
 }
 
 interface SyntaxHighlightProps {
-  file: string;
-  title: string;
+  file?: string;
+  title?: string;
   children: string;
   className?: string;
-  highlightLines: number[];
+  highlightLines?: number[];
   noMargin?: boolean;
   noMarkers?: boolean;
 }

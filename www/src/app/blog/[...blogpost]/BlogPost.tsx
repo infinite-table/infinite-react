@@ -9,6 +9,7 @@ import { useTwitter } from '@www/components/Layout/useTwitter';
 
 import type { TocHeading } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
+import { CopyMarkdownButton } from '@www/components/CopyMarkdownButton';
 import { type BlogPost } from '../sortedPosts';
 
 export function BlogPost({
@@ -17,12 +18,14 @@ export function BlogPost({
   prevRoute,
   headings,
   children,
+  mdPath,
 }: {
   headings: TocHeading[];
   children: React.ReactNode;
   post: BlogPost;
   nextRoute?: DocsPageRoute;
   prevRoute?: DocsPageRoute;
+  mdPath?: string;
 }) {
   let author = post.author;
   if (Array.isArray(author)) {
@@ -64,6 +67,8 @@ export function BlogPost({
                   </time>
                 </span>
               </p>
+
+              {mdPath ? <CopyMarkdownButton mdPath={mdPath} /> : null}
 
               {post.thumbnail && (
                 <div className="mb-8 aspect-video max-w-4xl mx-auto">

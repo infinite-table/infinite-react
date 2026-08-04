@@ -1,66 +1,17 @@
 import * as React from 'react';
 
 import type { MenuProps } from '../../Menu/MenuProps';
-import type { MenuState } from '../../Menu/MenuState';
 import { AvoidReactDiff } from '../../RawList/AvoidReactDiff';
 import type { Renderable } from '../../types/Renderable';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import type { GetContextMenuItemsReturnType } from '../types/InfiniteTableProps';
 
-export function getMenuItemsAndColumns(
-  menuDefinition: GetContextMenuItemsReturnType,
-) {
-  let items = menuDefinition
-    ? Array.isArray(menuDefinition)
-      ? menuDefinition
-      : menuDefinition.items
-    : null;
+import {
+  getMenuDefaultProps,
+  getMenuItemsAndColumns,
+} from './contextMenuUtilsShared';
 
-  const columns =
-    menuDefinition && !Array.isArray(menuDefinition)
-      ? menuDefinition.columns
-      : undefined;
-
-  return {
-    items,
-    columns,
-  };
-}
-
-export function getMenuDefaultProps(config: {
-  onHideIntent: VoidFunction | undefined;
-}) {
-  const onRootMouseDown: EventListener = (event: Event) => {
-    //@ts-ignore
-    event.__insideMenu = true;
-  };
-
-  const onHide = (state: MenuState) => {
-    state.domRef.current?.parentNode?.removeEventListener(
-      'mousedown',
-      onRootMouseDown,
-    );
-  };
-
-  const menuDefaultProps: MenuProps = {
-    columns: [],
-    items: [],
-    autoFocus: true,
-    onShow: (state) => {
-      state.domRef.current?.parentNode?.addEventListener(
-        'mousedown',
-        onRootMouseDown,
-      );
-    },
-    onHide,
-    onHideIntent: (state: MenuState) => {
-      onHide(state);
-      config.onHideIntent?.();
-    },
-  };
-
-  return menuDefaultProps;
-}
+export { getMenuDefaultProps, getMenuItemsAndColumns };
 
 export function getLazyMenu(
   menuDefinition: Promise<GetContextMenuItemsReturnType>,

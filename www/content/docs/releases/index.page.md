@@ -2,6 +2,9 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+## 9.0.0-canary - 15.07.2026
+
+First Vue release
 
 ## 8.0.5 — 06.07.2026 
 

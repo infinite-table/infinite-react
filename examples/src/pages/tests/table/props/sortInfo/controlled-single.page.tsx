@@ -39,6 +39,7 @@ export default function ControlledPageTest() {
       <div>
         <p>Currently the sorting is {enabled ? 'enabled' : 'disabled'}</p>
         <button
+          id="toggle-sortInfo"
           onClick={() => {
             setEnabled(!enabled);
           }}

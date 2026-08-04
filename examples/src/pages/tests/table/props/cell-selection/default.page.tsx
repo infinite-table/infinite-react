@@ -6,49 +6,15 @@ import {
   DataSourcePropCellSelection_MultiCell,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
 
-type Developer = {
-  id: number;
-
-  firstName: string;
-  lastName: string;
-  country: string;
-  city: string;
-  currency: string;
-  preferredLanguage: string;
-  stack: string;
-  canDesign: 'yes' | 'no';
-  hobby: string;
-  salary: number;
-  age: number;
-};
-
-const dataSource = () => {
-  return fetch(process.env.NEXT_PUBLIC_BASE_URL + '/developers1k')
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
-
-const columns: InfiniteTablePropColumns<Developer> = {
-  id: { field: 'id' },
-
-  firstName: {
-    field: 'firstName',
-  },
-
-  preferredLanguage: { field: 'preferredLanguage' },
-  stack: { field: 'stack' },
-};
-
-const domProps = {
-  style: {
-    height: '80vh',
-    margin: 10,
-  },
-};
+import {
+  columns,
+  developers1kDataSource,
+  height80vhDomProps,
+  type Developer,
+} from './common';
 
 export default function GroupByExample() {
   const [cellSelection, _setCellSelection] =
@@ -72,7 +38,7 @@ export default function GroupByExample() {
     <>
       <DataSource<Developer>
         primaryKey="id"
-        data={dataSource}
+        data={developers1kDataSource}
         selectionMode="multi-cell"
         // defaultRowSelection={rowSelection}
         // xdefaultCellSelection={[]}
@@ -86,7 +52,7 @@ export default function GroupByExample() {
             }
           }
           debugId="test"
-          domProps={domProps}
+          domProps={height80vhDomProps}
           columns={columns}
           keyboardSelection={true}
           keyboardNavigation={'cell'}

@@ -39,10 +39,31 @@ const config: PlaywrightTestConfig = {
   },
   projects: [
     {
-      name: 'chromium',
+      name: 'react',
       testMatch: /.*.spec.ts/,
 
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      // runs the same specs against the Vue examples app (port 5556).
+      // Specs without a .page.vue sibling are auto-skipped (see
+      // test-fixtures.ts), so parity progress is measurable as
+      // "specs no longer skipped on vue".
+      name: 'vue',
+      testMatch: /.*.spec.ts/,
+
+      // these specs import `test` directly from @playwright/test (bypassing
+      // the auto-skip fixture) and test React-only internals:
+      // - lists: the RawList/VirtualList React component wrappers (the Vue
+      //   siblings ListRowPoolForVue/RawTableForVue are covered by jest
+      //   bridge specs)
+      // - hooks: the React useComponentState/useProperty hook pages
+      testIgnore: ['**/tests/lists/**', '**/tests/hooks/**'],
+
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:5556/',
+      },
     },
   ],
 };

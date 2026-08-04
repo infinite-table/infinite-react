@@ -1,4 +1,10 @@
-import { createRef, KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent } from 'react';
+
+// neutral replacement for React's createRef - this file is shared across
+// framework builds, so it cannot have a runtime dependency on react
+function createRef<T>(): { current: T | null } {
+  return { current: null };
+}
 import {
   DataSourceGroupBy,
   DataSourcePropGroupBy,

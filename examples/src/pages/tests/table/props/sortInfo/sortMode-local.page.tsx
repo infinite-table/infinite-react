@@ -6,37 +6,7 @@ import {
 } from '@infinite-table/infinite-react';
 import * as React from 'react';
 
-const carsales: CarSale[] = [
-  {
-    category: '1 - Category 1 Truck',
-    make: 'Acura',
-    model: 'RDX 2WD',
-    year: 2010,
-    sales: 15,
-    color: 'red',
-    id: 0,
-  },
-  {
-    category: '1 - Category 1 Truck',
-    make: 'Acura',
-    model: 'RDX 4WD',
-    year: 2007,
-    sales: 1,
-    color: 'red',
-    id: 1,
-  },
-  {
-    category: '1 - Category 1 Truck',
-    make: 'Acura',
-    model: 'RDX 4WD',
-    year: 2008,
-    sales: 2,
-    color: 'magenta',
-    id: 2,
-  },
-];
-
-(globalThis as any).carsales = carsales;
+import { carsalesLocal as carsales } from './common';
 
 const columns: Record<string, InfiniteTableColumn<CarSale>> = {
   make: { field: 'make' },

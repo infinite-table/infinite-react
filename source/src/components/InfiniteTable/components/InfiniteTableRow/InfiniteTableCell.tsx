@@ -3,17 +3,20 @@ import * as React from 'react';
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
 
-import { internalProps } from '../../internalProps';
 import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName, overflow } from '../../utilities.css';
 import { ColumnCellCls } from '../cell.css';
 
 import { InfiniteTableCellProps } from './InfiniteTableCellTypes';
 
-const { rootClassName } = internalProps;
-
-export const InfiniteTableCellClassName = `${rootClassName}Cell`;
-export const InfiniteTableCellContentClassName = `${rootClassName}Cell_content`;
+export {
+  InfiniteTableCellClassName,
+  InfiniteTableCellContentClassName,
+} from './InfiniteTableCellClassNames';
+import {
+  InfiniteTableCellClassName,
+  InfiniteTableCellContentClassName,
+} from './InfiniteTableCellClassNames';
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnReorderEffectDurationAtIndex = stripVar(

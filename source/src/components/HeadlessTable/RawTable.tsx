@@ -117,6 +117,11 @@ export function RawTableFn(props: RawTableProps) {
     forceRerenderTimestamp,
   ]);
 
+  // Single after-commit flush for all grid cells (instead of per-cell useLayoutEffect).
+  useLayoutEffect(() => {
+    renderer.flushPendingAfterCommitWork();
+  });
+
   return <AvoidReactDiff updater={onRenderUpdater} />;
 }
 

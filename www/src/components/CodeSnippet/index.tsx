@@ -14,7 +14,7 @@ export type CodeSnippetProps = {
   file?: string;
   lang?: string;
   files: SandpackInputFile[];
-  highlightLines?: string;
+  highlightLines?: number[];
   importedPackages?: string[];
   viewMode?: 'code' | 'preview' | 'both';
   cwd?: string;
@@ -63,7 +63,11 @@ export function CodeSnippet(props: CodeSnippetProps) {
   }
 
   return (
-    <CodeBlock title={props.title} highlightLines={props.highlightLines}>
+    <CodeBlock
+      title={props.title}
+      highlightLines={props.highlightLines}
+      lang={props.lang}
+    >
       {files[0]?.code}
     </CodeBlock>
   );

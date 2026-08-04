@@ -12,6 +12,7 @@ const { config, dependencies } = packageJSON;
 Object.freeze(packageJSON);
 
 import { vanillaConfig } from './tsup-vanilla-extract-config';
+import { frameworkResolvePlugin } from './framework-resolve-plugin';
 
 // CHANGE HERE TO ADD ESM AS WELL
 const FORMATS: Format[] = ['cjs', 'esm'];
@@ -88,7 +89,7 @@ export const tsupConfig: Options = {
       ),
     };
   },
-  esbuildPlugins: [vanillaConfig],
+  esbuildPlugins: [frameworkResolvePlugin('react'), vanillaConfig],
 };
 
 export default defineConfig(tsupConfig);

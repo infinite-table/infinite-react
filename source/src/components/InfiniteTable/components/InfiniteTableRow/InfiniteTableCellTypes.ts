@@ -87,6 +87,8 @@ export interface InfiniteTableColumnCellProps<T>
   rowInfoStore: RowInfoStore<T>;
   groupRenderStrategy: InfiniteTablePropGroupRenderStrategy;
   getData: () => InfiniteTableRowInfo<T>[];
+  visibleColumnIds: string[];
+  computedColumnOrder: string[];
   toggleGroupRow: InfiniteTableToggleGroupRowFn;
   rowIndexInHorizontalLayoutPage: number | null;
   horizontalLayoutPageIndex: number | null;

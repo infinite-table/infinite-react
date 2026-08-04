@@ -1,3 +1,11 @@
+/**
+ * React adapter for the managed component state system.
+ *
+ * All framework-free logic (controlled/uncontrolled resolution, reducer body,
+ * generated action setters, prop-diff) lives in ./managedComponentState.ts.
+ * This file owns React scheduling: useState/useReducer, effects, context.
+ * Its behavior is pinned by buildManagedComponent.jestspec.tsx.
+ */
 import * as React from 'react';
 import {
   useReducer,
@@ -11,11 +19,8 @@ import {
 
 import { dbg } from '../../../utils/debugLoggers';
 
-import { proxyFn } from '../../../utils/proxyFnCall';
-import { toUpperFirst } from '../../../utils/toUpperFirst';
 import { notNullable, UPDATED_VALUES } from '../../InfiniteTable/types/Utility';
 
-import { isControlled } from '../../utils/isControlled';
 import { useEffectOnce } from '../useEffectOnceWithProperUnmount';
 import { useLatest } from '../useLatest';
 import { usePrevious } from '../usePrevious';
@@ -28,17 +33,17 @@ import {
 } from './types';
 import { getMarker } from '../../../utils/devTools';
 
-export const notifyChange = (
-  props: any,
-  callbackPropName: string,
-  values: any[],
-) => {
-  const callbackProp = props[callbackPropName] as Function;
+import {
+  notifyChange,
+  initManagedState,
+  managedComponentReducer,
+  createGeneratedActions,
+  computePropsDiff,
+  ForwardPropsToStateFnResult,
+} from './managedComponentState';
 
-  if (typeof callbackProp === 'function') {
-    callbackProp(...values);
-  }
-};
+export { notifyChange };
+export type { ForwardPropsToStateFnResult };
 
 let ComponentContext: any;
 
@@ -48,134 +53,6 @@ export function getComponentStateContext<T>(): React.Context<T> {
   }
 
   return (ComponentContext = createContext<T>(null as any as T));
-}
-
-function getReducerGeneratedActions<T_STATE, T_PROPS>(
-  dispatch: React.Dispatch<any>,
-  getState: () => T_STATE,
-  getProps: () => T_PROPS,
-  propsToForward: ForwardPropsToStateFnResult<T_PROPS, T_STATE, any>,
-  allowedControlledPropOverrides?: Record<keyof T_PROPS, boolean>,
-  interceptedActions?: ComponentInterceptedActions<T_STATE>,
-  mappedCallbacks?: ComponentMappedCallbacks<T_STATE>,
-): ComponentStateGeneratedActions<T_STATE> {
-  const state = getState();
-  //@ts-ignore
-  return Object.keys(state).reduce((actions, stateKey) => {
-    const key = stateKey as any as keyof T_STATE;
-
-    const setter = (value: T_STATE[typeof key]) => {
-      const props = getProps();
-      const state = getState();
-      const currentValue = state[key];
-      if (currentValue === value) {
-        // #samevaluecheckfailswhennotflushed
-        // early exit, as no change detected - this works if state updates are flushed, but could fail us when state updates are batched
-        // as we could discard a valid update, since the last/previous value could have not been flushed yet
-        // eg: in DataSource.useLoadData we set actions.loading = true, but this is not written to the state right away but is batched
-        // so if on the same tick we do actions.loading = false, this will be discarded, as the state is still loading: false as the above/previous actions was batched and hasn't been applied
-        //
-        // so in order to avoid the above scenario, simply allow same value updates to be applied
-        // return;
-        // we skip this return, as starting with React 18 we have batched updates
-        // so if we return we could be discarding a valid update, since the last/previous value could not have been flushed yet
-        // so this current value could be the same as the old value, but different from the value that was not yet flushed
-        // and therefore the current value to be set could be a valid new value
-      }
-
-      let notifyTheChange = true;
-
-      if (interceptedActions && typeof interceptedActions[key] === 'function') {
-        if (interceptedActions[key]!(value, { actions, state }) === false) {
-          notifyTheChange = false;
-        }
-      }
-
-      // it's important that we notify with the value that we receive
-      // directly from the setter (see continuation below)
-      if (notifyTheChange) {
-        let callbackParams = [value];
-        let callbackName = `on${toUpperFirst(stateKey)}Change` as string;
-
-        if (mappedCallbacks && mappedCallbacks[key]) {
-          const res = mappedCallbacks[key](value, state);
-          callbackName = res.callbackName || callbackName;
-          callbackParams = res.callbackParams;
-        }
-
-        notifyChange(props, callbackName, callbackParams);
-      }
-
-      //@ts-ignore
-      const forwardFn = propsToForward[key];
-
-      if (typeof forwardFn === 'function') {
-        // and not with the modified value from the forwardFn
-        value = forwardFn(value);
-      }
-
-      const allowControlled =
-        !!allowedControlledPropOverrides?.[key as any as keyof T_PROPS];
-
-      if (isControlled(stateKey as keyof T_PROPS, props) && !allowControlled) {
-        return;
-      }
-
-      dispatch({
-        payload: {
-          updatedProps: null,
-          mappedState: {
-            [stateKey]: value,
-          },
-        },
-      });
-    };
-
-    Object.defineProperty(actions, stateKey, {
-      set: setter,
-    });
-
-    return actions;
-  }, {} as ComponentStateGeneratedActions<T_STATE>);
-}
-
-export type ForwardPropsToStateFnResult<
-  TYPE_PROPS,
-  TYPE_RESULT,
-  COMPONENT_SETUP_STATE,
-> = {
-  [propName in keyof TYPE_PROPS & keyof TYPE_RESULT]:
-    | 1
-    | ((
-        value: TYPE_PROPS[propName],
-        setupState: COMPONENT_SETUP_STATE,
-      ) => TYPE_RESULT[propName]);
-};
-
-function forwardProps<T_PROPS, T_RESULT, COMPONENT_SETUP_STATE>(
-  propsToForward: Partial<
-    ForwardPropsToStateFnResult<T_PROPS, T_RESULT, COMPONENT_SETUP_STATE>
-  >,
-  props: T_PROPS,
-  setupState: COMPONENT_SETUP_STATE,
-): T_RESULT {
-  const mappedState = {} as T_RESULT;
-  for (let k in propsToForward)
-    if (propsToForward.hasOwnProperty(k)) {
-      const forwardFn = propsToForward[k as keyof typeof propsToForward];
-      let propValue = isControlled(k as keyof T_PROPS, props)
-        ? props[k as keyof T_PROPS]
-        : props[`default${toUpperFirst(k)}` as keyof T_PROPS];
-
-      if (typeof forwardFn === 'function') {
-        //@ts-ignore
-        propValue = forwardFn(propValue, setupState);
-      }
-      //@ts-ignore
-      mappedState[k as any as keyof T_RESULT] = propValue;
-    }
-
-  return mappedState;
 }
 
 type UPDATED_PROPS<T> = UPDATED_VALUES<T>;
@@ -338,51 +215,20 @@ export function buildManagedComponent<
     const getParentState = useLatest(parentState);
 
     function initStateOnce() {
-      // STEP 1: call setupState
-
-      let mappedState = {} as COMPONENT_MAPPED_STATE;
-
-      if (propsToForward) {
-        mappedState = forwardProps<
-          T_PROPS,
-          COMPONENT_MAPPED_STATE,
-          COMPONENT_SETUP_STATE
-        >(propsToForward, props, initialSetupState);
-      }
-
-      const state = { ...initialSetupState, ...mappedState };
-
-      if (config.mapPropsToState) {
-        const { fn: mapPropsToState, propertyReads } = proxyFn(
-          config.mapPropsToState,
-          {
-            getProxyTargetFromArgs: (initialArg) => initialArg.props,
-            putProxyToArgs: (props: T_PROPS, initialArg) => {
-              return [{ ...initialArg, props }];
-            },
-          },
-        );
-        const stateFromProps = mapPropsToState({
-          props,
-          state,
-          oldState: null,
-          parentState,
-          // getState: getComponentState,
-        });
-
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
-        return {
-          ...state,
-          ...stateFromProps,
-        };
-      }
-
-      return state as COMPONENT_MAPPED_STATE &
-        COMPONENT_DERIVED_STATE &
-        COMPONENT_SETUP_STATE;
+      return initManagedState<
+        T_PROPS,
+        COMPONENT_MAPPED_STATE,
+        COMPONENT_SETUP_STATE,
+        COMPONENT_DERIVED_STATE,
+        T_PARENT_STATE
+      >({
+        props,
+        initialSetupState,
+        propsToForward,
+        parentState,
+        mapPropsToState: config.mapPropsToState,
+        propsToStateSet: propsToStateSetRef.current,
+      });
     }
     const [wholeState] = useState<COMPONENT_STATE>(initStateOnce);
 
@@ -392,64 +238,17 @@ export function buildManagedComponent<
       previousState: COMPONENT_STATE,
       action: any,
     ) => {
-      if (action.type === 'REPLACE_STATE') {
-        return action.payload;
-      }
-
-      const parentState = getParentState?.() ?? null;
-
-      const mappedState: Partial<COMPONENT_MAPPED_STATE> | null =
-        action.payload.mappedState;
-      const updatedProps: Partial<T_PROPS> | null =
-        action.payload.updatedPropsToState;
-
-      const newState: COMPONENT_STATE = { ...previousState };
-
-      if (mappedState) {
-        Object.assign(newState, mappedState);
-      }
-
-      if (config.mapPropsToState) {
-        const { fn: mapPropsToState, propertyReads } = proxyFn(
-          config.mapPropsToState,
-          {
-            getProxyTargetFromArgs: (initialArg) => initialArg.props,
-            putProxyToArgs: (props: T_PROPS, initialArg) => {
-              return [{ ...initialArg, props }];
-            },
-          },
-        );
-
-        const stateFromProps = mapPropsToState({
-          props: getProps(),
-          state: newState,
-          oldState: previousState,
-          parentState,
-          // getState: getComponentState
-        });
-
-        propsToStateSetRef.current = new Set([
-          ...propsToStateSetRef.current,
-          ...propertyReads,
-        ]);
-
-        Object.assign(newState, stateFromProps);
-      }
-
-      if (action.type === 'ASSIGN_STATE') {
-        Object.assign(newState, action.payload);
-      }
-
-      const result = config.concludeReducer
-        ? config.concludeReducer({
-            previousState,
-            state: newState,
-            updatedProps,
-            parentState,
-          })
-        : newState;
-
-      return result;
+      return managedComponentReducer<T_PROPS, COMPONENT_STATE, T_PARENT_STATE>(
+        previousState,
+        action,
+        {
+          getProps,
+          getParentState: () => getParentState?.() ?? null,
+          mapPropsToState: config.mapPropsToState as any,
+          concludeReducer: config.concludeReducer as any,
+          propsToStateSet: propsToStateSetRef.current,
+        },
+      );
     };
 
     const [state, dispatch] = useReducer(theReducer, wholeState);
@@ -461,21 +260,20 @@ export function buildManagedComponent<
     const { allowedControlledPropOverrides } = config;
 
     const actions = useMemo(() => {
-      const generatedActions = getReducerGeneratedActions<
-        COMPONENT_STATE,
-        T_PROPS
-      >(
-        dispatch,
-        getComponentState,
-        getProps,
-        propsToForward as ForwardPropsToStateFnResult<
-          T_PROPS,
-          COMPONENT_STATE,
-          COMPONENT_SETUP_STATE
-        >,
-        allowedControlledPropOverrides,
-        config.interceptActions,
-        config.mappedCallbacks,
+      const generatedActions = createGeneratedActions<COMPONENT_STATE, T_PROPS>(
+        {
+          dispatch,
+          getState: getComponentState,
+          getProps,
+          propsToForward: propsToForward as ForwardPropsToStateFnResult<
+            T_PROPS,
+            COMPONENT_STATE,
+            COMPONENT_SETUP_STATE
+          >,
+          allowedControlledPropOverrides,
+          interceptedActions: config.interceptActions,
+          mappedCallbacks: config.mappedCallbacks,
+        },
       );
 
       return generatedActions;
@@ -520,60 +318,20 @@ export function buildManagedComponent<
     const effectFn = config.layoutEffect ? useLayoutEffect : useEffect;
     effectFn(() => {
       const currentProps = props;
-      const newMappedState: Partial<COMPONENT_MAPPED_STATE> = {};
-      let newMappedStateCount = 0;
 
-      const updatedPropsToState: Partial<T_PROPS> = {};
-      let updatedPropsToStateCount = 0;
-
-      const rawUpdatedProps: UPDATED_PROPS<T_PROPS> = {};
-      let rawUpdatedPropsCount = 0;
-      const allKeys = new Set([
-        ...Object.keys(currentProps),
-        ...Object.keys(prevProps),
-      ]);
-
-      // for (var k in props) {
-
-      // before this we were trivially iterating over props
-      // but when values go undefined (are not passed), they are not in the props object
-      // so we can't detect a value going from defined to undefined
-      // so we have to iterate over both current and prev keys
-      allKeys.forEach((k) => {
-        const key = k as keyof T_PROPS;
-        const oldValue = prevProps[key];
-        const newValue = currentProps[key];
-
-        if (key === 'children') {
-          return;
-        }
-        if (oldValue === newValue) {
-          return;
-        }
-        rawUpdatedProps[key] = { newValue, oldValue };
-        rawUpdatedPropsCount++;
-
-        if (isControlled(key, props) || isControlled(key, prevProps)) {
-          if (propsToForward.hasOwnProperty(k)) {
-            let valueToSet = newValue;
-            const forwardFn = propsToForward[k as keyof typeof propsToForward];
-            if (typeof forwardFn === 'function') {
-              //@ts-ignore
-              valueToSet = forwardFn(newValue);
-            }
-            //@ts-ignore
-            if (state[key] !== valueToSet) {
-              //@ts-ignore
-              newMappedState[key] = valueToSet;
-              newMappedStateCount++;
-            }
-
-            // or even if there is not, but props from propsToStateSet have changed
-          } else if (propsToStateSetRef.current.has(k)) {
-            updatedPropsToState[key] = currentProps[key];
-            updatedPropsToStateCount++;
-          }
-        }
+      const {
+        newMappedState,
+        newMappedStateCount,
+        updatedPropsToState,
+        updatedPropsToStateCount,
+        rawUpdatedProps,
+        rawUpdatedPropsCount,
+      } = computePropsDiff<T_PROPS, COMPONENT_MAPPED_STATE>({
+        currentProps,
+        prevProps,
+        state,
+        propsToForward,
+        propsToStateSet: propsToStateSetRef.current,
       });
 
       if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
@@ -633,17 +391,16 @@ export function buildManagedComponent<
           },
         };
 
-        // const newState = theReducer(state, action);
-
         skipTriggerParentStateChangeRef.current = true;
         dispatch(action);
 
         if (config.onPropChange) {
           for (var prop in rawUpdatedProps)
             if (rawUpdatedProps.hasOwnProperty(prop)) {
-              const { newValue, oldValue } = rawUpdatedProps[prop]!;
+              const { newValue, oldValue } =
+                rawUpdatedProps[prop as keyof T_PROPS]!;
               config.onPropChange(
-                { name: prop, newValue, oldValue },
+                { name: prop as keyof T_PROPS, newValue, oldValue },
                 props,
                 actions,
                 state,
@@ -651,18 +408,13 @@ export function buildManagedComponent<
             }
         }
         if (config.onPropsChange && rawUpdatedPropsCount) {
-          config.onPropsChange(rawUpdatedProps, props, actions, state);
+          config.onPropsChange(
+            rawUpdatedProps as UPDATED_PROPS<T_PROPS>,
+            props,
+            actions,
+            state,
+          );
         }
-
-        // config.onPropChange?.(
-        //   { name: key, oldValue, newValue },
-
-        //   actions as ACTIONS_TYPE,
-        // );
-        // dispatch({
-        //   type: 'REPLACE_STATE',
-        //   payload: newState,
-        // });
       }
     });
 

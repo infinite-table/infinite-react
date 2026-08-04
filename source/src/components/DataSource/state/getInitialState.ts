@@ -1,6 +1,6 @@
 import { type DebugLogger } from '../../../utils/debugPackage';
 import { warnOnce } from '../../../utils/logger';
-import {
+import type {
   DataSourceComponentActions,
   DataSourceDataParams,
   DataSourcePropOnCellSelectionChange_MultiCell,
@@ -15,16 +15,16 @@ import {
   DataSourceRowInfoReducer,
   DebugTimingKey,
   RowDisabledStateObject,
-  RowSelectionState,
 } from '..';
+import { RowSelectionState } from '../RowSelectionState';
 import { dbg } from '../../../utils/debugLoggers';
 import { DeepMap } from '../../../utils/DeepMap';
 import defaultSortTypes from '../../../utils/multisort/sortTypes';
 import { raf } from '../../../utils/raf';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
-import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import type { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
-import {
+import type {
   InfiniteTableRowInfo,
   InfiniteTable_Tree_RowInfoParentNode,
   Scrollbars,
@@ -43,7 +43,7 @@ import {
 import { defaultFilterTypes } from '../defaultFilterTypes';
 import { GroupRowsState } from '../GroupRowsState';
 import { Indexer } from '../Indexer';
-import { buildDataSourceDataParams } from '../privateHooks/useLoadData';
+import { buildDataSourceDataParams } from '../privateHooks/loadDataShared';
 import { RowSelectionStateObject } from '../RowSelectionState';
 import {
   DataSourceMappedState,

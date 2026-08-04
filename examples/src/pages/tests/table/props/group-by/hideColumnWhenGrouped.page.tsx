@@ -1,13 +1,13 @@
 import * as React from 'react';
 
 import {
+  InfiniteTablePropColumns,
   InfiniteTable,
   DataSource,
   DataSourcePropGroupBy,
   InfiniteTablePropGroupColumn,
 } from '@infinite-table/infinite-react';
 
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 import { useState } from 'react';
 

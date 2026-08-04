@@ -1,20 +1,8 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-export type IndexEntry = {
-  type: 'folder' | 'page';
-  name: string;
-  /** Path relative to the current index folder, e.g. `filter-value/client-side` */
-  path: string;
-  href: string;
-  depth: number;
-};
-
-export type TestPagesIndexProps = {
-  segments: string[];
-  parentHref: string | null;
-  entries: IndexEntry[];
-};
+export type { IndexEntry, TestPagesIndexProps } from './TestPagesIndex.types';
+import type { IndexEntry, TestPagesIndexProps } from './TestPagesIndex.types';
 
 const STORAGE_KEY = 'infinite-tests:index-search';
 

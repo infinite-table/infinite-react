@@ -1,8 +1,8 @@
-import {
+import type {
   DataSourceComponentActions,
   DataSourceState,
-  CellSelectionState,
 } from '../../DataSource';
+import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { CellSelectionPosition } from '../../DataSource/CellSelectionState';
 import {
   getRowInfoArray,

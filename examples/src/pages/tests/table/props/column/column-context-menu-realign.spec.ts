@@ -12,7 +12,7 @@ export default test.describe.parallel('Column context menu', () => {
 
     const menu = headerModel.getColumnMenuLocator();
 
-    let box = await menu.first().boundingBox();
+    const box = await menu.first().boundingBox();
 
     const initialX = box?.x || 0;
 
@@ -27,9 +27,10 @@ export default test.describe.parallel('Column context menu', () => {
       selector: 'input',
     });
 
-    box = await menu.first().boundingBox();
-
-    expect(box?.x).toBe(initialX - 140);
+    // the menu realigns asynchronously after the column is hidden, so poll
+    await expect
+      .poll(async () => (await menu.first().boundingBox())?.x)
+      .toBe(initialX - 140);
   });
 
   test('should realign when another column is hidden', async ({
@@ -43,7 +44,7 @@ export default test.describe.parallel('Column context menu', () => {
 
     const menu = headerModel.getColumnMenuLocator();
 
-    let box = await menu.first().boundingBox();
+    const box = await menu.first().boundingBox();
 
     const initialX = box?.x || 0;
 
@@ -58,8 +59,9 @@ export default test.describe.parallel('Column context menu', () => {
       selector: 'input',
     });
 
-    box = await menu.first().boundingBox();
-
-    expect(box?.x).toBe(initialX - 500);
+    // the menu realigns asynchronously after the column is hidden, so poll
+    await expect
+      .poll(async () => (await menu.first().boundingBox())?.x)
+      .toBe(initialX - 500);
   });
 });

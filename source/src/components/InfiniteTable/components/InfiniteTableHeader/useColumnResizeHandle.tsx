@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { computeResize } from '../../../flexbox';
 import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
+import { InfiniteTableComputedColumn } from '../../types';
 import {
-  InfiniteTableComputedColumn,
-  InfiniteTablePropColumnSizing,
-} from '../../types';
+  computeColumnResizeForDiff,
+  ColumnResizeContext,
+} from './ResizeHandle/columnResizeShared';
 import { ResizeHandle } from './ResizeHandle';
 
 export function useColumnResizeHandle<T>(
@@ -31,50 +31,12 @@ export function useColumnResizeHandle<T>(
       diff: number;
       shareSpaceOnResize: boolean;
     }) => {
-      const state = getState();
-      const { columnSizing, viewportReservedWidth, bodySize } = state;
-
-      const columns = getComputed().computedVisibleColumns;
-
-      let atLeastOneFlex = false;
-
-      const columnSizingWithFlex = columns.reduce((acc, col) => {
-        if (col.computedFlex) {
-          acc[col.id] = { ...columnSizing[col.id], flex: col.computedWidth }; // we explicitly need to have here `{ flex: col.computedWidth }` and not `{ flex: col.computedFlex }`
-          // this is to make the test #advancedcolumnresizing work
-
-          atLeastOneFlex = true;
-        }
-        return acc;
-      }, {} as InfiniteTablePropColumnSizing);
-
-      const columnSizingForResize = atLeastOneFlex
-        ? {
-            // #advancedcolumnresizing-important
-            // yep, this order is correct - first apply current columnSizing from state
-            ...columnSizing,
-
-            // and then for flex columns, we override with actual computed widths from above
-            ...columnSizingWithFlex,
-          }
-        : columnSizing;
-
-      const result = computeResize({
+      const result = computeColumnResizeForDiff<T>({
+        // the selector's getComputed loses the T generic, hence the cast
+        context: { getState, getComputed } as ColumnResizeContext<T>,
+        column,
+        diff,
         shareSpaceOnResize,
-        availableSize: bodySize.width,
-        reservedWidth: viewportReservedWidth || 0,
-        dragHandleOffset: diff,
-        dragHandlePositionAfter: column.computedVisibleIndex,
-        columnSizing: columnSizingForResize,
-        items: columns.map((c) => {
-          return {
-            id: c.id,
-            computedFlex: c.computedFlex,
-            computedWidth: c.computedWidth,
-            computedMinWidth: c.computedMinWidth,
-            computedMaxWidth: c.computedMaxWidth,
-          };
-        }),
       });
 
       // TODO I think this can be removed

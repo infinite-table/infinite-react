@@ -122,7 +122,9 @@ type OpenStatus =
   | { kind: 'ok'; file: string; line: number; col?: number; editor?: string }
   | { kind: 'err'; file: string; line: number; col?: number; error: string };
 
-export const RunTestButton: React.FC = () => {
+export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
+  embedded = false,
+}) => {
   const [pathname, setPathname] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [mode, setMode] = useState<Mode>('page');
@@ -267,7 +269,7 @@ export const RunTestButton: React.FC = () => {
       const response = await fetch(`${baseUrl()}/run`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pathname, watch: true }),
+        body: JSON.stringify({ pathname, watch: true, project: 'react' }),
         signal: controller.signal,
       });
 
@@ -379,10 +381,14 @@ export const RunTestButton: React.FC = () => {
         title={buttonTitle}
         data-testid="infinite-page-run-test"
         style={{
-          position: 'fixed',
-          bottom: 6,
-          right: 38,
-          zIndex: 10000,
+          ...(embedded
+            ? {}
+            : {
+                position: 'fixed',
+                bottom: 6,
+                right: 38,
+                zIndex: 10000,
+              }),
           padding: '4px 10px',
           fontSize: 12,
           lineHeight: 1.2,

@@ -115,12 +115,13 @@ export default test.describe.parallel('Inline Edit', () => {
 
     await editModel.confirmEdit(cellEditable1);
 
-    fontSize = await rowModel.getCellComputedStylePropertyValue(
-      cellEditable1,
-      'font-size',
-    );
-
-    expect(fontSize).not.toBe('30px');
+    // the inEdit style is cleared asynchronously (on the re-render after the
+    // edit is persisted), so poll instead of reading the style right away
+    await expect
+      .poll(() =>
+        rowModel.getCellComputedStylePropertyValue(cellEditable1, 'font-size'),
+      )
+      .not.toBe('30px');
     expect(await rowModel.getTextForCell(cellEditable1)).toBe('xyz');
   });
 });

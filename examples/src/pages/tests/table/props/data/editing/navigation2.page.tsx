@@ -7,20 +7,9 @@ import {
 } from '@infinite-table/infinite-react';
 import { DataSource } from '@infinite-table/infinite-react';
 
-type Developer = {
-  id: number;
+import { type Developer as BaseDeveloper, height100DomProps } from './common';
 
-  firstName: string;
-  lastName: string;
-
-  currency: string;
-  preferredLanguage: string;
-  stack: string;
-  canDesign: 'yes' | 'no';
-  salary: string;
-
-  age: number;
-};
+type Developer = BaseDeveloper & { salary: string };
 
 const data: Developer[] = [
   {
@@ -136,11 +125,7 @@ export default () => {
         </button>
         <DataSource<Developer> data={data} primaryKey="id">
           <InfiniteTable<Developer>
-            domProps={{
-              style: {
-                height: '100%',
-              },
-            }}
+            domProps={height100DomProps}
             onReady={onReady}
             columnDefaultWidth={150}
             columnMinWidth={50}

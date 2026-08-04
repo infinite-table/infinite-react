@@ -115,6 +115,8 @@ export default async function BlogPostPage({
     <BlogPost
       headings={getMarkdownHeadingsForPage(post.content)}
       children={children}
+      // drafts have no generated .md file
+      mdPath={post && !post.draft ? `${path}.md` : undefined}
       post={post}
       nextRoute={
         nextPost

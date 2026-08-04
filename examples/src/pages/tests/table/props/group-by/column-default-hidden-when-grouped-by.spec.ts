@@ -8,6 +8,10 @@ async function setGroupBy(
   groupBy: { field: string }[],
   { page }: { page: Page },
 ) {
+  // the page component (which exposes window.setGroupBy) is mounted async
+  await page.waitForFunction(
+    () => typeof (window as any).setGroupBy === 'function',
+  );
   await page.evaluate((groupBy) => {
     (window as any).setGroupBy(groupBy);
   }, groupBy);
@@ -27,15 +31,21 @@ export default test.describe
     await setGroupBy([], { page });
     await page.waitForTimeout(100);
 
-    expect(await rowModel.getRenderedRowCount()).toEqual(employees.length);
+    await expect
+      .poll(() => rowModel.getRenderedRowCount())
+      .toEqual(employees.length);
 
-    expect(await columnModel.isColumnDisplayed('teamID')).toBe(true);
+    await expect.poll(() => columnModel.isColumnDisplayed('teamID')).toBe(true);
 
     await setGroupBy([{ field: 'country' }], { page });
     await page.waitForTimeout(timeout);
 
-    expect(await rowModel.getRenderedRowCount()).not.toEqual(employees.length);
-    expect(await columnModel.isColumnDisplayed('teamID')).toBe(false);
+    await expect
+      .poll(() => rowModel.getRenderedRowCount())
+      .not.toEqual(employees.length);
+    await expect
+      .poll(() => columnModel.isColumnDisplayed('teamID'))
+      .toBe(false);
   });
 
   test('department should be hidden whenever there is grouping by department', async ({
@@ -50,14 +60,19 @@ export default test.describe
     await setGroupBy([{ field: 'country' }], { page });
     await page.waitForTimeout(timeout);
 
-    expect(await columnModel.isColumnDisplayed('departmentID')).toBe(true);
+    // poll: the visibility update flushes async after the groupBy change
+    await expect
+      .poll(() => columnModel.isColumnDisplayed('departmentID'))
+      .toBe(true);
 
     await setGroupBy([{ field: 'country' }, { field: 'department' }], {
       page,
     });
     await page.waitForTimeout(timeout);
 
-    expect(await columnModel.isColumnDisplayed('departmentID')).toBe(false);
+    await expect
+      .poll(() => columnModel.isColumnDisplayed('departmentID'))
+      .toBe(false);
   });
 
   test('salary should be hidden whenever there is grouping by salary or team', async ({
@@ -72,11 +87,15 @@ export default test.describe
     await setGroupBy([{ field: 'country' }], { page });
     await page.waitForTimeout(timeout);
 
-    expect(await columnModel.isColumnDisplayed('salaryID')).toBe(true);
+    await expect
+      .poll(() => columnModel.isColumnDisplayed('salaryID'))
+      .toBe(true);
 
     await setGroupBy([{ field: 'country' }, { field: 'team' }], { page });
     await page.waitForTimeout(timeout);
 
-    expect(await columnModel.isColumnDisplayed('salaryID')).toBe(false);
+    await expect
+      .poll(() => columnModel.isColumnDisplayed('salaryID'))
+      .toBe(false);
   });
 });
