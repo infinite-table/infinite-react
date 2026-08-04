@@ -120,5 +120,7 @@ tsconfig.tsbuildinfo
 
 examples/**/*.trace.json
 
+dist-vue
+out-vue
 # plans & prompts live in a separate private repo, nested in this folder
 /plans/
