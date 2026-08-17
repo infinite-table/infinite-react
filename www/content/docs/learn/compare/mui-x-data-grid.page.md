@@ -9,7 +9,7 @@ These two grids have more in common architecturally than either has with AG Grid
 
 ## Where they diverge
 
-**Design-system coupling.** MUI X Data Grid is built on Material UI. It inherits your MUI theme tokens — palette, spacing, typography — automatically. This is a major advantage if your app already uses MUI, and a friction point if it doesn't, because MUI's styling system (`@emotion`, theme provider, `sx` prop) comes along as dependencies.
+**Design-system coupling.** MUI X Data Grid is built on Material UI. It inherits your MUI theme tokens — palette, spacing, typography — automatically. This is a major advantage if your app already uses MUI. If your app uses a different design system, you'll be adding MUI's styling infrastructure (`@emotion`, theme provider, `sx` prop) as dependencies alongside your existing stack.
 
 Infinite Table is design-system agnostic. Theming is done through CSS variables — you can integrate with Tailwind, vanilla CSS, or any design system without extra dependencies. There's no coupling to a specific component library.
 
@@ -89,11 +89,11 @@ Infinite Table includes all of these features in the free Community build.
 ## When Infinite Table is the better fit
 
 - **You need grouping, pivoting, and aggregations without the Premium tier.** These are free in Infinite Table's Community build. MUI X requires Premium ($599/dev/year) for the same features.
-- **You're not using Material UI.** If your app uses Tailwind, vanilla CSS, or another design system, MUI X Data Grid brings along the MUI styling system as a dependency. Infinite Table uses plain CSS variables and works with any styling approach — no extra dependencies, no theme provider wrappers.
+- **You're not using Material UI.** If your app uses Tailwind, vanilla CSS, or another design system, Infinite Table may be a simpler fit — it uses plain CSS variables and works with any styling approach without adding a design-system dependency.
 - **Data layer separation.** Infinite Table's `<DataSource>` / `<InfiniteTable>` split gives you a clean separation between data management (fetching, sorting, grouping, pivoting, filtering) and rendering. You can even replace `<InfiniteTable>` with your own component and keep the data layer.
 - **Column virtualization on the free tier.** Infinite Table virtualizes both rows and columns by default. MUI X Community only virtualizes rows up to 100 rows; column virtualization and unlimited row virtualization require Pro.
 - **Live pagination and context menus.** Infinite Table includes built-in live pagination and context menus. MUI X does not offer equivalents at any tier.
-- **Simpler licensing model.** Infinite Table has one plan with all features. MUI X has four tiers — you need to cross-reference the pricing page to see which tier covers each feature you need.
+- **Single-tier licensing.** Infinite Table has one plan with all features included. MUI X offers four tiers, which gives you flexibility to pay only for what you need — but also means checking which tier covers each feature.
 
 
 <HeroCards>
