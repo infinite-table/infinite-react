@@ -3,24 +3,22 @@ title: Compare React DataGrids
 description: Honest comparison of Infinite Table against AG Grid, TanStack Table, and MUI X Data Grid. Find the right React data grid for your project.
 ---
 
-Most data grids were not built for React. They were built for the browser — or for multiple frameworks at once — and later wrapped with a React adapter. The result is an API that feels foreign: grid-options objects, imperative method calls, callback registrations instead of props.
+Infinite Table was built for React from the ground up. Columns are props. Sorting, grouping, and filtering are controlled or uncontrolled values — the same pattern you use for an `<input>`. Cell renderers are plain JSX. State lives in React. When you change a prop, the grid re-renders.
 
-Infinite Table was built for React from the ground up. Columns are props. Sorting, grouping, and filtering are controlled or uncontrolled values — the same pattern you use for an `<input>`. Cell renderers are plain JSX. State lives in React, not inside the grid. When you change a prop, the grid re-renders. You're not forced to use APIs unless you want to — just React.
-
-This section compares Infinite Table with three popular alternatives. We cover how each one integrates with React, what features ship built-in, and — just as importantly — when the other tool is the better fit.
+Other excellent data grids take different approaches — multi-framework support, headless logic libraries, deep Material UI integration — and those approaches are the right choice for many teams. This section compares Infinite Table with three popular alternatives so you can decide which fits your project.
 
 ## Comparisons
 
-- [Infinite Table vs AG Grid](/docs/learn/compare/ag-grid) — The most established enterprise data grid. Multi-framework, huge feature set — but its API was designed for vanilla JS and Angular first, then wrapped for React. Hundreds of grid-level props vs Infinite Table's small, composable surface.
-- [Infinite Table vs TanStack Table](/docs/learn/compare/tanstack-table) — A headless, MIT-licensed logic library. Total rendering control — but you build the UI, the virtualization, and the keyboard navigation yourself.
-- [Infinite Table vs MUI X Data Grid](/docs/learn/compare/mui-x-data-grid) — A rendered data grid from the Material UI ecosystem. Excellent MUI integration — but grouping and pivoting require the Premium tier.
+- [Infinite Table vs AG Grid](/docs/learn/compare/ag-grid) — The most established enterprise data grid. Multi-framework, huge feature set. AG Grid's breadth is unmatched; Infinite Table focuses on a small, composable, React-declarative API surface.
+- [Infinite Table vs TanStack Table](/docs/learn/compare/tanstack-table) — A headless, MIT-licensed logic library. Total rendering control — you build the UI, the virtualization, and the keyboard navigation. Infinite Table ships those built-in.
+- [Infinite Table vs MUI X Data Grid](/docs/learn/compare/mui-x-data-grid) — A rendered data grid from the Material UI ecosystem. Excellent MUI integration. Infinite Table is design-system agnostic and includes grouping and pivoting without a Premium tier.
 
 ## Quick Comparison
 
 | | Infinite Table | AG Grid | TanStack Table | MUI X Data Grid |
 |---|---|---|---|---|
-| **Built for React** | Yes — from the ground up | No — framework-agnostic core with React wrapper | Headless — framework-agnostic hooks | Yes — React only |
-| **API style** | Small, composable props (controlled + uncontrolled) | Hundreds of grid options, imperative API | Headless hooks, you provide all JSX | Declarative props, controlled + uncontrolled |
+| **Built for React** | Yes — from the ground up | Multi-framework (JS, Angular, Vue, React) | Headless — multi-framework hooks | Yes — React only |
+| **API style** | Small, composable props (controlled + uncontrolled) | Large, comprehensive configuration surface | Headless hooks, you provide all JSX | Declarative props, controlled + uncontrolled |
 | **Cell renderers** | JSX components | AG Grid component interface (React supported) | You build all rendering | JSX components |
 | **Frameworks** | React | React, Angular, Vue, JS | React, Vue, Solid, Svelte | React |
 | **Virtualization** | Row + column | Row + column | BYO (separate package) | Row (column in Pro+) |
@@ -40,9 +38,9 @@ Feature availability is based on each product's official documentation as of mid
 
 **Pick Infinite Table** if you want a data grid that feels like a native React component — a small, composable API of declarative props, controlled state, and JSX renderers — with grouping, pivoting, and aggregations included out of the box, no enterprise license required.
 
-**Pick AG Grid** if you need multi-framework support (Angular, Vue, and React under one grid), the widest possible feature surface (charting, clipboard, server-side row model), or your team already knows AG Grid's large API from other projects and values the coverage it provides.
+**Pick AG Grid** if you need multi-framework support (Angular, Vue, and React under one grid), the widest possible feature surface (charting, clipboard, server-side row model), or your team already knows AG Grid from other projects and values the breadth it provides.
 
-**Pick TanStack Table** if you want total control over rendering and are prepared to build your own UI layer, virtualization, keyboard navigation, and accessibility from scratch. Best for design-system component libraries or lightweight tables that don't need complex features.
+**Pick TanStack Table** if you want total control over rendering and are prepared to build your own UI layer, virtualization, keyboard navigation, and accessibility. Best for design-system component libraries or lightweight tables that don't need complex built-in features.
 
 **Pick MUI X Data Grid** if your application is already built on Material UI and you value automatic theme integration with MUI's design system, or you need the broader MUI X component suite (date pickers, charts, tree view) under a single license.
 
@@ -67,7 +65,7 @@ Use Infinite Table free with a footer, or buy a license to remove it and get ema
 
 <HeroCards>
 <YouWillLearnCard title="vs AG Grid" path="/docs/learn/compare/ag-grid">
-React-native props versus a framework-agnostic wrapper, plus which features sit behind AG Grid Enterprise.
+How Infinite Table's React-declarative surface compares with AG Grid's multi-framework approach.
 </YouWillLearnCard>
 <YouWillLearnCard title="vs TanStack Table" path="/docs/learn/compare/tanstack-table">
 A rendered, virtualized DataGrid versus a headless table library you assemble yourself.
@@ -79,7 +77,7 @@ A rendered, virtualized DataGrid versus a headless table library you assemble yo
 What ships in Infinite Table's free build versus MUI X Community, Pro, and Premium.
 </YouWillLearnCard>
 <YouWillLearnCard title="Grouping and pivoting" path="/docs/learn/grouping-and-pivoting">
-The features most often gated on other grids — included here without an enterprise tier.
+Grouping, aggregations, and pivoting — included in every Infinite Table build.
 </YouWillLearnCard>
 </HeroCards>
 

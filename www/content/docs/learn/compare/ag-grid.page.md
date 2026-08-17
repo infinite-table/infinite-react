@@ -1,32 +1,36 @@
 ---
 title: Infinite Table vs AG Grid
-description: A detailed comparison of Infinite Table and AG Grid for React. React-native API vs framework-agnostic wrapper, features, and when AG Grid is the better choice.
+description: A detailed comparison of Infinite Table and AG Grid for React. Two different approaches to building data grids — and when each one is the right choice.
 ---
 
-[AG Grid](https://www.ag-grid.com/) is the most established commercial data grid on the market, used across React, Angular, Vue, and plain JavaScript. It has a massive feature surface and a large community. We respect what the AG Grid team has built — it's a feat of engineering.
+[AG Grid](https://www.ag-grid.com/) is the most established commercial data grid on the market, used across React, Angular, Vue, and plain JavaScript. It has a massive feature surface and a large community. The AG Grid team has been shipping for over a decade and the result is an impressively comprehensive product.
 
-The core difference is not price. It's how each grid relates to React.
+Infinite Table and AG Grid make different bets. This page walks through those differences honestly, including where AG Grid is the stronger choice.
 
-AG Grid was designed as a framework-agnostic rendering engine. Its React package is a wrapper — an adapter layer that translates between AG Grid's internal model and React components. The grid's state, lifecycle, and rendering happen outside React's reconciler. You configure it through a `gridOptions` object and interact with it through imperative API calls like `api.setColumnDefs()`, `api.refreshCells()`, and `api.getSelectedRows()`.
+## Two different approaches to React
 
-Infinite Table was built for React from the start. There is no wrapper layer. Columns, sorting, grouping, and filtering are React props — controlled or uncontrolled, like any React component. Cell renderers are plain JSX. The grid participates in React's component tree, re-rendering when props change.
+AG Grid supports four frameworks from a single codebase. That multi-framework architecture is a genuine strength — it means your organisation can standardise on one grid across Angular, Vue, and React projects. The trade-off is that AG Grid's core is framework-agnostic: state and rendering live inside the grid engine, with a React adapter layer on top. Configuration goes through a `gridOptions` object, and many operations use imperative API calls like `api.setColumnDefs()` or `api.refreshCells()`.
 
-## What this means in practice
+Infinite Table is React-only, and that choice shapes the API. Columns, sorting, grouping, and filtering are React props — controlled or uncontrolled, like any React form component. Cell renderers are plain JSX. The grid participates in React's component tree, re-rendering when props change.
 
-With AG Grid, you might write:
+Neither approach is wrong. They reflect different design priorities: AG Grid optimises for framework reach and breadth; Infinite Table optimises for feeling native to React.
+
+## What this looks like in code
+
+With AG Grid, updating columns typically goes through the API:
 
 ```tsx
-// AG Grid: imperative API to update columns
+// AG Grid: update columns via the imperative API
 const onButtonClick = () => {
   gridRef.current.api.setColumnDefs(newColumnDefs);
   gridRef.current.api.refreshCells({ force: true });
 };
 ```
 
-With Infinite Table, the same operation is a prop change:
+With Infinite Table, the same operation is a state change:
 
 ```tsx
-// Infinite Table: declarative React props
+// Infinite Table: update columns via React state
 const [columns, setColumns] = useState(initialColumns);
 
 const onButtonClick = () => {
@@ -38,36 +42,30 @@ const onButtonClick = () => {
 </DataSource>
 ```
 
-No ref, no imperative API — just React state. The same pattern you use for `<input value={...} onChange={...} />` works for the entire grid.
+The same `value` / `onChange` pattern you use for a React `<input>` works for the entire grid.
 
-## A small, composable API vs a large configuration surface
+## API surface: breadth vs composability
 
-AG Grid has been shipping features for over a decade across four frameworks. The result is an enormous API surface — the [`GridOptions` interface](https://www.ag-grid.com/react-data-grid/grid-options/) spans hundreds of props across 25+ categories. That surface carries the weight of its history: overlapping options, boolean flags that only apply when another flag is set, and legacy alternatives that coexist with their replacements.
+AG Grid covers a huge number of enterprise use cases, and its API reflects that breadth. The [`GridOptions` interface](https://www.ag-grid.com/react-data-grid/grid-options/) spans hundreds of props across 25+ categories — from row grouping and pivoting to charting, clipboard, and server-side row models. For teams that need that coverage, it's all there.
 
-A few real patterns from the AG Grid docs:
+That breadth naturally comes with complexity. Over a decade of multi-framework development, the API has grown to include multiple ways to configure the same behaviour — for example, overlays can be customised through `overlayComponent`, or through the older `loadingOverlayComponent` and `noRowsOverlayComponent`, or through template strings, all of which still work. Row grouping alone involves roughly 20 grid-level props. These aren't flaws — they're the result of supporting many years of backwards compatibility across four frameworks, and teams that rely on those options are glad they exist.
 
-- **Overlays** have three generations of API living side by side. The current `overlayComponent` / `overlayComponentSelector` approach coexists with the older `loadingOverlayComponent`, `noRowsOverlayComponent`, `overlayLoadingTemplate`, and `overlayNoRowsTemplate` — all still accepted. The docs annotate the older props with "Prefer `overlayComponent`/`overlayComponentSelector`", but both paths work. Similarly, `suppressNoRowsOverlay` is a standalone boolean while `suppressOverlays` takes an array of overlay names — two ways to suppress the same thing.
-- **Row grouping** alone accounts for roughly 20 grid-level props: `groupDisplayType`, `autoGroupColumnDef`, `groupRowRenderer`, `showOpenedGroup`, `groupHideOpenParents`, `groupHideColumnsUntilExpanded`, `groupHideParentOfSingleChild`, `groupAllowUnbalanced`, `groupMaintainOrder`, `groupDefaultExpanded`, `isGroupOpenByDefault`, `groupLockGroupColumns`, `suppressGroupRowsSticky`, `rowGroupPanelShow`, `suppressDragLeaveHidesColumns`, `suppressGroupChangesColumnVisibility`, `functionsReadOnly`, and more — each a separate configuration knob.
-- **Column menus** offer `columnMenu` (with values `'legacy'` and `'new'`), `getMainMenuItems`, and `getColumnMenuItems` — where the docs note that `getColumnMenuItems` "takes precedence over `getMainMenuItems` for the column menu." The prop `suppressMenuHide` is only recommended when `columnMenu = 'legacy'`.
+Infinite Table makes a different trade-off: keep the API surface small and composable.
 
-None of this is a criticism of AG Grid's engineering — supporting four frameworks and a decade of backwards compatibility requires exactly this kind of surface. But it's a trade-off. Every `suppress*` boolean, every pair of overlapping callbacks, every legacy-vs-new toggle is something your team has to understand, or at least know not to touch.
+- **Function props as building blocks.** The [`groupColumn`](/docs/learn/grouping-and-pivoting/grouping-rows) prop can be a column object (single group column) or a function (called for each generated column). One prop, two behaviours, composed through the same mechanism.
+- **Controlled and uncontrolled variants.** Want to manage sorting yourself? Pass `sortInfo` (controlled). Want the grid to handle it? Pass `defaultSortInfo` (uncontrolled). The same pattern as `value` vs `defaultValue` on a React `<input>`.
+- **Fewer props to coordinate.** Infinite Table ships grouping, pivoting, and aggregations — but with a smaller configuration surface. The bet is that fewer, more composable props are easier to learn and reason about for React teams.
 
-Infinite Table makes the opposite bet: keep the API surface small and composable.
-
-- Instead of a forest of boolean flags, Infinite Table uses **function props as building blocks**. The [`groupColumn`](/docs/learn/grouping-and-pivoting/grouping-rows) prop can be a column object (single group column) or a function (called for each generated column). One prop, two behaviours — no `groupDisplayType` + `autoGroupColumnDef` + `groupRowRenderer` to coordinate.
-- Instead of `suppress*` booleans, features are **controlled or uncontrolled**. Want to manage sorting yourself? Pass `sortInfo` (controlled). Want the grid to handle it? Pass `defaultSortInfo` (uncontrolled). The same pattern as `value` vs `defaultValue` on a React `<input>`.
-- Instead of `getMainMenuItems` + `getColumnMenuItems` with precedence rules, Infinite Table has a single [`getContextMenuItems`](/docs/learn/context-menus/using-context-menus) callback.
-
-The result is a smaller surface you can hold in your head. Fewer props, fewer interactions between props, fewer "this only works when that other prop is set" footnotes.
+These are genuinely different philosophies. AG Grid's large surface means there's usually a dedicated prop for any specific requirement. Infinite Table's smaller surface means you compose general-purpose building blocks to get there.
 
 ## Architecture
 
 | | Infinite Table | AG Grid |
 |---|---|---|
-| **Built for** | React | Framework-agnostic (JS, Angular, Vue, React) |
-| **React integration** | Native — renders through React's reconciler | Wrapper — React adapter around internal DOM engine |
-| **API style** | Declarative props, controlled + uncontrolled | Grid-options object, imperative `api.*` calls |
-| **Cell renderers** | Plain JSX components | AG Grid component interface (React components supported via adapter) |
+| **Built for** | React | Multi-framework (JS, Angular, Vue, React) |
+| **React integration** | Native — renders through React's reconciler | Framework-agnostic core with React adapter |
+| **API style** | Declarative props, controlled + uncontrolled | Comprehensive configuration object, imperative API |
+| **Cell renderers** | Plain JSX components | AG Grid component interface (React components supported) |
 | **State management** | Lives in React (useState, context, external stores) | Lives inside the grid; synced to React via callbacks |
 | **TypeScript** | Written in TypeScript, first-class types | Written in TypeScript, first-class types |
 | **Virtualization** | Row + column | Row + column |
@@ -104,7 +102,7 @@ The result is a smaller surface you can hold in your head. Fewer props, fewer in
 
 <Note>
 
-AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, tree data, or master-detail. Those require AG Grid Enterprise. Infinite Table includes all of these in the free Community build (with a "Powered by Infinite Table" footer). A paid license key removes the footer.
+AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, tree data, or master-detail. Those require AG Grid Enterprise. Infinite Table includes all of these in the free build (with a "Powered by Infinite Table" footer). A paid license key removes the footer.
 
 </Note>
 
@@ -120,16 +118,17 @@ AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, t
 
 ## When AG Grid is the better choice
 
-- **Multi-framework projects.** If you need the same data grid across Angular, Vue, and React codebases, AG Grid is the only option here — Infinite Table is React-only. AG Grid's framework-agnostic core is a strength when your organisation standardises on one grid across teams.
-- **The widest feature surface.** AG Grid Enterprise includes built-in charting, clipboard, Excel export, column tool panels, status bars, and a full server-side row model with partial store. If you need several of these, AG Grid covers them in one package.
-- **Enormous community and ecosystem.** With over 1M weekly npm downloads and 13k+ GitHub stars, AG Grid has deep community resources, Stack Overflow coverage, and third-party integrations. If you value ecosystem maturity, AG Grid is unmatched.
-- **You prefer the imperative API.** If your team already knows AG Grid's `api.*` pattern from other projects, or you prefer imperative control over the grid's state, AG Grid's model may feel more natural to you than a prop-driven React API.
+- **Multi-framework projects.** If you need the same data grid across Angular, Vue, and React codebases, AG Grid is the clear choice — Infinite Table is React-only. Standardising on one grid across frameworks saves training time and keeps behaviour consistent.
+- **The widest feature surface.** AG Grid Enterprise includes built-in charting, clipboard, Excel export, column tool panels, status bars, and a full server-side row model with partial store. If you need several of these features, AG Grid covers them all in one package. No other grid matches this breadth.
+- **Enormous community and ecosystem.** With over 1M weekly npm downloads and 13k+ GitHub stars, AG Grid has the deepest community resources, Stack Overflow coverage, and third-party integrations of any data grid. Ecosystem maturity matters — and AG Grid's is unmatched.
+- **Your team already knows AG Grid.** If your developers are experienced with AG Grid's API and patterns from other projects, that familiarity has real value. Switching to a different grid has a learning cost, and AG Grid's comprehensive documentation makes it possible to find an answer for almost any scenario.
+- **You need the dedicated configuration options.** AG Grid's large API means there's often a purpose-built prop for a specific edge case. If you regularly need that level of fine-grained, per-feature configuration, the breadth of the API is a strength.
 
 ## When Infinite Table is the better fit
 
-- **You want the grid to feel like React.** Infinite Table's API is props, controlled state, and JSX — the same patterns you use in every other React component. No grid-options objects, no imperative API calls, no syncing grid state back to React. If your team thinks in React, Infinite Table fits that mental model.
-- **You want a small, composable API you can reason about.** Infinite Table ships grouping, pivoting, and aggregations with a fraction of the configuration surface. Function props instead of boolean flag forests, controlled/uncontrolled patterns instead of `suppress*` toggles, one callback where AG Grid has two with precedence rules. Fewer props, fewer interactions between props, fewer surprises.
-- **You need grouping, pivoting, and aggregations without an enterprise license.** These are included in Infinite Table's free build. AG Grid gates them behind the Enterprise tier.
+- **You want the grid to feel like React.** Infinite Table's API is props, controlled state, and JSX — the same patterns you use in every other React component. If your team thinks in React, Infinite Table fits that mental model.
+- **You prefer a small, composable API.** Infinite Table ships grouping, pivoting, and aggregations with a compact configuration surface. Function props as building blocks, controlled/uncontrolled patterns for state, composable rather than exhaustive. A different bet from AG Grid's comprehensive approach — one that suits teams who want fewer props to learn and coordinate.
+- **You need grouping, pivoting, and aggregations without an enterprise license.** These are included in Infinite Table's free build. AG Grid reserves them for the Enterprise tier.
 - **Simpler licensing.** One plan, one key for the whole team, no deployment license.
 
 
@@ -138,7 +137,7 @@ AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, t
 Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
 </YouWillLearnCard>
 <YouWillLearnCard title="Grouping and pivoting" path="/docs/learn/grouping-and-pivoting">
-The features AG Grid Community leaves out — included here without an Enterprise license.
+Grouping, aggregations, and pivoting — included without an Enterprise license.
 </YouWillLearnCard>
 </HeroCards>
 

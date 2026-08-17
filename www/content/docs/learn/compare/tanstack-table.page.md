@@ -9,9 +9,9 @@ Infinite Table is a fully rendered React data grid. You pass props — columns, 
 
 ## Two ends of a spectrum
 
-The "Why Another DataGrid?" question comes down to a positioning choice. At one end of the spectrum is AG Grid — a full-featured grid engine that wraps itself for React. At the other end is TanStack Table — headless hooks that give you total rendering control but require you to build everything visible.
+Data grids range from fully rendered components to headless logic libraries. At one end is AG Grid — a comprehensive, multi-framework grid that handles everything. At the other end is TanStack Table — headless hooks that give you total rendering control and require you to build everything visible.
 
-Infinite Table sits in the middle: **a declarative React component that ships the grid**. You get the React-native API feel (props, controlled state, JSX cell renderers) without having to construct the table markup, virtualization, focus management, and accessibility yourself.
+Infinite Table sits in the middle: **a declarative React component that ships the grid**. You get a React-native API (props, controlled state, JSX cell renderers) without having to construct the table markup, virtualization, focus management, and accessibility yourself.
 
 ```tsx
 // TanStack Table: you provide all the JSX
