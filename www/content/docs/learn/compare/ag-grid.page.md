@@ -40,6 +40,26 @@ const onButtonClick = () => {
 
 No ref, no imperative API — just React state. The same pattern you use for `<input value={...} onChange={...} />` works for the entire grid.
 
+## A small, composable API vs a large configuration surface
+
+AG Grid has been shipping features for over a decade across four frameworks. The result is an enormous API surface — the [`GridOptions` interface](https://www.ag-grid.com/react-data-grid/grid-options/) spans hundreds of props across 25+ categories. That surface carries the weight of its history: overlapping options, boolean flags that only apply when another flag is set, and legacy alternatives that coexist with their replacements.
+
+A few real patterns from the AG Grid docs:
+
+- **Overlays** have three generations of API living side by side. The current `overlayComponent` / `overlayComponentSelector` approach coexists with the older `loadingOverlayComponent`, `noRowsOverlayComponent`, `overlayLoadingTemplate`, and `overlayNoRowsTemplate` — all still accepted. The docs annotate the older props with "Prefer `overlayComponent`/`overlayComponentSelector`", but both paths work. Similarly, `suppressNoRowsOverlay` is a standalone boolean while `suppressOverlays` takes an array of overlay names — two ways to suppress the same thing.
+- **Row grouping** alone accounts for roughly 20 grid-level props: `groupDisplayType`, `autoGroupColumnDef`, `groupRowRenderer`, `showOpenedGroup`, `groupHideOpenParents`, `groupHideColumnsUntilExpanded`, `groupHideParentOfSingleChild`, `groupAllowUnbalanced`, `groupMaintainOrder`, `groupDefaultExpanded`, `isGroupOpenByDefault`, `groupLockGroupColumns`, `suppressGroupRowsSticky`, `rowGroupPanelShow`, `suppressDragLeaveHidesColumns`, `suppressGroupChangesColumnVisibility`, `functionsReadOnly`, and more — each a separate configuration knob.
+- **Column menus** offer `columnMenu` (with values `'legacy'` and `'new'`), `getMainMenuItems`, and `getColumnMenuItems` — where the docs note that `getColumnMenuItems` "takes precedence over `getMainMenuItems` for the column menu." The prop `suppressMenuHide` is only recommended when `columnMenu = 'legacy'`.
+
+None of this is a criticism of AG Grid's engineering — supporting four frameworks and a decade of backwards compatibility requires exactly this kind of surface. But it's a trade-off. Every `suppress*` boolean, every pair of overlapping callbacks, every legacy-vs-new toggle is something your team has to understand, or at least know not to touch.
+
+Infinite Table makes the opposite bet: keep the API surface small and composable.
+
+- Instead of a forest of boolean flags, Infinite Table uses **function props as building blocks**. The [`groupColumn`](/docs/learn/grouping-and-pivoting/grouping-rows) prop can be a column object (single group column) or a function (called for each generated column). One prop, two behaviours — no `groupDisplayType` + `autoGroupColumnDef` + `groupRowRenderer` to coordinate.
+- Instead of `suppress*` booleans, features are **controlled or uncontrolled**. Want to manage sorting yourself? Pass `sortInfo` (controlled). Want the grid to handle it? Pass `defaultSortInfo` (uncontrolled). The same pattern as `value` vs `defaultValue` on a React `<input>`.
+- Instead of `getMainMenuItems` + `getColumnMenuItems` with precedence rules, Infinite Table has a single [`getContextMenuItems`](/docs/learn/context-menus/using-context-menus) callback.
+
+The result is a smaller surface you can hold in your head. Fewer props, fewer interactions between props, fewer "this only works when that other prop is set" footnotes.
+
 ## Architecture
 
 | | Infinite Table | AG Grid |
@@ -108,8 +128,8 @@ AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, t
 ## When Infinite Table is the better fit
 
 - **You want the grid to feel like React.** Infinite Table's API is props, controlled state, and JSX — the same patterns you use in every other React component. No grid-options objects, no imperative API calls, no syncing grid state back to React. If your team thinks in React, Infinite Table fits that mental model.
+- **You want a small, composable API you can reason about.** Infinite Table ships grouping, pivoting, and aggregations with a fraction of the configuration surface. Function props instead of boolean flag forests, controlled/uncontrolled patterns instead of `suppress*` toggles, one callback where AG Grid has two with precedence rules. Fewer props, fewer interactions between props, fewer surprises.
 - **You need grouping, pivoting, and aggregations without an enterprise license.** These are included in Infinite Table's free build. AG Grid gates them behind the Enterprise tier.
-- **You want a composable, smaller API surface.** Infinite Table favours function props over boolean flags, and controlled/uncontrolled variants over imperative setters. The API is designed to compose — fewer props that do more, rather than hundreds of configuration options.
 - **Simpler licensing.** One plan, one key for the whole team, no deployment license.
 
 
