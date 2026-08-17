@@ -1,6 +1,7 @@
 import { compile, run } from '@mdx-js/mdx';
 import * as runtime from 'react/jsx-runtime';
 import remarkMdx from 'remark-mdx';
+import remarkGfm from 'remark-gfm';
 
 import { useMDXComponents } from '../../content/new-mdx-components';
 import { siteContent } from '@www/content';
@@ -54,6 +55,7 @@ export async function renderMarkdownPage(options: {
       outputFormat: 'function-body',
 
       remarkPlugins: [
+        remarkGfm,
         remarkMdx,
         markdownLinkChecker({
           fileInfo,
