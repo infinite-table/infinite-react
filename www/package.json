@@ -79,6 +79,7 @@
     "react-dom": "^19.2.0",
     "react-live": "^2.2.3",
     "react-select": "^5.4.0",
+    "remark-gfm": "^4.0.1",
     "remark-mdx-code-meta": "^2.0.0",
     "scroll-into-view-if-needed": "^2.2.25",
     "serverless-http": "^2.7.0",

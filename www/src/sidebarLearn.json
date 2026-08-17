@@ -343,5 +343,23 @@
         "path": "/docs/learn/examples/dynamic-pivoting-example"
       }
     ]
+  },
+  {
+    "title": "Compare",
+    "path": "/docs/learn/compare",
+    "routes": [
+      {
+        "title": "vs AG Grid",
+        "path": "/docs/learn/compare/ag-grid"
+      },
+      {
+        "title": "vs TanStack Table",
+        "path": "/docs/learn/compare/tanstack-table"
+      },
+      {
+        "title": "vs MUI X Data Grid",
+        "path": "/docs/learn/compare/mui-x-data-grid"
+      }
+    ]
   }
 ]
