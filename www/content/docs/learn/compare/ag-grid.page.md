@@ -5,13 +5,13 @@ description: A detailed comparison of Infinite Table and AG Grid for React. Two 
 
 [AG Grid](https://www.ag-grid.com/) is the most established commercial data grid on the market, used across React, Angular, Vue, and plain JavaScript. It has a massive feature surface and a large community. The AG Grid team has been shipping for over a decade and the result is an impressively comprehensive product.
 
-Infinite Table and AG Grid make different bets. This page walks through those differences honestly, including where AG Grid is the stronger choice.
+The core difference is not price. It's how each grid relates to React.
 
 ## Two different approaches to React
 
 AG Grid supports four frameworks from a single codebase. That multi-framework architecture is a genuine strength — it means your organisation can standardise on one grid across Angular, Vue, and React projects. The trade-off is that AG Grid's core is framework-agnostic: state and rendering live inside the grid engine, with a React adapter layer on top. Configuration goes through a `gridOptions` object, and many operations use imperative API calls like `api.setColumnDefs()` or `api.refreshCells()`.
 
-Infinite Table is React-only, and that choice shapes the API. Columns, sorting, grouping, and filtering are React props — controlled or uncontrolled, like any React form component. Cell renderers are plain JSX. The grid participates in React's component tree, re-rendering when props change.
+Infinite Table is built for React, and that choice shapes the API. Columns, sorting, grouping, and filtering are React props — controlled or uncontrolled, like any React form component. Cell renderers are plain JSX. The grid participates in React's component tree, re-rendering when props change.
 
 Neither approach is wrong. They reflect different design priorities: AG Grid optimises for framework reach and breadth; Infinite Table optimises for feeling native to React.
 
