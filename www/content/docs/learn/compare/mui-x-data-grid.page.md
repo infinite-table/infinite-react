@@ -1,24 +1,36 @@
 ---
 title: Infinite Table vs MUI X Data Grid
-description: A detailed comparison of Infinite Table and MUI X Data Grid. Features, licensing tiers, pricing, and when MUI X Data Grid is the better choice.
+description: A detailed comparison of Infinite Table and MUI X Data Grid. React-native design approaches, features across tiers, and when MUI X Data Grid is the better choice.
 ---
 
-[MUI X Data Grid](https://mui.com/x/react-data-grid/) is a React data grid component from the Material UI team. It's part of the broader MUI X suite (date pickers, charts, tree view) and follows Material Design conventions. Like AG Grid, it uses a tiered open-core model: Community (MIT), Pro, Premium, and Enterprise.
+[MUI X Data Grid](https://mui.com/x/react-data-grid/) is a React data grid from the Material UI team. It's part of the broader MUI X suite (date pickers, charts, tree view) and follows Material Design conventions. Like Infinite Table, it's React-only and uses a declarative, prop-driven API.
 
-This page compares Infinite Table with MUI X Data Grid so you can make an informed decision.
+These two grids have more in common architecturally than either has with AG Grid or TanStack Table. Both render through React, both use props and controlled state, both support JSX cell renderers. The differences are in design-system coupling, feature availability across tiers, and how each grid's API is structured.
+
+## Where they diverge
+
+**Design-system coupling.** MUI X Data Grid is built on Material UI. It inherits your MUI theme tokens — palette, spacing, typography — automatically. This is a major advantage if your app already uses MUI, and a friction point if it doesn't, because MUI's styling system (`@emotion`, theme provider, `sx` prop) comes along as dependencies.
+
+Infinite Table is design-system agnostic. Theming is done through CSS variables — you can integrate with Tailwind, vanilla CSS, or any design system without extra dependencies. There's no coupling to a specific component library.
+
+**Feature availability.** MUI X uses a four-tier model: Community (free), Pro ($299/dev/yr), Premium ($599/dev/yr), and Enterprise ($1,399/dev/yr). Core features like column resizing, pinning, and tree data require at least Pro. Grouping, pivoting, and aggregations require Premium.
+
+Infinite Table includes all of these in the free Community build. A "Powered by Infinite Table" footer is displayed; a [paid license ($395/dev/year)](https://infinite-table.com/pricing) removes it.
+
+**Data layer separation.** Infinite Table splits data management and rendering into two React components — `<DataSource>` and `<InfiniteTable>`. The `<DataSource>` handles fetching, sorting, grouping, pivoting, and filtering; the `<InfiniteTable>` handles rendering. You can even use `<DataSource>` with your own custom component. MUI X Data Grid is a single component that handles both data and rendering internally.
 
 ## Architecture
 
 | | Infinite Table | MUI X Data Grid |
 |---|---|---|
 | **Framework** | React | React |
-| **Design system** | Framework-agnostic; theming via CSS variables | Material UI (MUI); theming via MUI's theme system |
+| **Design system** | Agnostic — CSS variables | Material UI — MUI theme system |
+| **Component model** | Two components: `<DataSource>` + `<InfiniteTable>` | Single `<DataGrid>` / `<DataGridPro>` / `<DataGridPremium>` component |
+| **API style** | Declarative props, controlled + uncontrolled | Declarative props, controlled + uncontrolled |
+| **Cell renderers** | JSX components via column `render` prop | JSX components via `renderCell` slot |
 | **TypeScript** | Written in TypeScript | Written in TypeScript |
 | **Virtualization** | Row + column | Row virtualization; column virtualization in Pro+ |
-| **API style** | Declarative, prop-driven (controlled + uncontrolled) | Declarative, prop-driven (controlled + uncontrolled) |
-| **Package** | Single package, all features | Separate packages per tier (`@mui/x-data-grid`, `@mui/x-data-grid-pro`, `@mui/x-data-grid-premium`) |
-
-Both are React-only, TypeScript-first data grids with declarative APIs. The biggest architectural difference is the design system coupling: MUI X Data Grid is designed to work within the Material UI ecosystem. If your app already uses MUI, the Data Grid inherits your theme tokens, spacing, and typography automatically. Infinite Table is design-system agnostic and uses CSS variables for theming.
+| **Packages** | Single package, all features | Separate packages per tier |
 
 ## Feature Comparison
 
@@ -46,13 +58,12 @@ Both are React-only, TypeScript-first data grids with declarative APIs. The bigg
 | Context menus | Yes | — | — | — |
 | Excel export | — | — | — | Yes |
 | Clipboard (copy/paste) | — | — | — | Yes |
-| Pagination > 100 rows/page | — | — | Yes | Yes |
 
 <Note>
 
 MUI X uses a tiered model: row grouping, pivoting, aggregations, and cell selection require the Premium plan ($599/dev/year). Column resizing, pinning, reordering, tree data, and master-detail require at least Pro ($299/dev/year). Feature details are from the [MUI pricing page](https://mui.com/pricing/).
 
-Infinite Table includes all of these features in the free Community build (a "Powered by Infinite Table" footer is displayed). A paid license ($395/dev/year) removes the footer.
+Infinite Table includes all of these features in the free Community build.
 
 </Note>
 
@@ -67,27 +78,22 @@ Infinite Table includes all of these features in the free Community build (a "Po
 | **Deployment license** | None | None | None | None |
 | **Support** | Email (paid) | Community | Priority over Community | Priority over Pro |
 
-To match Infinite Table's feature set (grouping, pivoting, aggregations, cell selection), you need MUI X Premium at $599/dev/year. Infinite Table offers these for free — or at $395/dev/year if you want to remove the footer.
-
-For a team of five developers needing pivoting:
-- Infinite Table: $1,775/year (or $0 with footer)
-- MUI X Premium: $2,995/year
-
 ## When MUI X Data Grid is the better choice
 
-- **You're already in the MUI ecosystem.** If your app uses Material UI, MUI X Data Grid inherits your MUI theme, spacing, palette, and typography with zero configuration. Infinite Table uses its own CSS variables and won't automatically pick up your MUI theme tokens.
-- **You need the full MUI X suite.** MUI X includes date pickers, charts, tree view, and a scheduler under a single license. If you need multiple MUI X components, a Pro or Premium license covers them all — better value than paying separately for each tool.
-- **You value Material Design consistency.** The Data Grid follows Material Design patterns by default. If your design spec is Material Design, MUI X Data Grid is a natural fit.
-- **Community size.** MUI has a very large user community — Material UI's npm downloads are in the millions per week. More community resources, more Stack Overflow answers, more third-party tutorials.
-- **Column-level features at the Pro tier.** If you need column resizing, pinning, reordering, and tree data but not grouping/pivoting, MUI X Pro at $299/dev/year covers those features. Infinite Table offers the same features free (with footer) or at $395/dev/year (without), so MUI X Pro is comparable in price while covering non-grid MUI X components too.
+- **You're already in the MUI ecosystem.** If your app uses Material UI, MUI X Data Grid inherits your MUI theme automatically — palette, spacing, typography, dark mode — with zero configuration. Infinite Table uses CSS variables and won't pick up MUI theme tokens automatically.
+- **You need the full MUI X suite.** MUI X includes date pickers, charts, tree view, and a scheduler under a single license. If you need multiple MUI X components, a Pro or Premium license covers them all.
+- **Material Design consistency.** The Data Grid follows Material Design patterns by default. If your design spec is Material Design, MUI X is the most natural fit.
+- **Large community.** MUI has a very large user community — millions of weekly npm downloads for Material UI. More community resources, tutorials, and third-party integrations.
+- **Column-level features at the Pro tier.** If you need column resizing, pinning, reordering, and tree data but not grouping or pivoting, MUI X Pro at $299/dev/year covers those features along with all other MUI X Pro components.
 
 ## When Infinite Table is the better fit
 
-- **You need grouping, pivoting, and aggregations without paying for Premium.** These are free in Infinite Table's Community build. MUI X requires the Premium plan ($599/dev/year) for the same features.
-- **You're not using Material UI.** If your app uses Tailwind, vanilla CSS, or another design system, MUI X Data Grid brings along the MUI styling system as a dependency. Infinite Table uses plain CSS variables and works with any styling approach.
+- **You need grouping, pivoting, and aggregations without the Premium tier.** These are free in Infinite Table's Community build. MUI X requires Premium ($599/dev/year) for the same features.
+- **You're not using Material UI.** If your app uses Tailwind, vanilla CSS, or another design system, MUI X Data Grid brings along the MUI styling system as a dependency. Infinite Table uses plain CSS variables and works with any styling approach — no extra dependencies, no theme provider wrappers.
+- **Data layer separation.** Infinite Table's `<DataSource>` / `<InfiniteTable>` split gives you a clean separation between data management (fetching, sorting, grouping, pivoting, filtering) and rendering. You can even replace `<InfiniteTable>` with your own component and keep the data layer.
 - **Column virtualization on the free tier.** Infinite Table virtualizes both rows and columns by default. MUI X Community only virtualizes rows up to 100 rows; column virtualization and unlimited row virtualization require Pro.
 - **Live pagination and context menus.** Infinite Table includes built-in live pagination and context menus. MUI X does not offer equivalents at any tier.
-- **Simpler licensing model.** Infinite Table has one plan. MUI X has four tiers where features are spread across Community, Pro, Premium, and Enterprise — you need to check which tier covers each feature you need.
+- **Simpler licensing model.** Infinite Table has one plan with all features. MUI X has four tiers — you need to cross-reference the pricing page to see which tier covers each feature you need.
 
 ## Get started
 

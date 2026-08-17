@@ -1,25 +1,56 @@
 ---
 title: Infinite Table vs AG Grid
-description: A detailed comparison of Infinite Table and AG Grid for React. Architecture, features, pricing, and when AG Grid is the better choice.
+description: A detailed comparison of Infinite Table and AG Grid for React. React-native API vs framework-agnostic wrapper, features, and when AG Grid is the better choice.
 ---
 
-[AG Grid](https://www.ag-grid.com/) is the most established commercial data grid on the market, serving teams across React, Angular, Vue, and plain JavaScript. It has a massive feature surface and a large community.
+[AG Grid](https://www.ag-grid.com/) is the most established commercial data grid on the market, used across React, Angular, Vue, and plain JavaScript. It has a massive feature surface and a large community. We respect what the AG Grid team has built — it's a feat of engineering.
 
-This page compares Infinite Table and AG Grid so you can decide which fits your project. We'll be straightforward about where AG Grid is the stronger choice.
+The core difference is not price. It's how each grid relates to React.
+
+AG Grid was designed as a framework-agnostic rendering engine. Its React package is a wrapper — an adapter layer that translates between AG Grid's internal model and React components. The grid's state, lifecycle, and rendering happen outside React's reconciler. You configure it through a `gridOptions` object and interact with it through imperative API calls like `api.setColumnDefs()`, `api.refreshCells()`, and `api.getSelectedRows()`.
+
+Infinite Table was built for React from the start. There is no wrapper layer. Columns, sorting, grouping, and filtering are React props — controlled or uncontrolled, like any React component. Cell renderers are plain JSX. The grid participates in React's component tree, re-rendering when props change.
+
+## What this means in practice
+
+With AG Grid, you might write:
+
+```tsx
+// AG Grid: imperative API to update columns
+const onButtonClick = () => {
+  gridRef.current.api.setColumnDefs(newColumnDefs);
+  gridRef.current.api.refreshCells({ force: true });
+};
+```
+
+With Infinite Table, the same operation is a prop change:
+
+```tsx
+// Infinite Table: declarative React props
+const [columns, setColumns] = useState(initialColumns);
+
+const onButtonClick = () => {
+  setColumns(newColumns); // grid re-renders automatically
+};
+
+<DataSource<T> primaryKey="id" data={dataSource}>
+  <InfiniteTable<T> columns={columns} />
+</DataSource>
+```
+
+No ref, no imperative API — just React state. The same pattern you use for `<input value={...} onChange={...} />` works for the entire grid.
 
 ## Architecture
 
 | | Infinite Table | AG Grid |
 |---|---|---|
-| **Frameworks** | React | React, Angular, Vue, JavaScript |
+| **Built for** | React | Framework-agnostic (JS, Angular, Vue, React) |
+| **React integration** | Native — renders through React's reconciler | Wrapper — React adapter around internal DOM engine |
+| **API style** | Declarative props, controlled + uncontrolled | Grid-options object, imperative `api.*` calls |
+| **Cell renderers** | Plain JSX components | AG Grid component interface (React components supported via adapter) |
+| **State management** | Lives in React (useState, context, external stores) | Lives inside the grid; synced to React via callbacks |
 | **TypeScript** | Written in TypeScript, first-class types | Written in TypeScript, first-class types |
-| **API style** | Declarative, prop-driven | Imperative API + prop options |
-| **Rendering** | React component tree (no internal DOM engine) | Internal rendering engine; React wrapper dispatches to AG Grid's DOM layer |
 | **Virtualization** | Row + column | Row + column |
-
-Infinite Table renders through React's own reconciler — every cell is a React component. AG Grid uses its own internal rendering engine and wraps it for React. The practical difference: in Infinite Table, any React component works as a cell renderer without adapters. In AG Grid, custom cell renderers follow AG Grid's component interface, though React components are supported.
-
-AG Grid's architecture is why it supports multiple frameworks from a single codebase. If your organisation uses Angular or Vue alongside React, AG Grid lets you standardise on one grid.
 
 ## Feature Comparison
 
@@ -67,21 +98,19 @@ AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, t
 | **Free tier** | All features, footer displayed | Community edition (grouping/pivot excluded) |
 | **Support** | Email (paid license) | Zendesk (Enterprise license) |
 
-For a team of five front-end developers, Infinite Table costs $1,775/year vs roughly $4,995+/year for AG Grid Enterprise. The gap widens with larger teams.
-
 ## When AG Grid is the better choice
 
-- **Multi-framework projects.** If you need the same data grid in Angular, Vue, and React, AG Grid is the only option here — Infinite Table is React-only.
-- **The widest feature surface.** AG Grid Enterprise includes built-in charting integration, clipboard operations, Excel export, column tool panels, status bars, and a full server-side row model with partial store. If you need several of these, AG Grid covers them in one package.
-- **Enormous community and ecosystem.** With over 1M weekly npm downloads and 13k+ GitHub stars, AG Grid has deep community resources, Stack Overflow coverage, and third-party integrations.
-- **Non-React rendering performance.** AG Grid's internal rendering engine can outperform React reconciliation for extremely rapid, fine-grained cell updates in some scenarios, because it bypasses React's diffing.
+- **Multi-framework projects.** If you need the same data grid across Angular, Vue, and React codebases, AG Grid is the only option here — Infinite Table is React-only. AG Grid's framework-agnostic core is a strength when your organisation standardises on one grid across teams.
+- **The widest feature surface.** AG Grid Enterprise includes built-in charting, clipboard, Excel export, column tool panels, status bars, and a full server-side row model with partial store. If you need several of these, AG Grid covers them in one package.
+- **Enormous community and ecosystem.** With over 1M weekly npm downloads and 13k+ GitHub stars, AG Grid has deep community resources, Stack Overflow coverage, and third-party integrations. If you value ecosystem maturity, AG Grid is unmatched.
+- **You prefer the imperative API.** If your team already knows AG Grid's `api.*` pattern from other projects, or you prefer imperative control over the grid's state, AG Grid's model may feel more natural to you than a prop-driven React API.
 
 ## When Infinite Table is the better fit
 
-- **You only need React.** Infinite Table is built for React from the ground up. No framework-adapter layer means a simpler mental model and natural integration with React state management, Suspense, and concurrent features.
-- **You need grouping / pivoting / aggregations without an enterprise license.** These are included in Infinite Table's free build. AG Grid gates them behind the Enterprise tier.
-- **Simpler licensing.** One price, one key for the whole team, no deployment license. AG Grid's licensing is also per-developer but starts at a higher price point.
-- **Declarative API.** Infinite Table is designed around React props and controlled/uncontrolled patterns rather than imperative grid API calls.
+- **You want the grid to feel like React.** Infinite Table's API is props, controlled state, and JSX — the same patterns you use in every other React component. No grid-options objects, no imperative API calls, no syncing grid state back to React. If your team thinks in React, Infinite Table fits that mental model.
+- **You need grouping, pivoting, and aggregations without an enterprise license.** These are included in Infinite Table's free build. AG Grid gates them behind the Enterprise tier.
+- **You want a composable, smaller API surface.** Infinite Table favours function props over boolean flags, and controlled/uncontrolled variants over imperative setters. The API is designed to compose — fewer props that do more, rather than hundreds of configuration options.
+- **Simpler licensing.** One plan, one key for the whole team, no deployment license.
 
 ## Get started
 
