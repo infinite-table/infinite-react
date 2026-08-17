@@ -71,24 +71,24 @@ Both examples display tabular data. The first gives you total control over every
 
 | Feature | Infinite Table | TanStack Table |
 |---|---|---|
-| Sorting | Built-in UI + logic | Logic only |
-| Column filtering | Built-in filter UI + logic | Logic only |
-| Row grouping | Built-in, with expand/collapse UI | Logic only |
-| Aggregations | Built-in | Logic only |
-| Pivoting | Built-in | Logic only |
-| Tree data | Built-in (TreeGrid) | Logic only (expanding rows) |
-| Column resizing | Built-in | Logic helpers; you build the drag handles |
-| Column reordering | Built-in | Not included |
-| Column pinning | Built-in | Logic helpers; you implement sticky positioning |
-| Cell editing | Built-in | Not included |
-| Cell selection | Built-in | Not included |
-| Row selection | Built-in UI (checkbox, click) | Logic only |
-| Keyboard navigation | Built-in | Not included |
-| Context menus | Built-in | Not included |
-| Master-detail | Built-in | Not included |
-| Lazy loading / live pagination | Built-in | Not included (pagination logic available) |
-| Row + column virtualization | Built-in | Not included; use TanStack Virtual |
-| Theming | CSS variables, multiple built-in themes | N/A — you style everything |
+| Sorting | ✅ | 🔴 (logic only) |
+| Column filtering | ✅ | 🔴 (logic only) |
+| Row grouping | ✅ | 🔴 (logic only) |
+| Aggregations | ✅ | 🔴 (logic only) |
+| Pivoting | ✅ | 🔴 (logic only) |
+| Tree data | ✅ | 🔴 (logic only) |
+| Column resizing | ✅ | 🔴 (logic helpers) |
+| Column reordering | ✅ | 🔴 |
+| Column pinning | ✅ | 🔴 (logic helpers) |
+| Cell editing | ✅ | 🔴 |
+| Cell selection | ✅ | 🔴 |
+| Row selection | ✅ | 🔴 (logic only) |
+| Keyboard navigation | ✅ | 🔴 |
+| Context menus | ✅ | 🔴 |
+| Master-detail | ✅ | 🔴 |
+| Lazy loading / live pagination | ✅ | 🔴 (pagination logic available) |
+| Row + column virtualization | ✅ | 🔴 (use TanStack Virtual) |
+| Theming | ✅ | 🔴 |
 
 <Note>
 
@@ -114,7 +114,7 @@ With Infinite Table, grouping, pivoting, filtering, virtualization, keyboard nav
 
 TanStack Table is MIT-licensed and free. There is no paid tier.
 
-Infinite Table's Community build is also free — all features included — but displays a "Powered by Infinite Table" footer. A [paid license ($395/dev/year)](https://infinite-table.com/pricing) removes the footer and adds email support.
+Infinite Table is also free — all features included — but displays a "Powered by Infinite Table" footer. A [paid license ($395/dev/year)](https://infinite-table.com/pricing) removes the footer and adds email support.
 
 ## When TanStack Table is the better choice
 
@@ -127,17 +127,33 @@ Infinite Table's Community build is also free — all features included — but 
 ## When Infinite Table is the better fit
 
 - **You want to ship the grid, not build it.** Infinite Table delivers a production-ready grid — virtualized, keyboard-navigable, themed — out of the box. You focus on your product, not on re-implementing table infrastructure.
-- **You want React-native API feel without the assembly work.** TanStack Table gives you hooks and row models; you assemble the JSX. Infinite Table gives you declarative props and controlled state — the same patterns you use in every other React component — but ships the complete UI so you don't have to build it yourself.
+- **You want native React API feel without the assembly work.** TanStack Table gives you hooks and row models; you assemble the JSX. Infinite Table gives you declarative props and controlled state — the same patterns you use in every other React component — but ships the complete UI so you don't have to build it yourself. Of course you still have a lot of control over column cells, headers, filters, etc.
 - **Complex data features built in.** Master-detail, tree grids, lazy loading, live pagination, cell editing, cell selection, and context menus are all included. Building these on top of TanStack Table is a significant engineering project.
 - **Accessibility and keyboard support.** Infinite Table includes keyboard navigation and focus management. With TanStack Table, you implement these yourself.
 
-## Get started
 
-<TerminalBlock>
-npm i @infinite-table/infinite-react
-</TerminalBlock>
+<HeroCards>
+<YouWillLearnCard title="Getting Started" path="/docs/learn/getting-started">
+Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
+</YouWillLearnCard>
+<YouWillLearnCard title="Grouping and pivoting" path="/docs/learn/grouping-and-pivoting">
+Built-in grouping, aggregations, and pivoting — without writing the UI layer yourself.
+</YouWillLearnCard>
+</HeroCards>
 
-- [Getting Started guide](/docs/learn/getting-started)
-- [Grouping and Pivoting](/docs/learn/grouping-and-pivoting)
-- [Pricing](/pricing)
-- [TanStack Table official docs](https://tanstack.com/table/latest/docs/introduction)
+<HeroCards>
+<YouWillLearnCard title="Pricing" path="/pricing">
+Use Infinite Table free with a footer, or buy a license to remove it and get email support.
+</YouWillLearnCard>
+<YouWillLearnCard title="TanStack Table docs" path="https://tanstack.com/table/latest/docs/introduction" newTab>
+Read TanStack Table's official introduction.
+</YouWillLearnCard>
+</HeroCards>
+
+## Help us keep this comparison up-to-date
+
+This page is our reading of TanStack Table's public docs as of mid-2026. We want it to stay accurate. If you work on TanStack Table — or you've spotted something that's wrong, outdated, or missing context — please tell us. We will update the page.
+
+- [Edit this page on GitHub](https://github.com/infinite-table/infinite-react/edit/master/www/content/docs/learn/compare/tanstack-table.page.md) and open a pull request
+- [File a correction issue](https://github.com/infinite-table/infinite-react/issues/new?template=compare_page_correction.md&title=Compare%20page%20correction%3A%20TanStack%20Table)
+- Email [admin@infinite-table.com](mailto:admin@infinite-table.com?subject=Compare%20page%20correction%3A%20TanStack%20Table) with the URL and what should change

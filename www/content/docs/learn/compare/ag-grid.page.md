@@ -56,31 +56,31 @@ No ref, no imperative API — just React state. The same pattern you use for `<i
 
 | Feature | Infinite Table (free) | AG Grid Community (free) | AG Grid Enterprise (paid) |
 |---|---|---|---|
-| Sorting (single + multi) | Yes | Yes | Yes |
-| Column filtering | Yes | Yes | Yes |
-| Column resizing | Yes | Yes | Yes |
-| Column reordering | Yes | Yes | Yes |
-| Column pinning | Yes | Yes | Yes |
-| Column grouping (headers) | Yes | Yes | Yes |
-| Row grouping | Yes | — | Yes |
-| Aggregations | Yes | — | Yes |
-| Pivoting | Yes | — | Yes |
-| Tree data | Yes | — | Yes |
-| Master-detail | Yes | — | Yes |
-| Lazy loading | Yes | — | Yes (server-side row model) |
-| Live pagination | Yes | — | — |
-| Row + column virtualization | Yes | Yes | Yes |
-| Cell editing | Yes | Yes | Yes |
-| Cell selection | Yes | — | Yes (range selection) |
-| Row selection | Yes | Yes | Yes |
-| Context menus | Yes | — | Yes |
-| Keyboard navigation | Yes | Yes | Yes |
-| Theming (CSS variables) | Yes | Yes | Yes |
-| Excel export | — | — | Yes |
-| Clipboard | — | — | Yes |
-| Integrated charting | — | — | Yes |
-| Server-side row model | — (lazy loading + live pagination) | — | Yes |
-| Status bar / sidebar panels | — | — | Yes |
+| Sorting (single + multi) | ✅ | ✅ | ✅ |
+| Column filtering | ✅ | ✅ | ✅ |
+| Column resizing | ✅ | ✅ | ✅ |
+| Column reordering | ✅ | ✅ | ✅ |
+| Column pinning | ✅ | ✅ | ✅ |
+| Column grouping (headers) | ✅ | ✅ | ✅ |
+| Row grouping | ✅ | 🔴 | ✅ |
+| Aggregations | ✅ | 🔴 | ✅ |
+| Pivoting | ✅ | 🔴 | ✅ |
+| Tree data | ✅ | 🔴 | ✅ |
+| Master-detail | ✅ | 🔴 | ✅ |
+| Lazy loading | ✅ | 🔴 | ✅ (server-side row model) |
+| Live pagination | ✅ | 🔴 | ✅ |
+| Row + column virtualization | ✅ | ✅ | ✅ |
+| Cell editing | ✅ | ✅ | ✅ |
+| Cell selection | ✅ | 🔴 | ✅ (range selection) |
+| Row selection | ✅ | ✅ | ✅ |
+| Context menus | ✅ | 🔴 | ✅ |
+| Keyboard navigation | ✅ | ✅ | ✅ |
+| Theming (CSS variables) | ✅ | ✅ | ✅ |
+| Excel export | 🔴 | 🔴 | ✅ |
+| Clipboard | 🔴 | 🔴 | ✅ |
+| Integrated charting | 🔴 | 🔴 | ✅ |
+| Server-side row model | ✅ | 🔴 | ✅ |
+| Status bar / sidebar panels | 🔴 | 🔴 | ✅ |
 
 <Note>
 
@@ -112,13 +112,29 @@ AG Grid Community (MIT) does not include row grouping, pivoting, aggregations, t
 - **You want a composable, smaller API surface.** Infinite Table favours function props over boolean flags, and controlled/uncontrolled variants over imperative setters. The API is designed to compose — fewer props that do more, rather than hundreds of configuration options.
 - **Simpler licensing.** One plan, one key for the whole team, no deployment license.
 
-## Get started
 
-<TerminalBlock>
-npm i @infinite-table/infinite-react
-</TerminalBlock>
+<HeroCards>
+<YouWillLearnCard title="Getting Started" path="/docs/learn/getting-started">
+Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
+</YouWillLearnCard>
+<YouWillLearnCard title="Grouping and pivoting" path="/docs/learn/grouping-and-pivoting">
+The features AG Grid Community leaves out — included here without an Enterprise license.
+</YouWillLearnCard>
+</HeroCards>
 
-- [Getting Started guide](/docs/learn/getting-started)
-- [Grouping and Pivoting](/docs/learn/grouping-and-pivoting)
-- [Pricing](/pricing)
-- [AG Grid official docs](https://www.ag-grid.com/react-data-grid/getting-started/)
+<HeroCards>
+<YouWillLearnCard title="Pricing" path="/pricing">
+Use Infinite Table free with a footer, or buy a license to remove it and get email support.
+</YouWillLearnCard>
+<YouWillLearnCard title="AG Grid docs" path="https://www.ag-grid.com/react-data-grid/getting-started/" newTab>
+Read AG Grid's official React getting started guide.
+</YouWillLearnCard>
+</HeroCards>
+
+## Help us keep this comparison up-to-date
+
+This page is our reading of AG Grid's public docs and pricing as of mid-2026. We want it to stay accurate. If you work on AG Grid — or you've spotted something that's wrong, outdated, or missing context — please tell us. We will update the page.
+
+- [Edit this page on GitHub](https://github.com/infinite-table/infinite-react/edit/master/www/content/docs/learn/compare/ag-grid.page.md) and open a pull request
+- [File a correction issue](https://github.com/infinite-table/infinite-react/issues/new?template=compare_page_correction.md&title=Compare%20page%20correction%3A%20AG%20Grid)
+- Email [admin@infinite-table.com](mailto:admin@infinite-table.com?subject=Compare%20page%20correction%3A%20AG%20Grid) with the URL and what should change

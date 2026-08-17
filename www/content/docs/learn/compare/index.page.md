@@ -5,7 +5,7 @@ description: Honest comparison of Infinite Table against AG Grid, TanStack Table
 
 Most data grids were not built for React. They were built for the browser — or for multiple frameworks at once — and later wrapped with a React adapter. The result is an API that feels foreign: grid-options objects, imperative method calls, callback registrations instead of props.
 
-Infinite Table was built for React from the ground up. Columns are props. Sorting, grouping, and filtering are controlled or uncontrolled values — the same pattern you use for an `<input>`. Cell renderers are plain JSX. State lives in React, not inside the grid. When you change a prop, the grid re-renders. No `.api.setColumnDefs()`, no `ref.current.resetRowHeights()` — just React.
+Infinite Table was built for React from the ground up. Columns are props. Sorting, grouping, and filtering are controlled or uncontrolled values — the same pattern you use for an `<input>`. Cell renderers are plain JSX. State lives in React, not inside the grid. When you change a prop, the grid re-renders. You're not forced to use APIs unless you want to — just React.
 
 This section compares Infinite Table with three popular alternatives. We cover how each one integrates with React, what features ship built-in, and — just as importantly — when the other tool is the better fit.
 
@@ -48,9 +48,45 @@ Feature availability is based on each product's official documentation as of mid
 
 ## Get started
 
+Install Infinite Table from npm. The package includes everything: grouping, pivoting, tree data, and the rest of the features in the table above — no enterprise package or license required.
+
 <TerminalBlock>
 npm i @infinite-table/infinite-react
 </TerminalBlock>
 
-- [Getting Started guide](/docs/learn/getting-started)
-- [Pricing](/pricing)
+From there, follow the Getting Started guide for a first grid, or open the comparison that matches the tool you're evaluating.
+
+<HeroCards>
+<YouWillLearnCard title="Getting Started" path="/docs/learn/getting-started">
+Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
+</YouWillLearnCard>
+<YouWillLearnCard title="Pricing" path="/pricing">
+Use Infinite Table free with a footer, or buy a license to remove it and get email support.
+</YouWillLearnCard>
+</HeroCards>
+
+<HeroCards>
+<YouWillLearnCard title="vs AG Grid" path="/docs/learn/compare/ag-grid">
+React-native props versus a framework-agnostic wrapper, plus which features sit behind AG Grid Enterprise.
+</YouWillLearnCard>
+<YouWillLearnCard title="vs TanStack Table" path="/docs/learn/compare/tanstack-table">
+A rendered, virtualized DataGrid versus a headless table library you assemble yourself.
+</YouWillLearnCard>
+</HeroCards>
+
+<HeroCards>
+<YouWillLearnCard title="vs MUI X Data Grid" path="/docs/learn/compare/mui-x-data-grid">
+What ships in Infinite Table's free build versus MUI X Community, Pro, and Premium.
+</YouWillLearnCard>
+<YouWillLearnCard title="Grouping and pivoting" path="/docs/learn/grouping-and-pivoting">
+The features most often gated on other grids — included here without an enterprise tier.
+</YouWillLearnCard>
+</HeroCards>
+
+## Help us keep these comparisons up-to-date
+
+These pages are our reading of each product's public documentation and pricing as of mid-2026. We want them to stay accurate. If you work on AG Grid, TanStack Table, or MUI X — or you've spotted something that's wrong, outdated, or missing context — please tell us. We will update the page.
+
+- [File a correction issue](https://github.com/infinite-table/infinite-react/issues/new?template=compare_page_correction.md&title=Compare%20page%20correction%3A%20)
+- [Edit the source on GitHub](https://github.com/infinite-table/infinite-react/tree/master/www/content/docs/learn/compare) and open a pull request
+- Email [admin@infinite-table.com](mailto:admin@infinite-table.com?subject=Compare%20page%20correction) with the page URL and what should change

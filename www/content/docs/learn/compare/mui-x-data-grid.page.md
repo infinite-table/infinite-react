@@ -15,7 +15,7 @@ Infinite Table is design-system agnostic. Theming is done through CSS variables 
 
 **Feature availability.** MUI X uses a four-tier model: Community (free), Pro ($299/dev/yr), Premium ($599/dev/yr), and Enterprise ($1,399/dev/yr). Core features like column resizing, pinning, and tree data require at least Pro. Grouping, pivoting, and aggregations require Premium.
 
-Infinite Table includes all of these in the free Community build. A "Powered by Infinite Table" footer is displayed; a [paid license ($395/dev/year)](https://infinite-table.com/pricing) removes it.
+Infinite Table includes all of these in the package (only one package, no separate community and enterprise packages). A "Powered by Infinite Table" footer is displayed; a [paid license ($395/dev/year)](https://infinite-table.com/pricing) removes it.
 
 **Data layer separation.** Infinite Table splits data management and rendering into two React components — `<DataSource>` and `<InfiniteTable>`. The `<DataSource>` handles fetching, sorting, grouping, pivoting, and filtering; the `<InfiniteTable>` handles rendering. You can even use `<DataSource>` with your own custom component. MUI X Data Grid is a single component that handles both data and rendering internally.
 
@@ -36,28 +36,28 @@ Infinite Table includes all of these in the free Community build. A "Powered by 
 
 | Feature | Infinite Table (free) | MUI X Community (free) | MUI X Pro ($299/dev/yr) | MUI X Premium ($599/dev/yr) |
 |---|---|---|---|---|
-| Sorting (single + multi) | Yes | Yes (single) | Yes (multi) | Yes (multi) |
-| Column filtering | Yes | Yes (single) | Yes (multi) | Yes (multi) |
-| Column resizing | Yes | — | Yes | Yes |
-| Column reordering | Yes | — | Yes | Yes |
-| Column pinning | Yes | — | Yes | Yes |
-| Column grouping (headers) | Yes | Yes | Yes | Yes |
-| Row grouping | Yes | — | — | Yes |
-| Aggregations | Yes | — | — | Yes |
-| Pivoting | Yes | — | — | Yes |
-| Tree data | Yes | — | Yes | Yes |
-| Master-detail | Yes | — | Yes | Yes |
-| Row virtualization | Yes | Yes (≤100 rows) | Yes | Yes |
-| Column virtualization | Yes | — | Yes | Yes |
-| Cell editing | Yes | Yes | Yes | Yes |
-| Cell selection | Yes | — | — | Yes |
-| Row selection | Yes | Yes | Yes | Yes |
-| Keyboard navigation | Yes | Yes | Yes | Yes |
-| Lazy loading | Yes | — | Yes (server-side) | Yes |
-| Live pagination | Yes | — | — | — |
-| Context menus | Yes | — | — | — |
-| Excel export | — | — | — | Yes |
-| Clipboard (copy/paste) | — | — | — | Yes |
+| Sorting (single + multi) | ✅ | ✅ (single) | ✅ (multi) | ✅ (multi) |
+| Column filtering | ✅ | ✅ (single) | ✅ (multi) | ✅ (multi) |
+| Column resizing | ✅ | 🔴 | ✅ | ✅ |
+| Column reordering | ✅ | 🔴 | ✅ | ✅ |
+| Column pinning | ✅ | 🔴 | ✅ | ✅ |
+| Column grouping (headers) | ✅ | ✅ | ✅ | ✅ |
+| Row grouping | ✅ | 🔴 | 🔴 | ✅ |
+| Aggregations | ✅ | 🔴 | 🔴 | ✅ |
+| Pivoting | ✅ | 🔴 | 🔴 | ✅ |
+| Tree data | ✅ | 🔴 | ✅ | ✅ |
+| Master-detail | ✅ | 🔴 | ✅ | ✅ |
+| Row virtualization | ✅ | ✅  | ✅ | ✅ |
+| Column virtualization | ✅ | 🔴 | ✅ | ✅ |
+| Cell editing | ✅ | ✅ | ✅ | ✅ |
+| Cell selection | ✅ | 🔴 | 🔴 | ✅ |
+| Row selection | ✅ | ✅ | ✅ | ✅ |
+| Keyboard navigation | ✅ | ✅ | ✅ | ✅ |
+| Lazy loading | ✅ | 🔴 | ✅ (server-side) | ✅ |
+| Live pagination | ✅ | 🔴 | 🔴 | 🔴 |
+| Context menus | ✅ | 🔴 | 🔴 | 🔴 |
+| Excel export | 🔴 | 🔴 | 🔴 | ✅ |
+| Clipboard (copy/paste) | 🔴 | 🔴 | 🔴 | ✅ |
 
 <Note>
 
@@ -72,9 +72,9 @@ Infinite Table includes all of these features in the free Community build.
 | | Infinite Table | MUI X Pro | MUI X Premium | MUI X Enterprise |
 |---|---|---|---|---|
 | **Price** | [$395/dev/year](https://infinite-table.com/pricing) | [$299/dev/year](https://mui.com/pricing/) | [$599/dev/year](https://mui.com/pricing/) | [$1,399/dev/year](https://mui.com/pricing/) |
-| **Grouping + pivoting** | Included (free) | — | Included | Included |
-| **Tree data + master-detail** | Included (free) | Included | Included | Included |
-| **Column resizing + pinning** | Included (free) | Included | Included | Included |
+| **Grouping + pivoting** | ✅ (free) | 🔴 | ✅ | ✅ |
+| **Tree data + master-detail** | ✅ (free) | ✅ | ✅ | ✅ |
+| **Column resizing + pinning** | ✅ (free) | ✅ | ✅ | ✅ |
 | **Deployment license** | None | None | None | None |
 | **Support** | Email (paid) | Community | Priority over Community | Priority over Pro |
 
@@ -95,14 +95,29 @@ Infinite Table includes all of these features in the free Community build.
 - **Live pagination and context menus.** Infinite Table includes built-in live pagination and context menus. MUI X does not offer equivalents at any tier.
 - **Simpler licensing model.** Infinite Table has one plan with all features. MUI X has four tiers — you need to cross-reference the pricing page to see which tier covers each feature you need.
 
-## Get started
 
-<TerminalBlock>
-npm i @infinite-table/infinite-react
-</TerminalBlock>
+<HeroCards>
+<YouWillLearnCard title="Getting Started" path="/docs/learn/getting-started">
+Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
+</YouWillLearnCard>
+<YouWillLearnCard title="Theming with CSS variables" path="/docs/learn/theming/css-variables">
+Theme Infinite Table without a Material UI theme provider — CSS variables only.
+</YouWillLearnCard>
+</HeroCards>
 
-- [Getting Started guide](/docs/learn/getting-started)
-- [Grouping and Pivoting](/docs/learn/grouping-and-pivoting)
-- [Theming with CSS variables](/docs/learn/theming/css-variables)
-- [Pricing](/pricing)
-- [MUI X Data Grid official docs](https://mui.com/x/react-data-grid/)
+<HeroCards>
+<YouWillLearnCard title="Pricing" path="/pricing">
+Use Infinite Table free with a footer, or buy a license to remove it and get email support.
+</YouWillLearnCard>
+<YouWillLearnCard title="MUI X Data Grid docs" path="https://mui.com/x/react-data-grid/" newTab>
+Read MUI X Data Grid's official documentation.
+</YouWillLearnCard>
+</HeroCards>
+
+## Help us keep this comparison up-to-date
+
+This page is our reading of MUI X Data Grid's public docs and [pricing page](https://mui.com/pricing/) as of mid-2026. We want it to stay accurate. If you work on MUI X — or you've spotted something that's wrong, outdated, or missing context — please tell us. We will update the page.
+
+- [Edit this page on GitHub](https://github.com/infinite-table/infinite-react/edit/master/www/content/docs/learn/compare/mui-x-data-grid.page.md) and open a pull request
+- [File a correction issue](https://github.com/infinite-table/infinite-react/issues/new?template=compare_page_correction.md&title=Compare%20page%20correction%3A%20MUI%20X%20Data%20Grid)
+- Email [admin@infinite-table.com](mailto:admin@infinite-table.com?subject=Compare%20page%20correction%3A%20MUI%20X%20Data%20Grid) with the URL and what should change
