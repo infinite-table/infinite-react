@@ -21,6 +21,7 @@
 - [🤔 What is Infinite Table?](#-what-is-infinite-table)
 - [📦 Installation](#-installation)
 - [📄 Extensive documentation](#-extensive-documentation)
+- [⚖️ Compare](#-compare)
 - [❤️ TypeScript](#-typescript)
 - [🏢 Enterprise-ready](#-enterprise-ready)
   - [🔒 Secure by default](#-secure-by-default)
@@ -75,6 +76,15 @@ npm install @infinite-table/infinite-react --save
 Our approach with the `InfiniteTable` is to go documentation first. From our developer experience we know that most software products lack a good documentation. So we want to be different and start with the documentation first since our purpose is to have an outstanding documentation that developers can actually use.
 
 **[Visit our docs and getting-started guide](https://infinite-table.com/docs)**
+
+## ⚖️ Compare
+
+Choosing a React DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits — particularly if you value a component that feels native to React (hooks, controlled/uncontrolled props, no imperative API gymnastics).
+
+- [Overview](https://infinite-table.com/docs/learn/compare)
+- [vs AG Grid](https://infinite-table.com/docs/learn/compare/ag-grid)
+- [vs TanStack Table](https://infinite-table.com/docs/learn/compare/tanstack-table)
+- [vs MUI X Data Grid](https://infinite-table.com/docs/learn/compare/mui-x-data-grid)
 
 ## ❤️ TypeScript
 
