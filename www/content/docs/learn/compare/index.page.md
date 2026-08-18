@@ -20,7 +20,7 @@ Other excellent data grids take different approaches — multi-framework support
 | **Built for React** | Yes — from the ground up | Multi-framework (JS, Angular, Vue, React) | Headless — multi-framework hooks | Yes — React only |
 | **API style** | Small, composable props (controlled + uncontrolled) | Large, comprehensive configuration surface | Headless hooks, you provide all JSX | Declarative props, controlled + uncontrolled |
 | **Cell renderers** | JSX components | AG Grid component interface (React supported) | You build all rendering | JSX components |
-| **Frameworks** | React | React, Angular, Vue, JS | React, Vue, Solid, Svelte | React |
+| **Frameworks** | React | React, Angular, Vue, JS | All Most Popular | React |
 | **Virtualization** | Row + column | Row + column | BYO (separate package) | Row (column in Pro+) |
 | **Grouping** | Included (free) | Enterprise license | Logic only (free) | Premium plan ($599/dev/yr) |
 | **Pivoting** | Included (free) | Enterprise license | Logic only (free) | Premium plan ($599/dev/yr) |
@@ -43,25 +43,6 @@ Feature availability is based on each product's official documentation as of mid
 **Pick TanStack Table** if you want total control over rendering and are prepared to build your own UI layer, virtualization, keyboard navigation, and accessibility. Best for design-system component libraries or lightweight tables that don't need complex built-in features.
 
 **Pick MUI X Data Grid** if your application is already built on Material UI and you value automatic theme integration with MUI's design system, or you need the broader MUI X component suite (date pickers, charts, tree view) under a single license.
-
-## Get started
-
-Install Infinite Table from npm. The package includes everything: grouping, pivoting, tree data, and the rest of the features in the table above — no enterprise package or license required.
-
-<TerminalBlock>
-npm i @infinite-table/infinite-react
-</TerminalBlock>
-
-From there, follow the Getting Started guide for a first grid, or open the comparison that matches the tool you're evaluating.
-
-<HeroCards>
-<YouWillLearnCard title="Getting Started" path="/docs/learn/getting-started">
-Install the package, render your first DataGrid, and learn how `<DataSource />` and `<InfiniteTable />` work together.
-</YouWillLearnCard>
-<YouWillLearnCard title="Pricing" path="/pricing">
-Use Infinite Table free with a footer, or buy a license to remove it and get email support.
-</YouWillLearnCard>
-</HeroCards>
 
 <HeroCards>
 <YouWillLearnCard title="vs AG Grid" path="/docs/learn/compare/ag-grid">

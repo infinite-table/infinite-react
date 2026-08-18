@@ -61,8 +61,8 @@ Both examples display tabular data. The first gives you total control over every
 | **Type** | Rendered React component | Headless logic library |
 | **What you get** | Full UI: virtualized grid, headers, cells, scrollbars, keyboard nav, theming | Table state + utilities; you provide all DOM and styling |
 | **API style** | Declarative props (controlled + uncontrolled) | Hooks that return row/cell models; you render everything |
-| **Cell rendering** | JSX — pass a React component as a column prop | You call `flexRender()` yourself inside your own markup |
-| **Frameworks** | React | React, Vue, Solid, Svelte, vanilla JS |
+| **Cell rendering** | JSX — pass a React component as a column prop | JSX - Use the `FlexRender` component |
+| **Frameworks** | React | All Most Popular |
 | **Virtualization** | Built-in row + column virtualization | Not included; pair with [TanStack Virtual](https://tanstack.com/virtual) or your own |
 | **TypeScript** | First-class | First-class |
 | **Bundle** | Single package, includes CSS | Tiny core; total size depends on what you build on top |
