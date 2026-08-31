@@ -15,7 +15,7 @@ const columnGroups: Record<string, InfiniteTableColumnGroup> = {
   location: { header: 'location', columnGroup: 'address' },
 
   // this is a top-level group
-  address, { header: 'Address' }
+  address: { header: 'Address' },
 }
 ```
 
