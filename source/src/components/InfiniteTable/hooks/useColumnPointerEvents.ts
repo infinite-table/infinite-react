@@ -288,7 +288,8 @@ export const useColumnPointerEvents = ({
 
           target.style.cursor = initialCursor as string;
           // capture is often already gone by this rAF (browser released it on pointerup)
-          if (target.hasPointerCapture(pointerId)) {
+          // jsdom does not implement hasPointerCapture
+          if (target.hasPointerCapture?.(pointerId)) {
             target.releasePointerCapture(pointerId);
           }
 
