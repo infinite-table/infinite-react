@@ -41,6 +41,8 @@ import {
 } from './initRowInfoReducers';
 import { TreeExpandState } from '../TreeExpandState';
 import { getTreeSelectionState } from './getInitialState';
+import { enrichSortInfoFromGroupBy } from './enrichSortInfoFromGroupBy';
+import { sortGroupedRowInfosByPivotColumns } from './sortGroupedRowInfosByPivotColumns';
 
 import { once } from '../../../utils/DeepMap/once';
 import {
@@ -359,7 +361,7 @@ export function concludeReducer<T>(params: {
 
   const cacheAffectedParts = getCacheAffectedParts(state);
 
-  const sortInfo = state.sortInfo;
+  const sortInfo = enrichSortInfoFromGroupBy(state.sortInfo, state.groupBy);
   // #sortMode_vs_shouldReloadData.sortInfo
   const sortMode = state.sortMode;
   let shouldSort = !!sortInfo?.length ? sortMode === 'local' : false;
@@ -897,6 +899,19 @@ export function concludeReducer<T>(params: {
 
       state.pivotColumns = pivotGroupsAndCols?.columns;
       state.pivotColumnGroups = pivotGroupsAndCols?.columnGroups;
+
+      const pivotSortedRowInfos = sortGroupedRowInfosByPivotColumns(
+        rowInfoDataArray,
+        sortInfo,
+        state.pivotColumns as any,
+        state.sortTypes,
+      );
+      if (pivotSortedRowInfos !== rowInfoDataArray) {
+        rowInfoDataArray = pivotSortedRowInfos;
+        state.groupRowsIndexesInDataArray = rowInfoDataArray
+          .map((row, index) => (row.isGroupRow ? index : -1))
+          .filter((index) => index >= 0);
+      }
 
       if (state.devToolsDetected) {
         state.debugTimings.set('group-and-pivot', Date.now() - groupTimestamp);

@@ -40,7 +40,10 @@ import { realignColumnContextMenu } from './realignColumnContextMenu';
 
 import { GetImperativeApiParam } from './type';
 import { notNullable } from '../types/Utility';
-import { UNKNOWN_SORT_TYPE } from '../utils/getComputedColumns';
+import {
+  findColumnForField,
+  UNKNOWN_SORT_TYPE,
+} from '../utils/getComputedColumns';
 import {
   getCellSelectionApi,
   InfiniteTableCellSelectionApi,
@@ -772,9 +775,16 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       return;
     }
 
+    const isPivotColumn = !!(c as { pivotColumn?: boolean }).pivotColumn;
     const groupByForColumn = c.groupByForColumn;
 
-    let field: DataSourceSingleSortInfo<T>['field'] | undefined = c.field;
+    // Pivot columns inherit `field` from the aggregator column. Using that
+    // field sorts the raw dataset and reshuffles first-seen pivot keys
+    // (so `true`/`false` column groups swap). Pivot sorts are applied to
+    // group rows after aggregation instead.
+    let field: DataSourceSingleSortInfo<T>['field'] | undefined = isPivotColumn
+      ? undefined
+      : c.field;
 
     const groupByForCol: GroupBy<T>[] = groupByForColumn
       ? Array.isArray(groupByForColumn)
@@ -799,14 +809,25 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     let computedSortType: string | string[] = c.computedSortType;
 
     if (groupByForCol.length && computedSortType === UNKNOWN_SORT_TYPE) {
+      const userColumns = this.getState().initialColumns;
       const sortTypeForGroupCols = groupByForCol.flatMap((groupBy) => {
         const field = groupBy.field ?? groupBy.groupField;
 
         const col = field ? computedColumnsMap.get(field as string) : null;
-        if (!col) {
-          return UNKNOWN_SORT_TYPE;
+        if (col) {
+          return col.computedSortType;
         }
-        return col.computedSortType;
+
+        const userCol = field
+          ? findColumnForField(userColumns, field as string)
+          : undefined;
+        if (userCol) {
+          const type =
+            userCol.sortType ||
+            (typeof userCol.type === 'string' ? userCol.type : 'string');
+          return type;
+        }
+        return [UNKNOWN_SORT_TYPE];
       });
       computedSortType = sortTypeForGroupCols;
     }
@@ -817,7 +838,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       field,
       type: computedSortType,
     };
-    if (c.valueGetter) {
+    if (!isPivotColumn && c.valueGetter) {
       newColumnSortInfo.valueGetter = (data) =>
         c.valueGetter!({ data, field: c.field });
     }

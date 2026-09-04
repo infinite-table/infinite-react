@@ -454,7 +454,7 @@ The `DataSourceAggregationReducer` type can have the following properties
 - `reducer`: `string | (accumulator, value, data: T) => any` - either a string (for server-side aggregations) or a mandatory aggregation function for client-side aggregations.
 - `done`: `(accumulator, arr: T[]) => any` - a function that is called to finish the aggregation after all values have been accumulated. The function should return the final value of the aggregation. Only used for client-side aggregations.
 - `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
-- `pivotColumn` - if specified, will configure the pivot column generated for this aggregation. This object has the same shape as a normal <PropLink name="columns">column</PropLink>, but supports an extra `inheritFromColumn` property, which can either be a `string` (a column id), or a `boolean`. The default behavior for a pivot column is to inherit the configuration of the initial column that has the same `field` property. `inheritFromColumn` allows you to specify another column to inherit from, or, if `false` is passed, the pivot column will not inherit from any other column.
+- `pivotColumn` - if specified, will configure the pivot column generated for this aggregation. This object has the same shape as a normal <PropLink name="columns">column</PropLink>, but supports some extra props like `inheritFromColumn` See <DPropLink name="aggregationReducers.pivotColumn" />.
 
 <Sandpack title="Aggregation demo - see `salary` column">
 
@@ -475,6 +475,70 @@ Aggregation reducers can be used in combination with grouping and pivoting. The 
 </Sandpack>
 
 Pivot columns generated for aggregations will inehrit from initial columns - the example shows how to leverage this behavior and how to extend it
+
+<Sandpack title="Pivot columns inherit from original columns bound to the same field">
+
+```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="aggregationReducers.pivotColumn" type="Partial<InfiniteTableColumn<T>> | (({ column }) => Partial<InfiniteTableColumn<T>>)">
+
+> Configures the generated pivot columns for this aggregation only.
+
+Has the same shape as a normal <PropLink name="columns">column</PropLink> (or a function that returns one). Use it when you want a setting — <PropLink name="columns.defaultSortable" nocode>defaultSortable</PropLink>, `header`, `defaultWidth`,`style` - to apply to columns generated for this reducer, and not to other aggregations.
+
+Also supports <DPropLink name="aggregationReducers.pivotColumn.inheritFromColumn" /> to control which original column (if any) the generated columns inherit from.
+
+```ts
+const aggregationReducers = {
+  salary: {
+    field: 'salary',
+    initialValue: 0,
+    reducer: (acc, sum) => acc + sum,
+    pivotColumn: {
+      defaultSortable: true,
+    },
+  },
+  license: {
+    field: 'license',
+    initialValue: 0,
+    reducer: (acc) => acc + 1,
+  },
+};
+```
+
+In the example above, only the `salary` pivot columns are sortable. See [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns) for the other override points (<PropLink name="pivotColumn" /> and <DataSourcePropLink name="pivotBy.column" />).
+
+</Prop>
+
+<Prop name="aggregationReducers.pivotColumn.inheritFromColumn" type="string | boolean">
+
+> Controls which original <PropLink name="columns">column</PropLink> the generated pivot columns inherit from.
+
+By default, pivot columns inherit the configuration of the initial column bound to the same `field` as the aggregation. `inheritFromColumn` lets you change that:
+
+- a `string` — the id of another column to inherit from
+- `false` — do not inherit from any column
+- `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
+
+```ts
+const aggregationReducers = {
+  avgSalary: { field: 'salary', ...avgReducer },
+  avgAge: {
+    field: 'age',
+    ...avgReducer,
+    pivotColumn: {
+      inheritFromColumn: 'preferredLanguage',
+      defaultWidth: 500,
+    },
+  },
+};
+```
 
 <Sandpack title="Pivot columns inherit from original columns bound to the same field">
 

@@ -7,6 +7,7 @@ import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../../utils/groupAndPivot';
 import { ComponentStateGeneratedActions } from '../../hooks/useComponentState/types';
 import { assignExcept } from '../../InfiniteTable/utils/assignFiltered';
 import { cleanupEmptyFilterValues } from '../state/reducer';
+import { enrichSortInfoFromGroupBy } from '../state/enrichSortInfoFromGroupBy';
 import {
   DataSourceDataParams,
   DataSourceData,
@@ -72,9 +73,13 @@ export function buildDataSourceDataParams<T>(
     masterRowInfo: DataSourceMasterDetailContextValue<any>['masterRowInfo'];
   },
 ): DataSourceDataParams<T> {
+  const resolvedSortInfo = enrichSortInfoFromGroupBy(
+    componentState.sortInfo,
+    componentState.groupBy,
+  );
   const sortInfo = componentState.multiSort
-    ? componentState.sortInfo
-    : componentState.sortInfo?.[0] ?? null;
+    ? resolvedSortInfo
+    : resolvedSortInfo?.[0] ?? null;
 
   const dataSourceParams: DataSourceDataParams<T> = {
     append: false,

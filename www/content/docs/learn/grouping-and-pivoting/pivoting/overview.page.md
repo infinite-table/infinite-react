@@ -39,9 +39,47 @@ const groupBy = [{field: 'department'}, {field: 'country'}]
 
 </Sandpack>
 
+## Sorting the group column and pivot columns
+
+Sorting the group column in a pivot table uses the same <DPropLink name="sortInfo" /> as in [row grouping](/docs/learn/grouping-and-pivoting/grouping-rows#sorting-the-group-column). For a single group column it is enough to pass `{ id: 'group-by', dir: 1 }`. Based on the current <DPropLink name="groupBy" />and your columns, it will detect the fields and the sorting it needs to apply.
+
+```ts
+const defaultSortInfo = [{ id: 'group-by', dir: 1 }];
+```
+
+Generated pivot columns are not sortable by default. The simplest way to enable sorting is the `defaultSortable` property on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
+
+```tsx
+<InfiniteTable
+  pivotColumn={{
+    defaultSortable: true,
+  }}
+/>
+```
+
+That applies <PropLink name="columns.defaultSortable" nocode>defaultSortable</PropLink> to every generated pivot column. The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation field.
+
+For narrower control — only one aggregation, or only columns in a specific pivot group — see [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns).
+
+Passing `defaultSortInfo` as an array enables multiple sorting. Combined with <PropLink name="multiSortBehavior">multiSortBehavior="append"</PropLink>, clicking a pivot column adds that sort instead of replacing the group-column sort.
+
+<Sandpack title="Pivoting with initial group-column sort and sortable leaf pivot columns">
+
+<Description>
+
+This table starts sorted by the group column (`preferredLanguage`, then `stack`). Click a pivot column header — for example a `yes` or `no` column under a country — to add a sort by that aggregated value.
+
+</Description>
+
+```ts file="pivoting-sorting-example.page.tsx"
+
+```
+
+</Sandpack>
+
 ## Customizing Pivot Columns
 
-There are a number of ways to customize the pivot columns and <DataSourcePropLink name="pivotBy.columnGroup" nocode>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc.
+There are a number of ways to customize the pivot columns and <DataSourcePropLink name="pivotBy.columnGroup" nocode>pivot column groups</DataSourcePropLink>. This is something you generally want to do, as they are generated and you might need to tweak column headers, size, etc. The three override points - <PropLink name="pivotColumn" />, <DataSourcePropLink name="pivotBy.column" />, and <DataSourcePropLink name="aggregationReducers" nocode>aggregationReducers.pivotColumn</DataSourcePropLink> — are documented in [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns).
 
 The default behavior for pivot columns generated for aggregations is that they inherit the properties of the original columns bound to the same field as the aggregation.
 

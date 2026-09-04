@@ -293,6 +293,143 @@ describe('DataSource reducer pipeline - flat data', () => {
       'leaf:2',
     ]);
   });
+
+  test('sortInfo { id: group-by, dir } resolves fields from groupBy', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      groupBy: [{ field: 'country' }],
+      defaultSortInfo: { id: 'group-by', dir: 1 },
+    });
+
+    harness.setData(developers);
+    const state = harness.getState();
+
+    const shape = state.dataArray.map((ri: any) =>
+      ri.isGroupRow ? `group:${ri.groupKeys.join('/')}` : `leaf:${ri.id}`,
+    );
+    expect(shape).toEqual([
+      'group:France',
+      'leaf:2',
+      'leaf:4',
+      'group:USA',
+      'leaf:1',
+      'leaf:3',
+    ]);
+  });
+
+  test('pivot column sort orders sibling groups by the aggregated pivot cell', () => {
+    type Framework = {
+      id: number;
+      language: string;
+      license: string;
+      has_wiki: boolean;
+      stargazers_count: number;
+    };
+
+    const frameworks: Framework[] = [
+      {
+        id: 1,
+        language: 'JavaScript',
+        license: 'MIT',
+        has_wiki: true,
+        stargazers_count: 100,
+      },
+      {
+        id: 2,
+        language: 'JavaScript',
+        license: 'MIT',
+        has_wiki: false,
+        stargazers_count: 50,
+      },
+      {
+        id: 3,
+        language: 'JavaScript',
+        license: 'BSD',
+        has_wiki: true,
+        stargazers_count: 10,
+      },
+      {
+        id: 4,
+        language: 'JavaScript',
+        license: 'BSD',
+        has_wiki: false,
+        stargazers_count: 1000,
+      },
+      {
+        id: 5,
+        language: 'TypeScript',
+        license: 'MIT',
+        has_wiki: true,
+        stargazers_count: 200,
+      },
+      {
+        id: 6,
+        language: 'TypeScript',
+        license: 'MIT',
+        has_wiki: false,
+        stargazers_count: 1,
+      },
+    ];
+
+    const harness = createDataSourceHarness<Framework>({
+      primaryKey: 'id',
+      data: frameworks,
+      groupBy: [{ field: 'language' }, { field: 'license' }],
+      pivotBy: [{ field: 'has_wiki' }],
+      aggregationReducers: {
+        stargazers_count: {
+          field: 'stargazers_count',
+          initialValue: 0,
+          reducer: (acc, value) => acc + value,
+        },
+      },
+      defaultSortInfo: {
+        id: 'stargazers_count:true',
+        dir: 1,
+        type: 'number',
+      },
+    });
+
+    harness.setData(frameworks);
+    let state = harness.getState();
+
+    const shape = (s: any) =>
+      s.dataArray
+        .filter((ri: any) => ri.isGroupRow)
+        .map((ri: any) => ri.groupKeys.join('/'));
+
+    expect(shape(state)).toEqual([
+      'JavaScript',
+      'JavaScript/BSD',
+      'JavaScript/MIT',
+      'TypeScript',
+      'TypeScript/MIT',
+    ]);
+
+    const pivotColumnIds = Object.keys(state.pivotColumns || {});
+    expect(pivotColumnIds.indexOf('stargazers_count:true')).toBeLessThan(
+      pivotColumnIds.indexOf('stargazers_count:false'),
+    );
+
+    harness.setStateValue('sortInfo', [
+      { id: 'stargazers_count:true', dir: -1, type: 'number' },
+    ]);
+    state = harness.getState();
+
+    expect(shape(state)).toEqual([
+      'TypeScript',
+      'TypeScript/MIT',
+      'JavaScript',
+      'JavaScript/MIT',
+      'JavaScript/BSD',
+    ]);
+
+    const pivotColumnIdsDesc = Object.keys(state.pivotColumns || {});
+    expect(pivotColumnIdsDesc.indexOf('stargazers_count:true')).toBeLessThan(
+      pivotColumnIdsDesc.indexOf('stargazers_count:false'),
+    );
+  });
 });
 
 describe('DataSource reducer pipeline - memoization contract', () => {

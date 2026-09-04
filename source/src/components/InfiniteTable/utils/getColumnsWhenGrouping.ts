@@ -23,6 +23,7 @@ import type {
 } from '../types/InfiniteTableProps';
 import type { InfiniteTableState } from '../types/InfiniteTableState';
 
+import { findColumnForField } from './getComputedColumns';
 import {
   getColumnForGroupBy,
   getSingleGroupColumn,
@@ -108,15 +109,6 @@ export function getColumnsWhenGrouping<T>(params: {
   }
 
   if (pivotColumns) {
-    const columnsByField: Partial<Record<keyof T, InfiniteTableColumn<T>>> = {};
-
-    Object.keys(columns).forEach((colId) => {
-      const col = columns[colId];
-      if (col.field) {
-        columnsByField[col.field] = col;
-      }
-    });
-
     Object.keys(pivotColumns).forEach((key) => {
       const col = pivotColumns[key];
       const isSimpleTotalColumn = col.pivotTotalColumn && col.columnGroup;
@@ -155,7 +147,7 @@ export function getColumnsWhenGrouping<T>(params: {
           typeof column.inheritFromColumn === 'string'
             ? columns[column.inheritFromColumn]
             : column.pivotAggregator?.field
-            ? columnsByField[column.pivotAggregator?.field]
+            ? findColumnForField(columns, column.pivotAggregator.field as string)
             : undefined;
         column = { ...colToInheritFrom, ...column };
       }

@@ -361,6 +361,8 @@ const sortInfo = [
 ];
 ```
 
+To start with that sort, `{ id: 'group-by', dir: 1 }` is enough — `field` is filled in from <DPropLink name="groupBy" />, and the sort type is taken from the <PropLink name="columns" /> bound to those fields.
+
 <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.
 
  <Note>

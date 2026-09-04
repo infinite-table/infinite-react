@@ -757,6 +757,7 @@ export const InfiniteTable = defineComponent({
           s.columnSizing,
           s.columnTypes,
           s.columnVisibility,
+          s.initialColumns,
           ds.groupBy,
         ];
       },
@@ -766,6 +767,7 @@ export const InfiniteTable = defineComponent({
 
         return getComputedColumns({
           columns: s.computedColumns,
+          userColumns: s.initialColumns,
           scrollbarWidth: undefined,
           bodySize: s.bodySize,
           columnMinWidth: s.columnMinWidth,

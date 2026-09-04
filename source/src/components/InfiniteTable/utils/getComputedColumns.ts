@@ -40,6 +40,7 @@ export const DEFAULT_RESIZABLE = true;
 export const DEFAULT_DRAGGABLE = true;
 export const DEFAULT_DATA_TYPE = 'string';
 export const UNKNOWN_SORT_TYPE = 'unknown';
+export const DEFAULT_SORT_TYPE = DEFAULT_DATA_TYPE;
 
 const logError = err('getComputedVisibleColumns');
 
@@ -111,8 +112,75 @@ export type GetComputedColumnsResult<T> = {
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
 };
 
+export function findColumnForField<T>(
+  columns: Record<string, InfiniteTableColumn<T>> | undefined,
+  field: string,
+): InfiniteTableColumn<T> | undefined {
+  if (!columns) {
+    return undefined;
+  }
+  if (columns[field]) {
+    return columns[field];
+  }
+  return Object.values(columns).find((col) => col.field === field);
+}
+
+function getSortTypeFromUserColumn<T>(
+  column: InfiniteTableColumn<T>,
+  columnTypes: InfiniteTablePropColumnTypes<T>,
+): string | string[] {
+  const colType = getColumnComputedType(column, columnTypes);
+  if (column.sortType) {
+    return column.sortType;
+  }
+  if (colType.sortType) {
+    return colType.sortType;
+  }
+  if (typeof column.type === 'string') {
+    return column.type;
+  }
+  return DEFAULT_DATA_TYPE;
+}
+
+function getSortTypeForGroupByFromUserColumns<T>(
+  groupByForColumn: DataSourcePropGroupBy<T>[number] | DataSourcePropGroupBy<T>,
+  userColumns: Record<string, InfiniteTableColumn<T>> | undefined,
+  columnTypes: InfiniteTablePropColumnTypes<T>,
+): string | string[] {
+  const list = Array.isArray(groupByForColumn)
+    ? groupByForColumn
+    : groupByForColumn
+    ? [groupByForColumn]
+    : [];
+
+  const types = list.flatMap((groupBy) => {
+    const field = (groupBy.field ?? groupBy.groupField) as string | undefined;
+    if (!field) {
+      return [UNKNOWN_SORT_TYPE];
+    }
+    const userCol = findColumnForField(userColumns, field);
+    if (!userCol) {
+      return [UNKNOWN_SORT_TYPE];
+    }
+    const sortType = getSortTypeFromUserColumn(userCol, columnTypes);
+    return Array.isArray(sortType) ? sortType : [sortType];
+  });
+
+  if (types.every((type) => type === UNKNOWN_SORT_TYPE)) {
+    return UNKNOWN_SORT_TYPE;
+  }
+
+  return types.length === 1 ? types[0] : types;
+}
+
 type GetComputedVisibleColumnsParam<T> = {
   columns: Record<string, InfiniteTableColumn<T>>;
+  /**
+   * The user-provided `columns` prop. When grouping/pivoting, `columns` is the
+   * generated set — this still has the original field-bound columns so group
+   * columns can inherit sort type.
+   */
+  userColumns?: Record<string, InfiniteTableColumn<T>>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -155,6 +223,7 @@ type GetComputedVisibleColumnsParam<T> = {
 
 export const getComputedColumns = <T extends unknown>({
   columns,
+  userColumns,
 
   bodySize,
   columnMinWidth,
@@ -722,7 +791,13 @@ export const getComputedColumns = <T extends unknown>({
     }
     if (result.groupByForColumn) {
       result.computedSortType =
-        c.sortType || colType.sortType || UNKNOWN_SORT_TYPE;
+        c.sortType ||
+        colType.sortType ||
+        getSortTypeForGroupByFromUserColumns(
+          result.groupByForColumn,
+          userColumns,
+          columnTypes,
+        );
       groupColumns.push(result);
     }
     computedColumnsMap.set(result.id, result);

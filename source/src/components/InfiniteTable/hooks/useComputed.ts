@@ -52,6 +52,7 @@ export function useComputed<T>(options: {
     onColumnHeaderHeightCSSVarChange,
 
     computedColumns,
+    initialColumns,
     viewportReservedWidth,
     resizableColumns,
     sortable,
@@ -139,6 +140,7 @@ export function useComputed<T>(options: {
     fieldsToColumn,
   } = useComputedColumns({
     columns,
+    userColumns: initialColumns,
     // scrollbarWidth: scrollbars.vertical ? getScrollbarWidth() : 0,
 
     // #scrollbarverticaltag

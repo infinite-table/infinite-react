@@ -285,7 +285,6 @@ export function createColumnPointerDownHandler<T>(options: {
       const pointerId = e.pointerId;
       requestAnimationFrame(async () => {
         const { multiSortBehavior } = getState();
-        const target = domRef.current!;
         const rootNode = rootRef.current;
         rootNode?.classList.remove(InfiniteClsShiftingColumns);
 
@@ -298,7 +297,10 @@ export function createColumnPointerDownHandler<T>(options: {
         restoreRenderRange?.();
 
         target.style.cursor = initialCursor as string;
-        target.releasePointerCapture(pointerId);
+        // capture is often already gone by this rAF (browser released it on pointerup)
+        if (target.hasPointerCapture(pointerId)) {
+          target.releasePointerCapture(pointerId);
+        }
 
         target.removeEventListener('pointermove', onPointerMove);
         target.removeEventListener('pointerup', onPointerUp);

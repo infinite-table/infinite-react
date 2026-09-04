@@ -23,6 +23,7 @@ import { getComputedColumns } from '../utils/getComputedColumns';
 
 type UseComputedColumnsParam<T> = {
   columns: Record<string, InfiniteTableColumn<T>>;
+  userColumns?: Record<string, InfiniteTableColumn<T>>;
 
   bodySize: Size;
   columnMinWidth?: number;
@@ -92,6 +93,7 @@ type UseComputedVisibleColumnsResult<T> = {
 
 export const useComputedColumns = <T extends unknown>({
   columns,
+  userColumns,
   bodySize,
   columnMinWidth,
   columnMaxWidth,
@@ -149,6 +151,7 @@ export const useComputedColumns = <T extends unknown>({
   } = useMemo(() => {
     return getComputedColumns({
       columns,
+      userColumns,
       scrollbarWidth,
 
       bodySize,
@@ -191,6 +194,7 @@ export const useComputedColumns = <T extends unknown>({
     });
   }, [
     columns,
+    userColumns,
 
     bodySize.width,
     columnMinWidth,

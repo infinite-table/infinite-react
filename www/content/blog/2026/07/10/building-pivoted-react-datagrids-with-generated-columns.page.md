@@ -340,6 +340,7 @@ In each case the column structure depends on the data. Generated pivot columns a
 ## Go deeper in the docs
 
 - [Pivoting overview](/docs/learn/grouping-and-pivoting/pivoting/overview) — core `pivotBy` setup, totals, and server-side pivoting
+- [Customizing generated pivot columns](/blog/2026/09/03/customizing-generated-pivot-columns) — the three override layers, sortable pivot columns, and `inheritFromColumn`
 - [Customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns) — inheritance, headers, widths, per-value column config
 - [Dynamic pivoting example](/docs/learn/examples/dynamic-pivoting-example) — change group/pivot/aggregations from the UI
 - [Grouping and aggregations](/docs/learn/grouping-and-pivoting/group-aggregations) — reducer shapes that power pivot values
