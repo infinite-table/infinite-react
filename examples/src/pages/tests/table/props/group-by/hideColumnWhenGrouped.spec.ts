@@ -16,13 +16,14 @@ export default test.describe
     expect(colIds).toEqual(['group-by', 'firstName', 'id']);
 
     // click first button to ungroup
-    await page.click('button');
+    await page.getByRole('button', { name: 'ungroup' }).click();
     colIds = await columnModel.getVisibleColumnIds();
 
     expect(colIds).toEqual(['firstName', 'id', 'preferredLanguage', 'stack']);
 
-    // now group again by clicking the second button
-    await page.locator('button').last().click();
+    // now group again by clicking the second button - target it by name,
+    // as a bare `button` locator also matches the next.js dev overlay buttons
+    await page.getByRole('button', { name: /group by/ }).click();
 
     colIds = await columnModel.getVisibleColumnIds();
 

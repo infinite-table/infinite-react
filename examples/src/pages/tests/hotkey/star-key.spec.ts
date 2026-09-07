@@ -3,6 +3,7 @@ import { test, expect } from '@testing';
 export default test.describe('Keyboard shortcuts', () => {
   test('should allow * with modifiers', async ({ page }) => {
     await page.load();
+    await page.waitForFunction(() => (globalThis as any).hotkeyReady);
     const getCombinations = async () => {
       return await page.evaluate(() => (globalThis as any).combinations);
     };

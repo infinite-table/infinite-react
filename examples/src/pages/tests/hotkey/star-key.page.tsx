@@ -18,6 +18,7 @@ function App() {
     const callback = keyboardShortcutBinding(['*'], fn);
     //@ts-ignore
     document.documentElement.addEventListener('keydown', callback);
+    (globalThis as any).hotkeyReady = true;
   }, []);
 
   return (

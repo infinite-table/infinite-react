@@ -26,7 +26,10 @@ export default test.describe.parallel('Inline Edit', () => {
     await editModel.confirmEdit(cellEditable1);
 
     // make sure column was using custom editor
-    expect(await rowModel.getTextForCell(cellEditable1)).toBe('InfinityxABC');
+    // poll, as the cell content is rendered after the editor is unmounted
+    await expect
+      .poll(() => rowModel.getTextForCell(cellEditable1))
+      .toBe('InfinityxABC');
 
     const cellEditable2 = {
       colId: 'currency',
@@ -43,7 +46,9 @@ export default test.describe.parallel('Inline Edit', () => {
     await editModel.confirmEdit(cellEditable2);
 
     // make sure this second column was using default editor
-    expect(await rowModel.getTextForCell(cellEditable2)).toBe('test');
+    await expect
+      .poll(() => rowModel.getTextForCell(cellEditable2))
+      .toBe('test');
 
     // await stop();
   });

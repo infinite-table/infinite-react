@@ -832,6 +832,11 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       computedSortType = sortTypeForGroupCols;
     }
 
+    // Group-column field is always an array; keep type aligned with field.
+    if (groupByForCol.length && !Array.isArray(computedSortType)) {
+      computedSortType = [computedSortType];
+    }
+
     const newColumnSortInfo: DataSourceSingleSortInfo<T> = {
       dir,
       id: c.id,

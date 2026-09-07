@@ -2,17 +2,22 @@ import { SortDir } from '../../../utils/multisort';
 
 import { InfiniteTableComputedColumn } from '../types';
 import {
+  InfiniteTableColumn,
   InfiniteTableColumnSortable,
   InfiniteTableColumnSortableFn,
 } from '../types/InfiniteTableColumn';
 import {
   InfiniteTableApi,
   InfiniteTableColumnApi,
+  InfiniteTablePropColumnTypes,
   InfiniteTablePropSortable,
   MultiSortBehaviorOptions,
 } from '../types/InfiniteTableProps';
+import { getColumnComputedType } from '../utils/getColumnComputedType';
 import {
   DEFAULT_SORTABLE,
+  findColumnForField,
+  getColumnComputedSortable,
   UNKNOWN_SORT_TYPE,
 } from '../utils/getComputedColumns';
 
@@ -25,9 +30,22 @@ export function isGroupColumnSortable<T>(
     sortable?: InfiniteTablePropSortable<T>;
 
     fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
+    /**
+     * The user `columns` prop. When pivoting, the rendered columns are
+     * generated, so a groupBy field may have no computed column - we fall
+     * back to its user column to decide sortability.
+     */
+    userColumns?: Record<string, InfiniteTableColumn<T>>;
+    columnTypes?: InfiniteTablePropColumnTypes<T>;
   },
 ): InfiniteTableColumnSortable<T> {
-  const { sortable, fieldsToColumn, columnDefaultSortable } = options;
+  const {
+    sortable,
+    fieldsToColumn,
+    columnDefaultSortable,
+    userColumns,
+    columnTypes,
+  } = options;
 
   if (sortable) {
     return sortable;
@@ -41,7 +59,13 @@ export function isGroupColumnSortable<T>(
   }
 
   const defaultSortable = columnDefaultSortable ?? DEFAULT_SORTABLE;
-  if (column.computedSortType !== UNKNOWN_SORT_TYPE && defaultSortable) {
+
+  const explicitSortType = column.sortType ?? column.colType.sortType;
+  if (
+    explicitSortType != null &&
+    explicitSortType !== UNKNOWN_SORT_TYPE &&
+    defaultSortable
+  ) {
     return true;
   }
 
@@ -70,10 +94,23 @@ export function isGroupColumnSortable<T>(
         if (foundCol && foundColApi) {
           colSortable = foundColApi.isSortable();
         } else {
-          // we cannot sort the group column
-          // as we don't have info on one of the groupBy items
-          // eg: we can't know the sort type
-          colSortable = false;
+          const userCol = findColumnForField(userColumns, field);
+          if (userCol) {
+            const userSortable = getColumnComputedSortable(userCol, {
+              colType: getColumnComputedType(userCol, columnTypes ?? {}),
+              sortable,
+              columnDefaultSortable,
+            });
+            // a function-valued defaultSortable needs a computed column
+            // to be called with - there is none, so leave it to defaults
+            colSortable =
+              typeof userSortable === 'boolean' ? userSortable : undefined;
+          } else {
+            // we cannot sort the group column
+            // as we don't have info on one of the groupBy items
+            // eg: we can't know the sort type
+            colSortable = false;
+          }
         }
       }
       if (colSortable === undefined && groupBy.valueGetter) {

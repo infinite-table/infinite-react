@@ -13,6 +13,7 @@ import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
 import { isGroupColumnSortable } from '../api/getColumnApi';
 import type {
   InfiniteTableColumn,
+  InfiniteTableColumnSortable,
   InfiniteTableComputedColumn,
   InfiniteTableGeneratedGroupColumn,
   RequireAtLeastOne,
@@ -20,6 +21,7 @@ import type {
 import type {
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnSizingOptions,
+  InfiniteTableColumnType,
   InfiniteTablePropColumnOrder,
   InfiniteTablePropColumnOrderNormalized,
   InfiniteTablePropColumnPinning,
@@ -171,6 +173,39 @@ function getSortTypeForGroupByFromUserColumns<T>(
   }
 
   return types.length === 1 ? types[0] : types;
+}
+
+/**
+ * The single rule for a column's `computedSortable`. Used by the main loop
+ * and, for pivot group columns, on user columns that are not rendered.
+ */
+export function getColumnComputedSortable<T>(
+  column: InfiniteTableColumn<T>,
+  options: {
+    colType: InfiniteTableColumnType<T>;
+    sortable?: InfiniteTablePropSortable<T>;
+    columnDefaultSortable?: boolean;
+  },
+): InfiniteTableColumnSortable<T> {
+  const { colType, sortable, columnDefaultSortable } = options;
+
+  let sortableColumnOrType = column.defaultSortable ?? colType.defaultSortable;
+
+  const isGroupColumn = !!(column as InfiniteTableGeneratedGroupColumn<T>)
+    .groupByForColumn;
+
+  if (sortableColumnOrType == null && !isGroupColumn) {
+    const field = column.field ?? colType.field;
+    const valueGetter = column.valueGetter ?? colType.valueGetter;
+    //not explicitly set, so if no field or valueGetter defined, we'll make this unsortable
+    if (field == null && valueGetter == null) {
+      sortableColumnOrType = false;
+    }
+  }
+
+  return (
+    sortable ?? sortableColumnOrType ?? columnDefaultSortable ?? DEFAULT_SORTABLE
+  );
 }
 
 type GetComputedVisibleColumnsParam<T> = {
@@ -665,18 +700,6 @@ export const getComputedColumns = <T extends unknown>({
       computedGroupable = false;
     }
 
-    let sortableColumnOrType = c.defaultSortable ?? colType.defaultSortable;
-
-    if (
-      sortableColumnOrType == null &&
-      !(c as InfiniteTableGeneratedGroupColumn<T>).groupByForColumn
-    ) {
-      //not explicitly set, so if no field or valueGetter defined, we'll make this unsortable
-      if (field == null && valueGetter == null) {
-        sortableColumnOrType = false;
-      }
-    }
-
     const computedGroupedBy = field
       ? groupByFields[field as string] !== undefined
       : false;
@@ -684,11 +707,11 @@ export const getComputedColumns = <T extends unknown>({
       ? groupByFields[field as string]
       : undefined;
 
-    let computedSortable =
-      sortable ??
-      sortableColumnOrType ??
-      columnDefaultSortable ??
-      DEFAULT_SORTABLE;
+    const computedSortable = getColumnComputedSortable(c, {
+      colType,
+      sortable,
+      columnDefaultSortable,
+    });
 
     const computedResizable =
       c.resizable ?? colType.resizable ?? resizableColumns ?? DEFAULT_RESIZABLE;
@@ -815,6 +838,8 @@ export const getComputedColumns = <T extends unknown>({
   groupColumns.forEach((col) => {
     col.computedSortable = isGroupColumnSortable(col, {
       fieldsToColumn,
+      userColumns,
+      columnTypes,
       sortable,
       columnDefaultSortable,
     });

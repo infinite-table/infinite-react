@@ -24,8 +24,6 @@ export default test.describe
     // wait for france to be requested
     await page.waitForRequest(condition);
 
-    await page.waitForTimeout(50);
-
     const queryStrings = urls.map((url) => url.slice(url.indexOf('?')));
 
     const paramsForRequests = queryStrings.map((query) => {
@@ -41,16 +39,13 @@ export default test.describe
     // expect a request was made for France
     expect(paramsForRequests[1].groupKeys).toEqual(['France']);
 
-    const firstFrance = await getCellText(
-      { colId: 'country', rowIndex: 1 },
-      { page },
-    );
-    const secondFrance = await getCellText(
-      { colId: 'country', rowIndex: 2 },
-      { page },
-    );
-
-    expect(firstFrance).toBe('France');
-    expect(secondFrance).toBe('France');
+    // the France request was issued, but its response still has to arrive
+    // and render - so poll instead of reading the cells right away
+    await expect
+      .poll(() => getCellText({ colId: 'country', rowIndex: 1 }, { page }))
+      .toBe('France');
+    await expect
+      .poll(() => getCellText({ colId: 'country', rowIndex: 2 }, { page }))
+      .toBe('France');
   });
 });
