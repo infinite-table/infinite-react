@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Flashing', () => {
-  test('perf should remain stable for 50 clicks', async ({
+  test('perf should remain stable for 50 clicks', { tag: '@perf' }, async ({
     page,
     tracingModel,
   }) => {
@@ -28,7 +28,7 @@ export default test.describe.parallel('Flashing', () => {
     await stop();
   });
 
-  test('perf should be fine when single click', async ({
+  test('perf should be fine when single click', { tag: '@perf' }, async ({
     page,
     tracingModel,
   }) => {
@@ -42,7 +42,7 @@ export default test.describe.parallel('Flashing', () => {
     await stop();
   });
 
-  test('should be able to collapse and expand nodes with no error', async ({
+  test('should be able to collapse and expand nodes with no error', { tag: '@perf' }, async ({
     page,
     tracingModel,
   }) => {

@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Api', () => {
-  test('insert data', async ({
+  test('insert data', { tag: '@perf' }, async ({
     page,
     rowModel,
     tableModel,

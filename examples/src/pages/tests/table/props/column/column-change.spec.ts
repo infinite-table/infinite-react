@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Column change', () => {
-  test('works correctly', async ({
+  test('works correctly', { tag: '@perf' }, async ({
     page,
     columnModel,
     rowModel,

@@ -111,16 +111,15 @@ export class TracingModel {
       );
     }
 
-    // Only save baseline when total time is lower than previous (or no baseline exists)
+    // Only bootstrap a baseline when none exists. Baselines are deliberately
+    // NOT lowered automatically: a single lucky run used to ratchet them down
+    // to a min-ever value that later runs could not reliably reproduce.
+    // Use `stopAndSaveBaseline` or `npm run perf:copy-to-ci` to update them.
     const existingBaseline = getBaseline(testName);
-    if (
-      !existingBaseline ||
-      metrics[compare] <
-        existingBaseline[compare] * (1 - DEFAULT_THRESHOLD / 100)
-    ) {
+    if (!existingBaseline) {
       saveBaseline(testName, metrics);
       console.log(
-        `📝 Updated ${isCI ? 'CI' : 'local'} baseline: ${
+        `📝 Created ${isCI ? 'CI' : 'local'} baseline: ${
           metrics[compare]
         }ms (for ${compare})`,
       );

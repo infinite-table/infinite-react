@@ -17,6 +17,11 @@ export interface PerfBaseline {
 
 export const DEFAULT_THRESHOLD = 40;
 
+// a relative threshold alone is too strict for tiny baselines (a 16ms
+// baseline would fail on a 7ms GC pause), so a regression must also exceed
+// this absolute amount to count
+export const MIN_ABSOLUTE_REGRESSION_MS = 25;
+
 export interface PerfBaselines {
   [testName: string]: PerfBaseline;
 }
@@ -315,7 +320,9 @@ export function compareAgainstBaseline(
 
   // Calculate percentage difference (positive = slower, negative = faster)
   const difference = ((currentValue - baselineValue) / baselineValue) * 100;
-  const passed = difference <= threshold;
+  const passed =
+    difference <= threshold ||
+    currentValue - baselineValue <= MIN_ABSOLUTE_REGRESSION_MS;
 
   let message: string;
   if (passed) {
@@ -328,12 +335,12 @@ export function compareAgainstBaseline(
     } else {
       message = `Performance within threshold: +${difference.toFixed(
         1,
-      )}% (${currentValue}ms vs baseline ${baselineValue}ms, threshold: ${threshold}% - comparing ${compare})`;
+      )}% (${currentValue}ms vs baseline ${baselineValue}ms, threshold: ${threshold}% or ${MIN_ABSOLUTE_REGRESSION_MS}ms - comparing ${compare})`;
     }
   } else {
     message = `Performance regression detected: +${difference.toFixed(
       1,
-    )}% exceeds ${threshold}% threshold (${currentValue}ms vs baseline ${baselineValue}ms - comparing ${compare})`;
+    )}% exceeds ${threshold}% threshold and ${MIN_ABSOLUTE_REGRESSION_MS}ms (${currentValue}ms vs baseline ${baselineValue}ms - comparing ${compare})`;
   }
 
   return {

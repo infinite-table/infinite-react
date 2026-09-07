@@ -1,7 +1,7 @@
 import { test } from '@testing';
 
 export default test.describe.parallel('Update performance test', () => {
-  test('clicks update button 30 times with performance tracing', async ({
+  test('clicks update button 30 times with performance tracing', { tag: '@perf' }, async ({
     page,
     tracingModel,
   }) => {

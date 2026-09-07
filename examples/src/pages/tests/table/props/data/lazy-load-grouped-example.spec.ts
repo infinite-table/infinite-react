@@ -10,7 +10,15 @@ async function getCallCount({ page }: { page: Page }) {
   return (await getFnCalls('dataSource', { page })).length;
 }
 
-const TIMEOUT = 150;
+async function waitForCallCount({
+  page,
+  count,
+}: {
+  page: Page;
+  count: number;
+}) {
+  await expect.poll(() => getCallCount({ page })).toEqual(count);
+}
 
 export default test.describe.parallel('Lazy Load Grouped Data', () => {
   test('should work when we expand a group and sort by it', async ({
@@ -41,9 +49,9 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     });
 
     await cell.clickDetailIcon();
-    await page.waitForTimeout(TIMEOUT);
 
     CALL_COUNT = 2;
+    await waitForCallCount({ page, count: CALL_COUNT });
     dataSourceCalls = await getCalls({ page });
     arg = dataSourceCalls[CALL_COUNT - 1].args[0];
     expect(await getCallCount({ page })).toEqual(CALL_COUNT);
@@ -62,9 +70,8 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
 
     await col.clickToSort();
 
-    await page.waitForTimeout(TIMEOUT);
-
     CALL_COUNT = 4;
+    await waitForCallCount({ page, count: CALL_COUNT });
     dataSourceCalls = await getCalls({ page });
     const prevArg = dataSourceCalls[CALL_COUNT - 2].args[0];
     arg = dataSourceCalls[CALL_COUNT - 1].args[0];
@@ -133,6 +140,7 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     await col.clickToSort();
 
     CALL_COUNT = 2;
+    await waitForCallCount({ page, count: CALL_COUNT });
     dataSourceCalls = await getCalls({ page });
     arg = dataSourceCalls[CALL_COUNT - 1].args[0];
 
@@ -152,13 +160,12 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
       groupKeys: [],
       groupBy: [{ field: 'country' }],
     });
-    expect(await cell.getValue()).toBe('Argentina');
+    await expect.poll(() => cell.getValue()).toBe('Argentina');
 
     await col.clickToSort();
 
-    await page.waitForTimeout(TIMEOUT);
-
     CALL_COUNT = 3;
+    await waitForCallCount({ page, count: CALL_COUNT });
     dataSourceCalls = await getCalls({ page });
     arg = dataSourceCalls[CALL_COUNT - 1].args[0];
 
@@ -179,6 +186,6 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
       groupBy: [{ field: 'country' }],
     });
 
-    expect(await cell.getValue()).toBe('United States');
+    await expect.poll(() => cell.getValue()).toBe('United States');
   });
 });

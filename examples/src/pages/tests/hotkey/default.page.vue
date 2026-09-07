@@ -37,6 +37,7 @@ onMounted(() => {
   );
   //@ts-ignore
   document.documentElement.addEventListener('keydown', callback);
+  (globalThis as any).hotkeyReady = true;
 });
 </script>
 

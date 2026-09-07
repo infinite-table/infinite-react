@@ -1,7 +1,7 @@
 import { test, expect } from '@testing';
 
 export default test.describe.parallel('Inline Edit', () => {
-  test('should call and wait for async persistEdit correctly', async ({
+  test('should call and wait for async persistEdit correctly', { tag: '@perf' }, async ({
     page,
     editModel,
     rowModel,
@@ -48,7 +48,7 @@ export default test.describe.parallel('Inline Edit', () => {
     await stop();
   });
 
-  test('should not persist changes to the id column', async ({
+  test('should not persist changes to the id column', { tag: '@perf' }, async ({
     page,
     editModel,
     rowModel,

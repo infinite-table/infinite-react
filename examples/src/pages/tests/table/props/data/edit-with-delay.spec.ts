@@ -2,7 +2,7 @@ import { test, expect } from '@testing';
 
 export default test.describe
   .parallel('Immediate edit works on lazy editable columns', () => {
-  test('on string column', async ({ page, rowModel, tracingModel }) => {
+  test('on string column', { tag: '@perf' }, async ({ page, rowModel, tracingModel }) => {
     await page.waitForInfinite();
     const stop = await tracingModel.start();
 
