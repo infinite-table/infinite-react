@@ -2,9 +2,17 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
-## 9.0.0-canary - 15.07.2026
+## 9.0.0 — 07.09.2026
 
-First Vue release
+Read the [9.0.0 release blog post](/blog/2026/09/07/infinite-table-9-0-0).
+
+Faster rendering: cell styling and CSS variable computation are now memoized and cell pooling skips redundant work, so column and viewport updates re-render less.
+
+Sorting by a pivot column now works correctly — group rows are sorted by the aggregated value in the clicked pivot column, and group column sorting is inferred from `groupBy`.
+
+Devtools: new theme builder in the [Infinite Table DevTools extension](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa), for live-editing CSS variables of the current theme.
+
+Internal: the core has been made renderer-agnostic, paving the way for the upcoming Vue version of Infinite Table (published as a canary under `@infinite-table/infinite-vue`).
 
 ## 8.0.5 — 06.07.2026 
 

@@ -22,21 +22,17 @@ export default test.describe.parallel('Inline Edit', () => {
       value: 'Infinity',
     });
 
-    await editModel.getCellEditor(cellEditable1).type('x');
-    await editModel.confirmEdit(cellEditable1);
+    const editor = editModel.getCellEditor(cellEditable1);
+    await editor.type('x');
+    await editor.press('Enter');
 
-    // at the 100ms mark, expect the editor to still be around
-    await page.waitForTimeout(100);
+    // while persistEdit is pending (200ms), the editor stays mounted but readonly
+    await expect(editor).toHaveAttribute('readonly', '');
+    await page.keyboard.type('qqqqqq');
+    await expect(editor).toHaveValue('Infinityx');
 
-    // the editor should be readonly at this point!
-    await editModel.getCellEditor(cellEditable1).type('qqqqqq');
-
-    await page.waitForTimeout(20);
-
-    expect(await editModel.getValueInEditor(cellEditable1)).toBe('Infinityx');
-
-    await page.waitForTimeout(90);
-
+    // once persistEdit resolves, the editor is gone and the cell shows the persisted value
+    await page.waitForTimeout(400);
     expect(await rowModel.getTextForCell(cellEditable1)).toBe('Infinityx!');
 
     let persistSuccessCalls = await page.evaluate(
