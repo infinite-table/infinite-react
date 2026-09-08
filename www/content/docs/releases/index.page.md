@@ -2,6 +2,10 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+## 9.0.3
+
+Pivot group columns bound to a `field` that is not a grouping key (including the pivot dimension) now show that value on nested group rows when every item in the group shares it.
+
 ## 9.0.2
 
 Fix group columns bound to a `field` in pivoted grids.

@@ -45,16 +45,43 @@ const columnVisibilityAtIndex = stripVar(InternalVars.columnVisibilityAtIndex);
 
 export function styleForGroupColumn<T>({
   rowInfo,
+  column,
 }: {
   rowInfo: InfiniteTableRowInfo<T>;
+  column?: InfiniteTableComputedColumn<T>;
 }) {
+  let nesting = 0;
+  if (rowInfo.dataSourceHasGrouping) {
+    if (rowInfo.isGroupRow) {
+      const colGroupBy = column?.groupByForColumn;
+      const rowGroupBy = rowInfo.groupBy[rowInfo.groupBy.length - 1];
+      const isPivot = !!rowInfo.pivotValuesMap;
+      // Pivot has no leaves. Nested field-bound cells (multi-column) and
+      // the deepest group rows (single-column) are the analog of a leaf,
+      // so indent one level past a normal group row.
+      const isNestedBoundFieldInPivot =
+        isPivot &&
+        !!column?.field &&
+        !!colGroupBy &&
+        !Array.isArray(colGroupBy) &&
+        (colGroupBy.field ?? colGroupBy.groupField) !==
+          (rowGroupBy?.field ?? rowGroupBy?.groupField);
+      const isPivotLeafGroupInSingleColumn =
+        isPivot &&
+        Array.isArray(colGroupBy) &&
+        rowInfo.groupNesting === rowInfo.rootGroupBy.length;
+
+      nesting =
+        isNestedBoundFieldInPivot || isPivotLeafGroupInSingleColumn
+          ? rowInfo.groupNesting
+          : rowInfo.groupNesting - 1;
+    } else {
+      nesting = rowInfo.groupNesting;
+    }
+  }
+
   return {
-    [stripVar(ThemeVars.components.Row.groupNesting)]:
-      rowInfo.dataSourceHasGrouping
-        ? rowInfo.isGroupRow
-          ? rowInfo.groupNesting - 1
-          : rowInfo.groupNesting
-        : 0,
+    [stripVar(ThemeVars.components.Row.groupNesting)]: nesting,
   };
 }
 
@@ -246,7 +273,7 @@ export function getColumnCellStyling<T>(
   let style: CSSProperties | undefined;
 
   if (rowInfo.dataSourceHasGrouping && column.groupByForColumn) {
-    style = styleForGroupColumn({ rowInfo });
+    style = styleForGroupColumn({ rowInfo, column });
   }
 
   if (columnIsTree) {

@@ -77,7 +77,7 @@ export function getGroupColumnRender<T>({
     if (isNestedGroupRow) {
       // Pivot grids have no leaf rows. A field-bound group column must
       // still show that field on nested group rows — same as leaves
-      // in a non-pivoted grid — indented by group nesting.
+      // in a non-pivoted grid — indented one level past the group row.
       if (!column.field) {
         return selectionCheckBox
           ? (h('div', { class: className }, [

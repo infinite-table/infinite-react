@@ -269,7 +269,7 @@ const columns = {
 };
 ```
 
-This makes the column display the value of the `field` in non-group/normal rows, and in nested group rows when using multi-column grouping. Pivoted grids only render group rows, so that nested-row path is how a bound field still shows. Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in those rows.
+This makes the column display the value of the `field` in non-group/normal rows, and in nested group rows when using multi-column grouping. Pivoted grids only render group rows, so that nested-row path is how a bound field still shows — indented one extra nesting level, like a leaf. With <PropLink name="groupRenderStrategy" /> set to `single-column`, the deepest (leaf) group rows in a pivot get that same extra indent. The field does not have to be a grouping key: nested rows show it when every item in the group has the same value (aggregators still win when the field is aggregated). Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in those rows.
 
 <Sandpack title="Bind group column to a field">
 

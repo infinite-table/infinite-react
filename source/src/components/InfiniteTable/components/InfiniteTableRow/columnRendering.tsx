@@ -508,6 +508,26 @@ export function getColumnRenderParam<T>(options: {
   return renderParam;
 }
 
+function getUniqueFieldValueFromGroupItems<T>(
+  rowInfo: InfiniteTableRowInfo<T>,
+  field: keyof T,
+) {
+  if (!rowInfo.isGroupRow) {
+    return undefined;
+  }
+  const items = rowInfo.groupData;
+  if (!items.length) {
+    return undefined;
+  }
+  const first = items[0][field];
+  for (let i = 1, len = items.length; i < len; i++) {
+    if (items[i][field] !== first) {
+      return undefined;
+    }
+  }
+  return first;
+}
+
 export function getRawValueForCell<T>(
   column: InfiniteTableComputedColumn<T>,
   rowInfo: InfiniteTableRowInfo<T>,
@@ -536,6 +556,21 @@ export function getRawValueForCell<T>(
     rowInfo.reducerData[column.field] != null
   ) {
     value = rowInfo.reducerData[column.field];
+  }
+
+  // Group-row `data` only has groupBy keys and aggregator fields. A
+  // field-bound group column (including a pivot dimension) still needs
+  // that field on nested rows — use it when every item in the group
+  // shares the same value.
+  // this only applies to pivot tables, when the group rows are actually
+  // displayed as leaf nodes
+  if (
+    value === undefined &&
+    rowInfo.isGroupRow &&
+    column.groupByForColumn &&
+    isColumnWithField(column)
+  ) {
+    value = getUniqueFieldValueFromGroupItems(rowInfo, column.field);
   }
 
   if (column.valueGetter) {

@@ -100,7 +100,7 @@ export default test.describe.parallel('Pivoting with grouping and agg', () => {
     };
 
     expect(await expanderPadding(0)).toEqual('0px');
-    expect(await expanderPadding(1)).toEqual('24px');
+    expect(await expanderPadding(1)).toEqual('48px');
 
     expect(
       await apiModel.evaluate((api) => {
