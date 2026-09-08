@@ -41,7 +41,12 @@ const reducers: DataSourcePropAggregationReducers<WebFramework> = {
   },
 };
 const groupBy: DataSourceGroupBy<WebFramework>[] = [
-  { field: 'language' },
+  {
+    field: 'language',
+    column: {
+      field: 'language',
+    },
+  },
   { field: 'license' },
 ];
 const pivotBy: DataSourcePivotBy<WebFramework>[] = [{ field: 'license' }];

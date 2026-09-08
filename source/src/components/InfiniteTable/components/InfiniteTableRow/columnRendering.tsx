@@ -51,17 +51,29 @@ export function getGroupByColumnReference<T>(options: {
 
     if (rowInfo.isGroupRow) {
       const rowGroupBy = rowInfo.groupBy[rowInfo.groupBy.length - 1];
+      // Single-column strategy stores the full groupBy array on
+      // groupByForColumn, so this column is the group column at every
+      // nesting. Multi-column stores one groupBy item, so this is only
+      // the current row's group level when that item is this row's last
+      // groupBy (object identity with the DataSource groupBy array).
+      const isThisColumnGroupLevel =
+        Array.isArray(column.groupByForColumn) ||
+        column.groupByForColumn === rowGroupBy;
 
-      groupByColumn = rowGroupBy
-        ? fieldsToColumn.get(
-            rowGroupBy.field || (rowGroupBy.groupField as keyof T),
-          )
-        : undefined;
+      // Only inherit from the row's current group-by column at this
+      // column's nesting. Nested rows on a field-bound group column
+      // should inherit from `column.field` instead.
+      if (isThisColumnGroupLevel) {
+        groupByColumn = rowGroupBy
+          ? fieldsToColumn.get(
+              rowGroupBy.field || (rowGroupBy.groupField as keyof T),
+            )
+          : undefined;
+      }
     }
 
-    // also, if we're rendering a normal row, but the group column is bound
-    // to a field, then we return the other column that's bound to that field
-    // if one exists
+    // Leaf rows, and nested group rows on a field-bound group column:
+    // inherit from the other column bound to that field, if one exists.
     if (!groupByColumn && column.field) {
       groupByColumn = fieldsToColumn.get(column.field);
     }

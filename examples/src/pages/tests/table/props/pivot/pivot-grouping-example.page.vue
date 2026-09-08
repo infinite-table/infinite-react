@@ -32,7 +32,10 @@ const reducers = {
     field: 'license' as const,
   },
 };
-const groupBy = [{ field: 'language' as const }, { field: 'license' as const }];
+const groupBy = [
+  { field: 'language' as const, column: { field: 'language' as const } },
+  { field: 'license' as const },
+];
 const pivotBy = [{ field: 'license' as const }];
 
 const domProps = {

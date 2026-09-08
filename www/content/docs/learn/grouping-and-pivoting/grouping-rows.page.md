@@ -269,7 +269,7 @@ const columns = {
 };
 ```
 
-This makes the column display the value of the `field` in non-group/normal rows. Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in non-group rows.
+This makes the column display the value of the `field` in non-group/normal rows, and in nested group rows when using multi-column grouping. Pivoted grids only render group rows, so that nested-row path is how a bound field still shows. Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in those rows.
 
 <Sandpack title="Bind group column to a field">
 

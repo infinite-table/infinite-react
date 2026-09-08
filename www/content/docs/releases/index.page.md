@@ -2,6 +2,14 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+## 9.0.2
+
+Fix group columns bound to a `field` in pivoted grids.
+
+## 9.0.1 — 08.09.2026
+
+Generated pivot columns inherit sortability from the user column they inherit from — including <PropLink name="columns.defaultSortable" /> and <PropLink name="columnDefaultSortable" />. They are no longer unsortable.
+
 ## 9.0.0 — 07.09.2026
 
 Read the [9.0.0 release blog post](/blog/2026/09/07/infinite-table-9-0-0).

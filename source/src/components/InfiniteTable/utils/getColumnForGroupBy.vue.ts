@@ -55,6 +55,10 @@ export function getGroupColumnRender<T>({
     const { value: valueToRender, groupIcon, selectionCheckBox } = renderBag;
 
     const groupRowInfo = rowInfo as InfiniteTable_HasGrouping_RowInfoGroup<T>;
+    const isNestedGroupRow =
+      groupRenderStrategy === 'multi-column' &&
+      groupRowInfo.isGroupRow &&
+      groupIndexForColumn + 1 !== groupRowInfo.groupNesting;
 
     const className = join(
       display.flex,
@@ -63,22 +67,31 @@ export function getGroupColumnRender<T>({
       `${InfiniteTableColumnCellClassName}Expander`,
       groupRenderStrategy === 'single-column' ||
         (groupRenderStrategy === 'multi-column' &&
-          (!rowInfo.isGroupRow || selectionCheckBox))
+          (!rowInfo.isGroupRow ||
+            selectionCheckBox ||
+            (isNestedGroupRow && column.field)))
         ? GroupRowExpanderCls({ align })
         : null,
     );
 
-    if (groupRenderStrategy === 'multi-column') {
-      if (
-        groupIndexForColumn + 1 !== groupRowInfo.groupNesting &&
-        groupRowInfo.isGroupRow
-      ) {
+    if (isNestedGroupRow) {
+      // Pivot grids have no leaf rows. A field-bound group column must
+      // still show that field on nested group rows — same as leaves
+      // in a non-pivoted grid — indented by group nesting.
+      if (!column.field) {
         return selectionCheckBox
           ? (h('div', { class: className }, [
               selectionCheckBox as VNodeChild,
             ]) as any)
           : null;
       }
+
+      return h('div', { class: className }, [
+        selectionCheckBox as VNodeChild,
+        h('div', { class: cssEllipsisClassName }, [
+          (valueToRender ?? null) as VNodeChild,
+        ]),
+      ]) as any;
     }
 
     return h('div', { class: className }, [
