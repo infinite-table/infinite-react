@@ -47,7 +47,7 @@ Sorting the group column in a pivot table uses the same <DPropLink name="sortInf
 const defaultSortInfo = [{ id: 'group-by', dir: 1 }];
 ```
 
-Generated pivot columns are not sortable by default. The simplest way to enable sorting is the `defaultSortable` property on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
+Generated pivot columns inherit sortability from the original <PropLink name="columns" /> bound to the aggregation field — including <PropLink name="columnDefaultSortable" />. You can override that with `defaultSortable` on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
 
 ```tsx
 <InfiniteTable

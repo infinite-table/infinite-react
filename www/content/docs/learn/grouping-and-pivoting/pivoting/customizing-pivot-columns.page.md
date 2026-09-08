@@ -14,7 +14,7 @@ Those objects have the same shape as a normal <PropLink name="columns">column</P
 
 ## Global: the `pivotColumn` prop
 
-<PropLink name="pivotColumn" /> is applied to **every** generated pivot column (leaf values and totals). This is the simplest place to turn sorting on, or to set a shared width or header renderer.
+<PropLink name="pivotColumn" /> is applied to **every** generated pivot column (leaf values and totals). Use it to override inherited column properties(sortability, width, headers, etc).
 
 ```tsx
 <InfiniteTable

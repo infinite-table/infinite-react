@@ -213,7 +213,6 @@ export function getPivotColumnsAndColumnGroups<
           pivotGroupKey: keys[keys.length - 1],
           pivotIndex: keys.length - 1,
           pivotByAtIndex: pivotByForColumn,
-          defaultSortable: false,
           columnGroup: parentColumnGroupId,
           header,
           valueFormatter: ({ rowInfo }) => {
@@ -314,7 +313,6 @@ export function getPivotColumnsAndColumnGroups<
             pivotByAtIndex: pivotByForColumn,
             pivotIndex: keys.length - 1,
             pivotBy,
-            defaultSortable: false,
             valueFormatter: ({ rowInfo }) => {
               if (!rowInfo.isGroupRow) {
                 return null;

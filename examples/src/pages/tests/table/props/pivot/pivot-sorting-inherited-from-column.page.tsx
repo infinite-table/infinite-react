@@ -14,8 +14,13 @@ import {
 const columns: InfiniteTablePropColumns<WebFramework> = {
   id: { field: 'id' },
   name: { field: 'name' },
-  language: { field: 'language' },
-  license: { field: 'license' },
+  lang: { field: 'language' },
+  license: { field: 'license', defaultSortable: false },
+  stargazers: {
+    field: 'stargazers_count',
+    type: 'number',
+    defaultSortable: true,
+  },
 };
 
 const countReducer: InfiniteTableColumnAggregator<WebFramework, any> = {
@@ -33,6 +38,9 @@ const reducers: DataSourcePropAggregationReducers<WebFramework> = {
     ...sumReducer,
     name: 'Stargarzers (sum)',
     field: 'stargazers_count',
+    pivotColumn: {
+      inheritFromColumn: true,
+    },
   },
   license: {
     ...countReducer,
@@ -46,10 +54,10 @@ const groupBy: DataSourceGroupBy<WebFramework>[] = [
 ];
 const pivotBy: DataSourcePivotBy<WebFramework>[] = [
   {
-    field: 'license',
-    column: ({ column }) => ({
-      defaultSortable: !column.pivotTotalColumn,
-    }),
+    field: 'has_wiki',
+    // column: {
+    //   defaultSortable: true,
+    // },
   },
 ];
 
@@ -68,15 +76,20 @@ export default function PivotExample() {
         groupBy={groupBy}
         pivotBy={pivotBy}
         aggregationReducers={reducers}
-        defaultSortInfo={[{ id: 'group-by', dir: 1 }]}
+        defaultSortInfo={
+          [
+            // { id: 'stargazers_count:true', dir: 1 },
+            // { id: 'group-by-license', dir: -1 },
+          ]
+        }
       >
         {({ pivotColumns, pivotColumnGroups }) => {
           return (
             <InfiniteTable<WebFramework>
               domProps={domProps}
               columns={columns}
-              groupRenderStrategy="single-column"
               hideEmptyGroupColumns
+              groupRenderStrategy="multi-column"
               pivotColumns={pivotColumns}
               pivotColumnGroups={pivotColumnGroups}
             />

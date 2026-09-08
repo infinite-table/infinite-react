@@ -32,7 +32,7 @@ If the same property is set in more than one place, <PropLink name="pivotColumn"
 
 ## Global defaults: width and sorting
 
-<PropLink name="pivotColumn" /> is the simplest layer. Generated pivot columns set <PropLink name="columns.defaultSortable" nocode>defaultSortable</PropLink> to `false`, so <PropLink name="columnDefaultSortable" /> does not turn sorting on. Put `defaultSortable: true` on <PropLink name="pivotColumn" /> instead.
+<PropLink name="pivotColumn" /> is the simplest layer. Generated pivot columns inherit sortability from the source column, so <PropLink name="columnDefaultSortable" /> applies the same way as for normal columns. Override with `defaultSortable` on <PropLink name="pivotColumn" /> when you want a different rule.
 
 ```tsx
 <InfiniteTable
