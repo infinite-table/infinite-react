@@ -105,6 +105,40 @@ export type InfiniteTablePropRowStyle<T> =
   | React.CSSProperties
   | InfiniteTableRowStyleFn<T>;
 export type InfiniteTablePropCellStyle<T> = InfiniteTableColumn<T>['style'];
+
+export type InfiniteTablePropRepaintCellsKeyFnParams<T> = {
+  rowInfo: InfiniteTableRowInfo<T>;
+  column: InfiniteTableComputedColumn<T>;
+  /**
+   * The DataSource state that produced the current data array.
+   */
+  dataSourceState: DataSourceState<T>;
+  /**
+   * The DataSource state before the last data change - `undefined` until the
+   * first data change happens.
+   */
+  previousDataSourceState: DataSourceState<T> | undefined;
+};
+
+/**
+ * Called for each cell (whenever the DataSource data array changes) - the cell
+ * is re-rendered when the returned key is different (via `Object.is`) from the
+ * key returned on the previous call. Return primitives or stable references.
+ */
+export type InfiniteTablePropRepaintCellsKeyFn<T> = (
+  params: InfiniteTablePropRepaintCellsKeyFnParams<T>,
+) => unknown;
+
+/**
+ * When a string/number/object - cells re-render whenever the key changes.
+ * When a function - it is called per cell after each data change and the cell
+ * re-renders when the returned key changes.
+ */
+export type InfiniteTablePropRepaintCellsKey<T> =
+  | string
+  | number
+  | object
+  | InfiniteTablePropRepaintCellsKeyFn<T>;
 export type InfiniteTablePropRowClassName<T> =
   | string
   | InfiniteTableRowClassNameFn<T>;
@@ -774,6 +808,12 @@ export interface InfiniteTableProps<T> {
   cellClassName?: InfiniteTablePropCellClassName<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
   rowHoverClassName?: string;
+  /**
+   * Forces cells to re-render when their row didn't change but something they
+   * render depends on did (eg: cross-row computations). Applies to all columns,
+   * unless a column specifies its own `repaintCellsKey`, which takes precedence.
+   */
+  repaintCellsKey?: InfiniteTablePropRepaintCellsKey<T>;
   columnHeaderHeight?: number | string;
 
   onKeyDown?: (

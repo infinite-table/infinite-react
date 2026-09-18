@@ -258,6 +258,7 @@ export interface InfiniteTableMappedState<T> {
   columnDefaultSortable: InfiniteTableProps<T>['columnDefaultSortable'];
   rowStyle: InfiniteTableProps<T>['rowStyle'];
   cellStyle: InfiniteTableProps<T>['cellStyle'];
+  repaintCellsKey: InfiniteTableProps<T>['repaintCellsKey'];
   rowProps: InfiniteTableProps<T>['rowProps'];
   rowClassName: InfiniteTableProps<T>['rowClassName'];
   rowHoverClassName: InfiniteTableProps<T>['rowHoverClassName'];

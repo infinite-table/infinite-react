@@ -1,4 +1,5 @@
 import { PerfMarker } from '../../utils/devTools';
+import type { DataSourceState } from './types';
 import {
   InfiniteTableRowInfo,
   InfiniteTable_HasGrouping_RowInfoNormal,
@@ -288,6 +289,22 @@ function deepEqualRowInfo<T>(
   return true;
 }
 
+export type RowInfoStoreNotifyParams<T> = {
+  marker?: PerfMarker;
+  /**
+   * The DataSource state that produced `newDataArray` and the state it replaces.
+   * Exposed to cells via `getDataSourceStates()` so `repaintCellsKey` functions
+   * can compare the two.
+   */
+  dataSourceState?: DataSourceState<T>;
+  previousDataSourceState?: DataSourceState<T>;
+};
+
+export type RowInfoStoreDataSourceStates<T> = {
+  dataSourceState: DataSourceState<T> | undefined;
+  previousDataSourceState: DataSourceState<T> | undefined;
+};
+
 export interface RowInfoStore<T> {
   /**
    * Update the entire dataArray (called from reducer)
@@ -295,8 +312,22 @@ export interface RowInfoStore<T> {
    */
   notifyDataArray(
     newDataArray: InfiniteTableRowInfo<T>[],
-    params?: { marker?: PerfMarker },
+    params?: RowInfoStoreNotifyParams<T>,
   ): void;
+
+  /**
+   * Subscribe to *any* change of the dataArray reference (regardless of which
+   * rows changed). Used by cells whose `repaintCellsKey` is a function, so they
+   * can re-evaluate their key after every data change.
+   * Returns unsubscribe function
+   */
+  subscribeToDataArrayChange(callback: () => void): () => void;
+
+  /**
+   * The DataSource state that produced the current dataArray, and the one
+   * before it - as passed by the reducer via `notifyDataArray`.
+   */
+  getDataSourceStates(): RowInfoStoreDataSourceStates<T>;
 
   /**
    * Get current rowInfo at index (snapshot for useSyncExternalStore)
@@ -325,13 +356,30 @@ type RowSubscribers = Map<number, Set<() => void>>;
 export function createRowInfoStore<T>(): RowInfoStore<T> {
   let dataArray: InfiniteTableRowInfo<T>[] = [];
   const subscribers: RowSubscribers = new Map();
+  const dataArrayChangeSubscribers = new Set<() => void>();
+  let dataSourceStates: RowInfoStoreDataSourceStates<T> = {
+    dataSourceState: undefined,
+    previousDataSourceState: undefined,
+  };
 
   const notifyDataArray = (
     newDataArray: InfiniteTableRowInfo<T>[],
-    params?: { marker?: PerfMarker },
+    params?: RowInfoStoreNotifyParams<T>,
   ) => {
     const oldDataArray = dataArray;
     const marker = params?.marker;
+    const dataArrayChanged = newDataArray !== oldDataArray;
+    const notifyDataArrayChange =
+      dataArrayChanged && dataArrayChangeSubscribers.size > 0;
+
+    // only retain the states when someone (a `repaintCellsKey` fn) will read
+    // them - otherwise we'd keep a whole previous generation of the data alive
+    if (notifyDataArrayChange) {
+      dataSourceStates = {
+        dataSourceState: params?.dataSourceState,
+        previousDataSourceState: params?.previousDataSourceState,
+      };
+    }
 
     if (marker) {
       marker.start({
@@ -371,7 +419,7 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
     // Notify subscribers only for changed indices
     // Use queueMicrotask to defer notifications and avoid
     // "Cannot update a component while rendering a different component" error
-    if (changedIndices.length > 0) {
+    if (changedIndices.length > 0 || notifyDataArrayChange) {
       queueMicrotask(() => {
         for (let i = 0, len = changedIndices.length; i < len; i++) {
           const index = changedIndices[i];
@@ -380,6 +428,12 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
             for (const callback of indexSubscribers) {
               callback();
             }
+          }
+        }
+        if (notifyDataArrayChange) {
+          // copy, as callbacks may unsubscribe/resubscribe while we iterate
+          for (const callback of Array.from(dataArrayChangeSubscribers)) {
+            callback();
           }
         }
       });
@@ -430,15 +484,40 @@ export function createRowInfoStore<T>(): RowInfoStore<T> {
     return dataArray;
   };
 
+  const subscribeToDataArrayChange = (callback: () => void): (() => void) => {
+    dataArrayChangeSubscribers.add(callback);
+    return () => {
+      dataArrayChangeSubscribers.delete(callback);
+      if (dataArrayChangeSubscribers.size === 0) {
+        // nobody reads them anymore - don't keep the states alive
+        dataSourceStates = {
+          dataSourceState: undefined,
+          previousDataSourceState: undefined,
+        };
+      }
+    };
+  };
+
+  const getDataSourceStates = (): RowInfoStoreDataSourceStates<T> => {
+    return dataSourceStates;
+  };
+
   const clear = (): void => {
     dataArray = [];
     subscribers.clear();
+    dataArrayChangeSubscribers.clear();
+    dataSourceStates = {
+      dataSourceState: undefined,
+      previousDataSourceState: undefined,
+    };
   };
 
   return {
     notifyDataArray,
     getRowInfoAtIndex,
     subscribeToRowIndex,
+    subscribeToDataArrayChange,
+    getDataSourceStates,
 
     getDataArray,
     clear,

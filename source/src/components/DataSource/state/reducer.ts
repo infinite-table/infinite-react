@@ -1192,6 +1192,8 @@ export function concludeReducer<T>(params: {
     marker: debugId
       ? getMarker(debugId).track.DataSource.label.DiffRowInfoInStore
       : undefined,
+    dataSourceState: state,
+    previousDataSourceState: previousState,
   });
 
   if (rootMarker) {

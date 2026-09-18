@@ -64,6 +64,7 @@ export function useCellRendering<T>(
     isRowDetailsEnabled,
     cellClassName,
     cellStyle,
+    repaintCellsKey,
     rowStyle,
     rowDetailCache,
     rowClassName,
@@ -100,6 +101,7 @@ export function useCellRendering<T>(
         .isRowDetailEnabled as InfiniteTableProps<T>['isRowDetailEnabled'],
       cellClassName: ctx.state.cellClassName,
       cellStyle: ctx.state.cellStyle,
+      repaintCellsKey: ctx.state.repaintCellsKey,
       rowStyle: ctx.state.rowStyle,
       rowDetailCache: ctx.state.rowDetailCache,
       rowClassName: ctx.state.rowClassName,
@@ -350,6 +352,11 @@ export function useCellRendering<T>(
         rowClassName,
         cellStyle,
         cellClassName,
+        // the column-level key wins over the table-level one
+        repaintCellsKey:
+          column.repaintCellsKey !== undefined
+            ? column.repaintCellsKey
+            : repaintCellsKey,
 
         visibleColumnIds,
         computedColumnOrder,
@@ -397,6 +404,7 @@ export function useCellRendering<T>(
       rowClassName,
       cellClassName,
       cellStyle,
+      repaintCellsKey,
       getDataSourceState,
       dataSourceApi,
       dataSourceActions,

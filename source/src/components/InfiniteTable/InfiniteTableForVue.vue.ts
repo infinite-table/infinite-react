@@ -177,6 +177,7 @@ export const DATA_GRID_PROP_NAMES = [
   'rowProps',
   'cellClassName',
   'cellStyle',
+  'repaintCellsKey',
   'domProps',
   'licenseKey',
   'loadingText',
@@ -1768,6 +1769,7 @@ export const InfiniteTable = defineComponent({
           s.rowClassName,
           s.cellStyle,
           s.cellClassName,
+          s.repaintCellsKey,
           s.editingCell,
           s.updatedAt,
           ds.rowInfoStore,
@@ -1846,6 +1848,11 @@ export const InfiniteTable = defineComponent({
             rowClassName: s.rowClassName as any,
             cellStyle: s.cellStyle as any,
             cellClassName: s.cellClassName as any,
+            // the column-level key wins over the table-level one
+            repaintCellsKey:
+              column.repaintCellsKey !== undefined
+                ? column.repaintCellsKey
+                : s.repaintCellsKey,
             getData,
             rowInfoStore,
             renderingContext,

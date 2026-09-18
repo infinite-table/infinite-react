@@ -290,6 +290,7 @@ export const forwardProps = <T>(
 
     rowStyle: 1,
     cellStyle: 1,
+    repaintCellsKey: 1,
 
     rowProps: 1,
     rowClassName: 1,

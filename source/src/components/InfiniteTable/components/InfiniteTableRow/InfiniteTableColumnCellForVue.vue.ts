@@ -30,9 +30,14 @@ import type { InfiniteTableRowInfo } from '../../types';
 import type {
   InfiniteTablePropCellClassName,
   InfiniteTablePropCellStyle,
+  InfiniteTablePropRepaintCellsKey,
   InfiniteTablePropRowClassName,
   InfiniteTablePropRowStyle,
 } from '../../types/InfiniteTableProps';
+import {
+  isRepaintCellsKeyFn,
+  subscribeToRepaintCellsKey,
+} from './repaintCellsKey';
 
 import { getColumnRenderingParams } from './columnRendering';
 import type { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
@@ -190,6 +195,10 @@ export type InfiniteTableColumnCellVueProps<T = any> = {
   rowClassName?: InfiniteTablePropRowClassName<T>;
   cellStyle?: InfiniteTablePropCellStyle<T>;
   cellClassName?: InfiniteTablePropCellClassName<T>;
+  /**
+   * Already resolved: the column-level key if present, otherwise the table-level one.
+   */
+  repaintCellsKey?: InfiniteTablePropRepaintCellsKey<T>;
   getData: () => InfiniteTableRowInfo<T>[];
   rowInfoStore: RowInfoStore<T>;
   renderingContext: InfiniteTableColumnRenderingContext<T>;
@@ -243,6 +252,14 @@ export const InfiniteTableColumnCell = defineComponent({
     rowClassName: { type: [String, Function], default: undefined },
     cellStyle: { type: [Object, Function], default: undefined },
     cellClassName: { type: [String, Function], default: undefined },
+    // non-function keys need no subscription: a change in the prop already
+    // re-renders the cell. Function keys are re-evaluated on data changes
+    repaintCellsKey: {
+      type: [String, Number, Object, Function] as PropType<
+        InfiniteTablePropRepaintCellsKey<any>
+      >,
+      default: undefined,
+    },
     getData: { type: Function as PropType<() => any[]>, required: true },
     rowInfoStore: { type: Object as PropType<any>, required: true },
     renderingContext: {
@@ -320,9 +337,46 @@ export const InfiniteTableColumnCell = defineComponent({
       { immediate: true },
     );
 
+    // same role as React's useRepaintCellsKey: when repaintCellsKey is a
+    // function, re-evaluate it after every data change and re-render this
+    // cell when the returned key changes
+    const repaintTick = shallowRef(0);
+    let unsubscribeRepaintKey: VoidFunction | null = null;
+    watch(
+      [
+        () => props.repaintCellsKey,
+        () => props.column,
+        () => props.rowIndex,
+        () => props.rowInfoStore,
+      ],
+      ([repaintCellsKey, column, rowIndex, rowInfoStore]) => {
+        unsubscribeRepaintKey?.();
+        unsubscribeRepaintKey = null;
+
+        if (!isRepaintCellsKeyFn(repaintCellsKey)) {
+          return;
+        }
+        unsubscribeRepaintKey = subscribeToRepaintCellsKey(
+          repaintCellsKey,
+          {
+            column,
+            rowIndex,
+            rowInfoStore,
+            getDataSourceState: props.renderingContext.getDataSourceState,
+          },
+          () => {
+            repaintTick.value++;
+          },
+        );
+      },
+      { immediate: true },
+    );
+
     onBeforeUnmount(() => {
       unsubscribeRowInfo?.();
       unsubscribeRowInfo = null;
+      unsubscribeRepaintKey?.();
+      unsubscribeRepaintKey = null;
     });
 
     // exposed to descendants for useInfiniteColumnCell
@@ -378,6 +432,8 @@ export const InfiniteTableColumnCell = defineComponent({
       } = props;
 
       const rowInfo = rowInfoRef.value;
+      // reactive dependency - bumped when the repaintCellsKey fn returns a new key
+      void repaintTick.value;
 
       if (!column || !rowInfo) {
         return h('div', { ref: domRefCallback, style: { display: 'none' } });

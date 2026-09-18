@@ -1,18 +1,33 @@
 import * as React from 'react';
-import { useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useSyncExternalStore,
+} from 'react';
 import { once } from '../../../../utils/DeepMap/once';
 import { InfiniteTableRowInfoDataDiscriminator } from '../../../../utils/groupAndPivot';
+import type { DataSourceState } from '../../../DataSource/types';
+import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
 
 import {
   InfiniteColumnEditorContextType,
   InfiniteTableRowInfo,
+  InfiniteTablePropRepaintCellsKey,
 } from '../../types';
 
 import type {
   InfiniteTableColumnCellContextType,
   InfiniteTableColumnRenderFunction,
   InfiniteTableColumn,
+  InfiniteTableComputedColumn,
 } from '../../types/InfiniteTableColumn';
+import {
+  isRepaintCellsKeyFn,
+  subscribeToRepaintCellsKey,
+} from './repaintCellsKey';
 import { InfiniteTableRowContext } from '../../types/InfiniteTableContextValue';
 import {
   CellEditorContextComponent,
@@ -134,6 +149,41 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   );
 };
 
+/**
+ * When `repaintCellsKey` is a function, re-evaluates it after every data
+ * change and forces a re-render of this cell when the returned key changes.
+ *
+ * Non-function keys need no subscription: they're passed as a prop, so a
+ * change in the key already re-renders the (memoized) cell.
+ */
+function useRepaintCellsKey<T>(params: {
+  repaintCellsKey: InfiniteTablePropRepaintCellsKey<T> | undefined;
+  column: InfiniteTableComputedColumn<T>;
+  rowIndex: number;
+  rowInfoStore: RowInfoStore<T>;
+  getDataSourceState: () => DataSourceState<T>;
+}) {
+  const { repaintCellsKey, column, rowIndex, rowInfoStore, getDataSourceState } =
+    params;
+
+  const [, forceRepaint] = useReducer((x: number) => x + 1, 0);
+
+  const repaintCellsKeyFn = isRepaintCellsKeyFn(repaintCellsKey)
+    ? repaintCellsKey
+    : undefined;
+
+  useEffect(() => {
+    if (!repaintCellsKeyFn) {
+      return;
+    }
+    return subscribeToRepaintCellsKey(
+      repaintCellsKeyFn,
+      { column, rowIndex, rowInfoStore, getDataSourceState },
+      forceRepaint,
+    );
+  }, [repaintCellsKeyFn, column, rowIndex, rowInfoStore, getDataSourceState]);
+}
+
 function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
   const {
     dataSourceStatePartialForCell,
@@ -148,6 +198,7 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
     computedColumnOrder,
     cellStyle,
     cellClassName,
+    repaintCellsKey,
 
     rowDetailState,
 
@@ -196,6 +247,14 @@ function InfiniteTableColumnCellFn<T>(props: InfiniteTableColumnCellProps<T>) {
       [rowInfoStore, rowIndex],
     ),
   );
+
+  useRepaintCellsKey({
+    repaintCellsKey,
+    column,
+    rowIndex,
+    rowInfoStore,
+    getDataSourceState,
+  });
 
   const isEmptyRowInfo = !rowInfoFromStore;
   const isEmptyColumn = !column;

@@ -13,6 +13,7 @@ import { OnResizeFn } from '../../../types/Size';
 import {
   InfiniteTableRowInfo,
   InfiniteTablePropGroupRenderStrategy,
+  InfiniteTablePropRepaintCellsKey,
   InfiniteTablePropRowStyle,
   InfiniteTablePropRowClassName,
   InfiniteTablePropHeaderOptions,
@@ -98,6 +99,10 @@ export interface InfiniteTableColumnCellProps<T>
   cellClassName?: InfiniteTablePropCellClassName<T>;
   rowStyle?: InfiniteTablePropRowStyle<T>;
   rowClassName?: InfiniteTablePropRowClassName<T>;
+  /**
+   * Already resolved: the column-level key if present, otherwise the table-level one.
+   */
+  repaintCellsKey?: InfiniteTablePropRepaintCellsKey<T>;
 
   // DataSource context values passed as props to avoid context re-renders
   getDataSourceState: () => DataSourceState<T>;

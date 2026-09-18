@@ -1780,6 +1780,36 @@ In the `column.renderValue` function you can use hooks or <PropLink name="column
 
 </Prop>
 
+<Prop name="columns.repaintCellsKey" type="string|number|object|(params: InfiniteTablePropRepaintCellsKeyFnParams) => any">
+
+> Forces the cells of this column to re-render when their row did not change, but something they render depends on did.
+
+Same as the table-level <PropLink name="repaintCellsKey" />, but only for the cells of this column. When both are specified, the column-level key wins for the cells of this column.
+
+Typical use: a column whose <PropLink name="columns.render" /> or <PropLink name="columns.valueGetter" /> reads other rows (a group average, a running total, a cross-row lookup). Return the derived value from the function, and the cells repaint exactly when that value changes:
+
+```tsx
+const columns: InfiniteTablePropColumns<Sale> = {
+  segmentAverage: {
+    header: 'Segment avg',
+    repaintCellsKey: ({ rowInfo, dataSourceState }) =>
+      averageFor(dataSourceState.originalDataArray, rowInfo.data.segment),
+    render: ({ rowInfo, dataSourceApi }) =>
+      averageFor(dataSourceApi.getOriginalDataArray(), rowInfo.data.segment),
+  },
+};
+```
+
+<Note>
+
+Scanning the whole data array in `repaintCellsKey` and again in `render` - for every cell, on every data change - is **not** a performant way to compute averages or other aggregations. It's used here only because it keeps the demo short. In a real app, compute the aggregations once per data change (eg. in a memoized map keyed by a specific field, or have it computed for you automatically via <DPropLink name="aggregationReducers" /> when grouping) and have both `repaintCellsKey` and `render` read from that.
+
+</Note>
+
+See <PropLink name="repaintCellsKey" /> for details on the string/number/object and function forms and on the parameter the function is called with.
+
+</Prop>
+
 <Prop name="columns.resizable" type="boolean">
 
 > Specifies if the current column is resizable or not.
@@ -3315,6 +3345,51 @@ In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is a
 <Sandpack title="Pivoting with pivotTotalColumnPosition=start">
 
 ```ts file="pivot-total-column-position-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="repaintCellsKey" type="string|number|object|(params: InfiniteTablePropRepaintCellsKeyFnParams) => any">
+
+> Forces cells to re-render when their own row did not change, but something they render depends on did.
+
+For performance, a body cell only re-renders when the <TypeLink name="InfiniteTableRowInfo" /> of its own row changes (or when one of its props, like the column, changes). This means a cell whose content depends on **other rows** - a running total, the average of its group, a value looked up in another row - is not re-rendered when one of those other rows is updated, and shows a stale value.
+
+Use `repaintCellsKey` to tell the table when such cells need to repaint:
+
+- when a **`string`, `number` or `object`** - all cells re-render whenever the key changes (compare with <DPropLink name="refetchKey" /> on the `DataSource`, which reloads the data). Use it as a counter, or pass an object whose identity changes when your derived data changes.
+- when a **function** - it is called for each cell after every data change and the cell re-renders when the returned key is different (via `Object.is`) from the key returned on the previous data change. Return primitives or stable references - returning a new object on every call repaints the cell on every data change. The function is called with an object with the following properties:
+  - `rowInfo` - the current row - see <TypeLink name="InfiniteTableRowInfo" />
+  - `column` - the current column - see <TypeLink name="InfiniteTableComputedColumn" />
+  - `dataSourceState` - the <TypeLink name="DataSourceState" /> that produced the current data - `originalDataArray` (all rows, unfiltered), `dataArray` (the rows as displayed) and `originalDataArrayChangedInfo` (a new object on every data mutation, with the `mutations` keyed by primary key) are the useful properties here
+  - `previousDataSourceState` - the <TypeLink name="DataSourceState" /> before the last data change (`undefined` before the first data change)
+
+A good key for a function is the derived value itself: return the group average the cell displays, and the cell repaints exactly when that average changes.
+
+This prop applies to all columns. A column can specify its own <PropLink name="columns.repaintCellsKey" />, which takes precedence over this prop for the cells of that column.
+
+<Note>
+
+The function form of `repaintCellsKey` runs for every rendered cell of every affected column on each data change - keep it cheap. Cheap keys are values already available on the `DataSource` state (eg `dataSourceState.originalDataArrayChangedInfo`, a new object on every data mutation) or a small computation over `dataSourceState.originalDataArray`.
+
+</Note>
+
+<Sandpack title="Repainting cells that depend on other rows">
+
+<Description>
+
+Both "Country avg" columns render the average salary of the row's country. Edit a salary cell (or click "Update salary of first row"): the column without `repaintCellsKey` shows the stale average on the other rows of that country, while the column with `repaintCellsKey` is updated.
+
+"Repaint all cells" bumps the table-level `repaintCellsKey` and refreshes the stale column as well.
+
+Note: the example re-scans all the rows to compute the average for each cell - that's not a performant way to do aggregations and is only done here to keep the demo short.
+
+</Description>
+
+```ts file="repaintCellsKey-example.page.tsx"
 
 ```
 

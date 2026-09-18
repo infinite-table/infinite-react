@@ -27,6 +27,7 @@ import {
   InfiniteTableColumnPinnedValues,
   InfiniteTableColumnType,
   InfiniteTablePropOnEditAcceptedParams,
+  InfiniteTablePropRepaintCellsKey,
   InfiniteTableRowInfoDataDiscriminatorWithColumnAndApis,
 } from './InfiniteTableProps';
 import type {
@@ -531,6 +532,13 @@ export type InfiniteTableColumn<DATA_TYPE> = {
   headerStyle?: InfiniteTableColumnHeaderStyle<DATA_TYPE>;
   headerClassName?: InfiniteTableColumnHeaderClassName<DATA_TYPE>;
   className?: InfiniteTableColumnClassName<DATA_TYPE>;
+
+  /**
+   * Forces the cells of this column to re-render when their row didn't change
+   * but something they render depends on did (eg: cross-row computations).
+   * Takes precedence over the `repaintCellsKey` prop of the table.
+   */
+  repaintCellsKey?: InfiniteTablePropRepaintCellsKey<DATA_TYPE>;
 
   rowspan?: InfiniteTableColumnRowspanFn<DATA_TYPE>;
   // colspan?: InfiniteTableColumnColspanFn<T>;
