@@ -45,6 +45,9 @@ const columns: InfiniteTablePropColumns<Sale> = {
     header: 'segment avg (no key)',
     type: 'number',
     render: ({ rowInfo, dataSourceApi }) => {
+      if (rowInfo.isGroupRow) {
+        return null;
+      }
       countRender('noKey', rowInfo.id);
       return String(
         segmentAvg(dataSourceApi.getOriginalDataArray(), rowInfo.data.segment),
@@ -58,6 +61,9 @@ const columns: InfiniteTablePropColumns<Sale> = {
     repaintCellsKey: ({ dataSourceState }) =>
       dataSourceState.originalDataArrayChangedInfo,
     render: ({ rowInfo, dataSourceApi }) => {
+      if (rowInfo.isGroupRow) {
+        return null;
+      }
       countRender('anyChange', rowInfo.id);
       return String(
         segmentAvg(dataSourceApi.getOriginalDataArray(), rowInfo.data.segment),
@@ -69,6 +75,9 @@ const columns: InfiniteTablePropColumns<Sale> = {
     type: 'number',
     // the derived value is the key - the cell repaints only when it changes
     repaintCellsKey: ({ rowInfo, dataSourceState, previousDataSourceState }) => {
+      if (rowInfo.isGroupRow) {
+        return null;
+      }
       (globalThis as any).lastRepaintCellsKeyParams = {
         rowId: rowInfo.id,
         hasPreviousState: !!previousDataSourceState,
@@ -78,6 +87,9 @@ const columns: InfiniteTablePropColumns<Sale> = {
       return segmentAvg(dataSourceState.originalDataArray, rowInfo.data.segment);
     },
     render: ({ rowInfo, dataSourceApi }) => {
+      if (rowInfo.isGroupRow) {
+        return null;
+      }
       countRender('segmentKey', rowInfo.id);
       return String(
         segmentAvg(dataSourceApi.getOriginalDataArray(), rowInfo.data.segment),
