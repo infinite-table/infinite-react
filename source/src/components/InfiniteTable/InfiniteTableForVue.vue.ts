@@ -60,7 +60,10 @@ import {
 import { onCellClick } from './eventHandlers/onCellClick';
 import { onCellMouseDown } from './eventHandlers/onCellMouseDown';
 import { onKeyDown } from './eventHandlers/onKeyDown';
-import { getCellContext } from './components/InfiniteTableRow/columnRendering';
+import {
+  getEditingCellContext,
+  warnEditedRowGone,
+} from './utils/getEditingCellContext';
 import { getCellSelector } from './state/getInitialState';
 import { selectParentUntil } from '../../utils/selectParent';
 import { useColumnMenu } from './hooks/useColumnMenuForVue.vue';
@@ -1241,21 +1244,22 @@ export const InfiniteTable = defineComponent({
     // onEditCancelled/onEditRejected/onEditAccepted/onEditPersist* callbacks;
     // the accepted branch also triggers api.persistEdit - which is what
     // actually writes the value into the DataSource
-    const getEditingCellContext = () => {
-      const { rowIndex, columnId } = getState().editingCell!;
-      return getCellContext<any>({
-        rowIndex,
-        columnId,
-        getComputed,
-        getState,
-        getDataSourceState: getDSState,
-        getDataSourceMasterContext,
-        actions,
-        dataSourceActions: dataSourceContext.dataSourceActions,
-        api,
-        dataSourceApi,
-      });
-    };
+    // the edited row is resolved by primary key: the edit may have moved or
+    // removed it by the time a callback runs. `null` = the row is gone.
+    const editingCellContext = () =>
+      getEditingCellContext<any>(
+        {
+          getComputed,
+          getState,
+          getDataSourceState: getDSState,
+          getDataSourceMasterContext,
+          actions,
+          dataSourceActions: dataSourceContext.dataSourceActions,
+          api,
+          dataSourceApi,
+        },
+        getState().editingCell!,
+      );
 
     watch(
       [
@@ -1283,31 +1287,51 @@ export const InfiniteTable = defineComponent({
         // each branch fires only on its own transition - the same semantics
         // as the separate dependency-keyed effects in React
         if (cancelled && cancelled !== prevCancelled) {
-          const { initialValue } = getState().editingCell!;
-          getState().onEditCancelled?.({
-            ...getEditingCellContext(),
-            initialValue,
-          });
+          const editingCell = getState().editingCell!;
+          const { onEditCancelled } = getState();
+          if (onEditCancelled) {
+            const cellContext = editingCellContext();
+            if (cellContext) {
+              onEditCancelled({
+                ...cellContext,
+                initialValue: editingCell.initialValue,
+              });
+            } else {
+              warnEditedRowGone('onEditCancelled', editingCell);
+            }
+          }
         }
 
         if (rejected && rejected !== prevRejected) {
-          const { value, initialValue } = getState().editingCell!;
-          getState().onEditRejected?.({
-            ...getEditingCellContext(),
-            value,
-            error: rejected as Error,
-            initialValue,
-          });
+          const editingCell = getState().editingCell!;
+          const { onEditRejected } = getState();
+          if (onEditRejected) {
+            const cellContext = editingCellContext();
+            if (cellContext) {
+              onEditRejected({
+                ...cellContext,
+                value: editingCell.value,
+                error: rejected as Error,
+                initialValue: editingCell.initialValue,
+              });
+            } else {
+              warnEditedRowGone('onEditRejected', editingCell);
+            }
+          }
         }
 
         if (accepted && accepted !== prevAccepted) {
-          const { value, initialValue } = getState().editingCell!;
-          const editParams = {
-            ...getEditingCellContext(),
-            value,
-            initialValue,
-          };
-          getState().onEditAccepted?.(editParams);
+          const editingCell = getState().editingCell!;
+          const { value, initialValue } = editingCell;
+          const { onEditAccepted } = getState();
+          if (onEditAccepted) {
+            const cellContext = editingCellContext();
+            if (cellContext) {
+              onEditAccepted({ ...cellContext, value, initialValue });
+            } else {
+              warnEditedRowGone('onEditAccepted', editingCell);
+            }
+          }
 
           api.persistEdit({ value });
         }
@@ -1315,19 +1339,29 @@ export const InfiniteTable = defineComponent({
         if (persisted && persisted !== prevPersisted) {
           const editingCell = getState().editingCell;
           if (editingCell) {
-            const { value, initialValue } = editingCell;
-            const params = {
-              ...getEditingCellContext(),
-              value,
-              initialValue,
-            };
-            if (persisted instanceof Error) {
-              getState().onEditPersistError?.({
-                ...params,
-                error: persisted,
-              });
-            } else {
-              getState().onEditPersistSuccess?.(params);
+            const callbackName =
+              persisted instanceof Error
+                ? 'onEditPersistError'
+                : 'onEditPersistSuccess';
+            if (getState()[callbackName]) {
+              const cellContext = editingCellContext();
+              if (!cellContext) {
+                warnEditedRowGone(callbackName, editingCell);
+              } else {
+                const params = {
+                  ...cellContext,
+                  value: editingCell.value,
+                  initialValue: editingCell.initialValue,
+                };
+                if (persisted instanceof Error) {
+                  getState().onEditPersistError?.({
+                    ...params,
+                    error: persisted,
+                  });
+                } else {
+                  getState().onEditPersistSuccess?.(params);
+                }
+              }
             }
           }
         }

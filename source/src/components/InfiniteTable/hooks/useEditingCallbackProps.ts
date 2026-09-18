@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 
 import { usePrevious } from '../../hooks/usePrevious';
-import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
 import { InfiniteTableState } from '../types';
+import {
+  getEditingCellContext,
+  warnEditedRowGone,
+} from '../utils/getEditingCellContext';
 
 import {
   useInfiniteTableSelector,
@@ -25,16 +28,22 @@ function useOnEditCancelled<T>() {
 
   useEffect(() => {
     if (cancelled) {
-      const { rowIndex, columnId, initialValue } = getState().editingCell!;
       const { onEditCancelled } = getState();
+      const editingCell = getState().editingCell!;
 
-      onEditCancelled?.({
-        ...getCellContext({
-          rowIndex,
-          columnId,
-          ...context,
-        }),
-        initialValue,
+      if (!onEditCancelled) {
+        return;
+      }
+
+      const cellContext = getEditingCellContext(context, editingCell);
+      if (!cellContext) {
+        warnEditedRowGone('onEditCancelled', editingCell);
+        return;
+      }
+
+      onEditCancelled({
+        ...cellContext,
+        initialValue: editingCell.initialValue,
       });
     }
   }, [cancelled]);
@@ -58,19 +67,24 @@ function useOnEditRejected<T>() {
 
   useEffect(() => {
     if (rejected) {
-      const { rowIndex, columnId, value, initialValue } =
-        getState().editingCell!;
       const { onEditRejected } = getState();
+      const editingCell = getState().editingCell!;
 
-      onEditRejected?.({
-        ...getCellContext({
-          rowIndex,
-          columnId,
-          ...context,
-        }),
-        value,
+      if (!onEditRejected) {
+        return;
+      }
+
+      const cellContext = getEditingCellContext(context, editingCell);
+      if (!cellContext) {
+        warnEditedRowGone('onEditRejected', editingCell);
+        return;
+      }
+
+      onEditRejected({
+        ...cellContext,
+        value: editingCell.value,
         error: rejected,
-        initialValue,
+        initialValue: editingCell.initialValue,
       });
     }
   }, [rejected]);
@@ -115,19 +129,18 @@ function useOnEditAccepted<T>() {
 
   useEffect(() => {
     if (accepted) {
-      const { editingCell } = getState();
+      const { onEditAccepted } = getState();
+      const editingCell = getState().editingCell!;
+      const { value, initialValue } = editingCell;
 
-      const { value, rowIndex, columnId, initialValue } = editingCell!;
-      const editParams = {
-        ...getCellContext<T>({
-          rowIndex,
-          columnId,
-          ...context,
-        }),
-        value,
-        initialValue,
-      };
-      getState().onEditAccepted?.(editParams);
+      if (onEditAccepted) {
+        const cellContext = getEditingCellContext(context, editingCell);
+        if (cellContext) {
+          onEditAccepted({ ...cellContext, value, initialValue });
+        } else {
+          warnEditedRowGone('onEditAccepted', editingCell);
+        }
+      }
 
       context.api.persistEdit({ value });
     }
@@ -155,16 +168,24 @@ function useOnEditPersisted<T>() {
         return;
       }
 
-      const { rowIndex, columnId, value, initialValue } = editingCell;
+      const callbackName =
+        persisted instanceof Error
+          ? 'onEditPersistError'
+          : 'onEditPersistSuccess';
+      if (!getState()[callbackName]) {
+        return;
+      }
+
+      const cellContext = getEditingCellContext(context, editingCell);
+      if (!cellContext) {
+        warnEditedRowGone(callbackName, editingCell);
+        return;
+      }
 
       const params = {
-        ...getCellContext<T>({
-          rowIndex,
-          columnId,
-          ...context,
-        }),
-        value,
-        initialValue,
+        ...cellContext,
+        value: editingCell.value,
+        initialValue: editingCell.initialValue,
       };
       if (persisted instanceof Error) {
         onEditPersistError?.({ ...params, error: persisted });

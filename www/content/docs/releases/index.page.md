@@ -2,6 +2,14 @@
 title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
+
+## 9.1.1
+
+Fix a crash in the edit lifecycle callbacks (<PropLink name="onEditPersistSuccess" />, `onEditPersistError`, <PropLink name="onEditAccepted" />, <PropLink name="onEditRejected" />, `onEditCancelled`) when the edit itself moves or removes the row — for example editing the value the grid is grouped by, so the row leaves a single-row group and the row count shrinks.
+## 9.1.0 — 18.09.2026
+
+New <PropLink name="repaintCellsKey" /> prop, also available per column as <PropLink name="columns.repaintCellsKey" />.
+
 ## 9.0.3
 
 Pivot group columns bound to a `field` that is not a grouping key (including the pivot dimension) now show that value on nested group rows when every item in the group shares it.

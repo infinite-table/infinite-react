@@ -10,6 +10,7 @@ import type {
 import { GroupRowsState } from '../../DataSource/GroupRowsState';
 import { getChangeDetect } from '../../DataSource/privateHooks/getChangeDetect';
 import { loadData } from '../../DataSource/privateHooks/loadDataShared';
+import { resolveEditingCellRowIndex } from '../utils/getEditingCellContext';
 import {
   getColumnValueToEdit,
   getCellContext,
@@ -212,9 +213,31 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       };
     }
 
+    // the row may have moved (or gone) while we awaited the frame above
+    const rowIndex = resolveEditingCellRowIndex(
+      { ...this.context, api: this },
+      editingCell,
+    );
+
+    if (rowIndex === -1) {
+      const error = new Error(
+        `Cannot persist edit: the edited row (primaryKey: ${String(
+          editingCell.primaryKey,
+        )}, rowIndex: ${editingCell.rowIndex}) is no longer in the data array.`,
+      );
+      this.actions.editingCell = {
+        ...editingCell,
+        active: false,
+        accepted: false,
+        waiting: false,
+        persisted: error,
+      };
+      return Promise.resolve(error);
+    }
+
     const params = {
       ...getCellContext<T>({
-        rowIndex: editingCell.rowIndex,
+        rowIndex,
         columnId: editingCell.columnId,
         ...this.context,
         api: this,
