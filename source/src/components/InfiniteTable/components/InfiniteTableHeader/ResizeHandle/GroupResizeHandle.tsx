@@ -111,6 +111,10 @@ function GroupResizeHandleFn<T>(props: GroupResizeHandleProps<T>) {
       const diff = Math.round(e.clientX - initialX);
       const adjustedDiffs = resizeDiff(diff);
 
+      // reset the drag-preview CSS vars to the committed sizes - see the
+      // same step in ResizeHandle
+      resizer.resize(props.groupColumns.map(() => 0));
+
       props.onResize(adjustedDiffs);
     };
 

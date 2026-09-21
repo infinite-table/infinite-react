@@ -9,6 +9,7 @@ import {
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
 
 import { GroupResizeHandle } from './ResizeHandle/GroupResizeHandle';
+import { getResizeAvailableSize } from './ResizeHandle/columnResizeShared';
 import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 
 export function useColumnGroupResizeHandle<T>(
@@ -65,7 +66,7 @@ export function useColumnGroupResizeHandle<T>(
         : columnSizing;
 
       const result = computeGroupResize({
-        availableSize: bodySize.width,
+        availableSize: getResizeAvailableSize(bodySize),
         reservedWidth: viewportReservedWidth || 0,
         dragHandleOffset: diff,
         dragHandlePositionAfter: lastColumnInGroup.computedVisibleIndex,

@@ -3,6 +3,12 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.1.2
+
+Fix resizing a flex column when the fixed columns already overflow the viewport. The resized column now gets a fixed <PropLink name="columnSizing.width">width</PropLink> instead of a flex value in that case.
+
+<PropLink name="columnSizing" /> now takes precedence over <PropLink name="columns.defaultFlex" /> — a `width` in `columnSizing` makes a `defaultFlex` column fixed.
+
 ## 9.1.1
 
 Fix a crash in the edit lifecycle callbacks (<PropLink name="onEditPersistSuccess" />, `onEditPersistError`, <PropLink name="onEditAccepted" />, <PropLink name="onEditRejected" />, `onEditCancelled`) when the edit itself moves or removes the row — for example editing the value the grid is grouped by, so the row leaves a single-row group and the row count shrinks.

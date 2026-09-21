@@ -1,8 +1,19 @@
 import { computeResize, FlexComputeResizeResult } from '../../../../flexbox';
+import { getScrollbarWidth } from '../../../../utils/getScrollbarWidth';
 import type {
   InfiniteTableComputedColumn,
   InfiniteTablePropColumnSizing,
 } from '../../../types';
+
+/**
+ * The space the columns are laid out in - the same value `getComputedColumns`
+ * feeds to the flex algorithm (body width minus the vertical scrollbar), so
+ * the resize computation can tell whether the flex columns have any space to
+ * flex into.
+ */
+export function getResizeAvailableSize(bodySize: { width: number }) {
+  return Math.max(bodySize.width - getScrollbarWidth(), 0);
+}
 
 export type ColumnResizeContext<T> = {
   getState: () => {
@@ -58,7 +69,7 @@ export function computeColumnResizeForDiff<T>(options: {
 
   return computeResize({
     shareSpaceOnResize,
-    availableSize: bodySize.width,
+    availableSize: getResizeAvailableSize(bodySize),
     reservedWidth: viewportReservedWidth || 0,
     dragHandleOffset: diff,
     dragHandlePositionAfter: column.computedVisibleIndex,

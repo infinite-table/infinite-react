@@ -144,6 +144,10 @@ export const ResizeHandle = defineComponent({
 
         restoreRenderRange();
 
+        // reset the drag-preview CSS vars to the committed sizes so the DOM
+        // matches state even when the resize leaves computed columns unchanged
+        resizer.resize(0);
+
         props.onResize({ diff: adjustedDiff, shareSpaceOnResize });
       };
 

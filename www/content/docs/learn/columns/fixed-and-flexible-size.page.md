@@ -46,6 +46,8 @@ The <PropLink name="columnSizing" /> prop is an object of column ids to column s
 
 If a column is not specified in the <PropLink name="columnSizing" /> prop (or its uncontrolled variant), or sized otherwise (eg: via the column type), it will have a fixed size, defaulting to <PropLink name="columnDefaultWidth"/> (which also defaults to `200` if no value is passed in). You can also specify a <PropLink name="columnMinWidth" /> and <PropLink name="columnMaxWidth" /> - those will be applied for all columns (namely for those that dont explicitly specify other min/max widths).
 
+The <PropLink name="columnSizing" /> entry for a column is the actual sizing and takes precedence over the column's <PropLink name="columns.defaultWidth" /> and <PropLink name="columns.defaultFlex" /> - so `columnSizing.width` makes a column fixed even if it has a `defaultFlex`, and `columnSizing.flex` makes it flexible even if it has a `defaultWidth`.
+
 </Note>
 
 ```tsx
@@ -199,6 +201,14 @@ Initially they will occupy `200px` and `600px` respectively. If the user resizes
 ```
 
 since those are the actual widths measured from the DOM. This works out well, even if the available space of the table grows, as the proportions will be the same.
+
+</Note>
+
+<Note>
+
+There is one exception to flexible columns staying flexible: when the fixed columns alone already take up more than the available width, the flexible columns have no space to flex into and sit at their minimum width. Resizing a flexible column in this state gives it a fixed <PropLink name="columnSizing.width">width</PropLink> instead (the `flex` is dropped), since a flex value cannot represent the size the user asked for. In the example above, if `first` were the only flexible column and the fixed columns overflowed the viewport, resizing it to `150px` would call <PropLink name="onColumnSizingChange" /> with `{ first: { width: 150 } }`.
+
+Resizing always produces integer pixel sizes.
 
 </Note>
 

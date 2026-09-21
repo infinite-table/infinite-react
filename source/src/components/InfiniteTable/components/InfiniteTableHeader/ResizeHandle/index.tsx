@@ -140,6 +140,12 @@ function ResizeHandleFn<T>(props: ResizeHandleProps<T>) {
 
       restoreRenderRange();
 
+      // the drag preview wrote the CSS vars straight to the DOM - put them
+      // back to the committed sizes so the DOM always matches state, even
+      // when the resize ends up not changing the computed columns (the
+      // re-render only sets vars whose value changed)
+      resizer.resize(0);
+
       props.onResize({ diff: adjustedDiff, shareSpaceOnResize });
     };
 

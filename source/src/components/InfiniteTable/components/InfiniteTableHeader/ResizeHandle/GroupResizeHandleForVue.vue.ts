@@ -129,6 +129,10 @@ export const GroupResizeHandle = defineComponent({
         const diff = Math.round(e.clientX - initialX);
         const adjustedDiff = resizeDiff(diff);
 
+        // reset the drag-preview CSS vars to the committed sizes - see the
+        // same step in ResizeHandleForVue
+        resizer.resize(props.groupColumns.map(() => 0));
+
         props.onResize(adjustedDiff);
       };
 

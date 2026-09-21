@@ -14,6 +14,7 @@ import type { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTable
 
 import { useInfiniteTableContext } from '../../InfiniteTableContextForVue.vue';
 import { GroupResizeHandle } from './ResizeHandle/GroupResizeHandleForVue.vue';
+import { getResizeAvailableSize } from './ResizeHandle/columnResizeShared';
 
 import { HeaderGroupCls } from './header.css';
 
@@ -89,7 +90,7 @@ export const InfiniteTableHeaderGroup = defineComponent({
         : columnSizing;
 
       return computeGroupResize({
-        availableSize: bodySize.width,
+        availableSize: getResizeAvailableSize(bodySize),
         reservedWidth: viewportReservedWidth || 0,
         dragHandleOffset: diff,
         dragHandlePositionAfter: lastColumnInGroup.computedVisibleIndex,

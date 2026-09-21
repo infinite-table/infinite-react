@@ -387,15 +387,27 @@ export const getComputedColumns = <T extends unknown>({
       width: colType?.defaultWidth,
       flex: colType?.defaultFlex,
     };
-    let colSizing = assignNonNull(
-      {
-        width: column?.defaultWidth,
-        flex: column?.defaultFlex,
-        minWidth: column?.minWidth,
-        maxWidth: column?.maxWidth,
-      },
-      columnSizing[colId],
-    );
+    const colDefaultSizing: InfiniteTableColumnSizingOptions = {
+      width: column?.defaultWidth,
+      flex: column?.defaultFlex,
+      minWidth: column?.minWidth,
+      maxWidth: column?.maxWidth,
+    };
+    const colSizingFromProp = columnSizing[colId];
+
+    // `columnSizing` is the actual sizing, `defaultWidth`/`defaultFlex` are
+    // just defaults - so when the sizing says `width` (and no flex), the
+    // column's default flex must not survive the merge and win over it
+    // (this is how a flex column ends up with a fixed width after a resize
+    // when there is no space to flex into). Same for `flex` vs default width.
+    if (colSizingFromProp?.width != null && colSizingFromProp.flex == null) {
+      delete colDefaultSizing.flex;
+    }
+    if (colSizingFromProp?.flex != null && colSizingFromProp.width == null) {
+      delete colDefaultSizing.width;
+    }
+
+    let colSizing = assignNonNull(colDefaultSizing, colSizingFromProp);
 
     // if colSizing has width
     if (colSizing.width != null) {

@@ -272,6 +272,69 @@ function resizeClamp(
   return { value, clamped: false, diff: 0 };
 }
 
+type ResizeSizingProperty = 'flex' | 'width';
+
+/**
+ * True when the flex columns are pinned at their min width because the fixed
+ * columns alone already exceed the space available for columns. In that
+ * state, the flex algorithm has nothing to distribute, so adjusting `flex`
+ * values (or the reserved width) has no visible effect on any column.
+ *
+ * The comparison is done on integers - `computeFlex` hands the last flex item
+ * exactly the remaining space, so outside the deficit case the two sides are
+ * equal (modulo float noise).
+ */
+function hasFlexDeficit(
+  items: FlexComputeResizeItem[],
+  availableSize: number,
+  reservedWidth: number,
+) {
+  let hasFlex = false;
+  let totalWidth = 0;
+
+  for (const item of items) {
+    if (item.computedFlex) {
+      hasFlex = true;
+    }
+    totalWidth += item.computedWidth;
+  }
+
+  return (
+    hasFlex && Math.round(totalWidth) > Math.round(availableSize - reservedWidth)
+  );
+}
+
+/**
+ * Which sizing property a resize writes for an item.
+ *
+ * Flex items keep their flex (the new value being the pixel width, see
+ * #advancedcolumnresizing) - unless the flex columns have no space to flex
+ * into, in which case a flex value cannot represent the size the user asked
+ * for, so the item gets a fixed width instead.
+ */
+function getResizeSizingProperty(
+  item: FlexComputeResizeItem,
+  flexDeficit: boolean,
+): ResizeSizingProperty {
+  return item.computedFlex && !flexDeficit ? 'flex' : 'width';
+}
+
+/**
+ * `flex` wins over `width` when both are present in a column sizing entry, so
+ * writing a width has to drop any flex the entry carried.
+ */
+function withResizedSize(
+  entry: InfiniteTablePropColumnSizing[string] | undefined,
+  property: ResizeSizingProperty,
+  size: number,
+): InfiniteTablePropColumnSizing[string] {
+  if (property === 'width') {
+    const { flex: _flex, ...rest } = entry ?? {};
+    return { ...rest, width: size };
+  }
+  return { ...entry, flex: size };
+}
+
 export const computeResize = (
   params: FlexComputeResizeParams,
 ): FlexComputeResizeResult => {
@@ -300,29 +363,39 @@ export const computeResize = (
   const firstId = firstItem.id;
   const secondId = secondItem?.id;
 
+  const flexDeficit = hasFlexDeficit(
+    params.items,
+    availableSize,
+    reservedWidth,
+  );
+
   // the computed width holds the actual size
   const firstSize = firstItem.computedWidth;
   const firstMinSize = firstItem.computedMinWidth;
   const firstMaxSize = firstItem.computedMaxWidth;
   // even though if flex is present, we use it to determine which property to put in the result
-  const firstPropertyToAdjust = firstItem.computedFlex ? 'flex' : 'width';
+  const firstPropertyToAdjust = getResizeSizingProperty(firstItem, flexDeficit);
 
   const secondSize = secondItem?.computedWidth;
   const secondMinSize = secondItem?.computedMinWidth;
   const secondMaxSize = secondItem?.computedMaxWidth;
-  const secondPropertyToAdjust = secondItem?.computedFlex ? 'flex' : 'width';
+  const secondPropertyToAdjust = secondItem
+    ? getResizeSizingProperty(secondItem, flexDeficit)
+    : 'width';
 
   let maxReached = false;
   let minReached = false;
 
   const direction = dragHandleOffset > 0 ? 1 : -1;
 
+  // resizing only produces integer sizes - computed widths can be fractional
+  // (the last flex column takes whatever space is left), so round the target
   let {
     value: firstAdjustedSize,
     clamped: firstClamped,
     diff: firstDiff,
   } = resizeClamp(
-    firstSize + dragHandleOffset,
+    Math.round(firstSize + dragHandleOffset),
     firstMinSize,
     firstMaxSize,
     direction,
@@ -331,10 +404,11 @@ export const computeResize = (
   if (params.shareSpaceOnResize) {
     // there's no item on the right side of the handle
     if (secondItem == null) {
-      columnSizing[firstId] = {
-        ...columnSizing[firstId],
-        [firstPropertyToAdjust]: firstAdjustedSize,
-      };
+      columnSizing[firstId] = withResizedSize(
+        columnSizing[firstId],
+        firstPropertyToAdjust,
+        firstAdjustedSize,
+      );
 
       minReached = firstClamped === 'min';
       maxReached = firstClamped === 'max';
@@ -354,7 +428,7 @@ export const computeResize = (
       clamped: secondClamped,
       diff: secondDiff,
     } = resizeClamp(
-      secondSize - dragHandleOffset,
+      Math.round(secondSize - dragHandleOffset),
       secondMinSize,
       secondMaxSize,
       direction,
@@ -376,7 +450,7 @@ export const computeResize = (
       //this is the happy case, so all good
     } else if (firstClamped) {
       const clampResultForSecond = resizeClamp(
-        secondSize - dragHandleOffset - firstDiff,
+        Math.round(secondSize - dragHandleOffset - firstDiff),
         secondMinSize,
         secondMaxSize,
         direction,
@@ -386,7 +460,7 @@ export const computeResize = (
       secondDiff = clampResultForSecond.diff;
     } else if (secondClamped) {
       const clampResultForFirst = resizeClamp(
-        firstSize + dragHandleOffset + secondDiff,
+        Math.round(firstSize + dragHandleOffset + secondDiff),
         firstMinSize,
         firstMaxSize,
         direction,
@@ -396,22 +470,25 @@ export const computeResize = (
       firstDiff = clampResultForFirst.diff;
     }
 
-    columnSizing[firstId] = {
-      ...columnSizing[firstId],
-      [firstPropertyToAdjust]: firstAdjustedSize,
-    };
-    columnSizing[secondId] = {
-      ...columnSizing[secondId],
-      [secondPropertyToAdjust]: secondAdjustedSize,
-    };
+    columnSizing[firstId] = withResizedSize(
+      columnSizing[firstId],
+      firstPropertyToAdjust,
+      firstAdjustedSize,
+    );
+    columnSizing[secondId] = withResizedSize(
+      columnSizing[secondId],
+      secondPropertyToAdjust,
+      secondAdjustedSize,
+    );
 
     minReached = firstClamped === 'min' || secondClamped === 'min';
     maxReached = firstClamped === 'max' || secondClamped === 'max';
   } else {
-    columnSizing[firstId] = {
-      ...columnSizing[firstId],
-      [firstPropertyToAdjust]: firstAdjustedSize,
-    };
+    columnSizing[firstId] = withResizedSize(
+      columnSizing[firstId],
+      firstPropertyToAdjust,
+      firstAdjustedSize,
+    );
 
     minReached = firstClamped === 'min';
     maxReached = firstClamped === 'max';
@@ -421,7 +498,7 @@ export const computeResize = (
   return {
     adjustedDiff,
     reservedWidth: !params.shareSpaceOnResize
-      ? reservedWidth - adjustedDiff
+      ? Math.round(reservedWidth - adjustedDiff)
       : reservedWidth,
     columnSizing,
     minReached,
@@ -471,9 +548,15 @@ export const computeGroupResize = (
   // the computed width holds the actual size
   const beforeSizes = beforeItems.map((item) => item.computedWidth);
 
+  const flexDeficit = hasFlexDeficit(
+    params.items,
+    availableSize,
+    reservedWidth,
+  );
+
   // even though if flex is present, we use it to determine which property to put in the result
   const beforePropertiesToAdjust = beforeItems.map((item) =>
-    item.computedFlex ? 'flex' : 'width',
+    getResizeSizingProperty(item, flexDeficit),
   );
 
   let unresizableWidth = 0;
@@ -530,10 +613,11 @@ export const computeGroupResize = (
       },
     );
 
-    columnSizing[item.id] = {
-      ...currentColumnSizing[item.id],
-      [propertyToAdjust]: itemSize + adjustedDiff,
-    };
+    columnSizing[item.id] = withResizedSize(
+      currentColumnSizing[item.id],
+      propertyToAdjust,
+      Math.round(itemSize + adjustedDiff),
+    );
 
     adjustedDiffs.push(adjustedDiff);
 
@@ -557,6 +641,6 @@ export const computeGroupResize = (
     adjustedDiffs,
     adjustedDiff,
     columnSizing,
-    reservedWidth: reservedWidth - adjustedDiff,
+    reservedWidth: Math.round(reservedWidth - adjustedDiff),
   };
 };

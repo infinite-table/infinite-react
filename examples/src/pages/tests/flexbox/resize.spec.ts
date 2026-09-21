@@ -558,6 +558,154 @@ test.describe.parallel('resize normal', () => {
   });
 });
 
+/**
+ * When the fixed columns alone exceed the available size, flex columns sit at
+ * their min width and there is nothing left to flex into - so a resized flex
+ * column gets a fixed width instead of a (meaningless) flex value.
+ */
+test.describe.parallel('resize flex columns with no space to flex', () => {
+  const flexItem = (id: string, width: number) => ({
+    id,
+    computedWidth: width,
+    computedFlex: width,
+    computedMinWidth: 30,
+    computedMaxWidth: 10_000,
+  });
+  const fixedItem = (id: string, width: number) => ({
+    id,
+    computedWidth: width,
+    computedFlex: 0,
+    computedMinWidth: 30,
+    computedMaxWidth: 10_000,
+  });
+
+  test('resized flex column becomes a fixed width column', () => {
+    const result = computeResize({
+      // a is min-clamped: 30 + 200 + 200 = 430 > 300
+      columnSizing: { a: { flex: 30 } },
+      availableSize: 300,
+      reservedWidth: 0,
+      dragHandleOffset: 100,
+      dragHandlePositionAfter: 0,
+      shareSpaceOnResize: false,
+      items: [flexItem('a', 30), fixedItem('b', 200), fixedItem('c', 200)],
+    });
+
+    expect(result).toMatchObject({
+      adjustedDiff: 100,
+      reservedWidth: -100,
+      constrained: false,
+    });
+    // width, and no flex left behind - flex would win over width
+    expect(result.columnSizing.a).toEqual({ width: 130 });
+  });
+
+  test('flex is kept when the columns fit the available size', () => {
+    const items = [flexItem('a', 30), fixedItem('b', 200), fixedItem('c', 200)];
+
+    let result = computeResize({
+      columnSizing: { a: { flex: 30 } },
+      availableSize: 430,
+      reservedWidth: 0,
+      dragHandleOffset: 100,
+      dragHandlePositionAfter: 0,
+      shareSpaceOnResize: false,
+      items,
+    });
+    expect(result.columnSizing.a).toEqual({ flex: 130 });
+
+    // a negative reserved width (from earlier resizes) also counts as space
+    result = computeResize({
+      columnSizing: { a: { flex: 30 } },
+      availableSize: 300,
+      reservedWidth: -130,
+      dragHandleOffset: 100,
+      dragHandlePositionAfter: 0,
+      shareSpaceOnResize: false,
+      items,
+    });
+    expect(result.columnSizing.a).toEqual({ flex: 130 });
+  });
+
+  test('share space: a min-clamped flex neighbour also gets a fixed width', () => {
+    const result = computeResize({
+      columnSizing: { b: { flex: 30 } },
+      availableSize: 200,
+      reservedWidth: 0,
+      dragHandleOffset: -50,
+      dragHandlePositionAfter: 0,
+      shareSpaceOnResize: true,
+      items: [fixedItem('a', 200), flexItem('b', 30)],
+    });
+
+    expect(result).toMatchObject({
+      adjustedDiff: -50,
+      reservedWidth: 0,
+    });
+    expect(result.columnSizing.a).toEqual({ width: 150 });
+    expect(result.columnSizing.b).toEqual({ width: 80 });
+  });
+
+  test('group resize: min-clamped flex columns in the group get fixed widths', () => {
+    const result = computeGroupResize({
+      columnSizing: { a: { flex: 30 }, b: { flex: 30 } },
+      availableSize: 200,
+      reservedWidth: 0,
+      dragHandleOffset: 60,
+      dragHandlePositionAfter: 1,
+      columnGroupSize: 2,
+      items: [
+        { ...flexItem('a', 30), resizable: true },
+        { ...flexItem('b', 30), resizable: true },
+        { ...fixedItem('c', 300), resizable: true },
+      ],
+    });
+
+    expect(result).toMatchObject({
+      adjustedDiffs: [30, 30],
+      reservedWidth: -60,
+    });
+    expect(result.columnSizing.a).toEqual({ width: 60 });
+    expect(result.columnSizing.b).toEqual({ width: 60 });
+  });
+});
+
+test.describe.parallel('resize produces integer sizes', () => {
+  test('fractional computed widths are rounded in the result', () => {
+    const result = computeResize({
+      columnSizing: { a: { flex: 100.4 } },
+      // 100.4 + 199.6 = 300 - the columns fit exactly, so flex is kept
+      availableSize: 300,
+      reservedWidth: 0,
+      dragHandleOffset: 10,
+      dragHandlePositionAfter: 0,
+      shareSpaceOnResize: false,
+      items: [
+        {
+          id: 'a',
+          computedWidth: 100.4,
+          computedFlex: 100.4,
+          computedMinWidth: 30,
+          computedMaxWidth: 10_000,
+        },
+        {
+          id: 'b',
+          computedWidth: 199.6,
+          computedFlex: 0,
+          computedMinWidth: 30,
+          computedMaxWidth: 10_000,
+        },
+      ],
+    });
+
+    expect(result.columnSizing.a).toEqual({ flex: 110 });
+    expect(Number.isInteger(result.reservedWidth)).toBe(true);
+    expect(result.reservedWidth).toBe(-10);
+    // the preview moves by the rounded amount
+    expect(result.adjustedDiff).toBeCloseTo(9.6);
+  });
+});
+
 test.describe.parallel('group resize', () => {
   test('should do group resize with distributing space by percentage of current space', () => {
     const testData = {
