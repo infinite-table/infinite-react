@@ -235,6 +235,35 @@ describe('Vue DataSource', () => {
     harness.unmount();
   });
 
+  test('a new filterTypes object with the same content does not refetch', async () => {
+    const dataFn = jest.fn(() => Promise.resolve({ data: [...people] }));
+    const makeFilterTypes = () => ({
+      custom: {
+        emptyValues: [''],
+        defaultOperator: 'eq',
+        operators: [{ name: 'eq', fn: () => true }],
+      },
+    });
+
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: dataFn,
+      filterTypes: makeFilterTypes(),
+    });
+    await flush();
+    expect(dataFn).toHaveBeenCalledTimes(1);
+
+    await harness.setProps({
+      primaryKey: 'id',
+      data: dataFn,
+      filterTypes: makeFilterTypes(),
+    });
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(1);
+    harness.unmount();
+  });
+
   test('onDataParamsChange fires initially and the api is exposed via onReady', async () => {
     const onDataParamsChange = jest.fn();
     const onReady = jest.fn();

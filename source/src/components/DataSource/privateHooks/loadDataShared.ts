@@ -437,6 +437,55 @@ export function computeFilterValueForRemote<T>(
   );
 }
 
+/**
+ * Memoizes `computeFilterValueForRemote` on its inputs. It builds a new array
+ * on every call, and the result is a data-loading dependency - so when only
+ * `filterTypes` or `filterMode` changed (eg an inline `filterTypes` prop) and
+ * the remote filter value is the same, the previous identity is kept.
+ */
+export function createRemoteFilterValueMemo<T>() {
+  let prev:
+    | {
+        filterValue: DataSourceState<T>['filterValue'];
+        filterTypes: DataSourceState<T>['filterTypes'];
+        filterMode: DataSourceState<T>['filterMode'];
+        result: DataSourceState<T>['filterValue'];
+      }
+    | undefined;
+
+  return (
+    filterValue: DataSourceState<T>['filterValue'],
+    filterTypes: DataSourceState<T>['filterTypes'],
+    filterMode: DataSourceState<T>['filterMode'],
+  ) => {
+    if (
+      prev &&
+      prev.filterValue === filterValue &&
+      prev.filterTypes === filterTypes &&
+      prev.filterMode === filterMode
+    ) {
+      return prev.result;
+    }
+
+    let result = computeFilterValueForRemote(filterValue, {
+      filterTypes,
+      filterMode,
+    });
+
+    if (
+      prev &&
+      prev.filterValue === filterValue &&
+      JSON.stringify(prev.result) === JSON.stringify(result)
+    ) {
+      result = prev.result;
+    }
+
+    prev = { filterValue, filterTypes, filterMode, result };
+
+    return result;
+  };
+}
+
 const getRafPromise = () =>
   new Promise((resolve) => {
     raf(resolve);
@@ -460,6 +509,23 @@ export function getDetailReady(
     isDetail,
     isDetailReady,
   };
+}
+
+/**
+ * Whether the first root batch - the one a non-append `loadData` call requests
+ * in lazy mode - is already marked as requested in the batch cache.
+ */
+export function isFirstLazyBatchRequested<T>(
+  componentState: DataSourceState<T>,
+) {
+  const { lazyLoad, lazyLoadBatchSize, lazyLoadCacheOfLoadedBatches } =
+    componentState;
+  return (
+    !!lazyLoad &&
+    !!lazyLoadBatchSize &&
+    lazyLoadBatchSize > 0 &&
+    lazyLoadCacheOfLoadedBatches.has([0] as any[])
+  );
 }
 
 export function lazyLoadRange<T>(

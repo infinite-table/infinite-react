@@ -148,6 +148,46 @@ describe('Vue DataSource lazy load + livePagination', () => {
     expect(calls.length).toBe(callCountAfter);
   });
 
+  test('with shouldReloadData, a sort change requests the first batch only once', async () => {
+    const TOTAL = 100;
+    const BATCH = 50;
+
+    const data = jest.fn((params: any) => {
+      const start = params.lazyLoadStartIndex ?? 0;
+      return Promise.resolve({
+        data: Array.from({ length: Math.min(BATCH, TOTAL - start) }, (_, i) =>
+          makePerson(start + i),
+        ),
+        totalCount: TOTAL,
+      });
+    });
+
+    await mount({
+      data,
+      lazyLoad: { batchSize: BATCH },
+      shouldReloadData: {
+        sortInfo: true,
+        filterValue: true,
+        groupBy: true,
+        pivotBy: true,
+      },
+      defaultSortInfo: [],
+    });
+    await flush(50);
+
+    expect(data).toHaveBeenCalledTimes(1);
+
+    (globalThis as any).dataSourceActions.sortInfo = [
+      { field: 'name', dir: 1 },
+    ];
+    await flush(50);
+
+    expect(data).toHaveBeenCalledTimes(2);
+    const lastParams = data.mock.calls[1][0];
+    expect(lastParams.lazyLoadStartIndex).toBe(0);
+    expect(lastParams.sortInfo).toMatchObject([{ field: 'name', dir: 1 }]);
+  });
+
   test('livePagination appends pages while rows do not fill the viewport', async () => {
     const PAGE_SIZE = 5;
     const MAX_ROWS = 15;

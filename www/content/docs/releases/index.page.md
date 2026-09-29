@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.1.3 
+
+Fix DataSource: no duplicate first-batch load on sort in lazy mode, no refetch on inline filterTypes identity changes
+
 ## 9.1.2
 
 Fix resizing a flex column when the fixed columns already overflow the viewport. The resized column now gets a fixed <PropLink name="columnSizing.width">width</PropLink> instead of a flex value in that case.

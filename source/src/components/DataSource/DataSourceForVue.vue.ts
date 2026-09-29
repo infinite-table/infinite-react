@@ -25,8 +25,9 @@ import { getDataSourceApi } from './getDataSourceApi';
 import {
   loadData,
   buildDataSourceDataParams,
-  computeFilterValueForRemote,
+  createRemoteFilterValueMemo,
   getDetailReady,
+  isFirstLazyBatchRequested,
   lazyLoadRange,
 } from './privateHooks/loadDataShared';
 import { DeepMap } from '../../utils/DeepMap';
@@ -211,8 +212,9 @@ function useLazyLoadRangeForVue<T>(options: {
   state: ShallowRef<DataSourceState<T>>;
   getDataSourceState: () => DataSourceState<T>;
   dataSourceActions: DataSourceComponentActions<T>;
+  reloadedRef: { current: boolean };
 }) {
-  const { state, getDataSourceState, dataSourceActions } = options;
+  const { state, getDataSourceState, dataSourceActions, reloadedRef } = options;
 
   // cache reset on data/dataParams changes
   watchWithChanges(
@@ -341,6 +343,11 @@ function useLazyLoadRangeForVue<T>(options: {
 
         loadRange(notifyRenderRangeChange.get(), {
           dismissLoadedRows: true,
+        });
+        // only for the data-loading watcher of the current flush
+        reloadedRef.current = true;
+        Promise.resolve().then(() => {
+          reloadedRef.current = false;
         });
       } else {
         // when there are changes in lazily loaded data or group row state
@@ -499,23 +506,10 @@ function useLoadDataForVue<T>(options: {
     }
   });
 
-  // mirrors the [filterValue, filterMode, filterTypes] useMemo
-  let filterMemoInputs: any[] = [];
-  let filterMemoResult: any = null;
+  const getRemoteFilterValue = createRemoteFilterValueMemo<T>();
   const getComputedFilterValue = () => {
     const { filterValue, filterMode, filterTypes } = state.value;
-    const inputs = [filterValue, filterMode, filterTypes];
-    if (
-      inputs.length !== filterMemoInputs.length ||
-      inputs.some((input, index) => input !== filterMemoInputs[index])
-    ) {
-      filterMemoInputs = inputs;
-      filterMemoResult = computeFilterValueForRemote(filterValue, {
-        filterTypes,
-        filterMode,
-      });
-    }
-    return filterMemoResult;
+    return getRemoteFilterValue(filterValue, filterTypes, filterMode);
   };
 
   const getDepsObject = () => {
@@ -542,11 +536,15 @@ function useLoadDataForVue<T>(options: {
     };
   };
 
+  // set by the lazy-range watcher when it reloads batches in the current flush
+  const lazyRangeReloadedRef = { current: false };
+
   // lazyLoad batching (render-range driven loading)
   useLazyLoadRangeForVue<T>({
     state,
     getDataSourceState,
     dataSourceActions,
+    reloadedRef: lazyRangeReloadedRef,
   });
 
   // DS001 devtools warning: too many data changes in a short time
@@ -635,6 +633,15 @@ function useLoadDataForVue<T>(options: {
 
       const componentState = getDataSourceState();
       if (typeof componentState.data === 'function') {
+        // the lazy-range reload of this flush already requested the first root
+        // batch (with the same params) - don't request it twice
+        if (
+          lazyRangeReloadedRef.current &&
+          !appendWhenLivePagination &&
+          isFirstLazyBatchRequested(componentState)
+        ) {
+          return;
+        }
         loadData(
           componentState.data,
           componentState,

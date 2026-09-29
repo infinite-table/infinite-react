@@ -21,8 +21,9 @@ import { logDevToolsWarning } from '../../../utils/debugModeUtils';
 import { DevToolsMarker, getMarker } from '../../../utils/devTools';
 import {
   buildDataSourceDataParams,
-  computeFilterValueForRemote,
+  createRemoteFilterValueMemo,
   getDetailReady,
+  isFirstLazyBatchRequested,
   lazyLoadRange,
   loadData,
 } from './loadDataShared';
@@ -143,12 +144,15 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
     }
   }, [scrollbars.vertical]);
 
-  const computedFilterValue = useMemo(() => {
-    return computeFilterValueForRemote(filterValue, {
-      filterTypes,
-      filterMode,
-    });
-  }, [filterValue, filterMode, filterTypes]);
+  const getRemoteFilterValue = useMemo(
+    () => createRemoteFilterValueMemo<T>(),
+    [],
+  );
+  const computedFilterValue = getRemoteFilterValue(
+    filterValue,
+    filterTypes,
+    filterMode,
+  );
 
   const depsObject = {
     // #sortMode_vs_shouldReloadData.sortInfo
@@ -162,14 +166,21 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
   const initialRef = useRef(true);
 
-  useLazyLoadRange<T>(options, {
-    sortInfo,
-    groupBy,
-    pivotBy,
-    filterValue,
-    refetchKey,
-    cursorId: livePagination ? stateCursorId : null,
-  });
+  // true only while the effects of the current commit run - see the reset effect below
+  const lazyRangeReloadedRef = useRef(false);
+
+  useLazyLoadRange<T>(
+    options,
+    {
+      sortInfo,
+      groupBy,
+      pivotBy,
+      filterValue,
+      refetchKey,
+      cursorId: livePagination ? stateCursorId : null,
+    },
+    lazyRangeReloadedRef,
+  );
 
   const getMasterContext = useGetMasterDetailContext();
 
@@ -260,6 +271,15 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
       const componentState = getDataSourceState();
       if (typeof componentState.data === 'function') {
+        // the lazy-range reload of this commit already requested the first root
+        // batch (with the same params) - don't request it twice
+        if (
+          lazyRangeReloadedRef.current &&
+          !appendWhenLivePagination &&
+          isFirstLazyBatchRequested(componentState)
+        ) {
+          return;
+        }
         let marker: DevToolsMarker | undefined;
 
         if (componentState.debugId) {
@@ -282,6 +302,10 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
     },
     { ...depsObject, data },
   );
+
+  useEffect(() => {
+    lazyRangeReloadedRef.current = false;
+  });
 
   // only for initial triggering `onDataParamsChange`
   useEffectWithChanges(() => {
@@ -312,6 +336,7 @@ type LazyLoadDeps<T> = Partial<{
 function useLazyLoadRange<T>(
   options: LoadDataOptions<T>,
   dependencies: LazyLoadDeps<T>,
+  reloadedRef: { current: boolean },
 ) {
   const { getDataSourceState, dataSourceActions, dataSourceState } = options;
 
@@ -414,6 +439,7 @@ function useLazyLoadRange<T>(
           loadRange(notifyRenderRangeChange.get(), {
             dismissLoadedRows: true,
           });
+          reloadedRef.current = true;
         } else {
           // when there is changes in lazily loaded data or group row state
           // we need to trigger another loadRange immediately,
