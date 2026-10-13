@@ -20,5 +20,16 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "alasql": {
+      "form-data": "4.0.6"
+    },
+    "form-data": {
+      "form-data": "4.0.6"
+    },
+    "request": {
+      "form-data": "4.0.6"
+    }
+  }
 }
