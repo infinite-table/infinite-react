@@ -5,7 +5,7 @@ description: All releases | Infinite Table DataGrid for React
 
 ## 9.1.4
 
-The `Columns` and `Group by` submenus of the default column menu now use the custom <PropLink name="components.CheckBox" /> component, when one is specified.
+The `Columns` and `Group by` sub-menus of the default column menu now use the custom <PropLink name="components.CheckBox" /> component, when one is specified.
 
 ## 9.1.3 
 

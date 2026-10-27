@@ -129,7 +129,8 @@ jobs:
   run-tests:
     # needs: npm-install
     name: Run tests
-    runs-on: ubuntu-latest
+    # Playwright 1.52 can't install browsers on ubuntu-26.04 (current ubuntu-latest)
+    runs-on: ubuntu-24.04
     permissions:
       contents: write # Needed to push performance baseline updates
     env:
