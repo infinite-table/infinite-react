@@ -41,11 +41,6 @@ jobs:
           npm --version
 
       - uses: './.github/actions/will-release-check'
-        # env:
-        #   NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
-
-      # - name: Echo whoami on public npm registry
-      #   run: npm whoami
 
       - name: Echo publish cmd
         run: echo $WILL_RELEASE_CMD
