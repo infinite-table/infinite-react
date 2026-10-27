@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.1.4
+
+The `Columns` and `Group by` submenus of the default column menu now use the custom <PropLink name="components.CheckBox" /> component, when one is specified.
+
 ## 9.1.3 
 
 Fix DataSource: no duplicate first-batch load on sort in lazy mode, no refetch on inline filterTypes identity changes

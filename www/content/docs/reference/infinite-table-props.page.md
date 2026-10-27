@@ -745,7 +745,7 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 The following components can be overridden:
 
 - `LoadMask` - see <PropLink name="components.LoadMask" />
-- `CheckBox`
+- `CheckBox` - see <PropLink name="components.CheckBox" />
 - `Menu`
 - `MenuIcon`
 
@@ -769,6 +769,26 @@ For more components that can be overriden, see <PropLink name="components" />
 ```
 
 </Sandpack>
+
+</Prop>
+
+<Prop name="components.CheckBox">
+
+> Allows customising the checkbox rendered by the DataGrid.
+
+The custom component is used for:
+
+- the row selection checkboxes in column cells and the select-all checkbox in column headers
+- the checkboxes in the `Columns` and `Group by` submenus of the default column menu
+
+The component receives the following props:
+
+- `checked` - `true`, `false` or `null` (for indeterminate)
+- `disabled` - `boolean`
+- `onChange(checked)` - call it with the new checked value when the user toggles the checkbox
+- `domProps` - DOM props to spread on the root element
+
+For more components that can be overriden, see <PropLink name="components" />
 
 </Prop>
 <Prop name="columns.renderTreeIcon" type="boolean|(cellContext) => ReactNode">

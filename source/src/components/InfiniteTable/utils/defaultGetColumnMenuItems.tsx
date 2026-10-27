@@ -36,7 +36,10 @@ export function defaultGetColumnMenuItems<T>(
     dataSourceActions: DataSourceComponentActions<T>;
   },
 ): MenuProps['items'] {
-  const { columnApi, column, getComputed, api, dataSourceApi } = params;
+  const { columnApi, column, getComputed, api, dataSourceApi, getState } =
+    params;
+
+  const CheckBoxCmp = getState().components?.CheckBox || InfiniteCheckBox;
 
   const sortable = columnApi.isSortable();
 
@@ -138,7 +141,7 @@ export function defaultGetColumnMenuItems<T>(
             label,
 
             check: (
-              <InfiniteCheckBox
+              <CheckBoxCmp
                 key={col.id}
                 disabled={
                   col.computedVisible && api.getVisibleColumnsCount() === 1
@@ -154,7 +157,7 @@ export function defaultGetColumnMenuItems<T>(
                     api.realignColumnContextMenu();
                   });
                 }}
-              ></InfiniteCheckBox>
+              ></CheckBoxCmp>
             ),
           });
         });
@@ -191,14 +194,14 @@ export function defaultGetColumnMenuItems<T>(
             label,
 
             check: (
-              <InfiniteCheckBox
+              <CheckBoxCmp
                 key={col.id}
                 disabled={!col.computedGroupable}
                 checked={col.computedGroupedBy}
                 onChange={() => {
                   dataSourceApi.toggleGroupByField(col.field as keyof T);
                 }}
-              ></InfiniteCheckBox>
+              ></CheckBoxCmp>
             ),
           });
         });
