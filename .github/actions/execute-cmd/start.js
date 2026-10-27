@@ -5,7 +5,11 @@ const exec = (cmd, args = []) =>
   new Promise((resolve, reject) => {
     console.log(`Started: ${cmd} ${args.join(' ')}`);
     const app = spawn(cmd, args, { stdio: 'inherit' });
-    app.on('close', resolve);
+    app.on('close', (code) =>
+      code === 0
+        ? resolve()
+        : reject(new Error(`${cmd} exited with code ${code}`)),
+    );
     app.on('error', reject);
   });
 
