@@ -25,7 +25,14 @@ export type RowSelectionStateConfig<T> = {
   groupBy: DataSourceState<T>['groupBy'];
   groupDeepMap: DataSourceState<T>['groupDeepMap'];
   toPrimaryKey: DataSourceState<T>['toPrimaryKey'];
+  /**
+   * The count of all the rows - for lazy load, after the (remote) filter
+   */
   totalCount: number;
+  /**
+   * Lazy load: the count of all the rows without the filter, when the server sends it
+   */
+  lazyUnfilteredCount?: number;
   indexer: DataSourceState<T>['indexer'];
   lazyLoad: boolean;
   onlyUsePrimaryKeys: boolean;
@@ -230,9 +237,47 @@ export class RowSelectionState<T = any> {
     this.xcache();
   }
 
+  /**
+   * Lazy load, when the selection also acts on rows that are filtered out:
+   * the count of all the rows inside the group without the filter, if the server sent it
+   */
+  private getLazyUnfilteredCount(groupKeys: any[]): number | undefined {
+    const config = this.getConfig();
+    if (!config.lazyLoad || config.multiRowSelectionTarget === 'visible') {
+      return undefined;
+    }
+    if (!groupKeys.length) {
+      return config.lazyUnfilteredCount;
+    }
+    return config.groupDeepMap?.get(groupKeys)?.totalChildrenCountUnfiltered;
+  }
+
+  /**
+   * Lazy load, when the selection also acts on rows that are filtered out:
+   * the count of the rows inside the group (not at the last level) that are not inside
+   * its loaded groups - so the rows of the groups hidden by the filter or not loaded yet
+   */
+  public getLazyHiddenRowsCount(groupKeys: any[]): number {
+    const unfilteredCount =
+      groupKeys.length < this.getGroupByLength()
+        ? this.getLazyUnfilteredCount(groupKeys)
+        : undefined;
+    if (unfilteredCount === undefined) {
+      return 0;
+    }
+    const { groupDeepMap } = this.getConfig();
+    let childrenCount = 0;
+    this.getGroupKeysDirectlyInsideGroup(groupKeys).forEach((keys) => {
+      childrenCount +=
+        this.getLazyUnfilteredCount(keys) ??
+        (groupDeepMap?.get(keys)?.totalChildrenCount || 0);
+    });
+    return Math.max(unfilteredCount - childrenCount, 0);
+  }
+
   getGroupCount(groupKeys: any[]) {
     if (groupKeys.length == 0) {
-      return this.getConfig().totalCount;
+      return this.getLazyUnfilteredCount([]) ?? this.getConfig().totalCount;
     }
     if (this.targetsFilteredOutRows()) {
       return getUnfilteredGroups(this.getConfig()).get(groupKeys)?.count ?? 0;
@@ -243,7 +288,11 @@ export class RowSelectionState<T = any> {
       return 0;
     }
 
-    return deepMapValue.totalChildrenCount ?? (deepMapValue.items.length || 0);
+    return (
+      this.getLazyUnfilteredCount(groupKeys) ??
+      deepMapValue.totalChildrenCount ??
+      (deepMapValue.items.length || 0)
+    );
   }
 
   getGroupKeysDirectlyInsideGroup(groupKeys: any[]) {
@@ -944,11 +993,14 @@ export class RowSelectionState<T = any> {
     let selectedCount = 0;
     let deselectedCount = 0;
 
-    if (this.getConfig().lazyLoad && !allKeys.length) {
+    const { lazyLoad, groupDeepMap } = this.getConfig();
+
+    if (lazyLoad && !allKeys.length) {
       // no loaded rows under this group
       // so we need to somehow guess the selection
       const totalChildrenCount =
-        this.getConfig().groupDeepMap?.get(groupKeys)?.totalChildrenCount || 0;
+        this.getLazyUnfilteredCount(groupKeys) ??
+        (groupDeepMap?.get(groupKeys)?.totalChildrenCount || 0);
 
       if (parentSelected) {
         selectedCount = totalChildrenCount;
@@ -984,6 +1036,16 @@ export class RowSelectionState<T = any> {
       selectedCount += selCount;
       deselectedCount += deselCount;
     });
+
+    // their own selection is not known, so they take the selection of this group
+    const hiddenCount = allKeys.length
+      ? this.getLazyHiddenRowsCount(groupKeys)
+      : 0;
+    if (parentSelected) {
+      selectedCount += hiddenCount;
+    } else {
+      deselectedCount += hiddenCount;
+    }
 
     const result = {
       selectedCount,

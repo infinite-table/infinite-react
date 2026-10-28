@@ -65,6 +65,7 @@ type DataSourceStateForDataParams<T> = Pick<
   | 'filterMode'
   | 'filterTypes'
   | 'multiRowSelectionTarget'
+  | 'selectionMode'
 >;
 
 export function buildDataSourceDataParams<T>(
@@ -115,8 +116,10 @@ export function buildDataSourceDataParams<T>(
       dataSourceParams.lazyLoadStartIndex = 0;
     }
     dataSourceParams.groupKeys = [];
-    dataSourceParams.multiRowSelectionTarget =
-      componentState.multiRowSelectionTarget;
+    if (componentState.selectionMode === 'multi-row') {
+      dataSourceParams.multiRowSelectionTarget =
+        componentState.multiRowSelectionTarget;
+    }
   }
 
   if (overrides) {
@@ -220,7 +223,6 @@ export function loadData<T>(
         childrenAvailable: false,
         cache: CACHE_DEFAULT,
         totalCount: 0,
-        totalCountUnfiltered: 0,
       });
     }
     actions.originalLazyGroupDataChangeDetect = getChangeDetect();
@@ -289,7 +291,10 @@ export function loadData<T>(
             childrenLoading: false,
             childrenAvailable: true,
             totalCount: remoteData.totalCount ?? dataArray.length,
-            totalCountUnfiltered: remoteData.totalCount ?? dataArray.length,
+            // set even when missing, so a previous response's values are not kept
+            totalCountUnfiltered: remoteData.totalCountUnfiltered,
+            totalChildrenCountUnfiltered:
+              remoteData.totalChildrenCountUnfiltered,
             children: dataArray,
             error: remoteData.error,
           };

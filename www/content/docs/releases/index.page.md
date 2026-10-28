@@ -3,6 +3,12 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.3.0
+
+With <DPropLink name="lazyLoad" /> and <DPropLink name="multiRowSelectionTarget" />`="all"`, the selection checkboxes can count the rows that the filter hides. The <DPropLink name="data" /> function can return `totalChildrenCountUnfiltered` on group items and on the top-level group response, and `totalCountUnfiltered` for rows - a selected group with hidden rows that are not selected then shows as partly selected. See [multi selection with lazy load](/docs/learn/selection/row-selection#multi-selection-with-lazy-load-and-grouping).
+
+Fix the header selection checkbox with <DPropLink name="lazyLoad" />, a filter and <DPropLink name="multiRowSelectionTarget" />`="visible"`: it compared the selected rows with the count of rows without the filter, so selecting every row that passes the filter left it partly selected.
+
 ## 9.2.0
 
 New <DPropLink name="multiRowSelectionTarget" /> DataSource prop. When some rows are filtered out, it decides which rows the header selection checkbox, the group row (or parent node) checkboxes and the select all/deselect all API methods act on: all the rows (`'all'`, the default) or only the rows that pass the filter (`'visible'`). With <DPropLink name="lazyLoad" />, the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its params, so the server can apply it.

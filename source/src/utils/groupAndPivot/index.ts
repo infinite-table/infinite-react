@@ -497,6 +497,7 @@ export type DeepMapGroupValueType<DataType, KeyType> = {
   childrenLoading: boolean;
   childrenAvailable: boolean;
   totalChildrenCount?: number;
+  totalChildrenCountUnfiltered?: number;
   cache: boolean;
   error?: string;
   isTree: false;
@@ -804,6 +805,8 @@ export function lazyGroup<DataType, KeyType extends string = string>(
           childrenAvailable: false,
           commonData: dataObject,
           totalChildrenCount: dataArray[i].totalChildrenCount,
+          totalChildrenCountUnfiltered:
+            dataArray[i].totalChildrenCountUnfiltered,
           reducerResults: dataArray[i].aggregations || {},
           isTree: false,
           isGroupBy: true,

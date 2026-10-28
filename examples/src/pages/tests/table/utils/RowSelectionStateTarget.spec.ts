@@ -4,6 +4,7 @@ import {
   RowSelectionStateObject,
 } from '@src/components/DataSource/RowSelectionState';
 import { group } from '@src/utils/groupAndPivot';
+import { DeepMap } from '@src/utils/DeepMap';
 
 type Developer = {
   id: number;
@@ -50,6 +51,62 @@ function build(
     someRowsFilteredOut: visible.length < data.length,
     originalDataArray: data,
     postFilterDataArray: visible,
+  }));
+}
+
+/**
+ * Lazy load, as the server returns it with the filter `country = France AND language = TS`,
+ * so the rows 2 (France/Paris/JS), 4 and 5 (Italy) are filtered out.
+ * France and Paris are expanded, so row 1 is loaded.
+ */
+function buildLazy(
+  selection: RowSelectionStateObject,
+  options: {
+    target: 'all' | 'visible';
+    groupBy?: ('country' | 'city')[];
+    franceCollapsed?: boolean;
+    withUnfilteredCounts?: boolean;
+  },
+) {
+  const unfiltered = options.withUnfilteredCounts ?? true;
+  const groupBy = (options.groupBy ?? ['country', 'city']).map((field) => ({
+    field,
+  }));
+  const groupDeepMap = new DeepMap<any, any>();
+  const setGroup = (
+    keys: string[],
+    totalChildrenCount: number,
+    totalChildrenCountUnfiltered: number,
+    items: Developer[] = [],
+  ) => {
+    groupDeepMap.set(keys, {
+      items,
+      totalChildrenCount,
+      totalChildrenCountUnfiltered: unfiltered
+        ? totalChildrenCountUnfiltered
+        : undefined,
+    });
+  };
+
+  if (groupBy.length) {
+    setGroup(['France'], 2, 3);
+    if (!options.franceCollapsed) {
+      setGroup(['France', 'Paris'], 1, 2, [byId[1]]);
+      setGroup(['France', 'Lyon'], 1, 1);
+    }
+  }
+
+  return new RowSelectionState<Developer>(selection, () => ({
+    groupBy,
+    groupDeepMap: groupBy.length ? groupDeepMap : undefined,
+    toPrimaryKey: (d: Developer) => d.id,
+    totalCount: 2,
+    lazyUnfilteredCount: unfiltered ? data.length : undefined,
+    indexer: { getDataForPrimaryKey: (pk: number) => byId[pk] } as any,
+    lazyLoad: true,
+    onlyUsePrimaryKeys: !groupBy.length,
+    multiRowSelectionTarget: options.target,
+    someRowsFilteredOut: false,
   }));
 }
 
@@ -208,5 +265,116 @@ export default test.describe.parallel('RowSelectionState - target', () => {
     expect(selectedRows).not.toContainEqual(['Italy']);
     expect(selectedRows).not.toContainEqual(['Italy', 'Rome']);
     expect(selectedIds(state)).toEqual([1, 3, 5]);
+  });
+
+  test('lazy flat - all: counts the rows without the filter', () => {
+    const state = buildLazy(
+      { defaultSelection: false, selectedRows: [1, 3] },
+      { target: 'all', groupBy: [] },
+    );
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 2,
+      deselectedCount: 3,
+    });
+
+    state.selectAll();
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 5,
+      deselectedCount: 0,
+    });
+  });
+
+  test('lazy flat - visible: counts the rows after the filter', () => {
+    const state = buildLazy(
+      { defaultSelection: false, selectedRows: [1, 3] },
+      { target: 'visible', groupBy: [] },
+    );
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 2,
+      deselectedCount: 0,
+    });
+  });
+
+  test('lazy flat - all: without unfiltered counts, counts the rows after the filter', () => {
+    const state = buildLazy(
+      { defaultSelection: false, selectedRows: [1, 3] },
+      { target: 'all', groupBy: [], withUnfilteredCounts: false },
+    );
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 2,
+      deselectedCount: 0,
+    });
+  });
+
+  test('lazy grouped - all: groups count the rows without the filter', () => {
+    const state = buildLazy(NONE, { target: 'all' });
+
+    state.setRowAsSelected(1, ['France', 'Paris']);
+    expect(state.getGroupRowSelectionState(['France', 'Paris'])).toBe(null);
+    expect(state.getSelectionCountFor(['France', 'Paris'])).toEqual({
+      selectedCount: 1,
+      deselectedCount: 1,
+    });
+
+    state.selectGroupRow(['France']);
+    expect(state.getSelectionCountFor(['France'])).toEqual({
+      selectedCount: 3,
+      deselectedCount: 0,
+    });
+    // Italy is filtered out completely, so it is only in the level count
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 3,
+      deselectedCount: 2,
+    });
+    expect(state.getGroupRowSelectionState([])).toBe(null);
+
+    state.selectAll();
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 5,
+      deselectedCount: 0,
+    });
+  });
+
+  test('lazy grouped - all: a collapsed group counts the rows without the filter', () => {
+    const state = buildLazy(NONE, { target: 'all', franceCollapsed: true });
+
+    state.selectGroupRow(['France']);
+    expect(state.getSelectionCountFor(['France'])).toEqual({
+      selectedCount: 3,
+      deselectedCount: 0,
+    });
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 3,
+      deselectedCount: 2,
+    });
+  });
+
+  test('lazy grouped - visible: groups count the rows after the filter', () => {
+    const state = buildLazy(NONE, { target: 'visible' });
+
+    state.setRowAsSelected(1, ['France', 'Paris']);
+    expect(state.getGroupRowSelectionState(['France', 'Paris'])).toBe(true);
+
+    state.selectGroupRow(['France']);
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 2,
+      deselectedCount: 0,
+    });
+  });
+
+  test('lazy grouped - all: without unfiltered counts, groups count the rows after the filter', () => {
+    const state = buildLazy(NONE, {
+      target: 'all',
+      withUnfilteredCounts: false,
+    });
+
+    state.setRowAsSelected(1, ['France', 'Paris']);
+    expect(state.getGroupRowSelectionState(['France', 'Paris'])).toBe(true);
+
+    state.selectGroupRow(['France']);
+    expect(state.getSelectionCountFor([])).toEqual({
+      selectedCount: 2,
+      deselectedCount: 0,
+    });
   });
 });

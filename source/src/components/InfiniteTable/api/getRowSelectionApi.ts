@@ -1,4 +1,7 @@
-import { InfiniteTable_RowInfoBase } from '../../../utils/groupAndPivot';
+import {
+  InfiniteTable_RowInfoBase,
+  LAZY_ROOT_KEY_FOR_GROUPS,
+} from '../../../utils/groupAndPivot';
 import { getGroupKeysForDataItem } from '../../../utils/groupAndPivot/getGroupKeysForDataItem';
 
 import type {
@@ -63,15 +66,24 @@ export function rowSelectionStateConfigGetter<T>(
         : stateOrStateGetter;
 
     const { originalDataArray, postFilterDataArray } = state;
+    const lazyLoad = !!state.lazyLoad;
+    const lazyRoot = lazyLoad
+      ? state.originalLazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS])
+      : undefined;
 
     return {
-      lazyLoad: !!state.lazyLoad,
+      lazyLoad,
       toPrimaryKey: state.toPrimaryKey,
       onlyUsePrimaryKeys: !state.useGroupKeysForMultiRowSelection,
       groupBy: state.groupBy,
       groupDeepMap: state.groupDeepMap,
       indexer: state.indexer,
-      totalCount: state.unfilteredCount,
+      totalCount: lazyLoad
+        ? originalDataArray?.length ?? 0
+        : state.unfilteredCount,
+      lazyUnfilteredCount: state.groupBy.length
+        ? lazyRoot?.totalChildrenCountUnfiltered
+        : lazyRoot?.totalCountUnfiltered,
       multiRowSelectionTarget: state.multiRowSelectionTarget,
       someRowsFilteredOut:
         !state.lazyLoad &&

@@ -84,7 +84,7 @@ export interface DataSourceDataParams<T> {
   lazyLoadStartIndex?: number;
   groupKeys?: any[];
   /**
-   * Only passed with `lazyLoad`: the rows a stored multi row selection covers.
+   * Only passed with `lazyLoad` and `selectionMode: 'multi-row'`: the rows a stored multi row selection covers.
    * For `'visible'`, a selected group or `defaultSelection: true` covers only the rows that pass `filterValue`.
    */
   multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
@@ -126,7 +126,19 @@ export type DataSourceRemoteData<T> = {
   cache?: boolean;
   error?: string;
   totalCount?: number;
+  /**
+   * The count of rows (or groups, for a group level) without the filter
+   */
   totalCountUnfiltered?: number;
+  /**
+   * For a group level: the leaf rows under it (at any depth), after the filter
+   */
+  totalChildrenCount?: number;
+  /**
+   * For a group level: the leaf rows under it (at any depth), without the filter.
+   * With `multiRowSelectionTarget: 'all'`, the selection checkboxes also count the rows that the filter hides.
+   */
+  totalChildrenCountUnfiltered?: number;
   livePaginationCursor?: DataSourceLivePaginationCursorValue;
 };
 
@@ -275,6 +287,11 @@ export type LazyGroupDataItem<DataType> = {
   aggregations?: Record<string, any>;
   dataset?: DataSourceRemoteData<DataType>;
   totalChildrenCount?: number;
+  /**
+   * The leaf rows under the group (at any depth), without the filter.
+   * With `multiRowSelectionTarget: 'all'`, the selection checkboxes also count the rows that the filter hides.
+   */
+  totalChildrenCountUnfiltered?: number;
   pivot?: {
     values: Record<string, any>;
     totals?: Record<string, any>;
@@ -290,8 +307,8 @@ export type LazyRowInfoGroup<DataType> = {
   childrenAvailable: boolean;
   cache: boolean;
   totalCount: number;
-  // TODO make sure this is properly implemented
-  totalCountUnfiltered: number;
+  totalCountUnfiltered?: number;
+  totalChildrenCountUnfiltered?: number;
   error?: string;
 };
 

@@ -1145,6 +1145,17 @@ export function concludeReducer<T>(params: {
           }
         }
       });
+      const { rowSelection } = state;
+      if (
+        rowSelection instanceof RowSelectionState &&
+        rowSelection.getLazyHiddenRowsCount([])
+      ) {
+        if (rowSelection.defaultSelection) {
+          someRowsSelected = true;
+        } else {
+          allRowsSelected = false;
+        }
+      }
       state.allRowsSelected = allRowsSelected;
       state.someRowsSelected = someRowsSelected;
       if (debugId) {

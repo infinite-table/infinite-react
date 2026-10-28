@@ -187,7 +187,7 @@ The following properties are available on this object:
 - `pivotBy?` - an array of <TypeLink name="DataSourcePivotBy" /> - the current pivot by for the grid.
 - `filterValue?` - an array of <TypeLink name="DataSourceFilterValueItem" /> - the current filter value for the grid.
 - `masterRowInfo?` - <TypeLink name="InfiniteTableRowInfo" /> - only available if the DataSource is a detail DataSource - meaning there is a master DataGrid, and the DataSource is used to load the detail DataGrid.
-- `multiRowSelectionTarget?` - `'all' | 'visible'` - only available with <DPropLink name="lazyLoad" />. The current <DPropLink name="multiRowSelectionTarget" /> value, so the server can work out which rows a stored multi row selection covers. For `'visible'`, a selected group (or `defaultSelection: true`) only covers the rows that pass `filterValue`.
+- `multiRowSelectionTarget?` - `'all' | 'visible'` - only available with <DPropLink name="lazyLoad" /> and multi row selection. The current <DPropLink name="multiRowSelectionTarget" /> value, so the server can work out which rows a stored multi row selection covers. For `'visible'`, a selected group (or `defaultSelection: true`) only covers the rows that pass `filterValue`.
 
 </Prop>
 

@@ -351,6 +351,13 @@ In order to make this possible, the <DPropLink name="rowSelection" /> value will
 
 With lazy loading, the server knows which rows are filtered out, so it's the server that applies <DPropLink name="multiRowSelectionTarget" />. The selection keeps storing group keys and `defaultSelection`, and the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its parameters. Use it when working out which rows a stored selection covers - for `'visible'`, a selected group (or `defaultSelection: true`) only covers the rows that pass the current `filterValue`, while for `'all'`, it covers every row in the group. Changing <DPropLink name="multiRowSelectionTarget" /> doesn't reload the data.
 
+The checkboxes count the rows that the server reports: the `totalChildrenCount` of each group (see [server-side grouping](/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading)) and the `totalCount` of the response. With `'all'`, the server can also send the counts without the filter, so the checkboxes count the rows hidden by the filter as well - a selected group with hidden rows that are not selected shows as partly selected:
+
+- `totalChildrenCountUnfiltered` on each group, and on the top-level group response
+- `totalCountUnfiltered` on a response with rows (not groups)
+
+Without these counts, or with `'visible'`, the checkboxes only count the rows that pass the filter. The rows hidden by the filter take the selection of their parent group - or of `defaultSelection` at the top level.
+
 <Sandpack title="Multi row checkbox selection with lazy data and grouping" >
 
 <Description>
