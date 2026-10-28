@@ -62,6 +62,8 @@ export function rowSelectionStateConfigGetter<T>(
         ? stateOrStateGetter()
         : stateOrStateGetter;
 
+    const { originalDataArray, postFilterDataArray } = state;
+
     return {
       lazyLoad: !!state.lazyLoad,
       toPrimaryKey: state.toPrimaryKey,
@@ -70,6 +72,14 @@ export function rowSelectionStateConfigGetter<T>(
       groupDeepMap: state.groupDeepMap,
       indexer: state.indexer,
       totalCount: state.unfilteredCount,
+      multiRowSelectionTarget: state.multiRowSelectionTarget,
+      someRowsFilteredOut:
+        !state.lazyLoad &&
+        !!originalDataArray &&
+        !!postFilterDataArray &&
+        postFilterDataArray.length < originalDataArray.length,
+      originalDataArray,
+      postFilterDataArray,
     };
   };
 }

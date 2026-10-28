@@ -83,6 +83,11 @@ export interface DataSourceDataParams<T> {
   lazyLoadBatchSize?: number;
   lazyLoadStartIndex?: number;
   groupKeys?: any[];
+  /**
+   * Only passed with `lazyLoad`: the rows a stored multi row selection covers.
+   * For `'visible'`, a selected group or `defaultSelection: true` covers only the rows that pass `filterValue`.
+   */
+  multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
 
   append?: boolean;
 
@@ -194,6 +199,9 @@ export interface DataSourceMappedState<T> {
   lazyLoad: DataSourceProps<T>['lazyLoad'];
   useGroupKeysForMultiRowSelection: NonUndefined<
     DataSourceProps<T>['useGroupKeysForMultiRowSelection']
+  >;
+  multiRowSelectionTarget: NonUndefined<
+    DataSourceProps<T>['multiRowSelectionTarget']
   >;
 
   onDataParamsChange: DataSourceProps<T>['onDataParamsChange'];
@@ -442,6 +450,8 @@ export type DataSourcePropSelectionMode =
   | 'single-row'
   | 'multi-cell'
   | 'multi-row';
+
+export type DataSourcePropMultiRowSelectionTarget = 'all' | 'visible';
 
 // export type DataSourcePropOnRowSelectionChange_MultiRow = (params: {
 //   rowSelection: DataSourcePropRowSelection_MultiRow;
@@ -736,6 +746,7 @@ export type DataSourceProps<T> = {
 
   selectionMode?: DataSourcePropSelectionMode;
   useGroupKeysForMultiRowSelection?: boolean;
+  multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
 
   rowSelection?: DataSourcePropRowSelection;
 

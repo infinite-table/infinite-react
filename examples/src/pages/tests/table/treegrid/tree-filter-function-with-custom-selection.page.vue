@@ -166,6 +166,7 @@ const domProps = {
     :data="nodes"
     primaryKey="id"
     selectionMode="multi-row"
+    multiRowSelectionTarget="visible"
     :treeSelection="treeSelection"
     :onTreeSelectionChange="onTreeSelectionChange"
     :treeFilterFunction="filterFunction"

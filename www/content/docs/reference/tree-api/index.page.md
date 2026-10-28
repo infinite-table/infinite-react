@@ -43,6 +43,8 @@ For updating tree nodes, see the following methods:
 
 This works if the tree has selection enabled. See [tree selection](/docs/learn/tree-grid/tree-selection) for more details.
 
+When some nodes are filtered out, <DPropLink name="multiRowSelectionTarget" /> decides which nodes are selected: all of them (`'all'`, the default), or only the nodes that pass the filter (`'visible'`).
+
 <Sandpack title="Selecting all nodes via Tree API" size="lg">
 
 ```tsx file="tree-selectall-example.page.tsx"
@@ -97,6 +99,7 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 > Deselects all the nodes in the tree. See related <TreeApiLink name="selectAll" /> prop.
 
+When some nodes are filtered out and <DPropLink name="multiRowSelectionTarget" /> is `'visible'`, only the nodes that pass the filter are deselected.
 
 This works if the tree has selection enabled. See [tree selection](/docs/learn/tree-grid/tree-selection) for more details.
 

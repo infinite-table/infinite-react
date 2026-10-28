@@ -1,4 +1,4 @@
-import { DataSourceState } from '.';
+import { DataSourcePropMultiRowSelectionTarget, DataSourceState } from '.';
 import { DeepMap } from '../../utils/DeepMap';
 import { getGroupKeysForDataItem } from '../../utils/groupAndPivot/getGroupKeysForDataItem';
 
@@ -29,9 +29,103 @@ export type RowSelectionStateConfig<T> = {
   indexer: DataSourceState<T>['indexer'];
   lazyLoad: boolean;
   onlyUsePrimaryKeys: boolean;
+  multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
+  /**
+   * Whether the client-side filter hides some of the rows
+   */
+  someRowsFilteredOut?: boolean;
+  originalDataArray?: T[];
+  postFilterDataArray?: T[];
 };
 
 export type GetRowSelectionStateConfig<T> = () => RowSelectionStateConfig<T>;
+
+type UnfilteredGroup = {
+  /**
+   * The count of all the rows inside the group, at any depth
+   */
+  count: number;
+  /**
+   * Only set for the groups at the last level, to keep the memory linear in the row count
+   */
+  primaryKeys?: any[];
+};
+
+type UnfilteredGroups = {
+  groupBy: unknown;
+  groups: DeepMap<any, UnfilteredGroup>;
+};
+
+const EMPTY_UNFILTERED_GROUPS = new DeepMap<any, UnfilteredGroup>();
+
+const unfilteredGroupsCache = new WeakMap<any[], UnfilteredGroups>();
+
+/**
+ * The groups (at any level) of the data as it is before filtering,
+ * so the rows that are filtered out are counted as well
+ */
+function getUnfilteredGroups<T>(
+  config: RowSelectionStateConfig<T>,
+): DeepMap<any, UnfilteredGroup> {
+  const { originalDataArray, groupBy, toPrimaryKey } = config;
+
+  if (!originalDataArray || !groupBy.length) {
+    return EMPTY_UNFILTERED_GROUPS;
+  }
+
+  const cached = unfilteredGroupsCache.get(originalDataArray);
+  if (cached && cached.groupBy === groupBy) {
+    return cached.groups;
+  }
+
+  const groups = new DeepMap<any, UnfilteredGroup>();
+  const lastLevel = groupBy.length;
+
+  // DeepMap does not keep the keys array, so one array is reused for all the levels
+  const keys: any[] = [];
+
+  originalDataArray.forEach((data) => {
+    const groupKeys = getGroupKeysForDataItem(data, groupBy);
+
+    keys.length = 0;
+    for (let i = 0; i < groupKeys.length; i++) {
+      keys.push(groupKeys[i]);
+
+      let group = groups.get(keys);
+      if (!group) {
+        group = { count: 0 };
+        if (keys.length === lastLevel) {
+          group.primaryKeys = [];
+        }
+        groups.set(keys, group);
+      }
+      group.count++;
+      group.primaryKeys?.push(toPrimaryKey(data));
+    }
+  });
+
+  unfilteredGroupsCache.set(originalDataArray, { groupBy, groups });
+
+  return groups;
+}
+
+function getUnfilteredPrimaryKeysInsideGroup(
+  groups: DeepMap<any, UnfilteredGroup>,
+  groupKeys: any[],
+) {
+  const result: any[] = [];
+
+  groups.getLeafNodesStartingWith(groupKeys, (pair) => {
+    const primaryKeys = pair.value?.primaryKeys;
+    if (primaryKeys) {
+      for (let i = 0; i < primaryKeys.length; i++) {
+        result.push(primaryKeys[i]);
+      }
+    }
+  });
+
+  return result;
+}
 
 type RowSelectionStateOverride = {
   getGroupKeysForPrimaryKey: RowSelectionState<any>['getGroupKeysForPrimaryKey'];
@@ -77,9 +171,71 @@ export class RowSelectionState<T = any> {
     return this.getConfig().groupDeepMap;
   }
 
+  /**
+   * The selection acts only on the rows that pass the filter, and some rows are filtered out
+   */
+  private targetsVisibleRowsOnly() {
+    const { multiRowSelectionTarget, someRowsFilteredOut } = this.getConfig();
+    return multiRowSelectionTarget === 'visible' && !!someRowsFilteredOut;
+  }
+
+  /**
+   * The selection also acts on rows that are filtered out, and some rows are filtered out
+   */
+  private targetsFilteredOutRows() {
+    const { multiRowSelectionTarget, someRowsFilteredOut } = this.getConfig();
+    return multiRowSelectionTarget !== 'visible' && !!someRowsFilteredOut;
+  }
+
+  private getVisibleDataInsideGroup(groupKeys: any[]): T[] {
+    const { postFilterDataArray, groupDeepMap } = this.getConfig();
+    if (!groupKeys.length) {
+      return postFilterDataArray ?? [];
+    }
+    return groupDeepMap?.get(groupKeys)?.items ?? [];
+  }
+
+  private hasFilteredOutRowsInsideGroup(groupKeys: any[]) {
+    const config = this.getConfig();
+    if (!config.someRowsFilteredOut) {
+      return false;
+    }
+    const allCount = groupKeys.length
+      ? getUnfilteredGroups(config).get(groupKeys)?.count ?? 0
+      : config.originalDataArray?.length ?? 0;
+
+    return allCount > this.getVisibleDataInsideGroup(groupKeys).length;
+  }
+
+  /**
+   * Sets the selection of each visible row inside the group, by its full path,
+   * so the rows of the group that are filtered out keep their selection
+   */
+  private setVisibleRowsSelection(groupKeys: any[], selected: boolean) {
+    const { groupBy, toPrimaryKey } = this.getConfig();
+    const mapToSet = selected ? this.selectedMap : this.deselectedMap;
+    const mapToClear = selected ? this.deselectedMap : this.selectedMap;
+
+    this.xcache();
+    this.getVisibleDataInsideGroup(groupKeys).forEach((data) => {
+      const rowGroupKeys = getGroupKeysForDataItem(data, groupBy);
+      const pk = toPrimaryKey(data);
+      const finalKey = [...rowGroupKeys, pk];
+
+      mapToClear.delete(finalKey);
+      if (this.isRowSelected(pk, rowGroupKeys) !== selected) {
+        mapToSet.set(finalKey, true);
+      }
+    });
+    this.xcache();
+  }
+
   getGroupCount(groupKeys: any[]) {
     if (groupKeys.length == 0) {
       return this.getConfig().totalCount;
+    }
+    if (this.targetsFilteredOutRows()) {
+      return getUnfilteredGroups(this.getConfig()).get(groupKeys)?.count ?? 0;
     }
     const groupDeepMap = this.getGroupDeepMap();
     const deepMapValue = groupDeepMap?.get(groupKeys);
@@ -91,17 +247,34 @@ export class RowSelectionState<T = any> {
   }
 
   getGroupKeysDirectlyInsideGroup(groupKeys: any[]) {
-    const { groupDeepMap } = this.getConfig();
-    return (
-      groupDeepMap?.getKeysStartingWith(groupKeys, {
-        excludeSelf: true,
-        depthLimit: 1,
-      }) || []
-    );
+    const config = this.getConfig();
+    const options = { excludeSelf: true, depthLimit: 1 };
+
+    if (this.targetsFilteredOutRows()) {
+      return getUnfilteredGroups(config).getKeysStartingWith(
+        groupKeys,
+        options,
+      );
+    }
+    return config.groupDeepMap?.getKeysStartingWith(groupKeys, options) || [];
   }
 
   getAllPrimaryKeysInsideGroup(groupKeys: any[]): any[] {
-    const { groupDeepMap } = this.getConfig();
+    const config = this.getConfig();
+    const { groupDeepMap, toPrimaryKey } = config;
+
+    if (this.targetsFilteredOutRows()) {
+      return groupKeys.length
+        ? getUnfilteredPrimaryKeysInsideGroup(
+            getUnfilteredGroups(config),
+            groupKeys,
+          )
+        : (config.originalDataArray ?? []).map(toPrimaryKey);
+    }
+
+    if (!config.groupBy.length) {
+      return this.getVisibleDataInsideGroup([]).map(toPrimaryKey);
+    }
 
     if (!groupKeys.length) {
       const topLevelKeys =
@@ -205,14 +378,15 @@ export class RowSelectionState<T = any> {
     // because when we first load the keys, all the values which are not arrays, from selectedRows or deselectedRows,
     // we transform them to arrays: eg: [ 45, ['TypeScript']] becomes [['JavaScript',45],['TypeScript']] (where the row with id 45 was in the JavaScript group)
     // we do the above in order to make it easier to work with groups and rows
-    // so now we're doing the opposite transformation
+    // so now we're doing the opposite transformation - but when grouping, leaf rows keep their full path,
+    // as the group keys of a row that is not loaded (lazy load) cannot be looked up again
     const normalize = (allKeys: any[]) => {
       const groupByLength = this.getGroupByLength();
       return allKeys.map((keys) => {
         if (this.onlyUsePrimaryKeys) {
           return keys[0];
         }
-        return keys.length > groupByLength ? keys.pop() : keys;
+        return groupByLength === 0 && keys.length === 1 ? keys[0] : keys;
       });
     };
     const selectedRows = normalize(this.selectedMap.topDownKeys());
@@ -226,6 +400,14 @@ export class RowSelectionState<T = any> {
   }
 
   public deselectAll() {
+    if (this.targetsVisibleRowsOnly()) {
+      if (this.onlyUsePrimaryKeys) {
+        this.deselectGroupRow([]);
+      } else {
+        this.setVisibleRowsSelection([], false);
+      }
+      return;
+    }
     this.update({
       defaultSelection: false,
       selectedRows: [],
@@ -234,6 +416,14 @@ export class RowSelectionState<T = any> {
   }
 
   public selectAll() {
+    if (this.targetsVisibleRowsOnly()) {
+      if (this.onlyUsePrimaryKeys) {
+        this.selectGroupRow([]);
+      } else {
+        this.setVisibleRowsSelection([], true);
+      }
+      return;
+    }
     this.update({
       defaultSelection: true,
       deselectedRows: [],
@@ -442,6 +632,13 @@ export class RowSelectionState<T = any> {
       this.xcache();
       return;
     }
+    if (
+      this.targetsVisibleRowsOnly() &&
+      this.hasFilteredOutRowsInsideGroup(groupKeys)
+    ) {
+      this.setVisibleRowsSelection(groupKeys, true);
+      return;
+    }
     // retrieve any selection under this group
     const selectedKeys = this.selectedMap.getKeysStartingWith(groupKeys, {
       excludeSelf: true,
@@ -481,6 +678,13 @@ export class RowSelectionState<T = any> {
         }
       });
       this.xcache();
+      return;
+    }
+    if (
+      this.targetsVisibleRowsOnly() &&
+      this.hasFilteredOutRowsInsideGroup(groupKeys)
+    ) {
+      this.setVisibleRowsSelection(groupKeys, false);
       return;
     }
     // retrieve any deselection under this group
@@ -635,7 +839,10 @@ export class RowSelectionState<T = any> {
       return result;
     }
 
-    if (groupByLength && this.onlyUsePrimaryKeys) {
+    if (
+      this.onlyUsePrimaryKeys &&
+      (groupByLength || this.targetsVisibleRowsOnly())
+    ) {
       const allKeys = this.getAllPrimaryKeysInsideGroup(groupKeys);
 
       let selectedCount = 0;
@@ -666,6 +873,25 @@ export class RowSelectionState<T = any> {
         deselectedCount,
       };
 
+      this.selectionCountCache.set(groupKeys, result);
+
+      return result;
+    }
+
+    if (groupKeys.length === groupByLength && this.targetsVisibleRowsOnly()) {
+      const { toPrimaryKey } = this.getConfig();
+      let selectedCount = 0;
+      let deselectedCount = 0;
+
+      this.getVisibleDataInsideGroup(groupKeys).forEach((data) => {
+        if (this.isRowSelected(toPrimaryKey(data), groupKeys)) {
+          selectedCount++;
+        } else {
+          deselectedCount++;
+        }
+      });
+
+      const result = { selectedCount, deselectedCount };
       this.selectionCountCache.set(groupKeys, result);
 
       return result;

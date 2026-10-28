@@ -515,6 +515,7 @@ export function concludeReducer<T>(params: {
     'rowSelection',
     'cellSelection',
     'isRowSelected',
+    'multiRowSelectionTarget',
     'originalLazyGroupDataChangeDetect',
   ]);
 
@@ -522,6 +523,7 @@ export function concludeReducer<T>(params: {
     'treeSelection',
     'cellSelection',
     'isNodeSelected',
+    'multiRowSelectionTarget',
     'originalLazyGroupDataChangeDetect',
   ]);
   const groupsDepsChanged =
@@ -711,6 +713,9 @@ export function concludeReducer<T>(params: {
       ? state.cellSelection
       : undefined;
 
+  if (rowSelectionState) {
+    rowSelectionState.getConfig = rowSelectionStateConfigGetter(state);
+  }
   //@ts-ignore
   rowSelectionState?.xcache();
 
@@ -1153,18 +1158,19 @@ export function concludeReducer<T>(params: {
             debugId,
           ).track.DataSource.label.ComputeSelectionCount.start();
       }
-      const dataArrayCount = state.isTree
-        ? state.totalLeafNodesCount
-        : state.filteredCount;
+      // the counts cover the rows that multiRowSelectionTarget makes the selection act on
+      const selectionCount = state.isTree
+        ? state.treeSelectionState?.getSelectionCountFor([])
+        : (state.rowSelection as RowSelectionState)!.getSelectionCountFor([]);
 
-      const selectedRowCount = state.isTree
-        ? state.treeSelectionState
-          ? state.treeSelectionState.getSelectedCount()
-          : 0
-        : (state.rowSelection as RowSelectionState)!.getSelectedCount();
-
-      state.allRowsSelected = dataArrayCount === selectedRowCount;
-      state.someRowsSelected = selectedRowCount > 0;
+      if (selectionCount) {
+        state.allRowsSelected = selectionCount.deselectedCount === 0;
+        state.someRowsSelected = selectionCount.selectedCount > 0;
+      } else {
+        // no tree selection state, so nothing is selected
+        state.allRowsSelected = state.totalLeafNodesCount === 0;
+        state.someRowsSelected = false;
+      }
       if (debugId) {
         marker?.end();
         marker = undefined;

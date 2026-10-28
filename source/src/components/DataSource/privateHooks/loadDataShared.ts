@@ -64,6 +64,7 @@ type DataSourceStateForDataParams<T> = Pick<
   | 'dataParams'
   | 'filterMode'
   | 'filterTypes'
+  | 'multiRowSelectionTarget'
 >;
 
 export function buildDataSourceDataParams<T>(
@@ -114,6 +115,8 @@ export function buildDataSourceDataParams<T>(
       dataSourceParams.lazyLoadStartIndex = 0;
     }
     dataSourceParams.groupKeys = [];
+    dataSourceParams.multiRowSelectionTarget =
+      componentState.multiRowSelectionTarget;
   }
 
   if (overrides) {

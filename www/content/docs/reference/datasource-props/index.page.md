@@ -1395,6 +1395,29 @@ When this is a function, it is called with a parameter object that has the follo
 
 </Prop>
 
+<Prop name="multiRowSelectionTarget" type="'all'|'visible'" defaultValue="'all'">
+
+> When some rows are filtered out, decides which rows the header selection checkbox, the group row checkboxes and the select all/deselect all API methods act on. Only used with `selectionMode="multi-row"`.
+
+- `'all'` - they act on all the rows in the data (or in the group, for group rows), including the rows that are filtered out. The header and group checkboxes are only checked when all those rows are selected.
+- `'visible'` - they act only on the rows that pass the filter. The rows that are filtered out keep their current selection. The header and group checkboxes are checked when all the visible rows are selected.
+
+When no rows are filtered out, both values behave the same.
+
+This applies to flat, grouped and tree data, both with primary keys and with <DPropLink name="useGroupKeysForMultiRowSelection" />. For tree data, it also applies to the parent node checkboxes and to <TreeApiLink name="selectAll" />/<TreeApiLink name="deselectAll" />.
+
+With <DPropLink name="lazyLoad" />, the server applies the target: the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its <TypeLink name="DataSourceDataParams">parameters</TypeLink>, and it should use it when working out which rows a stored selection covers. Changing this prop doesn't reload the data.
+
+<Sandpack title="Choosing which rows the selection acts on when the data is filtered">
+
+```ts file="$DOCS/learn/selection/row-selection-target-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="onDataParamsChange" type="(dataParams: DataSourceDataParams<DATA_TYPE:>)=>void">
 
 > A function to be called when data-related state changes.
@@ -1837,6 +1860,8 @@ In this example, for the `"color"` column, we specified <PropLink name="columns.
 > Specifies whether <DPropLink name="rowSelection" /> contains group keys or only row ids/primary keys.
 
 When this is `true`, you might want to use the [getSelectedPrimaryKeys](./selection-api#getSelectedPrimaryKeys) method.
+
+When some rows are filtered out, see <DPropLink name="multiRowSelectionTarget" /> for which rows a selected group covers.
 
 <Sandpack title="Multi row checkbox selection using group keys" >
 

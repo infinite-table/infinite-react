@@ -93,8 +93,18 @@ export function treeSelectionStateConfigGetter<T>(
         ? stateOrStateGetter()
         : stateOrStateGetter;
 
+    const { treePaths, unfilteredTreePaths, multiRowSelectionTarget } = state;
+
+    if (multiRowSelectionTarget === 'visible') {
+      return {
+        treePaths: treePaths!,
+        unfilteredTreePaths,
+        multiRowSelectionTarget,
+      };
+    }
     return {
-      treePaths: state.treePaths!,
+      treePaths: unfilteredTreePaths ?? treePaths!,
+      multiRowSelectionTarget,
     };
   };
 }

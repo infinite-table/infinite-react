@@ -3,6 +3,17 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.2.0
+
+New <DPropLink name="multiRowSelectionTarget" /> DataSource prop. When some rows are filtered out, it decides which rows the header selection checkbox, the group row (or parent node) checkboxes and the select all/deselect all API methods act on: all the rows (`'all'`, the default) or only the rows that pass the filter (`'visible'`). With <DPropLink name="lazyLoad" />, the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its params, so the server can apply it.
+
+Behaviour changes with client-side filtering and multi row selection:
+
+- Fix the header selection checkbox on flat, filtered data. It used to compare the selected rows (including filtered out ones) with the count of visible rows, so it could show as checked or indeterminate in the wrong cases.
+- With the default `'all'` target, group row and tree parent node checkboxes now count the rows that are filtered out. Selecting a filtered group already selected its hidden rows - the checkbox state now reflects that. To act only on the visible rows, use `multiRowSelectionTarget="visible"`. This also applies to the selection callback from `withSelectedLeafNodesOnly`.
+
+Fix multi row selection with <DPropLink name="useGroupKeysForMultiRowSelection" /> and <DPropLink name="lazyLoad" />: selecting a group no longer deselects rows in sibling groups whose data is not loaded yet. With <DPropLink name="useGroupKeysForMultiRowSelection" />, the <DPropLink name="rowSelection" /> value now always lists leaf rows by their full path (group keys followed by the primary key).
+
 ## 9.1.5
 
 The `Columns` and `Group by` submenus of the default column menu now use the custom <PropLink name="components.CheckBox" /> component, when one is specified.

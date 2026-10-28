@@ -145,6 +145,7 @@ export default function DataTestPage() {
         data={nodes}
         primaryKey="id"
         selectionMode="multi-row"
+        multiRowSelectionTarget="visible"
         treeSelection={treeSelection}
         onTreeSelectionChange={withSelectedLeafNodesOnly(setTreeSelection)}
         treeFilterFunction={filterFunction}

@@ -83,6 +83,8 @@ Most often, you don't need to use this imperative way of deselecting rows. Simpl
 
 Calling this method triggers a call to <DPropLink name="onRowSelectionChange" >DataSource.onRowSelectionChange</DPropLink>.
 
+When some rows are filtered out and <DPropLink name="multiRowSelectionTarget" /> is `'visible'`, only the rows that pass the filter are deselected.
+
 For selecting all rows, see related [selectAll](#selectAll).
 
 <Note>
@@ -179,6 +181,8 @@ See note from [isRowSelected](#isRowSelected)
 > Selects all the rows in the DataSource.
 
 Calling this method triggers a call to <DPropLink name="onRowSelectionChange" >DataSource.onRowSelectionChange</DPropLink>.
+
+When some rows are filtered out, <DPropLink name="multiRowSelectionTarget" /> decides which rows are selected: all of them (`'all'`, the default), or only the rows that pass the filter (`'visible'`).
 
 For deselecting all rows, see related [deselectAll](#deselectAll).
 

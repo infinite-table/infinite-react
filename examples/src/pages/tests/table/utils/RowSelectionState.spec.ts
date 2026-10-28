@@ -803,4 +803,30 @@ export default test.describe.parallel('RowSelectionState', () => {
     expect(state1.getGroupRowSelectionState(['Italy'])).toBe(null);
     expect(state1.getGroupRowSelectionState(['Italy', 'Rome'])).toBe(true);
   });
+
+  test('group keys: cloning keeps the group path of rows whose data is not loaded', () => {
+    // row 66 (['backend', 'PHP', 'no']) is not loaded, so its group keys cannot be looked up
+    const rows: Record<any, any[]> = {
+      37: ['backend', 'CSharp', 'no'],
+    };
+
+    const state = buildRowSelectionState(
+      {
+        defaultSelection: false,
+        selectedRows: [
+          ['backend', 'CSharp', 'no', 37],
+          ['backend', 'PHP', 'no', 66],
+        ],
+      },
+      rows,
+    );
+
+    state.selectGroupRow(['backend', 'CSharp']);
+
+    const clone = buildRowSelectionState(state, rows);
+
+    expect(clone.isRowSelected(66, ['backend', 'PHP', 'no'])).toBe(true);
+    expect(clone.getState().selectedRows).toContainEqual(['backend', 'PHP', 'no', 66]);
+    expect(clone.getState().selectedRows).toContainEqual(['backend', 'CSharp']);
+  });
 });

@@ -1,3 +1,4 @@
+import type { DataSourcePropMultiRowSelectionTarget } from '.';
 import { DeepMap } from '../../utils/DeepMap';
 
 export type NodePath = any[];
@@ -22,9 +23,14 @@ export type TreeSelectionStateObject =
 type TreeSelectionStateConfigObject = {
   treePaths: DeepMap<any, true>;
   strictCheckPaths: boolean;
+  multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
+  unfilteredTreePaths?: DeepMap<any, true>;
 };
 
 export type TreeSelectionStateConfigParam<_T = any> = {
+  /**
+   * The paths the selection counts and acts on
+   */
   treePaths: TreeSelectionStateConfigObject['treePaths'] | any[][];
   /**
    * Defaults to true. If false, when checking if a given path is selected,
@@ -34,6 +40,21 @@ export type TreeSelectionStateConfigParam<_T = any> = {
    * If true, will check for the path both in the treePaths and the selectionMap.
    */
   strictCheckPaths?: boolean;
+  /**
+   * When `'visible'`, `treePaths` should only contain the paths that pass the filter,
+   * and `unfilteredTreePaths` all the paths, so the selection
+   * of the nodes that are filtered out is never changed.
+   */
+  multiRowSelectionTarget?: DataSourcePropMultiRowSelectionTarget;
+  unfilteredTreePaths?: TreeSelectionStateConfigObject['treePaths'] | any[][];
+};
+
+const toTreePathsMap = (
+  treePaths: TreeSelectionStateConfigParam['treePaths'],
+) => {
+  return Array.isArray(treePaths)
+    ? new DeepMap(treePaths.map((path) => [path, true] as const))
+    : treePaths;
 };
 export type GetTreeSelectionStateConfig<T> =
   | TreeSelectionStateConfigParam<T>
@@ -61,13 +82,7 @@ export class TreeSelectionState<T = any> {
   config!: TreeSelectionStateConfigObject;
 
   getTreePaths(treePaths?: TreeSelectionStateConfigParam['treePaths']) {
-    if (treePaths) {
-      if (Array.isArray(treePaths)) {
-        return new DeepMap(treePaths.map((path) => [path, true] as const));
-      }
-      return treePaths;
-    }
-    return this.config.treePaths;
+    return treePaths ? toTreePathsMap(treePaths) : this.config.treePaths;
   }
 
   withTreePaths<T>(
@@ -230,11 +245,53 @@ export class TreeSelectionState<T = any> {
     const config = typeof getConfig === 'function' ? getConfig() : getConfig;
 
     this.config = {
-      treePaths: Array.isArray(config.treePaths)
-        ? new DeepMap(config.treePaths.map((path) => [path, true]))
-        : config.treePaths,
+      treePaths: toTreePathsMap(config.treePaths),
       strictCheckPaths: config.strictCheckPaths ?? true,
+      multiRowSelectionTarget: config.multiRowSelectionTarget,
+      unfilteredTreePaths: config.unfilteredTreePaths
+        ? toTreePathsMap(config.unfilteredTreePaths)
+        : undefined,
     };
+    this.xcache();
+  }
+
+  private hasFilteredOutLeavesInside(nodePath: NodePath) {
+    const { multiRowSelectionTarget, unfilteredTreePaths, treePaths } =
+      this.config;
+
+    if (
+      multiRowSelectionTarget !== 'visible' ||
+      !unfilteredTreePaths ||
+      unfilteredTreePaths === treePaths
+    ) {
+      return false;
+    }
+
+    // the filter only removes nodes, so fewer descendants means some leaves are hidden
+    return (
+      unfilteredTreePaths.getAllChildrenSizeFor(nodePath) >
+      treePaths.getAllChildrenSizeFor(nodePath)
+    );
+  }
+
+  /**
+   * Sets the selection of each visible leaf node inside the node, by its path,
+   * so the leaf nodes that are filtered out keep their selection
+   */
+  private setVisibleLeafNodesSelection(nodePath: NodePath, selected: boolean) {
+    const { unfilteredTreePaths, treePaths } = this.config;
+
+    this.xcache();
+    treePaths.getKeysForLeafNodesStartingWith(nodePath).forEach((leafPath) => {
+      // a parent with all its children filtered out would cover them
+      if (unfilteredTreePaths!.getAllChildrenSizeFor(leafPath) > 0) {
+        return;
+      }
+      this.selectionMap.delete(leafPath);
+      if (this.isNodeSelected(leafPath) !== selected) {
+        this.setSelectionForPath(leafPath, selected);
+      }
+    });
     this.xcache();
   }
 
@@ -289,6 +346,10 @@ export class TreeSelectionState<T = any> {
   }
 
   public deselectAll() {
+    if (this.hasFilteredOutLeavesInside([])) {
+      this.setVisibleLeafNodesSelection([], false);
+      return;
+    }
     this.update({
       defaultSelection: false,
       selectedPaths: [],
@@ -297,6 +358,10 @@ export class TreeSelectionState<T = any> {
   }
 
   public selectAll() {
+    if (this.hasFilteredOutLeavesInside([])) {
+      this.setVisibleLeafNodesSelection([], true);
+      return;
+    }
     this.update({
       defaultSelection: true,
       deselectedPaths: [],
@@ -505,6 +570,10 @@ export class TreeSelectionState<T = any> {
 
   public setNodeSelection(nodePath: NodePath, selected: boolean) {
     if (!nodePath.length) {
+      return;
+    }
+    if (this.hasFilteredOutLeavesInside(nodePath)) {
+      this.setVisibleLeafNodesSelection(nodePath, selected);
       return;
     }
     this.xcache();

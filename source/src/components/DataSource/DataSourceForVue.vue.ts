@@ -62,6 +62,7 @@ export const DATA_SOURCE_PROP_NAMES = [
   'data',
   'selectionMode',
   'useGroupKeysForMultiRowSelection',
+  'multiRowSelectionTarget',
   'rowSelection',
   'defaultRowSelection',
   'onRowSelectionChange',

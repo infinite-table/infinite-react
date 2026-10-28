@@ -209,6 +209,40 @@ The only supported modifier key when selecting a row by pressing **spacebar** is
 
 </Note>
 
+## Selecting all rows when the data is filtered
+
+When some rows are filtered out, use the <DPropLink name="multiRowSelectionTarget" /> prop to decide which rows the header checkbox, the group row checkboxes and [`selectAll`](/docs/reference/row-selection-api#selectAll)/[`deselectAll`](/docs/reference/row-selection-api#deselectAll) act on:
+
+- `'all'` (the default) - they act on all the rows in the data (or in the group), including the rows that are filtered out. The header and group checkboxes are only checked when all those rows are selected.
+- `'visible'` - they act only on the rows that pass the filter. Rows that are filtered out keep their current selection. The header and group checkboxes are checked when all the visible rows are selected.
+
+```tsx {4}
+<DataSource<Developer>
+  primaryKey="id"
+  selectionMode="multi-row"
+  multiRowSelectionTarget="visible"
+  filterFunction={({ data }) => data.preferredLanguage === 'TypeScript'}
+/>
+```
+
+When no rows are filtered out, both values behave the same.
+
+<Sandpack title="Choosing which rows the selection acts on when the data is filtered">
+
+<Description>
+
+The data is grouped by `stack` and filtered to only show TypeScript developers.
+
+Click the header checkbox, a group checkbox or the "Select all" button, then remove the filter, to see which rows were selected with each <DPropLink name="multiRowSelectionTarget" /> value.
+
+</Description>
+
+```ts file="row-selection-target-example.page.tsx"
+
+```
+
+</Sandpack>
+
 ## Specify a `rowSelection` value
 
 When multiple row selection is used, the <DPropLink name="rowSelection" /> prop should be an object that can have the following shape:
@@ -314,6 +348,8 @@ Probably the most complex use-case for multi selection (with checkbox) is the co
 In this scenario, not all groups and/or rows are loaded at a given point in time, but we need to be able to know how to render each checkbox for each group - either checked, unchecked or indeterminate, all this depending on whether all children, at any nesting levels are selected or not.
 
 In order to make this possible, the <DPropLink name="rowSelection" /> value will only contain arrays (and not individual primary keys) in the `selectedRows` and `deselectedRows` arrays and the DataSource will be configured with <DPropLink name="useGroupKeysForMultiRowSelection" />.
+
+With lazy loading, the server knows which rows are filtered out, so it's the server that applies <DPropLink name="multiRowSelectionTarget" />. The selection keeps storing group keys and `defaultSelection`, and the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its parameters. Use it when working out which rows a stored selection covers - for `'visible'`, a selected group (or `defaultSelection: true`) only covers the rows that pass the current `filterValue`, while for `'all'`, it covers every row in the group. Changing <DPropLink name="multiRowSelectionTarget" /> doesn't reload the data.
 
 <Sandpack title="Multi row checkbox selection with lazy data and grouping" >
 

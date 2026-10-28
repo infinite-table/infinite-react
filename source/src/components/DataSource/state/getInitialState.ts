@@ -273,6 +273,8 @@ export const forwardProps = <T>(
     filterValue: 1,
     useGroupKeysForMultiRowSelection: (useGroupKeysForMultiRowSelection) =>
       useGroupKeysForMultiRowSelection ?? false,
+    multiRowSelectionTarget: (multiRowSelectionTarget) =>
+      multiRowSelectionTarget ?? 'all',
     filterDelay: (filterDelay) => filterDelay ?? 200,
     filterTypes: (filterTypes) => {
       return { ...defaultFilterTypes, ...filterTypes };
