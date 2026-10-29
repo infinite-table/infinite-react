@@ -3,7 +3,7 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
-## 9.3.1
+## 9.4.0
 
 Fix changing <DPropLink name="groupBy" /> or <DPropLink name="pivotBy" /> at runtime with <DPropLink name="lazyLoad" />: the <DPropLink name="data" /> function was not called again, so the grid showed a single empty group row. With <DPropLink name="lazyLoad" />, <DPropLink name="shouldReloadData.groupBy" /> and <DPropLink name="shouldReloadData.pivotBy" /> now default to `true`.
 
