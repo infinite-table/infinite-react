@@ -40,6 +40,8 @@ type TestExtras = {
   getConsoleErrors: () => string[];
 };
 
+export type TestPage = Page & TestExtras;
+
 function getFileInfoFromTestInfo(testInfo: TestInfo) {
   const [_, __, ...rest] = testInfo.titlePath[0].split(pathSep);
 

@@ -1,5 +1,5 @@
 import { test, expect } from '@testing';
-import type { Page } from '@playwright/test';
+import type { Page, TestPage } from '@testing';
 
 // leaves 11 and 121 are filtered out
 const ALL_LEAVES = ['10', '11', '120', '121', '20'];
@@ -46,7 +46,7 @@ async function selectedLeafIds(page: Page) {
   );
 }
 
-async function setup(page: Page, target: 'all' | 'visible') {
+async function setup(page: TestPage, target: 'all' | 'visible') {
   await page.waitForInfinite();
   await page.evaluate((t) => (globalThis as any).setTarget(t), target);
   await expect.poll(() => renderedRows(page)).toBe(ROW_COUNT);

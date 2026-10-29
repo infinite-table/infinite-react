@@ -1,5 +1,5 @@
 import { test, expect } from '@testing';
-import type { Page } from '@playwright/test';
+import type { Page, TestPage } from '@testing';
 
 type Config = {
   target: 'all' | 'visible';
@@ -36,7 +36,7 @@ const selectedIds = (page: Page) =>
 const renderedRows = (page: Page) =>
   page.locator('.InfiniteColumnCell[data-column-id="checkbox"]').count();
 
-async function setup(page: Page, config: Config) {
+async function setup(page: TestPage, config: Config) {
   await page.waitForInfinite();
   await page.evaluate((c) => (globalThis as any).setConfig(c), config);
   await expect
