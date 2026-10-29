@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.3.1
+
+Fix changing <DPropLink name="groupBy" /> or <DPropLink name="pivotBy" /> at runtime with <DPropLink name="lazyLoad" />: the <DPropLink name="data" /> function was not called again, so the grid showed a single empty group row. With <DPropLink name="lazyLoad" />, <DPropLink name="shouldReloadData.groupBy" /> and <DPropLink name="shouldReloadData.pivotBy" /> now default to `true`.
+
 ## 9.3.0
 
 With <DPropLink name="lazyLoad" /> and <DPropLink name="multiRowSelectionTarget" />`="all"`, the selection checkboxes can count the rows that the filter hides. The <DPropLink name="data" /> function can return `totalChildrenCountUnfiltered` on group items and on the top-level group response, and `totalCountUnfiltered` for rows - a selected group with hidden rows that are not selected then shows as partly selected. See [multi selection with lazy load](/docs/learn/selection/row-selection#multi-selection-with-lazy-load-and-grouping).

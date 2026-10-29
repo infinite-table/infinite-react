@@ -719,8 +719,13 @@ export function deriveStateFromProps<T extends any>(params: {
     );
   }
 
+  // lazily loaded rows can only be grouped and pivoted by the server
+  const remoteByDefault = typeof props.data === 'function' && !!props.lazyLoad;
+
   const groupMode =
-    typeof props.data === 'function' ? propsGroupMode ?? 'local' : 'local';
+    typeof props.data === 'function'
+      ? propsGroupMode ?? (remoteByDefault ? 'remote' : 'local')
+      : 'local';
 
   const sortMode = props.sortFunction
     ? 'local'
@@ -732,7 +737,8 @@ export function deriveStateFromProps<T extends any>(params: {
       : propsFilterMode ??
         (typeof props.data === 'function' ? 'remote' : 'local');
 
-  const pivotMode = shouldReloadData.pivotBy ? 'remote' : 'local';
+  const pivotMode =
+    shouldReloadData.pivotBy ?? remoteByDefault ? 'remote' : 'local';
 
   const rowDisabledState = state.rowDisabledState;
 

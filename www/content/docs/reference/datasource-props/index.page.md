@@ -1788,6 +1788,24 @@ For configuring the sorting behavior when multiple sorting is enabled, see <Prop
 
 </Prop>
 
+<Prop name="shouldReloadData.groupBy" type="boolean">
+
+> Specifies if changes in the <DPropLink name="groupBy" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function. Replaces the deprecated `groupMode` prop.
+
+- `true` - the data is grouped by the server: when <DPropLink name="groupBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `groupBy` in its params. This is the default with <DPropLink name="lazyLoad" />, since lazily loaded rows can only be grouped by the server.
+- `false` - the data is grouped locally (in the browser) and the <DPropLink name="data" /> function is not called again. This is the default without <DPropLink name="lazyLoad" />.
+
+</Prop>
+
+<Prop name="shouldReloadData.pivotBy" type="boolean">
+
+> Specifies if changes in the <DPropLink name="pivotBy" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
+
+- `true` - the data is pivoted by the server: when <DPropLink name="pivotBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `pivotBy` in its params. This is the default with <DPropLink name="lazyLoad" />.
+- `false` - the data is pivoted locally (in the browser). This is the default without <DPropLink name="lazyLoad" />.
+
+</Prop>
+
 <Prop name="shouldReloadData" type="{ sortInfo, groupBy, filterValue, pivotBy }">
 
 > Specifies which changes in the data-related props should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
