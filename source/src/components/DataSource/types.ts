@@ -308,6 +308,7 @@ export type LazyRowInfoGroup<DataType> = {
   cache: boolean;
   totalCount: number;
   totalCountUnfiltered?: number;
+  totalChildrenCount?: number;
   totalChildrenCountUnfiltered?: number;
   error?: string;
 };

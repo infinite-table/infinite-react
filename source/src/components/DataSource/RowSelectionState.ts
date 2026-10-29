@@ -1,6 +1,7 @@
 import { DataSourcePropMultiRowSelectionTarget, DataSourceState } from '.';
 import { DeepMap } from '../../utils/DeepMap';
 import { getGroupKeysForDataItem } from '../../utils/groupAndPivot/getGroupKeysForDataItem';
+import { isNotLoadedYetKey } from '../../utils/groupAndPivot/notLoadedYet';
 
 type RowSelectionStateItem = (any | any[])[];
 
@@ -29,6 +30,10 @@ export type RowSelectionStateConfig<T> = {
    * The count of all the rows - for lazy load, after the (remote) filter
    */
   totalCount: number;
+  /**
+   * Lazy load with grouping: the count of all the (leaf) rows, after the filter, when the server sends it
+   */
+  lazyGroupedRowCount?: number;
   /**
    * Lazy load: the count of all the rows without the filter, when the server sends it
    */
@@ -160,6 +165,22 @@ export class RowSelectionState<T = any> {
     { selectedCount: number; deselectedCount: number }
   > = new DeepMap();
 
+  /**
+   * Lazy load: the selected (true) and deselected (false) entries, in one map,
+   * for the given versions of the selection maps
+   */
+  private lazyEntries: {
+    version: string;
+    entries: DeepMap<any, boolean>;
+  } | null = null;
+  // the caches below depend on the config, so they only live until the next xcache()
+  private lazyLoadedRows: DeepMap<
+    any,
+    { primaryKeys: Set<any>; complete: boolean }
+  > | null = null;
+  private lazyChildrenLoaded: DeepMap<any, boolean> | null = null;
+  private lazyRowCounts: DeepMap<any, number | null> | null = null;
+
   getConfig: GetRowSelectionStateConfig<T>;
 
   getGroupKeysForPrimaryKey(pk: any) {
@@ -273,6 +294,234 @@ export class RowSelectionState<T = any> {
         (groupDeepMap?.get(keys)?.totalChildrenCount || 0);
     });
     return Math.max(unfilteredCount - childrenCount, 0);
+  }
+
+  private getLazyEntries() {
+    const version = `${this.selectedMap.version}:${this.deselectedMap.version}`;
+    if (this.lazyEntries?.version !== version) {
+      const entries = new DeepMap<any, boolean>();
+      this.selectedMap
+        .getKeysStartingWith([])
+        .forEach((keys) => entries.set(keys, true));
+      this.deselectedMap
+        .getKeysStartingWith([])
+        .forEach((keys) => entries.set(keys, false));
+      this.lazyEntries = { version, entries };
+    }
+    return this.lazyEntries.entries;
+  }
+
+  /**
+   * Lazy load: the count of the rows inside the group, as the server sent it
+   */
+  private getLazyRowCount(groupKeys: any[]): number | undefined {
+    this.lazyRowCounts = this.lazyRowCounts ?? new DeepMap();
+    const cached = this.lazyRowCounts.get(groupKeys);
+    if (cached !== undefined) {
+      return cached ?? undefined;
+    }
+    const result = this.computeLazyRowCount(groupKeys);
+    this.lazyRowCounts.set(groupKeys, result ?? null);
+    return result;
+  }
+
+  private computeLazyRowCount(groupKeys: any[]): number | undefined {
+    const config = this.getConfig();
+    const groupByLength = this.getGroupByLength();
+
+    const unfilteredCount = this.getLazyUnfilteredCount(groupKeys);
+    if (unfilteredCount !== undefined) {
+      return unfilteredCount;
+    }
+    if (!groupKeys.length && !groupByLength) {
+      return config.totalCount;
+    }
+
+    const group = groupKeys.length
+      ? config.groupDeepMap?.get(groupKeys)
+      : undefined;
+    const count = groupKeys.length
+      ? group?.totalChildrenCount
+      : config.lazyGroupedRowCount;
+    if (count != null) {
+      return count;
+    }
+    if (groupKeys.length === groupByLength) {
+      return group?.childrenAvailable ? group.items.length : undefined;
+    }
+
+    // no count from the server: add up the groups inside it
+    const childKeys =
+      config.groupDeepMap?.getKeysStartingWith(groupKeys, {
+        excludeSelf: true,
+        depthLimit: 1,
+      }) ?? [];
+    if (!childKeys.length) {
+      return undefined;
+    }
+    return childKeys.reduce(
+      (sum, keys) =>
+        sum +
+        (isNotLoadedYetKey(keys[keys.length - 1])
+          ? 1
+          : this.getLazyRowCount(keys) ?? 1),
+      0,
+    );
+  }
+
+  /**
+   * Lazy load: whether the server sent all the direct children of the group
+   */
+  private areLazyChildrenLoaded(groupKeys: any[]): boolean {
+    this.lazyChildrenLoaded = this.lazyChildrenLoaded ?? new DeepMap();
+    const cached = this.lazyChildrenLoaded.get(groupKeys);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const result = this.computeLazyChildrenLoaded(groupKeys);
+    this.lazyChildrenLoaded.set(groupKeys, result);
+    return result;
+  }
+
+  private computeLazyChildrenLoaded(groupKeys: any[]): boolean {
+    const { groupDeepMap } = this.getConfig();
+    const group = groupKeys.length ? groupDeepMap?.get(groupKeys) : undefined;
+    if (groupKeys.length && !group?.childrenAvailable) {
+      return false;
+    }
+
+    if (groupKeys.length === this.getGroupByLength()) {
+      return this.getLazyLoadedRows(groupKeys).complete;
+    }
+
+    return (
+      groupDeepMap?.getKeysStartingWith(groupKeys, {
+        excludeSelf: true,
+        depthLimit: 1,
+      }) ?? []
+    ).every((keys) => !isNotLoadedYetKey(keys[keys.length - 1]));
+  }
+
+  /**
+   * Lazy load, at the last group level (or the root, without grouping): the primary keys
+   * of the loaded rows, and whether they are all the rows of the group
+   */
+  private getLazyLoadedRows(groupKeys: any[]) {
+    this.lazyLoadedRows = this.lazyLoadedRows ?? new DeepMap();
+
+    let loadedRows = this.lazyLoadedRows.get(groupKeys);
+    if (!loadedRows) {
+      const { groupDeepMap, originalDataArray, toPrimaryKey, totalCount } =
+        this.getConfig();
+      const group = groupKeys.length ? groupDeepMap?.get(groupKeys) : undefined;
+      const items = group ? group.items : originalDataArray ?? [];
+      const rowCount = group ? group.totalChildrenCount : totalCount;
+
+      const primaryKeys = new Set();
+      let complete = rowCount == null || items.length >= rowCount;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item == null) {
+          complete = false;
+        } else {
+          primaryKeys.add(toPrimaryKey(item));
+        }
+      }
+      loadedRows = { primaryKeys, complete };
+      this.lazyLoadedRows.set(groupKeys, loadedRows);
+    }
+    return loadedRows;
+  }
+
+  /**
+   * Lazy load, with the counts after the filter: whether the row or group of a selection entry
+   * is known to be filtered out - its parent has all the children loaded, and it's not among them
+   */
+  private isLazyEntryFilteredOut(keys: any[]) {
+    const { groupDeepMap } = this.getConfig();
+    const groupByLength = this.getGroupByLength();
+
+    for (let length = 1; length <= keys.length; length++) {
+      const parentKeys = keys.slice(0, length - 1);
+      const loaded =
+        length > groupByLength
+          ? this.getLazyLoadedRows(parentKeys).primaryKeys.has(keys[length - 1])
+          : !!groupDeepMap?.get(keys.slice(0, length));
+
+      if (!loaded) {
+        return this.areLazyChildrenLoaded(parentKeys);
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Lazy load: counts the explicit selection entries inside the group, at any depth, by their own selection,
+   * whether their rows are loaded or not. The other rows of the group take its selection.
+   */
+  private getLazySelectionCountFor(
+    groupKeys: any[],
+    selected: boolean,
+  ): { selectedCount: number; deselectedCount: number } {
+    const cachedResult = this.selectionCountCache.get(groupKeys);
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
+    const entries = this.getLazyEntries();
+    const leafLength = this.getGroupByLength() + 1;
+    // the counts without the filter include the rows that are filtered out
+    const countsIncludeFilteredOutRows =
+      this.getLazyUnfilteredCount([]) !== undefined;
+
+    let selectedCount = 0;
+    let deselectedCount = 0;
+
+    entries
+      .getKeysOfFirstChildOnEachBranchStartingWith(groupKeys, {
+        excludeSelf: true,
+        respectOrder: false,
+      })
+      .forEach((keys) => {
+        if (
+          !countsIncludeFilteredOutRows &&
+          this.isLazyEntryFilteredOut(keys)
+        ) {
+          return;
+        }
+        const entrySelected = entries.get(keys)!;
+
+        if (keys.length >= leafLength) {
+          if (entrySelected) {
+            selectedCount++;
+          } else {
+            deselectedCount++;
+          }
+          return;
+        }
+
+        const count = this.getLazySelectionCountFor(keys, entrySelected);
+        selectedCount += count.selectedCount;
+        deselectedCount += count.deselectedCount;
+      });
+
+    const rowCount = this.getLazyRowCount(groupKeys);
+    // without a count from the server, the group has at least one row besides its entries
+    const otherRowsCount =
+      rowCount === undefined
+        ? 1
+        : Math.max(rowCount - selectedCount - deselectedCount, 0);
+
+    if (selected) {
+      selectedCount += otherRowsCount;
+    } else {
+      deselectedCount += otherRowsCount;
+    }
+
+    const result = { selectedCount, deselectedCount };
+    this.selectionCountCache.set(groupKeys, result);
+
+    return result;
   }
 
   getGroupCount(groupKeys: any[]) {
@@ -415,6 +664,9 @@ export class RowSelectionState<T = any> {
   private xcache() {
     this.selectionCache.clear();
     this.selectionCountCache.clear();
+    this.lazyLoadedRows = null;
+    this.lazyChildrenLoaded = null;
+    this.lazyRowCounts = null;
 
     // //@ts-ignore
     // this.selectionCache.get = () => {};
@@ -889,6 +1141,17 @@ export class RowSelectionState<T = any> {
     }
 
     if (
+      this.getConfig().lazyLoad &&
+      (!this.onlyUsePrimaryKeys || !groupByLength)
+    ) {
+      return this.getLazySelectionCountFor(
+        groupKeys,
+        parentSelected ??
+          this.getGroupRowBooleanSelectionStateFromParent(groupKeys),
+      );
+    }
+
+    if (
       this.onlyUsePrimaryKeys &&
       (groupByLength || this.targetsVisibleRowsOnly())
     ) {
@@ -993,33 +1256,6 @@ export class RowSelectionState<T = any> {
     let selectedCount = 0;
     let deselectedCount = 0;
 
-    const { lazyLoad, groupDeepMap } = this.getConfig();
-
-    if (lazyLoad && !allKeys.length) {
-      // no loaded rows under this group
-      // so we need to somehow guess the selection
-      const totalChildrenCount =
-        this.getLazyUnfilteredCount(groupKeys) ??
-        (groupDeepMap?.get(groupKeys)?.totalChildrenCount || 0);
-
-      if (parentSelected) {
-        selectedCount = totalChildrenCount;
-        // the deselection count might contain groups as well (with more than 1 row)
-        // but here we count everything as a leaf row (so a value of 1)
-        // which will be enough to render the selection checkbox in the correct state
-        deselectedCount = this.deselectedMap.getAllChildrenSizeFor(groupKeys);
-        if (deselectedCount === totalChildrenCount) {
-          selectedCount = 0;
-        }
-      } else {
-        deselectedCount = totalChildrenCount;
-        // same as above, the selection count might contain ....
-        selectedCount = this.selectedMap.getAllChildrenSizeFor(groupKeys);
-        if (selectedCount === totalChildrenCount) {
-          deselectedCount = 0;
-        }
-      }
-    }
     allKeys.forEach((keys) => {
       let isSelected = this.selectedMap.get(keys);
       let isDeselected = this.deselectedMap.get(keys);
@@ -1036,16 +1272,6 @@ export class RowSelectionState<T = any> {
       selectedCount += selCount;
       deselectedCount += deselCount;
     });
-
-    // their own selection is not known, so they take the selection of this group
-    const hiddenCount = allKeys.length
-      ? this.getLazyHiddenRowsCount(groupKeys)
-      : 0;
-    if (parentSelected) {
-      selectedCount += hiddenCount;
-    } else {
-      deselectedCount += hiddenCount;
-    }
 
     const result = {
       selectedCount,

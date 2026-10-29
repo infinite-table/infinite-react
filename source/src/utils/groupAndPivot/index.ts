@@ -20,6 +20,7 @@ import type { GroupBy } from './types';
 import { deepClone } from '../deepClone';
 import { DeepMap } from '../DeepMap';
 import { DEFAULT_TO_KEY } from './defaultToKey';
+import { NOT_LOADED_YET_KEY_PREFIX } from './notLoadedYet';
 import { KeyOfNoSymbol } from '../../components/InfiniteTable/types/Utility';
 import { DataSourceCache } from '../../components/DataSource/DataSourceCache';
 import { sharedValueGetterParamsFlyweightObject } from './sharedValueGetterParamsFlyweightObject';
@@ -28,7 +29,7 @@ import type { PerfMarker } from '../devTools/PerfMarker';
 
 export const LAZY_ROOT_KEY_FOR_GROUPS = '____root____';
 
-export const NOT_LOADED_YET_KEY_PREFIX = '____not_loaded_yet____';
+export { NOT_LOADED_YET_KEY_PREFIX };
 
 export type AggregationReducer<
   T,

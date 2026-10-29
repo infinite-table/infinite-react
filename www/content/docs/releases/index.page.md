@@ -3,6 +3,16 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.4.1
+
+With <DPropLink name="lazyLoad" /> and multi row selection, the group and header checkboxes now count the rows from the counts that the server sends, instead of estimating them:
+
+- With the counts without the filter (`totalChildrenCountUnfiltered`, `totalCountUnfiltered`) and <DPropLink name="multiRowSelectionTarget" />`="all"`, a row or group that is selected or deselected on its own keeps its own selection, even when the filter hides it - deselecting a hidden row of a selected group leaves the group (and the header) partly selected.
+- Otherwise, once all the rows of a group are loaded, a selected row that the filter hides is no longer counted, so it can't make a checkbox look checked.
+- The top-level group response can include `totalChildrenCount`, the number of all leaf rows after the filter, which the header checkbox uses.
+
+Fix the `filteredCount` of the DataSource state with <DPropLink name="lazyLoad" /> and grouping: it was the number of top-level groups. It's now the number of leaf rows - the `totalChildrenCount` of the top-level group response or, when it's missing, the sum of the `totalChildrenCount` of the top-level groups, once they are all loaded.
+
 ## 9.4.0
 
 Fix changing <DPropLink name="groupBy" /> or <DPropLink name="pivotBy" /> at runtime with <DPropLink name="lazyLoad" />: the <DPropLink name="data" /> function was not called again, so the grid showed a single empty group row. With <DPropLink name="lazyLoad" />, <DPropLink name="shouldReloadData.groupBy" /> and <DPropLink name="shouldReloadData.pivotBy" /> now default to `true`.

@@ -293,6 +293,7 @@ export function loadData<T>(
             totalCount: remoteData.totalCount ?? dataArray.length,
             // set even when missing, so a previous response's values are not kept
             totalCountUnfiltered: remoteData.totalCountUnfiltered,
+            totalChildrenCount: remoteData.totalChildrenCount,
             totalChildrenCountUnfiltered:
               remoteData.totalChildrenCountUnfiltered,
             children: dataArray,

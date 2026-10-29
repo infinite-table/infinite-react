@@ -446,6 +446,7 @@ Server side grouping needs two kinds of data responses in order to work properly
     - `aggregations` - an object that describes the aggregations for the current group
     - `totalChildrenCount` - optional - the number of leaf rows in the group, at any depth. Multiple row selection uses it to render the checkbox of a group whose rows are not loaded.
     - `totalChildrenCountUnfiltered` - optional - the same count, without the filter. See [lazy selection with a filter](/docs/learn/selection/row-selection#multi-selection-with-lazy-load-and-grouping).
+  - `totalChildrenCount` - optional, for the top-level group - the number of all leaf rows. Multiple row selection uses it for the header checkbox.
   - `totalChildrenCountUnfiltered` - optional, for the top-level group - the number of all leaf rows, without the filter
 - response for **leaf rows** - these are normal rows - rows that would have been served in the non-grouped response. The resolved object should have the following properties:
   - `data` - an array of objects that describes the rows

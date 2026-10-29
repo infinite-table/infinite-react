@@ -351,12 +351,16 @@ In order to make this possible, the <DPropLink name="rowSelection" /> value will
 
 With lazy loading, the server knows which rows are filtered out, so it's the server that applies <DPropLink name="multiRowSelectionTarget" />. The selection keeps storing group keys and `defaultSelection`, and the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its parameters. Use it when working out which rows a stored selection covers - for `'visible'`, a selected group (or `defaultSelection: true`) only covers the rows that pass the current `filterValue`, while for `'all'`, it covers every row in the group. Changing <DPropLink name="multiRowSelectionTarget" /> doesn't reload the data.
 
-The checkboxes count the rows that the server reports: the `totalChildrenCount` of each group (see [server-side grouping](/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading)) and the `totalCount` of the response. With `'all'`, the server can also send the counts without the filter, so the checkboxes count the rows hidden by the filter as well - a selected group with hidden rows that are not selected shows as partly selected:
+The checkboxes count the rows that the server reports: the `totalChildrenCount` of each group (and of the top-level group response - see [server-side grouping](/docs/learn/grouping-and-pivoting/grouping-rows#server-side-grouping-with-lazy-loading)) and the `totalCount` of a response with rows. With `'all'`, the server can also send the counts without the filter, so the checkboxes count the rows hidden by the filter as well - a selected group with hidden rows that are not selected shows as partly selected:
 
 - `totalChildrenCountUnfiltered` on each group, and on the top-level group response
 - `totalCountUnfiltered` on a response with rows (not groups)
 
-Without these counts, or with `'visible'`, the checkboxes only count the rows that pass the filter. The rows hidden by the filter take the selection of their parent group - or of `defaultSelection` at the top level.
+With these counts, a row or group that is selected or deselected on its own is counted with its own selection, even when the filter hides it.
+
+Without them, or with `'visible'`, the checkboxes only count the rows that pass the filter. Once all the rows of a group are loaded, a selected (or deselected) row that the filter hides is no longer counted. Until then, it can't be told apart from a row that's not loaded yet, so it's counted with its own selection.
+
+A group whose count is not known yet (it was never loaded) counts as one row.
 
 <Sandpack title="Multi row checkbox selection with lazy data and grouping" >
 

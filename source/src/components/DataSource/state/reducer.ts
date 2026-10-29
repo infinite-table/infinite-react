@@ -10,6 +10,7 @@ import {
   InfiniteTable_NoGrouping_RowInfoNormal,
   InfiniteTable_Tree_RowInfoNode,
   InfiniteTable_Tree_RowInfoParentNode,
+  LAZY_ROOT_KEY_FOR_GROUPS,
   lazyGroup,
 } from '../../../utils/groupAndPivot';
 import {
@@ -28,6 +29,7 @@ import { RowSelectionState } from '../RowSelectionState';
 import type {
   DataSourceState,
   DataSourceDerivedState,
+  LazyGroupDataDeepMap,
   LazyRowInfoGroup,
   DataSourcePropFilterFunction,
   DataSourcePropFilterValue,
@@ -93,6 +95,31 @@ const haveDepsChanged = <StateType>(
   }
   return false;
 };
+
+/**
+ * Lazy load with grouping: the count of the leaf rows, as the server sent it -
+ * for all the rows, or for each of the top-level groups, once they are all loaded
+ */
+function getLazyGroupedRowCount<T>(
+  lazyGroupData: LazyGroupDataDeepMap<T>,
+): number | undefined {
+  const root = lazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS]);
+  if (!root) {
+    return undefined;
+  }
+  if (root.totalChildrenCount != null) {
+    return root.totalChildrenCount;
+  }
+  let count = 0;
+  for (let i = 0; i < root.children.length; i++) {
+    const groupCount = root.children[i]?.totalChildrenCount;
+    if (groupCount == null) {
+      return undefined;
+    }
+    count += groupCount;
+  }
+  return count;
+}
 
 function returnFalse() {
   return false;
@@ -640,7 +667,10 @@ export function concludeReducer<T>(params: {
     state.filteredAt = now;
   }
 
-  state.filteredCount = dataArray.length;
+  state.filteredCount =
+    (state.lazyLoad && groupBy.length
+      ? getLazyGroupedRowCount(state.originalLazyGroupData)
+      : undefined) ?? dataArray.length;
   state.postFilterDataArray = dataArray;
 
   if (shouldSort) {
@@ -1121,7 +1151,11 @@ export function concludeReducer<T>(params: {
   state.reducedAt = now;
 
   if (state.selectionMode === 'multi-row') {
-    if (shouldGroup && state.lazyLoad) {
+    const groupKeysSelection =
+      state.rowSelection instanceof RowSelectionState &&
+      !state.rowSelection.onlyUsePrimaryKeys;
+
+    if (shouldGroup && state.lazyLoad && !groupKeysSelection) {
       if (debugId) {
         marker =
           getMarker(

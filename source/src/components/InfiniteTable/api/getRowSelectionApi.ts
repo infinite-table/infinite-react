@@ -81,6 +81,9 @@ export function rowSelectionStateConfigGetter<T>(
       totalCount: lazyLoad
         ? originalDataArray?.length ?? 0
         : state.unfilteredCount,
+      lazyGroupedRowCount: state.groupBy.length
+        ? lazyRoot?.totalChildrenCount
+        : undefined,
       lazyUnfilteredCount: state.groupBy.length
         ? lazyRoot?.totalChildrenCountUnfiltered
         : lazyRoot?.totalCountUnfiltered,

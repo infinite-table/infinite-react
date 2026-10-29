@@ -38,7 +38,15 @@ export class DeepMap<KeyType, ValueType> {
   private map = new Map<KeyType, Pair<KeyType, ValueType>>();
   private length = 0;
   private revision = 0;
+  private mutations = 0;
   private emptyKey = Symbol('emptyKey') as any as KeyType;
+
+  /**
+   * Increases on every set, delete and clear, so derived data can be cached until the map changes
+   */
+  get version() {
+    return this.mutations;
+  }
 
   static clone<KeyType, ValueType>(map: DeepMap<KeyType, ValueType>) {
     const clone = new DeepMap<KeyType, ValueType>();
@@ -373,6 +381,7 @@ export class DeepMap<KeyType, ValueType> {
 
   set(keys: KeyType[] & { length: Omit<number, 0> }, value: ValueType) {
     let currentMap = this.map;
+    this.mutations++;
     if (!keys.length) {
       keys = [this.emptyKey];
     }
@@ -445,10 +454,12 @@ export class DeepMap<KeyType, ValueType> {
 
     this.length = 0;
     this.revision = 0;
+    this.mutations++;
   }
 
   delete(keys: KeyType[]): boolean {
     let currentMap = this.map;
+    this.mutations++;
     if (!keys.length) {
       keys = [this.emptyKey];
     } else {
