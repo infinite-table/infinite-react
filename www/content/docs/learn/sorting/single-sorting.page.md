@@ -178,17 +178,13 @@ The <DataSourcePropLink name="defaultSortInfo" /> prop is an uncontrolled prop, 
 
 ### Controlled Sorting
 
-When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, by default the <DPropLink name="shouldReloadData.sortInfo" /> is `true` (remote sorting), unless you specify otherwise.
+When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, the `<DataSource />` still sorts the data internally, just like with uncontrolled sorting - <DPropLink name="shouldReloadData.sortInfo" /> is `false` (local sorting) by default.
 
 Also, be aware that when the user interacts with the DataGrid when controlled sorting is configured, the <DPropLink name="sortInfo" /> prop will not update automatically - you need to listen to <DPropLink name="onSortInfoChange" /> and update the <DPropLink name="sortInfo" /> yourself.
 
-Just like with uncontrolled sorting, updating the controlled <DPropLink name="sortInfo" /> when `shouldReloadData.sortInfo=true`, will trigger a call to the <DPropLink name="data" /> function, so new sorted data can be re-fetched.
-
 <Note>
 
-When the controlled <DPropLink name="sortInfo" /> is combined with <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=false</DPropLink>, the `<DataSource />` will sort the data internally, on any changes of the sorting information.
-
-But remember it's your responsibility to update the <DPropLink name="sortInfo" /> prop when the user interacts with the DataGrid.
+If you sort the data yourself - on the server, or in your own code before passing it to the `<DataSource />` - set <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DPropLink>. With a `data` function, it's called again whenever the controlled <DPropLink name="sortInfo" /> changes; with array data, you pass the newly sorted array. Either way, the rows are shown in the order they come in. See [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
 
 </Note>
 
@@ -226,7 +222,7 @@ Sorting remotely makes a lot of sense when using a function as your <DataSourceP
 
 <Note>
 
-For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
+For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the `data` function is not called again when the sorting changes, and the data is sorted in the browser.
 
 </Note>
 
@@ -331,7 +327,9 @@ The function specified in the <DPropLink name="sortFunction" /> prop is called w
 
 <Note>
 
-When <DPropLink name="sortFunction" /> is specified, <DPropLink name="shouldReloadData.sortInfo" /> will be forced to `false`, as the sorting is done in the browser.
+A <DPropLink name="sortFunction" /> makes the sorting happen in the browser. It is independent from <DPropLink name="shouldReloadData.sortInfo" />, which only decides if the `data` function is called again when the sorting changes - with both, the data is reloaded on every sort change and then sorted in the browser with the `sortFunction`.
+
+For tree data, see [`multisort` and `multisortNested`](/docs/reference/datasource-props#sortFunction).
 </Note>
 
 <Sandpack  title="Using a custom sortFunction">

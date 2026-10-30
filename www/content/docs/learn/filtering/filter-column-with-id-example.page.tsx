@@ -76,7 +76,6 @@ export default () => {
             },
           ]}
           filterDelay={0}
-          filterMode="local"
         >
           <InfiniteTable<Developer>
             debugId="filter-column-with-id-example"

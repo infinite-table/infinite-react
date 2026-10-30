@@ -27,7 +27,6 @@ const target = ref<'all' | 'visible'>('all');
     :data="lazyUnfilteredDataSource"
     :groupBy="groupBy"
     :lazyLoad="true"
-    filterMode="remote"
     :defaultFilterValue="lazyUnfilteredFilterValue"
     selectionMode="multi-row"
     :useGroupKeysForMultiRowSelection="true"

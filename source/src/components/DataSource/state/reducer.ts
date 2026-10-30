@@ -1,9 +1,5 @@
 import { composeFunctions } from '../../../utils/composeFunctions';
-import {
-  DataSourceFilterValueItem,
-  DataSourcePropTreeFilterFunction,
-  DataSourceSetupState,
-} from '..';
+import { DataSourcePropTreeFilterFunction, DataSourceSetupState } from '..';
 import { DeepMap } from '../../../utils/DeepMap';
 import {
   InfiniteTableRowInfo,
@@ -33,7 +29,6 @@ import type {
   LazyRowInfoGroup,
   DataSourcePropFilterFunction,
   DataSourcePropFilterValue,
-  DataSourceFilterOperatorFunctionParam,
   DataSourcePropFilterTypes,
 } from '../types';
 import {
@@ -53,31 +48,16 @@ import {
   type PerfMarker,
 } from '../../../utils/devTools';
 import { notNullable } from '../../InfiniteTable/types/Utility';
+import {
+  cleanupEmptyFilterValues,
+  defaultTreeFilterFunction,
+  getActiveFilters,
+  getDefaultFilterFunctionCalls,
+  matchesActiveFilters,
+} from '../defaultFilterFunction';
+import { warnOnce } from '../../../utils/logger';
 
-export function cleanupEmptyFilterValues<T>(
-  filterValue: DataSourceState<T>['filterValue'],
-
-  filterTypes: DataSourceState<T>['filterTypes'],
-) {
-  if (!filterValue) {
-    return filterValue;
-  }
-  // for remote filters, we don't want to include the values that are empty
-  return filterValue.filter((filterValue) => {
-    const filterType = filterTypes[filterValue.filter.type];
-    if (!filterType) {
-      return false;
-    }
-
-    if (
-      filterType.emptyValues &&
-      filterType.emptyValues.includes(filterValue.filter.value)
-    ) {
-      return false;
-    }
-    return true;
-  });
-}
+export { cleanupEmptyFilterValues };
 
 const haveDepsChanged = <StateType>(
   state1: StateType,
@@ -205,6 +185,8 @@ function filterTreeDataSource<T>(params: {
   getNodeChildren: NonNullable<FilterDataSourceParams<T>['getNodeChildren']>;
   isLeafNode: NonNullable<FilterDataSourceParams<T>['isLeafNode']>;
   nodesKey: NonNullable<FilterDataSourceParams<T>['nodesKey']>;
+  filterValue: DataSourcePropFilterValue<T>;
+  filterTypes: DataSourcePropFilterTypes<T>;
 }) {
   const {
     dataArray,
@@ -213,18 +195,21 @@ function filterTreeDataSource<T>(params: {
     getNodeChildren,
     isLeafNode,
     nodesKey,
+    filterValue,
+    filterTypes,
   } = params;
   let treeDataArray: T[] = [];
 
-  const filterTreeNode = (data: T) => {
-    const children = getNodeChildren(data);
+  const isLeaf = (data: T) =>
+    isLeafNode(data) || !Array.isArray(getNodeChildren(data));
 
-    if (isLeafNode(data) || !Array.isArray(children)) {
+  const filterTreeNode = (data: T) => {
+    if (isLeaf(data)) {
       return data;
     }
     const newChildren = filterTreeDataSource({
       ...params,
-      dataArray: children,
+      dataArray: getNodeChildren(data)!,
     });
 
     if (newChildren.length === 0) {
@@ -246,7 +231,10 @@ function filterTreeDataSource<T>(params: {
       index: i,
       dataArray,
       primaryKey: toPrimaryKey(data, i),
+      filterValue,
+      filterTypes,
       filterTreeNode,
+      isLeafNode: isLeaf(data),
     });
 
     if (!res) {
@@ -269,7 +257,6 @@ function filterTreeDataSource<T>(params: {
 type FilterDataSourceParams<T> = {
   marker?: PerfMarker;
   dataArray: T[];
-  operatorsByFilterType: DataSourceDerivedState<T>['operatorsByFilterType'];
   filterTypes: DataSourcePropFilterTypes<T>;
   filterFunction?: DataSourcePropFilterFunction<T>;
   filterValue?: DataSourcePropFilterValue<T>;
@@ -280,11 +267,21 @@ type FilterDataSourceParams<T> = {
   nodesKey: string | undefined;
 };
 
+const EMPTY_FILTER_VALUE: any[] = [];
+
+/**
+ * Filters the data array locally.
+ *
+ * A `filterFunction` (or, for tree data, a `treeFilterFunction`) replaces the
+ * built-in column filtering - compose it with `defaultFilterFunction` to keep
+ * the column filters. Without a filter function, the column filters
+ * (`filterValue`) are applied - on tree data, they are matched against the leaf
+ * nodes and a parent is kept when any of its descendants is kept.
+ */
 export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
   const {
     filterTypes,
     marker,
-    operatorsByFilterType,
     filterFunction,
     toPrimaryKey,
     treeFilterFunction,
@@ -292,6 +289,8 @@ export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
     nodesKey,
     isLeafNode,
   } = params;
+  const filterValue: DataSourcePropFilterValue<T> =
+    params.filterValue || EMPTY_FILTER_VALUE;
 
   let { dataArray } = params;
 
@@ -299,85 +298,68 @@ export function filterDataArray<T>(params: FilterDataSourceParams<T>) {
     details: [{ name: 'Count before', value: dataArray.length }],
   });
 
-  if (filterFunction) {
+  const isTree = !!nodesKey && !!getNodeChildren && !!isLeafNode;
+  const defaultCallsBefore = __DEV__ ? getDefaultFilterFunctionCalls() : 0;
+
+  if (isTree) {
+    const userFilterFunction = filterFunction;
+    const treeFn: DataSourcePropTreeFilterFunction<T> =
+      treeFilterFunction ||
+      (userFilterFunction
+        ? (param) =>
+            param.isLeafNode
+              ? userFilterFunction(param)
+              : param.filterTreeNode(param.data)
+        : defaultTreeFilterFunction);
+
+    dataArray = filterTreeDataSource({
+      dataArray,
+      treeFilterFunction: treeFn,
+      toPrimaryKey,
+      getNodeChildren: getNodeChildren!,
+      nodesKey: nodesKey!,
+      isLeafNode: isLeafNode!,
+      filterValue,
+      filterTypes,
+    });
+  } else if (filterFunction) {
     dataArray = dataArray.filter((data, index, arr) =>
       filterFunction({
         data,
         index,
         dataArray: arr,
         primaryKey: toPrimaryKey(data, index),
+        filterValue,
+        filterTypes,
       }),
     );
+  } else {
+    const activeFilters = getActiveFilters(filterValue, filterTypes);
+    if (activeFilters.length) {
+      dataArray = dataArray.filter((data, index, arr) =>
+        matchesActiveFilters(activeFilters, {
+          data,
+          index,
+          dataArray: arr,
+          primaryKey: toPrimaryKey(data, index),
+        }),
+      );
+    }
   }
 
-  if (treeFilterFunction) {
-    dataArray = filterTreeDataSource({
-      ...params,
-      treeFilterFunction,
-      getNodeChildren: getNodeChildren!,
-      nodesKey: nodesKey!,
-      isLeafNode: isLeafNode!,
-    });
-  }
-
-  const filterValueArray =
-    cleanupEmptyFilterValues(params.filterValue, filterTypes) || [];
-
-  if (filterValueArray && filterValueArray.length) {
-    const result = dataArray.filter((data, index, arr) => {
-      const param = {
-        data,
-        index,
-        dataArray: arr,
-        primaryKey: toPrimaryKey(data, index),
-        field: undefined as keyof T | undefined,
-      };
-
-      for (let i = 0, len = filterValueArray.length; i < len; i++) {
-        const currentFilterValue = filterValueArray[i];
-
-        const {
-          disabled,
-          field,
-          valueGetter: filterValueGetter,
-          filter: { type: filterTypeKey, value: filterValue, operator },
-        } = currentFilterValue;
-        const filterType = filterTypes[filterTypeKey];
-        if (disabled || !filterType) {
-          continue;
-        }
-        const currentOperator =
-          operatorsByFilterType[filterTypeKey]?.[operator];
-        if (!currentOperator) {
-          continue;
-        }
-
-        const valueGetter: DataSourceFilterValueItem<T>['valueGetter'] =
-          filterValueGetter || filterType.valueGetter;
-        const getter =
-          valueGetter || (({ data, field }) => (field ? data[field] : data));
-
-        // this assignment is important
-        param.field = field;
-
-        const operatorFnParam =
-          param as DataSourceFilterOperatorFunctionParam<T>;
-
-        operatorFnParam.filterValue = filterValue;
-        operatorFnParam.currentValue = getter(operatorFnParam);
-        operatorFnParam.emptyValues = filterType.emptyValues;
-
-        if (!currentOperator.fn(operatorFnParam)) {
-          return false;
-        }
-      }
-      return true;
-    });
-
-    marker?.end({
-      details: [{ name: 'Count after', value: result.length }],
-    });
-    return result;
+  if (
+    __DEV__ &&
+    (filterFunction || treeFilterFunction) &&
+    params.dataArray.length &&
+    getDefaultFilterFunctionCalls() === defaultCallsBefore &&
+    getActiveFilters(filterValue, filterTypes).length
+  ) {
+    warnOnce(
+      `The <DataSource /> has a "${
+        treeFilterFunction ? 'treeFilterFunction' : 'filterFunction'
+      }" and active column filters ("filterValue"), but the column filters are not applied: a filter function replaces the built-in column filtering. Call "defaultFilterFunction" from your filter function to keep them.`,
+      'filterFunction replaces column filters',
+    );
   }
 
   marker?.end({
@@ -507,19 +489,18 @@ export function concludeReducer<T>(params: {
     state.cache = undefined;
   }
 
-  const {
-    filterFunction,
-    treeFilterFunction,
-    filterValue,
-    filterTypes,
-    operatorsByFilterType,
-  } = state;
+  const { filterFunction, treeFilterFunction, filterValue, filterTypes } =
+    state;
   const shouldFilter =
     !!filterFunction ||
     !!treeFilterFunction ||
     (Array.isArray(filterValue) && filterValue.length);
 
-  const shouldFilterClientSide = shouldFilter && state.filterMode === 'local';
+  // lazily loaded data has placeholders for the rows not loaded yet,
+  // so it is never filtered locally
+  const filterLocally = state.filterMode === 'local' && !state.lazyLoad;
+
+  const shouldFilterClientSide = shouldFilter && filterLocally;
 
   const filterDepsChanged = haveDepsChanged(previousState, state, [
     'filterFunction',
@@ -535,8 +516,7 @@ export function concludeReducer<T>(params: {
     originalDataArrayChanged || filterDepsChanged || sortInfoChanged;
 
   const shouldFilterAgain =
-    state.filterMode === 'local' &&
-    (filterChanged || !state.lastFilterDataArray);
+    filterLocally && (filterChanged || !state.lastFilterDataArray);
 
   const shouldSortAgain =
     shouldSort &&
@@ -669,7 +649,6 @@ export function concludeReducer<T>(params: {
         dataArray,
         toPrimaryKey,
         filterTypes,
-        operatorsByFilterType,
         filterFunction,
         filterValue,
       });

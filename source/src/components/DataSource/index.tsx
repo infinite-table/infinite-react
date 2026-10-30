@@ -20,6 +20,10 @@ import {
   cleanupDataSource,
 } from './state/getInitialState';
 import { concludeReducer, filterDataArray } from './state/reducer';
+import {
+  defaultFilterFunction,
+  defaultTreeFilterFunction,
+} from './defaultFilterFunction';
 
 // import { DataSourceCmp } from './DataSourceCmp';
 import { useDataSourceInternal } from './privateHooks/useDataSource';
@@ -85,6 +89,8 @@ export {
   useRowInfoReducers,
   useMasterRowInfo,
   filterDataArray,
+  defaultFilterFunction,
+  defaultTreeFilterFunction,
 };
 
 export * from './types';

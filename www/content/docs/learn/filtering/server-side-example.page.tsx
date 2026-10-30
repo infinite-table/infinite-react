@@ -97,6 +97,7 @@ const defaultFilterValue: DataSourcePropFilterValue<Developer> = [];
 
 const shouldReloadData = {
   sortInfo: true,
+  filterValue: true,
 };
 
 export default () => {

@@ -143,7 +143,7 @@ Sorting remotely makes a lot of sense when using a function as your <DataSourceP
 
 <Note>
 
-For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the data will also be sorted locally in the browser (which most of the times will be harmless, but it means wasted CPU cycles).
+For remote sorting, make sure you specify <DataSourcePropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DataSourcePropLink> - if you don't, the `data` function is not called again when the sorting changes, and the data is sorted in the browser.
 
 </Note>
 

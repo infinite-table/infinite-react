@@ -3,7 +3,7 @@ import { test, expect } from '@testing';
 import { persons } from './sortPersons';
 
 export default test.describe.parallel('DataSource', () => {
-  test('should work correctly with sortInfo controlled - no change to the datasource if controlled sortInfo', async ({
+  test('controlled sortInfo sorts locally and onSortInfoChange is not called for prop changes', async ({
     page,
   }) => {
     await page.load();
@@ -58,6 +58,14 @@ export default test.describe.parallel('DataSource', () => {
       (window as any).setSortInfo([{ dir: -1, field: 'age' }]);
     });
 
+    // the controlled sortInfo is applied locally: age descending
+    await page.waitForFunction((firstId) => {
+      const rows = JSON.parse(
+        (document.querySelector('#source') as HTMLElement).innerText,
+      );
+      return rows[0]?.id === firstId;
+    }, persons[1].id);
+
     result = await page.evaluate(() => {
       return JSON.parse(
         (document.querySelector('#source') as HTMLElement).innerText,
@@ -66,25 +74,23 @@ export default test.describe.parallel('DataSource', () => {
 
     expect(result).toEqual([
       {
-        data: persons[0],
-        id: persons[0].id,
         dataSourceHasGrouping: false,
+        data: persons[1],
         indexInAll: 0,
         rowSelected: false,
         rowDisabled: false,
-        // indexInGroup: 0,
+        id: persons[1].id,
         isGroupRow: false,
         isTreeNode: false,
         selfLoaded: true,
       },
       {
+        data: persons[0],
+        id: persons[0].id,
         dataSourceHasGrouping: false,
-        data: persons[1],
         indexInAll: 1,
         rowSelected: false,
         rowDisabled: false,
-        // indexInGroup: 1,
-        id: persons[1].id,
         isGroupRow: false,
         isTreeNode: false,
         selfLoaded: true,

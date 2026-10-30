@@ -713,7 +713,7 @@ sortTypes={{
 
 > The delay in milliseconds before the filter is applied. This is useful when you want to wait for the user to finish typing before applying the filter.
 
-This is especially useful in order to reduce the number of requests sent to the server, when <DPropLink name="filterMode">remote filtering</DPropLink> is used.
+This is especially useful in order to reduce the number of requests sent to the server, when <DPropLink name="shouldReloadData.filterValue">remote filtering</DPropLink> is used.
 
 If not specified, defaults to `200` milliseconds. This means, any changes to the column filters, that happen inside a 200ms window (or the current value of <DPropLink name="filterDelay"/>), will be debounced and only the last value will be sent to the server.
 
@@ -748,15 +748,20 @@ The following mutative operations are batched:
 
 </Prop>
 
-<Prop name="treeFilterFunction" type="({ data, filterTreeNode, primaryKey }) => DATA_TYPE | boolean">
+<Prop name="treeFilterFunction" type="({ data, isLeafNode, filterTreeNode, filterValue, filterTypes, primaryKey }) => DATA_TYPE | boolean">
 
-> A function to be used for filtering a `TreeDataSource`.
+> A function to be used for filtering a `TreeDataSource` in the browser. It replaces the built-in column filtering.
 
-The function should return a boolean value or a data object.
+The function is called for the nodes of the top level, and should return a boolean value or a data object.
 
 - when returning `false` the current data object will be filtered out.
 - when returning `true`, the current data object will be included in the filtered data, with no changes.
 - when returning a data object, the object will be used instead of the current data object for the row. This means that you can modify the data object to only include some of its children (which match a specific criteria)
+
+The param also has:
+
+- `isLeafNode` - whether the current node is a leaf node.
+- `filterValue` and `filterTypes` - the current column filters (see <DPropLink name="filterValue" />), so you can apply them with `defaultFilterFunction`.
 
 <Note>
 
@@ -768,6 +773,30 @@ You can opt to not use this helper function, and instead implement your own filt
 
 </Note>
 
+When there is no `treeFilterFunction`, the column filters are applied with `defaultTreeFilterFunction`, which you can also import and call from your own function:
+
+```ts
+import {
+  defaultFilterFunction,
+  defaultTreeFilterFunction,
+} from '@infinite-table/infinite-react';
+
+// the built-in tree filtering: leaf nodes are matched against the column filters,
+// a parent node is kept when at least one of its descendants is kept
+treeFilterFunction={defaultTreeFilterFunction}
+
+// also keep the parent nodes that match the column filters themselves
+treeFilterFunction={(param) =>
+  param.isLeafNode
+    ? defaultFilterFunction(param)
+    : defaultFilterFunction(param) || param.filterTreeNode(param.data)
+}
+```
+
+`defaultTreeFilterFunction` matches only the leaf nodes against the column filters - the fields of a parent node are not matched.
+
+A `treeFilterFunction` has no effect with <DPropLink name="lazyLoad" />.
+
 <Sandpack title="Tree filtering via treeFilterFunction">
 
 ```ts file=tree-filter-function-example.page.tsx
@@ -778,15 +807,36 @@ You can opt to not use this helper function, and instead implement your own filt
 
 </Prop>
 
-<Prop name="filterFunction" type="({ data, dataArray, index, primaryKey }) => boolean">
+<Prop name="filterFunction" type="({ data, dataArray, index, primaryKey, filterValue, filterTypes }) => boolean">
 
-> A function to be used for client-side filtering.
+> A function to be used for filtering in the browser - you decide how the rows are filtered.
 
-Using this function will not show any special filtering UI for columns.
+The function is called for every row, and returns whether the row is kept. Its param also has the current column filters (<DPropLink name="filterValue" />, as `filterValue` and `filterTypes`), so the function can filter in any way you want:
+
+- call `defaultFilterFunction`, which Infinite Table exports, to filter by the column filters the same way the built-in filtering does;
+- use your own logic;
+- or combine the two.
+
+```ts
+import { defaultFilterFunction } from '@infinite-table/infinite-react';
+
+// the built-in column filtering
+filterFunction={defaultFilterFunction}
+
+// your own logic only
+filterFunction={(param) => param.data.age > 30}
+
+// the column filters, and your own condition
+filterFunction={(param) => defaultFilterFunction(param) && param.data.age > 30}
+```
+
+A `filterFunction` makes the filtering happen in the browser. Combine it with <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> when the <DPropLink name="data" /> function should also be called again on every filter change - the returned rows are then filtered in the browser.
+
+A `filterFunction` has no effect with <DPropLink name="lazyLoad" />: the rows that are not loaded yet can't be filtered in the browser.
 
 <Note>
 
-For filtering when using a `TreeGrid`, see <DPropLink name="treeFilterFunction" />.
+For filtering when using a `TreeGrid`, see <DPropLink name="treeFilterFunction" />. When both are specified for tree data, only the `treeFilterFunction` is used.
 
 </Note>
 
@@ -808,20 +858,12 @@ Loads data from remote location but will only show rows that have `id > 100`.
 
 <Prop name="shouldReloadData.filterValue" type="boolean">
 
-> Explicitly configures where filtering will take place and if changes in the <DataSourcePropLink name="filterValue" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
- Replaces the deprecated <DPropLink name="filterMode" />
+> Specifies if changes in the <DataSourcePropLink name="filterValue" /> should trigger a reload of the data source - and so, that the data is filtered by whoever provides it.
 
-- `false` (the default) - filtering will be done on the client side and the <DPropLink name="data" /> function will not be invoked again.
-- `true` - filtering will be done on the server side - the <DPropLink name="data" /> function will be called with an object that includes the `filterValue` property, so it can be sent to the server
+- `false` - filtering is done in the browser and the <DPropLink name="data" /> function is not called again. This is the default - for both controlled and uncontrolled filtering - unless <DPropLink name="lazyLoad" /> or <DPropLink name="livePagination" /> is used.
+- `true` - the data is filtered by whoever provides it. When <DPropLink name="data" /> is a function, it's called again on every filter change, with the `filterValue` in its params, so it can be sent to the server. When <DPropLink name="data" /> is an array, you pass a new, filtered array (eg from <DPropLink name="onFilterValueChange" />). The rows are shown as they come in - unless a <DPropLink name="filterFunction" /> is specified, in which case they are filtered again in the browser. This is the default with <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />.
 
-</Prop>
-
-<Prop name="filterMode" type="'local'|'remote'" deprecated>
-
-> Explicitly configures where filtering will take place. Update to use the <DPropLink name="shouldReloadData.filterValue" /> prop.
-
-- `'local'` - filtering will be done on the client side
-- `'remote'` - filtering will be done on the server side - the <DPropLink name="data" /> function will be called with an object that includes the `filterValue` property, so it can be sent to the server
+See [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
 
 </Prop>
 
@@ -1693,18 +1735,21 @@ Read more on cell selection (`multi-cell` and `single-cell`).
 
 <Prop name="sortFunction" type="(sortInfo:DataSourceSingleSortInfo<T>[], arr: T[]) => T[]">
 
-> Custom sorting function to replace the `multisort` function used by default.
+> Custom sorting function to replace the built-in sorting - `multisort` for flat data, `multisortNested` for tree data.
 
 The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.
 
 <Note>
 
-When <DPropLink name="sortFunction" /> is specified, <DPropLink name="shouldReloadData.sortInfo" /> will be forced to `false`, as the sorting is done in the browser.
+A `sortFunction` makes the sorting happen in the browser, and it is independent from <DPropLink name="shouldReloadData.sortInfo" />, which only decides if the <DPropLink name="data" /> function is called again when the sorting changes. With both, the data is fetched again on every sort change and then sorted in the browser - `sortFunction={multisort}` is the easiest way to get that.
+
+A `sortFunction` has no effect with <DPropLink name="lazyLoad" /> or <DPropLink name="livePagination" />.
+
 </Note>
 
 <Note>
 
-The `@infinite-table/infinite-react` package exports a `multisort` function - this is the default function used for local sorting.
+The `@infinite-table/infinite-react` package exports a `multisort` function - this is the default function used for local sorting of flat data.
 
 ```ts
 import { multisort } from '@infinite-table/infinite-react';
@@ -1732,6 +1777,21 @@ If you want to implement your own custom sort function, the `multisort` fn is a 
 <Sandpack  title="Using a custom sortFunction">
 
 ```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
+
+```
+
+</Sandpack>
+
+#### Flat data vs tree data: `multisort` and `multisortNested`
+
+- `multisort(sortInfo, array)` sorts a flat array - it's the default for a `DataSource`. It sorts the array in place and returns it.
+- `multisortNested(sortInfo, array, { nodesKey, toKey, isLeafNode?, getNodeChildren?, depthFirst?, inplace? })` sorts tree data on every level - it's the default for a `TreeDataSource`. With `inplace: false` (what the `TreeDataSource` uses), the top-level array is copied before sorting, but the sorted children of every parent node are assigned back onto that parent node.
+
+A `sortFunction` is called with the top-level array only, and with no information about the tree. So for tree data, a custom `sortFunction` has to sort the children too - your code knows the `nodesKey` and the primary key, so it can call `multisortNested`:
+
+<Sandpack  title="A custom sortFunction for tree data, using multisortNested">
+
+```ts file="$DOCS/reference/datasource-props/tree-sortFunction-multisortNested-example.page.tsx"
 
 ```
 
@@ -1776,13 +1836,14 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 <Prop name="shouldReloadData.sortInfo" type="boolean">
 
-> Specifies if changes in the <DataSourcePropLink name="sortInfo" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function. Replaces the deprecated <DPropLink name="sortMode" />.
+> Specifies if changes in the <DataSourcePropLink name="sortInfo" /> should trigger a reload of the data source - and so, that the data is sorted by whoever provides it.
 
 See related <DataSourcePropLink name="sortInfo" /> and <DataSourcePropLink name="defaultSortInfo" />.
 
-When set to `false` (the default), the data is sorted locally (in the browser) after the data-source is loaded. When set to `true`, the data should be sorted by the server (or by the data-source function that serves the data).
+- `false` - the data is sorted locally (in the browser) and the <DPropLink name="data" /> function is not called again. This is the default - for both controlled and uncontrolled sorting - unless <DPropLink name="lazyLoad" /> or <DPropLink name="livePagination" /> is used.
+- `true` - the data is sorted by whoever provides it. When <DPropLink name="data" /> is a function, it's called again on every sort change, with the `sortInfo` in its params. When <DPropLink name="data" /> is an array, you pass a new, sorted array (eg from <DataSourcePropLink name="onSortInfoChange" />). The rows are shown in the order they come in - unless a <DPropLink name="sortFunction" /> is specified, in which case they are sorted again in the browser. This is the default with <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />.
 
-See [the Sorting page](/docs/learn/sorting/overview) for more details.
+See [the Sorting page](/docs/learn/sorting/overview) for more details, and [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
 
 For configuring the sorting behavior when multiple sorting is enabled, see <PropLink name="multiSortBehavior" />.
 
@@ -1790,10 +1851,12 @@ For configuring the sorting behavior when multiple sorting is enabled, see <Prop
 
 <Prop name="shouldReloadData.groupBy" type="boolean">
 
-> Specifies if changes in the <DPropLink name="groupBy" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function. Replaces the deprecated `groupMode` prop.
+> Specifies if changes in the <DPropLink name="groupBy" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
 
-- `true` - the data is grouped by the server: when <DPropLink name="groupBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `groupBy` in its params. This is the default with <DPropLink name="lazyLoad" />, since lazily loaded rows can only be grouped by the server.
-- `false` - the data is grouped locally (in the browser) and the <DPropLink name="data" /> function is not called again. This is the default without <DPropLink name="lazyLoad" />.
+- `true` - when <DPropLink name="groupBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `groupBy` in its params. This is the default with <DPropLink name="lazyLoad" />, where the server does the grouping (lazily loaded rows can only be grouped by the server).
+- `false` - the <DPropLink name="data" /> function is not called again. This is the default without <DPropLink name="lazyLoad" /> - also with <DPropLink name="livePagination" />, where the loaded pages are grouped in the browser.
+
+Without <DPropLink name="lazyLoad" />, the grouping is always done in the browser - `true` only makes the data reload.
 
 </Prop>
 
@@ -1801,34 +1864,31 @@ For configuring the sorting behavior when multiple sorting is enabled, see <Prop
 
 > Specifies if changes in the <DPropLink name="pivotBy" /> should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
 
-- `true` - the data is pivoted by the server: when <DPropLink name="pivotBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `pivotBy` in its params. This is the default with <DPropLink name="lazyLoad" />.
-- `false` - the data is pivoted locally (in the browser). This is the default without <DPropLink name="lazyLoad" />.
+- `true` - when <DPropLink name="pivotBy" /> changes, the <DPropLink name="data" /> function is called again, with the new `pivotBy` in its params. This is the default with <DPropLink name="lazyLoad" />, where the server does the pivoting.
+- `false` - the <DPropLink name="data" /> function is not called again. This is the default without <DPropLink name="lazyLoad" />.
+
+Without <DPropLink name="lazyLoad" />, the pivoting is always done in the browser - `true` only makes the data reload.
 
 </Prop>
 
 <Prop name="shouldReloadData" type="{ sortInfo, groupBy, filterValue, pivotBy }">
 
-> Specifies which changes in the data-related props should trigger a reload of the data source - applicable when <DPropLink name="data" /> is a function.
+> Specifies which changes in the data-related props should trigger a reload of the data source. Can be a boolean (applies to all of them) or an object.
+
+For sorting and filtering, each one is in one of three states:
+
+- done in the browser - `shouldReloadData.X: false`. The default, for any kind of <DPropLink name="data" />, unless <DPropLink name="lazyLoad" /> or <DPropLink name="livePagination" /> is used.
+- reloaded, then done in the browser - `shouldReloadData.X: true`, plus a <DPropLink name="sortFunction" /> or a <DPropLink name="filterFunction" /> (eg `sortFunction={multisort}` or `filterFunction={defaultFilterFunction}`).
+- done by whoever provides the data - `shouldReloadData.X: true` and no sort / filter function. The <DPropLink name="data" /> function is called again with the new values in its params (or, for array data, you pass the new data yourself). The default with <DPropLink name="lazyLoad" /> (and, for sorting and filtering, with <DPropLink name="livePagination" />).
+
+Grouping and pivoting are done in the browser, unless <DPropLink name="lazyLoad" /> is used.
+
+The params of the <DPropLink name="data" /> function always include the current `sortInfo` and `filterValue`, even when they don't trigger a reload.
 
 See <DPropLink name="shouldReloadData.sortInfo" />.
 See <DPropLink name="shouldReloadData.groupBy" />.
 See <DPropLink name="shouldReloadData.filterValue" />.
 See <DPropLink name="shouldReloadData.pivotBy" />.
-
-</Prop>
-
-
-<Prop name="sortMode" type="'local'|'remote'" deprecated>
-
-> Specifies where the sorting should be done. Use <DPropLink name="shouldReloadData.sortInfo" /> instead.
-
-See related <DPropLink name="sortInfo" /> and <DPropLink name="defaultSortInfo" />.
-
-When set to `'local'`, the data is sorted locally (in the browser) after the data-source is loaded. When set to `'remote'`, the data should be sorted by the server (or by the data-source function that serves the data).
-
-See [the Sorting page](/docs/learn/sorting/overview) for more details.
-
-For configuring the sorting behavior when multiple sorting is enabled, see <PropLink name="multiSortBehavior" />.
 
 </Prop>
 

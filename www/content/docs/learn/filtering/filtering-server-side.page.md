@@ -3,15 +3,9 @@ title: Server-side Filtering
 description: Learn how to integrate server-side filtering with your InfiniteTable React DataGrid
 ---
 
-If you're using a remote <DPropLink name="data" /> prop (a function that returns a `Promise`) on the `<DataSource />` component, the filtering will happen server-side by default.
+To filter server-side, use a function as the <DPropLink name="data" /> prop and set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> on the `<DataSource />` component (with <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />, this is the default).
 
-<Note>
-
-You can explicitly configure server-side filtering by using <DPropLink name="filterMode">filterMode="remote"</DPropLink>.
-
-</Note>
-
-When remote filtering is enabled, the <DPropLink name="data" /> function prop will be called with an object argument that includes the `filterValue` property, so the filters can be sent to the server for performing the correct filtering operations.
+The <DPropLink name="data" /> function prop is then called again on every filter change, with an object argument that includes the `filterValue` property, so the filters can be sent to the server for performing the correct filtering operations. The rows it returns are shown as they are - they are not filtered again in the browser.
 
 <Note>
 

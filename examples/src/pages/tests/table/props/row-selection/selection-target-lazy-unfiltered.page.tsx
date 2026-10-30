@@ -28,7 +28,6 @@ export default function App() {
       primaryKey="id"
       data={lazyUnfilteredDataSource}
       lazyLoad
-      filterMode="remote"
       defaultFilterValue={lazyUnfilteredFilterValue}
       selectionMode="multi-row"
       multiRowSelectionTarget={target}

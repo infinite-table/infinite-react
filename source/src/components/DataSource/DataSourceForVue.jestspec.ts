@@ -11,6 +11,8 @@ import type { App, Ref } from 'vue';
 
 import { DataSource, useDataSourceContext } from './DataSourceForVue.vue';
 import type { DataSourceContextValueForVue } from './DataSourceForVue.vue';
+import { defaultFilterFunction } from './defaultFilterFunction';
+import { multisort } from '../../utils/multisort';
 
 type Person = {
   id: number;
@@ -138,15 +140,11 @@ describe('Vue DataSource', () => {
     harness.unmount();
   });
 
-  test('controlled sortInfo (with local sorting): state follows the prop', async () => {
-    // NOTE: controlled sortInfo alone implies remote sorting (the owner is
-    // expected to sort the data) — same semantics as React. We opt into
-    // local sorting explicitly.
+  test('controlled sortInfo (sorted locally by default): state follows the prop', async () => {
     const harness = mountDataSource({
       primaryKey: 'id',
       data: people,
       sortInfo: [{ field: 'age', dir: 1 }],
-      shouldReloadData: { sortInfo: false },
     });
     await flush();
     expect(harness.renderedNames()).toEqual(['alice', 'bob', 'carol']);
@@ -155,7 +153,6 @@ describe('Vue DataSource', () => {
       primaryKey: 'id',
       data: people,
       sortInfo: [{ field: 'age', dir: -1 }],
-      shouldReloadData: { sortInfo: false },
     });
 
     expect(harness.renderedNames()).toEqual(['carol', 'bob', 'alice']);
@@ -279,6 +276,175 @@ describe('Vue DataSource', () => {
     expect(onDataParamsChange).toHaveBeenCalled();
     expect(onReady).toHaveBeenCalledTimes(1);
     expect(onReady.mock.calls[0][0]).toBe(harness.getContext().dataSourceApi);
+    harness.unmount();
+  });
+
+  test('a data function without shouldReloadData is called once; sorting and filtering are local', async () => {
+    const dataFn = jest.fn(() => Promise.resolve({ data: [...people] }));
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: dataFn,
+      defaultSortInfo: [],
+      defaultFilterValue: [],
+    });
+    await flush();
+    expect(dataFn).toHaveBeenCalledTimes(1);
+
+    harness.getContext().dataSourceActions.sortInfo = [
+      { field: 'age', dir: 1 },
+    ] as any;
+    await flush();
+    expect(harness.renderedNames()).toEqual(['alice', 'bob', 'carol']);
+
+    harness.getContext().dataSourceActions.filterValue = [
+      {
+        field: 'name',
+        filter: { type: 'string', operator: 'includes', value: 'o' },
+      },
+    ] as any;
+    await flush();
+    expect(harness.renderedNames()).toEqual(['bob', 'carol']);
+
+    expect(dataFn).toHaveBeenCalledTimes(1);
+    harness.unmount();
+  });
+
+  test('shouldReloadData.sortInfo + sortFunction: refetches and sorts locally', async () => {
+    // the server returns the rows in the same order, whatever the sort
+    const dataFn = jest.fn(() => Promise.resolve({ data: [...people] }));
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: dataFn,
+      defaultSortInfo: [],
+      sortFunction: multisort,
+      shouldReloadData: { sortInfo: true },
+    });
+    await flush();
+    expect(dataFn).toHaveBeenCalledTimes(1);
+
+    harness.getContext().dataSourceActions.sortInfo = [
+      { field: 'age', dir: -1 },
+    ] as any;
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(2);
+    expect(harness.renderedNames()).toEqual(['carol', 'bob', 'alice']);
+    harness.unmount();
+  });
+
+  test('shouldReloadData.filterValue + defaultFilterFunction: refetches and filters locally', async () => {
+    // the server ignores the filter
+    const dataFn = jest.fn(() => Promise.resolve({ data: [...people] }));
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: dataFn,
+      defaultFilterValue: [],
+      filterFunction: defaultFilterFunction,
+      shouldReloadData: { filterValue: true },
+    });
+    await flush();
+    expect(dataFn).toHaveBeenCalledTimes(1);
+
+    harness.getContext().dataSourceActions.filterValue = [
+      {
+        field: 'name',
+        filter: { type: 'string', operator: 'includes', value: 'ali' },
+      },
+    ] as any;
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(2);
+    expect(harness.renderedNames()).toEqual(['alice']);
+    harness.unmount();
+  });
+
+  test('local filtering: dataParams.filterValue keeps every item but drops the value getters', async () => {
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: people,
+      defaultFilterValue: [],
+    });
+    await flush();
+
+    harness.getContext().dataSourceActions.filterValue = [
+      {
+        field: 'name',
+        valueGetter: ({ data }: any) => data.name,
+        filter: { type: 'string', operator: 'includes', value: 'o' },
+      },
+      {
+        field: 'name',
+        filter: { type: 'string', operator: 'includes', value: '' },
+      },
+    ] as any;
+    await flush();
+
+    const filterValue = harness.getState().dataParams!.filterValue!;
+    expect(filterValue.length).toBe(2);
+    expect(filterValue[0]).not.toHaveProperty('valueGetter');
+    expect(filterValue[0].filter.value).toBe('o');
+    expect(harness.renderedNames()).toEqual(['bob', 'carol']);
+    harness.unmount();
+  });
+
+  test('a rejected data call clears loading and keeps the previous rows', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let fail = false;
+    const dataFn = jest.fn(() =>
+      fail
+        ? Promise.reject(new Error('server down'))
+        : Promise.resolve({ data: [...people] }),
+    );
+    const harness = mountDataSource({
+      primaryKey: 'id',
+      data: dataFn,
+      defaultSortInfo: [],
+      shouldReloadData: { sortInfo: true },
+    });
+    await flush();
+    expect(harness.renderedNames()).toEqual(['bob', 'alice', 'carol']);
+
+    fail = true;
+    harness.getContext().dataSourceActions.sortInfo = [
+      { field: 'age', dir: 1 },
+    ] as any;
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(2);
+    expect(harness.getState().loading).toBe(false);
+    expect(harness.renderedNames()).toEqual(['bob', 'alice', 'carol']);
+    expect(consoleError).toHaveBeenCalled();
+
+    fail = false;
+    harness.getContext().dataSourceActions.sortInfo = [
+      { field: 'age', dir: -1 },
+    ] as any;
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(3);
+    expect(harness.getState().loading).toBe(false);
+
+    consoleError.mockRestore();
+    harness.unmount();
+  });
+
+  test('a data function that throws clears loading', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const dataFn = jest.fn(() => {
+      throw new Error('boom');
+    });
+    const harness = mountDataSource({ primaryKey: 'id', data: dataFn });
+    await flush();
+
+    expect(dataFn).toHaveBeenCalledTimes(1);
+    expect(harness.getState().loading).toBe(false);
+    expect(consoleError).toHaveBeenCalled();
+
+    consoleError.mockRestore();
     harness.unmount();
   });
 

@@ -159,6 +159,7 @@ export default function ServerSideFiltering() {
           data={dataSource}
           primaryKey="id"
           filterValue={filterValue}
+          shouldReloadData={{ filterValue: true }}
         >
           <InfiniteTable<Developer>
             showColumnFilters

@@ -848,21 +848,6 @@ export type DataSourceProps<T> = {
   filterFunction?: DataSourcePropFilterFunction<T>;
   treeFilterFunction?: DataSourcePropTreeFilterFunction<T>;
 
-  /**
-   * @deprecated Use shouldReloadData.sortInfo instead
-   */
-  sortMode?: 'local' | 'remote';
-  /**
-   * @deprecated Use shouldReloadData.filterValue instead
-   */
-  filterMode?: 'local' | 'remote';
-
-  /**
-   * @deprecated Use shouldReloadData.groupBy instead
-   */
-  groupMode?: 'local' | 'remote';
-
-  // TODO in the future if shouldReloadData.sortInfo== true and sortFn is defined, show a warning - same for filterMode/filterFunction
   shouldReloadData?: DataSourcePropShouldReloadData<T>;
 
   filterValue?: DataSourcePropFilterValue<T>;
@@ -918,20 +903,39 @@ export type DataSourcePropFilterTypes<T> = Record<
   DataSourceFilterType<T>
 >;
 
-export type DataSourceFilterFunctionParam<T> = {
+export type DataSourceFilterRowParam<T> = {
   data: T;
   index: number;
   dataArray: T[];
   primaryKey: any;
 };
+
+export type DataSourceFilterFunctionParam<T> = DataSourceFilterRowParam<T> & {
+  /**
+   * The current column filters - pass the param to `defaultFilterFunction`
+   * to apply them.
+   */
+  filterValue: DataSourcePropFilterValue<T>;
+  filterTypes: DataSourcePropFilterTypes<T>;
+};
+
 export type DataSourcePropFilterFunction<T> = (
   filterParam: DataSourceFilterFunctionParam<T>,
 ) => boolean;
 
-export type DataSourcePropTreeFilterFunction<T> = (
-  filterParam: DataSourceFilterFunctionParam<T> & {
+export type DataSourceTreeFilterFunctionParam<T> =
+  DataSourceFilterFunctionParam<T> & {
+    /**
+     * Filters the children of a parent node with the same tree filter function:
+     * returns a copy of the node with only the kept children, or `false` when
+     * no child is kept.
+     */
     filterTreeNode: (data: T) => T | boolean;
-  },
+    isLeafNode: boolean;
+  };
+
+export type DataSourcePropTreeFilterFunction<T> = (
+  filterParam: DataSourceTreeFilterFunctionParam<T>,
 ) => T | boolean;
 
 export type DataSourcePropFilterValue<T> = DataSourceFilterValueItem<T>[];
@@ -953,7 +957,7 @@ export type DataSourceFilterValueItem<T> = DiscriminatedUnion<
 };
 
 export type DataSourceFilterValueItemValueGetter<T> = (
-  param: DataSourceFilterFunctionParam<T> & { field?: keyof T },
+  param: DataSourceFilterRowParam<T> & { field?: keyof T },
 ) => any;
 
 export type DataSourceFilterType<T> = {
@@ -990,7 +994,7 @@ export type DataSourceFilterOperatorFunctionParam<T> = {
   filterValue: any;
   emptyValues: any[];
   field?: keyof T;
-} & DataSourceFilterFunctionParam<T>;
+} & DataSourceFilterRowParam<T>;
 
 export type DataSourcePropLivePaginationCursor<T> =
   | DataSourceLivePaginationCursorValue
@@ -1032,8 +1036,6 @@ export type DataSourceDerivedState<T> = {
 
   sortMode: 'local' | 'remote';
   filterMode: 'local' | 'remote';
-  groupMode: 'local' | 'remote';
-  pivotMode: 'local' | 'remote';
   shouldReloadData: NonUndefined<
     Required<DataSourcePropShouldReloadDataObject<T>>
   >;

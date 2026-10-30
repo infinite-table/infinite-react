@@ -5,16 +5,11 @@ description: Learn how to configure client-side filtering for your Infinite Tabl
 
 The most common way to use filtering in Infinite Table is by configuring filters for columns (this works both for client-side and server-side filtering).
 
-If the DataSource <DPropLink name="data" /> property is a function (and not an array or a `Promise`), then the filtering will happen server-side by default.
+Filtering happens client-side by default - whether the DataSource <DPropLink name="data" /> property is an array, a `Promise` or a function. The only exceptions are <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />, which filter server-side by default.
 
 <Note>
 
-To force client-side filtering, you can explicitly set the <DPropLink name="filterMode">filterMode="local"</DPropLink> property on the `<DataSource />` component.
-
-The possible values for this prop are:
-
-- `filterMode="local"` - filtering will happen client-side
-- `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
+When the <DPropLink name="data" /> property is a function, it's not called again when the filters change. If you also want to reload the data on every filter change, and then filter it client-side, set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> together with `filterFunction={defaultFilterFunction}`.
 
 </Note>
 
@@ -26,7 +21,7 @@ In order to show the column filter editors in the column headers, you need to sp
 
 <Description>
 
-This example shows remote data with local filtering - it sets `filterMode="local"` on the `<DataSource />` component.
+This example shows remote data with local filtering - the data function is called once, and the filtering happens in the browser.
 
 In addition, the `filterDelay` property is set to `0` for instant feedback.
 
@@ -79,7 +74,7 @@ The above filter value specifies that there are 2 filters applied:
 - the `firstName` column applies a filter that will only match rows with `firstName` containining the string `John`
 - the `age` column has an additional filter, that will only match rows with `age` greater than `30`
 
-If <DPropLink name="filterMode" /> is set to `local`, then the filtering will happen client-side, using the filtering functions specified by `includes` operator in the `string` filter type and the `gt` operator in the `number` filter type.
+When filtering client-side, the rows are filtered using the functions of the `includes` operator in the `string` filter type and of the `gt` operator in the `number` filter type.
 
 Here's a snippet of code from the `string` filter type showing the `includes` operator:
 
@@ -187,9 +182,28 @@ API calls to <ApiLink name="setColumnFilter"/> or <ApiLink name="clearColumnFilt
 
 ## Using a Filter Function Instead of the Column Filters
 
-For client-side rendering, it's possible that instead of showing a column filter bar, you use a custom <DPropLink name="filterFunction" /> to filter the data.
+With a <DPropLink name="filterFunction" />, you decide how the rows are filtered client-side. It is called for every row, and the param it receives also has the current column filters (`filterValue` and `filterTypes`), so you can filter in any way you want:
 
-In this case, the filtering will happen client-side ... of course 🤦‍♂️.
+- call `defaultFilterFunction`, which Infinite Table exports, to filter by the column filters the same way the built-in filtering does;
+- write your own logic;
+- or combine the two.
+
+```tsx
+import { defaultFilterFunction } from '@infinite-table/infinite-react';
+
+// the built-in column filtering
+<DataSource<Developer> filterFunction={defaultFilterFunction} />;
+
+// your own logic only
+<DataSource<Developer> filterFunction={(param) => param.data.id > 100} />;
+
+// the column filters, and your own condition
+<DataSource<Developer>
+  filterFunction={(param) =>
+    defaultFilterFunction(param) && param.data.id > 100
+  }
+/>;
+```
 
 <Sandpack title="Custom filterFunction example">
 

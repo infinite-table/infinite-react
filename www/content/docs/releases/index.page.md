@@ -3,6 +3,63 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.0.0
+
+This release brings some changes and better clarity around sorting and filtering and where each of those operations happen. Everything is done in the browser unless you opt into reloading the data with <DPropLink name="shouldReloadData" />.
+
+### Breaking changes
+
+1. **Sorting and filtering happen in the browser by default.** A <DPropLink name="data" /> function no longer makes filtering remote, and a controlled <DPropLink name="sortInfo" /> no longer makes sorting remote. If your server sorts or filters - or you pass a controlled `sortInfo` / `filterValue` and sort or filter the data yourself - set <DPropLink name="shouldReloadData" />:
+
+   ```tsx
+   // before: implied by the data function / the controlled sortInfo
+   <DataSource data={fetchRows} sortInfo={sortInfo} />
+
+   // now
+   <DataSource
+     data={fetchRows}
+     sortInfo={sortInfo}
+     shouldReloadData={{ sortInfo: true, filterValue: true }}
+   />
+   ```
+
+   With <DPropLink name="lazyLoad" />, sorting, filtering, grouping and pivoting still default to the server. With <DPropLink name="livePagination" />, sorting and filtering now default to the server (an uncontrolled sort change used to do nothing) and grouping stays in the browser - this also applies to array data with `livePagination`. In development, a warning is shown the first time the sorting or filtering changes for a `data` function without `shouldReloadData`. See [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
+
+2. **A <DPropLink name="filterFunction" /> (or <DPropLink name="treeFilterFunction" />) decides the filtering on its own.** Before, the column filters (<DPropLink name="filterValue" />) were also applied after your function. Now your function gets the column filters in its param and does whatever filtering you want with them - to filter by them the same way as the built-in filtering, call the new `defaultFilterFunction`:
+
+   ```tsx
+   import { defaultFilterFunction } from '@infinite-table/infinite-react';
+
+   // before
+   filterFunction={({ data }) => data.age > 30}
+
+   // now, to also apply the column filters
+   filterFunction={(param) => defaultFilterFunction(param) && param.data.age > 30}
+   ```
+
+   In development, a warning is shown when a filter function is used with active column filters that it doesn't apply. The `filterDataArray` export follows the same rule, and no longer takes `operatorsByFilterType`.
+
+3. **The deprecated `sortMode`, `filterMode` and `groupMode` props are removed.**
+
+   - `sortMode="local"` / `filterMode="local"` - remove the prop; this is now the default.
+   - `sortMode="remote"` - use `shouldReloadData={{ sortInfo: true }}`.
+   - `filterMode="remote"` - use `shouldReloadData={{ filterValue: true }}`.
+   - `groupMode` - use <DPropLink name="shouldReloadData.groupBy" />.
+
+   Because of a bug, `sortMode="remote"` and `filterMode="remote"` (without `shouldReloadData`) used to sort and filter in the browser. With `shouldReloadData`, the sorting and filtering are now really left to the server.
+
+4. **Column filters on tree data are applied to the leaf nodes.** Without a <DPropLink name="treeFilterFunction" />, the column filters used to be matched against the top-level nodes only. Now the leaf nodes are matched, and a parent node is kept when at least one of its descendants is kept - the fields of parent nodes are not matched. This is the new `defaultTreeFilterFunction`.
+
+5. **A <DPropLink name="filterFunction" /> has no effect with <DPropLink name="lazyLoad" />.** The rows that are not loaded yet can't be filtered in the browser - with batching, using a `filterFunction` threw an error.
+
+### Other changes
+
+- `shouldReloadData.filterValue: true` together with a <DPropLink name="filterFunction" /> now reloads the data on every filter change and filters the returned rows in the browser - the reload was skipped before. Same as `shouldReloadData.sortInfo: true` with a <DPropLink name="sortFunction" />.
+- New exports: `defaultFilterFunction` and `defaultTreeFilterFunction` (also from `@infinite-table/infinite-vue`, which now exports `multisort` and `multisortNested` too).
+- The params of <DPropLink name="filterFunction" /> and <DPropLink name="treeFilterFunction" /> include `filterValue` and `filterTypes`; the params of `treeFilterFunction` include `isLeafNode`.
+- When the <DPropLink name="data" /> function throws or returns a rejected promise, the grid no longer stays loading: the previous rows are kept and the error is logged. A failed batch with <DPropLink name="lazyLoad" /> is requested again when its rows are rendered again, and a failed group can be collapsed and expanded to request its children again.
+- With local filtering, the `filterValue` in the <DPropLink name="data" /> params no longer includes the `valueGetter` functions.
+
 ## 9.4.2
 
 Fix the `unfilteredCount` of the DataSource state with <DPropLink name="lazyLoad" />: it took the `totalCountUnfiltered` of any response, so loading the rows of a group replaced it with the count of that group. It's now the count that the top-level response sends without the filter - `totalChildrenCountUnfiltered` with grouping, `totalCountUnfiltered` without - or the row count, when the server doesn't send one.

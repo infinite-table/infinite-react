@@ -124,7 +124,6 @@ export type DataSourcePropsNotAvailableInTreeDataSource = keyof Pick<
   | 'collapseGroupRowsOnDataFunctionChange'
   | 'livePagination'
   | 'onLivePaginationCursorChange'
-  | 'groupMode'
   | 'filterFunction'
   | 'onPivotByChange'
   | 'pivotBy'

@@ -68,7 +68,6 @@ export default () => {
           primaryKey="id"
           defaultFilterValue={[]}
           filterDelay={0}
-          filterMode="local"
         >
           <InfiniteTable<Developer>
             debugId="column-filter-icon-example"

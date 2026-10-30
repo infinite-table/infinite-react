@@ -295,7 +295,6 @@ export default function App() {
       data={dataSource}
       primaryKey="id"
       defaultFilterValue={defaultFilterValue}
-      filterMode="local"
       useGroupKeysForMultiRowSelection
       defaultRowSelection={defaultRowSelection}
       onDataArrayChange={(data) => {

@@ -80,7 +80,6 @@ export default () => {
           filterValue={filterValue}
           onFilterValueChange={setFilterValue}
           filterDelay={0}
-          filterMode="local"
         >
           <InfiniteTable<Developer>
             debugId="onFilterValueChange-example"

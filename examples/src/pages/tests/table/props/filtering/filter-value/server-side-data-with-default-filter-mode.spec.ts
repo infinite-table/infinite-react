@@ -1,8 +1,8 @@
 import { test, expect } from '@testing';
 
 export default test.describe
-  .parallel('Server side sorting with default filter mode', () => {
-  test('Correctly executes data() calls when filtering', async ({
+  .parallel('Server side sorting, local filtering by default', () => {
+  test('sorting calls data() again, filtering does not', async ({
     page,
     headerModel,
   }) => {
@@ -24,10 +24,10 @@ export default test.describe
 
     expect(await getCount()).toBe(initialCount + 1);
 
-    // filtering, since it's remote, should trigger a data call
+    // shouldReloadData only opts sorting in, so filtering stays local
     await headerModel.filterColumn(cityCol, 'San');
     await page.waitForTimeout(200);
 
-    expect(await getCount()).toBe(initialCount + 2);
+    expect(await getCount()).toBe(initialCount + 1);
   });
 });

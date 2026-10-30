@@ -26,6 +26,10 @@
         "title": "Live Pagination"
       },
       {
+        "path": "/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself",
+        "title": "Sorting and Filtering the Data Yourself"
+      },
+      {
         "path": "/docs/learn/working-with-data/lazy-loading",
         "title": "Lazy Loading"
       },

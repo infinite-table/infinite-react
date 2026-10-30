@@ -676,69 +676,56 @@ export function deriveStateFromProps<T extends any>(params: {
     );
 
   const shouldReloadData = toShouldReloadObject(props.shouldReloadData || {});
-  const propsGroupMode =
-    props.groupMode ??
-    (shouldReloadData.groupBy != null
-      ? shouldReloadData.groupBy
-        ? 'remote'
-        : 'local'
-      : undefined);
-  const propsSortMode =
-    props.sortMode ?? shouldReloadData.sortInfo != null
-      ? shouldReloadData.sortInfo
-        ? 'remote'
-        : 'local'
-      : undefined;
-  const propsFilterMode =
-    props.filterMode ?? shouldReloadData.filterValue != null
-      ? shouldReloadData.filterValue
-        ? 'remote'
-        : 'local'
-      : undefined;
 
-  if (props.groupMode) {
-    warnOnce(
-      `"groupMode" prop is deprecated for the <DataSource />, use "shouldReloadData.groupBy: true|false" instead`,
-      'groupMode deprecated',
-      state.logger,
-    );
-  }
-  if (props.sortMode) {
-    warnOnce(
-      `"sortMode" prop is deprecated for the <DataSource />, use "shouldReloadData.sortInfo: true|false" instead`,
-      'sortMode deprecated',
-      state.logger,
-    );
-  }
+  // Lazily loaded rows (batches or group levels) can only be sorted, filtered,
+  // grouped and pivoted by the server. Live-paginated pages can only be sorted
+  // and filtered by the server - they can still be grouped locally.
+  // Everything else is local unless `shouldReloadData` opts in.
+  const lazyLoad = typeof props.data === 'function' && !!props.lazyLoad;
+  const livePagination = !!props.livePagination;
 
-  if (props.filterMode) {
-    warnOnce(
-      `"filterMode" prop is deprecated for the <DataSource />, use "shouldReloadData.filterValue: true|false" instead`,
-      'filterMode deprecated',
-      state.logger,
-    );
-  }
+  const reloadData = {
+    sortInfo: shouldReloadData.sortInfo ?? (lazyLoad || livePagination),
+    filterValue: shouldReloadData.filterValue ?? (lazyLoad || livePagination),
+    groupBy: shouldReloadData.groupBy ?? lazyLoad,
+    pivotBy: shouldReloadData.pivotBy ?? lazyLoad,
+  };
 
-  // lazily loaded rows can only be grouped and pivoted by the server
-  const remoteByDefault = typeof props.data === 'function' && !!props.lazyLoad;
+  const sortMode: DataSourceState<T>['sortMode'] = props.sortFunction
+    ? 'local'
+    : reloadData.sortInfo
+    ? 'remote'
+    : 'local';
 
-  const groupMode =
-    typeof props.data === 'function'
-      ? propsGroupMode ?? (remoteByDefault ? 'remote' : 'local')
+  const hasFilterFunction =
+    typeof props.filterFunction === 'function' ||
+    typeof props.treeFilterFunction === 'function';
+
+  // lazily loaded data contains placeholders for the rows that are not loaded
+  // yet, so it can never be filtered locally - even with a filter function
+  const filterMode: DataSourceState<T>['filterMode'] =
+    hasFilterFunction && !props.lazyLoad
+      ? 'local'
+      : reloadData.filterValue || props.lazyLoad
+      ? 'remote'
       : 'local';
 
-  const sortMode = props.sortFunction
-    ? 'local'
-    : propsSortMode ?? (controlledSort ? 'remote' : 'local');
-  const filterMode =
-    typeof props.filterFunction === 'function' ||
-    typeof props.treeFilterFunction === 'function'
-      ? 'local'
-      : propsFilterMode ??
-        (typeof props.data === 'function' ? 'remote' : 'local');
-
-  const pivotMode =
-    shouldReloadData.pivotBy ?? remoteByDefault ? 'remote' : 'local';
+  if (
+    __DEV__ &&
+    typeof props.data === 'function' &&
+    props.shouldReloadData === undefined &&
+    !props.lazyLoad &&
+    !livePagination &&
+    oldState &&
+    (oldState.sortInfo !== state.sortInfo ||
+      oldState.filterValue !== state.filterValue)
+  ) {
+    warnOnce(
+      `The <DataSource /> "data" function is not called again when sorting or filtering changes - sorting and filtering happen in the browser. If your server should sort or filter, set "shouldReloadData" (eg: shouldReloadData={{ sortInfo: true, filterValue: true }}).`,
+      'data function without shouldReloadData',
+      state.logger,
+    );
+  }
 
   const rowDisabledState = state.rowDisabledState;
 
@@ -764,26 +751,16 @@ export function deriveStateFromProps<T extends any>(params: {
     treeExpandState,
     treeExpandMode: treeExpandState.mode,
 
-    shouldReloadData: {
-      // #sortMode_vs_shouldReloadData.sortInfo
-      // we reconstruct this object
-      // and don't default to the computed filterMode, sortMode, groupMode and pivotMode
-      // as computed above
-      // since we want a subtle difference between the computed sortMode and shouldReloadData.sortInfo (for example)
-      // difference: sortMode will be local when sortFunction is provided, however, the user may want to reload data when sortInfo changes
-      // and thus the data will be refetched, but will be sorted locally
-      filterValue: shouldReloadData?.filterValue ?? filterMode === 'remote',
-      sortInfo: shouldReloadData?.sortInfo ?? sortMode === 'remote',
-      groupBy: shouldReloadData?.groupBy ?? groupMode === 'remote',
-      pivotBy: shouldReloadData?.pivotBy ?? pivotMode === 'remote',
-    },
+    // #sortMode_vs_shouldReloadData.sortInfo
+    // refetching (shouldReloadData.X) and processing locally (sortMode / filterMode)
+    // are independent: with a sortFunction and shouldReloadData.sortInfo: true,
+    // the data is refetched when the sort changes, and then sorted in the browser
+    shouldReloadData: reloadData,
     isRowDisabled,
     rowSelection: rowSelectionState,
     cellSelection: cellSelectionState,
-    groupMode,
     sortMode,
     filterMode,
-    pivotMode,
 
     toPrimaryKey,
     operatorsByFilterType,

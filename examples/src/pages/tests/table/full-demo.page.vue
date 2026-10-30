@@ -312,7 +312,6 @@ const dataSource = () => {
     :data="dataSource"
     primaryKey="id"
     :defaultFilterValue="defaultFilterValue"
-    filterMode="local"
     :useGroupKeysForMultiRowSelection="true"
     :defaultRowSelection="defaultRowSelection"
     :onDataArrayChange="onDataArrayChange"

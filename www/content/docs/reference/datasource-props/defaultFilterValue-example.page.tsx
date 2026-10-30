@@ -75,7 +75,6 @@ export default () => {
           primaryKey="id"
           defaultFilterValue={defaultFilterValue}
           filterDelay={0}
-          filterMode="local"
         >
           <InfiniteTable<Developer>
             debugId="defaultFilterValue-example"

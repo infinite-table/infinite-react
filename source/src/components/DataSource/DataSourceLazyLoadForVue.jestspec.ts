@@ -16,6 +16,7 @@ import type { App } from 'vue';
 
 import { DataSource } from './DataSourceForVue.vue';
 import { InfiniteTable } from '../InfiniteTable/InfiniteTableForVue.vue';
+import { LAZY_ROOT_KEY_FOR_GROUPS } from '../../utils/groupAndPivot';
 
 type Person = {
   id: number;
@@ -186,6 +187,115 @@ describe('Vue DataSource lazy load + livePagination', () => {
     const lastParams = data.mock.calls[1][0];
     expect(lastParams.lazyLoadStartIndex).toBe(0);
     expect(lastParams.sortInfo).toMatchObject([{ field: 'name', dir: 1 }]);
+  });
+
+  test('a failed batch is requested again when its rows are rendered again', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const TOTAL = 100;
+    const BATCH = 10;
+    let failBatch50 = true;
+
+    const data = jest.fn((params: any) => {
+      const start = params.lazyLoadStartIndex ?? 0;
+      if (start === 50 && failBatch50) {
+        failBatch50 = false;
+        return Promise.reject(new Error('batch failed'));
+      }
+      return Promise.resolve({
+        data: Array.from({ length: Math.min(BATCH, TOTAL - start) }, (_, i) =>
+          makePerson(start + i),
+        ),
+        totalCount: TOTAL,
+      });
+    });
+
+    await mount({ data, lazyLoad: { batchSize: BATCH } });
+    await flush(50);
+
+    const range = { renderStartIndex: 50, renderEndIndex: 55 };
+    getDataSourceState().notifyRenderRangeChange(range);
+    await flush(80);
+
+    const batch50Calls = () =>
+      data.mock.calls.filter((c: any) => c[0].lazyLoadStartIndex === 50).length;
+
+    expect(batch50Calls()).toBe(1);
+    expect(getDataSourceState().loading).toBe(false);
+    expect(getDataSourceState().dataArray[50].data).toBeFalsy();
+
+    // no retry loop: nothing re-renders the failed rows by itself
+    await flush(80);
+    expect(batch50Calls()).toBe(1);
+
+    getDataSourceState().notifyRenderRangeChange({ ...range });
+    await flush(80);
+
+    expect(batch50Calls()).toBe(2);
+    expect(getDataSourceState().dataArray[50].data).toEqual(makePerson(50));
+    consoleError.mockRestore();
+  });
+
+  test('a failed group expansion stops loading; collapsing and expanding requests it again', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let failExpansion = true;
+
+    const data = jest.fn((params: any) => {
+      const groupKeys = params.groupKeys || [];
+      if (!groupKeys.length) {
+        return Promise.resolve({
+          data: [
+            { keys: ['a'], data: { group: 'a' }, totalChildrenCount: 2 },
+            { keys: ['b'], data: { group: 'b' }, totalChildrenCount: 1 },
+          ],
+          totalCount: 2,
+        });
+      }
+      if (failExpansion) {
+        failExpansion = false;
+        return Promise.reject(new Error('expansion failed'));
+      }
+      return Promise.resolve({
+        data: [makePerson(1), makePerson(2)],
+        totalCount: 2,
+      });
+    });
+
+    await mount({ data, lazyLoad: true, groupBy: [{ field: 'group' }] });
+    await flush(50);
+
+    const groupCalls = () =>
+      data.mock.calls.filter((c: any) => (c[0].groupKeys || []).length).length;
+    const groupInfo = () =>
+      getDataSourceState().originalLazyGroupData.get([
+        LAZY_ROOT_KEY_FOR_GROUPS,
+        'a',
+      ]);
+
+    const api = (globalThis as any).infiniteApi;
+    api.toggleGroupRow(['a']);
+    await flush(80);
+
+    expect(groupCalls()).toBe(1);
+    expect(groupInfo().childrenLoading).toBe(false);
+    expect(groupInfo().error).toBe('expansion failed');
+
+    // no retry loop while the group stays expanded
+    await flush(80);
+    expect(groupCalls()).toBe(1);
+
+    api.toggleGroupRow(['a']);
+    await flush(50);
+    api.toggleGroupRow(['a']);
+    await flush(80);
+
+    expect(groupCalls()).toBe(2);
+    expect(groupInfo().childrenAvailable).toBe(true);
+    expect(groupInfo().error).toBeUndefined();
+    consoleError.mockRestore();
   });
 
   test('livePagination appends pages while rows do not fill the viewport', async () => {

@@ -61,6 +61,11 @@ export { DeepMap } from './utils/DeepMap';
 
 export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
+export {
+  defaultFilterFunction,
+  defaultTreeFilterFunction,
+} from './components/DataSource/defaultFilterFunction';
+export { multisort, multisortNested } from './utils/multisort';
 
 // framework-neutral state classes, same as the React entry
 export { RowSelectionState } from './components/DataSource/RowSelectionState';

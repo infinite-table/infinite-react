@@ -76,6 +76,7 @@ export default function RemoteControlledSortingExample() {
         data={dataSource}
         sortInfo={sortInfo}
         onSortInfoChange={setSortInfo}
+        shouldReloadData={{ sortInfo: true }}
       >
         <InfiniteTable<Developer>
           domProps={domProps}

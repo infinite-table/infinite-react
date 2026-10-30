@@ -24,7 +24,6 @@ const target = ref<'all' | 'visible'>('all');
     primaryKey="id"
     :data="lazyUnfilteredDataSource"
     :lazyLoad="true"
-    filterMode="remote"
     :defaultFilterValue="lazyUnfilteredFilterValue"
     selectionMode="multi-row"
     :multiRowSelectionTarget="target"

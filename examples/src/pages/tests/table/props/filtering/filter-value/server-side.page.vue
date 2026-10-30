@@ -138,7 +138,12 @@ const setCountry = () => {
     Filter by country=United States
   </button>
 
-  <DataSource :data="dataSource" primaryKey="id" :filterValue="filterValue">
+  <DataSource
+    :data="dataSource"
+    primaryKey="id"
+    :filterValue="filterValue"
+    :shouldReloadData="{ filterValue: true }"
+  >
     <InfiniteTable
       :showColumnFilters="true"
       :domProps="domProps"

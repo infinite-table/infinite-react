@@ -21,6 +21,11 @@ import {
   deriveStateFromProps,
 } from './getInitialState';
 import { concludeReducer } from './reducer';
+import {
+  defaultFilterFunction,
+  defaultTreeFilterFunction,
+} from '../defaultFilterFunction';
+import { multisort } from '../../../utils/multisort';
 
 import type { DataSourceProps } from '../types';
 
@@ -150,22 +155,66 @@ describe('DataSource reducer pipeline - flat data', () => {
     expect(developers.map((d) => d.age)).toEqual([30, 25, 40, 35]);
   });
 
-  test('controlled sortInfo -> sortMode remote -> NO local sorting is applied', () => {
+  test('controlled sortInfo -> sortMode local -> dataArray is sorted locally', () => {
     const harness = createDataSourceHarness<Developer>({
       primaryKey: 'id',
       data: developers,
       sortInfo: { field: 'age', dir: 1 },
     });
 
-    expect(harness.getState().sortMode).toBe('remote');
+    expect(harness.getState().sortMode).toBe('local');
     expect(harness.getState().controlledSort).toBe(true);
+    expect(harness.getState().shouldReloadData.sortInfo).toBe(false);
 
     harness.setData(developers);
     const state = harness.getState();
 
-    // data stays in the original order - the server is expected to sort
     expect(state.dataArray.map((ri: any) => ri.data.age)).toEqual([
+      25, 30, 35, 40,
+    ]);
+  });
+
+  test('controlled sortInfo + shouldReloadData.sortInfo -> sortMode remote -> NO local sorting', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      sortInfo: { field: 'age', dir: 1 },
+      shouldReloadData: { sortInfo: true },
+    });
+
+    expect(harness.getState().sortMode).toBe('remote');
+
+    harness.setData(developers);
+
+    // data stays in the original order - the server is expected to sort
+    expect(harness.getState().dataArray.map((ri: any) => ri.data.age)).toEqual([
       30, 25, 40, 35,
+    ]);
+  });
+
+  test('controlled filterValue + shouldReloadData.filterValue -> the owner filters, rows are kept as passed', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      filterValue: [
+        {
+          field: 'country',
+          filter: { type: 'string', operator: 'includes', value: 'usa' },
+        },
+      ],
+      shouldReloadData: { filterValue: true },
+    });
+
+    expect(harness.getState().filterMode).toBe('remote');
+
+    harness.setData(developers);
+    const state = harness.getState();
+
+    expect(state.dataArray.map((ri: any) => ri.data.name)).toEqual([
+      'Bob',
+      'Alice',
+      'Carl',
+      'Dana',
     ]);
   });
 
@@ -546,5 +595,322 @@ describe('DataSource reducer pipeline - tree data', () => {
 
     const ids = state.dataArray.map((ri: any) => ri.id);
     expect(ids).toEqual(['root1', 'leaf1']);
+  });
+
+  test('column filters without a treeFilterFunction are matched against the leaf nodes', () => {
+    const harness = createDataSourceHarness<TreeNode>({
+      primaryKey: 'id',
+      data: treeData,
+      nodesKey: 'children',
+      defaultFilterValue: [
+        {
+          field: 'name',
+          filter: { type: 'string', operator: 'includes', value: 'photo' },
+        },
+      ],
+    } as any);
+
+    harness.setData(treeData);
+
+    expect(harness.getState().dataArray.map((ri: any) => ri.id)).toEqual([
+      'root1',
+      'leaf2',
+    ]);
+    // the input tree is not modified
+    expect(treeData[0].children!.length).toBe(2);
+  });
+
+  test('column filters on tree data do not match the fields of parent nodes', () => {
+    const harness = createDataSourceHarness<TreeNode>({
+      primaryKey: 'id',
+      data: treeData,
+      nodesKey: 'children',
+      defaultFilterValue: [
+        {
+          field: 'name',
+          filter: { type: 'string', operator: 'includes', value: 'documents' },
+        },
+      ],
+    } as any);
+
+    harness.setData(treeData);
+
+    expect(harness.getState().dataArray).toEqual([]);
+  });
+
+  test('treeFilterFunction gets isLeafNode and can compose defaultTreeFilterFunction', () => {
+    const seen: Record<string, boolean> = {};
+    const filterFunction = jest.fn(() => true);
+
+    const harness = createDataSourceHarness<TreeNode>({
+      primaryKey: 'id',
+      data: treeData,
+      nodesKey: 'children',
+      filterFunction,
+      defaultFilterValue: [
+        {
+          field: 'name',
+          filter: { type: 'string', operator: 'includes', value: '.doc' },
+        },
+      ],
+      treeFilterFunction: (param: any) => {
+        seen[param.data.id] = param.isLeafNode;
+        return defaultTreeFilterFunction(param);
+      },
+    } as any);
+
+    harness.setData(treeData);
+
+    expect(harness.getState().dataArray.map((ri: any) => ri.id)).toEqual([
+      'root1',
+      'leaf1',
+    ]);
+    expect(seen).toEqual({
+      root1: false,
+      leaf1: true,
+      leaf2: true,
+      root2: true,
+    });
+    // with both, only the treeFilterFunction runs on tree data
+    expect(filterFunction).not.toHaveBeenCalled();
+  });
+});
+
+describe('DataSource defaults - what is done locally and what triggers a reload', () => {
+  const dataFn = () => Promise.resolve(developers);
+
+  test('a data function without shouldReloadData does everything locally', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: dataFn,
+      sortInfo: { field: 'age', dir: 1 },
+      defaultFilterValue: [],
+    });
+
+    const state = harness.getState();
+    expect(state.shouldReloadData).toEqual({
+      sortInfo: false,
+      filterValue: false,
+      groupBy: false,
+      pivotBy: false,
+    });
+    expect(state.sortMode).toBe('local');
+    expect(state.filterMode).toBe('local');
+  });
+
+  test('lazyLoad defaults every operation to the server', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: dataFn,
+      lazyLoad: { batchSize: 10 },
+    });
+
+    const state = harness.getState();
+    expect(state.shouldReloadData).toEqual({
+      sortInfo: true,
+      filterValue: true,
+      groupBy: true,
+      pivotBy: true,
+    });
+    expect(state.sortMode).toBe('remote');
+    expect(state.filterMode).toBe('remote');
+  });
+
+  test('livePagination defaults sorting and filtering to the server, grouping stays local', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: dataFn,
+      livePagination: true,
+    });
+
+    expect(harness.getState().shouldReloadData).toEqual({
+      sortInfo: true,
+      filterValue: true,
+      groupBy: false,
+      pivotBy: false,
+    });
+  });
+
+  test('an explicit shouldReloadData value wins over the lazyLoad default', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: dataFn,
+      lazyLoad: true,
+      shouldReloadData: { sortInfo: false },
+    });
+
+    expect(harness.getState().shouldReloadData.sortInfo).toBe(false);
+    expect(harness.getState().shouldReloadData.filterValue).toBe(true);
+  });
+
+  test('sortFunction + shouldReloadData.sortInfo: refetch and sort locally', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultSortInfo: { field: 'age', dir: -1 },
+      sortFunction: multisort,
+      shouldReloadData: { sortInfo: true },
+    });
+
+    expect(harness.getState().shouldReloadData.sortInfo).toBe(true);
+    expect(harness.getState().sortMode).toBe('local');
+
+    harness.setData(developers);
+    expect(harness.getState().dataArray.map((ri: any) => ri.data.age)).toEqual([
+      40, 35, 30, 25,
+    ]);
+  });
+
+  test('filterFunction + shouldReloadData.filterValue: refetch and filter locally', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      filterFunction: defaultFilterFunction,
+      shouldReloadData: { filterValue: true },
+      defaultFilterValue: [],
+    });
+
+    expect(harness.getState().shouldReloadData.filterValue).toBe(true);
+    expect(harness.getState().filterMode).toBe('local');
+
+    harness.setData(developers);
+    harness.setStateValue('filterValue', [
+      {
+        field: 'country',
+        filter: { type: 'string', operator: 'includes', value: 'france' },
+      },
+    ]);
+
+    expect(harness.getState().dataArray.map((ri: any) => ri.data.name)).toEqual(
+      ['Alice', 'Dana'],
+    );
+  });
+
+  test('under lazyLoad, a filterFunction never runs (rows are placeholders until loaded)', () => {
+    const filterFunction = jest.fn(() => true);
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: dataFn,
+      lazyLoad: { batchSize: 2 },
+      filterFunction,
+    });
+
+    expect(harness.getState().filterMode).toBe('remote');
+
+    harness.setData(developers);
+    expect(filterFunction).not.toHaveBeenCalled();
+    expect(harness.getState().dataArray.length).toBe(4);
+  });
+});
+
+describe('DataSource filterFunction replaces the built-in column filtering', () => {
+  const franceFilter = [
+    {
+      field: 'country' as const,
+      filter: { type: 'string', operator: 'includes', value: 'france' },
+    },
+  ];
+
+  test('a filterFunction alone ignores the column filters', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultFilterValue: franceFilter,
+      filterFunction: ({ data }) => data.age > 30,
+    });
+
+    harness.setData(developers);
+    expect(harness.getState().dataArray.map((ri: any) => ri.data.name)).toEqual(
+      ['Carl', 'Dana'],
+    );
+  });
+
+  test('composing defaultFilterFunction applies both', () => {
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultFilterValue: franceFilter,
+      filterFunction: (param) =>
+        defaultFilterFunction(param) && param.data.age > 30,
+    });
+
+    harness.setData(developers);
+    expect(harness.getState().dataArray.map((ri: any) => ri.data.name)).toEqual(
+      ['Dana'],
+    );
+  });
+
+  test('filterFunction={defaultFilterFunction} gives the same rows as the built-in filtering', () => {
+    const builtIn = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultFilterValue: franceFilter,
+    });
+    const viaFunction = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultFilterValue: franceFilter,
+      filterFunction: defaultFilterFunction,
+    });
+
+    builtIn.setData(developers);
+    viaFunction.setData(developers);
+
+    expect(viaFunction.getState().dataArray.map((ri: any) => ri.id)).toEqual(
+      builtIn.getState().dataArray.map((ri: any) => ri.id),
+    );
+    expect(builtIn.getState().dataArray.map((ri: any) => ri.id)).toEqual([
+      2, 4,
+    ]);
+  });
+
+  test('the filter function param carries filterValue and filterTypes', () => {
+    const params: any[] = [];
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      defaultFilterValue: franceFilter,
+      filterFunction: (param) => {
+        params.push(param);
+        return true;
+      },
+    });
+
+    harness.setData(developers);
+    expect(params.length).toBe(4);
+    expect(params[0].filterValue).toEqual(franceFilter);
+    expect(Object.keys(params[0].filterTypes)).toEqual(
+      expect.arrayContaining(['string', 'number']),
+    );
+  });
+
+  test('the column filter operator runs once per row', () => {
+    const fn = jest.fn(({ currentValue, filterValue }: any) =>
+      String(currentValue).toLowerCase().includes(filterValue),
+    );
+    const harness = createDataSourceHarness<Developer>({
+      primaryKey: 'id',
+      data: developers,
+      filterTypes: {
+        text: {
+          defaultOperator: 'has',
+          emptyValues: [''],
+          operators: [{ name: 'has', fn }],
+        },
+      },
+      defaultFilterValue: [
+        {
+          field: 'country',
+          filter: { type: 'text', operator: 'has', value: 'usa' },
+        },
+      ],
+      filterFunction: defaultFilterFunction,
+    });
+
+    harness.setData(developers);
+    expect(fn).toHaveBeenCalledTimes(4);
+    expect(harness.getState().dataArray.map((ri: any) => ri.id)).toEqual([
+      1, 3,
+    ]);
   });
 });

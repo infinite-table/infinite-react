@@ -147,20 +147,13 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 
 </Sandpack>
 
-## Specifying the filter mode
+## Client-side or server-side filtering
 
-As already mentioned, filtering can happen either client-side or server-side. If the DataSource <DPropLink name="data" /> property is a function (and not an array or a `Promise`), then the filtering will happen server-side by default.
+As already mentioned, filtering can happen either client-side or server-side. By default, it happens client-side - also when the DataSource <DPropLink name="data" /> property is a function. The only exceptions are <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />, where only part of the data is loaded, so it has to be filtered by the server.
 
-However, you can explicitly specify where the filtering should happen by setting the <DPropLink name="filterMode" /> property on the `<DataSource />` component - possible values are
+To filter server-side, set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> - the <DPropLink name="data"/> function is then called again on every filter change, with the <DPropLink name="filterValue" /> in its params.
 
-- `filterMode="local"` - filtering will happen client-side
-- `filterMode="remote"` - filtering will happen remotely and the <DPropLink name="filterValue" /> will be passed as a property to the parameter object sent to the <DPropLink name="data"/> function.
-
-<Note title="Filter mode ⚠️">
-
-Explicitly specify <DPropLink name="filterMode" /> as either `"local"` or `"remote"` if you want to change the default behavior.
-
-</Note>
+To both reload the data and filter it client-side, also specify a <DPropLink name="filterFunction" /> - for example `filterFunction={defaultFilterFunction}`, which applies the column filters.
 
 ## Filtering Columns Not Bound to a Field
 

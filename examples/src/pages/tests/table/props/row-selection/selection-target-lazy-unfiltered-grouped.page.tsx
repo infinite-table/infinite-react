@@ -32,7 +32,6 @@ export default function App() {
       data={lazyUnfilteredDataSource}
       groupBy={groupBy}
       lazyLoad
-      filterMode="remote"
       defaultFilterValue={lazyUnfilteredFilterValue}
       selectionMode="multi-row"
       useGroupKeysForMultiRowSelection

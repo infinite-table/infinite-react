@@ -23,7 +23,7 @@ import {
   buildDataSourceDataParams,
   createRemoteFilterValueMemo,
   getDetailReady,
-  isFirstLazyBatchRequested,
+  isRootLazyBatchRequested,
   lazyLoadRange,
   loadData,
 } from './loadDataShared';
@@ -236,15 +236,6 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
       if (keys.length === 1) {
         appendWhenLivePagination = !!changes.cursorId;
 
-        if (
-          changes.filterValue &&
-          getDataSourceState().filterMode === 'local'
-        ) {
-          // if filter value has changed and filter mode is local
-          // then we don't need to do a remote call
-          return;
-        }
-
         const originalData = getDataSourceState().data;
         if (Array.isArray(originalData) && changes.refetchKey) {
           // the data is an array, but the refetchKey has changed
@@ -271,12 +262,12 @@ export function useLoadData<T>(options: LoadDataOptions<T>) {
 
       const componentState = getDataSourceState();
       if (typeof componentState.data === 'function') {
-        // the lazy-range reload of this commit already requested the first root
-        // batch (with the same params) - don't request it twice
+        // the lazy-range reload of this commit already requested the top-level
+        // batches in view - requesting the first batch too would be one call too many
         if (
           lazyRangeReloadedRef.current &&
           !appendWhenLivePagination &&
-          isFirstLazyBatchRequested(componentState)
+          isRootLazyBatchRequested(componentState)
         ) {
           return;
         }
