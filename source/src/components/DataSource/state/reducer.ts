@@ -121,6 +121,23 @@ function getLazyGroupedRowCount<T>(
   return count;
 }
 
+/**
+ * Lazy load: the count of the leaf rows without the filter, as the server sent it
+ * for the top level - a group level or a leaf response for a group only counts its own rows
+ */
+function getLazyUnfilteredRowCount<T>(
+  lazyGroupData: LazyGroupDataDeepMap<T>,
+  grouped: boolean,
+): number | undefined {
+  const root = lazyGroupData.get([LAZY_ROOT_KEY_FOR_GROUPS]);
+  if (!root) {
+    return undefined;
+  }
+  return grouped
+    ? root.totalChildrenCountUnfiltered
+    : root.totalCountUnfiltered;
+}
+
 function returnFalse() {
   return false;
 }
@@ -671,6 +688,14 @@ export function concludeReducer<T>(params: {
     (state.lazyLoad && groupBy.length
       ? getLazyGroupedRowCount(state.originalLazyGroupData)
       : undefined) ?? dataArray.length;
+
+  if (state.lazyLoad) {
+    state.unfilteredCount =
+      getLazyUnfilteredRowCount(
+        state.originalLazyGroupData,
+        groupBy.length > 0,
+      ) ?? state.filteredCount;
+  }
   state.postFilterDataArray = dataArray;
 
   if (shouldSort) {

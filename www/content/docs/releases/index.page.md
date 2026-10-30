@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 9.4.2
+
+Fix the `unfilteredCount` of the DataSource state with <DPropLink name="lazyLoad" />: it took the `totalCountUnfiltered` of any response, so loading the rows of a group replaced it with the count of that group. It's now the count that the top-level response sends without the filter - `totalChildrenCountUnfiltered` with grouping, `totalCountUnfiltered` without - or the row count, when the server doesn't send one.
+
 ## 9.4.1
 
 With <DPropLink name="lazyLoad" /> and multi row selection, the group and header checkboxes now count the rows from the counts that the server sends, instead of estimating them:

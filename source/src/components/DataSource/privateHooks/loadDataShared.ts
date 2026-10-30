@@ -258,8 +258,9 @@ export function loadData<T>(
       if (remoteData.mappings) {
         actions.pivotMappings = remoteData.mappings;
       }
-      if (remoteData.totalCountUnfiltered) {
-        actions.unfilteredCount = remoteData.totalCountUnfiltered;
+      if (!componentState.lazyLoad) {
+        actions.unfilteredCount =
+          remoteData.totalCountUnfiltered ?? dataArray.length;
       }
 
       if (componentState.lazyLoad) {

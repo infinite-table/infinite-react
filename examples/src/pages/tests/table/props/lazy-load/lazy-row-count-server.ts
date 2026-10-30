@@ -14,13 +14,20 @@ const rows: Developer[] = [
   { id: 6, firstName: 'Alex', stack: 'mobile' },
 ];
 
+const stacks = [...new Set(rows.map((row) => row.stack))].sort();
+
+// the server filters out one more row in each group
+const hiddenRowsPerGroup = 1;
+
 export const lazyRowCount = {
   rows: rows.length,
-  groups: new Set(rows.map((row) => row.stack)).size,
+  groups: stacks.length,
+  unfilteredRows: rows.length + stacks.length * hiddenRowsPerGroup,
 };
 
 /**
- * A server that counts the rows of each group, and - with `withRootCount` - of the whole top level
+ * A server that counts the rows of each group, and - with `withRootCount` - of the whole top level.
+ * With `withRootCount`, it also sends the counts without its filter.
  */
 export const getLazyRowCountDataSource =
   (withRootCount: boolean) =>
@@ -34,18 +41,35 @@ export const getLazyRowCountDataSource =
     if (!groupBy?.length || groupKeys.length) {
       const [stack] = groupKeys;
       const data = stack ? rows.filter((row) => row.stack === stack) : rows;
-      return Promise.resolve({ data, totalCount: data.length });
+      const totalCountUnfiltered = stack
+        ? data.length + hiddenRowsPerGroup
+        : lazyRowCount.unfilteredRows;
+      return Promise.resolve({
+        data,
+        totalCount: data.length,
+        ...(withRootCount ? { totalCountUnfiltered } : {}),
+      });
     }
 
-    const stacks = [...new Set(rows.map((row) => row.stack))].sort();
     return Promise.resolve({
-      data: stacks.map((stack) => ({
-        keys: [stack],
-        data: { stack },
-        totalChildrenCount: rows.filter((row) => row.stack === stack).length,
-      })),
+      data: stacks.map((stack) => {
+        const totalChildrenCount = rows.filter((row) => row.stack === stack).length;
+        return {
+          keys: [stack],
+          data: { stack },
+          totalChildrenCount,
+          ...(withRootCount
+            ? { totalChildrenCountUnfiltered: totalChildrenCount + hiddenRowsPerGroup }
+            : {}),
+        };
+      }),
       totalCount: stacks.length,
-      ...(withRootCount ? { totalChildrenCount: rows.length } : {}),
+      ...(withRootCount
+        ? {
+            totalChildrenCount: rows.length,
+            totalChildrenCountUnfiltered: lazyRowCount.unfilteredRows,
+          }
+        : {}),
     });
   };
 
