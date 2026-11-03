@@ -74,7 +74,9 @@ export function useCellClassName<T>(
   if (column.computedLastInCategory) {
     result.push(...baseClasses.map((c) => `${c}--last-in-category`));
   }
-  if (extraFlags.rowSelected) {
+  if (extraFlags.rowSelected === null) {
+    result.push(...baseClasses.map((c) => `${c}--row-partially-selected`));
+  } else if (extraFlags.rowSelected) {
     result.push(...baseClasses.map((c) => `${c}--row-selected`));
   }
   if (extraFlags.cellSelected) {

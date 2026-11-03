@@ -330,7 +330,12 @@ export const ColumnCellRecipe = recipe({
         background: ThemeVars.components.Row.selectedBackground,
       },
       false: {},
-      null: {},
+      // A group or tree parent with only some of its rows selected — the same
+      // state as an indeterminate selection checkbox. Mixed from the selected
+      // and row backgrounds, so hover (which swaps those variables) follows.
+      null: {
+        background: `color-mix(in srgb, ${ThemeVars.components.Row.selectedBackground} 50%, ${ThemeVars.components.Row.background})`,
+      },
     },
     first: {
       true: {

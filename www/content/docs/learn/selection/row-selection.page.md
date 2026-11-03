@@ -170,6 +170,8 @@ Rust
 
 clicking `TS 2` and then `shift` + clicking `Rust 2` selects `TS 2`, `TS 3`, all of `Go` (`Go 1` and `Go 2`), `Rust 1` and `Rust 2`, but not `Rust 3`. `TypeScript` and `Rust` are partly selected, while `Go` is selected.
 
+A partly selected group or tree row is painted with a lighter selection background, halfway between the row background and the selected row background. A selection checkbox on that row shows the indeterminate state. The same applies when some rows of the group are hidden by a filter and `multiRowSelectionTarget` is `'all'`.
+
 If you then `shift` + click the `Rust` group row instead, the range ends just above the rows of `Rust`, so it selects `TS 2`, `TS 3` and all of `Go`, while `Rust` is not selected. And clicking the `Rust` group row first, then `shift` + clicking `TS 3`, selects `TS 3`, all of `Go` and all of `Rust` - the starting group stays selected as a whole.
 
 The same rules apply to `shift` + spacebar and to `shift` + clicking a selection checkbox.

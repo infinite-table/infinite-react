@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.1
+
+A partly selected group row or tree parent is painted with a lighter selection background. See [partly selected groups](/docs/learn/selection/row-selection#selecting-a-range-of-rows-with-groups).
+
 ## 10.1.0
 
 - Add the <PropLink name="multiRowSelectionWith" /> prop: with `'checkbox'` (the default), rows are selected with the checkboxes while a visible column shows one; with `'click'`, clicking rows selects them too.
