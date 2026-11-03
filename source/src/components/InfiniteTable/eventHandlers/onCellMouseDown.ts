@@ -12,6 +12,10 @@ export function onCellMouseDown<T>(
   context: OnCellMouseDownContext<T>,
   event: React.MouseEvent<Element>,
 ) {
+  context.getComputed().multiRowSelector.lastPointerDown = {
+    rowIndex: context.rowIndex,
+    shiftKey: !!event.shiftKey,
+  };
   if (event.detail === 2) {
     return;
   }

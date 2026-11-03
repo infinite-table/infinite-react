@@ -272,11 +272,14 @@ export function loadData<T>(
         groupInfo.error = message;
         actions.originalLazyGroupDataChangeDetect = getChangeDetect();
       } else {
-        // a batch: it is requested again when its rows are rendered again
-        componentState.lazyLoadCacheOfLoadedBatches.delete([
-          ...groupKeys,
-          dataParams.lazyLoadStartIndex ?? 0,
-        ]);
+        // a batch: it is requested again when its rows are rendered again.
+        // Until then it stays in the cache - the load changed the data, and
+        // a reload of the range on that change would request it again, in a loop
+        const cache = componentState.lazyLoadCacheOfLoadedBatches;
+        const cacheKey = [...groupKeys, dataParams.lazyLoadStartIndex ?? 0];
+        if (cache.has(cacheKey)) {
+          cache.set(cacheKey, 'failed');
+        }
         if (groupInfo) {
           groupInfo.childrenLoading = false;
           groupInfo.error = message;
@@ -598,6 +601,20 @@ export function isRootLazyBatchRequested<T>(
   return false;
 }
 
+/**
+ * Removes the failed batches from the cache of loaded batches, so they are
+ * requested again. Called when the render range changes.
+ */
+export function releaseFailedLazyBatches(
+  cache: DeepMap<string, true | 'failed'>,
+) {
+  for (const [keys, value] of cache.entries()) {
+    if (value === 'failed') {
+      cache.delete(keys);
+    }
+  }
+}
+
 export function lazyLoadRange<T>(
   options: {
     startIndex: number;
@@ -607,7 +624,7 @@ export function lazyLoadRange<T>(
     componentActions: ComponentStateGeneratedActions<DataSourceState<T>>;
     dismissLoadedRows?: boolean;
   },
-  cache?: DeepMap<string, true>,
+  cache?: DeepMap<string, true | 'failed'>,
 ) {
   const {
     startIndex,

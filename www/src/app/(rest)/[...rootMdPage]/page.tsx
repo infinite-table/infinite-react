@@ -37,7 +37,7 @@ export const generateMetadata = async ({
 
   if (url === '/eula') {
     return {
-      title: 'End User License Agreement | Infinite Table DataGrid for React',
+      title: 'End User License Agreement | Infinite Table React DataGrid',
       description: `End User License Agreement | ${meta.description}`,
     };
   }
@@ -46,11 +46,9 @@ export const generateMetadata = async ({
 
   const res = {
     title:
-      page?.frontmatter?.metaTitle ??
       (page?.frontmatter?.title
-        ? `${page?.frontmatter?.title} | Infinite Table DataGrid for React`
-        : null) ??
-      meta.title,
+        ? `${page?.frontmatter?.title} | Infinite Table React DataGrid`
+        : null) ?? meta.title,
     description:
       page?.frontmatter.metaDescription ??
       page.frontmatter.description ??

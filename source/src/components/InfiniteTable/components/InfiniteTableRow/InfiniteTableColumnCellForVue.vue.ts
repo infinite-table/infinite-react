@@ -19,6 +19,7 @@ import { InternalVars } from '../../internalVars.css';
 import { cssEllipsisClassName, overflow } from '../../utilities.css';
 import { ColumnCellCls, SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBoxForVue.vue';
+import { updateRowSelectionOnCheckboxChange } from '../../eventHandlers/onCellClick';
 import { ExpandCollapseIcon } from '../icons/ExpandCollapseIcon/ExpandCollapseIconForVue.vue';
 
 import type {
@@ -104,14 +105,7 @@ export const defaultRenderTreeIcon = (params: any): VNodeChild => {
 };
 
 export const defaultRenderSelectionCheckBox = (params: any): VNodeChild => {
-  const {
-    rowInfo,
-    selectCurrentRow,
-    deselectCurrentRow,
-    toggleCurrentGroupRowSelection,
-    dataSourceApi,
-    api,
-  } = params;
+  const { rowInfo, rowIndex, api } = params;
 
   const { components } = api.getState();
 
@@ -123,24 +117,8 @@ export const defaultRenderSelectionCheckBox = (params: any): VNodeChild => {
       class: SelectionCheckboxCls,
     },
     disabled: rowInfo.isTreeNode ? !isNodeSelectable(rowInfo) : false,
-    onChange: (selected: boolean | null) => {
-      if (rowInfo.isTreeNode) {
-        dataSourceApi.treeApi.setNodeSelection(
-          rowInfo.nodePath,
-          selected ?? false,
-        );
-        return;
-      }
-      if (rowInfo.isGroupRow) {
-        toggleCurrentGroupRowSelection();
-        return;
-      }
-
-      if (selected) {
-        selectCurrentRow();
-      } else {
-        deselectCurrentRow();
-      }
+    onChange: () => {
+      updateRowSelectionOnCheckboxChange(api, rowIndex);
     },
     checked: rowInfo.rowSelected,
   });

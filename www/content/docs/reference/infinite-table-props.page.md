@@ -2924,6 +2924,25 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 </Prop>
 
+<Prop name="multiRowSelectionWith" type="'checkbox'|'click'" defaultValue="'checkbox'">
+
+> Decides whether clicking a row selects it, when <DPropLink name="selectionMode" /> is `'multi-row'`.
+
+- `'checkbox'` (the default) - while a visible column shows a selection checkbox (see <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink>), users select rows with the checkboxes and the spacebar (`shift` + checkbox click and `shift` + spacebar select a range). Clicking a row doesn't change the selection. When no visible column shows a selection checkbox, it works like `'click'`.
+- `'click'` - clicking a row selects it, with `cmd`/`ctrl` and `shift` as modifier keys, just like in the MacOS Finder app. The spacebar works like a click, and the selection checkboxes, if any, work as well.
+
+Both values work the same with or without grouping, and with tree data - clicking a group row or a parent node selects (or with `cmd`/`ctrl`, toggles) the whole group or node. See [selecting a range of rows with groups](/docs/learn/selection/row-selection#selecting-a-range-of-rows-with-groups) for how `shift` ranges handle group rows.
+
+<Sandpack title="Choosing how users select rows">
+
+```ts file="$DOCS/learn/selection/row-selection-ranges-with-groups-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="multiSortBehavior" type="'append'|'replace'" default="'replace'">
 
 > Specifies the behavior of the DataGrid when [multiple sorting](/docs/learn/sorting/multiple-sorting) is configured. Defaults to `'replace'`.

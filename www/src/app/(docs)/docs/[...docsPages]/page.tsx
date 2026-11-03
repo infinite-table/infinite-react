@@ -54,11 +54,9 @@ export const generateMetadata = async ({
 
   const res = {
     title:
-      page?.frontmatter?.title ??
       (page?.frontmatter?.title
-        ? `${page?.frontmatter?.title} | Infinite Table DataGrid for React`
-        : null) ??
-      meta.title,
+        ? `${page?.frontmatter?.title} | Infinite Table React DataGrid`
+        : null) ?? `${meta.title} | Infinite Table React DataGrid`,
     description:
       page?.frontmatter?.description ?? page?.excerpt ?? meta.description,
   };

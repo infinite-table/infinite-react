@@ -965,6 +965,7 @@ export class RowSelectionState<T = any> {
     deselectedKeys.forEach((groupKeys) => {
       this.deselectedMap.delete(groupKeys);
     });
+    this.xcache();
   }
 
   public deselectGroupRow(groupKeys: any[]) {
@@ -1011,6 +1012,7 @@ export class RowSelectionState<T = any> {
     selectedKeys.forEach((groupKeys) => {
       this.selectedMap.delete(groupKeys);
     });
+    this.xcache();
   }
 
   public setRowAsSelected(key: string | number, groupKeys?: any[]) {

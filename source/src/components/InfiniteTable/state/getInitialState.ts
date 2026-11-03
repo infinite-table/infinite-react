@@ -361,6 +361,8 @@ export const forwardProps = <T>(
     licenseKey: (licenseKey) => licenseKey || '',
 
     keyboardSelection: (keyboardSelection) => keyboardSelection ?? true,
+    multiRowSelectionWith: (multiRowSelectionWith) =>
+      multiRowSelectionWith ?? 'checkbox',
 
     activeRowIndex: 1,
     activeCellIndex: 1,

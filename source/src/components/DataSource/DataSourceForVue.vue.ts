@@ -29,6 +29,7 @@ import {
   getDetailReady,
   isRootLazyBatchRequested,
   lazyLoadRange,
+  releaseFailedLazyBatches,
 } from './privateHooks/loadDataShared';
 import { DeepMap } from '../../utils/DeepMap';
 import { debounce } from '../utils/debounce';
@@ -223,7 +224,7 @@ function useLazyLoadRangeForVue<T>(options: {
     () => {
       dataSourceActions.lazyLoadCacheOfLoadedBatches = new DeepMap<
         string,
-        true
+        true | 'failed'
       >();
     },
   );
@@ -233,7 +234,7 @@ function useLazyLoadRangeForVue<T>(options: {
   const loadRange = (
     renderRange?: RenderRange | null,
     options?: { dismissLoadedRows?: boolean },
-    cache: DeepMap<string, true> = getDataSourceState()
+    cache: DeepMap<string, true | 'failed'> = getDataSourceState()
       .lazyLoadCacheOfLoadedBatches,
   ) => {
     const componentState = getDataSourceState();
@@ -362,6 +363,9 @@ function useLazyLoadRangeForVue<T>(options: {
       removeRenderRangeSubscription = notifyRenderRangeChange.onChange(
         (renderRange: RenderRange | null) => {
           latestRenderRange = renderRange;
+          releaseFailedLazyBatches(
+            getDataSourceState().lazyLoadCacheOfLoadedBatches,
+          );
           loadRange(renderRange);
         },
       );

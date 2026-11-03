@@ -26,6 +26,7 @@ import {
   isRootLazyBatchRequested,
   lazyLoadRange,
   loadData,
+  releaseFailedLazyBatches,
 } from './loadDataShared';
 
 export {
@@ -334,7 +335,7 @@ function useLazyLoadRange<T>(
   useEffect(() => {
     dataSourceActions.lazyLoadCacheOfLoadedBatches = new DeepMap<
       string,
-      true
+      true | 'failed'
     >();
   }, [dataSourceState.data, dataSourceState.dataParams]);
 
@@ -357,7 +358,7 @@ function useLazyLoadRange<T>(
   const loadRange = (
     renderRange?: RenderRange | null,
     options?: { dismissLoadedRows?: boolean },
-    cache: DeepMap<string, true> = getDataSourceState()
+    cache: DeepMap<string, true | 'failed'> = getDataSourceState()
       .lazyLoadCacheOfLoadedBatches,
   ) => {
     const componentState = getDataSourceState();
@@ -449,6 +450,9 @@ function useLazyLoadRange<T>(
         return notifyRenderRangeChange.onChange(
           (renderRange: RenderRange | null) => {
             latestRenderRangeRef.current = renderRange;
+            releaseFailedLazyBatches(
+              getDataSourceState().lazyLoadCacheOfLoadedBatches,
+            );
             loadRange(renderRange);
           },
         );

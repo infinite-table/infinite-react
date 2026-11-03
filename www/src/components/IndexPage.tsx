@@ -90,8 +90,8 @@ function HomepageBlogpostCard({ post }: { post: BlogPost }) {
 }
 export function IndexPage({ posts }: { posts?: BlogPost[] }) {
   const seoTitle =
-    'Infinite Table DataGrid for React — One Table — Infinite Applications.';
-  const seoDescription = `Infinite Table DataGrid for React — One Table — Infinite Applications. Infinite Table is the modern DataGrid for building React apps — faster.`;
+    'Infinite Table React DataGrid — One Table — Infinite Applications.';
+  const seoDescription = `Infinite Table DataGrid for React — One Table — Infinite Applications. Infinite Table is the modern React DataGrid for building apps — faster.`;
 
   posts = posts || [];
 

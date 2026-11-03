@@ -3,6 +3,15 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.0
+
+- Add the <PropLink name="multiRowSelectionWith" /> prop: with `'checkbox'` (the default), rows are selected with the checkboxes while a visible column shows one; with `'click'`, clicking rows selects them too.
+- Row clicks now select in grouped data and in tree data too - a group row or parent node selects its whole group, `cmd`/`ctrl` + click toggles it and `shift` + click selects a range (see [ranges with groups](/docs/learn/selection/row-selection#selecting-a-range-of-rows-with-groups) and [tree selection](/docs/learn/tree-grid/tree-selection#selecting-nodes-with-the-mouse-and-keyboard)).
+- `shift` + a selection checkbox selects a range, and the spacebar works like a click (or a checkbox click) everywhere - clicks, checkboxes and the spacebar share the range's starting row.
+- Clicking an expand/collapse icon no longer changes the selection, and a disabled row's checkbox no longer selects it.
+- Fix a group row selection not shown right away with <DPropLink name="useGroupKeysForMultiRowSelection" />.
+- Fix a failed <DPropLink name="lazyLoad" /> batch being requested over and over while its rows stay in view.
+
 ## 10.0.0
 
 This release brings some changes and better clarity around sorting and filtering and where each of those operations happen. Everything is done in the browser unless you opt into reloading the data with <DPropLink name="shouldReloadData" />.

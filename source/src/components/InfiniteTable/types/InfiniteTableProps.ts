@@ -867,6 +867,7 @@ export interface InfiniteTableProps<T> {
 
   keyboardNavigation?: InfiniteTablePropKeyboardNavigation;
   keyboardSelection?: InfiniteTablePropKeyboardSelection;
+  multiRowSelectionWith?: InfiniteTablePropMultiRowSelectionWith;
   defaultActiveRowIndex?: number | null;
   activeRowIndex?: number | null;
   onActiveRowIndexChange?: (activeRowIndex: number) => void;
@@ -1014,6 +1015,17 @@ export type InfiniteTablePropGetFilterOperatorMenuItems<T> = (
 
 export type InfiniteTablePropKeyboardNavigation = 'cell' | 'row' | false;
 export type InfiniteTablePropKeyboardSelection = boolean;
+
+/**
+ * How users select rows with multi-row selection:
+ *
+ * - `'checkbox'` (the default) - while a visible column shows a selection checkbox, rows are
+ *   selected with the checkboxes (and the spacebar); clicking a row doesn't select it.
+ *   Without a visible selection checkbox, it works like `'click'`.
+ * - `'click'` - clicking a row selects it (with `cmd`/`ctrl` and `shift` as modifiers),
+ *   and the selection checkboxes, if any, work too.
+ */
+export type InfiniteTablePropMultiRowSelectionWith = 'click' | 'checkbox';
 
 export type InfiniteTablePropHeaderOptions = {
   alwaysReserveSpaceForSortIcon: boolean;

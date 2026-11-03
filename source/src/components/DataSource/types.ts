@@ -379,9 +379,16 @@ export interface DataSourceSetupState<T> {
     mutations?: Map<string, DataSourceMutation<T>[]>;
     treeMutations?: DeepMap<any, DataSourceMutation<T>[]>;
   };
-  lazyLoadCacheOfLoadedBatches: DeepMap<string, true>;
+  /**
+   * A failed batch stays in the cache as `'failed'` until the render range
+   * changes - see `releaseFailedLazyBatches`.
+   */
+  lazyLoadCacheOfLoadedBatches: DeepMap<string, true | 'failed'>;
   pivotMappings?: DataSourceMappings;
-  propsCache: Map<keyof DataSourceProps<T>, WeakMap<any, any>>;
+  propsCache: Map<
+    keyof (DataSourceProps<T> & TreeDataSourceProps<T>),
+    WeakMap<any, any>
+  >;
   showSeparatePivotColumnForSingleAggregation: boolean;
   dataParams?: DataSourceDataParams<T>;
   originalLazyGroupData: LazyGroupDataDeepMap<T>;

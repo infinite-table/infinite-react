@@ -1,5 +1,5 @@
 ---
-title: Pivoting
+title: Pivoting with Infinite
 ---
 
 An enteprise-level feature `InfiniteTable` provides is the pivoting functionality. Combined with grouping and advanced aggregation, it unlocks new ways to visualize data.

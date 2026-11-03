@@ -1,7 +1,14 @@
 import { isTargetInput } from '../../../utils/isTargetInput';
 import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
-import { InfiniteTablePropOnCellDoubleClickResult } from '../types/InfiniteTableProps';
+import { cloneTreeSelection } from '../../DataSource/TreeApi';
+import { TreeSelectionState } from '../../DataSource/TreeSelectionState';
+import { cloneRowSelection } from '../api/getRowSelectionApi';
+import { SelectionCheckboxCls } from '../components/cell.css';
+import {
+  InfiniteTableApi,
+  InfiniteTablePropOnCellDoubleClickResult,
+} from '../types/InfiniteTableProps';
 
 import {
   InfiniteTableCellClickEventHandlerContext,
@@ -135,53 +142,141 @@ export function updateCellSelectionOnCellClick<T>(
   dataSourceActions.cellSelection = cellSelection;
 }
 
+/**
+ * Resolves the `multiRowSelectionWith` prop: `'checkbox'` only applies while
+ * a visible column renders a selection checkbox.
+ */
+export function getMultiRowSelectionWith<T>(
+  context: Pick<InfiniteTableEventHandlerAbstractContext<T>, 'getComputed'> & {
+    getState: () => { multiRowSelectionWith?: 'click' | 'checkbox' };
+  },
+): 'click' | 'checkbox' {
+  return context.getState().multiRowSelectionWith !== 'click' &&
+    context.getComputed().renderSelectionCheckBox
+    ? 'checkbox'
+    : 'click';
+}
+
+function isSelectionNeutralTarget(target: EventTarget | null | undefined) {
+  if (!target) {
+    return false;
+  }
+  if (isTargetInput(target)) {
+    return true;
+  }
+  const closest = (target as HTMLElement).closest;
+  if (typeof closest !== 'function') {
+    return false;
+  }
+  return !!(target as HTMLElement).closest(
+    `.${SelectionCheckboxCls}, [data-name="expand-collapse-icon"]`,
+  );
+}
+
+/**
+ * `'click'` is a click on a row, `'keyboard'` is the spacebar on the active row,
+ * `'checkbox'` is a change of a row selection checkbox.
+ */
+export type RowSelectionGesture = 'click' | 'keyboard' | 'checkbox';
+
 export function updateRowSelectionOnCellClick<T>(
   context: InfiniteTableEventHandlerAbstractContext<T> & {
     rowIndex: number;
   },
 
-  event: SimpleClickEvent,
+  event: SimpleClickEvent & { target?: EventTarget | null },
+  gesture: RowSelectionGesture = event.key ? 'keyboard' : 'click',
 ) {
   const {
     rowIndex,
     getDataSourceState,
     getComputed,
     dataSourceActions,
+    dataSourceApi,
     api,
     cloneRowSelection,
+    cloneTreeSelection,
   } = context;
 
-  const { multiRowSelector, renderSelectionCheckBox } = getComputed();
+  const { multiRowSelector } = getComputed();
   const dataSourceState = getDataSourceState();
 
-  const { selectionMode, groupBy, dataArray, isTree } = dataSourceState;
+  const { selectionMode, dataArray, isTree } = dataSourceState;
 
-  if (groupBy.length) {
-    // for now we don't support row selection via user clicks
-    // with grouping when there is no checkbox column
-    return false;
-  }
-
-  if (isTree) {
+  if (gesture === 'click' && isSelectionNeutralTarget(event.target)) {
     return false;
   }
 
   const rowInfo = dataArray[rowIndex];
 
-  if (rowInfo?.rowDisabled) {
+  if (!rowInfo || rowInfo.rowDisabled) {
     return false;
   }
 
-  if (selectionMode === 'multi-row') {
-    if (renderSelectionCheckBox && !event.key) {
-      // we should not click-select when we have a checkbox column
-      // but we only do this if there is no key
-      // as key could  == ' ', and in this case we want
-      // to let the selection logic happen, as it's the same function
-      // but used by the keyboard selection
+  if (isTree) {
+    if (!rowInfo.isTreeNode || !rowInfo.nodePath) {
       return false;
     }
+    const { isNodeSelectable } = dataSourceState;
+    if (isNodeSelectable && !isNodeSelectable(rowInfo as any)) {
+      return false;
+    }
+  }
+
+  if (selectionMode === 'multi-row') {
+    const selectWith = getMultiRowSelectionWith(context);
+
+    if (gesture === 'click' && selectWith === 'checkbox') {
+      return false;
+    }
+    const toggles =
+      gesture === 'checkbox' ||
+      (gesture === 'keyboard' && selectWith === 'checkbox');
+
+    const applyGesture = () => {
+      if (event.shiftKey) {
+        multiRowSelector.multiSelectClick(rowIndex);
+      } else if (toggles || event.metaKey || event.ctrlKey) {
+        multiRowSelector.singleAddClick(rowIndex);
+      } else {
+        multiRowSelector.resetClick(rowIndex);
+      }
+    };
+
+    if (isTree) {
+      const { treeSelectionState: currentTreeSelection } = dataSourceState;
+      if (!(currentTreeSelection instanceof TreeSelectionState)) {
+        return false;
+      }
+      const treeSelectionState = cloneTreeSelection(currentTreeSelection);
+
+      multiRowSelector.treeSelectionState = treeSelectionState;
+      applyGesture();
+      multiRowSelector.treeSelectionState = undefined;
+
+      const singleNodeChanged =
+        !event.shiftKey && (toggles || event.metaKey || event.ctrlKey);
+      if (dataSourceState.lastSelectionUpdatedNodePathRef) {
+        dataSourceState.lastSelectionUpdatedNodePathRef.current =
+          singleNodeChanged
+            ? {
+                nodePath: rowInfo.nodePath!,
+                selected: !!treeSelectionState.isNodeSelected(
+                  rowInfo.nodePath!,
+                ),
+              }
+            : null;
+      }
+
+      dataSourceActions.treeSelection = treeSelectionState;
+      return true;
+    }
+
     let { rowSelection: rowSelectionState } = dataSourceState;
+
+    if (!rowSelectionState || typeof rowSelectionState !== 'object') {
+      return false;
+    }
     // clone the row selection
     rowSelectionState = cloneRowSelection(
       rowSelectionState as RowSelectionState<T>,
@@ -189,28 +284,81 @@ export function updateRowSelectionOnCellClick<T>(
 
     multiRowSelector.rowSelectionState = rowSelectionState;
 
-    if (rowSelectionState && typeof rowSelectionState === 'object') {
-      if (event.shiftKey) {
-        multiRowSelector.multiSelectClick(rowIndex);
-      } else if (event.metaKey || event.ctrlKey) {
-        multiRowSelector.singleAddClick(rowIndex);
+    applyGesture();
+
+    // so we can give actions a new instance of rowSelection
+    dataSourceActions.rowSelection = rowSelectionState;
+
+    return true;
+  } else if (selectionMode === 'single-row') {
+    if (rowInfo.isGroupRow) {
+      return false;
+    }
+    const toggles = event.metaKey || event.ctrlKey || gesture !== 'click';
+    if (isTree) {
+      const { treeApi } = dataSourceApi;
+      if (toggles) {
+        treeApi.toggleNodeSelection(rowInfo.nodePath!);
       } else {
-        multiRowSelector.resetClick(rowIndex);
+        treeApi.selectNode(rowInfo.nodePath!);
       }
-
-      // so we can give actions a new instance of rowSelection
-      dataSourceActions.rowSelection = rowSelectionState;
-
       return true;
     }
-  } else if (selectionMode === 'single-row') {
-    const rowInfo = dataArray[rowIndex];
     const id = rowInfo.id;
-    if (event.metaKey || event.ctrlKey) {
+    if (toggles) {
       api.rowSelectionApi.toggleRowSelection(id);
     } else {
       api.rowSelectionApi.selectRow(id);
     }
+    return true;
   }
   return false;
+}
+
+/**
+ * Called when a row selection checkbox changes - toggles the row (or group),
+ * or selects a range when shift was pressed while clicking the checkbox.
+ */
+export function updateRowSelectionOnCheckboxChange<T>(
+  api: InfiniteTableApi<T>,
+  rowIndex: number,
+) {
+  // the api implementation exposes these, but they're not part of the public api type
+  const { getComputed, dataSourceActions, dataSourceApi } =
+    api as InfiniteTableApi<T> &
+      Pick<
+        InfiniteTableEventHandlerAbstractContext<T>,
+        'getComputed' | 'dataSourceActions' | 'dataSourceApi'
+      >;
+  const multiRowSelector = getComputed().multiRowSelector;
+  const pointerDown = multiRowSelector.lastPointerDown;
+  multiRowSelector.lastPointerDown = undefined;
+
+  const getDataSourceState = api.getDataSourceState;
+
+  return updateRowSelectionOnCellClick(
+    {
+      rowIndex,
+      api,
+      getComputed,
+      getState: api.getState,
+      getDataSourceState,
+      dataSourceActions,
+      dataSourceApi,
+      cloneRowSelection: (rowSelection: RowSelectionState<T>) =>
+        cloneRowSelection<T>(rowSelection, getDataSourceState),
+      cloneTreeSelection: (treeSelection: TreeSelectionState<T>) =>
+        cloneTreeSelection<T>(treeSelection, getDataSourceState),
+    } as unknown as InfiniteTableEventHandlerAbstractContext<T> & {
+      rowIndex: number;
+    },
+    {
+      key: '',
+      metaKey: false,
+      ctrlKey: false,
+      shiftKey: pointerDown?.rowIndex === rowIndex && pointerDown.shiftKey,
+      preventDefault: () => {},
+    },
+    'checkbox',
+  );
 }

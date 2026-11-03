@@ -26,6 +26,7 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
     activeCellIndex: InfiniteTableState<T>['activeCellIndex'];
     keyboardNavigation: InfiniteTableState<T>['keyboardNavigation'];
     keyboardSelection: InfiniteTableState<T>['keyboardSelection'];
+    multiRowSelectionWith: InfiniteTableState<T>['multiRowSelectionWith'];
     brain: InfiniteTableState<T>['brain'];
   };
   actions: InfiniteTableActions<T>;
@@ -42,6 +43,8 @@ export type InfiniteTableEventHandlerAbstractContext<T> = {
     groupBy: DataSourceState<T>['groupBy'];
     selectionMode: DataSourceState<T>['selectionMode'];
     isTree: DataSourceState<T>['isTree'];
+    isNodeSelectable?: DataSourceState<T>['isNodeSelectable'];
+    lastSelectionUpdatedNodePathRef?: DataSourceState<T>['lastSelectionUpdatedNodePathRef'];
     dataArray: {
       id: string;
       isGroupRow: boolean;

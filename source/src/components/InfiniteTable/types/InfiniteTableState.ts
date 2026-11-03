@@ -284,6 +284,9 @@ export interface InfiniteTableMappedState<T> {
     InfiniteTableProps<T>['hideColumnWhenGrouped']
   >;
   keyboardSelection: NonUndefined<InfiniteTableProps<T>['keyboardSelection']>;
+  multiRowSelectionWith: NonUndefined<
+    InfiniteTableProps<T>['multiRowSelectionWith']
+  >;
   columnOrder: NonUndefined<InfiniteTableProps<T>['columnOrder']>;
   showZebraRows: NonUndefined<InfiniteTableProps<T>['showZebraRows']>;
   showHoverRows: NonUndefined<InfiniteTableProps<T>['showHoverRows']>;

@@ -35,6 +35,7 @@ import {
 } from '../../utils/RenderHookComponentForInfinite';
 import { SelectionCheckboxCls } from '../cell.css';
 import { InfiniteCheckBox } from '../CheckBox';
+import { updateRowSelectionOnCheckboxChange } from '../../eventHandlers/onCellClick';
 import { ExpandCollapseIcon } from '../icons/ExpandCollapseIcon';
 import { getColumnRenderingParams } from './columnRendering';
 import { getColumnCellStyling, styleForTreeColumn } from './columnCellStyling';
@@ -98,15 +99,7 @@ export const defaultRenderTreeIcon: InfiniteTableColumn<any>['renderTreeIcon'] =
 export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
   any
 > = (params) => {
-  const {
-    rowInfo,
-    selectCurrentRow,
-    deselectCurrentRow,
-    toggleCurrentGroupRowSelection,
-    column,
-    dataSourceApi,
-    api,
-  } = params;
+  const { rowInfo, rowIndex, column, api } = params;
 
   if (rowInfo.isGroupRow && !column.groupByForColumn) {
     // we previously returned null here and didn't show a selection checkbox
@@ -125,24 +118,8 @@ export const defaultRenderSelectionCheckBox: InfiniteTableColumnRenderFunction<
         className: SelectionCheckboxCls,
       }}
       disabled={rowInfo.isTreeNode ? !isNodeSelectable(rowInfo) : false}
-      onChange={(selected) => {
-        if (rowInfo.isTreeNode) {
-          dataSourceApi.treeApi.setNodeSelection(
-            rowInfo.nodePath,
-            selected ?? false,
-          );
-          return;
-        }
-        if (rowInfo.isGroupRow) {
-          toggleCurrentGroupRowSelection();
-          return;
-        }
-
-        if (selected) {
-          selectCurrentRow();
-        } else {
-          deselectCurrentRow();
-        }
+      onChange={() => {
+        updateRowSelectionOnCheckboxChange(api, rowIndex);
       }}
       checked={rowInfo.rowSelected}
     />
@@ -163,8 +140,13 @@ function useRepaintCellsKey<T>(params: {
   rowInfoStore: RowInfoStore<T>;
   getDataSourceState: () => DataSourceState<T>;
 }) {
-  const { repaintCellsKey, column, rowIndex, rowInfoStore, getDataSourceState } =
-    params;
+  const {
+    repaintCellsKey,
+    column,
+    rowIndex,
+    rowInfoStore,
+    getDataSourceState,
+  } = params;
 
   const [, forceRepaint] = useReducer((x: number) => x + 1, 0);
 

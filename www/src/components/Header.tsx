@@ -248,7 +248,7 @@ export const HeroHeader = (props: {
         ]}
       />
       <br />
-      DataGrid for building <span className={'text-glow'}>React</span> apps —{' '}
+      <span className={'text-glow'}>React</span> DataGrid for building apps —{' '}
       <b className={`font-black`}>faster</b>
     </>
   );

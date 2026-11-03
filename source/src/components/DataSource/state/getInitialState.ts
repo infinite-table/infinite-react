@@ -156,7 +156,7 @@ export function initSetupState<T>(
       mutations: undefined,
     },
     rowsPerPage: null,
-    lazyLoadCacheOfLoadedBatches: new DeepMap<string, true>(),
+    lazyLoadCacheOfLoadedBatches: new DeepMap<string, true | 'failed'>(),
     dataParams: undefined,
     onCleanup: buildSubscriptionCallback<DataSourceState<T>>(),
     notifyScrollbarsChange: buildSubscriptionCallback<Scrollbars>(),
@@ -171,9 +171,19 @@ export function initSetupState<T>(
     cursorId: defaultCursorId,
     showSeparatePivotColumnForSingleAggregation: false,
 
-    propsCache: new Map<keyof DataSourceProps<T>, WeakMap<any, any>>([
+    // per DataSource caches of the instances built from prop objects - they are destroyed
+    // when the DataSource is unmounted, so they can't be shared with other DataSources
+    propsCache: new Map<
+      keyof (DataSourceProps<T> & TreeDataSourceProps<T>),
+      WeakMap<any, any>
+    >([
       ['sortInfo', new WeakMap()],
       ['rowDisabledState', new WeakMap()],
+      ['isRowDisabled', new WeakMap()],
+      ['cellSelection', new WeakMap()],
+      ['treeSelection', new WeakMap()],
+      ['treeExpandState', new WeakMap()],
+      ['groupRowsState', new WeakMap()],
     ]),
 
     rowInfoReducerResults: undefined,
@@ -358,7 +368,7 @@ export const forwardProps = <T>(
         return rowDisabledState;
       }
 
-      const wMap = setupState.propsCache.get('rowDisabledState') ?? weakMap;
+      const wMap = setupState.propsCache.get('rowDisabledState')!;
 
       let cachedRowDisabledState = wMap.get(
         rowDisabledState,
@@ -402,8 +412,6 @@ function getLivePaginationCursorValue<T>(
 
   return livePaginationCursor;
 }
-
-const weakMap = new WeakMap<any, any>();
 
 function toShouldReloadObject<T>(
   shouldReloadData: DataSourcePropShouldReloadData<T>,
@@ -471,6 +479,7 @@ export function getTreeSelectionState<T>(
     (currentTreeSelection as TreeSelectionStateObject | null) ??
     treeSelectionStateDefaultObject;
 
+  const weakMap = state.propsCache.get('treeSelection')!;
   let instance: TreeSelectionState = weakMap.get(treeSelectionStateObject);
 
   if (instance) {
@@ -616,6 +625,7 @@ export function deriveStateFromProps<T extends any>(params: {
           cellSelectionState = currentCellSelection;
         } else {
           // reuse the instance if it's the same object
+          const weakMap = state.propsCache.get('cellSelection')!;
           const instance =
             weakMap.get(currentCellSelection) ??
             new CellSelectionState(
@@ -640,6 +650,7 @@ export function deriveStateFromProps<T extends any>(params: {
     treeProps.defaultTreeExpandState;
 
   if (treeExpandState && !(treeExpandState instanceof TreeExpandState)) {
+    const weakMap = state.propsCache.get('treeExpandState')!;
     const instance: TreeExpandState =
       weakMap.get(treeExpandState) ?? new TreeExpandState(treeExpandState);
 
@@ -658,6 +669,7 @@ export function deriveStateFromProps<T extends any>(params: {
     props.groupRowsState || state.groupRowsState || props.defaultGroupRowsState;
 
   if (groupRowsState && !(groupRowsState instanceof GroupRowsState)) {
+    const weakMap = state.propsCache.get('groupRowsState')!;
     const instance =
       weakMap.get(groupRowsState) ?? new GroupRowsState(groupRowsState);
     weakMap.set(groupRowsState, instance);
@@ -732,6 +744,7 @@ export function deriveStateFromProps<T extends any>(params: {
   let isRowDisabled = props.isRowDisabled;
 
   if (!isRowDisabled && rowDisabledState) {
+    const weakMap = state.propsCache.get('isRowDisabled')!;
     const cachedIsRowDisabled = weakMap.get(rowDisabledState);
     if (cachedIsRowDisabled) {
       isRowDisabled = cachedIsRowDisabled;

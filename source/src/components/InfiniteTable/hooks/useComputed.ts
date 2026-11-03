@@ -200,14 +200,10 @@ export function useComputed<T>(options: {
 
   const [multiRowSelector] = useState(() => {
     const multiRowSelector = new MultiRowSelector({
-      isRowDisabledAt: (index: number) => {
-        const dataItem = getDataSourceState().dataArray[index];
-        return dataItem?.rowDisabled ?? false;
-      },
-      getIdForIndex: (index: number) => {
-        const dataItem = getDataSourceState().dataArray[index];
-
-        return dataItem?.id ?? -1;
+      getRowAt: (index: number) => getDataSourceState().dataArray[index],
+      isNodeSelectable: (row) => {
+        const { isNodeSelectable } = getDataSourceState();
+        return isNodeSelectable ? isNodeSelectable(row as any) : true;
       },
     });
 

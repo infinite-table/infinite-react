@@ -187,6 +187,7 @@ export const DATA_GRID_PROP_NAMES = [
   'components',
   'keyboardNavigation',
   'keyboardSelection',
+  'multiRowSelectionWith',
   'keyboardShortcuts',
   'activeRowIndex',
   'defaultActiveRowIndex',
@@ -815,13 +816,10 @@ export const InfiniteTable = defineComponent({
     const { getDataSourceState: getDSState, dataSourceApi } = dataSourceContext;
 
     const multiRowSelector = new MultiRowSelector({
-      isRowDisabledAt: (index: number) => {
-        const dataItem = getDSState().dataArray[index];
-        return dataItem?.rowDisabled ?? false;
-      },
-      getIdForIndex: (index: number) => {
-        const dataItem = getDSState().dataArray[index];
-        return dataItem?.id ?? -1;
+      getRowAt: (index: number) => getDSState().dataArray[index],
+      isNodeSelectable: (row) => {
+        const { isNodeSelectable } = getDSState();
+        return isNodeSelectable ? isNodeSelectable(row as any) : true;
       },
     });
 

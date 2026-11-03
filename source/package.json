@@ -1,12 +1,16 @@
 {
   "name": "@infinite-table/infinite-react",
   "description": "Infinite Table for React",
+  "homepage": "https://infinite-table.com",
   "keywords": [
     "react",
     "infinite-table",
     "react-table",
     "table",
     "datagrid",
+    "data-grid",
+    "pivot",
+    "tree-grid",
     "react-datagrid",
     "react-infinite"
   ],

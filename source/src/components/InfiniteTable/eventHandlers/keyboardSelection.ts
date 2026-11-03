@@ -23,8 +23,6 @@ export function handleKeyboardSelection<T>(
     getState,
     getDataSourceState,
     dataSourceActions,
-    api: imperativeApi,
-    dataSourceApi,
     cloneRowSelection,
     cloneTreeSelection,
   } = context;
@@ -46,7 +44,6 @@ export function handleKeyboardSelection<T>(
 
   const {
     selectionMode,
-    groupBy,
     rowSelection,
     treeSelectionState: treeSelection,
     isTree,
@@ -69,9 +66,28 @@ export function handleKeyboardSelection<T>(
     return false;
   }
 
-  if (selectionMode === 'single-row' && key === ' ') {
-    imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
-    return true;
+  if (
+    key === ' ' &&
+    (selectionMode === 'single-row' || selectionMode === 'multi-row')
+  ) {
+    // space works like a click on the row - or like a click on its
+    // selection checkbox, when selecting with checkboxes
+
+    // explicit copy instead of a spread: native DOM events (Vue) keep
+    // their props on the prototype, so a spread would lose them
+    const event = {
+      key: keyboardEvent.key,
+      metaKey: keyboardEvent.metaKey,
+      ctrlKey: keyboardEvent.ctrlKey,
+      shiftKey: keyboardEvent.shiftKey,
+      preventDefault: () => keyboardEvent.preventDefault(),
+    };
+
+    return updateRowSelectionOnCellClick(
+      { ...context, rowIndex },
+      event,
+      'keyboard',
+    );
   }
 
   if (selectionMode !== 'multi-row') {
@@ -96,47 +112,6 @@ export function handleKeyboardSelection<T>(
 
     dataSourceActions.rowSelection = rowSelectionState;
     return true;
-  }
-
-  if (key === ' ') {
-    if (groupBy.length) {
-      if (rowInfo.isGroupRow && rowInfo.groupKeys) {
-        imperativeApi.rowSelectionApi.toggleGroupRowSelection(
-          rowInfo.groupKeys,
-        );
-      } else {
-        imperativeApi.rowSelectionApi.toggleRowSelection(rowInfo.id);
-      }
-      return true;
-    } else if (isTree) {
-      if (rowInfo.isTreeNode && rowInfo.nodePath) {
-        dataSourceApi.treeApi.toggleNodeSelection(rowInfo.nodePath);
-        return true;
-      }
-    } else {
-      // no grouping, but space should be treated like a mouse click
-
-      // explicit copy instead of a spread: native DOM events (Vue) keep
-      // their props on the prototype, so a spread would lose them
-      const event = {
-        key: keyboardEvent.key,
-        metaKey: keyboardEvent.metaKey,
-        ctrlKey: keyboardEvent.ctrlKey,
-        shiftKey: keyboardEvent.shiftKey,
-        preventDefault: () => keyboardEvent.preventDefault(),
-      };
-      const { renderSelectionCheckBox } = context.getComputed();
-
-      // if we have a selection checkbox column, then we wont allow shift be used with the space key
-      if (renderSelectionCheckBox) {
-        // event.shiftKey = false;
-        event.metaKey = false;
-        // but rather make the selection only additive
-        event.ctrlKey = true;
-      }
-
-      return updateRowSelectionOnCellClick({ ...context, rowIndex }, event);
-    }
   }
 
   return false;

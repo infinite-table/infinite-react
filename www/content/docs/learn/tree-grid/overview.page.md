@@ -1,6 +1,6 @@
 ---
-title: Using Tree Data
-description: Learn how to use the Tree DataGrid to display tree data
+title: Using Tree Data in your React DataGrid
+description: Learn how to use the React Tree DataGrid to display tree data
 ---
 
 
