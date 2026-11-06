@@ -242,9 +242,12 @@ export function loadData<T>(
     //@ts-ignore
     typeof data === 'object' && typeof data.then === 'function';
 
+  // with lazy loading, only a fresh load of the top level masks the grid: a batch
+  // appends to rows already shown, and a group's children load while the group
+  // row shows its own loading icon (childrenLoading)
   const togglesLoading =
     dataIsPromise &&
-    (!componentState.lazyLoad || (componentState.lazyLoad && !append));
+    (!componentState.lazyLoad || (!append && !dataParams.groupKeys?.length));
 
   if (togglesLoading) {
     actions.loading = true;

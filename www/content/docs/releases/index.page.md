@@ -3,6 +3,11 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.2
+
+- With <DPropLink name="lazyLoad" />, expanding a group shows its loading icon instead of masking the whole grid.
+- With multi-column grouping, a <PropLink name="columns.renderGroupIcon" /> from <PropLink name="groupColumn" /> now gets the default icon in `renderBag.groupIcon`, as with a single group column.
+
 ## 10.1.1
 
 A partly selected group row or tree parent is painted with a lighter selection background. See [partly selected groups](/docs/learn/selection/row-selection#selecting-a-range-of-rows-with-groups).

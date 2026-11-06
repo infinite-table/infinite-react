@@ -47,7 +47,12 @@ export function buildColumnForGroupBy<T>(
   const userDefinedGroupColumn: Partial<InfiniteTableColumn<T>> =
     groupByForColumn.column ? { ...groupByForColumn.column } : {};
 
-  let generatedGroupColumn: InfiniteTableGeneratedGroupColumn<T> = {
+  const theGroupColumnFromProps =
+    typeof groupColumnFromProps === 'function'
+      ? groupColumnFromProps(options, toggleGroupRow)
+      : groupColumnFromProps;
+
+  return {
     header: `Group by ${groupByForColumn.field || groupByForColumn.groupField}`,
     groupByForColumn,
 
@@ -56,28 +61,19 @@ export function buildColumnForGroupBy<T>(
       groupRenderStrategy,
     }),
     ...userDefinedGroupColumn,
+    ...theGroupColumnFromProps,
+    // a renderGroupIcon from the groupColumn prop is wrapped too, as with a
+    // single group column: it is called only where a group icon belongs, with
+    // the default icon in renderBag.groupIcon
     renderGroupIcon: renderers.getGroupColumnRenderGroupIcon({
-      initialRenderGroupIcon: userDefinedGroupColumn?.renderGroupIcon,
+      initialRenderGroupIcon:
+        theGroupColumnFromProps?.renderGroupIcon ??
+        userDefinedGroupColumn.renderGroupIcon,
       groupIndexForColumn,
       toggleGroupRow,
       groupRenderStrategy,
     }),
-  };
-
-  if (groupColumnFromProps) {
-    if (typeof groupColumnFromProps === 'function') {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps(options, toggleGroupRow),
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    } else {
-      generatedGroupColumn = {
-        ...generatedGroupColumn,
-        ...groupColumnFromProps,
-      } as InfiniteTableGeneratedGroupColumn<T>;
-    }
-  }
-  return generatedGroupColumn;
+  } as InfiniteTableGeneratedGroupColumn<T>;
 }
 
 export function buildSingleGroupColumn<T>(
