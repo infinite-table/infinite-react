@@ -968,7 +968,27 @@ export interface InfiniteTableProps<T> {
 
   getColumnMenuItems?: InfiniteTablePropGetColumnMenuItems<T>;
   getFilterOperatorMenuItems?: InfiniteTablePropGetFilterOperatorMenuItems<T>;
+
+  /**
+   * The element the menus (column menu, context menus, filter operator menu)
+   * are rendered into. Defaults to an element inside the table.
+   *
+   * A function returning `null` falls back to the default.
+   */
+  menuPortalContainer?: InfiniteTablePropMenuElement;
+
+  /**
+   * The area the menus are kept within. Defaults to the table element.
+   *
+   * A function is called every time a menu is shown; returning `null` falls
+   * back to the table element.
+   */
+  menuConstrainTo?: InfiniteTablePropMenuElement;
 }
+
+export type InfiniteTablePropMenuElement =
+  | HTMLElement
+  | (() => HTMLElement | null | undefined);
 
 export type InfiniteTablePropGetColumnMenuItems<T> = (
   defaultItems: Exclude<MenuProps['items'], undefined>,

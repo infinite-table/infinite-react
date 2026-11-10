@@ -16,6 +16,10 @@ import {
   getTableContextMenu,
 } from '../utils/getCellContextMenuForVue.vue';
 
+import {
+  getMenuConstrainTo,
+  getMenuPortalContainer,
+} from '../utils/menuOverlayTargets';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 import type { InfiniteTableState } from '../types';
 
@@ -44,7 +48,11 @@ export function useCellContextMenu<T>(params: {
     portal: MenuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: getMenuPortalContainer(
+      getState,
+      getState().menuPortalContainer,
+      false,
+    ),
   });
 
   const removeOnCellContextMenu = getState().cellContextMenu.onChange(
@@ -74,7 +82,7 @@ export function useCellContextMenu<T>(params: {
       rect.height += OFFSET;
 
       showOverlay(() => menu, {
-        constrainTo: getState().domRef.current!,
+        constrainTo: getMenuConstrainTo(getState()),
         id: 'cell-context-menu',
         alignTo: rect,
         alignPosition: ALIGN_POSITIONS,
@@ -149,7 +157,11 @@ export function useTableContextMenu<T>(params: {
     portal: MenuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: false,
+    portalContainer: getMenuPortalContainer(
+      getState,
+      getState().menuPortalContainer,
+      false,
+    ),
   });
 
   const removeOnContextMenu = getState().contextMenu.onChange((info) => {
@@ -179,7 +191,7 @@ export function useTableContextMenu<T>(params: {
     rect.height += OFFSET;
 
     showOverlay(() => menu, {
-      constrainTo: getState().domRef.current!,
+      constrainTo: getMenuConstrainTo(getState()),
       id: 'table-context-menu',
       alignTo: rect,
       alignPosition: ALIGN_POSITIONS,

@@ -280,6 +280,8 @@ export const forwardProps = <T>(
     getColumnMenuItems: 1,
     getCellContextMenuItems: 1,
     getContextMenuItems: 1,
+    menuPortalContainer: 1,
+    menuConstrainTo: 1,
     columnPinning: 1,
     editable: 1,
     columnDefaultEditable: 1,

@@ -28,6 +28,7 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 
 import {
   alignNode,
+  isHTMLElement,
   retrieveElement,
   type ElementContainerGetter,
   type OverlayShowParams,
@@ -253,8 +254,16 @@ export function useOverlay(params: OverlayParams) {
         }
 
         if (portalContainer) {
-          return containerRef.value
-            ? h(Teleport, { to: containerRef.value }, contentForPortal)
+          // a function container is read again on every render (each time an
+          // overlay is shown), as the element may not have been there when
+          // first resolved
+          const currentContainer =
+            typeof portalContainer === 'function' ? portalContainer() : null;
+          const targetContainer = isHTMLElement(currentContainer)
+            ? currentContainer
+            : containerRef.value;
+          return targetContainer
+            ? h(Teleport, { to: targetContainer }, contentForPortal)
             : null;
         }
 

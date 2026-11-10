@@ -13,7 +13,8 @@ import {
   useInfiniteTableStableContext,
 } from './useInfiniteTableSelector';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
-import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
+import { getMenuConstrainTo } from '../utils/menuOverlayTargets';
+import { useMenuPortalContainer } from './useMenuPortalContainer';
 
 const menuIconSelector = `[${MenuIconDataAttributes['data-name']}="${MenuIconDataAttributesValues['data-name']}"]`;
 
@@ -61,7 +62,7 @@ function showMenuForColumn<T>(options: {
   columnMenuTargetRef.current = null;
 
   showOverlay(() => getMenuForColumn(columnId, context, onHideIntent), {
-    constrainTo: domRef.current!,
+    constrainTo: getMenuConstrainTo(getState()),
     id: 'column-menu',
     alignTo: target,
     alignPosition: [
@@ -88,18 +89,12 @@ export function useColumnMenu<T>() {
     };
   });
 
-  const { portalDOMRef } =
-    useDataSourceMasterDetailSelector((ctx) => {
-      return {
-        portalDOMRef: ctx.getMasterState().portalDOMRef,
-      };
-    }) || {};
   const {
     showOverlay,
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: portalDOMRef?.current ?? false,
+    portalContainer: useMenuPortalContainer(),
   });
 
   useEffect(() => {

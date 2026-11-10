@@ -237,6 +237,8 @@ export const DATA_GRID_PROP_NAMES = [
   'getCellContextMenuItems',
   'getContextMenuItems',
   'getFilterOperatorMenuItems',
+  'menuPortalContainer',
+  'menuConstrainTo',
   'onEditCancelled',
   'onEditRejected',
   'onEditAccepted',

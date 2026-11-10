@@ -13,6 +13,10 @@ import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { useOverlay } from '../../hooks/useOverlay/useOverlayForVue.vue';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumnForVue.vue';
 
+import {
+  getMenuConstrainTo,
+  getMenuPortalContainer,
+} from '../utils/menuOverlayTargets';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 import type { InfiniteTableState } from '../types';
 
@@ -32,7 +36,11 @@ export function useColumnFilterOperatorMenu<T>(params: {
   } = useOverlay({
     // master-detail is not yet ported to Vue - when it is, this should use
     // the master state's portalDOMRef (see the React hook)
-    portalContainer: false,
+    portalContainer: getMenuPortalContainer(
+      getState,
+      getState().menuPortalContainer,
+      false,
+    ),
   });
 
   const removeOnMenuClick = getState().onFilterOperatorMenuClick.onChange(
@@ -62,7 +70,7 @@ export function useColumnFilterOperatorMenu<T>(params: {
       showOverlay(
         () => getFilterOperatorMenuForColumn(column.id, context, onHideIntent),
         {
-          constrainTo: getState().domRef.current!,
+          constrainTo: getMenuConstrainTo(getState()),
           id: 'filter-operator-menu',
           alignTo: rect,
 

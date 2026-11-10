@@ -15,6 +15,10 @@ import {
 import { menuIconSelector } from '../components/icons/menuIconAttributes';
 import { getMenuForColumn } from '../utils/getMenuForColumnForVue.vue';
 
+import {
+  getMenuConstrainTo,
+  getMenuPortalContainer,
+} from '../utils/menuOverlayTargets';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 import type { InfiniteTableState } from '../types';
 
@@ -62,7 +66,7 @@ function showMenuForColumn<T>(options: {
   columnMenuTargetRef.current = null;
 
   showOverlay(() => getMenuForColumn(columnId, context, onHideIntent), {
-    constrainTo: domRef.current!,
+    constrainTo: getMenuConstrainTo(getState()),
     id: 'column-menu',
     alignTo: target,
     alignPosition: [
@@ -86,7 +90,11 @@ export function useColumnMenu<T>(params: {
   } = useOverlay({
     // master-detail is not yet ported to Vue - when it is, this should use
     // the master state's portalDOMRef (see the React useColumnMenu)
-    portalContainer: false,
+    portalContainer: getMenuPortalContainer(
+      getState,
+      getState().menuPortalContainer,
+      false,
+    ),
   });
 
   const removeOnColumnMenuClick = getState().onColumnMenuClick.onChange(

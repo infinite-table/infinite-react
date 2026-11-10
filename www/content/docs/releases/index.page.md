@@ -3,6 +3,10 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.3
+
+Add the <PropLink name="menuPortalContainer" /> and <PropLink name="menuConstrainTo" /> props, to render the table menus outside the table and choose the area they are constrained to.
+
 ## 10.1.2
 
 - With <DPropLink name="lazyLoad" />, expanding a group shows its loading icon instead of masking the whole grid.

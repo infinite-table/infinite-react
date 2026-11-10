@@ -201,6 +201,8 @@ export interface InfiniteTableMappedState<T> {
   getContextMenuItems: InfiniteTableProps<T>['getContextMenuItems'];
   getCellContextMenuItems: InfiniteTableProps<T>['getCellContextMenuItems'];
   getColumnMenuItems: InfiniteTableProps<T>['getColumnMenuItems'];
+  menuPortalContainer: InfiniteTableProps<T>['menuPortalContainer'];
+  menuConstrainTo: InfiniteTableProps<T>['menuConstrainTo'];
   getFilterOperatorMenuItems: InfiniteTableProps<T>['getFilterOperatorMenuItems'];
   keyboardShortcuts: InfiniteTableProps<T>['keyboardShortcuts'];
 

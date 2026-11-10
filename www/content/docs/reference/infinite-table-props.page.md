@@ -2924,6 +2924,42 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 </Prop>
 
+<Prop name="menuConstrainTo" type="HTMLElement | () => HTMLElement | null">
+
+> The area the table menus are kept within - the column menu, the context menus and the filter operator menu. Defaults to the table element.
+
+When a function is given, it's called every time a menu is shown. Returning `null` uses the table element.
+
+Use it together with <PropLink name="menuPortalContainer" /> to let menus extend past the table, for example when the table sits in a pane that clips its content.
+
+<Sandpack title="Menus rendered into document.body and kept within the app">
+
+```ts file="menuPortalContainer-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
+<Prop name="menuPortalContainer" type="HTMLElement | () => HTMLElement | null">
+
+> The element the table menus are rendered into - the column menu, the context menus and the filter operator menu. Defaults to an element inside the table.
+
+When a function is given, returning `null` uses the default element. Submenus are rendered into the same element.
+
+Menus rendered inside the table can't extend past an ancestor that clips its content (`overflow: hidden`) - render them into an element outside that ancestor, such as `document.body`. They are still kept within the table area, unless you also specify <PropLink name="menuConstrainTo" />.
+
+<Sandpack title="Menus rendered into document.body and kept within the app">
+
+```ts file="menuPortalContainer-example.page.tsx"
+
+```
+
+</Sandpack>
+
+</Prop>
+
 <Prop name="multiRowSelectionWith" type="'checkbox'|'click'" defaultValue="'checkbox'">
 
 > Decides whether clicking a row selects it, when <DPropLink name="selectionMode" /> is `'multi-row'`.

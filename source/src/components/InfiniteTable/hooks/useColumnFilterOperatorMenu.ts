@@ -4,17 +4,12 @@ import { useOverlay } from '../../hooks/useOverlay';
 import { getFilterOperatorMenuForColumn } from '../utils/getFilterOperatorMenuForColumn';
 
 import { useInfiniteTableStableContext } from './useInfiniteTableSelector';
-import { useDataSourceMasterDetailSelector } from '../../DataSource/publicHooks/useDataSourceMasterDetailSelector';
+import { getMenuConstrainTo } from '../utils/menuOverlayTargets';
+import { useMenuPortalContainer } from './useMenuPortalContainer';
 
 const OFFSET = 10;
 
 export function useColumnFilterOperatorMenu<T>() {
-  const { portalDOMRef } =
-    useDataSourceMasterDetailSelector((ctx) => {
-      return {
-        portalDOMRef: ctx.getMasterState().portalDOMRef,
-      };
-    }) || {};
   const stableContext = useInfiniteTableStableContext<T>();
   const { getState, actions } = stableContext;
   const {
@@ -22,7 +17,7 @@ export function useColumnFilterOperatorMenu<T>() {
     portal: menuPortal,
     clearAll,
   } = useOverlay({
-    portalContainer: portalDOMRef?.current ?? false,
+    portalContainer: useMenuPortalContainer(),
   });
 
   useEffect(() => {
@@ -59,7 +54,7 @@ export function useColumnFilterOperatorMenu<T>() {
             onHideIntent,
           ),
         {
-          constrainTo: getState().domRef.current!,
+          constrainTo: getMenuConstrainTo(getState()),
           id: 'filter-operator-menu',
           alignTo: rect,
 

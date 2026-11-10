@@ -16,6 +16,7 @@ import { useRerender } from '../useRerender';
 
 import {
   alignNode,
+  isHTMLElement,
   retrieveElement,
   type AdvancedAlignable,
   type ElementContainerGetter,
@@ -103,9 +104,17 @@ export function useOverlayPortal(
     getContainer();
   }, [portalContainer]);
 
+  // a function container is read again on every render (each time an overlay
+  // is shown), as the element may not have been there when first resolved
+  const currentContainer =
+    typeof portalContainer === 'function' ? portalContainer() : null;
+  const targetContainer = isHTMLElement(currentContainer)
+    ? currentContainer
+    : container;
+
   return portalContainer ? (
-    container ? (
-      createPortal(content, container)
+    targetContainer ? (
+      createPortal(content, targetContainer)
     ) : (
       // we're probably still fetching the container
       <></>
