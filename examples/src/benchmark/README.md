@@ -79,6 +79,16 @@ folder identical in the two repositories (all but this README).
   inline styles again every second.
 - **Each page loads only its own grid**: neither grid is imported in `_app`
   (the Infinite Table license key is set in `InfiniteBenchmark.tsx`).
+- **String sorting is the `en-US`, ASCII case**: the sorted string column is
+  lowercase a-z and the browser runs as `en-US`. Infinite Table compares
+  strings in the order of the browser's locale, AG Grid by character code
+  (the same order for this column). Chrome has a fast path for locale-aware
+  comparison of ASCII text in `en-US` and a few other locales; in the rest,
+  and with accented text, it is several times slower - so the string result
+  does not carry over to every locale. In `de-DE` and `ro-RO`, Infinite Table
+  10.1.4 is about 5% slower than AG Grid on this sort; later versions use a
+  reused `Intl.Collator` in those locales and are about 1.2x faster. The
+  number column has no such condition.
 - **Sandboxed Chromium**: the benchmark turns Chromium's sandbox on
   (Playwright turns it off by default), as in real Chrome. Without it, on
   macOS, the first hover recompute after a layout change under the mouse

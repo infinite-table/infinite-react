@@ -35,7 +35,7 @@ Both grids render the same data, in the same browser, with the same interactions
 - **Versions:** both grids are React components, installed from npm: AG Grid React Community 36.3.0 (`ag-grid-react` and `ag-grid-community`) and Infinite Table 10.1.4 (`@infinite-table/infinite-react`). Each page loads only its own grid.
 - **License keys:** none. AG Grid Community doesn't need one. Infinite Table works the same without one, but shows a "Powered by Infinite Table" footer, so the benchmark makes its box taller until both grids scroll a body of exactly the same height, and render the same number of rows.
 - **Builds:** production builds only - the benchmark refuses to run against a dev server.
-- **Browser:** Chrome 136, headless, sandboxed like the Chrome your users run, no CPU throttling, 1400×1000 viewport.
+- **Browser:** Chrome 136, headless, sandboxed like the Chrome your users run, `en-US` locale, no CPU throttling, 1400×1000 viewport.
 - **Machine:** Apple M1 Pro (10 cores), macOS.
 - **Runs:** 7 measured runs per grid per scenario, plus 1 discarded warmup. The two grids are interleaved (A/B, alternating which goes first), and every run uses a fresh browser context.
 
@@ -108,6 +108,20 @@ Click a column header, measured until every visible row shows sorted, consistent
 />
 
 Infinite Table sorts 2.2-2.5× faster in every combination we measured. Almost all of this time is JavaScript on the main thread for both grids, so this is a measure of the sorting pipeline, not of rendering.
+
+The string result comes with a condition: it is for **an `en-US` browser and ASCII text**. By default the two grids don't compare strings the same way. Infinite Table uses the order of the browser's locale; AG Grid compares character codes, which is cheaper, but puts "Zebra" before "apple". Our string column is lowercase a-z, where both give the same order, and Chrome has a fast path for locale-aware comparison of ASCII text in `en-US` (and a few other locales, such as `en-GB`, `de` and `fr`). In the other browser locales that comparison is several times slower.
+
+So we ran the same sort (1M rows, string column, ascending) in two of those locales, with a separate script - median of 5 runs:
+
+| Browser locale | AG Grid 36.3.0 | Infinite Table 10.1.4 | Infinite Table, next release |
+|---|---|---|---|
+| `en-US` | 3455 ms | 1365 ms | 1412 ms |
+| `de-DE` | 3509 ms | 3691 ms | 2922 ms |
+| `ro-RO` | 3659 ms | 3824 ms | 3018 ms |
+
+Outside the fast locales, Infinite Table 10.1.4 is about 5% slower than AG Grid on strings, not 2.5× faster. The next release fixes that: in those locales it compares strings with a reused `Intl.Collator`, which gives the same order with less work per comparison, and it is about 1.2× faster than AG Grid. In `en-US` nothing changes (the two Infinite Table columns differ by run-to-run noise).
+
+Text with accented characters also misses the fast path: on it the two grids are about level, even in `en-US`. The number column doesn't depend on any of this.
 
 ## Jumping around the dataset
 
@@ -185,7 +199,7 @@ Where **Infinite Table** came out ahead:
 
 - Faster mount: about 30% less time to first paint, 40-55% less time to settle
 - Roughly half the memory for the same rows
-- 2.2-2.5× faster sorting at 300k and 1M rows
+- 2.2-2.5× faster sorting at 300k and 1M rows (for strings: in an `en-US` browser, on ASCII text; about 1.2× in most other locales, from the next release - see [Sorting](#sorting))
 - Less layout and style recalculation work while scrolling vertically, and about 23% less main-thread work while scrolling horizontally
 
 Where **AG Grid** came out ahead:
@@ -206,6 +220,7 @@ A benchmark is a model of reality, not reality. Please keep these in mind:
 - **Headless Chrome.** These numbers come from Chrome's new headless mode, which runs the same rendering code as headed Chrome. Frame-pacing numbers can still differ in a headed browser with a real display.
 - **Defaults only.** Both grids have options that could change these results. We deliberately didn't tune either one, because tuning one grid well and the other badly is the easiest way to make a benchmark unfair.
 - **One dataset shape.** 20 columns of plain text and numbers, no custom cell renderers, no grouping, no filtering, no live updates. Real apps do more.
+- **One browser locale, ASCII text.** The string sorting result is for `en-US` and unaccented text, which is the best case for Infinite Table. The numbers for two other locales are in [Sorting](#sorting).
 - **We have an interest.** We make Infinite Table. We've tried to design the harness so that it measures both grids the same way, and to report every metric - including the ones where AG Grid is ahead - but you shouldn't have to trust us. That's what the next section is for.
 
 ## Run it yourself
