@@ -1,6 +1,12 @@
 import * as React from 'react';
 
 import { join } from '../../../../../utils/join';
+import {
+  IconCustomLayerCls,
+  IconCustomMaskCls,
+  LoadingIconSpinWhenCustomCls,
+} from '../Icon.css';
+import { getCustomIconLayerRect } from '../customizableIcons';
 import { LoadingIconCls } from './loading.css';
 import { loadingIconStrokeDasharray, loadingIconSvgStyle } from './shared';
 import type { LoadingIconProps } from './shared';
@@ -20,6 +26,8 @@ export const LoadingIcon = (props: LoadingIconProps<React.CSSProperties>) => {
       className={join(
         props.className,
         LoadingIconCls,
+        IconCustomMaskCls.loading,
+        LoadingIconSpinWhenCustomCls,
         'InfiniteIcon',
         'InfiniteIcon-loading',
       )}
@@ -41,6 +49,10 @@ export const LoadingIcon = (props: LoadingIconProps<React.CSSProperties>) => {
           keyTimes="0;1"
         />
       </circle>
+      <rect
+        className={IconCustomLayerCls.loading}
+        {...getCustomIconLayerRect(props.viewBox ?? '0 0 100 100')}
+      />
     </svg>
   );
 };

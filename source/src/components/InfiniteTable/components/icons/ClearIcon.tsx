@@ -4,7 +4,7 @@ import { iconPaths } from './iconPaths';
 
 export const ClearIcon = (props: Omit<TableIconProps, 'children'>) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="clear">
       <path d={iconPaths.clear[0]} />
     </Icon>
   );

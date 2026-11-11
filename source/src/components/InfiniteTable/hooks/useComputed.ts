@@ -13,6 +13,10 @@ import { useComputedRowHeight } from './useComputedRowHeight';
 import { useScrollbars } from './useScrollbars';
 import { DataSourceState, useDataSourceSelector } from '../../DataSource';
 import { InfiniteTableActions } from '../types/InfiniteTableState';
+import {
+  getColumnHeaderHeightFromCSSValue,
+  getRowHeightFromCSSValue,
+} from '../shared';
 
 export function useComputed<T>(options: {
   state: InfiniteTableState<T>;
@@ -85,8 +89,9 @@ export function useComputed<T>(options: {
   });
 
   useState(() => {
-    onRowHeightCSSVarChange.onChange((rowHeight) => {
-      if (rowHeight) {
+    onRowHeightCSSVarChange.onChange((value) => {
+      const rowHeight = getRowHeightFromCSSValue(value, getState());
+      if (rowHeight != null) {
         componentActions.rowHeight = rowHeight;
       }
     });
@@ -101,8 +106,12 @@ export function useComputed<T>(options: {
         componentActions.rowDetailHeight = rowDetailHeight;
       }
     });
-    onColumnHeaderHeightCSSVarChange.onChange((columnHeaderHeight) => {
-      if (columnHeaderHeight) {
+    onColumnHeaderHeightCSSVarChange.onChange((value) => {
+      const columnHeaderHeight = getColumnHeaderHeightFromCSSValue(
+        value,
+        getState(),
+      );
+      if (columnHeaderHeight != null) {
         componentActions.columnHeaderHeight = columnHeaderHeight;
       }
     });

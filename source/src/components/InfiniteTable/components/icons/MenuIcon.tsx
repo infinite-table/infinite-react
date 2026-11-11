@@ -5,6 +5,7 @@ import { ThemeVars } from '../../vars.css';
 
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { MenuIconLineCls, MenuIconWithDefaultLinesCls } from './MenuIcon.css';
 import {
   MenuIconDataAttributes,
   MenuIconDataAttributesValues,
@@ -28,7 +29,7 @@ const defaultLineStyle: React.CSSProperties = {
   pointerEvents: 'none',
 };
 
-const lineClassName = `${InfiniteIconClassName}-menu`;
+const lineClassName = join(`${InfiniteIconClassName}-menu`, MenuIconLineCls);
 
 export function MenuIcon(props: MenuIconProps) {
   const {
@@ -60,6 +61,7 @@ export function MenuIcon(props: MenuIconProps) {
         }),
         InfiniteIconClassName,
         `${InfiniteIconClassName}-menu`,
+        children == null ? MenuIconWithDefaultLinesCls : '',
       )}
     >
       {children ?? (

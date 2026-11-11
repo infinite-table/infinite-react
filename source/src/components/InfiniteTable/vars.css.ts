@@ -46,6 +46,12 @@ export const ThemeVars = createGlobalThemeContract(
       7: 'font-size-7',
     },
     fontFamily: 'font-family',
+    /**
+     * The font size of the component. Not specified by default, in which case the font size is inherited from the parent element.
+     *
+     * The value is multiplied by a third of the difference of [`--infinite-density-scale`](#density-scale) from `1` - so with `0.8`, it's `~93%`.
+     */
+    baseFontSize: 'font-size',
     minHeight: 'min-height',
     borderRadius: 'border-radius',
     focusOutline: 'focus-outline',
@@ -57,6 +63,75 @@ export const ThemeVars = createGlobalThemeContract(
     background: 'background',
 
     iconSize: 'icon-size',
+
+    /**
+     * The row height used when the `rowHeight` prop is not specified. Defaults to `40px`.
+     *
+     * The value is multiplied by [`--infinite-density-scale`](#density-scale).
+     */
+    rowHeight: 'row-height',
+
+    /**
+     * A unitless multiplier for the row height, the column header height, the cell paddings and the font size.
+     * Set by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.
+     *
+     * Defaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`.
+     */
+    densityScale: 'density-scale',
+
+    /**
+     * Icons, as CSS images (eg: `url("data:image/svg+xml,...")`). The icons are painted with `currentColor`, using the image as a mask, so only the shape (alpha) of the image matters.
+     */
+    icons: {
+      /**
+       * The icon for expanding/collapsing group rows, tree nodes and row details. Also used for submenu arrows.
+       * It should point towards the end (right). It's rotated when expanded.
+       *
+       * Defaults to a chevron.
+       */
+      expandCollapse: 'icon-expand-collapse',
+      /**
+       * The loading icon - rotated by a CSS animation. Defaults to a spinner arc.
+       */
+      loading: 'icon-loading',
+      /**
+       * The sort ascending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used.
+       */
+      sortAsc: 'icon-sort-asc',
+      /**
+       * The sort descending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used.
+       */
+      sortDesc: 'icon-sort-desc',
+      /**
+       * The icon displayed in the header of filtered columns. When not specified, the default (lines) filter icon is used.
+       */
+      filter: 'icon-filter',
+      /**
+       * The column menu icon displayed in column headers. When not specified, the default (lines) menu icon is used.
+       */
+      menu: 'icon-menu',
+      /**
+       * The icon for the selected filter operator, in the filter operator menu. Defaults to a check mark.
+       */
+      done: 'icon-done',
+      /**
+       * The clear icon - used for clearing the filter, in the filter operator menu, and for removing a group in the grouping toolbar. Defaults to an `X`.
+       */
+      clear: 'icon-clear',
+      /**
+       * The icon displayed when dragging a column outside the table, to hide it. Defaults to a crossed eye.
+       */
+      hidden: 'icon-hidden',
+      filterOperatorContains: 'icon-filter-operator-contains',
+      filterOperatorStartsWith: 'icon-filter-operator-starts-with',
+      filterOperatorEndsWith: 'icon-filter-operator-ends-with',
+      filterOperatorEq: 'icon-filter-operator-eq',
+      filterOperatorNeq: 'icon-filter-operator-neq',
+      filterOperatorGt: 'icon-filter-operator-gt',
+      filterOperatorGte: 'icon-filter-operator-gte',
+      filterOperatorLt: 'icon-filter-operator-lt',
+      filterOperatorLte: 'icon-filter-operator-lte',
+    },
 
     runtime: {
       bodyWidth: 'runtime-body-content-width',
@@ -114,6 +189,8 @@ export const ThemeVars = createGlobalThemeContract(
         /**
          * The height of the column header.
          *
+         * When the `columnHeaderHeight` prop is not specified, the value is multiplied by [`--infinite-density-scale`](#density-scale).
+         *
          * @alias column-header-height
          */
         columnHeaderHeight: columnHeaderHeightName,
@@ -128,6 +205,11 @@ export const ThemeVars = createGlobalThemeContract(
         background: 'header-cell-background',
         hoverBackground: 'header-cell-hover-background',
         border: 'header-cell-border',
+        /**
+         * The padding for header cells. Not specified by default, in which case header cells use [`--infinite-header-cell-padding-y`](#header-cell-padding-y) and [`--infinite-header-cell-padding-x`](#header-cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).
+         *
+         * When specified, it's used as is (not scaled by the density).
+         */
         padding: 'header-cell-padding',
         paddingX: 'header-cell-padding-x',
         paddingY: 'header-cell-padding-y',
@@ -182,7 +264,20 @@ export const ThemeVars = createGlobalThemeContract(
         flashingBackground: 'flashing-background',
         flashingUpBackground: 'flashing-up-background',
         flashingDownBackground: 'flashing-down-background',
+        /**
+         * The padding for cells. Not specified by default, in which case cells use [`--infinite-cell-padding-y`](#cell-padding-y) and [`--infinite-cell-padding-x`](#cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).
+         *
+         * When specified, it's used as is (not scaled by the density).
+         */
         padding: 'cell-padding',
+        /**
+         * The horizontal padding for cells. Defaults to `var(--infinite-space-3)`.
+         */
+        paddingX: 'cell-padding-x',
+        /**
+         * The vertical padding for cells. Defaults to `var(--infinite-space-2)`.
+         */
+        paddingY: 'cell-padding-y',
         borderWidth: 'cell-border-width',
         borderColor: 'cell-border-color',
         /**

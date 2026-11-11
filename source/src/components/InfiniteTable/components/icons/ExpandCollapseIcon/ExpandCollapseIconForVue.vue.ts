@@ -2,6 +2,7 @@ import { defineComponent, h, ref, watch } from 'vue';
 import type { CSSProperties } from 'vue';
 
 import { join } from '../../../../../utils/join';
+import { IconCustomLayerCls, IconCustomMaskCls } from '../Icon.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import {
   ExpanderIconCls,
@@ -57,6 +58,7 @@ export const ExpandCollapseIcon = defineComponent(
           class: join(
             props.className,
             ExpanderIconCls,
+            IconCustomMaskCls.expandCollapse,
             ExpanderIconClsVariants({
               direction: direction || 'start',
               expanded: expanded.value,
@@ -72,6 +74,13 @@ export const ExpandCollapseIcon = defineComponent(
         [
           h('path', {
             d: expandCollapseIconPath,
+          }),
+          h('rect', {
+            class: IconCustomLayerCls.expandCollapse,
+            x: 0,
+            y: 0,
+            width: 24,
+            height: 24,
           }),
         ],
       );

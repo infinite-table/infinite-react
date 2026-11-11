@@ -25,7 +25,12 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { ScrollListener } from '../../VirtualBrain/ScrollListener';
 
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
-import { ThemeVars } from '../vars.css';
+import {
+  DEFAULT_COLUMN_HEADER_HEIGHT,
+  DEFAULT_COLUMN_HEADER_HEIGHT_CSS_VALUE,
+  DEFAULT_ROW_HEIGHT,
+  DEFAULT_ROW_HEIGHT_CSS_VALUE,
+} from '../shared';
 import {
   InfiniteTableComputedColumn,
   InfiniteTableProps,
@@ -377,6 +382,11 @@ export const forwardProps = <T>(
     rowHeight: (rowHeight) =>
       typeof rowHeight === 'number' || typeof rowHeight === 'function'
         ? rowHeight
+        : // when not specified, the row height comes from the theme (and density)
+        // via a CSS watcher - but we start with the old default, so the first render
+        // is the same as before
+        rowHeight === DEFAULT_ROW_HEIGHT_CSS_VALUE
+        ? DEFAULT_ROW_HEIGHT
         : 0,
     rowDetailHeight: (rowDetailHeight) =>
       typeof rowDetailHeight === 'number' ||
@@ -631,8 +641,11 @@ export const mapPropsToState = <T>(params: {
       typeof props.rowDetailHeight === 'string' ? props.rowDetailHeight : '',
     columnHeaderHeightCSSVar:
       typeof props.columnHeaderHeight === 'string'
-        ? props.columnHeaderHeight ||
-          ThemeVars.components.Header.columnHeaderHeight
+        ? !props.columnHeaderHeight ||
+          props.columnHeaderHeight === DEFAULT_COLUMN_HEADER_HEIGHT
+          ? // the theme column header height, scaled by the density
+            DEFAULT_COLUMN_HEADER_HEIGHT_CSS_VALUE
+          : props.columnHeaderHeight
         : '',
   };
 

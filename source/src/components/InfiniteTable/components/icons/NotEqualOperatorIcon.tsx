@@ -6,7 +6,7 @@ export const NotEqualOperatorIcon = (
   props: Omit<TableIconProps, 'children'>,
 ) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorNeq">
       <path d={iconPaths.neqOperator[0]} />
     </Icon>
   );

@@ -7,6 +7,10 @@ import {
   justifyContent,
   position,
 } from '../../../utilities.css';
+import {
+  defineHideWhenIconSpecified,
+  defineMaskIconOverlay,
+} from '../iconStyles';
 
 export const FilterIconCls = style([
   display.flex,
@@ -21,3 +25,13 @@ export const FilterIconCls = style([
     height: ThemeVars.components.HeaderCell.iconSize,
   },
 ]);
+
+export const FilterIconLineCls = style({});
+
+// by default, the filter icon is made of lines - when the theme specifies
+// --infinite-icon-filter, that icon is painted instead
+defineMaskIconOverlay(`.${FilterIconCls}`, ThemeVars.icons.filter);
+defineHideWhenIconSpecified(
+  `.${FilterIconCls} > .${FilterIconLineCls}`,
+  ThemeVars.icons.filter,
+);

@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import { join } from '../../../../../utils/join';
 import { HeaderSortIconIndexCls } from '../../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
-import { SortIconCls } from './SortIcon.css';
+import {
+  SortIconCls,
+  SortIconDirectionCls,
+  SortIconLineCls,
+} from './SortIcon.css';
 import { defaultLineStyle } from './shared';
 import type { SortIconProps } from './shared';
 
@@ -65,6 +69,9 @@ export function SortIcon(props: SortIconProps<React.CSSProperties>) {
     return null;
   }
 
+  const directionName =
+    direction === 1 ? 'asc' : direction === -1 ? 'desc' : 'none';
+
   const indexStyle: React.CSSProperties = {};
 
   if (direction === -1) {
@@ -79,7 +86,9 @@ export function SortIcon(props: SortIconProps<React.CSSProperties>) {
         className,
         InfiniteIconClassName,
         SortIconCls,
+        SortIconDirectionCls[directionName],
         `${InfiniteIconClassName}-sort`,
+        `${InfiniteIconClassName}-sort--${directionName}`,
       )}
     >
       {showIndex ? (
@@ -92,11 +101,18 @@ export function SortIcon(props: SortIconProps<React.CSSProperties>) {
         </div>
       ) : null}
       <div
+        className={SortIconLineCls}
         style={{ width: sizes[0], ...lineStyle }}
         onTransitionEnd={onTransitionEnd}
       ></div>
-      <div style={{ width: sizes[1], ...lineStyle }}></div>
-      <div style={{ width: sizes[2], ...lineStyle }}></div>
+      <div
+        className={SortIconLineCls}
+        style={{ width: sizes[1], ...lineStyle }}
+      ></div>
+      <div
+        className={SortIconLineCls}
+        style={{ width: sizes[2], ...lineStyle }}
+      ></div>
     </div>
   );
 }

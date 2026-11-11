@@ -118,6 +118,95 @@ If you don't explicitly have a `infinite-theme-mode--light` or `infinite-theme-m
 
 </Note>
 
+## Density
+
+Density is independent of the theme, and works with any of them. Apply one of the following classNames to the `<InfiniteTable />` component, or to any of its parent elements:
+
+- `infinite-density--compact`
+- `infinite-density--comfortable` - the default
+- `infinite-density--spacious`
+
+```tsx title="Using the compact density"
+<div className="infinite-theme-name--minimalist infinite-density--compact">
+  <DataSource {...dataSouceProps}>
+    <InfiniteTable {...props} />
+  </DataSource>
+</div>
+```
+
+The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
+
+<Note>
+
+The density changes the row height and the column header height only when you don't specify the <PropLink name="rowHeight" /> and <PropLink name="columnHeaderHeight" /> props - in this case, they come from the `--infinite-row-height` and `--infinite-column-header-height` CSS variables of the theme, multiplied by the density.
+
+Similarly, if you specify `--infinite-cell-padding` (or `--infinite-header-cell-padding`), it's used as is. To have the paddings scaled by the density, specify `--infinite-cell-padding-x` and `--infinite-cell-padding-y` instead.
+
+</Note>
+
+Under the hood, the density classNames set the `--infinite-density-scale` CSS variable - `0.8` for `compact`, `1` for `comfortable` and `1.2` for `spacious`. You can also set it to any other value.
+
+```css title="A custom density"
+.my-app {
+  --infinite-density-scale: 0.9;
+}
+```
+
+<Sandpack title="Changing the density">
+
+```tsx file="density-example.page.tsx"
+```
+
+```tsx file="columns.ts"
+```
+
+</Sandpack>
+
+## Icons
+
+The icons of `<InfiniteTable />` can be replaced via CSS - every icon has a CSS variable that you can set to an image, typically an SVG data URI.
+
+```css title="Replacing the expand/collapse icon"
+.my-app {
+  --infinite-icon-expand-collapse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+```
+
+The image is used as a mask, so only its shape matters (its colors don't) - the icon is painted with the current text color (the expand/collapse icon uses `--infinite-expand-collapse-icon-color` and the loading icon uses the accent color).
+
+The available icon variables are:
+
+| CSS variable | Icon |
+| --- | --- |
+| `--infinite-icon-expand-collapse` | expand/collapse icon of group rows, tree nodes and row details - should point to the end (right), it's rotated when expanded |
+| `--infinite-icon-loading` | loading icon - it's rotated by a CSS animation |
+| `--infinite-icon-sort-asc` | sort ascending icon, in column headers |
+| `--infinite-icon-sort-desc` | sort descending icon, in column headers |
+| `--infinite-icon-filter` | the icon displayed in the header of filtered columns |
+| `--infinite-icon-menu` | the column menu icon, in column headers |
+| `--infinite-icon-done` | the icon for the selected filter operator, in the filter operator menu |
+| `--infinite-icon-clear` | the icon for clearing the filter, and for removing a group in the grouping toolbar |
+| `--infinite-icon-hidden` | the icon displayed when dragging a column outside the table, to hide it |
+| `--infinite-icon-filter-operator-contains`, `-starts-with`, `-ends-with`, `-eq`, `-neq`, `-gt`, `-gte`, `-lt`, `-lte` | the filter operator icons |
+
+When the variables are not specified, the default icons are rendered (as inline SVG). The variables work the same way in React and Vue.
+
+<Sandpack title="Replacing the icons via CSS variables">
+
+```tsx file="custom-icons-example.page.tsx"
+```
+
+```tsx file="columns.ts"
+```
+
+</Sandpack>
+
+<Note>
+
+You can also replace the icons with your own components - see <PropLink name="columns.renderSortIcon" />, <PropLink name="columns.renderMenuIcon" />, <PropLink name="columns.renderGroupIcon" /> and <PropLink name="columns.renderTreeIcon" />.
+
+</Note>
+
 ## Available themes
 
 ### Default theme

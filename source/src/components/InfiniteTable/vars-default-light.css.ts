@@ -42,8 +42,8 @@ const HeaderCellVars = {
   [ThemeVars.components.HeaderCell.hoverBackground]: '#dfdfdf',
   [ThemeVars.components.HeaderCell.paddingX]: ThemeVars.spacing['3'],
   [ThemeVars.components.HeaderCell.paddingY]: ThemeVars.spacing['3'],
-  [ThemeVars.components.HeaderCell
-    .padding]: `${ThemeVars.components.HeaderCell.paddingY} ${ThemeVars.components.HeaderCell.paddingX} `,
+  // HeaderCell.padding is intentionally not declared - header cells default to
+  // paddingY/paddingX scaled by the density (see density.css.ts)
 
   [ThemeVars.components.HeaderCell.iconSize]: '16px',
   [ThemeVars.components.HeaderCell.menuIconLineWidth]: '1px',
@@ -92,8 +92,10 @@ const CellVars = {
   [ThemeVars.components.Cell
     .horizontalLayoutColumnReorderDisabledPageOpacity]: 0.3,
 
-  [ThemeVars.components.Cell
-    .padding]: `${ThemeVars.spacing[2]} ${ThemeVars.spacing[3]}`,
+  // Cell.padding is intentionally not declared - cells default to
+  // paddingY/paddingX scaled by the density (see density.css.ts)
+  [ThemeVars.components.Cell.paddingY]: ThemeVars.spacing[2],
+  [ThemeVars.components.Cell.paddingX]: ThemeVars.spacing[3],
   [ThemeVars.components.Cell.borderColor]: '#c6c6c6',
   [ThemeVars.components.Cell
     .border]: `${ThemeVars.components.Cell.borderWidth} solid ${ThemeVars.components.Cell.borderColor}`,
@@ -191,6 +193,7 @@ export const LightVars = {
   [ThemeVars.themeName]: 'default',
   [ThemeVars.themeMode]: 'light',
   [ThemeVars.iconSize]: '24px',
+  [ThemeVars.rowHeight]: '40px',
   [ThemeVars.spacing[0]]: '0rem' /* 0px when 1rem=16px */,
   [ThemeVars.spacing[1]]: '0.125rem' /* 2px when 1rem=16px */,
   [ThemeVars.spacing[2]]: '0.25rem' /* 4px when 1rem=16px */,

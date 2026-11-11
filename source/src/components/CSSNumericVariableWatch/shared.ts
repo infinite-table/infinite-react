@@ -13,3 +13,13 @@ export const WRAPPER_STYLE: CSSProperties = {
   fontSize: 0,
   overflow: 'hidden',
 };
+
+/**
+ * The watched value can be a CSS var name (eg: `--row-height`), a `var(...)`
+ * expression, or a `calc(...)` expression.
+ */
+export function toWatchedCSSValue(varName: string) {
+  return varName.startsWith('var(') || varName.startsWith('calc(')
+    ? varName
+    : `var(${varName})`;
+}

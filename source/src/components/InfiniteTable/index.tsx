@@ -88,7 +88,10 @@ import {
 import { useDataSourceState } from '../DataSource';
 import { useInfiniteTableApi } from './hooks/useInfiniteTableApi';
 import { useInfiniteColumnApi } from './hooks/useInfiniteColumnApi';
-import { DEFAULT_COLUMN_HEADER_HEIGHT, DEFAULT_ROW_HEIGHT } from './shared';
+import {
+  DEFAULT_COLUMN_HEADER_HEIGHT,
+  DEFAULT_ROW_HEIGHT_CSS_VALUE,
+} from './shared';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -454,7 +457,7 @@ const InfiniteTable: InfiniteTableComponent = function <T>(
     //@ts-ignore
     <InfiniteTableRoot
       repeatWrappedGroupRows={!!props.wrapRowsHorizontally}
-      rowHeight={DEFAULT_ROW_HEIGHT}
+      rowHeight={DEFAULT_ROW_HEIGHT_CSS_VALUE}
       columnHeaderHeight={DEFAULT_COLUMN_HEADER_HEIGHT}
       {...props}
     >

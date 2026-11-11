@@ -10,6 +10,7 @@ import { ThemeVars } from '../../vars.css';
 
 import { HeaderMenuIconCls } from '../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { MenuIconLineCls, MenuIconWithDefaultLinesCls } from './MenuIcon.css';
 import { MenuIconDataAttributesValues } from './menuIconAttributes';
 
 export type MenuIconVueProps = {
@@ -27,7 +28,7 @@ const defaultLineStyle: Record<string, any> = {
   pointerEvents: 'none',
 };
 
-const lineClassName = `${InfiniteIconClassName}-menu`;
+const lineClassName = join(`${InfiniteIconClassName}-menu`, MenuIconLineCls);
 
 export const MenuIcon = defineComponent({
   name: 'MenuIcon',
@@ -80,6 +81,7 @@ export const MenuIcon = defineComponent({
             }),
             InfiniteIconClassName,
             `${InfiniteIconClassName}-menu`,
+            slots.default ? '' : MenuIconWithDefaultLinesCls,
           ),
         },
         children,

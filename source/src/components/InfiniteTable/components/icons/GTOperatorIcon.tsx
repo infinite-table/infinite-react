@@ -4,7 +4,7 @@ import { iconPaths } from './iconPaths';
 
 export const GTOperatorIcon = (props: Omit<TableIconProps, 'children'>) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorGt">
       <path d={iconPaths.gtOperator[0]} />
     </Icon>
   );

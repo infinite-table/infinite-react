@@ -4,7 +4,7 @@ import { iconPaths } from './iconPaths';
 
 export const EqualOperatorIcon = (props: Omit<TableIconProps, 'children'>) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorEq">
       <path d={iconPaths.eqOperator[0]} />
     </Icon>
   );

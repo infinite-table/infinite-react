@@ -4,7 +4,7 @@ import type { CSSProperties } from 'vue';
 import { join } from '../../../../../utils/join';
 import { HeaderFilterIconIndexCls } from '../../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
-import { FilterIconCls } from './FilterIcon.css';
+import { FilterIconCls, FilterIconLineCls } from './FilterIcon.css';
 import { defaultLineStyle, filterIconPropNames } from './shared';
 import type { FilterIconProps } from './shared';
 
@@ -66,9 +66,18 @@ export const FilterIcon = defineComponent(
                 `${index}`,
               )
             : null,
-          h('div', { style: { width: `${sizes[0]}px`, ...lineStyle } }),
-          h('div', { style: { width: `${sizes[1]}px`, ...lineStyle } }),
-          h('div', { style: { width: `${sizes[2]}px`, ...lineStyle } }),
+          h('div', {
+            class: FilterIconLineCls,
+            style: { width: `${sizes[0]}px`, ...lineStyle },
+          }),
+          h('div', {
+            class: FilterIconLineCls,
+            style: { width: `${sizes[1]}px`, ...lineStyle },
+          }),
+          h('div', {
+            class: FilterIconLineCls,
+            style: { width: `${sizes[2]}px`, ...lineStyle },
+          }),
         ],
       );
     };

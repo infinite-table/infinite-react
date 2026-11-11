@@ -108,7 +108,12 @@ import type {
 } from './types';
 import type { InfiniteTableActions } from './types/InfiniteTableState';
 import type { InfiniteTableColumnRenderingContext } from './components/InfiniteTableRow/columnRenderingContextType';
-import { DEFAULT_COLUMN_HEADER_HEIGHT, DEFAULT_ROW_HEIGHT } from './shared';
+import {
+  DEFAULT_COLUMN_HEADER_HEIGHT,
+  DEFAULT_ROW_HEIGHT_CSS_VALUE,
+  getColumnHeaderHeightFromCSSValue,
+  getRowHeightFromCSSValue,
+} from './shared';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -343,7 +348,7 @@ export const InfiniteTable = defineComponent({
       get(target, key, receiver) {
         const value = Reflect.get(target, key, receiver);
         if (key === 'rowHeight') {
-          return value ?? DEFAULT_ROW_HEIGHT;
+          return value ?? DEFAULT_ROW_HEIGHT_CSS_VALUE;
         }
         if (key === 'columnHeaderHeight') {
           return value ?? DEFAULT_COLUMN_HEADER_HEIGHT;
@@ -1034,8 +1039,9 @@ export const InfiniteTable = defineComponent({
     };
 
     // mirrors the CSS var subscriptions in React's useComputed
-    getState().onRowHeightCSSVarChange.onChange((rowHeight) => {
-      if (rowHeight) {
+    getState().onRowHeightCSSVarChange.onChange((value) => {
+      const rowHeight = getRowHeightFromCSSValue(value, getState());
+      if (rowHeight != null) {
         actions.rowHeight = rowHeight;
       }
     });
@@ -1050,13 +1056,15 @@ export const InfiniteTable = defineComponent({
         actions.rowDetailHeight = rowDetailHeight;
       }
     });
-    getState().onColumnHeaderHeightCSSVarChange.onChange(
-      (columnHeaderHeight) => {
-        if (columnHeaderHeight) {
-          actions.columnHeaderHeight = columnHeaderHeight;
-        }
-      },
-    );
+    getState().onColumnHeaderHeightCSSVarChange.onChange((value) => {
+      const columnHeaderHeight = getColumnHeaderHeightFromCSSValue(
+        value,
+        getState(),
+      );
+      if (columnHeaderHeight != null) {
+        actions.columnHeaderHeight = columnHeaderHeight;
+      }
+    });
 
     // ---- menus (mirrors useColumnMenu/useCellContextMenu/useTableContextMenu) ----
     const { MenuPortal: ColumnMenuPortal } = useColumnMenu({

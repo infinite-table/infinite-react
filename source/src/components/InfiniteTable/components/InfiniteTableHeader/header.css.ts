@@ -26,6 +26,10 @@ import {
   CellClsVariants,
   ColumnCellVariantsObject,
 } from '../cell.css';
+import {
+  CellPaddingWithDensity,
+  HeaderCellPaddingWithDensity,
+} from '../../density.css';
 
 export { CellCls, CellClsVariants };
 
@@ -176,7 +180,7 @@ export const HeaderCellProxy = style([
     background: ThemeVars.components.HeaderCell.hoverBackground,
     color: ThemeVars.components.Cell.color,
     opacity: 0.8,
-    padding: ThemeVars.components.Cell.padding,
+    padding: CellPaddingWithDensity,
     paddingLeft: 20,
     zIndex: 2_000,
     display: 'flex',
@@ -407,7 +411,7 @@ export const HeaderCellContentRecipe = recipe(
   {
     base: [
       {
-        padding: ThemeVars.components.HeaderCell.padding,
+        padding: HeaderCellPaddingWithDensity,
       },
       height['100%'],
       width['100%'],
@@ -463,7 +467,7 @@ export const HeaderGroupCls = style([
   flexFlow.row,
   alignItems.center,
   {
-    padding: ThemeVars.components.Cell.padding,
+    padding: CellPaddingWithDensity,
     borderBottom: ThemeVars.components.Cell.border,
     borderRight: ThemeVars.components.Cell.border,
     background: ThemeVars.components.HeaderCell.background,

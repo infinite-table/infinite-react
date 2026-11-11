@@ -201,6 +201,13 @@ export const THEME_VARS: ThemeVarMeta[] = [
     "description": ""
   },
   {
+    "name": "--infinite-font-size",
+    "label": "Base font size",
+    "group": "General",
+    "kind": "text",
+    "description": "The font size of the component. Not specified by default, in which case the font size is inherited from the parent element.\n\nThe value is multiplied by a third of the difference of [`--infinite-density-scale`](#density-scale) from `1` - so with `0.8`, it's `~93%`."
+  },
+  {
     "name": "--infinite-min-height",
     "label": "Min height",
     "group": "General",
@@ -231,6 +238,146 @@ export const THEME_VARS: ThemeVarMeta[] = [
   {
     "name": "--infinite-icon-size",
     "label": "Icon size",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-row-height",
+    "label": "Row height",
+    "group": "General",
+    "kind": "text",
+    "description": "The row height used when the `rowHeight` prop is not specified. Defaults to `40px`.\n\nThe value is multiplied by [`--infinite-density-scale`](#density-scale)."
+  },
+  {
+    "name": "--infinite-density-scale",
+    "label": "Density scale",
+    "group": "General",
+    "kind": "text",
+    "description": "A unitless multiplier for the row height, the column header height, the cell paddings and the font size.\nSet by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.\n\nDefaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`."
+  },
+  {
+    "name": "--infinite-icon-expand-collapse",
+    "label": "Expand collapse",
+    "group": "General",
+    "kind": "text",
+    "description": "The icon for expanding/collapsing group rows, tree nodes and row details. Also used for submenu arrows.\nIt should point towards the end (right). It's rotated when expanded.\n\nDefaults to a chevron."
+  },
+  {
+    "name": "--infinite-icon-loading",
+    "label": "Loading",
+    "group": "General",
+    "kind": "text",
+    "description": "The loading icon - rotated by a CSS animation. Defaults to a spinner arc."
+  },
+  {
+    "name": "--infinite-icon-sort-asc",
+    "label": "Sort asc",
+    "group": "General",
+    "kind": "text",
+    "description": "The sort ascending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used."
+  },
+  {
+    "name": "--infinite-icon-sort-desc",
+    "label": "Sort desc",
+    "group": "General",
+    "kind": "text",
+    "description": "The sort descending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used."
+  },
+  {
+    "name": "--infinite-icon-filter",
+    "label": "Filter",
+    "group": "General",
+    "kind": "text",
+    "description": "The icon displayed in the header of filtered columns. When not specified, the default (lines) filter icon is used."
+  },
+  {
+    "name": "--infinite-icon-menu",
+    "label": "Menu",
+    "group": "General",
+    "kind": "text",
+    "description": "The column menu icon displayed in column headers. When not specified, the default (lines) menu icon is used."
+  },
+  {
+    "name": "--infinite-icon-done",
+    "label": "Done",
+    "group": "General",
+    "kind": "text",
+    "description": "The icon for the selected filter operator, in the filter operator menu. Defaults to a check mark."
+  },
+  {
+    "name": "--infinite-icon-clear",
+    "label": "Clear",
+    "group": "General",
+    "kind": "text",
+    "description": "The clear icon - used for clearing the filter, in the filter operator menu, and for removing a group in the grouping toolbar. Defaults to an `X`."
+  },
+  {
+    "name": "--infinite-icon-hidden",
+    "label": "Hidden",
+    "group": "General",
+    "kind": "text",
+    "description": "The icon displayed when dragging a column outside the table, to hide it. Defaults to a crossed eye."
+  },
+  {
+    "name": "--infinite-icon-filter-operator-contains",
+    "label": "Filter operator contains",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-starts-with",
+    "label": "Filter operator starts with",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-ends-with",
+    "label": "Filter operator ends with",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-eq",
+    "label": "Filter operator eq",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-neq",
+    "label": "Filter operator neq",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-gt",
+    "label": "Filter operator gt",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-gte",
+    "label": "Filter operator gte",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-lt",
+    "label": "Filter operator lt",
+    "group": "General",
+    "kind": "text",
+    "description": ""
+  },
+  {
+    "name": "--infinite-icon-filter-operator-lte",
+    "label": "Filter operator lte",
     "group": "General",
     "kind": "text",
     "description": ""
@@ -401,7 +548,7 @@ export const THEME_VARS: ThemeVarMeta[] = [
     "label": "Column header height",
     "group": "Header",
     "kind": "text",
-    "description": "The height of the column header."
+    "description": "The height of the column header.\n\nWhen the `columnHeaderHeight` prop is not specified, the value is multiplied by [`--infinite-density-scale`](#density-scale)."
   },
   {
     "name": "--infinite-header-cell-background",
@@ -429,7 +576,7 @@ export const THEME_VARS: ThemeVarMeta[] = [
     "label": "Padding",
     "group": "HeaderCell",
     "kind": "text",
-    "description": ""
+    "description": "The padding for header cells. Not specified by default, in which case header cells use [`--infinite-header-cell-padding-y`](#header-cell-padding-y) and [`--infinite-header-cell-padding-x`](#header-cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).\n\nWhen specified, it's used as is (not scaled by the density)."
   },
   {
     "name": "--infinite-header-cell-padding-x",
@@ -632,7 +779,21 @@ export const THEME_VARS: ThemeVarMeta[] = [
     "label": "Padding",
     "group": "Cell",
     "kind": "text",
-    "description": ""
+    "description": "The padding for cells. Not specified by default, in which case cells use [`--infinite-cell-padding-y`](#cell-padding-y) and [`--infinite-cell-padding-x`](#cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).\n\nWhen specified, it's used as is (not scaled by the density)."
+  },
+  {
+    "name": "--infinite-cell-padding-x",
+    "label": "Padding x",
+    "group": "Cell",
+    "kind": "text",
+    "description": "The horizontal padding for cells. Defaults to `var(--infinite-space-3)`."
+  },
+  {
+    "name": "--infinite-cell-padding-y",
+    "label": "Padding y",
+    "group": "Cell",
+    "kind": "text",
+    "description": "The vertical padding for cells. Defaults to `var(--infinite-space-2)`."
   },
   {
     "name": "--infinite-cell-border-width",
