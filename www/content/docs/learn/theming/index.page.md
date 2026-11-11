@@ -18,6 +18,7 @@ The other available themes are
   - `ocean`
   - `balsam`
   - `terminal`
+  - `sheet`
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
@@ -27,6 +28,7 @@ import '@infinite-table/infinite-react/theme/balsam.css'
 import '@infinite-table/infinite-react/theme/minimalist.css'
 import '@infinite-table/infinite-react/theme/ocean.css'
 import '@infinite-table/infinite-react/theme/terminal.css'
+import '@infinite-table/infinite-react/theme/sheet.css'
 ```
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
@@ -48,6 +50,7 @@ The following themes are currently available:
  - `minimalist`
  - `ocean`
  - `terminal`
+ - `sheet`
  - `shadcn` - for this theme to correctly show up, make sure the shadcn CSS vars are available on page - see [shadcn theming](https://ui.shadcn.com/docs/theming) for details
 
 
@@ -243,6 +246,23 @@ It works with the density classNames - since the theme is already dense, `infini
 <Sandpack title="Terminal theme, with flashing cells">
 
 ```tsx file="terminal-theme-example.page.tsx"
+```
+
+</Sandpack>
+
+### Sheet theme
+
+The `sheet` theme looks like a spreadsheet: full gridlines, sharp corners, an active cell with a thick border and a fill handle, and a header that looks like the column headers of a spreadsheet. It has a light and a dark mode.
+
+```ts
+import '@infinite-table/infinite-react/theme/sheet.css'
+```
+
+The first column pinned at the start (see <PropLink name="columnPinning" />) is styled like the row headers of a spreadsheet - so if you want row numbers, add a column that renders `rowInfo.indexInAll + 1` and pin it at the start.
+
+<Sandpack title="Sheet theme, with a row number column">
+
+```tsx file="sheet-theme-example.page.tsx"
 ```
 
 </Sandpack>

@@ -34,7 +34,6 @@ const columns: Record<string, any> = {
     header: '',
     defaultWidth: 48,
     align: 'center',
-    defaultPinned: 'start',
     defaultSortable: false,
     renderValue: ({ rowInfo }: { rowInfo: any }) =>
       rowInfo.isGroupRow ? '' : `${rowInfo.indexInAll + 1}`,
@@ -131,7 +130,8 @@ onBeforeUnmount(() => interval && clearInterval(interval));
       >
         <InfiniteTable
           :columns="columns"
-          keyboardNavigation="cell"
+          :defaultColumnPinning="{ rowNumber: 'start' }"
+        keyboardNavigation="cell"
           :defaultActiveCellIndex="[2, 4]"
           :domProps="domProps"
         />

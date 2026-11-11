@@ -19,6 +19,7 @@ export const tsupConfig: Options = {
     minimalist: './src/generate-theme-minimalist.ts',
     ocean: './src/generate-theme-ocean.ts',
     shadcn: './src/generate-theme-shadcn.ts',
+    sheet: './src/generate-theme-sheet.ts',
     terminal: './src/generate-theme-terminal.ts',
   },
 

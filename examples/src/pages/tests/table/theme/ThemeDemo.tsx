@@ -38,7 +38,6 @@ const columns: InfiniteTablePropColumns<Instrument> = {
     header: '',
     defaultWidth: 48,
     align: 'center',
-    defaultPinned: 'start',
     defaultSortable: false,
     renderValue: ({ rowInfo }) =>
       rowInfo.isGroupRow ? '' : `${rowInfo.indexInAll + 1}`,
@@ -151,7 +150,8 @@ export function ThemeDemo({
         >
           <InfiniteTable<Instrument>
             columns={columns}
-            keyboardNavigation="cell"
+            defaultColumnPinning={{ rowNumber: 'start' }}
+          keyboardNavigation="cell"
             defaultActiveCellIndex={[2, 4]}
             domProps={{ style: { flex: 1, minHeight: 0 } }}
           />
