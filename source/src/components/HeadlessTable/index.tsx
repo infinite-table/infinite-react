@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { setupResizeObserver } from '../ResizeObserver';
 
@@ -206,51 +213,64 @@ export function HeadlessTable(
     return remove;
   }, [wrapRowsHorizontally, brain]);
 
-  const updateDOMTransform = useCallback((scrollPos: ScrollPosition) => {
-    requestAnimationFrame(() => {
-      // const scrollVarHost = scrollVarHostRef?.current;
+  const updateDOMTransform = useCallback(
+    (contentScrollPos: ScrollPosition) => {
+      // relative to the scroll origin, like all the cells - see largeContent.ts.
+      // Computed now, not in the raf: cells were (re)positioned for this origin
+      const scrollPos = brain.getDOMScrollPosition(contentScrollPos);
+      requestAnimationFrame(() => {
+        // const scrollVarHost = scrollVarHostRef?.current;
 
-      // if (!scrollVarHost) {
-      // seems like it's a lot less performant to scroll via CSS vars
-      // as STYLE RECALCULATION is a lot more expensive than using the transform property
+        // if (!scrollVarHost) {
+        // seems like it's a lot less performant to scroll via CSS vars
+        // as STYLE RECALCULATION is a lot more expensive than using the transform property
 
-      if (!domRef.current) {
-        // we're in a raf, so the component might have been unmounted in the meantime
-        // so we protect against that
+        if (!domRef.current) {
+          // we're in a raf, so the component might have been unmounted in the meantime
+          // so we protect against that
+          return;
+        }
+        domRef.current!.style.setProperty(
+          'transform',
+          `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
+        );
         return;
-      }
-      domRef.current!.style.setProperty(
-        'transform',
-        `translate3d(${-scrollPos.scrollLeft}px, ${-scrollPos.scrollTop}px, 0px)`,
-      );
-      return;
-      // }
+        // }
 
-      // scrollVarHost.style.setProperty(
-      //   virtualScrollLeftOffset,
-      //   `-${scrollPos.scrollLeft}px`,
-      // );
+        // scrollVarHost.style.setProperty(
+        //   virtualScrollLeftOffset,
+        //   `-${scrollPos.scrollLeft}px`,
+        // );
 
-      // scrollVarHost.style.setProperty(
-      //   virtualScrollTopOffset,
-      //   `-${scrollPos.scrollTop}px`,
-      // );
-    });
-  }, []);
+        // scrollVarHost.style.setProperty(
+        //   virtualScrollTopOffset,
+        //   `-${scrollPos.scrollTop}px`,
+        // );
+      });
+    },
+    [brain],
+  );
 
   const onContainerScroll = useCallback(
-    (scrollPos: ScrollPosition) => {
-      brain.setScrollPosition(scrollPos, updateDOMTransform);
+    (nativeScrollPos: ScrollPosition) => {
+      // the scroll container may be shorter than the content (when the
+      // content is larger than what browsers support) - the brain works with
+      // content positions - see largeContent.ts
+      brain.setScrollPosition(
+        brain.toContentScrollPosition(nativeScrollPos),
+        updateDOMTransform,
+      );
     },
     [brain, updateDOMTransform],
   );
 
   useEffect(() => {
+    // the spacer gets the content size, capped at what the browser supports
     const removeOnRenderCount = brain.onRenderCountChange(() => {
-      setTotalScrollSize(brain.getVirtualizedContentSize());
+      setTotalScrollSize(brain.getNativeScrollSize());
     });
 
-    setTotalScrollSize(brain.getVirtualizedContentSize());
+    setTotalScrollSize(brain.getNativeScrollSize());
 
     // useful when the brain is changed - when toggling the value of wrapRowsHorizontally
     updateDOMTransform(
@@ -259,6 +279,35 @@ export function HeadlessTable(
 
     return removeOnRenderCount;
   }, [brain]);
+
+  // When the scroll ratio changes (huge content that grows/shrinks, or
+  // starts/stops being huge), keep the content the user was looking at:
+  // rewrite the native scroll position for the new ratio - see largeContent.ts
+  const scrollRatioRef = useRef({ brain, vertical: 1, horizontal: 1 });
+  useLayoutEffect(() => {
+    const prev = scrollRatioRef.current;
+    const vertical = brain.getScrollRatio('vertical');
+    const horizontal = brain.getScrollRatio('horizontal');
+    scrollRatioRef.current = { brain, vertical, horizontal };
+
+    const scroller = domRef.current?.parentElement;
+    if (
+      !scroller ||
+      prev.brain !== brain ||
+      (prev.vertical === vertical && prev.horizontal === horizontal)
+    ) {
+      return;
+    }
+    const nativeScrollPos = brain.toNativeScrollPosition(
+      brain.getScrollPosition(),
+    );
+    if (prev.vertical !== vertical) {
+      scroller.scrollTop = nativeScrollPos.scrollTop;
+    }
+    if (prev.horizontal !== horizontal) {
+      scroller.scrollLeft = nativeScrollPos.scrollLeft;
+    }
+  }, [scrollSize, brain]);
 
   return (
     <VirtualScrollContainer

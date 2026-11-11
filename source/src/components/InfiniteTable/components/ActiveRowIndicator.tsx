@@ -11,6 +11,10 @@ import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
 import { ThemeVars } from '../vars.css';
 import { ActiveIndicatorWrapperCls } from './ActiveCellIndicator.css';
 import { ActiveRowIndicatorRecipe } from './ActiveRowIndicator.css';
+import {
+  getActiveRowIndicatorScrollVars,
+  getActiveRowIndicatorVars,
+} from './activeIndicatorOffsets';
 
 const { rootClassName } = internalProps;
 const baseCls = `${rootClassName}-ActiveRowIndicator`;
@@ -45,45 +49,26 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
 
   const [_rerenderId, rerender] = useRerender();
 
-  useLayoutEffect(() => {
-    if (props.activeRowIndex == null) {
+  const activeRowIndexRef = useRef(props.activeRowIndex);
+  activeRowIndexRef.current = props.activeRowIndex;
+
+  const reposition = () => {
+    const activeRowIndex = activeRowIndexRef.current;
+    if (activeRowIndex == null || !domRef.current) {
       return;
     }
+    setInfiniteVarsOnNode(
+      getActiveRowIndicatorVars(brain, activeRowIndex),
+      domRef.current,
+    );
+  };
 
-    let activeCellRowOffsetX = '0px';
-    let rowIndex = props.activeRowIndex;
-
-    if (brain.isHorizontalLayoutBrain && brain.rowsPerPage) {
-      const pageIndex = brain.getPageIndexForRow(rowIndex);
-      if (pageIndex > 0) {
-        activeCellRowOffsetX = `calc(${ThemeVars.runtime.totalVisibleColumnsWidthVar} * ${pageIndex})`;
-      }
-      rowIndex = rowIndex % brain.rowsPerPage;
-    }
-    const activeCellRowHeight = brain.getRowHeight(rowIndex);
-    const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
-
-    const node = domRef.current!;
-
-    const vars = {
-      activeCellRowHeight: `${activeCellRowHeight}px`,
-      activeCellRowOffset: `${activeCellRowOffset}px`,
-      activeCellRowOffsetX,
-    };
-
-    setInfiniteVarsOnNode(vars, node);
-  }, [props.activeRowIndex, brain]);
+  useLayoutEffect(reposition, [props.activeRowIndex, brain]);
 
   useEffect(() => {
     const updateVars = (scrollPosition: ScrollPosition) => {
       setInfiniteVarsOnNode(
-        {
-          scrollTopForActiveRow: `${-scrollPosition.scrollTop}px`,
-          scrollLeftForActiveRowWhenHorizontalLayout:
-            brain.isHorizontalLayoutBrain
-              ? `${-scrollPosition.scrollLeft}px`
-              : '0px',
-        },
+        getActiveRowIndicatorScrollVars(brain, scrollPosition),
         domRef.current!,
       );
     };
@@ -92,8 +77,11 @@ const ActiveRowIndicatorFn = (props: ActiveRowIndicatorProps) => {
     const removeOnScroll = brain.onScroll(updateVars);
 
     const removeOnRenderCountChange = brain.onRenderCountChange(rerender);
+    // offsets are relative to the scroll origin - see largeContent.ts
+    const removeOnScrollOriginChange = brain.onScrollOriginChange(reposition);
 
     return () => {
+      removeOnScrollOriginChange();
       removeOnRenderCountChange();
       removeOnScroll();
     };

@@ -205,7 +205,12 @@ export const TableHeaderWrapper = defineComponent({
     let headerDOMNode: HTMLElement | null = null;
     const updateDOMTransform = (scrollPosition: ScrollPosition) => {
       if (headerDOMNode) {
-        headerDOMNode.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
+        // relative to the scroll origin, like the header cells - see
+        // largeContent.ts (in horizontal layout the header brain uses the
+        // body brain's origin, so header and body stay aligned)
+        const { scrollLeft } =
+          props.headerBrain.getDOMScrollPosition(scrollPosition);
+        headerDOMNode.style.transform = `translate3d(${-scrollLeft}px, 0px, 0px)`;
       }
     };
     const headerDomRef = (el: any) => {

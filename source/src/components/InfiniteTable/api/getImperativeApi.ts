@@ -1243,6 +1243,33 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return this.getState().scrollerDOMRef.current!;
   }
 
+  /**
+   * All scroll positions in the API are content positions. The scroll
+   * container can be shorter than the content (when the content is larger
+   * than what browsers support), so writes go through the brain's ratio -
+   * see VirtualBrain/largeContent.ts. Identity when the content fits.
+   */
+  private setNativeScroll(contentScroll: {
+    scrollTop?: number;
+    scrollLeft?: number;
+  }) {
+    const state = this.getState();
+    const scroller = state.scrollerDOMRef.current;
+    if (!scroller) {
+      return;
+    }
+    const native = state.brain.toNativeScrollPosition({
+      scrollTop: contentScroll.scrollTop ?? 0,
+      scrollLeft: contentScroll.scrollLeft ?? 0,
+    });
+    if (contentScroll.scrollTop !== undefined) {
+      scroller.scrollTop = native.scrollTop;
+    }
+    if (contentScroll.scrollLeft !== undefined) {
+      scroller.scrollLeft = native.scrollLeft;
+    }
+  }
+
   get scrollLeftMax() {
     const scrollLeftMax = this.getState().brain.scrollLeftMax;
     return scrollLeftMax;
@@ -1256,10 +1283,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return state.brain.getScrollPosition().scrollLeft;
   }
   set scrollLeft(scrollLeft: number) {
-    const state = this.getState();
-    if (state.scrollerDOMRef.current) {
-      state.scrollerDOMRef.current.scrollLeft = Math.max(scrollLeft, 0);
-    }
+    this.setNativeScroll({ scrollLeft: Math.max(scrollLeft, 0) });
   }
 
   get scrollTop() {
@@ -1267,10 +1291,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     return state.brain.getScrollPosition().scrollTop;
   }
   set scrollTop(scrollTop: number) {
-    const state = this.getState();
-    if (state.scrollerDOMRef.current) {
-      state.scrollerDOMRef.current.scrollTop = Math.max(scrollTop, 0);
-    }
+    this.setNativeScroll({ scrollTop: Math.max(scrollTop, 0) });
   }
   scrollRowIntoView(
     rowIndex: number,
@@ -1326,10 +1347,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       scrollTopValid &&
       scrollPosition.scrollTop !== currentScrollPosition.scrollTop
     ) {
-      state.scrollerDOMRef.current!.scrollTop = scrollPosition.scrollTop;
+      this.setNativeScroll({ scrollTop: scrollPosition.scrollTop });
     }
     if (scrollLeftChanged) {
-      state.scrollerDOMRef.current!.scrollLeft = scrollPosition.scrollLeft;
+      this.setNativeScroll({ scrollLeft: scrollPosition.scrollLeft });
     }
     return true;
   }
@@ -1365,7 +1386,7 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     }
 
     if (scrollPosition.scrollLeft !== currentScrollPosition.scrollLeft) {
-      state.scrollerDOMRef.current!.scrollLeft = scrollPosition.scrollLeft;
+      this.setNativeScroll({ scrollLeft: scrollPosition.scrollLeft });
     }
 
     return true;
@@ -1440,13 +1461,13 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
       newScrollPosition.scrollLeft !== currentScrollPosition.scrollLeft &&
       !cantScrollLeft
     ) {
-      state.scrollerDOMRef.current!.scrollLeft = newScrollPosition.scrollLeft;
+      this.setNativeScroll({ scrollLeft: newScrollPosition.scrollLeft });
     }
     if (
       newScrollPosition.scrollTop !== currentScrollPosition.scrollTop &&
       !cantScrollTop
     ) {
-      state.scrollerDOMRef.current!.scrollTop = newScrollPosition.scrollTop;
+      this.setNativeScroll({ scrollTop: newScrollPosition.scrollTop });
     }
 
     return true;

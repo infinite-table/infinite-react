@@ -78,9 +78,12 @@ export class HorizontalLayoutTableRenderer extends GridRenderer {
     );
 
     const { y } = options;
-    const pageIndex = Math.floor(
-      horizontalLayoutCoords.rowIndex / this.brain.rowsPerPage,
-    );
+    // pages are positioned relative to the page at the scroll origin, so the
+    // offsets stay below what browsers can handle - see largeContent.ts
+    // (the origin page is 0 unless the content is huge)
+    const pageIndex =
+      Math.floor(horizontalLayoutCoords.rowIndex / this.brain.rowsPerPage) -
+      this.brain.getScrollOriginPageIndex();
     const pageWidth = ThemeVars.runtime.totalVisibleColumnsWidthVar;
     const pageOffset = pageIndex ? `calc(${pageWidth} * ${pageIndex})` : '0px';
 
