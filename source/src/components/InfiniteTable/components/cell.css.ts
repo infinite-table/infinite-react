@@ -10,6 +10,7 @@ import { InfiniteClsShiftingColumns } from '../InfiniteCls.css';
 
 import { ThemeVars } from '../vars.css';
 import { InternalVars } from '../internalVars.css';
+import { CellPaddingWithDensity } from '../density.css';
 
 export const columnAlignCellStyle = styleVariants({
   center: { justifyContent: 'center' },
@@ -50,7 +51,7 @@ export const CellCls = style([
     whiteSpace: 'nowrap',
     userSelect: 'none',
 
-    padding: ThemeVars.components.Cell.padding,
+    padding: CellPaddingWithDensity,
     ...CellBorderObject,
   },
 ]);

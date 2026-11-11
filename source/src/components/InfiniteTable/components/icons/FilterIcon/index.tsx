@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { join } from '../../../../../utils/join';
 import { HeaderFilterIconIndexCls } from '../../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
-import { FilterIconCls } from './FilterIcon.css';
+import { FilterIconCls, FilterIconLineCls } from './FilterIcon.css';
 import { defaultLineStyle } from './shared';
 import type { FilterIconProps } from './shared';
 
@@ -70,9 +70,18 @@ export function FilterIcon(props: FilterIconProps<React.CSSProperties>) {
           {index}
         </div>
       ) : null}
-      <div style={{ width: sizes[0], ...lineStyle }}></div>
-      <div style={{ width: sizes[1], ...lineStyle }}></div>
-      <div style={{ width: sizes[2], ...lineStyle }}></div>
+      <div
+        className={FilterIconLineCls}
+        style={{ width: sizes[0], ...lineStyle }}
+      ></div>
+      <div
+        className={FilterIconLineCls}
+        style={{ width: sizes[1], ...lineStyle }}
+      ></div>
+      <div
+        className={FilterIconLineCls}
+        style={{ width: sizes[2], ...lineStyle }}
+      ></div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ export const EndsWithOperatorIcon = (
   props: Omit<TableIconProps, 'children'>,
 ) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorEndsWith">
       <path d={iconPaths.endsWithOperator[0]} />
     </Icon>
   );

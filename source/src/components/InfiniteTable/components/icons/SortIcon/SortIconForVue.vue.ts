@@ -4,7 +4,11 @@ import type { CSSProperties } from 'vue';
 import { join } from '../../../../../utils/join';
 import { HeaderSortIconIndexCls } from '../../InfiniteTableHeader/header.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
-import { SortIconCls } from './SortIcon.css';
+import {
+  SortIconCls,
+  SortIconDirectionCls,
+  SortIconLineCls,
+} from './SortIcon.css';
 import { defaultLineStyle, sortIconPropNames } from './shared';
 import type { SortIconProps } from './shared';
 
@@ -86,6 +90,9 @@ export const SortIcon = defineComponent(
         opacity: opacity.value,
       };
 
+      const directionName =
+        direction === 1 ? 'asc' : direction === -1 ? 'desc' : 'none';
+
       const indexStyle: CSSProperties = {};
       if (direction === -1) {
         indexStyle.top = '100%';
@@ -100,7 +107,9 @@ export const SortIcon = defineComponent(
             className,
             InfiniteIconClassName,
             SortIconCls,
+            SortIconDirectionCls[directionName],
             `${InfiniteIconClassName}-sort`,
+            `${InfiniteIconClassName}-sort--${directionName}`,
           ),
         },
         [
@@ -116,11 +125,18 @@ export const SortIcon = defineComponent(
               )
             : null,
           h('div', {
+            class: SortIconLineCls,
             style: { width: `${sizes[0]}px`, ...lineStyle },
             onTransitionend: onTransitionEnd,
           }),
-          h('div', { style: { width: `${sizes[1]}px`, ...lineStyle } }),
-          h('div', { style: { width: `${sizes[2]}px`, ...lineStyle } }),
+          h('div', {
+            class: SortIconLineCls,
+            style: { width: `${sizes[1]}px`, ...lineStyle },
+          }),
+          h('div', {
+            class: SortIconLineCls,
+            style: { width: `${sizes[2]}px`, ...lineStyle },
+          }),
         ],
       );
     };

@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { join } from '../../../../../utils/join';
 import { isControlled } from '../../../../utils/isControlled';
+import { IconCustomMaskCls } from '../Icon.css';
 import { InfiniteIconClassName } from '../InfiniteIconClassName';
 import {
   ExpanderIconCls,
@@ -50,6 +51,7 @@ export function ExpandCollapseIcon(
       className={join(
         props.className,
         ExpanderIconCls,
+        IconCustomMaskCls.expandCollapse,
         ExpanderIconClsVariants({
           direction: direction || 'start',
           expanded,

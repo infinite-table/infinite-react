@@ -4,7 +4,7 @@ import { iconPaths } from './iconPaths';
 
 export const LTOperatorIcon = (props: Omit<TableIconProps, 'children'>) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorLt">
       <path d={iconPaths.ltOperator[0]} />
     </Icon>
   );

@@ -199,6 +199,16 @@ The text color inside the component
 --infinite-font-family
 ```
 
+### Font size
+
+The font size of the component. Not specified by default, in which case the font size is inherited from the parent element.
+
+The value is multiplied by a third of the difference of [`--infinite-density-scale`](#density-scale) from `1` - so with `0.8`, it's `~93%`.
+
+```css
+--infinite-font-size
+```
+
 ### Min height
 
 
@@ -239,6 +249,174 @@ Overriden in the `dark` theme.
 
 ```css
 --infinite-icon-size
+```
+
+### Row height
+
+The row height used when the `rowHeight` prop is not specified. Defaults to `40px`.
+
+The value is multiplied by [`--infinite-density-scale`](#density-scale).
+
+```css
+--infinite-row-height
+```
+
+### Density scale
+
+A unitless multiplier for the row height, the column header height, the cell paddings, the menu item, column filter and grouping toolbar item spacing and the font size.
+Set by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.
+
+Defaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`.
+
+```css
+--infinite-density-scale
+```
+
+### Icon expand collapse
+
+The icon for expanding/collapsing group rows, tree nodes and row details. Also used for submenu arrows.
+It should point towards the end (right). It's rotated when expanded.
+
+Defaults to a chevron.
+
+```css
+--infinite-icon-expand-collapse
+```
+
+### Icon loading
+
+The loading icon - rotated by a CSS animation. Defaults to a spinner arc.
+
+```css
+--infinite-icon-loading
+```
+
+### Icon sort asc
+
+The sort ascending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used.
+
+```css
+--infinite-icon-sort-asc
+```
+
+### Icon sort desc
+
+The sort descending icon displayed in column headers. When not specified, the default (animated lines) sort icon is used.
+
+```css
+--infinite-icon-sort-desc
+```
+
+### Icon filter
+
+The icon displayed in the header of filtered columns. When not specified, the default (lines) filter icon is used.
+
+```css
+--infinite-icon-filter
+```
+
+### Icon menu
+
+The column menu icon displayed in column headers. When not specified, the default (lines) menu icon is used.
+
+```css
+--infinite-icon-menu
+```
+
+### Icon done
+
+The icon for the selected filter operator, in the filter operator menu. Defaults to a check mark.
+
+```css
+--infinite-icon-done
+```
+
+### Icon clear
+
+The clear icon - used for clearing the filter, in the filter operator menu, and for removing a group in the grouping toolbar. Defaults to an `X`.
+
+```css
+--infinite-icon-clear
+```
+
+### Icon hidden
+
+The icon displayed when dragging a column outside the table, to hide it. Defaults to a crossed eye.
+
+```css
+--infinite-icon-hidden
+```
+
+### Icon filter operator contains
+
+
+
+```css
+--infinite-icon-filter-operator-contains
+```
+
+### Icon filter operator starts with
+
+
+
+```css
+--infinite-icon-filter-operator-starts-with
+```
+
+### Icon filter operator ends with
+
+
+
+```css
+--infinite-icon-filter-operator-ends-with
+```
+
+### Icon filter operator eq
+
+
+
+```css
+--infinite-icon-filter-operator-eq
+```
+
+### Icon filter operator neq
+
+
+
+```css
+--infinite-icon-filter-operator-neq
+```
+
+### Icon filter operator gt
+
+
+
+```css
+--infinite-icon-filter-operator-gt
+```
+
+### Icon filter operator gte
+
+
+
+```css
+--infinite-icon-filter-operator-gte
+```
+
+### Icon filter operator lt
+
+
+
+```css
+--infinite-icon-filter-operator-lt
+```
+
+### Icon filter operator lte
+
+
+
+```css
+--infinite-icon-filter-operator-lte
 ```
 
 ### Grouping toolbar color
@@ -433,6 +611,8 @@ Overriden in the `dark` theme.
 
 The height of the column header.
 
+When the `columnHeaderHeight` prop is not specified, the value is multiplied by [`--infinite-density-scale`](#density-scale).
+
 ```css
 --infinite-column-header-height
 ```
@@ -465,7 +645,9 @@ Overriden in the `dark` theme.
 
 ### Header cell padding
 
+The padding for header cells. Not specified by default, in which case header cells use [`--infinite-header-cell-padding-y`](#header-cell-padding-y) and [`--infinite-header-cell-padding-x`](#header-cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).
 
+When specified, it's used as is (not scaled by the density).
 
 ```css
 --infinite-header-cell-padding
@@ -701,10 +883,28 @@ The color of the column resize handle when it has reached a min/max constraint.
 
 ### Cell padding
 
+The padding for cells. Not specified by default, in which case cells use [`--infinite-cell-padding-y`](#cell-padding-y) and [`--infinite-cell-padding-x`](#cell-padding-x), scaled by [`--infinite-density-scale`](#density-scale).
 
+When specified, it's used as is (not scaled by the density).
 
 ```css
 --infinite-cell-padding
+```
+
+### Cell padding x
+
+The horizontal padding for cells. Defaults to `var(--infinite-space-3)`.
+
+```css
+--infinite-cell-padding-x
+```
+
+### Cell padding y
+
+The vertical padding for cells. Defaults to `var(--infinite-space-2)`.
+
+```css
+--infinite-cell-padding-y
 ```
 
 ### Cell border width

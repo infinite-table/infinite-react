@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { join } from '../../../../../utils/join';
+import { IconCustomMaskCls, LoadingIconSpinWhenCustomCls } from '../Icon.css';
 import { LoadingIconCls } from './loading.css';
 import { loadingIconStrokeDasharray, loadingIconSvgStyle } from './shared';
 import type { LoadingIconProps } from './shared';
@@ -20,6 +21,8 @@ export const LoadingIcon = (props: LoadingIconProps<React.CSSProperties>) => {
       className={join(
         props.className,
         LoadingIconCls,
+        IconCustomMaskCls.loading,
+        LoadingIconSpinWhenCustomCls,
         'InfiniteIcon',
         'InfiniteIcon-loading',
       )}

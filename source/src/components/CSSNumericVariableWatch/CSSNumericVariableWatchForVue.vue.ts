@@ -7,7 +7,7 @@ import { defineComponent, h, onBeforeUnmount, onMounted } from 'vue';
 import type { CSSProperties, PropType } from 'vue';
 
 import { setupResizeObserver } from '../ResizeObserver/setupResizeObserver';
-import { error, debug, WRAPPER_STYLE } from './shared';
+import { error, debug, toWatchedCSSValue, WRAPPER_STYLE } from './shared';
 
 export const CSSNumericVariableWatch = defineComponent({
   name: 'CSSNumericVariableWatch',
@@ -55,9 +55,7 @@ export const CSSNumericVariableWatch = defineComponent({
     });
 
     return () => {
-      const height = props.varName.startsWith('var(')
-        ? props.varName
-        : `var(${props.varName})`;
+      const height = toWatchedCSSValue(props.varName);
 
       return h(
         'div',

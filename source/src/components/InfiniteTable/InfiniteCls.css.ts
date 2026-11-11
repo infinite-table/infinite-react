@@ -2,6 +2,7 @@ import { fallbackVar, style, styleVariants } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 
 import './theming.css';
+import './density.css';
 import { ThemeVars } from './vars.css';
 import { RowDetailRecipe } from './components/rowDetail.css';
 

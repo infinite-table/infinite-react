@@ -6,7 +6,7 @@ export const StartsWithOperatorIcon = (
   props: Omit<TableIconProps, 'children'>,
 ) => {
   return (
-    <Icon {...props}>
+    <Icon {...props} icon="filterOperatorStartsWith">
       <path d={iconPaths.startsWithOperator[0]} />
     </Icon>
   );

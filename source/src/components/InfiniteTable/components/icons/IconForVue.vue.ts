@@ -1,7 +1,11 @@
 import { defineComponent, h } from 'vue';
 import type { CSSProperties, FunctionalComponent, PropType } from 'vue';
 
+import { join } from '../../../../utils/join';
+import { IconCustomMaskCls } from './Icon.css';
+import { CUSTOMIZABLE_ICONS, CustomizableIconName } from './customizableIcons';
 import { iconPaths } from './iconPaths';
+import { InfiniteIconClassName } from './InfiniteIconClassName';
 
 /**
  * Vue sibling of the React Icon svg wrapper (Icon.tsx) plus factory-generated
@@ -18,6 +22,14 @@ export const Icon = defineComponent({
       type: Array as PropType<readonly string[]>,
       required: true,
     },
+    /**
+     * When specified, the icon can be replaced via the corresponding
+     * `--infinite-icon-*` CSS variable - see Icon.css.ts
+     */
+    icon: {
+      type: String as PropType<CustomizableIconName>,
+      default: undefined,
+    },
   },
   setup(props) {
     return () => {
@@ -29,9 +41,21 @@ export const Icon = defineComponent({
         fill: 'currentColor',
         ...props.style,
       };
+      const icon = props.icon;
       return h(
         'svg',
-        { viewBox: props.viewBox, class: props.className, style },
+        {
+          viewBox: props.viewBox,
+          class: icon
+            ? join(
+                props.className,
+                IconCustomMaskCls[icon],
+                InfiniteIconClassName,
+                `${InfiniteIconClassName}-${CUSTOMIZABLE_ICONS[icon]}`,
+              )
+            : props.className,
+          style,
+        },
         props.paths.map((d) => h('path', { d })),
       );
     };
@@ -47,9 +71,10 @@ type IconProps = {
 function iconFromPaths(
   name: string,
   paths: readonly string[],
+  icon: CustomizableIconName,
 ): FunctionalComponent<IconProps> {
   const cmp: FunctionalComponent<IconProps> = (props) =>
-    h(Icon, { ...props, paths });
+    h(Icon, { ...props, paths, icon });
   cmp.displayName = name;
   return cmp;
 }
@@ -57,42 +82,56 @@ function iconFromPaths(
 export const IncludesOperatorIcon = iconFromPaths(
   'IncludesOperatorIcon',
   iconPaths.includesOperator,
+  'filterOperatorContains',
 );
 export const StartsWithOperatorIcon = iconFromPaths(
   'StartsWithOperatorIcon',
   iconPaths.startsWithOperator,
+  'filterOperatorStartsWith',
 );
 export const EndsWithOperatorIcon = iconFromPaths(
   'EndsWithOperatorIcon',
   iconPaths.endsWithOperator,
+  'filterOperatorEndsWith',
 );
 export const EqualOperatorIcon = iconFromPaths(
   'EqualOperatorIcon',
   iconPaths.eqOperator,
+  'filterOperatorEq',
 );
 export const NotEqualOperatorIcon = iconFromPaths(
   'NotEqualOperatorIcon',
   iconPaths.neqOperator,
+  'filterOperatorNeq',
 );
 export const GTOperatorIcon = iconFromPaths(
   'GTOperatorIcon',
   iconPaths.gtOperator,
+  'filterOperatorGt',
 );
 export const GTEOperatorIcon = iconFromPaths(
   'GTEOperatorIcon',
   iconPaths.gteOperator,
+  'filterOperatorGte',
 );
 export const LTOperatorIcon = iconFromPaths(
   'LTOperatorIcon',
   iconPaths.ltOperator,
+  'filterOperatorLt',
 );
 export const LTEOperatorIcon = iconFromPaths(
   'LTEOperatorIcon',
   iconPaths.lteOperator,
+  'filterOperatorLte',
 );
-export const DoneIcon = iconFromPaths('DoneIcon', iconPaths.done);
-export const ClearIcon = iconFromPaths('ClearIcon', iconPaths.clear);
+export const DoneIcon = iconFromPaths('DoneIcon', iconPaths.done, 'done');
+export const ClearIcon = iconFromPaths('ClearIcon', iconPaths.clear, 'clear');
 
 export const HiddenIcon: FunctionalComponent<IconProps> = (props) =>
-  h(Icon, { ...props, viewBox: '0 -960 960 960', paths: iconPaths.hidden });
+  h(Icon, {
+    ...props,
+    viewBox: '0 -960 960 960',
+    paths: iconPaths.hidden,
+    icon: 'hidden',
+  });
 HiddenIcon.displayName = 'HiddenIcon';

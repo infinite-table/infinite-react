@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 
 import { useResizeObserver } from '../ResizeObserver';
-import { error, debug, WRAPPER_STYLE } from './shared';
+import { error, debug, toWatchedCSSValue, WRAPPER_STYLE } from './shared';
 
 type CSSVariableWatcherProps = {
   varName: string;
@@ -51,9 +51,7 @@ export const CSSNumericVariableWatch = (props: CSSVariableWatcherProps) => {
     ref: domRef,
   });
 
-  const height = props.varName.startsWith('var(')
-    ? props.varName
-    : `var(${props.varName})`;
+  const height = toWatchedCSSValue(props.varName);
 
   const { allowInts = false } = props;
 

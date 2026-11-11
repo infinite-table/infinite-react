@@ -2,6 +2,7 @@ import { defineComponent, h } from 'vue';
 import type { CSSProperties } from 'vue';
 
 import { join } from '../../../../../utils/join';
+import { IconCustomMaskCls, LoadingIconSpinWhenCustomCls } from '../Icon.css';
 import { LoadingIconCls } from './loading.css';
 import {
   loadingIconPropNames,
@@ -31,6 +32,8 @@ export const LoadingIcon = defineComponent(
           class: join(
             props.className,
             LoadingIconCls,
+            IconCustomMaskCls.loading,
+            LoadingIconSpinWhenCustomCls,
             'InfiniteIcon',
             'InfiniteIcon-loading',
           ),
