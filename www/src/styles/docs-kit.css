@@ -1,0 +1,28 @@
+/*
+ * docs-kit demo cards (@thedatagrid/docs-kit/react/styles.css) in the site's
+ * colors. The site is dark-only for now; the light values stay the kit's.
+ */
+:root {
+  --dk-font-mono: var(--font-mono, 'Source Code Pro', Menlo, monospace);
+  --dk-radius: 1rem;
+}
+
+[data-theme='dark'] {
+  --dk-border: rgba(255, 255, 255, 0.09);
+  --dk-surface: #16181d;
+  --dk-code-bg: #1a1b26;
+  --dk-preview-bg: rgb(35, 39, 47);
+  --dk-fg: rgba(235, 236, 240, 0.93);
+  --dk-heading: #f6f7f9;
+  --dk-muted: #99a1b3;
+  --dk-faint: #78839b;
+  --dk-accent: #497aff;
+  --dk-accent-soft: rgba(73, 122, 255, 0.16);
+  --dk-highlight-bg: rgba(88, 175, 223, 0.15);
+  --dk-highlight-border: #149eca;
+}
+
+.dk-demo-description code {
+  font-family: var(--dk-font-mono);
+  font-size: 0.9em;
+}

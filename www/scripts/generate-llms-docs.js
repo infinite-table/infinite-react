@@ -18,6 +18,9 @@ const BASE_URL = 'https://infinite-table.com';
 
 const siteContent = require(path.join(WWW_DIR, 'src/.gen/index.json'));
 
+/** @thedatagrid/docs-kit/code - regions and highlight markers (loaded in `main`). */
+let docsKitCode = null;
+
 // maps MDX link components to the reference page they link into
 const LINK_COMPONENTS = {
   PropLink: '/docs/reference/infinite-table-props',
@@ -43,6 +46,9 @@ const STRIP_WRAPPERS = [
   'HeroCards',
   'Snippet',
   'TerminalBlock',
+  // docs-kit demo cards (<DemoTitle> becomes an "Example" heading below)
+  'Demo',
+  'DemoDescription',
 ];
 
 // components removed entirely (interactive/visual only, no text value)
@@ -71,7 +77,10 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   }
 
   let fileAbsolutePath;
-  if (fileRef.startsWith('$DOCS/')) {
+  if (fileRef.startsWith('/')) {
+    // docs-kit fences: `/docs/...` is relative to the content folder
+    fileAbsolutePath = path.join(CONTENT_DIR, fileRef);
+  } else if (fileRef.startsWith('$DOCS/')) {
     fileAbsolutePath = path.join(
       CONTENT_DIR,
       'docs',
@@ -90,8 +99,21 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   }
 
   const lang = header.trim().split(/\s/)[0] || 'ts';
-  const code = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
-  return '```' + lang + '\n' + code + '\n```';
+  let code = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
+  // docs-kit snippets/demos: show the `region`, without `#region` /
+  // `#highlight` marker comments - the same code the docs page shows
+  const region = getAttr(header, 'region');
+  const context = `${fileRef} (in ${mdFileAbsolutePath})`;
+  if (region && docsKitCode) {
+    code = docsKitCode.sliceRegion(code, region, context).source;
+  }
+  if (docsKitCode && /\.(demo|snippet)\.[cm]?[jt]sx?$/.test(fileRef)) {
+    code = docsKitCode.extractCodeMarkers(code, context).source;
+  }
+  // a titled docs-kit live demo: same "Example" heading as <Sandpack title>
+  const title = /\blive\b/.test(header) ? getAttr(header, 'title') : null;
+  const heading = title ? `**Example: ${title}**\n\n` : '';
+  return heading + '```' + lang + '\n' + code + '\n```';
 }
 
 function transformProse(text) {
@@ -170,6 +192,12 @@ function transformProse(text) {
         : url;
       return videoUrl ? `[Watch video](${videoUrl})` : '';
     },
+  );
+
+  // <DemoTitle>...</DemoTitle> (docs-kit card header) -> "Example: ..."
+  result = result.replace(
+    /<DemoTitle>\s*([\s\S]*?)\s*<\/DemoTitle>/g,
+    (_all, title) => `**Example: ${title}**`,
   );
 
   STRIP_WRAPPERS.forEach((cmp) => {
@@ -406,4 +434,13 @@ function run() {
   );
 }
 
-run();
+import('./docs-kit-import.mjs')
+  .then(({ importDocsKit }) => importDocsKit('code'))
+  .then((code) => {
+    docsKitCode = code;
+    run();
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

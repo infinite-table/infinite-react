@@ -5,6 +5,8 @@ import '../styles/index.css';
 import '../styles/fonts.css';
 import '../styles/sandpack.css';
 import '../styles/globals.css';
+import '@thedatagrid/docs-kit/react/styles.css';
+import '../styles/docs-kit.css';
 import colors from '../../colors';
 
 import ClientLayout from './clientLayout';

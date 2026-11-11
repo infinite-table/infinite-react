@@ -691,13 +691,8 @@ sortTypes={{
 
 </Note>
 
-<Sandpack title="Local uncontrolled single sorting">
-
-```ts file="$DOCS/learn/sorting/local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="/docs/learn/sorting/local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" live title="Local uncontrolled single sorting"
 ```
-
-</Sandpack>
 
 <Sandpack  title="Custom sort by color - magenta will come first">
 
@@ -1822,13 +1817,8 @@ For configuring if a column is sortable or not, see <PropLink name="columns.sort
 
 </Note>
 
-<Sandpack title="Remote + controlled multi sorting">
-
-```ts file="$DOCS/learn/sorting/remote-controlled-multi-sorting-example.page.tsx"
-
+```tsx file="/docs/learn/sorting/remote-controlled-multi-sorting-example.demo.tsx" live title="Remote + controlled multi sorting"
 ```
-
-</Sandpack>
 
 </Prop>
 

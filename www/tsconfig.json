@@ -1,4 +1,7 @@
 {
+  // Type checking (editor, `npm run tsc`): docs content and snippets are
+  // checked against the library *source*, so they can use unreleased APIs and
+  // no build is needed first. The Next.js build uses tsconfig.next.json.
   "extends": "../tsconfig.root.json",
 
   "compilerOptions": {
@@ -6,21 +9,25 @@
     "target": "es6",
     "allowJs": true,
     "jsx": "preserve",
-    "rootDir": ".",
+    "rootDir": "..",
     "baseUrl": "./",
     "paths": {
       "react": ["../node_modules/@types/react"],
       "react-dom": ["../node_modules/react-dom"],
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
-      "@infinite-table/infinite-react": ["../source/dist"],
+      "@infinite-table/infinite-react": ["../source/src/index.tsx"],
       "contentlayer/generated": ["./.contentlayer/generated"]
     },
+    // the source's sibling-file resolution (`./Foo` → `Foo.react.tsx`),
+    // see source/tsconfig.react.json
+    "moduleSuffixes": [".react", ""],
     "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
     "app.d.ts",
+    "../source/globals.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "src/**/*.ts",

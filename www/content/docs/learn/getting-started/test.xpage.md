@@ -7,7 +7,7 @@ hello
 
 <Sandpack>
 
-```ts file="meet-the-code.page.tsx"
+```ts file="meet-the-code.demo.tsx"
 
 ```
 

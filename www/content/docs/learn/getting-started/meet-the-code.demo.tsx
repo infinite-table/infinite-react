@@ -50,8 +50,10 @@ const data: Person[] = [
 
 export default function App() {
   return (
+    // #highlight the DataSource holds the data, the InfiniteTable renders it
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person> debugId="meet-the-code" columns={columns} />
     </DataSource>
+    // #endhighlight
   );
 }

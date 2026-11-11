@@ -40,7 +40,18 @@ versions = allowCanaries
 const NEXT_PUBLIC_INFINITE_REACT_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || versions.pop();
 
+// Local docs-kit development: DOCS_KIT_LOCAL=1 (kit checked out next to this
+// repo) or DOCS_KIT_LOCAL=/path/to/docs-kit resolves @thedatagrid/docs-kit to
+// the kit's TypeScript source - no `npm link`, no kit build.
+const docsKitLocal = resolveDocsKitLocal();
+
 let nextConfig = withMDX({
+  typescript: {
+    tsconfigPath: docsKitLocal
+      ? docsKitLocal.tsconfigPath
+      : 'tsconfig.next.json',
+  },
+  ...(docsKitLocal ? { turbopack: { root: docsKitLocal.root } } : null),
   env: {
     NEXT_PUBLIC_INFINITE_REACT_VERSION,
     // NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -77,4 +88,59 @@ let nextConfig = withMDX({
 delete nextConfig.redirects;
 
 module.exports = nextConfig;
-// module.exports = nextConfig;
+
+function resolveDocsKitLocal() {
+  const local = process.env.DOCS_KIT_LOCAL;
+  if (!local || local === '0' || local === 'false') {
+    return null;
+  }
+  const fs = require('fs');
+  const kitDir =
+    local === '1' || local === 'true'
+      ? path.resolve(__dirname, '../../docs-kit')
+      : path.resolve(local);
+  const kitSrc = path.join(kitDir, 'packages/docs-kit/src');
+  if (!fs.existsSync(kitSrc)) {
+    throw new Error(`DOCS_KIT_LOCAL: no docs-kit source at ${kitSrc}`);
+  }
+  const nextTsconfig = path.join(__dirname, 'tsconfig.next.json');
+  const base = require('typescript').parseConfigFileTextToJson(
+    nextTsconfig,
+    fs.readFileSync(nextTsconfig, 'utf8'),
+  ).config;
+  const rel = (file) => path.relative(__dirname, file);
+  const subpaths = {
+    code: 'code/index.ts',
+    remark: 'remark/index.ts',
+    demos: 'demos/index.ts',
+    'demos/client': 'demos/client.ts',
+    react: 'react/index.ts',
+    'react/styles.css': 'react/styles.css',
+    fork: 'fork/index.ts',
+  };
+  const paths = { ...base.compilerOptions.paths };
+  for (const [subpath, file] of Object.entries(subpaths)) {
+    paths[`@thedatagrid/docs-kit/${subpath}`] = [rel(path.join(kitSrc, file))];
+  }
+  const genDir = path.join(__dirname, 'src/.gen');
+  fs.mkdirSync(genDir, { recursive: true });
+  const tsconfigPath = 'src/.gen/tsconfig.docs-kit-local.json';
+  fs.writeFileSync(
+    path.join(__dirname, tsconfigPath),
+    JSON.stringify(
+      {
+        extends: '../../tsconfig.next.json',
+        compilerOptions: { baseUrl: '../..', paths },
+      },
+      null,
+      2,
+    ),
+  );
+  // Turbopack only reads files inside its root
+  let root = path.resolve(__dirname, '..');
+  while (!kitDir.startsWith(root + path.sep)) {
+    root = path.dirname(root);
+  }
+  console.log(`[docs-kit] using local source from ${kitSrc}`);
+  return { tsconfigPath, root };
+}

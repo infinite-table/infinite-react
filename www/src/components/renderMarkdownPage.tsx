@@ -1,4 +1,5 @@
 import { compile, run } from '@mdx-js/mdx';
+import { remarkDemoFences } from '@thedatagrid/docs-kit/remark';
 import * as runtime from 'react/jsx-runtime';
 import remarkMdx from 'remark-mdx';
 import remarkGfm from 'remark-gfm';
@@ -7,6 +8,7 @@ import { useMDXComponents } from '../../content/new-mdx-components';
 import { siteContent } from '@www/content';
 
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
+import { DOCS_CONTENT_DIR, isDocsKitFence } from '@www/utils/docsKit';
 import markdownLinkChecker from '@www/utils/markdownLinkChecker';
 import markdownPropLinkChecker from '@www/utils/markdownPropLinkChecker';
 import remarkMilestonePlugin from '@www/components/remarkMilestone';
@@ -64,6 +66,19 @@ export async function renderMarkdownPage(options: {
         markdownPropLinkChecker({
           fileInfo,
           env,
+        }),
+        // file="x.demo.tsx" / file="x.snippet.tsx" fences (prebuilt, editable
+        // demos and type-checked snippets); everything else stays on Sandpack
+        remarkDemoFences({
+          contentDir: DOCS_CONTENT_DIR,
+          folder: fileInfo.folderPath,
+          claim: isDocsKitFence,
+          banInlineCode: false,
+          staticFences: 'card',
+          liveHeight: 'default',
+          sourceReplacements: {
+            'process.env.NEXT_PUBLIC_BASE_URL': `'${env.NEXT_PUBLIC_BASE_URL}'`,
+          },
         }),
         snippetTransformer({
           fileInfo,
