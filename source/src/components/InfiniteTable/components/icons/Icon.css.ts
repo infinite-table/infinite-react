@@ -28,7 +28,8 @@ import { maskLayout } from './iconStyles';
  *
  * The mask costs more to paint than the inline path (measured: with ~800
  * icons on screen, frames are a few times slower), which is why the default
- * icons are not masks.
+ * icons are not masks. The two var() references per icon have a small style
+ * recalc cost (a few % of the icons' style recalc time in Chromium).
  */
 const iconNames = Object.fromEntries(
   Object.keys(CUSTOMIZABLE_ICONS).map((name) => [name, name]),
@@ -46,7 +47,6 @@ export const IconCustomMaskCls = styleVariants(iconNames, (name) => {
   return {
     ...maskLayout,
     WebkitMaskImage: image,
-    maskImage: image,
     backgroundImage: `linear-gradient(${color}, ${color})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: fallbackVar(iconVar, '0 0'),

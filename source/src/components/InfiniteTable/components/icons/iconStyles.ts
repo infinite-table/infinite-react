@@ -14,13 +14,14 @@ const forcedColors = {
   },
 } as const;
 
+// only the -webkit- prefixed mask properties are used: they're supported by
+// all browsers (in Chrome and Firefox they're aliases of the unprefixed
+// ones), and declaring both would double the var() references per icon,
+// which have a (small) style recalc cost
 export const maskLayout = {
   WebkitMaskRepeat: 'no-repeat',
-  maskRepeat: 'no-repeat',
   WebkitMaskPosition: 'center',
-  maskPosition: 'center',
   WebkitMaskSize: 'contain',
-  maskSize: 'contain',
 } as const;
 
 /**
@@ -41,7 +42,6 @@ export function defineMaskIconOverlay(selector: string, iconVar: string) {
     backgroundColor: 'currentColor',
     ...maskLayout,
     WebkitMaskImage: iconVar,
-    maskImage: iconVar,
     '@media': forcedColors,
   });
 }
@@ -56,6 +56,5 @@ export function defineHideWhenIconSpecified(selector: string, iconVar: string) {
   const mask = `${fallbackVar(iconVar, 'none')} 0 0 / 0 0 no-repeat`;
   globalStyle(selector, {
     WebkitMask: mask,
-    mask,
   });
 }
