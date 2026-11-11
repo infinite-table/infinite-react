@@ -17,18 +17,13 @@ npm i @infinite-table/infinite-react
 
 ## Meet the Code
 
-<Demo>
-<DemoTitle>Meet the Code</DemoTitle>
+
 <DemoDescription>
-
 This is an example to get you started with Infinite Table with minimal setup. Click **edit** to change the code and see the grid update.
-
 </DemoDescription>
 
-```tsx file="meet-the-code.demo.tsx" live
+```tsx file="meet-the-code.demo.tsx" live lines
 ```
-
-</Demo>
 
 
 <Note>

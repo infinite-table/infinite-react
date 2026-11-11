@@ -14,6 +14,7 @@ type Person = {
   Age: number;
 };
 
+//#highlight columns are objects keyed by the column id
 const columns: InfiniteTablePropColumns<Person> = {
   id: {
     // specifies which field from the data source

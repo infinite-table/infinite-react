@@ -55,6 +55,7 @@ import {
 import { DocsLink } from '../src/components/DocsLink';
 import { createDemoComponents } from '@thedatagrid/docs-kit/react';
 import {
+  DOCS_CODE_THEMES,
   DOCS_CONTENT_DIR,
   DOCS_DEMO_ANCHOR_PREFIX,
   DOCS_DEMO_HEIGHTS,
@@ -89,6 +90,7 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
       folder: fileInfo.folderPath,
       manifest: DOCS_DEMO_MANIFEST,
       heights: DOCS_DEMO_HEIGHTS,
+      themes: DOCS_CODE_THEMES,
       anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
     }),
     HomepageHero,

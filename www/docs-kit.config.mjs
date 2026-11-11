@@ -5,8 +5,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import nextEnv from '@next/env';
+
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
+
+// the docs-kit CLI isn't Next, so it doesn't read .env* (the license key lives in .env.local)
+nextEnv.loadEnvConfig(
+  import.meta.dirname,
+  process.env.NODE_ENV !== 'production',
+);
 
 const sourcePackage = JSON.parse(
   fs.readFileSync(new URL('../source/package.json', import.meta.url), 'utf8'),
