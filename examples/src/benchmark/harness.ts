@@ -111,9 +111,15 @@ export type SettleInfo = {
   recent: string[];
 };
 
-function isInLiveRegion(node: Node) {
+// Mutations that are not the grid rendering:
+//  - live regions: screen-reader announcements
+//  - the footer Infinite Table shows when it has no license key: it sets its
+//    own inline styles again every second, for as long as it is there
+function isNotRendering(node: Node) {
   const el = node instanceof Element ? node : node.parentElement;
-  return !!el?.closest('[aria-live], [role="status"], [role="alert"]');
+  return !!el?.closest(
+    '[aria-live], [role="status"], [role="alert"], .Infinite-Footer',
+  );
 }
 
 function describeMutation(record: MutationRecord) {
@@ -219,8 +225,7 @@ function createBench(
       recent: [],
     };
     const observer = new MutationObserver((all) => {
-      // live regions are screen-reader announcements, not rendering
-      const records = all.filter((r) => !isInLiveRegion(r.target));
+      const records = all.filter((r) => !isNotRendering(r.target));
       if (!records.length) {
         return;
       }

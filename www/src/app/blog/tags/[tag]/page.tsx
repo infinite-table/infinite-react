@@ -6,7 +6,7 @@ import {
   tagToSlug,
 } from '../../blogTagUtils';
 import RecentPosts from '../../RecentPosts';
-import { sortedPosts } from '../../sortedPosts';
+import { listedPosts, sortedPosts } from '../../sortedPosts';
 
 const suffix = '| Infinite Table DataGrid for React';
 
@@ -50,5 +50,5 @@ export default async function BlogTagPage({
     notFound();
   }
 
-  return <RecentPosts posts={sortedPosts} selectedTag={tag} />;
+  return <RecentPosts posts={listedPosts} selectedTag={tag} />;
 }

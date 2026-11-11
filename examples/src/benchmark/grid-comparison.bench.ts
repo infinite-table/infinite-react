@@ -109,6 +109,15 @@ type RunContext = {
 
 let environment: BenchEnvironment | null = null;
 
+/**
+ * px added to the box of each grid (`?extraHeight=`), so both have a body of
+ * the same height and render the same number of rows - worked out in the
+ * setup test. The grids differ by a few px of borders, and by more when one
+ * shows something the other doesn't: Infinite Table renders a footer when it
+ * has no license key.
+ */
+let boxExtraHeight: Record<GridName, number> | null = null;
+
 async function openGrid(
   browser: Browser,
   baseURL: string,
@@ -128,9 +137,12 @@ async function openGrid(
   const cdp = await context.newCDPSession(page);
   await cdp.send('Performance.enable', { timeDomain: 'timeTicks' });
 
-  await page.goto(`benchmark/${grid}-${size}?autoMount=0`, {
-    waitUntil: 'load',
-  });
+  const extraHeight = boxExtraHeight?.[grid] ?? 0;
+  await page.goto(
+    `benchmark/${grid}-${size}?autoMount=0` +
+      (extraHeight ? `&extraHeight=${extraHeight}` : ''),
+    { waitUntil: 'load' },
+  );
   await page.waitForFunction(() => !!window.__bench, null, {
     timeout: 30_000,
   });
@@ -891,7 +903,51 @@ for (const size of SIZES) {
       const rowTexts: (string | null)[][][] = [];
       const versions: Partial<Record<GridName, string>> = {};
       const scroll: Partial<Record<GridName, SizeScrollInfo>> = {};
+      const bodyHeights: Partial<Record<GridName, number>> = {};
       let rowCount = 0;
+
+      // first, give both grids a body of the same height: measure, make the
+      // box of the shorter one taller, measure again. More than one pass,
+      // because a grid may not turn every extra pixel of its box into a
+      // pixel of body (AG Grid's body grows in steps of 1 or 2).
+      const extra: Record<GridName, number> = { 'ag-grid': 0, infinite: 0 };
+      const measured: Partial<Record<GridName, number>> = {};
+      boxExtraHeight = extra;
+      for (let pass = 0; pass < 6; pass++) {
+        for (const grid of GRIDS) {
+          const { ctx, close } = await openGrid(
+            browser,
+            baseURL!,
+            grid,
+            size,
+            `setup-${size}-${grid}-body`,
+          );
+          try {
+            await ctx.page.evaluate(() => window.__bench!.mount());
+            await settle(ctx.page, 300);
+            measured[grid] = await ctx.page.evaluate(
+              () => window.__bench!.getBodyRect().height,
+            );
+          } finally {
+            await close();
+          }
+        }
+        const tallest = Math.max(...GRIDS.map((grid) => measured[grid]!));
+        if (GRIDS.every((grid) => measured[grid] === tallest)) {
+          break;
+        }
+        for (const grid of GRIDS) {
+          extra[grid] += tallest - measured[grid]!;
+        }
+      }
+      console.log(
+        `[setup ${size}] body height ${GRIDS.map(
+          (grid) =>
+            `${GRID_LABELS[grid]} ${measured[grid]}px` +
+            (extra[grid] ? ` (box +${extra[grid]}px)` : ''),
+        ).join(', ')}`,
+      );
+
       for (const grid of GRIDS) {
         const { ctx, info, close } = await openGrid(
           browser,
@@ -911,6 +967,9 @@ for (const size of SIZES) {
           await settle(ctx.page, 300);
           rowTexts.push(
             await ctx.page.evaluate(() => window.__bench!.getVisibleTexts(18)),
+          );
+          bodyHeights[grid] = await ctx.page.evaluate(
+            () => window.__bench!.getBodyRect().height,
           );
           // how the scrollbar maps onto the rows, and whether the last row
           // can be reached at all - browsers cap element heights, and
@@ -932,6 +991,10 @@ for (const size of SIZES) {
       expect(rowTexts[0]).toEqual(rowTexts[1]);
       expect(rowTexts[0][17][0]).toBe('18');
       expect(rowCount).toBe(BENCH_SIZES[size]);
+      expect(
+        bodyHeights.infinite,
+        `the grid bodies differ in height: AG Grid ${bodyHeights['ag-grid']}px, Infinite ${bodyHeights.infinite}px`,
+      ).toBe(bodyHeights['ag-grid']);
       // both grids must map the scrollbar onto the rows the same way,
       // otherwise the same wheel gesture scrolls a different number of rows
       // in each (the browser's element size limit depends on the display's
@@ -956,6 +1019,8 @@ for (const size of SIZES) {
         viewport: `${VIEWPORT.width}×${VIEWPORT.height}`,
         versions: versions as Record<GridName, string>,
         baseURL: baseURL!,
+        bodyHeight: bodyHeights.infinite,
+        boxExtraHeight,
       };
       saveResults(testInfo, (stored) => {
         const sizeResults = getSizeResults(stored, size);
@@ -978,6 +1043,7 @@ for (const size of SIZES) {
         if (!environment) {
           environment = readResults().environment;
         }
+        boxExtraHeight = boxExtraHeight ?? environment?.boxExtraHeight ?? null;
 
         const samples: ScenarioResult['samples'] = {
           'ag-grid': [],

@@ -23,6 +23,11 @@ type BenchmarkPageProps = {
  * `?autoMount=0` - used by the benchmark spec, which calls
  * `window.__bench.mount()` itself, so mounting is measured. Without it the
  * grid mounts right away, for looking at the demo in the browser.
+ *
+ * `?extraHeight=N` - makes the box N px taller. The spec uses it to give
+ * both grids a body of the same height (so they render the same number of
+ * rows) when one of them shows something the other doesn't - e.g. the footer
+ * Infinite Table renders when it has no license key.
  */
 export function BenchmarkPage(props: BenchmarkPageProps) {
   const { adapter, renderGrid, title, rowCount } = props;
@@ -30,6 +35,7 @@ export function BenchmarkPage(props: BenchmarkPageProps) {
   const [mounted, setMounted] = React.useState(false);
   const mountedRef = React.useRef(false);
   const [info, setInfo] = React.useState('generating data...');
+  const [extraHeight, setExtraHeight] = React.useState(0);
 
   React.useEffect(() => {
     const start = performance.now();
@@ -58,8 +64,11 @@ export function BenchmarkPage(props: BenchmarkPageProps) {
     );
     setData(rows);
 
-    const autoMount =
-      new URLSearchParams(window.location.search).get('autoMount') !== '0';
+    // set before the grid mounts, so mounting is not followed by a resize
+    const params = new URLSearchParams(window.location.search);
+    setExtraHeight(Math.max(0, Number(params.get('extraHeight')) || 0));
+
+    const autoMount = params.get('autoMount') !== '0';
     if (autoMount) {
       mountedRef.current = true;
       setMounted(true);
@@ -77,7 +86,7 @@ export function BenchmarkPage(props: BenchmarkPageProps) {
           top: 0,
           left: 0,
           width: BENCH_GRID_WIDTH,
-          height: BENCH_GRID_HEIGHT,
+          height: BENCH_GRID_HEIGHT + extraHeight,
           display: 'flex',
           flexDirection: 'column',
           background: 'white',
@@ -89,7 +98,7 @@ export function BenchmarkPage(props: BenchmarkPageProps) {
       <div
         style={{
           position: 'fixed',
-          top: BENCH_GRID_HEIGHT + 8,
+          top: BENCH_GRID_HEIGHT + extraHeight + 8,
           left: 8,
           font: '13px system-ui, sans-serif',
           color: 'gray',

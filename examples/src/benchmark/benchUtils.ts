@@ -377,6 +377,14 @@ export type BenchEnvironment = {
   viewport: string;
   versions: Record<GridName, string>;
   baseURL: string;
+  /** height (px) of the scrolling body - the same for both grids */
+  bodyHeight?: number;
+  /**
+   * px added to the box of each grid so the bodies have the same height -
+   * e.g. to make up for the footer Infinite Table renders when it has no
+   * license key
+   */
+  boxExtraHeight?: Record<GridName, number>;
 };
 
 /** from Bench.calibrateScroll() - see harness.ts */
@@ -517,6 +525,21 @@ function scrollTable(scroll: Record<GridName, SizeScrollInfo>) {
   return lines.join('\n');
 }
 
+function bodyHeightLine(env: BenchEnvironment) {
+  if (env.bodyHeight == null) {
+    return '';
+  }
+  const extra = (Object.keys(GRID_LABELS) as GridName[])
+    .filter((grid) => env.boxExtraHeight?.[grid])
+    .map((grid) => `${GRID_LABELS[grid]} +${env.boxExtraHeight![grid]} px`);
+  return (
+    `\n- Grid body: ${env.bodyHeight} px high in both grids` +
+    (extra.length
+      ? ` (to get there, the setup made the boxes taller: ${extra.join(', ')})`
+      : '')
+  );
+}
+
 export function buildReport(
   env: BenchEnvironment,
   sizes: SizeResults[],
@@ -540,7 +563,8 @@ export function buildReport(
       } · CPU throttling ${env.cpuThrottle}× · viewport ${env.viewport}\n` +
       `- ${env.runs} measured runs per grid per scenario (+${env.warmup} warmup, discarded), A/B interleaved, fresh browser context per run\n` +
       `- ${env.os} · ${env.cpu}\n` +
-      `- Served from ${env.baseURL}`,
+      `- Served from ${env.baseURL}` +
+      bodyHeightLine(env),
   );
   out.push('');
   out.push(

@@ -14,3 +14,10 @@ export type { BlogPost };
 export const sortedPostsIncludingDrafts = getBlogPosts({
   skipDrafts: false,
 });
+
+// What the blog index and the tag pages list. In dev mode this includes the
+// drafts (marked as such), so a post can be checked in place before it goes out.
+export const listedPosts =
+  process.env.NODE_ENV === 'development'
+    ? sortedPostsIncludingDrafts
+    : sortedPosts;

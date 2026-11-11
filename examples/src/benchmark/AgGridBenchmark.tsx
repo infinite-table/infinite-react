@@ -91,6 +91,7 @@ const adapter: BenchAdapter = {
     null,
 };
 
+const style = { flex: 1, minHeight: 0 };
 /**
  * AG Grid with defaults, except for the settings below, which only make the
  * setup match the Infinite Table one:
@@ -101,7 +102,7 @@ const adapter: BenchAdapter = {
  */
 function AgGrid({ data }: { data: BenchRow[] }) {
   return (
-    <div style={{ flex: 1, minHeight: 0 }}>
+    <div style={style}>
       <AgGridReact<BenchRow>
         theme={themeQuartz}
         rowData={data}

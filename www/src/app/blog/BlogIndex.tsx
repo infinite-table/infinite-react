@@ -10,6 +10,25 @@ import { useMemo } from 'react';
 import { tagHref } from './blogTagUtils';
 import { BlostPostExcerpt } from './BlostPostExcerpt';
 
+// Drafts are only listed in dev mode, with a note. Everywhere else they are
+// left out, whatever the page passes in.
+const SHOW_DRAFTS = process.env.NODE_ENV === 'development';
+
+function DraftNote({ post }: { post: BlogPost }) {
+  if (!post.draft) {
+    return null;
+  }
+
+  return (
+    <span
+      title="This post has draft: true. It is listed here only in dev mode."
+      className="inline-block align-middle text-xs uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full border border-amber-400/40 bg-amber-400/10 text-amber-300"
+    >
+      Draft · dev only
+    </span>
+  );
+}
+
 function getAuthor(post: BlogPost) {
   let author = post.author;
   if (Array.isArray(author)) {
@@ -102,9 +121,12 @@ function FeaturedPost({ post }: { post: BlogPost }) {
     >
       <div className="flex flex-col lg:flex-row">
         <div className="flex-1 p-6 md:p-8">
-          <span className="text-xs uppercase tracking-wider text-glow font-semibold mb-3 block">
-            Latest
-          </span>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <span className="text-xs uppercase tracking-wider text-glow font-semibold">
+              Latest
+            </span>
+            <DraftNote post={post} />
+          </div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-content-color group-hover:text-link transition-colors">
             {post.title}
           </h2>
@@ -148,6 +170,12 @@ function TimelinePost({ post }: { post: BlogPost }) {
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold mb-2 text-content-color group-hover:text-link transition-colors">
             {post.title}
+            {post.draft ? (
+              <>
+                {' '}
+                <DraftNote post={post} />
+              </>
+            ) : null}
           </h3>
           <div className="text-content-color/70 text-sm leading-relaxed mb-3 line-clamp-2">
             <BlostPostExcerpt post={post} />
@@ -177,6 +205,7 @@ export default function BlogIndex({
     () => posts.filter((post) => !post.draft),
     [posts],
   );
+  const listedPosts = SHOW_DRAFTS ? posts : publishedPosts;
 
   const allTags = useMemo(
     () =>
@@ -190,10 +219,10 @@ export default function BlogIndex({
 
   const filteredPosts = useMemo(() => {
     if (!selectedTag) {
-      return publishedPosts;
+      return listedPosts;
     }
-    return publishedPosts.filter((post) => post.tags?.includes(selectedTag));
-  }, [publishedPosts, selectedTag]);
+    return listedPosts.filter((post) => post.tags?.includes(selectedTag));
+  }, [listedPosts, selectedTag]);
 
   const featuredPost = filteredPosts[0] ?? null;
   const remainingPosts = filteredPosts.slice(1);

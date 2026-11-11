@@ -29,6 +29,12 @@ const columns: InfiniteTablePropColumns<BenchRow> = Object.fromEntries(
 
 declare const __INFINITE_VERSION__: string;
 
+// Set here and not in _app, so the AG Grid pages don't load Infinite Table.
+// Without a license key the grid works the same, but shows a footer.
+if (process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY) {
+  InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
+}
+
 const CELL = '.InfiniteColumnCell:not(.InfiniteDetachedCell)';
 
 const root = () =>
@@ -86,6 +92,7 @@ const adapter: BenchAdapter = {
  * Infinite Table with defaults - only row height / header height / column
  * widths are set, to match the AG Grid setup.
  */
+const domProps = { style: { flex: 1, minHeight: 0 } };
 function Infinite({ data }: { data: BenchRow[] }) {
   return (
     <DataSource<BenchRow> data={data} primaryKey="id">
@@ -94,7 +101,7 @@ function Infinite({ data }: { data: BenchRow[] }) {
         rowHeight={BENCH_ROW_HEIGHT}
         columnHeaderHeight={BENCH_HEADER_HEIGHT}
         columnDefaultWidth={BENCH_COLUMN_WIDTH}
-        domProps={{ style: { flex: 1, minHeight: 0 } }}
+        domProps={domProps}
       />
     </DataSource>
   );

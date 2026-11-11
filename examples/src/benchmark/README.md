@@ -14,6 +14,12 @@ The report goes to `examples/benchmark-results/<run id>/report.md` (also
 copied to `benchmark-results/latest.md`); the raw samples are in
 `results.json` next to it. `benchmark-results/` is git-ignored.
 
+Here the benchmark runs against the grid's source. The same files are in
+[infinite-ag-grid-performance-comparison](https://github.com/infinite-table/infinite-ag-grid-performance-comparison),
+where both grids are installed from npm, any two versions can be compared,
+and CI publishes the results for every new version. Keep the files of this
+folder identical in the two repositories (all but this README).
+
 ## Files
 
 | File                                           |                                                                                                                                               |
@@ -65,6 +71,14 @@ copied to `benchmark-results/latest.md`); the raw samples are in
   the last row is reachable and how the scrollbar maps onto the rows. The
   probes and jumps use that mapping, so they measure rendering - not mapping
   differences.
+- **Same body height** (setup): the setup measures the scrolling body of both
+  grids and makes the box of the shorter one taller (`?extraHeight=`) until
+  they match, so both render the same number of rows. The grids differ by a
+  few px of borders - and by 24px when Infinite Table has no license key and
+  shows its footer. The "settled" metric ignores that footer setting its own
+  inline styles again every second.
+- **Each page loads only its own grid**: neither grid is imported in `_app`
+  (the Infinite Table license key is set in `InfiniteBenchmark.tsx`).
 - **Sandboxed Chromium**: the benchmark turns Chromium's sandbox on
   (Playwright turns it off by default), as in real Chrome. Without it, on
   macOS, the first hover recompute after a layout change under the mouse
