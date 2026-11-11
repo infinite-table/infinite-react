@@ -55,13 +55,20 @@
     0 30px 80px -20px rgb(59 130 246 / 0.25), 0 20px 50px -30px rgb(0 0 0 / 0.8);
 }
 
+/* full-page demo: fill the viewport under the site nav and the page title */
+.hero-frame--page {
+  height: max(620px, calc(100dvh - 150px));
+}
+
 @media (max-width: 1023px) {
-  .hero-frame {
+  .hero-frame,
+  .hero-frame--page {
     height: 980px;
   }
 }
 @media (max-width: 639px) {
-  .hero-frame {
+  .hero-frame,
+  .hero-frame--page {
     height: 860px;
     border-radius: 12px;
   }

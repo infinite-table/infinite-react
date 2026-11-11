@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   add('/');
   add('/blog');
   add('/pricing');
+  add('/demo');
   add('/full-demo');
   add('/devtools');
 
