@@ -9,6 +9,7 @@ import '../../../source/dist/theme/shadcn.css';
 import '../../../source/dist/theme/ocean.css';
 import '../../../source/dist/theme/minimalist.css';
 import '../../../source/dist/theme/balsam.css';
+import '../../../source/dist/theme/terminal.css';
 
 import PageDevChrome from '../test-index/PageDevChrome.vue';
 import TestPagesIndexRoute from '../test-index/TestPagesIndexRoute.vue';
