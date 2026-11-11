@@ -9,6 +9,7 @@ import nextEnv from '@next/env';
 
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
+import { DOCS_FENCE_DEFAULTS } from './src/utils/docsKit.ts';
 
 // the docs-kit CLI isn't Next, so it doesn't read .env* (the license key lives in .env.local)
 nextEnv.loadEnvConfig(
@@ -38,6 +39,7 @@ export default {
   urlRoot: '/gen/demos',
   // card anchors are #demo-<title>, so they never clash with heading ids
   anchorPrefix: DEMO_ANCHOR_PREFIX,
+  fenceDefaults: DOCS_FENCE_DEFAULTS,
   libraries: {
     '@infinite-table/infinite-react': {
       entry: '../source/src/index.tsx',

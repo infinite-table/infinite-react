@@ -8,7 +8,7 @@ import { useMDXComponents } from '../../content/new-mdx-components';
 import { siteContent } from '@www/content';
 
 import snippetTransformer from '@www/utils/markdownSnippetTransformer';
-import { DOCS_CONTENT_DIR, isDocsKitFence } from '@www/utils/docsKit';
+import { DOCS_CONTENT_DIR, DOCS_FENCE_DEFAULTS, isDocsKitFence } from '@www/utils/docsKit';
 import markdownLinkChecker from '@www/utils/markdownLinkChecker';
 import markdownPropLinkChecker from '@www/utils/markdownPropLinkChecker';
 import remarkMilestonePlugin from '@www/components/remarkMilestone';
@@ -75,7 +75,7 @@ export async function renderMarkdownPage(options: {
           claim: isDocsKitFence,
           banInlineCode: false,
           staticFences: 'card',
-          liveHeight: 'default',
+          fenceDefaults: DOCS_FENCE_DEFAULTS,
           sourceReplacements: {
             'process.env.NEXT_PUBLIC_BASE_URL': `'${env.NEXT_PUBLIC_BASE_URL}'`,
           },
