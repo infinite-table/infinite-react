@@ -6,8 +6,17 @@ import { visit } from 'unist-util-visit';
 
 import { MarkdownFileEnv, MarkdownFileInfo } from './MarkdownFileInfo';
 import { siteContent } from '../content';
+import { competitors } from '../compare/matrix';
 
-const EXCEPTIONS = ['/full-demo', '//404', '/pricing'];
+// app-router pages, which are not markdown content
+const EXCEPTIONS = [
+  '/full-demo',
+  '//404',
+  '/pricing',
+  '/compare',
+  '/benchmark',
+  ...competitors.map((product) => `/compare/${product.id}`),
+];
 
 const exceptionsMap = EXCEPTIONS.reduce((acc, url) => {
   acc[url] = true;

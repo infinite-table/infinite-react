@@ -33,5 +33,8 @@ We encourage companies 🙌 to purchase development licenses for their teams and
 <YouWillLearnCard title="See Pricing" path="/pricing">
 See our pricing page for more information on how to purchase a license.
 </YouWillLearnCard>
+<YouWillLearnCard title="Compare licensing" path="/compare">
+See how Infinite Table's licensing and features compare with AG Grid, MUI X and other data grids.
+</YouWillLearnCard>
 
 </HeroCards>

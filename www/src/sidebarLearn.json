@@ -350,19 +350,27 @@
   },
   {
     "title": "Compare",
-    "path": "/docs/learn/compare",
+    "path": "/compare",
     "routes": [
       {
         "title": "vs AG Grid",
-        "path": "/docs/learn/compare/ag-grid"
-      },
-      {
-        "title": "vs TanStack Table",
-        "path": "/docs/learn/compare/tanstack-table"
+        "path": "/compare/ag-grid"
       },
       {
         "title": "vs MUI X Data Grid",
-        "path": "/docs/learn/compare/mui-x-data-grid"
+        "path": "/compare/mui-x-data-grid"
+      },
+      {
+        "title": "vs TanStack Table",
+        "path": "/compare/tanstack-table"
+      },
+      {
+        "title": "vs Handsontable",
+        "path": "/compare/handsontable"
+      },
+      {
+        "title": "Benchmark",
+        "path": "/benchmark"
       }
     ]
   }

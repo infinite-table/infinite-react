@@ -81,10 +81,12 @@ Our approach with the `InfiniteTable` is to go documentation first. From our dev
 
 Choosing a React DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits — particularly if you value a component that feels native to React (hooks, controlled/uncontrolled props).
 
-- [Overview](https://infinite-table.com/docs/learn/compare)
-- [vs AG Grid](https://infinite-table.com/docs/learn/compare/ag-grid)
-- [vs TanStack Table](https://infinite-table.com/docs/learn/compare/tanstack-table)
-- [vs MUI X Data Grid](https://infinite-table.com/docs/learn/compare/mui-x-data-grid)
+- [Overview](https://infinite-table.com/compare)
+- [vs AG Grid](https://infinite-table.com/compare/ag-grid)
+- [vs MUI X Data Grid](https://infinite-table.com/compare/mui-x-data-grid)
+- [vs TanStack Table](https://infinite-table.com/compare/tanstack-table)
+- [vs Handsontable](https://infinite-table.com/compare/handsontable)
+- [Benchmark: Infinite Table vs AG Grid at 300k and 1M rows](https://infinite-table.com/benchmark)
 
 ## ❤️ TypeScript
 
