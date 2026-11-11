@@ -134,13 +134,15 @@ Density is independent of the theme, and works with any of them. Apply one of th
 </div>
 ```
 
-The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, the spacing of the menu items (column menu, context menus, filter operator menu), and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
+The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, the spacing of the menu items (column menu, context menus, filter operator menu), of the column filter editors and of the grouping toolbar items, and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
 
 <Note>
 
 The density changes the row height and the column header height only when you don't specify the <PropLink name="rowHeight" /> and <PropLink name="columnHeaderHeight" /> props - in this case, they come from the `--infinite-row-height` and `--infinite-column-header-height` CSS variables of the theme, multiplied by the density.
 
 Similarly, if you specify `--infinite-cell-padding` (or `--infinite-header-cell-padding`), it's used as is. To have the paddings scaled by the density, specify `--infinite-cell-padding-x` and `--infinite-cell-padding-y` instead.
+
+The spacings that can be specified as shorthands with multiple values (`--infinite-menu-padding`, `--infinite-grouping-toolbar-padding` and `--infinite-grouping-toolbar-gap`) are not scaled by the density - they're left to the theme.
 
 </Note>
 

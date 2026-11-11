@@ -2,6 +2,7 @@ import { style } from '@vanilla-extract/css';
 
 import { ThemeVars } from '../../vars.css';
 import { recipe } from '@vanilla-extract/recipes';
+import { DensityScale } from '../../density.css';
 
 import {
   alignItems,
@@ -10,7 +11,6 @@ import {
   cursor,
   display,
   flexFlow,
-  padding,
   userSelect,
   zIndex,
 } from '../../utilities.css';
@@ -93,8 +93,10 @@ export const GroupingToolbarItemRecipe = recipe({
       borderRadius: ThemeVars.components.GroupingToolbarItem.borderRadius,
       background: ThemeVars.components.GroupingToolbarItem.background,
       gap: ThemeVars.components.GroupingToolbar.gap,
+      // scaled by the density (the toolbar padding and gap are not, as
+      // they can be shorthands with more values)
+      padding: `calc(${ThemeVars.spacing[2]} * ${DensityScale})`,
     },
-    padding[2],
     userSelect.none,
     alignItems.center,
     display.flex,

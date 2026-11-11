@@ -263,7 +263,7 @@ The value is multiplied by [`--infinite-density-scale`](#density-scale).
 
 ### Density scale
 
-A unitless multiplier for the row height, the column header height, the cell paddings, the menu item spacing and the font size.
+A unitless multiplier for the row height, the column header height, the cell paddings, the menu item, column filter and grouping toolbar item spacing and the font size.
 Set by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.
 
 Defaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`.

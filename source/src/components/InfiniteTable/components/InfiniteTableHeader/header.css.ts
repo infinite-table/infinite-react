@@ -28,8 +28,12 @@ import {
 } from '../cell.css';
 import {
   CellPaddingWithDensity,
+  DensityScale,
   HeaderCellPaddingWithDensity,
 } from '../../density.css';
+
+// the filter row spacing is scaled by the density
+const scaled = (value: string) => `calc(${value} * ${DensityScale})`;
 
 export { CellCls, CellClsVariants };
 
@@ -481,7 +485,7 @@ export const HeaderFilterRecipe = recipe({
     position.relative,
     {
       borderTop: ThemeVars.components.Cell.border,
-      paddingBlock: ThemeVars.components.HeaderCell.filterEditorMarginY,
+      paddingBlock: scaled(ThemeVars.components.HeaderCell.filterEditorMarginY),
     },
   ],
   variants: {
@@ -498,8 +502,8 @@ export const HeaderFilterOperatorCls = style([
   alignItems.center,
   position.relative,
   {
-    paddingInline: ThemeVars.components.HeaderCell.filterOperatorPaddingX,
-    paddingBlock: ThemeVars.components.HeaderCell.filterOperatorPaddingY,
+    paddingInline: scaled(ThemeVars.components.HeaderCell.filterOperatorPaddingX),
+    paddingBlock: scaled(ThemeVars.components.HeaderCell.filterOperatorPaddingY),
     selectors: {
       [`.${HeaderFilterRecipe.classNames.variants.active.true} &`]: {
         color: ThemeVars.color.accent,
@@ -539,9 +543,9 @@ export const HeaderFilterEditorCls = style([
   width['100%'],
   height['100%'],
   {
-    marginInline: ThemeVars.components.HeaderCell.filterEditorMarginX,
-    paddingInline: ThemeVars.components.HeaderCell.filterEditorPaddingX,
-    paddingBlock: ThemeVars.components.HeaderCell.filterEditorPaddingY,
+    marginInline: scaled(ThemeVars.components.HeaderCell.filterEditorMarginX),
+    paddingInline: scaled(ThemeVars.components.HeaderCell.filterEditorPaddingX),
+    paddingBlock: scaled(ThemeVars.components.HeaderCell.filterEditorPaddingY),
     background: ThemeVars.components.HeaderCell.filterEditorBackground,
     color: ThemeVars.components.HeaderCell.filterEditorColor,
     border: ThemeVars.components.HeaderCell.filterEditorBorder,
