@@ -2,11 +2,12 @@
 import { Card, Cards, CardsSubtitle } from '@www/components/Cards';
 import { MainContent, MainLayout } from '@www/layouts/MainLayout';
 import { BlogPost } from '@www/utils/blogUtils';
+import Link from 'next/link';
 import * as React from 'react';
 import { AccentButton } from './AccentButton';
 import cmpStyles from './components.module.css';
 import { GetAccessFormConvertKit } from './GetAccessFormConvertKit';
-import { HeroPicture } from './HeroPicture';
+import { HeroShowcase } from './hero/HeroShowcase';
 import { getHighlightShadowStyle } from './HighlightButton';
 
 import { SecondaryButton } from './SecondaryButton';
@@ -110,7 +111,17 @@ export function IndexPage({ posts }: { posts?: BlogPost[] }) {
   }
   return (
     <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
-      <HeroPicture />
+      <div className="mx-auto w-full max-w-[1480px] px-4 md:px-8 pt-2 pb-4">
+        <HeroShowcase />
+        <div className="mt-3 text-right text-sm">
+          <Link
+            href="/full-demo"
+            className="opacity-60 hover:opacity-100 transition-opacity"
+          >
+            Open the full-page demo &rarr;
+          </Link>
+        </div>
+      </div>
       {postsContent}
       <div className="flex items-center flex-col">
         <div className="flex flex-col mt-20 md:flex-row items-center md:items-stretch">

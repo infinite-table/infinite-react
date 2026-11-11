@@ -1,0 +1,174 @@
+/*
+ * Styles for the product-agnostic showcase kit (scripted cursor, automated
+ * demo shell, lazy poster). Hosts theme it through these custom properties:
+ *
+ *   --showcase-accent        cursor click ripple, pill dot
+ *   --showcase-pill-bg       pill background
+ *   --showcase-pill-fg       pill text
+ *   --showcase-pill-border   pill border
+ *   --showcase-z             base z-index of the overlay layer
+ */
+
+.showcase-demo {
+  position: relative;
+  height: 100%;
+}
+
+.showcase-demo__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--showcase-z, 2000));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---- the fake cursor ---------------------------------------------------- */
+
+.showcase-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 350ms ease;
+}
+.showcase-cursor.is-visible {
+  opacity: 1;
+}
+.showcase-cursor__arrow {
+  display: block;
+  filter: drop-shadow(0 2px 5px rgb(0 0 0 / 0.35));
+  transform-origin: 4px 3px; /* the arrow tip */
+  transition: transform 130ms ease;
+}
+.showcase-cursor.is-clicking .showcase-cursor__arrow,
+.showcase-cursor.is-pressed .showcase-cursor__arrow {
+  transform: scale(0.82);
+}
+.showcase-cursor__ring {
+  position: absolute;
+  left: -15px;
+  top: -14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--showcase-accent, #3b82f6);
+  opacity: 0;
+  transform: scale(0.3);
+}
+.showcase-cursor.is-clicking .showcase-cursor__ring {
+  animation: showcase-ripple 500ms ease-out;
+}
+.showcase-cursor.is-pressed .showcase-cursor__ring {
+  opacity: 0.35;
+  transform: scale(0.75);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.showcase-cursor__label {
+  position: absolute;
+  left: 24px;
+  top: 22px;
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font: 500 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--showcase-pill-fg, #e5e7eb);
+  background: var(--showcase-pill-bg, rgb(17 19 24 / 0.92));
+  border: 1px solid var(--showcase-pill-border, rgb(255 255 255 / 0.14));
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.showcase-cursor.has-label .showcase-cursor__label {
+  opacity: 1;
+  transform: none;
+}
+@keyframes showcase-ripple {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+/* ---- status pills ------------------------------------------------------- */
+
+.showcase-pill {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  z-index: calc(var(--showcase-z, 2000) + 1);
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font: 500 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+  color: var(--showcase-pill-fg, #e5e7eb);
+  background: var(--showcase-pill-bg, rgb(17 19 24 / 0.9));
+  border: 1px solid var(--showcase-pill-border, rgb(255 255 255 / 0.14));
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(8px);
+}
+.showcase-pill--running {
+  pointer-events: none;
+}
+.showcase-pill--user {
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+.showcase-pill--user:hover {
+  border-color: var(--showcase-accent, #3b82f6);
+}
+.showcase-pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--showcase-accent, #3b82f6);
+  animation: showcase-pulse 1.4s ease-in-out infinite;
+}
+@keyframes showcase-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---- lazy poster → live ------------------------------------------------- */
+
+.showcase-lazy {
+  position: relative;
+  overflow: hidden;
+}
+.showcase-lazy__poster,
+.showcase-lazy__live {
+  position: absolute;
+  inset: 0;
+}
+.showcase-lazy__poster {
+  transition: opacity 500ms ease;
+}
+.showcase-lazy__live {
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+.showcase-lazy[data-showcase-ready='true'] .showcase-lazy__live {
+  opacity: 1;
+}
+.showcase-lazy[data-showcase-ready='true'] .showcase-lazy__poster {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-lazy__poster,
+  .showcase-lazy__live,
+  .showcase-cursor {
+    transition: none;
+  }
+}

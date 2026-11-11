@@ -24,6 +24,7 @@
     "generate-lib-dts": "echo all-fine",
     "tscw": "npm run index-content && tsc --watch --project tsconfig.json",
     "tsc": "npm run index-content && tsc --project tsconfig.json",
+    "check:showcase": "node scripts/check-showcase-boundary.js",
     "//": "http://localhost:3002/api/employees?_start=0&_limit=10",
     "kill-prev-process": "kill-port --port 3002",
     "serve:data": "npm run kill-prev-process && mkdir -p .logs && nodemon serve-data.js 2>&1 | tee -a .logs/serve-data.log",
