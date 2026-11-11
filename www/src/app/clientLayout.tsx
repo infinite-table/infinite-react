@@ -24,8 +24,9 @@ export default function ClientLayout({
     pricing: pathname.startsWith('/pricing'),
     docs: pathname.startsWith('/docs'),
     blog: pathname.startsWith('/blog'),
+    demo: /^\/demo\/?$/.test(pathname),
   };
-  const skipMaxWidth = activePage.blog || activePage.docs;
+  const skipMaxWidth = activePage.blog || activePage.docs || activePage.demo;
 
   if (!skipMaxWidth) {
     style.maxWidth = newvars.maxSiteWidth;

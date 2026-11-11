@@ -115,7 +115,7 @@ export function IndexPage({ posts }: { posts?: BlogPost[] }) {
         <HeroShowcase />
         <div className="mt-3 text-right text-sm">
           <Link
-            href="/full-demo"
+            href="/demo"
             className="opacity-60 hover:opacity-100 transition-opacity"
           >
             Open the full-page demo &rarr;
