@@ -85,6 +85,10 @@ export const TerminalDarkVars = {
 
   [ThemeVars.components.ExpandCollapseIcon.color]: palette.textMuted,
 
+  // menus as dense as the rows
+  [ThemeVars.components.Menu.padding]: '4px',
+  [ThemeVars.components.Menu.cellPaddingVertical]: '5px',
+  [ThemeVars.components.Menu.cellPaddingHorizontal]: '10px',
   [ThemeVars.components.Menu.background]: palette.surfaceRaised,
   [ThemeVars.components.Menu.separatorColor]: palette.dividerStrong,
   [ThemeVars.components.Menu.borderRadius]: '2px',
