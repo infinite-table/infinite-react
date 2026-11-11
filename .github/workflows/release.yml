@@ -75,16 +75,18 @@ jobs:
           key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
 
       - name: Install Playwright browsers
-        # The browser download is skipped when the previous step found a cached binary, but
-        # --with-deps always installs Chromium's system packages with apt-get, which fails on a
-        # transient mirror or DNS error: retry before failing the job
-        run: |
-          for attempt in 1 2 3; do
-            npx playwright install --with-deps chromium && exit 0
-            echo "::warning::Playwright install failed (attempt $attempt of 3), retrying in 60s"
-            sleep 60
-          done
-          exit 1
+        # this will not download anything if the previous step found a cached browser binary
+        run: npx playwright install chromium
+        working-directory: examples
+        env:
+          CI: true
+
+      - name: Install Playwright system dependencies
+        # Chromium's apt packages. On the runner image its libraries are already installed and only
+        # fonts are missing, and the tests do not compare screenshots, so an unreachable Ubuntu
+        # mirror (a DNS outage failed two release runs) must not fail the job
+        continue-on-error: true
+        run: npx playwright install-deps chromium
         working-directory: examples
         env:
           CI: true
