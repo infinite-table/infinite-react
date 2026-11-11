@@ -104,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -145,7 +145,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -168,14 +168,24 @@ jobs:
 
       - name: Restore cached browser binaries for Playwright
         id: playwright-restore
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: '~/.cache/ms-playwright'
           key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
 
       - name: Install Playwright browsers
-        # this will not install anything if the previous step found a cached browser binary
-        run: npx playwright install --with-deps chromium
+        # this will not download anything if the previous step found a cached browser binary
+        run: npx playwright install chromium
+        working-directory: examples
+        env:
+          CI: true
+
+      - name: Install Playwright system dependencies
+        # Chromium's apt packages. On the runner image its libraries are already installed and only
+        # fonts are missing, and the tests do not compare screenshots, so an unreachable Ubuntu
+        # mirror (a DNS outage failed two release runs) must not fail the job
+        continue-on-error: true
+        run: npx playwright install-deps chromium
         working-directory: examples
         env:
           CI: true
@@ -195,7 +205,7 @@ jobs:
 
       - name: Save browser binaries for Playwright
         id: playwright-save
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: '~/.cache/ms-playwright'
           key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
