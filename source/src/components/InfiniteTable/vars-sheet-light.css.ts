@@ -93,6 +93,10 @@ export const SheetLightVars = {
 
   [ThemeVars.components.ExpandCollapseIcon.color]: palette.textMuted,
 
+  // compact menus, like the rows
+  [ThemeVars.components.Menu.padding]: '3px',
+  [ThemeVars.components.Menu.cellPaddingVertical]: '5px',
+  [ThemeVars.components.Menu.cellPaddingHorizontal]: '10px',
   [ThemeVars.components.Menu.background]: palette.background,
   [ThemeVars.components.Menu.separatorColor]: palette.grid,
   [ThemeVars.components.Menu.borderRadius]: '0',
