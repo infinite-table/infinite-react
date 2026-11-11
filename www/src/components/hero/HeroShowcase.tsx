@@ -15,10 +15,16 @@ const loadHeroDemo = () => import('./HeroDemo');
  * the browser is idle, then cross-fades in. The frame height is fixed in CSS,
  * so nothing shifts.
  */
-export function HeroShowcase(props: Omit<HeroDemoProps, 'onReady'>) {
+export function HeroShowcase({
+  className,
+  ...props
+}: Omit<HeroDemoProps, 'onReady'> & {
+  /** Extra frame classes, e.g. `hero-frame--page` for the full-page demo. */
+  className?: string;
+}) {
   return (
     <LazyShowcase<Omit<HeroDemoProps, 'onReady'>>
-      className="hero-frame"
+      className={className ? `hero-frame ${className}` : 'hero-frame'}
       load={loadHeroDemo}
       props={props}
       poster={<HeroPoster mode={props.mode} />}

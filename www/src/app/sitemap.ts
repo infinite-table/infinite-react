@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   add('/');
   add('/blog');
   add('/pricing');
-  add('/full-demo');
+  add('/demo');
   add('/devtools');
   add('/compare');
   competitors.forEach((product) => {

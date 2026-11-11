@@ -455,7 +455,7 @@ export function DemoPlaceholder({
         {demo.title}. <Inline text={demo.description} />
       </span>
       <span className={styles.muted}>
-        Until then, try the <Link href="/full-demo">full Infinite Table demo</Link>{' '}
+        Until then, try the <Link href="/demo">live Infinite Table demo</Link>{' '}
         or see the <Link href="/benchmark">benchmark</Link>.
       </span>
     </div>
