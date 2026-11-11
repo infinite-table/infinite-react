@@ -254,7 +254,7 @@ export const THEME_VARS: ThemeVarMeta[] = [
     "label": "Density scale",
     "group": "General",
     "kind": "text",
-    "description": "A unitless multiplier for the row height, the column header height, the cell paddings and the font size.\nSet by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.\n\nDefaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`."
+    "description": "A unitless multiplier for the row height, the column header height, the cell paddings, the menu item spacing and the font size.\nSet by the `infinite-density--compact` (`0.8`), `infinite-density--comfortable` (`1`) and `infinite-density--spacious` (`1.2`) classNames.\n\nDefaults to `1`. The font size is scaled by a third of the difference, so `0.8` makes it `~93%`."
   },
   {
     "name": "--infinite-icon-expand-collapse",

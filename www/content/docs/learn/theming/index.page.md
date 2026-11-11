@@ -134,7 +134,7 @@ Density is independent of the theme, and works with any of them. Apply one of th
 </div>
 ```
 
-The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
+The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, the spacing of the menu items (column menu, context menus, filter operator menu), and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
 
 <Note>
 

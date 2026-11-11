@@ -203,4 +203,41 @@ export default test.describe.parallel('Density', () => {
     await page.click('[data-name="wrapper-compact"]');
     expect(await getFontSize()).toBeCloseTo((12 * 2.8) / 3, 2);
   });
+
+  test('the column menu item spacing is scaled by the density', async ({
+    page,
+  }) => {
+    await page.waitForInfinite();
+
+    const getMenuItemPadding = async () => {
+      const header = '#default-grid .InfiniteHeaderCell[data-column-id="firstName"]';
+      await page.hover(header);
+      await page.click(`${header} [data-name="menu-icon"]`);
+      const padding = await page.evaluate(() => {
+        const item = document.querySelector(
+          '.InfiniteMenu [data-menu-item-key]',
+        )!;
+        const style = getComputedStyle(item);
+        return {
+          block: parseFloat(style.paddingTop),
+          inline: parseFloat(style.paddingLeft),
+        };
+      });
+      await page.keyboard.press('Escape');
+      await page.click('body', { position: { x: 1, y: 1 } });
+      return padding;
+    };
+
+    const comfortable = await getMenuItemPadding();
+    expect(comfortable).toEqual({ block: 8, inline: 8 });
+
+    await page.click('[data-name="wrapper-compact"]');
+    const compact = await getMenuItemPadding();
+    expect(compact.block).toBeCloseTo(6.4, 1);
+    expect(compact.inline).toBeCloseTo(6.4, 1);
+
+    await page.click('[data-name="wrapper-spacious"]');
+    const spacious = await getMenuItemPadding();
+    expect(spacious.block).toBeCloseTo(9.6, 1);
+  });
 });

@@ -1,6 +1,7 @@
 import { fallbackVar, style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { ThemeVars } from '../InfiniteTable/vars.css';
+import { DensityScale } from '../InfiniteTable/density.css';
 import {
   alignItems,
   boxSizingBorderBox,
@@ -46,12 +47,18 @@ const keyboardActiveItemBorder = fallbackVar(
     ThemeVars.color.accent,
   )}`,
 );
+// the menu item spacing is scaled by the density (computed here, on the menu
+// elements, so it also works for menus rendered outside the table, via
+// menuPortalContainer). The outer menu padding is not scaled, as it can be
+// a shorthand with more values.
+const scaled = (value: string) => `calc(${value} * ${DensityScale})`;
+
 export const MenuItemCls = recipe({
   base: [
     {
-      paddingBlock: ThemeVars.components.Menu.cellPaddingVertical,
-      paddingInline: ThemeVars.components.Menu.cellPaddingHorizontal,
-      marginBlock: ThemeVars.components.Menu.cellMarginVertical,
+      paddingBlock: scaled(ThemeVars.components.Menu.cellPaddingVertical),
+      paddingInline: scaled(ThemeVars.components.Menu.cellPaddingHorizontal),
+      marginBlock: scaled(ThemeVars.components.Menu.cellMarginVertical),
       border: keyboardActiveItemBorder,
       borderColor: 'transparent',
     },
@@ -136,7 +143,7 @@ export const MenuSeparatorCls = style([
     borderBottom: 0,
     borderLeft: 0,
     borderRight: 0,
-    marginTop: `calc(${ThemeVars.components.Menu.cellPaddingVertical} / 2)`,
-    marginBottom: `calc(${ThemeVars.components.Menu.cellPaddingVertical} / 2)`,
+    marginTop: `calc(${ThemeVars.components.Menu.cellPaddingVertical} * ${DensityScale} / 2)`,
+    marginBottom: `calc(${ThemeVars.components.Menu.cellPaddingVertical} * ${DensityScale} / 2)`,
   },
 ]);
