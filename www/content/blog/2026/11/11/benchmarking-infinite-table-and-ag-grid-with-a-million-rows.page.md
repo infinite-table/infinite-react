@@ -3,7 +3,6 @@ title: Benchmarking Infinite Table and AG Grid with a million rows
 description: An open, reproducible benchmark of Infinite Table and AG Grid Community at 300,000 and 1,000,000 rows - mount time, memory, sorting and scrolling smoothness - with the exact steps to run it yourself.
 date: 2026-11-11
 author: radu
-draft: true
 tags: performance, benchmark, ag-grid
 ---
 
@@ -35,7 +34,7 @@ Both grids render the same data, in the same browser, with the same interactions
 - **Versions:** both grids are React components, installed from npm: AG Grid React Community 36.3.0 (`ag-grid-react` and `ag-grid-community`) and Infinite Table 10.1.4 (`@infinite-table/infinite-react`). Each page loads only its own grid.
 - **License keys:** none. AG Grid Community doesn't need one. Infinite Table works the same without one, but shows a "Powered by Infinite Table" footer, so the benchmark makes its box taller until both grids scroll a body of exactly the same height, and render the same number of rows.
 - **Builds:** production builds only - the benchmark refuses to run against a dev server.
-- **Browser:** Chrome 136, headless, sandboxed like the Chrome your users run, no CPU throttling, 1400×1000 viewport.
+- **Browser:** Chrome 136, headless, sandboxed like the Chrome your users run, `en-US` locale, no CPU throttling, 1400×1000 viewport.
 - **Machine:** Apple M1 Pro (10 cores), macOS.
 - **Runs:** 7 measured runs per grid per scenario, plus 1 discarded warmup. The two grids are interleaved (A/B, alternating which goes first), and every run uses a fresh browser context.
 
@@ -108,6 +107,8 @@ Click a column header, measured until every visible row shows sorted, consistent
 />
 
 Infinite Table sorts 2.2-2.5× faster in every combination we measured. Almost all of this time is JavaScript on the main thread for both grids, so this is a measure of the sorting pipeline, not of rendering.
+
+The browser ran with the `en-US` locale, which matters when comparing strings. In that locale, sorting 1M rows by the string column (ascending) took 3384 ms in AG Grid and 1395 ms in Infinite Table.
 
 ## Jumping around the dataset
 
@@ -185,7 +186,7 @@ Where **Infinite Table** came out ahead:
 
 - Faster mount: about 30% less time to first paint, 40-55% less time to settle
 - Roughly half the memory for the same rows
-- 2.2-2.5× faster sorting at 300k and 1M rows
+- 2.2-2.5× faster sorting at 300k and 1M rows (strings sorted in an `en-US` browser)
 - Less layout and style recalculation work while scrolling vertically, and about 23% less main-thread work while scrolling horizontally
 
 Where **AG Grid** came out ahead:
@@ -206,6 +207,7 @@ A benchmark is a model of reality, not reality. Please keep these in mind:
 - **Headless Chrome.** These numbers come from Chrome's new headless mode, which runs the same rendering code as headed Chrome. Frame-pacing numbers can still differ in a headed browser with a real display.
 - **Defaults only.** Both grids have options that could change these results. We deliberately didn't tune either one, because tuning one grid well and the other badly is the easiest way to make a benchmark unfair.
 - **One dataset shape.** 20 columns of plain text and numbers, no custom cell renderers, no grouping, no filtering, no live updates. Real apps do more.
+- **One browser locale.** The string sorting result is for an `en-US` browser.
 - **We have an interest.** We make Infinite Table. We've tried to design the harness so that it measures both grids the same way, and to report every metric - including the ones where AG Grid is ahead - but you shouldn't have to trust us. That's what the next section is for.
 
 ## Run it yourself

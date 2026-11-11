@@ -3,6 +3,14 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.5
+
+- Add three themes: `terminal`, `sheet` and `paper` - see [available themes](/docs/learn/theming#available-themes).
+- Add a density setting: the `infinite-density--compact`, `infinite-density--comfortable` and `infinite-density--spacious` classNames scale the row height, paddings and font size, with any theme - see [density](/docs/learn/theming#density).
+- Icons can be replaced via CSS variables (for example `--infinite-icon-sort-asc`) - see [icons](/docs/learn/theming#icons).
+- Add the `--infinite-row-height`, `--infinite-font-size`, `--infinite-cell-padding-x` and `--infinite-cell-padding-y` [CSS variables](/docs/learn/theming/css-variables).
+- Sorting a string column takes about 20% less time in browser locales such as `de-DE`, `fr-FR` or `en-AU`. The sort order is unchanged.
+
 ## 10.1.4
 
 - Very large grids now scroll all the way to the last row. Browsers limit how tall or wide an element can be, so with around a million rows (or fewer, depending on the browser and row height) the scrollbar used to stop before the end. This also applies to <PropLink name="wrapRowsHorizontally" />, where the limit was reached with far fewer rows.
