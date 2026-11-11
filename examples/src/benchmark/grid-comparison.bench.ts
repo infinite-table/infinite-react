@@ -932,6 +932,16 @@ for (const size of SIZES) {
       expect(rowTexts[0]).toEqual(rowTexts[1]);
       expect(rowTexts[0][17][0]).toBe('18');
       expect(rowCount).toBe(BENCH_SIZES[size]);
+      // both grids must map the scrollbar onto the rows the same way,
+      // otherwise the same wheel gesture scrolls a different number of rows
+      // in each (the browser's element size limit depends on the display's
+      // scale factor - see --force-device-scale-factor in the config)
+      expect(
+        Math.abs(scroll['ag-grid']!.ratio - scroll.infinite!.ratio),
+        `scroll ratio differs: AG Grid ${scroll['ag-grid']!.ratio}, Infinite ${
+          scroll.infinite!.ratio
+        }`,
+      ).toBeLessThan(0.01);
 
       environment = {
         runId: RUN_ID,
