@@ -6,6 +6,7 @@ import { HorizontalLayoutMatrixBrain } from './HorizontalLayoutMatrixBrain';
 import {
   computeScrollOrigin,
   computeScrollRatio,
+  createSteppedScrollPosition,
   isLargeContentSize,
   LARGE_CONTENT_PROBE_THRESHOLD,
   SCROLL_ORIGIN_REBASE_DISTANCE,
@@ -265,5 +266,133 @@ describe('HorizontalLayoutMatrixBrain with very large content', () => {
 
     brain.destroy();
     headerBrain.destroy();
+  });
+});
+
+/**
+ * A scroll container like Firefox / Safari: the native scroll position is
+ * rounded to whole px, and the content position is native px x ratio
+ */
+function makeRoundingScroller(ratio: number, contentMax: number) {
+  let native = 0;
+  return {
+    get content() {
+      return native * ratio;
+    },
+    set content(value: number) {
+      const nativeMax = Math.floor(contentMax / ratio);
+      native = Math.min(nativeMax, Math.max(0, Math.round(value / ratio)));
+    },
+  };
+}
+
+describe('createSteppedScrollPosition (column reorder auto-scroll)', () => {
+  // what the auto-scroll does every frame: read, add a small step, write
+  function autoScroll(
+    position: { value: number },
+    step: number,
+    frames: number,
+  ) {
+    for (let i = 0; i < frames; i++) {
+      position.value = position.value + step;
+    }
+  }
+
+  it('small steps are lost without it, on a scaled axis', () => {
+    const scroller = makeRoundingScroller(5.36, 40_000_000);
+    scroller.content = 20_000_000;
+    const start = scroller.content;
+
+    const plain = {
+      get value() {
+        return scroller.content;
+      },
+      set value(value: number) {
+        scroller.content = value;
+      },
+    };
+    autoScroll(plain, 1, 60);
+    expect(scroller.content).toBe(start);
+  });
+
+  it('keeps adding small steps on a scaled axis', () => {
+    const ratio = 5.36;
+    const scroller = makeRoundingScroller(ratio, 40_000_000);
+    scroller.content = 20_000_000;
+    const start = scroller.content;
+
+    const position = createSteppedScrollPosition({
+      getScrollPosition: () => scroller.content,
+      setScrollPosition: (value) => {
+        scroller.content = value;
+      },
+      getScrollRatio: () => ratio,
+    });
+
+    autoScroll(position, 1, 60);
+    // 60px on average - within a native px, as the browser rounds it
+    expect(Math.abs(scroller.content - (start + 60))).toBeLessThanOrEqual(
+      ratio,
+    );
+
+    // and backwards
+    autoScroll(position, -2, 30);
+    expect(Math.abs(scroller.content - start)).toBeLessThanOrEqual(ratio);
+  });
+
+  it('follows the real position when something else scrolls', () => {
+    const ratio = 2.5;
+    const scroller = makeRoundingScroller(ratio, 40_000_000);
+    scroller.content = 1_000_000;
+
+    const position = createSteppedScrollPosition({
+      getScrollPosition: () => scroller.content,
+      setScrollPosition: (value) => {
+        scroller.content = value;
+      },
+      getScrollRatio: () => ratio,
+    });
+    autoScroll(position, 1, 10);
+
+    // e.g. the user scrolls with the wheel during the drag
+    scroller.content = 3_000_000;
+    expect(position.value).toBe(3_000_000);
+
+    autoScroll(position, 1, 10);
+    expect(Math.abs(scroller.content - 3_000_010)).toBeLessThanOrEqual(ratio);
+  });
+
+  it('stops at the end instead of running away', () => {
+    const ratio = 2.5;
+    const contentMax = 10_000_000;
+    const scroller = makeRoundingScroller(ratio, contentMax);
+    scroller.content = contentMax - 20;
+
+    const position = createSteppedScrollPosition({
+      getScrollPosition: () => scroller.content,
+      setScrollPosition: (value) => {
+        scroller.content = value;
+      },
+      getScrollRatio: () => ratio,
+    });
+    autoScroll(position, 15, 100);
+
+    expect(scroller.content).toBe(contentMax);
+    // back to the real position, not 1500px past the end
+    expect(position.value - contentMax).toBeLessThanOrEqual(ratio);
+  });
+
+  it('is the real position when the axis is not scaled', () => {
+    let scroll = 100.5;
+    const position = createSteppedScrollPosition({
+      getScrollPosition: () => scroll,
+      setScrollPosition: (value) => {
+        // rounded, but ratio 1 - nothing to keep
+        scroll = Math.round(value);
+      },
+      getScrollRatio: () => 1,
+    });
+    position.value = 101.2;
+    expect(position.value).toBe(101);
   });
 });

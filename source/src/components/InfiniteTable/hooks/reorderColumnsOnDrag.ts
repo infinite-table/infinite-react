@@ -24,6 +24,7 @@ import { moveXatY } from '../utils/moveXatY';
 import { progressiveSpeedScroller } from '../utils/progressiveSpeedScroller';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { DragDropSourceAndTarget } from '../components/draggable/DragDropProvider';
+import { createSteppedScrollPosition } from '../../VirtualBrain/largeContent';
 
 type TopLeft = {
   left: number;
@@ -535,6 +536,16 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     scrollOffsetStart: pinnedStartColsRight,
     scrollOffsetEnd: pinnedEndColsLeft,
   });
+  // auto-scroll steps are 1-15px - with very large content (horizontal
+  // layout only) a step can be less than one native px, which some browsers
+  // round away - see createSteppedScrollPosition
+  const autoScrollLeft = createSteppedScrollPosition({
+    getScrollPosition: () => brain.getScrollPosition().scrollLeft,
+    setScrollPosition: (value) => {
+      imperativeApi.scrollLeft = value;
+    },
+    getScrollRatio: () => brain.getScrollRatio('horizontal'),
+  });
   updatePositionAndDiff(initialMousePosition);
 
   return {
@@ -562,10 +573,10 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
       speedScroller.scroll({
         mousePosition: currentMousePosition,
         get scrollLeft() {
-          return brain.getScrollPosition().scrollLeft;
+          return autoScrollLeft.value;
         },
         set scrollLeft(value) {
-          imperativeApi.scrollLeft = value;
+          autoScrollLeft.value = value;
         },
       });
 

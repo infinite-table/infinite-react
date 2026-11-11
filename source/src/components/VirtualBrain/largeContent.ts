@@ -123,12 +123,10 @@
  * own AutoScroller uses native deltas, but it never runs for the header: the
  * header is not inside the scroll container, so it finds nothing to scroll.)
  *
- * Known limitation: on a scaled axis (only a huge horizontal layout) one
- * native px is `ratio` content px, and Firefox and Safari round the native
- * scroll position - so the slowest auto-scroll steps (1-2 content px per
- * frame) are lost and the drag auto-scroll doesn't move until the pointer is
- * deeper in the edge zone. Chrome keeps fractional scroll offsets, so it's
- * not affected.
+ * On a scaled axis (only a huge horizontal layout) one native px is `ratio`
+ * content px, and Firefox and Safari round the native scroll position - so
+ * the slowest auto-scroll steps (1-2 content px per frame) would be lost and
+ * auto-scroll would not move at all. See {@link createSteppedScrollPosition}.
  */
 
 /**
@@ -219,6 +217,50 @@ export function computeScrollRatio(contentSize: number, viewportSize: number) {
   return nativeScrollMax > 0 && contentScrollMax > 0
     ? contentScrollMax / nativeScrollMax
     : 1;
+}
+
+/**
+ * A scroll position for code that scrolls in small steps and reads the
+ * position back before each step - the column reorder auto-scroll
+ * (reorderColumnsOnDrag), which adds 1-15 content px per frame.
+ *
+ * On a scaled axis one native px is `ratio` content px, and Firefox and
+ * Safari round the native scroll position - so a step smaller than that is
+ * lost: the native position stays the same, no scroll event fires, the next
+ * step starts from the same place again and auto-scroll never moves (Chrome
+ * keeps fractional scroll offsets, so it's not affected).
+ *
+ * So we keep the position we asked for (not rounded) and add to it, as long
+ * as the real position is still within a native px of it. When it isn't
+ * (something else scrolled, or we hit the end), we go back to the real one.
+ * When the axis is not scaled (ratio 1), it's simply the real position.
+ */
+export function createSteppedScrollPosition(options: {
+  getScrollPosition: () => number;
+  setScrollPosition: (value: number) => void;
+  getScrollRatio: () => number;
+}) {
+  let requested: number | null = null;
+
+  return {
+    get value() {
+      const actual = options.getScrollPosition();
+      const ratio = options.getScrollRatio();
+      if (
+        ratio > 1 &&
+        requested !== null &&
+        Math.abs(requested - actual) <= ratio
+      ) {
+        return requested;
+      }
+      requested = null;
+      return actual;
+    },
+    set value(value: number) {
+      requested = value;
+      options.setScrollPosition(value);
+    },
+  };
 }
 
 /**
