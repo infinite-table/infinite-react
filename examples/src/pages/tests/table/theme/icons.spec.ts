@@ -48,9 +48,9 @@ export default test.describe.parallel('Themeable icons', () => {
         0,
       );
       expect(await getStyle(page, selector, 'mask-image')).toBe('none');
-      // the custom icon layer is not displayed
-      expect(await getStyle(page, `${selector} > rect`, 'display')).toBe(
-        'none',
+      // the background for the custom icon is not painted
+      expect(await getStyle(page, selector, 'background-size')).toBe(
+        '0px 0px',
       );
     }
     expect(
@@ -74,9 +74,7 @@ export default test.describe.parallel('Themeable icons', () => {
       expect(await getStyle(page, selector, 'mask-image')).toContain(
         SQUARE_PATH,
       );
-      expect(await getStyle(page, `${selector} > rect`, 'display')).toBe(
-        'inline',
-      );
+      expect(await getStyle(page, selector, 'background-size')).toBe('auto');
     }
 
     // a full square, in the icon color

@@ -1,12 +1,8 @@
 import * as React from 'react';
 
 import { join } from '../../../../utils/join';
-import { IconCustomLayerCls, IconCustomMaskCls } from './Icon.css';
-import {
-  CUSTOMIZABLE_ICONS,
-  CustomizableIconName,
-  getCustomIconLayerRect,
-} from './customizableIcons';
+import { IconCustomMaskCls } from './Icon.css';
+import { CUSTOMIZABLE_ICONS, CustomizableIconName } from './customizableIcons';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
 
 export type TableIconProps = {
@@ -32,7 +28,6 @@ export const Icon = (props: TableIconProps) => {
     fill: 'currentColor',
     ...props.style,
   };
-  const viewBox = props.viewBox ?? '0 0 24 24';
   return (
     //@ts-ignore
     <svg
@@ -51,12 +46,6 @@ export const Icon = (props: TableIconProps) => {
       style={style}
     >
       {props.children}
-      {icon ? (
-        <rect
-          className={IconCustomLayerCls[icon]}
-          {...getCustomIconLayerRect(viewBox)}
-        />
-      ) : null}
     </svg>
   );
 };

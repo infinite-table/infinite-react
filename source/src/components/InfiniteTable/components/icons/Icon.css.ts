@@ -12,18 +12,19 @@ import { maskLayout } from './iconStyles';
 /**
  * How path icons are made themeable, at no cost for the default icons:
  *
- * the icon is still the inline `<svg><path /></svg>` it always was, plus a
- * `<rect>` covering the whole viewBox (the "custom layer").
+ * the icon is still the inline `<svg><path /></svg>` it always was. The svg
+ * also has a background (a gradient in the icon color) whose size comes from
+ * the `--infinite-icon-<name>` variable, and a mask image from the same
+ * variable:
  *
- * - when `--infinite-icon-<name>` is NOT specified: the svg has
- *   `mask-image: none` and the rect has `display: none` - so the default
- *   icon is painted exactly as before, with no mask.
- * - when it IS specified (eg: `url("data:image/svg+xml,...")`): the svg is
- *   masked by that image, and the rect is displayed - substituting a url()
- *   into `display` makes the declaration invalid at computed-value time, so
- *   it computes to its initial value (`inline`). The rect is painted with
- *   the same fill as the path, so what shows is the custom icon shape, in the
- *   icon color.
+ * - when the variable is NOT specified: `background-size: 0 0` (nothing is
+ *   painted) and `mask-image: none` - so the default icon is painted exactly
+ *   as before, with no mask.
+ * - when it IS specified (eg: `url("data:image/svg+xml,...")`): substituting
+ *   a url() into `background-size` makes the declaration invalid at
+ *   computed-value time, so it computes to its initial value (`auto`) and the
+ *   background fills the svg. The svg is masked by the image - so what shows
+ *   is the custom icon shape, in the icon color.
  *
  * The mask costs more to paint than the inline path (measured: with ~800
  * icons on screen, frames are a few times slower), which is why the default
@@ -33,18 +34,24 @@ const iconNames = Object.fromEntries(
   Object.keys(CUSTOMIZABLE_ICONS).map((name) => [name, name]),
 ) as Record<CustomizableIconName, CustomizableIconName>;
 
+const iconColors: Partial<Record<CustomizableIconName, string>> = {
+  expandCollapse: ThemeVars.components.ExpandCollapseIcon.color,
+  loading: ThemeVars.color.accent,
+};
+
 export const IconCustomMaskCls = styleVariants(iconNames, (name) => {
-  const image = fallbackVar(ThemeVars.icons[name], 'none');
+  const iconVar = ThemeVars.icons[name];
+  const color = iconColors[name] ?? 'currentColor';
+  const image = fallbackVar(iconVar, 'none');
   return {
     ...maskLayout,
     WebkitMaskImage: image,
     maskImage: image,
+    backgroundImage: `linear-gradient(${color}, ${color})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: fallbackVar(iconVar, '0 0'),
   };
 });
-
-export const IconCustomLayerCls = styleVariants(iconNames, (name) => ({
-  display: fallbackVar(ThemeVars.icons[name], 'none'),
-}));
 
 const rotate = keyframes({
   from: { transform: 'rotate(0deg)' },

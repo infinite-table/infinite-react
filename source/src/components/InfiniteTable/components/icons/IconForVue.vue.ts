@@ -2,12 +2,8 @@ import { defineComponent, h } from 'vue';
 import type { CSSProperties, FunctionalComponent, PropType } from 'vue';
 
 import { join } from '../../../../utils/join';
-import { IconCustomLayerCls, IconCustomMaskCls } from './Icon.css';
-import {
-  CUSTOMIZABLE_ICONS,
-  CustomizableIconName,
-  getCustomIconLayerRect,
-} from './customizableIcons';
+import { IconCustomMaskCls } from './Icon.css';
+import { CUSTOMIZABLE_ICONS, CustomizableIconName } from './customizableIcons';
 import { iconPaths } from './iconPaths';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
 
@@ -46,15 +42,6 @@ export const Icon = defineComponent({
         ...props.style,
       };
       const icon = props.icon;
-      const children = props.paths.map((d) => h('path', { d }));
-      if (icon) {
-        children.push(
-          h('rect', {
-            class: IconCustomLayerCls[icon],
-            ...getCustomIconLayerRect(props.viewBox),
-          }),
-        );
-      }
       return h(
         'svg',
         {
@@ -69,7 +56,7 @@ export const Icon = defineComponent({
             : props.className,
           style,
         },
-        children,
+        props.paths.map((d) => h('path', { d })),
       );
     };
   },

@@ -2,12 +2,7 @@ import { defineComponent, h } from 'vue';
 import type { CSSProperties } from 'vue';
 
 import { join } from '../../../../../utils/join';
-import {
-  IconCustomLayerCls,
-  IconCustomMaskCls,
-  LoadingIconSpinWhenCustomCls,
-} from '../Icon.css';
-import { getCustomIconLayerRect } from '../customizableIcons';
+import { IconCustomMaskCls, LoadingIconSpinWhenCustomCls } from '../Icon.css';
 import { LoadingIconCls } from './loading.css';
 import {
   loadingIconPropNames,
@@ -65,10 +60,6 @@ export const LoadingIcon = defineComponent(
               }),
             ],
           ),
-          h('rect', {
-            class: IconCustomLayerCls.loading,
-            ...getCustomIconLayerRect(props.viewBox ?? '0 0 100 100'),
-          }),
         ],
       );
   },

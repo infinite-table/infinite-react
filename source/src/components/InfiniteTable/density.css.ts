@@ -1,4 +1,4 @@
-import { fallbackVar, globalStyle } from '@vanilla-extract/css';
+import { createVar, fallbackVar, globalStyle } from '@vanilla-extract/css';
 
 import { rootClassName } from './internalProps';
 import { ThemeVars } from './vars.css';
@@ -42,15 +42,19 @@ export const DensityScale = fallbackVar(ThemeVars.densityScale, '1');
 
 const scaled = (value: string) => `calc(${value} * ${DensityScale})`;
 
+// the density-scaled paddings, computed once on the table root element
+// (not in every cell)
+const cellPaddingScaled = createVar('cell-padding-scaled');
+const headerCellPaddingScaled = createVar('header-cell-padding-scaled');
+
 /**
  * Used by cells - if `--infinite-cell-padding` is specified (by the user),
- * it's used as is, otherwise paddingY/paddingX are scaled by the density.
+ * it's used as is, otherwise paddingY/paddingX scaled by the density.
  */
 export const CellPaddingWithDensity = fallbackVar(
   ThemeVars.components.Cell.padding,
-  `${scaled(ThemeVars.components.Cell.paddingY)} ${scaled(
-    ThemeVars.components.Cell.paddingX,
-  )}`,
+  cellPaddingScaled,
+  `${ThemeVars.components.Cell.paddingY} ${ThemeVars.components.Cell.paddingX}`,
 );
 
 /**
@@ -58,9 +62,8 @@ export const CellPaddingWithDensity = fallbackVar(
  */
 export const HeaderCellPaddingWithDensity = fallbackVar(
   ThemeVars.components.HeaderCell.padding,
-  `${scaled(ThemeVars.components.HeaderCell.paddingY)} ${scaled(
-    ThemeVars.components.HeaderCell.paddingX,
-  )}`,
+  headerCellPaddingScaled,
+  `${ThemeVars.components.HeaderCell.paddingY} ${ThemeVars.components.HeaderCell.paddingX}`,
 );
 
 // The font size (`--infinite-font-size`, which defaults to the inherited
@@ -69,6 +72,14 @@ export const HeaderCellPaddingWithDensity = fallbackVar(
 // `1em`, so it's a no-op. `:where()` gives it zero specificity, so a
 // font-size specified by the user for the table (via a className) always wins.
 globalStyle(`:where(.${rootClassName})`, {
+  vars: {
+    [cellPaddingScaled]: `${scaled(ThemeVars.components.Cell.paddingY)} ${scaled(
+      ThemeVars.components.Cell.paddingX,
+    )}`,
+    [headerCellPaddingScaled]: `${scaled(
+      ThemeVars.components.HeaderCell.paddingY,
+    )} ${scaled(ThemeVars.components.HeaderCell.paddingX)}`,
+  },
   fontSize: `calc(${fallbackVar(
     ThemeVars.baseFontSize,
     '1em',

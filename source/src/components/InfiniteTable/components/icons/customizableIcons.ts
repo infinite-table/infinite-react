@@ -23,10 +23,3 @@ export const CUSTOMIZABLE_ICONS = {
 
 export type CustomizableIconName = keyof typeof CUSTOMIZABLE_ICONS;
 
-/**
- * The geometry of the custom icon layer - a rect covering the whole viewBox.
- */
-export function getCustomIconLayerRect(viewBox: string) {
-  const [x, y, width, height] = viewBox.split(/[\s,]+/).map(Number);
-  return { x, y, width, height };
-}
