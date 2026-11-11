@@ -17,6 +17,9 @@ The other available themes are
   - `minimalist`
   - `ocean`
   - `balsam`
+  - `terminal`
+  - `sheet`
+  - `paper`
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
@@ -25,6 +28,9 @@ import '@infinite-table/infinite-react/theme/shadcn.css'
 import '@infinite-table/infinite-react/theme/balsam.css'
 import '@infinite-table/infinite-react/theme/minimalist.css'
 import '@infinite-table/infinite-react/theme/ocean.css'
+import '@infinite-table/infinite-react/theme/terminal.css'
+import '@infinite-table/infinite-react/theme/sheet.css'
+import '@infinite-table/infinite-react/theme/paper.css'
 ```
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
@@ -45,6 +51,9 @@ The following themes are currently available:
  - `balsam`
  - `minimalist`
  - `ocean`
+ - `terminal`
+ - `sheet`
+ - `paper`
  - `shadcn` - for this theme to correctly show up, make sure the shadcn CSS vars are available on page - see [shadcn theming](https://ui.shadcn.com/docs/theming) for details
 
 
@@ -218,3 +227,62 @@ The `default` theme is applied when you don't specify any explicit theme by defa
 ### Minimalist theme
 
 The `minimalist` theme is inspired from minimalistic designs and is a good choice if you want to keep the UI simple and clean.
+
+### Terminal theme
+
+The `terminal` theme is made for dense, data-heavy screens, like trading desks: a monospace font with tabular numbers (so numbers line up), compact rows, hairline dividers and green/red flashing for values going up/down. It's designed dark-first, but it has a light mode too.
+
+```ts
+import '@infinite-table/infinite-react/theme/terminal.css'
+```
+
+```tsx
+<div className="infinite-theme-name--terminal infinite-theme-mode--dark">
+  <DataSource {...dataSouceProps}>
+    <InfiniteTable {...props} />
+  </DataSource>
+</div>
+```
+
+It works with the density classNames - since the theme is already dense, `infinite-density--compact` makes it even denser.
+
+<Sandpack title="Terminal theme, with flashing cells">
+
+```tsx file="terminal-theme-example.page.tsx"
+```
+
+</Sandpack>
+
+### Sheet theme
+
+The `sheet` theme looks like a spreadsheet: full gridlines, sharp corners, an active cell with a thick border and a fill handle, and a header that looks like the column headers of a spreadsheet. It has a light and a dark mode.
+
+```ts
+import '@infinite-table/infinite-react/theme/sheet.css'
+```
+
+The first column pinned at the start (see <PropLink name="columnPinning" />) is styled like the row headers of a spreadsheet - so if you want row numbers, add a column that renders `rowInfo.indexInAll + 1` and pin it at the start.
+
+<Sandpack title="Sheet theme, with a row number column">
+
+```tsx file="sheet-theme-example.page.tsx"
+```
+
+</Sandpack>
+
+### Paper theme
+
+The `paper` theme is borderless and airy: hairline row separators, a subtle hover, selected rows painted as rounded pills, and its own icon set (rounded strokes) - a good fit for document-like and productivity apps. It has a light and a dark mode.
+
+```ts
+import '@infinite-table/infinite-react/theme/paper.css'
+```
+
+Its icons are set via the `--infinite-icon-*` CSS variables (see [Icons](#icons)), so you can replace any of them, or reuse them with another theme.
+
+<Sandpack title="Paper theme, with selected rows">
+
+```tsx file="paper-theme-example.page.tsx"
+```
+
+</Sandpack>
