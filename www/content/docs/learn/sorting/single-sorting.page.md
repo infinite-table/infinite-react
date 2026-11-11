@@ -15,7 +15,6 @@ Technically, it's the `<DataSource />` that's being sorted, not the `<InfiniteTa
 
 </Note>
 
-<Demo>
 <DemoTitle>Default behavior is single sorting</DemoTitle>
 <DemoDescription>
 
@@ -23,10 +22,8 @@ By default, clicking a column header sorts the column.
 
 </DemoDescription>
 
-```tsx file="local-single-sorting-example-defaults-with-local-data.demo.tsx" live
+```tsx file="local-single-sorting-example-defaults-with-local-data.demo.tsx"
 ```
-
-</Demo>
 
 ## Apply a default sort order
 
@@ -45,7 +42,6 @@ For controlled sorting, make sure you use the <DataSourcePropLink name="sortInfo
 
 </Note>
 
-<Demo>
 <DemoTitle>Local + uncontrolled single-sorting example</DemoTitle>
 <DemoDescription>
 
@@ -53,10 +49,8 @@ The `age` column is sorted in ascending order.
 
 </DemoDescription>
 
-```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" live
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx"
 ```
-
-</Demo>
 
 ## Controlled sorting
 
@@ -94,7 +88,6 @@ If you want to use multiple sorting, specify an array of objects like
 
 This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
 
-<Demo>
 <DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
 <DemoDescription>
 
@@ -102,12 +95,10 @@ This table allows sorting multiple columns - initially the `country` column is s
 
 </DemoDescription>
 
-```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx" live
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
 ```
 
-</Demo>
-
-```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" live title="Remote + uncontrolled multi-sorting example"
+```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
 ```
 
 <Note>
@@ -167,10 +158,10 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 
 </Note>
 
-```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" live title="Local uncontrolled sorting + local data"
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" title="Local uncontrolled sorting + local data"
 ```
 
-```tsx file="local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" live title="Local uncontrolled sorting + remote data"
+```tsx file="local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" title="Local uncontrolled sorting + remote data"
 ```
 
 ### Remote Sorting
@@ -183,7 +174,7 @@ For remote sorting, make sure you specify <DataSourcePropLink name="shouldReload
 
 </Note>
 
-```tsx file="remote-controlled-multi-sorting-example.demo.tsx" live title="Remote + controlled multi-sorting example"
+```tsx file="remote-controlled-multi-sorting-example.demo.tsx" title="Remote + controlled multi-sorting example"
 ```
 
 In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.

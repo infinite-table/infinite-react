@@ -1,9 +1,11 @@
 /*
  * docs-kit demo cards (@thedatagrid/docs-kit/react/styles.css) in the site's
  * colors. The site is dark-only for now; the light values stay the kit's.
+ * Every variable is listed in the kit's README (Theming).
  */
 :root {
   --dk-font-mono: var(--font-mono, 'Source Code Pro', Menlo, monospace);
+  --dk-font-sans: var(--font-sans, system-ui, sans-serif);
   --dk-radius: 1rem;
 }
 
@@ -12,14 +14,30 @@
   --dk-surface: #16181d;
   --dk-code-bg: #1a1b26;
   --dk-preview-bg: rgb(35, 39, 47);
-  --dk-fg: rgba(235, 236, 240, 0.93);
-  --dk-heading: #f6f7f9;
-  --dk-muted: #99a1b3;
-  --dk-faint: #78839b;
+  --dk-fg: var(--color-primary-dark);
+  --dk-heading: var(--color-primary-dark);
+  --dk-muted: var(--color-primary-dark);
+  --dk-faint: var(--color-primary-dark);
   --dk-accent: #497aff;
   --dk-accent-soft: rgba(73, 122, 255, 0.16);
   --dk-highlight-bg: rgba(88, 175, 223, 0.15);
   --dk-highlight-border: #149eca;
+  --dk-label-bg: rgba(20, 158, 202, 0.45);
+  --dk-label-fg: #e6f7fd;
+  --dk-line-number: #78839b;
+
+  /*
+   * The code editor (the card's Edit button). Unset ones follow the card
+   * values above; the syntax colors (--dk-editor-keyword, -string, -comment,
+   * …) default to tokyo-night, like the static code.
+   */
+  --dk-editor-bg: #1a1b26;
+  --dk-editor-fg: var(--color-primary-dark);
+  --dk-editor-cursor: #497aff;
+  --dk-editor-selection-bg: rgba(73, 122, 255, 0.3);
+  --dk-editor-active-line-bg: rgba(73, 122, 255, 0.1);
+  --dk-editor-gutter-fg: #78839b;
+  --dk-editor-active-line-gutter-fg: var(--color-primary-dark);
 }
 
 .dk-demo-description code {

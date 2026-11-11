@@ -110,8 +110,13 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (docsKitCode && /\.(demo|snippet)\.[cm]?[jt]sx?$/.test(fileRef)) {
     code = docsKitCode.extractCodeMarkers(code, context).source;
   }
-  // a titled docs-kit live demo: same "Example" heading as <Sandpack title>
-  const title = /\blive\b/.test(header) ? getAttr(header, 'title') : null;
+  // a titled docs-kit live demo: same "Example" heading as <Sandpack title>.
+  // Demo fences are live unless they say `live=false` (DOCS_FENCE_DEFAULTS
+  // in src/utils/docsKit.ts).
+  const live = /\.demo\.[cm]?[jt]sx?$/.test(fileRef)
+    ? !/\blive=false\b/.test(header)
+    : /\blive\b/.test(header);
+  const title = live ? getAttr(header, 'title') : null;
   const heading = title ? `**Example: ${title}**\n\n` : '';
   return heading + '```' + lang + '\n' + code + '\n```';
 }

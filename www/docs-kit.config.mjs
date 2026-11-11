@@ -7,6 +7,7 @@ import path from 'node:path';
 
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
+import { DOCS_FENCE_DEFAULTS } from './src/utils/docsKit.ts';
 
 const sourcePackage = JSON.parse(
   fs.readFileSync(new URL('../source/package.json', import.meta.url), 'utf8'),
@@ -30,6 +31,7 @@ export default {
   urlRoot: '/gen/demos',
   // card anchors are #demo-<title>, so they never clash with heading ids
   anchorPrefix: DEMO_ANCHOR_PREFIX,
+  fenceDefaults: DOCS_FENCE_DEFAULTS,
   libraries: {
     '@infinite-table/infinite-react': {
       entry: '../source/src/index.tsx',
