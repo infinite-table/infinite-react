@@ -15,6 +15,12 @@ import type {
 
 import { SORT_ASC, ALL_DIRECTIONS } from './IBrain';
 import { getDebugChannel } from '../../utils/debugChannel';
+import {
+  computeScrollOrigin,
+  computeScrollRatio,
+  getMaxElementSize,
+  isLargeContentSize,
+} from './largeContent';
 
 const DEFAULT_EXTEND_BY = {
   start: 0,
@@ -200,6 +206,20 @@ export class MatrixBrain extends Logger implements IBrain {
   protected extraSpanCells: [number, number][] = [];
 
   private scrollPosition: ScrollPosition = { scrollLeft: 0, scrollTop: 0 };
+
+  /**
+   * Content larger than the browser can lay out - see largeContent.ts.
+   * Recomputed when sizes change (updateRenderCount), not on scroll.
+   */
+  private largeContent = { vertical: false, horizontal: false };
+  private scrollRatio = { vertical: 1, horizontal: 1 };
+  /**
+   * DOM offsets are written relative to this (content px) - see
+   * "scroll origin" in largeContent.ts. Always 0 unless the content is large.
+   */
+  private scrollOrigin: ScrollPosition = { scrollLeft: 0, scrollTop: 0 };
+  private onScrollOriginChangeFns: Set<(origin: ScrollPosition) => void> =
+    new Set();
 
   private onScrollFns: OnScrollFn[] = [];
   // private onTotalSizeChangeFns: OnSizeChangeFn[] = [];
@@ -500,8 +520,205 @@ export class MatrixBrain extends Logger implements IBrain {
     this.reset(which);
     this.doUpdateRenderCount(which);
 
+    // sizes are final now
+    this.updateLargeContent();
+
     //   delete this._updateRenderCountRafId;
     // });
+  }
+
+  // -------------------------------------------------------------------------
+  // very large content - see largeContent.ts for the why and the how
+  // -------------------------------------------------------------------------
+
+  /**
+   * The axes on which this brain handles content larger than the browser
+   * can lay out. The normal layout: vertical (horizontal offsets come from
+   * column CSS vars computed by the table, not from the brain).
+   */
+  protected supportsLargeContent(
+    direction: 'horizontal' | 'vertical',
+  ): boolean {
+    return direction === 'vertical';
+  }
+
+  /**
+   * Where the origin can be placed - see HorizontalLayoutMatrixBrain, which
+   * needs whole pages
+   */
+  protected alignScrollOrigin(
+    _direction: 'horizontal' | 'vertical',
+    value: number,
+  ) {
+    return Math.floor(value);
+  }
+
+  private updateLargeContent() {
+    const size = this.getVirtualizedContentSize();
+
+    const vertical =
+      this.supportsLargeContent('vertical') && isLargeContentSize(size.height);
+    const horizontal =
+      this.supportsLargeContent('horizontal') && isLargeContentSize(size.width);
+
+    this.largeContent = { vertical, horizontal };
+    this.scrollRatio = {
+      vertical: vertical
+        ? computeScrollRatio(size.height, this.availableHeight)
+        : 1,
+      horizontal: horizontal
+        ? computeScrollRatio(size.width, this.availableWidth)
+        : 1,
+    };
+
+    // entering / leaving large mode changes the origin
+    this.updateScrollOrigin();
+  }
+
+  public isLargeContent(direction: 'horizontal' | 'vertical') {
+    return this.largeContent[direction];
+  }
+
+  /**
+   * native scroll px -> content px (1 when the content fits)
+   */
+  public getScrollRatio(direction: 'horizontal' | 'vertical') {
+    return this.scrollRatio[direction];
+  }
+
+  /**
+   * The size for the scroll spacer - the content size, capped at what the
+   * browser supports on large axes.
+   */
+  public getNativeScrollSize(): Size {
+    const size = this.getVirtualizedContentSize();
+    const { largeContent } = this;
+
+    if (!largeContent.vertical && !largeContent.horizontal) {
+      return size;
+    }
+    const max = getMaxElementSize();
+    return {
+      width: largeContent.horizontal ? max : size.width,
+      height: largeContent.vertical ? max : size.height,
+    };
+  }
+
+  /**
+   * The native scroll position of the scroll container -> the content scroll
+   * position (what the brain and the API work with)
+   */
+  public toContentScrollPosition(
+    nativeScrollPosition: ScrollPosition,
+  ): ScrollPosition {
+    const { vertical, horizontal } = this.scrollRatio;
+    if (vertical === 1 && horizontal === 1) {
+      return nativeScrollPosition;
+    }
+    return {
+      scrollTop: nativeScrollPosition.scrollTop * vertical,
+      scrollLeft: nativeScrollPosition.scrollLeft * horizontal,
+    };
+  }
+
+  /**
+   * Content scroll position -> what to set on the scroll container
+   */
+  public toNativeScrollPosition(
+    contentScrollPosition: ScrollPosition,
+  ): ScrollPosition {
+    const { vertical, horizontal } = this.scrollRatio;
+    if (vertical === 1 && horizontal === 1) {
+      return contentScrollPosition;
+    }
+    return {
+      scrollTop: contentScrollPosition.scrollTop / vertical,
+      scrollLeft: contentScrollPosition.scrollLeft / horizontal,
+    };
+  }
+
+  /**
+   * DOM offsets (transforms, CSS vars) are relative to this. Always 0,0
+   * unless the content is large.
+   */
+  public getScrollOrigin(): ScrollPosition {
+    return this.scrollOrigin;
+  }
+
+  /**
+   * The scroll position relative to the scroll origin - this is what
+   * transforms that follow the scroll position should use.
+   */
+  public getDOMScrollPosition(
+    scrollPosition: ScrollPosition = this.getScrollPosition(),
+  ): ScrollPosition {
+    const origin = this.getScrollOrigin();
+    if (!origin.scrollTop && !origin.scrollLeft) {
+      return scrollPosition;
+    }
+    return {
+      scrollTop: scrollPosition.scrollTop - origin.scrollTop,
+      scrollLeft: scrollPosition.scrollLeft - origin.scrollLeft,
+    };
+  }
+
+  /**
+   * Called (synchronously) when the scroll origin moves - every DOM offset
+   * relative to it has to be written again (in the same frame).
+   */
+  public onScrollOriginChange = (fn: (origin: ScrollPosition) => void) => {
+    return this.onScrollOriginChangeForBrain(fn);
+  };
+
+  // a method (not an arrow property) so subclasses can call it via super
+  protected onScrollOriginChangeForBrain(fn: (origin: ScrollPosition) => void) {
+    this.onScrollOriginChangeFns.add(fn);
+    return () => {
+      this.onScrollOriginChangeFns.delete(fn);
+    };
+  }
+
+  protected updateScrollOrigin() {
+    const { scrollPosition, largeContent, scrollOrigin } = this;
+
+    // the current origin is re-aligned first: in horizontal layout it has to
+    // be a whole number of pages, and the page width can change
+    const alignVertical = (value: number) =>
+      this.alignScrollOrigin('vertical', value);
+    const alignHorizontal = (value: number) =>
+      this.alignScrollOrigin('horizontal', value);
+
+    const scrollTop = largeContent.vertical
+      ? computeScrollOrigin(
+          scrollPosition.scrollTop,
+          alignVertical(scrollOrigin.scrollTop),
+          alignVertical,
+        )
+      : 0;
+    const scrollLeft = largeContent.horizontal
+      ? computeScrollOrigin(
+          scrollPosition.scrollLeft,
+          alignHorizontal(scrollOrigin.scrollLeft),
+          alignHorizontal,
+        )
+      : 0;
+
+    if (
+      scrollTop === scrollOrigin.scrollTop &&
+      scrollLeft === scrollOrigin.scrollLeft
+    ) {
+      return;
+    }
+    this.scrollOrigin = { scrollTop, scrollLeft };
+    this.notifyScrollOriginChange();
+  }
+
+  protected notifyScrollOriginChange() {
+    if (this.destroyed) {
+      return;
+    }
+    const origin = this.getScrollOrigin();
+    this.onScrollOriginChangeFns.forEach((fn) => fn(origin));
   }
 
   protected doUpdateRenderCount(which: WhichDirection = ALL_DIRECTIONS) {
@@ -594,6 +811,9 @@ export class MatrixBrain extends Logger implements IBrain {
     this.scrollPosition = scrollPosition;
 
     if (changeHorizontal || changeVertical) {
+      // before anybody (the callback included) writes DOM offsets for the
+      // new position - they need to be relative to the right origin
+      this.updateScrollOrigin();
       callback?.(scrollPosition);
       this.updateRenderRange({
         horizontal: changeHorizontal,
@@ -1845,6 +2065,7 @@ export class MatrixBrain extends Logger implements IBrain {
     this.onScrollStartFns = [];
     this.onScrollStopFns = [];
     this.onRenderCountChangeFns.clear();
+    this.onScrollOriginChangeFns.clear();
     this.onRenderRangeChangeFns.clear();
     this.onVerticalRenderRangeChangeFns.clear();
     this.onHorizontalRenderRangeChangeFns.clear();

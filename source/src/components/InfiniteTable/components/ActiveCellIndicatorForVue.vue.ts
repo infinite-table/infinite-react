@@ -14,6 +14,7 @@ import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import { internalProps } from '../internalProps';
 import { InternalVars } from '../internalVars.css';
 import { setInfiniteVarsOnNode } from '../utils/infiniteDOMUtils';
+import { getActiveCellIndicatorVars } from './activeIndicatorOffsets';
 import {
   ActiveCellIndicatorRecipe,
   ActiveIndicatorWrapperCls,
@@ -59,33 +60,22 @@ export const ActiveCellIndicator = defineComponent({
         return;
       }
 
-      let [rowIndex] = activeCellIndex;
-
-      if (brain.isHorizontalLayoutBrain && brain.rowsPerPage) {
-        rowIndex = rowIndex % brain.rowsPerPage;
-      }
-
-      const activeCellRowHeight: number =
-        typeof rowHeight === 'function'
-          ? rowHeight(rowIndex)
-          : rowHeight ?? brain.getRowHeight(rowIndex);
-      const activeCellRowOffset = brain.getItemOffsetFor(rowIndex, 'vertical');
-
       setInfiniteVarsOnNode(
-        {
-          activeCellRowHeight: `${activeCellRowHeight}px`,
-          activeCellRowOffset: `${activeCellRowOffset}px`,
-        },
+        getActiveCellIndicatorVars(brain, activeCellIndex, rowHeight),
         domRef.value,
       );
     };
 
     let removeOnRenderCountChange: VoidFunction | null = null;
+    let removeOnScrollOriginChange: VoidFunction | null = null;
     const wireBrain = (brain: MatrixBrain) => {
       removeOnRenderCountChange?.();
+      removeOnScrollOriginChange?.();
       removeOnRenderCountChange = brain.onRenderCountChange(() => {
         renderCount.value++;
       });
+      // offsets are relative to the scroll origin - see largeContent.ts
+      removeOnScrollOriginChange = brain.onScrollOriginChange(reposition);
     };
 
     onMounted(() => {
@@ -103,6 +93,7 @@ export const ActiveCellIndicator = defineComponent({
 
     onBeforeUnmount(() => {
       removeOnRenderCountChange?.();
+      removeOnScrollOriginChange?.();
     });
 
     return () => {

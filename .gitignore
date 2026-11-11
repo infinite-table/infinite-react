@@ -124,3 +124,7 @@ dist-vue
 out-vue
 # plans & prompts live in a separate private repo, nested in this folder
 /plans/
+
+# grid benchmark (examples/src/benchmark)
+/examples/.next-benchmark
+/examples/benchmark-results

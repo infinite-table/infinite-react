@@ -101,6 +101,11 @@ export class GridRenderer extends Logger {
       scrollLeft,
     }: { y: number; scrollTop?: boolean; scrollLeft?: number },
   ) => {
+    // content offsets are written relative to the scroll origin - see
+    // largeContent.ts (the origin is 0 unless the content is huge)
+    if (!scrollTop) {
+      y -= this.brain.getScrollOrigin().scrollTop;
+    }
     element.style.setProperty(
       currentTransformY,
       scrollTop ? `calc( ${y}px + var(${scrollTopCSSVar}) )` : `${y}px`,
@@ -149,9 +154,13 @@ export class GridRenderer extends Logger {
      * so we will keep it for now on each cell
      */
 
+    // `scrollTop: true` (fixed rows) means y is relative to the viewport,
+    // otherwise it's a content offset, written relative to the scroll origin
+    // so it stays below what browsers can handle - see largeContent.ts
+    // (the origin is 0 unless the content is huge)
     const currentTransformYValue = scrollTop
       ? `calc( ${y}px + var(${scrollTopCSSVar}) )`
-      : `${y}px`;
+      : `${y - this.brain.getScrollOrigin().scrollTop}px`;
     //@ts-ignore
     if (element.__currentTransformY !== currentTransformYValue) {
       //@ts-ignore
@@ -223,14 +232,37 @@ export class GridRenderer extends Logger {
     });
     const removeOnScrollStart = brain.onScrollStart(this.onScrollStart);
     const removeOnScrollStop = brain.onScrollStop(this.onScrollStop);
+    const removeOnScrollOriginChange = brain.onScrollOriginChange(
+      this.onScrollOriginChange,
+    );
 
     this.onDestroy = () => {
+      removeOnScrollOriginChange();
       removeOnScroll();
       removeOnSizeChange();
       removeOnScrollStart();
       removeOnScrollStop();
     };
   }
+
+  /**
+   * The scroll origin moved (huge content only - see largeContent.ts): every
+   * rendered cell / detail row is positioned relative to it, so they all
+   * need to be repositioned now - synchronously, so it's in the same frame
+   * as the scroll layer transform, which uses the new origin too.
+   */
+  private onScrollOriginChange = () => {
+    if (this.destroyed) {
+      return;
+    }
+    this.cellManager.getAllCells().forEach((cell) => {
+      this.updateElementPosition(cell, undefined, { immediate: true });
+    });
+    this.rowManager.forEachAttachedRow((row) => {
+      this.updateDetailElementPosition(row);
+    });
+    this.adjustFixedElementsOnScroll();
+  };
 
   private onCellAttached(cell: GridCellInterface) {
     if (this.cellDetachedClassNames.length) {
@@ -1503,6 +1535,7 @@ export class GridRenderer extends Logger {
       renderColIndex: number;
     }>,
     options?: { hidden: boolean; rowspan: number; colspan: number },
+    config?: { immediate?: boolean },
   ) => {
     if (this.destroyed) {
       return;
@@ -1567,7 +1600,11 @@ export class GridRenderer extends Logger {
       };
 
       // if (this.scrolling && this.brain.isHorizontalLayoutBrain) {
-      if (this.scrolling && this.brain.isHorizontalLayoutBrain) {
+      if (
+        this.scrolling &&
+        this.brain.isHorizontalLayoutBrain &&
+        !config?.immediate
+      ) {
         cell.setPendingAfterCommitWork(applyPosition);
       } else {
         applyPosition();
@@ -1603,7 +1640,7 @@ export class GridRenderer extends Logger {
       if (ITEM_POSITION_WITH_TRANSFORM) {
         this.setDetailTransform(itemElement, rowIndex, {
           y,
-          scrollLeft: this.brain.getScrollPosition().scrollLeft,
+          scrollLeft: this.brain.getDOMScrollPosition().scrollLeft,
         });
 
         itemElement.style.willChange = 'transform';
@@ -1632,6 +1669,16 @@ export class GridRenderer extends Logger {
 
   private onScrollStop = () => {
     this.scrolling = false;
+
+    // In horizontal layout, cell positions are applied after React commits
+    // the new cell content (see updateElementPosition). That flush happens in
+    // RawTable's layout effect - but when a scroll only changes the content
+    // of already rendered cells (e.g. a programmatic jump far away), only the
+    // cells re-render, not RawTable, so the positions stayed pending and the
+    // cells were left at their old place (nothing visible after the jump).
+    // By the time scrolling stops the content is committed, so it's safe to
+    // apply them now.
+    this.flushPendingAfterCommitWork();
 
     if (this.lastEnteredRow != -1) {
       this.addHoverClass(this.lastEnteredRow);
@@ -1669,7 +1716,7 @@ export class GridRenderer extends Logger {
 
           this.setDetailTransform(node, rowIndex, {
             y,
-            scrollLeft: scrollPosition.scrollLeft,
+            scrollLeft: brain.getDOMScrollPosition(scrollPosition).scrollLeft,
           });
         }
       });
@@ -1682,7 +1729,9 @@ export class GridRenderer extends Logger {
     const attachedCell = this.cellManager.getOneAttachedCell();
     if (attachedCell) {
       setInfiniteScrollPosition(
-        scrollPosition,
+        // fixed cells are positioned with these, inside the scroll layer
+        // which is translated relative to the scroll origin
+        brain.getDOMScrollPosition(scrollPosition),
         this.getInfiniteNode(attachedCell.getElement()!),
       );
     }

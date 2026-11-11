@@ -1,3 +1,4 @@
+import type { ScrollPosition } from '../types/ScrollPosition';
 import { raf } from '../../utils/raf';
 import { Size } from '../types/Size';
 import { getGreatestCountVisibleInSize } from './getGreatestCountVisibleInSize';
@@ -463,6 +464,71 @@ export class HorizontalLayoutMatrixBrain extends MatrixBrain implements IBrain {
 
     this.options.masterBrain = undefined;
     this.onTotalPageCountChangeFns.clear();
+  }
+
+  // -------------------------------------------------------------------------
+  // very large content - see largeContent.ts
+  //
+  // Here the rows become width (pageWidth x totalPageCount) while the height
+  // always fits the viewport, so it's the horizontal axis that can get larger
+  // than the browser supports - with way fewer rows than in the normal layout.
+  // -------------------------------------------------------------------------
+
+  protected supportsLargeContent(
+    direction: 'horizontal' | 'vertical',
+  ): boolean {
+    return direction === 'horizontal';
+  }
+
+  /**
+   * The horizontal origin is a whole number of pages: cells are positioned at
+   * `calc(pageWidth * (pageIndex - originPageIndex))`, with pageWidth being a
+   * CSS var (so column resizes keep working without rewriting every cell).
+   */
+  protected alignScrollOrigin(
+    direction: 'horizontal' | 'vertical',
+    value: number,
+  ) {
+    if (direction === 'vertical' || !this.pageWidth) {
+      return Math.floor(value);
+    }
+    return Math.floor(value / this.pageWidth) * this.pageWidth;
+  }
+
+  /**
+   * The page at the horizontal scroll origin - page offsets in the DOM are
+   * relative to it.
+   */
+  public getScrollOriginPageIndex() {
+    const pageWidth = this.getPageWidth();
+    return pageWidth
+      ? Math.round(this.getScrollOrigin().scrollLeft / pageWidth)
+      : 0;
+  }
+
+  // the header brain follows the body brain (its master) - same origin, so
+  // the header and the body cells stay aligned
+
+  public getScrollOrigin(): ScrollPosition {
+    return this.options?.masterBrain
+      ? this.options.masterBrain.getScrollOrigin()
+      : super.getScrollOrigin();
+  }
+
+  public onScrollOriginChange = (
+    fn: (origin: ScrollPosition) => void,
+  ): VoidFunction => {
+    if (this.options?.masterBrain) {
+      return this.options.masterBrain.onScrollOriginChange(fn);
+    }
+    return super.onScrollOriginChangeForBrain(fn);
+  };
+
+  protected updateScrollOrigin() {
+    if (this.options?.masterBrain) {
+      return;
+    }
+    super.updateScrollOrigin();
   }
 
   getVirtualizedContentSizeFor(direction: 'horizontal' | 'vertical') {

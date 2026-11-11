@@ -98,7 +98,11 @@ export const HeadlessTable = defineComponent({
       { immediate: true },
     );
 
-    const updateDOMTransform = (scrollPos: ScrollPosition) => {
+    const updateDOMTransform = (contentScrollPos: ScrollPosition) => {
+      // relative to the scroll origin, like all the cells - see
+      // largeContent.ts. Computed now, not in the raf: cells were
+      // (re)positioned for this origin
+      const scrollPos = props.brain.getDOMScrollPosition(contentScrollPos);
       requestAnimationFrame(() => {
         if (!domRef.value) {
           // we're in a raf, so the component might have been unmounted in
@@ -112,8 +116,14 @@ export const HeadlessTable = defineComponent({
       });
     };
 
-    const onContainerScroll = (scrollPos: ScrollPosition) => {
-      props.brain.setScrollPosition(scrollPos, updateDOMTransform);
+    const onContainerScroll = (nativeScrollPos: ScrollPosition) => {
+      // the scroll container may be shorter than the content (when the
+      // content is larger than what browsers support) - the brain works with
+      // content positions - see largeContent.ts
+      props.brain.setScrollPosition(
+        props.brain.toContentScrollPosition(nativeScrollPos),
+        updateDOMTransform,
+      );
     };
 
     let removeResizeObserver: VoidFunction | null = null;
@@ -122,11 +132,12 @@ export const HeadlessTable = defineComponent({
     const wireBrain = (brain: MatrixBrain) => {
       removeOnRenderCount?.();
 
+      // the spacer gets the content size, capped at what the browser supports
       removeOnRenderCount = brain.onRenderCountChange(() => {
-        scrollSize.value = brain.getVirtualizedContentSize();
+        scrollSize.value = brain.getNativeScrollSize();
       });
 
-      scrollSize.value = brain.getVirtualizedContentSize();
+      scrollSize.value = brain.getNativeScrollSize();
 
       // useful when the brain is changed - when toggling the value of
       // wrapRowsHorizontally
@@ -178,6 +189,42 @@ export const HeadlessTable = defineComponent({
       () => {
         wireResizeObserver();
       },
+    );
+
+    // When the scroll ratio changes (huge content that grows/shrinks, or
+    // starts/stops being huge), keep the content the user was looking at:
+    // rewrite the native scroll position for the new ratio - see
+    // largeContent.ts
+    let scrollRatio = { brain: props.brain, vertical: 1, horizontal: 1 };
+    watch(
+      [scrollSize, () => props.brain],
+      () => {
+        const brain = props.brain;
+        const prev = scrollRatio;
+        const vertical = brain.getScrollRatio('vertical');
+        const horizontal = brain.getScrollRatio('horizontal');
+        scrollRatio = { brain, vertical, horizontal };
+
+        const scroller = domRef.value?.parentElement;
+        if (
+          !scroller ||
+          prev.brain !== brain ||
+          (prev.vertical === vertical && prev.horizontal === horizontal)
+        ) {
+          return;
+        }
+        const nativeScrollPos = brain.toNativeScrollPosition(
+          brain.getScrollPosition(),
+        );
+        if (prev.vertical !== vertical) {
+          scroller.scrollTop = nativeScrollPos.scrollTop;
+        }
+        if (prev.horizontal !== horizontal) {
+          scroller.scrollLeft = nativeScrollPos.scrollLeft;
+        }
+      },
+      // after the spacer got its new size
+      { flush: 'post' },
     );
 
     onBeforeUnmount(() => {

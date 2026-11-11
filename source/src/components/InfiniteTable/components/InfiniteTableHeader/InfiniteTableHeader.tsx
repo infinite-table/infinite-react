@@ -76,11 +76,18 @@ function InfiniteTableInternalHeaderFn<T>(
   });
 
   const domRef = useRef<HTMLDivElement | null>(null);
-  const updateDOMTransform = useCallback((scrollPosition: ScrollPosition) => {
-    if (domRef.current) {
-      domRef.current.style.transform = `translate3d(-${scrollPosition.scrollLeft}px, 0px, 0px)`;
-    }
-  }, []);
+  const updateDOMTransform = useCallback(
+    (scrollPosition: ScrollPosition) => {
+      if (domRef.current) {
+        // relative to the scroll origin, like the header cells - see
+        // largeContent.ts (in horizontal layout the header brain uses the
+        // body brain's origin, so header and body stay aligned)
+        const { scrollLeft } = headerBrain.getDOMScrollPosition(scrollPosition);
+        domRef.current.style.transform = `translate3d(${-scrollLeft}px, 0px, 0px)`;
+      }
+    },
+    [headerBrain],
+  );
 
   useEffect(() => {
     const removeOnScroll = headerBrain.onScroll(updateDOMTransform);
