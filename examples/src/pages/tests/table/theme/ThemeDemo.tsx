@@ -143,7 +143,7 @@ export function ThemeDemo({
           onReady={setApi}
           defaultSortInfo={[{ field: 'symbol', dir: 1 }]}
           defaultRowSelection={{
-            selectedRows: [3, 4],
+            selectedRows: [5, 10, 4],
             defaultSelection: false,
           }}
           selectionMode="multi-row"

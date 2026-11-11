@@ -19,6 +19,7 @@ The other available themes are
   - `balsam`
   - `terminal`
   - `sheet`
+  - `paper`
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
@@ -29,6 +30,7 @@ import '@infinite-table/infinite-react/theme/minimalist.css'
 import '@infinite-table/infinite-react/theme/ocean.css'
 import '@infinite-table/infinite-react/theme/terminal.css'
 import '@infinite-table/infinite-react/theme/sheet.css'
+import '@infinite-table/infinite-react/theme/paper.css'
 ```
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
@@ -51,6 +53,7 @@ The following themes are currently available:
  - `ocean`
  - `terminal`
  - `sheet`
+ - `paper`
  - `shadcn` - for this theme to correctly show up, make sure the shadcn CSS vars are available on page - see [shadcn theming](https://ui.shadcn.com/docs/theming) for details
 
 
@@ -263,6 +266,23 @@ The first column pinned at the start (see <PropLink name="columnPinning" />) is 
 <Sandpack title="Sheet theme, with a row number column">
 
 ```tsx file="sheet-theme-example.page.tsx"
+```
+
+</Sandpack>
+
+### Paper theme
+
+The `paper` theme is borderless and airy: hairline row separators, a subtle hover, selected rows painted as rounded pills, and its own icon set (rounded strokes) - a good fit for document-like and productivity apps. It has a light and a dark mode.
+
+```ts
+import '@infinite-table/infinite-react/theme/paper.css'
+```
+
+Its icons are set via the `--infinite-icon-*` CSS variables (see [Icons](#icons)), so you can replace any of them, or reuse them with another theme.
+
+<Sandpack title="Paper theme, with selected rows">
+
+```tsx file="paper-theme-example.page.tsx"
 ```
 
 </Sandpack>
