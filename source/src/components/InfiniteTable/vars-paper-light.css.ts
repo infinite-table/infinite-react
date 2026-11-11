@@ -87,6 +87,11 @@ export const PaperLightVars = {
 
   [ThemeVars.components.ExpandCollapseIcon.color]: palette.textMuted,
 
+  // airy menus, with rounded item highlights (see theme-paper.css.ts)
+  [ThemeVars.components.Menu.padding]: '6px',
+  [ThemeVars.components.Menu.cellPaddingVertical]: '7px',
+  [ThemeVars.components.Menu.cellPaddingHorizontal]: '10px',
+  [ThemeVars.components.Menu.cellMarginVertical]: '1px',
   [ThemeVars.components.Menu.background]: palette.background,
   [ThemeVars.components.Menu.separatorColor]: palette.divider,
   [ThemeVars.components.Menu.borderRadius]: '10px',

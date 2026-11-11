@@ -56,6 +56,16 @@ const paperStyles = {
   [`& .InfiniteIcon-sort [data-name="index"]`]: {
     right: '-7px',
   },
+  // menu items highlighted as rounded pills (the cells of a menu item are
+  // laid out in a grid row - round the first and last one)
+  [`& .InfiniteMenu [data-menu-item-key]:first-child`]: {
+    borderStartStartRadius: '6px',
+    borderEndStartRadius: '6px',
+  },
+  [`& .InfiniteMenu [data-menu-item-key]:last-child`]: {
+    borderStartEndRadius: '6px',
+    borderEndEndRadius: '6px',
+  },
   // a rounded active cell
   [`& .Infinite-ActiveCellIndicator`]: {
     borderRadius: '6px',
