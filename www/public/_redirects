@@ -11,7 +11,8 @@
 /community/team /docs/community
 /docs/learn/column-groups /docs/learn/columns/column-grouping
 /docs/learn/filtering/writing-custom-filter-editors /docs/learn/filtering/providing-a-custom-filter-editor
-/docs/learn/getting-started/full-demo /full-demo
+/docs/learn/getting-started/full-demo /demo
+/full-demo /demo
 /docs/learn/working-with-data/sorting /docs/learn/sorting/overview
 /docs/learn/editing/inline-editing /docs/learn/editing/overview
 

@@ -7,7 +7,7 @@ import { visit } from 'unist-util-visit';
 import { MarkdownFileEnv, MarkdownFileInfo } from './MarkdownFileInfo';
 import { siteContent } from '../content';
 
-const EXCEPTIONS = ['/full-demo', '//404', '/pricing'];
+const EXCEPTIONS = ['/demo', '//404', '/pricing'];
 
 const exceptionsMap = EXCEPTIONS.reduce((acc, url) => {
   acc[url] = true;

@@ -30,7 +30,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   add('/blog');
   add('/pricing');
   add('/demo');
-  add('/full-demo');
   add('/devtools');
 
   // all markdown-driven pages: docs, comparison, community, eula, privacy.

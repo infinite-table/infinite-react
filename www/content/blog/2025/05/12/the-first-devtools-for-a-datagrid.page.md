@@ -14,7 +14,7 @@ Infinite Table is the first DataGrid with a Chrome DevTools extension. Starting 
 
 To see the extension on a live demo, head to the [chrome webstore](https://chromewebstore.google.com/detail/infinite-table-devtools-e/jpipjljbfffijmgiecljadbogfegejfa) to download the extension.
 
-Then visit [our live demo page](/full-demo) and open your browser devtools - you should see the "Infinite Table" devtool tab. Click it and enjoy interacting with the DataGrid!
+Then visit [our live demo page](/demo) and open your browser devtools - you should see the "Infinite Table" devtool tab. Click it and enjoy interacting with the DataGrid!
 </Note>
 
 
