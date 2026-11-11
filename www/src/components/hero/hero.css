@@ -276,20 +276,39 @@
 
 /* ---- density (stand-in until the library density classes land) ---------- */
 
+/* The grid menus (column menu and its submenus) render inside the table, so
+   they inherit these too: the font size, plus the menu spacing below. */
 .hero-density--compact {
   font-size: 12px;
   --infinite-cell-padding: 2px 8px;
   --infinite-header-cell-padding-x: 8px;
+  --infinite-menu-padding: 4px;
+  --infinite-menu-cell-padding-vertical: 4px;
+  --infinite-menu-cell-padding-horizontal: 8px;
+  --hero-menu-check: 12px;
 }
 .hero-density--normal {
   font-size: 13px;
   --infinite-cell-padding: 4px 10px;
   --infinite-header-cell-padding-x: 10px;
+  --infinite-menu-padding: 6px;
+  --infinite-menu-cell-padding-vertical: 6px;
+  --infinite-menu-cell-padding-horizontal: 10px;
+  --hero-menu-check: 13px;
 }
 .hero-density--comfortable {
   font-size: 14px;
   --infinite-cell-padding: 6px 14px;
   --infinite-header-cell-padding-x: 14px;
+  --infinite-menu-padding: 8px;
+  --infinite-menu-cell-padding-vertical: 9px;
+  --infinite-menu-cell-padding-horizontal: 14px;
+  --hero-menu-check: 15px;
+}
+.hero .InfiniteMenu input[type='checkbox'] {
+  width: var(--hero-menu-check);
+  height: var(--hero-menu-check);
+  margin: 0;
 }
 
 /* ---- cells -------------------------------------------------------------- */

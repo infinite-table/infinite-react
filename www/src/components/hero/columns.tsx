@@ -82,14 +82,12 @@ type GetColumnMenuItems = NonNullable<
 >;
 type MenuItems = ReturnType<GetColumnMenuItems>;
 
-/** Columns it makes sense to group by (the categorical ones). */
-const GROUPABLE = new Set([
-  'sector',
-  'assetClass',
-  'region',
-  'exchange',
-  'currency',
-]);
+/**
+ * Columns it makes sense to group by (the categorical ones). Currency is left
+ * out: it is a computed column with no field, so the menu would show it
+ * disabled.
+ */
+const GROUPABLE = new Set(['sector', 'assetClass', 'region', 'exchange']);
 
 /**
  * Keep the default column menu, but trim its "Group by" submenu to the
