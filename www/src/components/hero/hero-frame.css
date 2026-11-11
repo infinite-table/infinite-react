@@ -1,0 +1,89 @@
+/* Loaded eagerly with the poster: frame size, tokens, poster. */
+
+/* ---- tokens ------------------------------------------------------------- */
+
+.hero-frame,
+.hero {
+  --hero-surface: #0c0d10;
+  --hero-card: #121318;
+  --hero-raised: #1a1b21;
+  --hero-border: rgb(255 255 255 / 0.08);
+  --hero-border-strong: rgb(255 255 255 / 0.16);
+  --hero-ink: #ececf1;
+  --hero-muted: #8b8e99;
+  --hero-grid: #23252b;
+  /* validated diverging pair (CVD ΔE ≥ 10 on the dark surface) */
+  --hero-up: #13a88f;
+  --hero-down: #e5533f;
+  --hero-neutral: #383835;
+  --hero-up-ink: #3fd2b3;
+  --hero-down-ink: #ff8170;
+  --hero-accent: var(--infinite-accent-color, #3b82f6);
+  --showcase-accent: var(--hero-accent);
+  --showcase-pill-bg: rgb(17 19 24 / 0.92);
+  --showcase-pill-fg: #e5e7eb;
+  --showcase-pill-border: rgb(255 255 255 / 0.14);
+}
+
+.hero[data-hero-mode='light'] {
+  --hero-surface: #ffffff;
+  --hero-card: #f7f7f9;
+  --hero-raised: #ffffff;
+  --hero-border: rgb(0 0 0 / 0.08);
+  --hero-border-strong: rgb(0 0 0 / 0.16);
+  --hero-ink: #16171b;
+  --hero-muted: #646873;
+  --hero-grid: #e6e7ea;
+  --hero-up: #0f8a75;
+  --hero-down: #d0432f;
+  --hero-neutral: #d9d9d5;
+  --hero-up-ink: #0a7764;
+  --hero-down-ink: #bf3925;
+  --showcase-pill-bg: rgb(255 255 255 / 0.94);
+  --showcase-pill-fg: #23252b;
+  --showcase-pill-border: rgb(0 0 0 / 0.12);
+}
+
+/* ---- frame + layout ----------------------------------------------------- */
+
+.hero-frame {
+  height: 720px;
+  border-radius: 16px;
+  border: 1px solid var(--hero-border);
+  background: var(--hero-surface);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.4),
+    0 30px 80px -20px rgb(59 130 246 / 0.25), 0 20px 50px -30px rgb(0 0 0 / 0.8);
+}
+
+@media (max-width: 1023px) {
+  .hero-frame {
+    height: 980px;
+  }
+}
+@media (max-width: 639px) {
+  .hero-frame {
+    height: 860px;
+    border-radius: 12px;
+  }
+}
+
+/* ---- poster ------------------------------------------------------------- */
+
+.hero-poster {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--hero-surface);
+}
+.hero-poster picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hero-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
