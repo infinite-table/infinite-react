@@ -25,6 +25,7 @@ import { Blockquote } from '@www/components/Blockquote';
 
 import HomepageHero from '@www/components/MDX/HomepageHero';
 import TerminalBlock from '../src/components/MDX/TerminalBlock';
+import { BenchmarkChart } from '../src/components/MDX/BenchmarkChart';
 
 import Intro from '../src/components/MDX/Intro';
 import HeroCards from '../src/components/MDX/HeroCards';
@@ -77,6 +78,7 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
   const components: MDXComponents = {
     HomepageHero,
     TerminalBlock,
+    BenchmarkChart,
     HeroCards,
     Illustration,
     IllustrationBlock,

@@ -2,7 +2,10 @@
 
 import { getBlogPosts } from '../../utils/blogUtils';
 // they are sorted by date in descending order - so the most recent post is first
-export const sortedPosts = getBlogPosts();
+// drafts are left out: this is what the homepage, the blog sidebar, the tag
+// pages and the prev/next links are built from. A draft is still reachable at
+// its own URL (see sortedPostsIncludingDrafts below).
+export const sortedPosts = getBlogPosts({ skipDrafts: true });
 
 import type { BlogPost } from '../../utils/blogUtils';
 

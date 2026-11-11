@@ -42,7 +42,7 @@ export default function App() {
         The table sits in a short pane that clips its content. Open a column
         menu - it is rendered into document.body and kept within this app.
       </p>
-      <div style={{ height: 160, overflow: 'hidden' }}>
+      <div style={{ height: 360, overflow: 'hidden' }}>
         <DataSource<Developer> data={data} primaryKey="id">
           <InfiniteTable<Developer>
             columns={columns}
