@@ -3,6 +3,11 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.1.4
+
+- Very large grids now scroll all the way to the last row. Browsers limit how tall or wide an element can be, so with around a million rows (or fewer, depending on the browser and row height) the scrollbar used to stop before the end. This also applies to <PropLink name="wrapRowsHorizontally" />, where the limit was reached with far fewer rows.
+- Fix <PropLink name="wrapRowsHorizontally" /> showing no rows after a far jump with the scrollbar or the API.
+
 ## 10.1.3
 
 Add the <PropLink name="menuPortalContainer" /> and <PropLink name="menuConstrainTo" /> props, to render the table menus outside the table and choose the area they are constrained to.
