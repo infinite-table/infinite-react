@@ -1,4 +1,4 @@
-import { columnHeaderHeightName } from './vars.css';
+import { columnHeaderHeightName, CSS_LOADED_VALUE } from './vars.css';
 import { toCSSVarName } from './utils/toCSSVarName';
 
 export const DEFAULT_ROW_HEIGHT = 40;
@@ -46,8 +46,31 @@ export function getRowHeightFromCSSValue(
   if (state.rowHeightCSSVar !== DEFAULT_ROW_HEIGHT_CSS_VALUE) {
     return value;
   }
+  // the default row height only comes from the theme when the theme CSS is
+  // loaded - eg: in jsdom (unit tests) with a mocked getBoundingClientRect,
+  // the watcher would otherwise "measure" the mocked size - keep the old default
+  if (!isThemeCSSLoaded()) {
+    return null;
+  }
   const rowHeight = Math.round(value);
   return rowHeight === state.rowHeight ? null : rowHeight;
+}
+
+const CSS_LOADED_VAR_NAME = toCSSVarName('loaded');
+
+// the default theme (included in the main CSS file) declares this var on :root
+function isThemeCSSLoaded() {
+  if (
+    typeof document === 'undefined' ||
+    typeof getComputedStyle !== 'function'
+  ) {
+    return false;
+  }
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(CSS_LOADED_VAR_NAME)
+      .trim() === CSS_LOADED_VALUE
+  );
 }
 
 /**

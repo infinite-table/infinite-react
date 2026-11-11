@@ -85,6 +85,10 @@ describe('Vue InfiniteTable column drag-to-reorder', () => {
                   name: { field: 'name', header: 'Name', defaultWidth: 150 },
                   age: { field: 'age', header: 'Age', defaultWidth: 100 },
                 },
+                // getBoundingClientRect is mocked for all elements (see above),
+                // so the CSS watcher of the default (theme) row height would
+                // measure the mocked height - use an explicit row height
+                rowHeight: 40,
                 ...tableProps,
               } as any),
           });
