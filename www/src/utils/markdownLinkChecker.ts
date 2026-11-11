@@ -10,7 +10,7 @@ import { competitors } from '../compare/matrix';
 
 // app-router pages, which are not markdown content
 const EXCEPTIONS = [
-  '/full-demo',
+  '/demo',
   '//404',
   '/pricing',
   '/compare',
