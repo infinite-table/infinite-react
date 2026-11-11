@@ -34,7 +34,6 @@ const columns: Record<string, any> = {
     header: '',
     defaultWidth: 48,
     align: 'center',
-    defaultPinned: 'start',
     defaultSortable: false,
     renderValue: ({ rowInfo }: { rowInfo: any }) =>
       rowInfo.isGroupRow ? '' : `${rowInfo.indexInAll + 1}`,
@@ -52,7 +51,7 @@ const columns: Record<string, any> = {
 
 const groupBy = [{ field: 'sector' }];
 const defaultSortInfo = [{ field: 'symbol', dir: 1 }];
-const defaultRowSelection = { selectedRows: [3, 4], defaultSelection: false };
+const defaultRowSelection = { selectedRows: [5, 10, 4], defaultSelection: false };
 const domProps = { style: { flex: 1, minHeight: 0 } };
 
 const mode = ref<'light' | 'dark'>(props.defaultMode ?? 'light');
@@ -131,7 +130,8 @@ onBeforeUnmount(() => interval && clearInterval(interval));
       >
         <InfiniteTable
           :columns="columns"
-          keyboardNavigation="cell"
+          :defaultColumnPinning="{ rowNumber: 'start' }"
+        keyboardNavigation="cell"
           :defaultActiveCellIndex="[2, 4]"
           :domProps="domProps"
         />
