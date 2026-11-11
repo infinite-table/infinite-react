@@ -1,0 +1,229 @@
+/*
+ * BenchmarkChart - paired horizontal bars, AG Grid vs Infinite Table.
+ * The site is dark only, so there is one set of values. The two series
+ * colors were checked for colorblind separation and contrast on this surface.
+ */
+.root {
+  --bc-surface: #16181d;
+  --bc-border: #262a31;
+  --bc-grid: #343a46;
+  --bc-text: #f0efec;
+  --bc-text-secondary: #c3c2b7;
+  --bc-text-muted: #99a1b3;
+  --bc-ag: #d95926;
+  --bc-infinite: #3987e5;
+  --bc-value-space: 6.5rem;
+
+  margin: 1.75rem 0 2rem;
+  padding: 1.25rem 1.25rem 0.75rem;
+  max-width: 46rem;
+  background: var(--bc-surface);
+  border: 1px solid var(--bc-border);
+  border-radius: 10px;
+  color: var(--bc-text);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.header {
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bc-text);
+}
+
+.subtitle {
+  color: var(--bc-text-muted);
+  font-size: 0.8125rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--bc-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.ag {
+  background: var(--bc-ag);
+}
+
+.infinite {
+  background: var(--bc-infinite);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rowLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75rem;
+  margin-bottom: 0.3rem;
+  color: var(--bc-text-secondary);
+}
+
+.note {
+  color: var(--bc-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* the baseline both bars grow from */
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 1px solid var(--bc-grid);
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* the hit target is taller than the 14px mark */
+  padding: 2px 0;
+  outline: none;
+}
+
+/* the bar grows in what is left after the space kept for its value */
+.fill {
+  flex: 0 0 auto;
+  width: calc((100% - var(--bc-value-space)) * var(--bc-fraction, 0));
+  height: 14px;
+  border-radius: 0 4px 4px 0;
+  transition: filter 0.1s;
+}
+
+.value {
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  color: var(--bc-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.bar:hover .fill,
+.bar:focus-visible .fill {
+  filter: brightness(1.2);
+}
+
+.bar:focus-visible {
+  outline: 2px solid var(--bc-text-muted);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+.tooltip {
+  position: absolute;
+  /* at the right edge, so it doesn't cover the bar it is compared with */
+  right: 0;
+  bottom: calc(100% + 2px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 11rem;
+  padding: 0.5rem 0.7rem;
+  background: #0b0d10;
+  border: 1px solid var(--bc-grid);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  color: var(--bc-text-secondary);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s;
+}
+
+.tooltip strong {
+  color: var(--bc-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.tooltipSeries {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lineKey {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.tooltipDetail {
+  color: var(--bc-text-muted);
+}
+
+.bar:hover .tooltip,
+.bar:focus-visible .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tableView {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--bc-border);
+  color: var(--bc-text-muted);
+  font-size: 0.8125rem;
+}
+
+.tableView summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.tableView summary:hover {
+  color: var(--bc-text-secondary);
+}
+
+.tableView table {
+  width: 100%;
+  margin-top: 0.6rem;
+  border-collapse: collapse;
+  color: var(--bc-text-secondary);
+}
+
+.tableView th,
+.tableView td {
+  padding: 0.35rem 0.5rem 0.35rem 0;
+  border-bottom: 1px solid var(--bc-border);
+  text-align: left;
+  font-weight: 400;
+}
+
+.tableView thead th {
+  color: var(--bc-text-muted);
+}
+
+.tableView td,
+.tableView thead th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

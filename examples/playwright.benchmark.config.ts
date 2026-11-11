@@ -16,6 +16,18 @@ process.env.BENCH_RUN_ID =
 // BENCH_HEADLESS=1 uses Chromium's new headless mode (same rendering code)
 const headless = !!process.env.CI || process.env.BENCH_HEADLESS === '1';
 
+// Run Chromium with its sandbox, as real Chrome does (Playwright turns it off
+// by default). It matters on macOS: without the sandbox the renderer can talk
+// to the WindowServer, and the first time Blink recomputes the hover state
+// (a layout change under the mouse - e.g. the first scroll of a grid that
+// updates rows while scrolling) GetCurrentKeyModifiers() initializes that
+// connection, which blocks the main thread for 30-80ms. With the sandbox the
+// call returns right away, so users never see that frame - and without it,
+// it lands on whichever grid changes layout under the mouse first.
+// BENCH_NO_SANDBOX=1 turns the sandbox off (e.g. containers where it can't
+// start).
+const sandbox = process.env.BENCH_NO_SANDBOX !== '1';
+
 const config: PlaywrightTestConfig = {
   testDir: './src/benchmark',
   testMatch: /.*\.bench\.ts$/,
@@ -38,11 +50,19 @@ const config: PlaywrightTestConfig = {
     video: 'off',
     screenshot: 'off',
     launchOptions: {
+      chromiumSandbox: sandbox,
       args: [
         '--enable-benchmarking',
         '--disable-extensions',
         '--no-default-browser-check',
         '--window-size=1400,1100',
+        // Layout works in physical pixels, so the largest element a page can
+        // have (in CSS px) depends on the scale factor of the display the
+        // window is on: ~33.5M px at 1x, ~16.7M px at 2x - whatever
+        // deviceScaleFactor the context emulates. With displays of different
+        // densities connected, the two grids could get different limits (and
+        // so a different scrollbar-to-rows ratio at 1M rows) in the same run.
+        '--force-device-scale-factor=1',
       ],
     },
   },

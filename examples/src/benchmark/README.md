@@ -65,6 +65,18 @@ copied to `benchmark-results/latest.md`); the raw samples are in
   the last row is reachable and how the scrollbar maps onto the rows. The
   probes and jumps use that mapping, so they measure rendering - not mapping
   differences.
+- **Sandboxed Chromium**: the benchmark turns Chromium's sandbox on
+  (Playwright turns it off by default), as in real Chrome. Without it, on
+  macOS, the first hover recompute after a layout change under the mouse
+  blocks the main thread for 30-80ms, once per page (`GetCurrentKeyModifiers`
+  connecting to the WindowServer). It showed up as one long frame at the
+  start of the first scroll - only for the grid that updates rows under the
+  mouse first - and does not happen in a sandboxed renderer.
+- **Fixed display scale**: Chromium runs with `--force-device-scale-factor=1`.
+  The largest element a page can have depends on the scale factor of the
+  display the window is on (about 33.5M px at 1x, 16.7M px at 2x), whatever
+  the emulated `deviceScaleFactor`. Pinning it gives both grids the same
+  limit on every machine; the setup fails if their scroll ranges differ.
 - **Statistics**: medians, with a 95% bootstrap confidence interval of the
   ratio of medians (Infinite / AG Grid). A winner is only named when the
   interval excludes 1. When AG Grid has zeros among its values (0% blank
@@ -74,19 +86,20 @@ copied to `benchmark-results/latest.md`); the raw samples are in
 
 ## Options (env vars)
 
-| Variable                                       | Default          |                                                                                        |
-| ---------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------- |
-| `BENCH_SIZES`                                  | `300k,1m`        | dataset sizes to run                                                                   |
-| `BENCH_SCENARIOS`                              | all              | comma separated scenario ids, e.g. `mount,scroll-jump`                                 |
-| `BENCH_RUNS` / `BENCH_WARMUP`                  | `7` / `1`        | measured / discarded runs per grid per scenario                                        |
-| `BENCH_CPU_THROTTLE`                           | `1`              | CDP CPU throttling rate during measurements                                            |
-| `BENCH_HEADLESS`                               | off              | `1` = Chromium's new headless mode (headed by default - closest to real vsync and GPU) |
-| `BENCH_SCROLL_SPEED` / `BENCH_SCROLL_DISTANCE` | `8000` / `24000` | wheel gesture (px/s, px) for the smoothness scenarios                                  |
-| `BENCH_FAST_SCROLL_SPEED`                      | `20000`          | the fast gesture of the correctness / screencast scenarios                             |
-| `BENCH_SAVE_TRACES`                            | off              | `1` = save every trace to `benchmark-results/<run id>/traces`                          |
-| `BENCH_VERBOSE`                                | off              | `1` = log the last DOM mutations ("settled") and the first wrong samples of the probes |
-| `BENCH_RUN_ID`                                 | ISO date         | results folder name                                                                    |
-| `BENCH_PORT` / `BENCH_BASE_URL`                | `5560` / -       | port of the server the config starts, or an already running server to use instead      |
+| Variable                                       | Default          |                                                                                              |
+| ---------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| `BENCH_SIZES`                                  | `300k,1m`        | dataset sizes to run                                                                         |
+| `BENCH_SCENARIOS`                              | all              | comma separated scenario ids, e.g. `mount,scroll-jump`                                       |
+| `BENCH_RUNS` / `BENCH_WARMUP`                  | `7` / `1`        | measured / discarded runs per grid per scenario                                              |
+| `BENCH_CPU_THROTTLE`                           | `1`              | CDP CPU throttling rate during measurements                                                  |
+| `BENCH_HEADLESS`                               | off              | `1` = Chromium's new headless mode (headed by default - closest to real vsync and GPU)       |
+| `BENCH_NO_SANDBOX`                             | off              | `1` = run Chromium without its sandbox (where the sandbox can't start, e.g. some containers) |
+| `BENCH_SCROLL_SPEED` / `BENCH_SCROLL_DISTANCE` | `8000` / `24000` | wheel gesture (px/s, px) for the smoothness scenarios                                        |
+| `BENCH_FAST_SCROLL_SPEED`                      | `20000`          | the fast gesture of the correctness / screencast scenarios                                   |
+| `BENCH_SAVE_TRACES`                            | off              | `1` = save every trace to `benchmark-results/<run id>/traces`                                |
+| `BENCH_VERBOSE`                                | off              | `1` = log the last DOM mutations ("settled") and the first wrong samples of the probes       |
+| `BENCH_RUN_ID`                                 | ISO date         | results folder name                                                                          |
+| `BENCH_PORT` / `BENCH_BASE_URL`                | `5560` / -       | port of the server the config starts, or an already running server to use instead            |
 
 ## Reading the report
 
