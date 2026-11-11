@@ -1,0 +1,101 @@
+/*
+ * docs-kit demo cards (@thedatagrid/docs-kit/react/styles.css) in the site's
+ * colors. The site is dark-only for now; the light values stay the kit's.
+ * Every variable is listed in the kit's README (Theming).
+ */
+:root {
+  --dk-font-mono: var(--font-mono, 'Source Code Pro', Menlo, monospace);
+  --dk-font-sans: var(--font-sans, system-ui, sans-serif);
+  --dk-radius: 1rem;
+}
+
+[data-theme='dark'] {
+  --dk-border: rgba(255, 255, 255, 0.09);
+  --dk-surface: #16181d;
+  --dk-code-bg: #101419;
+  --dk-preview-bg: rgb(35, 39, 47);
+  --dk-fg: var(--color-primary-dark);
+  --dk-heading: var(--color-primary-dark);
+  --dk-muted: var(--color-primary-dark);
+  --dk-faint: var(--color-primary-dark);
+  --dk-accent: var(--color-link);
+  --dk-accent-soft: var(--color-highlight-dark);
+  --dk-highlight-bg: var(--color-highlight-dark);
+  --dk-highlight-border: var(--color-link);
+  --dk-label-bg: var(--color-link);
+  --dk-label-fg: #ffffff;
+  --dk-line-number: #78839b;
+
+  /*
+   * The code editor (the card's Edit button). Unset ones follow the card
+   * values above; the syntax colors are the Sandpack palette, like the
+   * highlighted code (DOCS_CODE_THEMES).
+   */
+  --dk-editor-bg: #101419;
+  --dk-editor-fg: var(--color-primary-dark);
+  --dk-editor-cursor: #497aff;
+  --dk-editor-selection-bg: rgba(73, 122, 255, 0.3);
+  --dk-editor-active-line-bg: rgba(73, 122, 255, 0.1);
+  --dk-editor-gutter-fg: #78839b;
+  --dk-editor-active-line-gutter-fg: var(--color-primary-dark);
+  --dk-editor-keyword: #ff6188;
+  --dk-editor-constant: #ab9df2;
+  --dk-editor-string: #ffd866;
+  --dk-editor-number: #ab9df2;
+  --dk-editor-comment: #757575;
+  --dk-editor-type: #ebecf0cc;
+  --dk-editor-function: #a9dc76;
+  --dk-editor-property: #78dce8;
+  --dk-editor-tag: #a9dc76;
+  --dk-editor-attribute: #ebecf0cc;
+  --dk-editor-operator: #939293;
+  --dk-editor-punctuation: #939293;
+}
+
+/* the size and font of the Sandpack examples' file tabs */
+.dk-demo-tab,
+.dk-demo-file,
+.dk-demo-filename {
+  font-family: inherit;
+  font-size: var(--text-lg);
+}
+
+/* selected like the sidebar and TOC: highlight background, link-colored text */
+.dk-demo-tab--active,
+.dk-demo-file--active {
+  color: var(--color-link);
+}
+
+/* the kit's grid layout drops blank lines from copied text; inline lines keep the newlines between them */
+.dk-demo pre.shiki code {
+  display: block;
+  min-width: max-content;
+}
+
+.dk-demo pre.shiki .line {
+  min-width: 100%;
+  vertical-align: top;
+}
+
+.dk-demo pre.shiki .line.has-label {
+  display: inline-flex;
+}
+
+/* the kit maps only the shiki colors; the theme's italics come as --shiki-dark-font-style */
+[data-theme='dark'] .dk-demo .shiki span {
+  font-style: var(--shiki-dark-font-style);
+}
+
+[data-theme] .dk-demo pre.shiki .line-label {
+  font-style: normal;
+}
+
+/* above the site header (z-index 10000) and docs sidebar (2000) */
+body > .dk-demo-overlay {
+  z-index: 10100;
+}
+
+.dk-demo-description code {
+  font-family: var(--dk-font-mono);
+  font-size: 0.9em;
+}

@@ -29,3 +29,12 @@
     public,
     max-age=31536000,
     immutable'''
+[[headers]]
+  # docs demo editor: esbuild-wasm, content-hashed by the docs-kit demo build
+  for = "*.wasm"
+  [headers.values]
+    content-type = "application/wasm"
+    cache-control = '''
+    public,
+    max-age=31536000,
+    immutable'''

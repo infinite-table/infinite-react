@@ -15,27 +15,21 @@ Technically, it's the `<DataSource />` that's being sorted, not the `<InfiniteTa
 
 </Note>
 
-<Sandpack title="Default behavior is single sorting.">
-
-<Description>
+<DemoTitle>Default behavior is single sorting</DemoTitle>
+<DemoDescription>
 
 By default, clicking a column header sorts the column.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-single-sorting-example-defaults-with-local-data.page.tsx"
-
+```tsx file="local-single-sorting-example-defaults-with-local-data.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Apply a default sort order
 
 You can specify a default sort order by using the <DataSourcePropLink name="defaultSortInfo" /> prop - specify an object like
 
-```ts
-// sort by `firstName`, in ascending order
-defaultSortInfo = { field: 'firstName', dir: 1 };
+```ts file="single-sorting.snippet.tsx" region="default-sort-info"
 ```
 
 <Note>
@@ -48,34 +42,26 @@ For controlled sorting, make sure you use the <DataSourcePropLink name="sortInfo
 
 </Note>
 
-<Sandpack title="Local + uncontrolled single-sorting example">
-
-<Description>
+<DemoTitle>Local + uncontrolled single-sorting example</DemoTitle>
+<DemoDescription>
 
 The `age` column is sorted in ascending order.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-uncontrolled-single-sorting-example-with-local-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Controlled sorting
 
 For controlled, single sorting, use the <DataSourcePropLink name="sortInfo" /> as an object like this:
 
-```ts
-// sort by `firstName`, in ascending order
-sortInfo = { field: 'firstName', dir: 1 };
+```ts file="single-sorting.snippet.tsx" region="sort-info"
 ```
 
 or you can specify `null` for explicit no sorting
 
-```ts
-// no sorting
-sortInfo = null;
+```ts file="single-sorting.snippet.tsx" region="no-sort"
 ```
 
 <Note>
@@ -97,40 +83,23 @@ To describe the sorting order, you have to use an object that has the following 
 
 If you want to use multiple sorting, specify an array of objects like
 
-```ts
-// sort by age in descending order, then by `firstName` in ascending order
-sortInfo = [
-  { field: 'age', type: 'number', dir: -1 },
-  { field: 'firstName', dir: 1 },
-];
-
-// no sorting
-sortInfo = [];
+```ts file="single-sorting.snippet.tsx" region="multiple"
 ```
 
 This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
 
-<Sandpack title="Local + uncontrolled multi-sorting example">
-
-<Description>
+<DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
+<DemoDescription>
 
 This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. Click the `salary` column to toggle the column sort to descending. Clicking it a second time will remove it from the sort altogether.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
 ```
 
-</Sandpack>
-
-<Sandpack title="Remote + uncontrolled multi-sorting example">
-
-```ts file="remote-uncontrolled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -150,18 +119,7 @@ If you use uncontrolled sorting (namely you don't care about updating the <DProp
 
 You can initially render the component with no sort state or you can specify a default sorting state, via the uncontrolled prop <DPropLink name="defaultSortInfo" />.
 
-```tsx
-// initially render the component with ascending sorting on `firstName` field
-// also, note this is an array, so multiple sorting will be enabled
-const defaultSortInfo = [{ field: 'firstName', dir: 1 }];
-
-<DataSource<Developer>
-  primaryKey="id"
-  data={data}
-  defaultSortInfo={defaultSortInfo}
->
-  <InfiniteTable />
-</DataSource>;
+```tsx file="single-sorting.snippet.tsx" region="uncontrolled"
 ```
 
 If your data is remote and you want the sorting to happen on the backend, you can still use uncontrolled sorting, but you need to specify <DPropLink name="shouldReloadData.sortInfo">shouldReloadData.sortInfo=true</DPropLink>.
@@ -200,21 +158,11 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 
 </Note>
 
-<Sandpack title="Local uncontrolled sorting + local data">
-
-```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" title="Local uncontrolled sorting + local data"
 ```
 
-</Sandpack>
-
-<Sandpack title="Local uncontrolled sorting + remote data">
-
-```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" title="Local uncontrolled sorting + remote data"
 ```
-
-</Sandpack>
 
 ### Remote Sorting
 
@@ -226,13 +174,8 @@ For remote sorting, make sure you specify <DataSourcePropLink name="shouldReload
 
 </Note>
 
-<Sandpack title="Remote + controlled multi-sorting example">
-
-```ts file="remote-controlled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-controlled-multi-sorting-example.demo.tsx" title="Remote + controlled multi-sorting example"
 ```
-
-</Sandpack>
 
 In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
 
@@ -249,11 +192,7 @@ Each dataType has its own sorting function and its own filtering operators & fun
 
 Sorting works in combination with the <PropLink name="sortTypes" /> property, which is an object with keys being sort types and values being functions that compare two values of the same type.
 
-```ts
-const sortTypes = {
-  string: (a, b) => a.localeCompare(b),
-  number: (a, b) => a - b,
-};
+```ts file="single-sorting.snippet.tsx" region="default-sort-types"
 ```
 
 Those are the two sort types supported by default.
@@ -289,21 +228,12 @@ In this example, for the `"color"` column, we specified <PropLink name="columns.
 
 When you provide a <DataSourcePropLink name="defaultSortInfo"/> prop and the sorting information uses a custom <DataSourcePropLink name="sortTypes">sortType</DataSourcePropLink>, make sure you specify that as the `type` property of the sorting info object.
 
-```tsx
-defaultSortInfo={{
-  field: 'color',
-  dir: 1,
-  // note this custom sort type
-  type: 'color',
-}}
+```tsx file="single-sorting.snippet.tsx" region="default-sort-info-with-type"
 ```
 
 You will need to have a property for that type in your <DataSourcePropLink name="sortTypes"/> object as well.
 
-```tsx
-sortTypes={{
-  color: (a, b) => //...
-}}
+```tsx file="single-sorting.snippet.tsx" region="color-sort-type"
 ```
 
 </Note>
@@ -314,13 +244,7 @@ While there are many ways to customise sorting, including the <DPropLink name="s
 
 You can do this by configuring the <DPropLink name="sortFunction" /> prop.
 
-```tsx
-const sortFunction = (sortInfo, dataArray) => {
-  // sort the dataArray according to the sortInfo
-  // and return the sorted array
-  // return sortedDataArray;
-};
-<DataSource<T> sortFunction={sortFunction} />;
+```tsx file="single-sorting.snippet.tsx" region="sort-function"
 ```
 
 The function specified in the <DPropLink name="sortFunction" /> prop is called with the <DPropLink name="sortInfo" /> as the first argument and the data array as the second. It should return a sorted array, as per the <DPropLink name="sortInfo" /> it was called with.

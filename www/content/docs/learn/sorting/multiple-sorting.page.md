@@ -109,27 +109,18 @@ In this case, make sure you update the <DPropLink name="sortInfo" /> prop as a r
 
 </Note>
 
-<Sandpack title="Local + uncontrolled multi-sorting example">
-
-<Description>
+<DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
+<DemoDescription>
 
 This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. `Ctrl`/`Cmd` + click the `salary` column to toggle the column sort to descending. `Ctrl`/`Cmd` clicking it a second time will remove it from the sort altogether.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
 ```
 
-</Sandpack>
-
-<Sandpack title="Remote + uncontrolled multi-sorting example">
-
-```ts file="remote-uncontrolled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -147,12 +138,7 @@ For remote sorting, make sure you specify <DataSourcePropLink name="shouldReload
 
 </Note>
 
-<Sandpack title="Remote + controlled multi-sorting example">
-
-```ts file="remote-controlled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-controlled-multi-sorting-example.demo.tsx" title="Remote + controlled multi-sorting example"
 ```
-
-</Sandpack>
 
 In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.

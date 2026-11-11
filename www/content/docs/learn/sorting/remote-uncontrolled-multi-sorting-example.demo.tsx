@@ -62,7 +62,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
 };
 
 const shouldReloadData = {
-  sortInfo: true,
+  sortInfo: true, // #highlight the data function sorts on the server
 };
 export default function RemoteUncontrolledMultiSortingExample() {
   return (

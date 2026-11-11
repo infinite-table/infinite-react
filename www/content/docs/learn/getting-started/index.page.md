@@ -17,19 +17,14 @@ npm i @infinite-table/infinite-react
 
 ## Meet the Code
 
-<Snippet>
+<DemoDescription>
 
-<Description>
+This is an example to get you started with Infinite Table with minimal setup. Click **edit** to change the code and see the grid update.
 
-This is an example to get you started with Infinite Table with minimal setup.
-</Description>
+</DemoDescription>
 
-```ts file="meet-the-code.page.tsx"
-
+```tsx file="meet-the-code.demo.tsx"
 ```
-
-</Snippet>
-
 
 <Note>
 
@@ -110,8 +105,6 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 ```ts live title="Invalid License Demo" files="invalid-license.page.tsx,data.tsx"
 ```
-
-
 
 <HeroCards>
 <YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">

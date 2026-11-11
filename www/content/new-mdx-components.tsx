@@ -53,6 +53,14 @@ import {
   RowDetailApiLink,
 } from '../src/components/MDX/Prop';
 import { DocsLink } from '../src/components/DocsLink';
+import { createDemoComponents } from '@thedatagrid/docs-kit/react';
+import {
+  DOCS_CODE_THEMES,
+  DOCS_CONTENT_DIR,
+  DOCS_DEMO_ANCHOR_PREFIX,
+  DOCS_DEMO_HEIGHTS,
+  DOCS_DEMO_MANIFEST,
+} from '../src/utils/docsKit';
 // import { Note } from '@www/components/Note';
 
 type IgnoreChildrenCmpProps = { className?: string; children: React.ReactNode };
@@ -76,6 +84,15 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
   };
 
   const components: MDXComponents = {
+    // <Demo>, <DemoTitle>, <DemoDescription> (see renderMarkdownPage)
+    ...createDemoComponents({
+      contentDir: DOCS_CONTENT_DIR,
+      folder: fileInfo.folderPath,
+      manifest: DOCS_DEMO_MANIFEST,
+      heights: DOCS_DEMO_HEIGHTS,
+      themes: DOCS_CODE_THEMES,
+      anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
+    }),
     HomepageHero,
     TerminalBlock,
     BenchmarkChart,

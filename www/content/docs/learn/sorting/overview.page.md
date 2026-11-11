@@ -38,19 +38,15 @@ The sort information object has the following shape (see <TypeLink name="DataSou
 - `id?` - `string` - if you don't sort by a field, you can specify an id of the column this sorting is bound to. Note that columns have a <PropLink name="columns.valueGetter">valueGetter</PropLink>, which will be used when doing local sorting and the column is not bound to an exact field.
 - `type?` - the sort type - one of the keys in <DataSourcePropLink name="sortTypes"/> - eg `"string"`, `"number"`, `"date"` - will be used for local sorting, to provide the proper comparison function.
 
-<Sandpack title="Local + uncontrolled single-sorting example">
-
-<Description>
+<DemoTitle>Local + uncontrolled single-sorting example</DemoTitle>
+<DemoDescription>
 
 This example shows initial sorting by `salary` in ascending order. Click the header of the `salary` column to sort in descending order and then click it again to unsort.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-uncontrolled-single-sorting-example-with-local-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -77,27 +73,18 @@ sortInfo = [];
 
 This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
 
-<Sandpack title="Local + uncontrolled multi-sorting example">
-
-<Description>
+<DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
+<DemoDescription>
 
 This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. Click the `salary` column to toggle the column sort to descending. Clicking it a second time will remove it from the sort altogether.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-uncontrolled-multi-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
 ```
 
-</Sandpack>
-
-<Sandpack title="Remote + uncontrolled multi-sorting example">
-
-```ts file="remote-uncontrolled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -169,21 +156,11 @@ You can use <DataSourcePropLink name="onDataParamsChange" />, which is called wh
 
 </Note>
 
-<Sandpack title="Local uncontrolled sorting + local data">
-
-```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" title="Local uncontrolled sorting + local data"
 ```
 
-</Sandpack>
-
-<Sandpack title="Local uncontrolled sorting + remote data">
-
-```ts file="local-uncontrolled-single-sorting-example-with-remote-data.page.tsx"
-
+```tsx file="local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" title="Local uncontrolled sorting + remote data"
 ```
-
-</Sandpack>
 
 ### Remote Sorting
 
@@ -195,13 +172,8 @@ For remote sorting, make sure you specify <DataSourcePropLink name="shouldReload
 
 </Note>
 
-<Sandpack title="Remote + controlled multi-sorting example">
-
-```ts file="remote-controlled-multi-sorting-example.page.tsx"
-
+```tsx file="remote-controlled-multi-sorting-example.demo.tsx" title="Remote + controlled multi-sorting example"
 ```
-
-</Sandpack>
 
 In the example above, remote and controlled sorting are combined - because `shouldReloadData.sortInfo=true` is specified, the `<DataSource />` will call the `data` function whenever sorting changes, and will pass in the `dataParams` object that contains the sort information.
 

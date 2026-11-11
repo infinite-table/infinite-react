@@ -1,0 +1,31 @@
+{
+  // Used by Next.js (next.config.js `typescript.tsconfigPath`): the site
+  // bundles the *built* library (../source/dist), since it can't compile the
+  // source's vanilla-extract styles. Type checking against the source lives in
+  // tsconfig.json.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "paths": {
+      "react": ["../node_modules/@types/react"],
+      "react-dom": ["../node_modules/react-dom"],
+      "@www/*": ["./src/*"],
+      "components/*": ["./src/components/*"],
+      "@infinite-table/infinite-react": ["../source/dist"],
+      "contentlayer/generated": ["./.contentlayer/generated"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "app.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts",
+    "-mdx-components.tsx",
+    ".contentlayer/generated",
+    "contentlayer.config.ts"
+  ],
+  "exclude": ["node_modules"]
+}

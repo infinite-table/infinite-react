@@ -14,6 +14,7 @@ type Person = {
   Age: number;
 };
 
+//#highlight columns are objects keyed by the column id
 const columns: InfiniteTablePropColumns<Person> = {
   id: {
     // specifies which field from the data source
@@ -50,8 +51,10 @@ const data: Person[] = [
 
 export default function App() {
   return (
+    // #highlight the DataSource holds the data, the InfiniteTable renders it
     <DataSource<Person> data={data} primaryKey="Id">
       <InfiniteTable<Person> debugId="meet-the-code" columns={columns} />
     </DataSource>
+    // #endhighlight
   );
 }

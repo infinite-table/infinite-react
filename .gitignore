@@ -117,6 +117,8 @@ tsconfig.tsbuildinfo
 .parcel-cache
 
 /www/src/.gen
+# prebuilt docs demos (npm run build-demos, docs-kit.config.mjs)
+/www/public/gen/demos
 
 examples/**/*.trace.json
 

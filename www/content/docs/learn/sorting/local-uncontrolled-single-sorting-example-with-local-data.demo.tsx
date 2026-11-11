@@ -40,10 +40,12 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 
+// #highlight the initial sort: age, ascending
 const defaultSortInfo: DataSourceSingleSortInfo<Developer> = {
   field: 'age',
   dir: 1,
 };
+// #endhighlight
 export default function LocalUncontrolledSingleSortingExample() {
   return (
     <>

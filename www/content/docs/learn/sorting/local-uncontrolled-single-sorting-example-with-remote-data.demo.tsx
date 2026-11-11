@@ -45,7 +45,7 @@ const columns: InfiniteTablePropColumns<Developer> = {
   currency: { field: 'currency' },
 };
 const shouldReloadData = {
-  sortInfo: false,
+  sortInfo: false, // #highlight sorted in the browser
 };
 export default function LocalUncontrolledSingleSortingExampleWithRemoteData() {
   return (
