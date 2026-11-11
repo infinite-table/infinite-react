@@ -17,6 +17,12 @@
 
 /docs/reference/selection-api /docs/reference/row-selection-api
 /docs/learn/tree-grid/tree-expand-and-collpapse-state /docs/learn/tree-grid/tree-expand-and-collapse-state
+# comparison pages moved out of the docs
+/docs/learn/compare /compare 301
+/docs/learn/compare/* /compare/:splat 301
+/comparison /compare 301
+/comparison/* /compare 301
+
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
 

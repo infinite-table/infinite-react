@@ -4,6 +4,8 @@ title: Performance with Many Rows and Columns
 
 This example showcases a DataGrid with **10.000 rows** and **12 columns**.
 
+For a reproducible benchmark with 300,000 and 1,000,000 rows, see [Infinite Table vs AG Grid, benchmarked](/benchmark).
+
 <HeroCards>
 <YouWillLearnCard title="Working with Data" path="/docs/learn/working-with-data">
 Find out more about how to work with data - both client-side and server-side.

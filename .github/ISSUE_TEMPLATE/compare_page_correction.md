@@ -1,6 +1,6 @@
 ---
 name: Compare page correction
-about: Suggest a correction to a comparison page (AG Grid, TanStack Table, or MUI X Data Grid)
+about: Suggest a correction to a comparison page or the benchmark (infinite-table.com/compare)
 title: 'Compare page correction: '
 labels: 'docs'
 assignees: ''
@@ -11,10 +11,7 @@ Thanks for helping us keep these pages accurate. We want the comparisons to be f
 
 **Which page?**
 
-- [ ] [/docs/learn/compare](https://infinite-table.com/docs/learn/compare)
-- [ ] [vs AG Grid](https://infinite-table.com/docs/learn/compare/ag-grid)
-- [ ] [vs TanStack Table](https://infinite-table.com/docs/learn/compare/tanstack-table)
-- [ ] [vs MUI X Data Grid](https://infinite-table.com/docs/learn/compare/mui-x-data-grid)
+The URL, for example https://infinite-table.com/compare/ag-grid, https://infinite-table.com/compare or https://infinite-table.com/benchmark
 
 **What should change?**
 
@@ -26,7 +23,7 @@ Link to the vendor docs, changelog, or pricing page that supports the correction
 
 **Suggested wording** (optional)
 
-If you already know how the cell, sentence, or table row should read, paste it here.
+If you already know how the cell, sentence, or table row should read, paste it here. The data lives in `www/src/compare/matrix.ts`.
 
 **Are you affiliated with the product being compared?**
 

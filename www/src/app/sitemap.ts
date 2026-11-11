@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 
+import { competitors } from '@www/compare/matrix';
 import { siteContent } from '@www/content';
 import { getBlogPosts } from '@www/utils/blogUtils';
 
@@ -31,8 +32,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   add('/pricing');
   add('/full-demo');
   add('/devtools');
+  add('/compare');
+  competitors.forEach((product) => {
+    add(`/compare/${product.id}`, { lastModified: new Date(product.lastVerified) });
+  });
+  add('/benchmark');
 
-  // all markdown-driven pages: docs, comparison, community, eula, privacy.
+  // all markdown-driven pages: docs, community, eula, privacy.
   // blog posts are added below (with dates and draft filtering), so skip them here.
   siteContent.routes.forEach((route) => {
     const path = normalizePath(route.routePath);
