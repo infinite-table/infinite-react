@@ -51,7 +51,7 @@ const columns: Record<string, any> = {
 
 const groupBy = [{ field: 'sector' }];
 const defaultSortInfo = [{ field: 'symbol', dir: 1 }];
-const defaultRowSelection = { selectedRows: [3, 4], defaultSelection: false };
+const defaultRowSelection = { selectedRows: [5, 10, 4], defaultSelection: false };
 const domProps = { style: { flex: 1, minHeight: 0 } };
 
 const mode = ref<'light' | 'dark'>(props.defaultMode ?? 'light');
