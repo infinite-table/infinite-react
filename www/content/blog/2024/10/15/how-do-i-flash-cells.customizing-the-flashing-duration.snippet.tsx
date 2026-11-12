@@ -1,8 +1,12 @@
 // Snippets shown on how-do-i-flash-cells.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
-import {
-  InfiniteTablePropColumns,
-} from '@infinite-table/infinite-react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+
+type Developer = {
+  id: number;
+  firstName: string;
+  salary: number;
+};
 
 //#region customizing-the-flashing-duration
 

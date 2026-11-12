@@ -1,22 +1,50 @@
 // Snippets shown on building-a-file-explorer-treegrid-in-react.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   TreeDataSource,
   TreeGrid,
+  type InfiniteTableColumn,
+  type InfiniteTablePropColumns,
+  type TreeSelectionValue,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region start-with-nested-data
-  // #highlight
-  <TreeDataSource nodesKey="children" primaryKey="id" data={dataSource}>
-    <TreeGrid columns={columns} />
-  // #endhighlight
-  </TreeDataSource>
-  //#endregion
+type FileSystemNode = {
+  id: string;
+  name: string;
+  type?: string;
+  children?: FileSystemNode[];
+};
+
+// The post writes its column objects without a type (`const columns = { name: { field: 'name' } }`),
+// so their `field` is a `string`. They are checked, after the region, against
+// the columns of a row type that has any string as a key.
+type AnyRow = Record<string, unknown>;
+
+declare function FileIcon(): React.ReactElement;
+declare function FolderIcon(props: {
+  open: boolean;
+  onClick: () => void;
+}): React.ReactElement;
+
+export function NestedData(props: {
+  dataSource: FileSystemNode[];
+  columns: InfiniteTablePropColumns<FileSystemNode>;
+}) {
+  const { dataSource, columns } = props;
+  return (
+    //#region start-with-nested-data
+    // #highlight
+    <TreeDataSource nodesKey="children" primaryKey="id" data={dataSource}>
+      <TreeGrid columns={columns} />
+      {/* #endhighlight */}
+    </TreeDataSource>
+    //#endregion
+  );
 }
 
-{
-  //#region start-with-nested-data-2
+export function nestedData() {
+  //#region nested-data
   const dataSource = [
     {
       id: '1',
@@ -32,10 +60,12 @@ import {
     },
   ];
   //#endregion
+  const nodes: FileSystemNode[] = dataSource;
+  return nodes;
 }
 
-{
-  //#region start-with-nested-data-3
+export function treeIconColumn() {
+  //#region tree-icon-column
   const columns = {
     name: {
       field: 'name',
@@ -43,9 +73,11 @@ import {
     },
   };
   //#endregion
+  const checked: InfiniteTablePropColumns<AnyRow> = columns;
+  return checked;
 }
 
-{
+export function nodePaths() {
   //#region node-path-example
   const data = [
     {
@@ -76,9 +108,13 @@ import {
     }
   ];
   //#endregion
+  const nodes: FileSystemNode[] = data;
+  return nodes;
 }
 
-{
+export function ExpandState(props: { dataSource: FileSystemNode[] }) {
+  const { dataSource } = props;
+
   //#region restore-expand-and-collapse-state
   const defaultTreeExpandState = {
     defaultExpanded: true,
@@ -89,11 +125,12 @@ import {
     expandedPaths: [['3']],
   };
 
-  <TreeDataSource defaultTreeExpandState={defaultTreeExpandState} />;
+  <TreeDataSource primaryKey="id" data={dataSource} defaultTreeExpandState={defaultTreeExpandState} />;
   //#endregion
+  return null;
 }
 
-{
+export function treeSelection() {
   //#region add-tree-aware-selection
   const defaultTreeSelection = {
     defaultSelection: true, // #highlight
@@ -112,11 +149,14 @@ import {
     },
   };
   //#endregion
+  const checkedSelection: TreeSelectionValue = defaultTreeSelection;
+  const checkedColumns: InfiniteTablePropColumns<AnyRow> = columns;
+  return { checkedSelection, checkedColumns };
 }
 
-{
+export function customTreeIcon() {
   //#region rendering-a-custom-tree-icon
-  const renderTreeIcon = ({ rowInfo, toggleCurrentTreeNode }) => {
+  const renderTreeIcon: InfiniteTableColumn<FileSystemNode>['renderTreeIcon'] = ({ rowInfo, toggleCurrentTreeNode }) => {
     if (!rowInfo.isParentNode) {
       return <FileIcon />;
     }
@@ -126,6 +166,5 @@ import {
     );
   };
   //#endregion
+  return renderTreeIcon;
 }
-
-export {};

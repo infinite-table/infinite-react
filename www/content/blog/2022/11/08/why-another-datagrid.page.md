@@ -79,7 +79,7 @@ Infinite Table is getting this a step further and splitting the data loading and
 - the `<DataSource />` component is responsible for managing the data - fetching it, sorting, grouping, pivoting, filtering, etc and making it available via the React context to the UI component.
 - the `<InfiniteTable />` component is responsible only for rendering the data. This means you can even use the `<DataSource />` component with another React component and implement your own rendering and virtualization.
 
-```tsx file="why-another-datagrid.snippet.tsx" region="yui-datatable-2"
+```tsx file="why-another-datagrid.snippet.tsx" region="datasource-and-infinitetable"
 ```
 
 This level of separation allows us to iterate more rapidly on new features and also makes testing 🧪 easier.
@@ -94,7 +94,7 @@ The ExtJS 3 DataGrid brought excellent product execution in a few areas:
 - it came together with a rich set of components for building complex UIs - grids, trees, combo-boxes, form inputs, menus, dialogs, etc. Powerful layout components were available, which allowed developers to build complex app layouts by composing components together - and everything felt like it was part of the same story, which it was.
 - enthusiastic community - the forums were very active and the community was writing lots of good plugins.
 
-```js file="why-another-datagrid.snippet.tsx" region="extjs-3-datagrid-code-snippet" title="ExtJS 3 DataGrid code snippet"
+```js file="why-another-datagrid.extjs.snippet.tsx" region="extjs-3-datagrid-code-snippet" title="ExtJS 3 DataGrid code snippet"
 ```
 
 Building on the legacy of YUI 3, the ExtJS added virtualization to make the DataGrid perform well for large datasets - it really made the component fly - since there was no framework overhead, and ExtJS was working directly with the DOM, the scrolling experience was pretty smooth.

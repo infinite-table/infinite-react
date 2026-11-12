@@ -28,7 +28,7 @@ You can get access to the [DataSource API](/docs/reference/datasource-api) from 
 
 Or from `InfiniteTable.onReady`, where you receive both the grid API and the DataSource API:
 
-```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="the-datasource-api-owns-row-updates-2"
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="infinite-table-on-ready"
 ```
 
 ## Update one row by primary key
@@ -49,7 +49,7 @@ When several rows change together, use `dataSourceApi.updateDataArray`.
 
 The docs call out an important implementation detail: DataSource row mutations are batched by default. Multiple insert, update, or delete calls made in the same `requestAnimationFrame` resolve through the same promise and trigger one render pass.
 
-```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="update-many-rows-without-creating-render-noise-2"
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="batched-updates"
 ```
 
 That batching matters when updates are frequent. It lets your app react to a stream of changes while Infinite Table keeps the rendering work grouped.

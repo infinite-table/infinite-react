@@ -53,7 +53,7 @@ When using remote filtering, it's your responsability to send the DataSource <DP
 Whenever filters change, when remote filtering is configured, the <DPropLink name="data" /> function prop is called again, with an object that has the `filterValue` correctly set to the current filters (together with `sortInfo` and other data-related props like `groupBy`, etc).
 </Note>
 
-However, we can use the <DPropLink name="filterMode"/> to force client-side filtering:
+However, we can use <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue</DPropLink> to force client-side filtering:
 
 ```tsx file="filtering-data-with-infinite-table-for-react.snippet.tsx" region="local-and-remote-filtering"
 ```
@@ -64,7 +64,7 @@ We also specify the <DPropLink name="filterDelay">filterDelay=0</DPropLink> in o
 
 <Note title="Using local filtering">
 
-Even if your data is loaded from a remote source, using `filterMode="local"` will perform all filtering on the client-side - so you don't need to send the `filterValue` to the server in your `data` function.
+Even if your data is loaded from a remote source, using `shouldReloadData={{ filterValue: false }}` will perform all filtering on the client-side - so you don't need to send the `filterValue` to the server in your `data` function.
 
 </Note>
 

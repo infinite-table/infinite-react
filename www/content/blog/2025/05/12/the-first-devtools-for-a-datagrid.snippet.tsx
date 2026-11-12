@@ -5,29 +5,27 @@ import {
   InfiniteTable,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region intro
-  const columns = {
-    name: {
-      field: 'firstName',
-    },
-    lastName: {
-      field: 'lastName',
-    },
-    age: {
-      field: 'age',
-    },
-  }
-
-  const App = () => {
-    return <DataSource primaryKey={'id'} data={[...]}>
-      <InfiniteTable
-        debugId="simple" // #highlight
-        columns={columns}
-      />
-    </DataSource>
-  }
-  //#endregion
+//#region intro
+const columns = {
+  name: {
+    field: 'firstName',
+  },
+  lastName: {
+    field: 'lastName',
+  },
+  age: {
+    field: 'age',
+  },
 }
 
-export {};
+const App = () => {
+  return <DataSource primaryKey={'id'} data={[/* ... */]}>
+    <InfiniteTable
+      debugId="simple" // #highlight
+      columns={columns}
+    />
+  </DataSource>
+}
+//#endregion
+
+export { App };

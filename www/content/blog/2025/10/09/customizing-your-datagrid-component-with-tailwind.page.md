@@ -33,7 +33,7 @@ Besides the flexibility of nesting your DataGrid component anywhere in your app,
 
 Let's suppose you want to show the header after the body of the DataGrid or choose to insert something in between. That should be easy, right? **It is with Infinite!** - but try to do that with the other commercial DataGrids out there!
 
-```tsx file="customizing-structure.tailwind.demo.tsx"
+```tsx file="customizing-structure-tailwind.demo.tsx"
 ```
 
 As demoed above, the good part is that you can very easily add additional elements to your structure and have the grouping toolbar displayed on the side, vertically.
@@ -92,7 +92,7 @@ Also we applied `px-6` to change the horizontal padding.
 
 </DemoDescription>
 
-```tsx file="customizing-cells.tailwind.demo.tsx"
+```tsx file="customizing-cells-tailwind.demo.tsx"
 ```
 
 ## Advanced Tailwind configuration
@@ -107,6 +107,6 @@ In this example, we applied `bg-orange-900/70!` (notice the Tailwind important `
 
 </Note>
 
-```tsx file="advanced-tailwind-configuration.tailwind.demo.tsx" title="Advanced Tailwind configuration"
+```tsx file="advanced-configuration-tailwind.demo.tsx" title="Advanced Tailwind configuration"
 ```
 

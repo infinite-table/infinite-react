@@ -3,38 +3,54 @@
 import {
   DataSource,
   InfiniteTable,
+  type DataSourceProps,
+  type InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region applying-the-minimalist-theme-with-dark-mode
-  <body className="infinite-theme-mode--dark infinite-theme-name--minimalist">
-    <DataSource {...dataSouceProps}>
-      <InfiniteTable {...props} />
-    </DataSource>
-  </body>
-  //#endregion
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+};
+
+// the snippets spread these - the post is about the classNames around the component
+declare const dataSouceProps: DataSourceProps<Developer>;
+declare const props: InfiniteTableProps<Developer>;
+
+export function MinimalistThemeDarkMode() {
+  return (
+    //#region applying-the-minimalist-theme-with-dark-mode
+    <body className="infinite-theme-mode--dark infinite-theme-name--minimalist">
+      <DataSource {...dataSouceProps}>
+        <InfiniteTable {...props} />
+      </DataSource>
+    </body>
+    //#endregion
+  );
 }
 
-{
-  //#region applying-light-mode-via-container-classname
-  <div className="infinite-theme-mode--light">
-    <DataSource {...dataSouceProps}>
-      <InfiniteTable {...props} />
-    </DataSource>
-  </div>
-  //#endregion
-}
-
-{
-  //#region explicitly-applying-dark-theme-via-container
-  <body className="infinite-theme-mode--dark">
-    <div>
+export function LightModeViaContainer() {
+  return (
+    //#region applying-light-mode-via-container-classname
+    <div className="infinite-theme-mode--light">
       <DataSource {...dataSouceProps}>
         <InfiniteTable {...props} />
       </DataSource>
     </div>
-  </body>
-  //#endregion
+    //#endregion
+  );
 }
 
-export {};
+export function DarkModeViaContainer() {
+  return (
+    //#region explicitly-applying-dark-theme-via-container
+    <body className="infinite-theme-mode--dark">
+      <div>
+        <DataSource {...dataSouceProps}>
+          <InfiniteTable {...props} />
+        </DataSource>
+      </div>
+    </body>
+    //#endregion
+  );
+}

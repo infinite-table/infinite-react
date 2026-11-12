@@ -39,7 +39,7 @@ If the same property is set in more than one place, <PropLink name="pivotColumn"
 
 That applies to leaf columns and totals. When totals should stay unsortable, pass a function. The generated column includes `pivotTotalColumn`:
 
-```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="global-defaults-width-and-sorting-2"
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="pivot-column-function"
 ```
 
 The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation `field` — not the column id. A column defined as `stargazers: { field: 'stargazers_count', type: 'number' }` is enough for numeric sorting on the generated `stargazers_count:true` column.
@@ -64,7 +64,7 @@ Raw pivot keys rarely belong in a header. Inventory statuses (`in_stock`, `reser
 
 As a function, it receives the generated column, so you can vary the header per value. `column.pivotGroupKey` is the key at that pivot level:
 
-```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="per-pivot-field-headers-people-recognize-2"
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="pivot-by-column-function"
 ```
 
 <DemoDescription>
@@ -100,7 +100,7 @@ Pivoting is aggregations. Each reducer usually has a `field`. If `<InfiniteTable
 
 You do not re-declare number formatting for every generated `United States / yes` salary column. Inheritance looks up the original column by **field**, not by column id, so this also works:
 
-```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-the-columns-you-already-wrote-2"
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-by-field"
 ```
 
 Override the default with <DataSourcePropLink name="aggregationReducers.pivotColumn.inheritFromColumn" />:
@@ -109,7 +109,7 @@ Override the default with <DataSourcePropLink name="aggregationReducers.pivotCol
 - `false` — inherit from none
 - `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
 
-```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-the-columns-you-already-wrote-3"
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-column"
 ```
 
 `avgAge` still aggregates `age`, but the generated columns pick up the `preferredLanguage` column config, then apply `defaultWidth: 500` on top.

@@ -140,7 +140,7 @@ The `canDesign` pivot values are rewritten to Designer / Non-designer headers. T
 
 A warehouse dashboard might look like:
 
-```tsx file="building-pivoted-react-datagrids-with-generated-columns.snippet.tsx" region="rename-raw-values-into-business-labels-2"
+```tsx file="building-pivoted-react-datagrids-with-generated-columns.snippet.tsx" region="warehouse-dashboard"
 ```
 
 New warehouses in the dataset become new column groups without a frontend schema change.

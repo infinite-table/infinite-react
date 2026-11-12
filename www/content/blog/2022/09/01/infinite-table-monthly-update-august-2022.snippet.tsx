@@ -1,10 +1,12 @@
 // Snippets shown on infinite-table-monthly-update-august-2022.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   InfiniteTableColumn,
 } from '@infinite-table/infinite-react';
 
-{
+// `T` on the page is the type of the data items
+export function columnRenderingPipeline<T>() {
   //#region column-rendering-pipeline
   const column: InfiniteTableColumn<T> = {
     valueGetter: () => 'world',
@@ -20,12 +22,12 @@ import {
     }, // #highlight
   };
   //#endregion
+  return column;
 }
 
-{
+export function sortableGroupColumns() {
   //#region sortable-group-columns
   const sortInfo = [{ field: ['stack', 'age'], dir: 1, id: 'group-by' }];
   //#endregion
+  return sortInfo;
 }
-
-export {};

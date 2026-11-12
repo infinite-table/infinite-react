@@ -1,13 +1,51 @@
 // Snippets shown on why-another-datagrid.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import { useState } from 'react';
 import {
   DataSource,
   InfiniteTable,
   InfiniteTablePropColumns,
+  type InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 
-{
+// ---------------------------------------------------------------------------
+// The post quotes YUI 3 code, to compare the APIs. YUI is not installed, so this
+// declares just the parts of it the quoted code uses.
+// (The ExtJS 3 quote is in why-another-datagrid.extjs.snippet.tsx.)
+
+declare namespace Y {
+  type Plugin = { readonly NS: string };
+
+  class DataTable {
+    constructor(config: {
+      columns: (
+        | string
+        | { key: string; width?: string; formatter?: string; sortable?: boolean }
+      )[];
+      data?: object[];
+      sortable?: boolean;
+      summary?: string;
+    });
+    render(selector: string): this;
+    sort(fields: Record<string, 'asc' | 'desc'>): this;
+    plug(plugin: Plugin, config: object): this;
+  }
+
+  namespace DataSource {
+    class IO {
+      constructor(config: { source: string });
+      plug(plugin: Plugin, config: object): this;
+    }
+  }
+
+  namespace Plugin {
+    const DataSourceXMLSchema: Plugin;
+    const DataTableDataSource: Plugin;
+  }
+}
+
+export function yuiDataTableWithSorting(data: object[]) {
   //#region yui-datatable-with-sorting
   var table = new Y.DataTable({
     columns: [
@@ -27,7 +65,7 @@ import {
   //#endregion
 }
 
-{
+export function yuiDataTableWithDataSource() {
   //#region yui-datatable
   var dataSource = new Y.DataSource.IO({
     source: '/restaurants/fetch.php?',
@@ -51,86 +89,49 @@ import {
   //#endregion
 }
 
-{
-  //#region yui-datatable-2
-  <DataSource<DataEntity> primaryKey="id" data={...}>
-    {/* if you wanted to, you can replace
-     <InfiniteTable/> with your own custom component */}
+// ---------------------------------------------------------------------------
+// Infinite Table
 
-    <InfiniteTable<DataEntity> columns={...}>
-  </DataSource>
-  //#endregion
+type DataEntity = {
+  id: number;
+  firstName: string;
+};
+type DataType = {
+  id: number;
+  firstName: string;
+  address: string;
+  age: number;
+};
+
+export function DataSourceAndInfiniteTable(props: {
+  data: DataEntity[];
+  columns: InfiniteTablePropColumns<DataEntity>;
+}) {
+  const { data, columns } = props;
+  return (
+    //#region datasource-and-infinitetable
+    <DataSource<DataEntity> primaryKey="id" data={data}>
+      {/* if you wanted to, you can replace
+       <InfiniteTable/> with your own custom component */}
+
+      <InfiniteTable<DataEntity> columns={columns} />
+    </DataSource>
+    //#endregion
+  );
 }
 
-{
-  //#region extjs-3-datagrid-code-snippet
-  var grid = new Ext.grid.GridPanel({
-    // data fetching abstracted in a "Store" component
-    store: new Ext.data.Store({
-      // ...
-    }),
-    // columns abstracted in a ColumnModel
-    colModel: new Ext.grid.ColumnModel({
-      defaults: {
-        width: 120,
-        sortable: true,
-      },
-      columns: [
-        {
-          id: 'company',
-          header: 'Company',
-          width: 200,
-          sortable: true,
-          dataIndex: 'company',
-        },
-        {
-          header: 'Price',
-          renderer: Ext.util.Format.usMoney,
-          dataIndex: 'price',
-        },
-        { header: 'Change', dataIndex: 'change' },
-        { header: '% Change', dataIndex: 'pctChange' },
-        {
-          header: 'Last Updated',
-          width: 135,
-          dataIndex: 'lastChange',
-          xtype: 'datecolumn',
-          format: 'M d, Y',
-        },
-      ],
-    }),
-    viewConfig: {
-      forceFit: true,
-      // Return CSS class to apply to rows depending upon data values
-      getRowClass: function (record, index) {
-        var c = record.get('change');
-        if (c < 0) {
-          return 'price-fall';
-        } else if (c > 0) {
-          return 'price-rise';
-        }
-      },
-    },
-    sm: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-    // size need if not inside a layout
-    width: 600,
-    height: 300,
-  });
-  //#endregion
-}
-
-{
+export function declarativeColumnUpdates(data: DataType[]) {
   //#region fully-declarative-way-to-update-columns
   function getColumns() {
     return {
       firstName: {
         field: 'firstName',
-        width: 200,
+        defaultWidth: 200,
         columnGroup: 'personalInfo',
       },
       address: {
         field: 'address',
-        width: 200,
+        defaultWidth: 200,
         columnGroup: 'personalInfo',
       },
       age: {
@@ -157,41 +158,52 @@ import {
 
       setColumns(cols) // #highlight
       setColGroupForAddress(newColGroup)
-    }}
+    }
     const btn = <button onClick={toggle}> Toggle group for address </button>
 
     return <>
       {btn}
-      <DataSource<DataType> data={...} primaryKey="id">
+      <DataSource<DataType> data={data} primaryKey="id">
         <InfiniteTable columns={columns} columnGroups={columnGroups}/>
       </DataSource>
     </>
   }
   //#endregion
+  return App;
 }
 
-{
-  //#region group-column-as-an-object
-  <InfiniteTable
-    //...
-    groupColumn={{
-      header: 'Groups',
-    }}
-  />
-  //#endregion
+// The two `groupColumn` snippets show only that prop (`//...` stands for the others):
+// the library component with every prop optional, so the code stays as it was published.
+const AbbreviatedInfiniteTable = InfiniteTable as <T>(
+  props: Partial<InfiniteTableProps<T>>,
+) => React.JSX.Element;
+
+export function GroupColumnAsAnObject() {
+  const InfiniteTable = AbbreviatedInfiniteTable;
+  return (
+    //#region group-column-as-an-object
+    <InfiniteTable
+      //...
+      groupColumn={{
+        header: 'Groups',
+      }}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region group-column-as-a-function
-  <InfiniteTable
-    //...
-    groupColumn={() => {
-      // this allows you to affect all generated group columns in a single place
-      // especially useful when the generated columns are dynamic or generated via a pivot
-      return {...}
-    }}
-  />
-  //#endregion
+export function GroupColumnAsAFunction() {
+  const InfiniteTable = AbbreviatedInfiniteTable;
+  return (
+    //#region group-column-as-a-function
+    <InfiniteTable
+      //...
+      groupColumn={() => {
+        // this allows you to affect all generated group columns in a single place
+        // especially useful when the generated columns are dynamic or generated via a pivot
+        return {/* ... */}
+      }}
+    />
+    //#endregion
+  );
 }
-
-export {};

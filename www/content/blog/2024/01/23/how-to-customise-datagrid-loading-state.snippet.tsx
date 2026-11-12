@@ -3,14 +3,24 @@
 import {
   DataSource,
   InfiniteTable,
+  type InfiniteTablePropColumns,
+  type InfiniteTableProps,
 } from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: string;
+  firstName: string;
+};
+
+// the first snippet spreads the rest of the props
+declare const props: Partial<InfiniteTableProps<Developer>>;
+
+export function CustomLoadingText() {
   //#region customising-the-loading-text
-  const developers: Developer = [
+  const developers: Developer[] = [
     { id: '1', firstName: 'Bob' },
     { id: '2', firstName: 'Bill' },
-  ]
+  ];
 
   // make sure to add "loading" to the DataSource so you see the loading state
   <DataSource<Developer> loading data={developers} primaryKey="id">
@@ -30,7 +40,12 @@ import {
     />
   </DataSource>
   //#endregion
+  return null;
 }
+
+// the second snippet uses the rows and the columns of the first one
+declare const developers: Developer[];
+declare const columns: InfiniteTablePropColumns<Developer>;
 
 //#region customising-the-loadmask-component
 // make sure to add "loading" to the DataSource so you see the loading state
@@ -75,5 +90,3 @@ function LoadMask() { // #highlight
   );
 }
 //#endregion
-
-export {};

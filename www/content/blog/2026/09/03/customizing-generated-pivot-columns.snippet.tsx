@@ -1,31 +1,69 @@
 // Snippets shown on customizing-generated-pivot-columns.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   InfiniteTable,
+  type DataSourcePivotBy,
+  type DataSourcePropAggregationReducers,
+  type DataSourcePropPivotBy,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region global-defaults-width-and-sorting
-  <InfiniteTable
-    pivotColumn={{
-      defaultSortable: true,
-      defaultWidth: 180,
-    }}
-  />
-  //#endregion
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+  preferredLanguage: string;
+  canDesign: 'yes' | 'no';
+  license: string;
+  age: number;
+  salary: number;
+};
+
+declare const columns: InfiniteTablePropColumns<Developer>;
+
+// Some snippets write their config without a type (`const pivotBy = [{ field: 'country' }]`),
+// so their `field` is a `string`. Those are checked, after the region, against
+// the library types for a row type that has any string as a key.
+type AnyRow = Record<string, unknown>;
+
+// the "average" reducer the post refers to, without showing it
+const avgReducer = {
+  initialValue: 0,
+  reducer: (acc: number, sum: number) => acc + sum,
+  done: (sum: number, arr: unknown[]) => {
+    return Math.floor(arr.length ? sum / arr.length : 0);
+  },
+};
+
+export function PivotColumnObject() {
+  return (
+    //#region global-defaults-width-and-sorting
+    <InfiniteTable
+      columns={columns}
+      pivotColumn={{
+        defaultSortable: true,
+        defaultWidth: 180,
+      }}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region global-defaults-width-and-sorting-2
-  <InfiniteTable
-    pivotColumn={({ column }) => ({
-      defaultSortable: !column.pivotTotalColumn,
-    })}
-  />
-  //#endregion
+export function PivotColumnFunction() {
+  return (
+    //#region pivot-column-function
+    <InfiniteTable
+      columns={columns}
+      pivotColumn={({ column }) => ({
+        defaultSortable: !column.pivotTotalColumn,
+      })}
+    />
+    //#endregion
+  );
 }
 
-{
+export function pivotByColumnObject() {
   //#region per-pivot-field-headers-people-recognize
   const pivotBy = [
     { field: 'country' },
@@ -37,11 +75,13 @@ import {
     },
   ];
   //#endregion
+  const checked: DataSourcePropPivotBy<AnyRow> = pivotBy;
+  return checked;
 }
 
-{
-  //#region per-pivot-field-headers-people-recognize-2
-  const pivotBy = [
+export function pivotByColumnFunction() {
+  //#region pivot-by-column-function
+  const pivotBy: DataSourcePivotBy<Developer>[] = [
     { field: 'country' },
     {
       field: 'canDesign',
@@ -51,11 +91,12 @@ import {
     },
   ];
   //#endregion
+  return pivotBy;
 }
 
-{
+export function aggregationPivotColumn() {
   //#region per-aggregation-configure-one-measure
-  const aggregationReducers = {
+  const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
     salary: {
       field: 'salary',
       initialValue: 0,
@@ -72,9 +113,10 @@ import {
     },
   };
   //#endregion
+  return aggregationReducers;
 }
 
-{
+export function inheritFromColumns() {
   //#region inherit-from-the-columns-you-already-wrote
   const columns = {
     salary: {
@@ -91,10 +133,14 @@ import {
     },
   };
   //#endregion
+  const checkedColumns: InfiniteTablePropColumns<AnyRow> = columns;
+  const checkedReducers: DataSourcePropAggregationReducers<AnyRow> =
+    aggregationReducers;
+  return { checkedColumns, checkedReducers };
 }
 
-{
-  //#region inherit-from-the-columns-you-already-wrote-2
+export function inheritByField() {
+  //#region inherit-by-field
   const columns = {
     stargazers: {
       field: 'stargazers_count',
@@ -102,10 +148,12 @@ import {
     },
   };
   //#endregion
+  const checked: InfiniteTablePropColumns<AnyRow> = columns;
+  return checked;
 }
 
-{
-  //#region inherit-from-the-columns-you-already-wrote-3
+export function inheritFromColumn() {
+  //#region inherit-from-column
   const aggregationReducers = {
     avgSalary: { field: 'salary', ...avgReducer },
     avgAge: {
@@ -118,11 +166,14 @@ import {
     },
   };
   //#endregion
+  const checked: DataSourcePropAggregationReducers<AnyRow> =
+    aggregationReducers;
+  return checked;
 }
 
-{
+export function CombiningLayers() {
   //#region combining-layers
-  const pivotBy = [
+  const pivotBy: DataSourcePivotBy<Developer>[] = [
     { field: 'country' },
     {
       field: 'canDesign',
@@ -132,7 +183,7 @@ import {
     },
   ];
 
-  const aggregationReducers = {
+  const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
     salary: {
       field: 'salary',
       reducer: 'avg',
@@ -151,11 +202,11 @@ import {
   };
 
   <InfiniteTable
+    columns={columns}
     pivotColumn={{
       defaultWidth: 140,
     }}
   />
   //#endregion
+  return { pivotBy, aggregationReducers };
 }
-
-export {};

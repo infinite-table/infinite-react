@@ -19,12 +19,12 @@ For tree data, use `<TreeDataSource />` instead of `<DataSource />`, and `<TreeG
 
 The `nodesKey` prop tells the data source where child nodes live on each data item. In the docs, the examples use a file-system shape where folders contain a `children` array and files are leaf nodes.
 
-```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="start-with-nested-data-2"
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="nested-data"
 ```
 
 Once the data has a nested structure, choose the column that should render the expand/collapse affordance by setting <PropLink name="columns.renderTreeIcon" />.
 
-```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="start-with-nested-data-3"
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="tree-icon-column"
 ```
 
 With this setup, you're already good to go and have an interactive tree grid.
