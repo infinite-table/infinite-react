@@ -5,15 +5,7 @@ description: Docs and examples on applying multiple sorting to the DataSource fo
 
 By default, if you don't specify otherwise, the DataGrid is configured with single sorting. For multiple sorting, you need to specify the sorting information as an array:
 
-```tsx
-<DataSource<Developer>
-  primaryKey="id"
-  data={data}
-  // we want an array here
-  defaultSortInfo={[]}
->
-  <InfiniteTable<Developer> columns={columns} />
-</DataSource>
+```tsx file="single-sorting.snippet.tsx" region="multiple-sorting-default"
 ```
 
 <Note>
@@ -22,9 +14,8 @@ An empty array means no sorting. However, it does specify that sorting is config
 
 </Note>
 
-<Sandpack title="Configuring multiple sorting with uncontrolled behavior">
-
-<Description>
+<DemoTitle>Configuring multiple sorting with uncontrolled behavior</DemoTitle>
+<DemoDescription>
 
 Try clicking the `age` column and then the `firstName` column.
 
@@ -33,13 +24,10 @@ In order for the sorting to be additive, even if the behavior is `replace`, use 
 
 If the multi-sort behavior is `append`, clicking the second column will add it to the sort.
 
-</Description>
+</DemoDescription>
 
-```ts file="local-multi-sorting-example-defaults-with-local-data.page.tsx"
-
+```tsx file="local-multi-sorting-example-defaults-with-local-data.demo.tsx"
 ```
-
-</Sandpack>
 
 ## User interaction and multi sort behavior
 
@@ -86,15 +74,7 @@ In order to add a new column to the sort, the user needs to hold the `Ctrl`/`Cmd
 
 As noted above, for multiple sorting, you need to specify an array of objects - see <TypeLink name="DataSourceSingleSortInfo" /> for more on the shape of those objects:
 
-```ts
-// sort by age in descending order, then by `firstName` in ascending order
-sortInfo = [
-  { field: 'age', type: 'number', dir: -1 },
-  { field: 'firstName', dir: 1 },
-];
-
-// no sorting
-sortInfo = [];
+```ts file="single-sorting.snippet.tsx" region="multiple"
 ```
 
 The simplest way to use multiple sorting is via the uncontrolled <DPropLink name="defaultSortInfo" /> prop. Specify an empty array as the default value, and multiple sorting will be enabled.

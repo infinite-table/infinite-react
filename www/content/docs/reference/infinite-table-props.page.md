@@ -1918,13 +1918,8 @@ For local sorting, the sort order for a column is determined by the specified `s
 
 The value of this prop (as specified, or as computed by the steps described above) should be a key from the <DataSourcePropLink name="sortTypes" /> object.
 
-<Sandpack  title="Custom sort by color - magenta will come first">
-
-```ts file="./datasource-props/sortTypes-example.page.tsx"
-
+```tsx file="datasource-props/sortTypes-example.demo.tsx" title="Custom sort by color - magenta will come first"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -2988,8 +2983,7 @@ When `InfiniteTable` is configured with multiple sorting there are two supported
 - `append` - when this behavior is used, clicking a column header adds that column to the alredy existing sort. If the column is already sorted, the sort direction is reversed. In order to remove a column from the sort, the user needs to click the column header in order to toggle sorting from ascending to descending and then to no sorting.
 - `replace` - the default behavior - a user clicking a column header removes any existing sorting and sets that column as sorted. In order to add a new column to the sort, the user needs to hold the `Ctrl/Cmd` key while clicking the column header.
 
-<Sandpack>
-<Description>
+<DemoDescription>
 
 Try clicking the `age` column and then the `firstName` column.
 
@@ -2998,13 +2992,10 @@ In order for the sorting to be additive, even if the behavior is `replace`, use 
 
 If the multi-sort behavior is `append`, clicking the second column will add it to the sort.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/sorting/local-multi-sorting-example-defaults-with-local-data.page.tsx"
-
+```tsx file="/docs/learn/sorting/local-multi-sorting-example-defaults-with-local-data.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 

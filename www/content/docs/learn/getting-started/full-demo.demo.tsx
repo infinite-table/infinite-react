@@ -1,4 +1,3 @@
-'use client';
 import {
   InfiniteTable,
   DataSource,
@@ -31,12 +30,6 @@ type Developer = {
   salary: number;
   age: number;
 };
-
-const showLogo =
-  typeof window === 'undefined'
-    ? true
-    : window.location.host.startsWith('localhost:') ||
-      window.location.host.startsWith('infinite-table.com');
 
 const avgReducer = {
   initialValue: 0,
@@ -293,83 +286,41 @@ export default function App() {
     [],
   );
 
-  const Link = ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => {
-    return (
-      <a
-        href={href}
-        style={{
-          textDecoration: 'underline',
-          color: '#3bff7f',
-          padding: 20,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        {children}
-      </a>
-    );
-  };
   return (
-    <>
-      {showLogo ? (
-        <div style={{ display: 'flex' }}>
-          <Link href="https://infinite-table.com">
-            <img
-              src="https://infinite-table.com/logo-infinite.svg"
-              width={50}
-              title="Infinite Logo"
-              style={{ marginRight: 20 }}
-            />
-            Go Back Home
-          </Link>
+    <DataSource<Developer>
+      data={dataSource}
+      primaryKey="id"
+      defaultFilterValue={defaultFilterValue}
+      useGroupKeysForMultiRowSelection
+      defaultRowSelection={defaultRowSelection}
+      defaultSortInfo={{
+        dir: -1,
+        field: 'country',
+      }}
+      onDataArrayChange={(data) => {
+        const min = Math.min(...data.map((data) => data.salary ?? 0));
+        const max = Math.max(...data.map((data) => data.salary ?? 0));
 
-          <Link href="/docs/learn/getting-started#built-for-react-from-the-ground-up">
-            View source
-          </Link>
-        </div>
-      ) : null}
-      <DataSource<Developer>
-        data={dataSource}
-        primaryKey="id"
-        defaultFilterValue={defaultFilterValue}
-        useGroupKeysForMultiRowSelection
-        defaultRowSelection={defaultRowSelection}
-        defaultSortInfo={{
-          dir: -1,
-          field: 'country',
+        setMinMax({ min, max });
+      }}
+      defaultGroupRowsState={defaultGroupRowsState}
+      aggregationReducers={aggregationReducers}
+      groupBy={groupBy}
+    >
+      <InfiniteTable<Developer>
+        debugId="full-demo"
+        groupRenderStrategy="single-column"
+        defaultColumnPinning={{
+          'group-by': true,
         }}
-        onDataArrayChange={(data) => {
-          const min = Math.min(...data.map((data) => data.salary ?? 0));
-          const max = Math.max(...data.map((data) => data.salary ?? 0));
-
-          setMinMax({ min, max });
-        }}
-        defaultGroupRowsState={defaultGroupRowsState}
-        aggregationReducers={aggregationReducers}
-        groupBy={groupBy}
-      >
-        <InfiniteTable<Developer>
-          debugId="full-demo"
-          groupRenderStrategy="single-column"
-          defaultColumnPinning={{
-            'group-by': true,
-          }}
-          domProps={domProps}
-          defaultActiveRowIndex={0}
-          groupColumn={groupColumn}
-          licenseKey={process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY}
-          columns={columns}
-          columnTypes={columnTypes}
-          columnDefaultWidth={150}
-        />
-      </DataSource>
-    </>
+        domProps={domProps}
+        defaultActiveRowIndex={0}
+        groupColumn={groupColumn}
+        columns={columns}
+        columnTypes={columnTypes}
+        columnDefaultWidth={150}
+      />
+    </DataSource>
   );
 }
 

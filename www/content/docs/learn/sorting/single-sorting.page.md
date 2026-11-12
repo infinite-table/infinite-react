@@ -196,7 +196,7 @@ Sorting works in combination with the <PropLink name="sortTypes" /> property, wh
 ```ts file="single-sorting.snippet.tsx" region="default-sort-types"
 ```
 
-Those are the two sort types supported by default.
+Those are the three sort types supported by default.
 
 <Note>
 
@@ -211,13 +211,8 @@ To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a colu
 
 </Note>
 
-<Sandpack  title="Custom sort by color - magenta will come first">
-
-```ts file="$DOCS/reference/datasource-props/sortTypes-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/sortTypes-example.demo.tsx" title="Custom sort by color - magenta will come first"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -257,10 +252,5 @@ A <DPropLink name="sortFunction" /> makes the sorting happen in the browser. It 
 For tree data, see [`multisort` and `multisortNested`](/docs/reference/datasource-props#sortFunction).
 </Note>
 
-<Sandpack  title="Using a custom sortFunction">
-
-```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.demo.tsx" title="Using a custom sortFunction"
 ```
-
-</Sandpack>

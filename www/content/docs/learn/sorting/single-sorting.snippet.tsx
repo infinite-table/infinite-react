@@ -70,10 +70,26 @@ export function UncontrolledSorting() {
   return null;
 }
 
+export function MultipleSortingByDefault() {
+  return (
+    //#region multiple-sorting-default
+    <DataSource<Developer>
+      primaryKey="id"
+      data={data}
+      // we want an array here
+      defaultSortInfo={[]}
+    >
+      <InfiniteTable<Developer> columns={columns} />
+    </DataSource>
+    //#endregion
+  );
+}
+
 //#region default-sort-types
 const sortTypes: DataSourcePropSortTypes = {
   string: (a, b) => a.localeCompare(b),
   number: (a, b) => a - b,
+  date: (a, b) => a - b,
 };
 //#endregion
 

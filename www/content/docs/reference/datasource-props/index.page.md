@@ -1769,13 +1769,8 @@ If you want to implement your own custom sort function, the `multisort` fn is a 
 
 </Note>
 
-<Sandpack  title="Using a custom sortFunction">
-
-```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.demo.tsx" title="Using a custom sortFunction"
 ```
-
-</Sandpack>
 
 #### Flat data vs tree data: `multisort` and `multisortNested`
 
@@ -1907,13 +1902,8 @@ When a column does not explicitly specify the <PropLink name="columns.sortType">
 
 You can add new sort types to the DataSource and InfiniteTable components by specifying this property - the object will be merged into the default sort types.
 
-<Sandpack  title="Custom sort by color - magenta will come first">
-
-```ts file="./sortTypes-example.page.tsx"
-
+```tsx file="sortTypes-example.demo.tsx" title="Custom sort by color - magenta will come first"
 ```
-
-</Sandpack>
 
 <Note>
 

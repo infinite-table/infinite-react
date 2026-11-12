@@ -10,32 +10,14 @@ The 2 main components that you can need to use and import are:
 - `InfiniteTable`
 - `DataSource`
 
-```tsx title="Importing InfiniteTable and DataSource components"
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.snippet.tsx" region="importing-infinitetable-and-datasource" title="Importing InfiniteTable and DataSource components"
 ```
 
 <Note>
 
 In our TypeScript typings, those components are exported as generic components, so they need to be bound to the type of the data they are rendering.
 
-```tsx
-type Developer = {
-  id: number;
-
-  firstName: string;
-  lastName: string;
-
-  currency: string;
-  salary: number;
-}
-
-const App = () => {
-  return <DataSource<Developer> data={data} primaryKey="id">
-    <InfiniteTable<Developer>
-      columns={{...}}
-    />
-  </DataSource>
-}
+```tsx file="typescript-types.snippet.tsx" region="generic-components"
 ```
 
 Throughout the documentation, we will use the `DATA_TYPE` placeholder to refer to the type of the data that the `InfiniteTable` and `DataSource` components are bound to.
@@ -50,13 +32,7 @@ You can still use `InfiniteTable` in plain JavaScript, but you won't get all the
 
 Both `InfiniteTable` and `DataSource` components have types provided for most of the props they support. Generally the naming pattern is `<COMPONENT_NAME>Prop<PROP_NAME>`, so here are a few examples to clarify the rule:
 
-```ts
-import type {
-  InfiniteTablePropColumns,
-  // corresponding to the `columns` prop
-  DataSourcePropGroupBy,
-  // corresponding to the `groupBy` prop
-} from '@infinite-table/infinite-react';
+```ts file="typescript-types.snippet.tsx" region="prop-types"
 ```
 
 ## `DataSource` Types
@@ -65,14 +41,12 @@ Here are a few examples for types for the `DataSource` component:
 
 - `DataSourcePropGroupBy<DATA_TYPE>` - the type for <DPropLink name="groupBy">DataSource.groupBy</DPropLink>
 
-```tsx
-import type { DataSourcePropGroupBy } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.group-by-type.snippet.tsx" region="group-by-type"
 ```
 
 - `DataSourcePropAggregationReducers<DATA_TYPE>` - the type for <DPropLink name="aggregationReducers">DataSource.aggregationReducers</DPropLink>
 
-```tsx
-import type { DataSourcePropAggregationReducers } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.snippet.tsx" region="aggregation-reducers-type"
 ```
 
 <Note>
@@ -93,20 +67,17 @@ Below you can find a few examples for types for the `InfiniteTable` component:
 
 - `InfiniteTablePropColumns<DATA_TYPE>` - the type for <PropLink name="columns">InfiniteTable.columns</PropLink>
 
-```tsx
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.columns-type.snippet.tsx" region="columns-type"
 ```
 
 - `InfiniteTablePropRowStyle<DATA_TYPE>` - the type for <PropLink name="rowStyle">InfiniteTable.rowStyle</PropLink>
 
-```tsx
-import type { InfiniteTablePropRowStyle } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.snippet.tsx" region="row-style-type"
 ```
 
 - `InfiniteTablePropColumnGroups<DATA_TYPE>` - the type for <PropLink name="columnGroups">InfiniteTable.columnGroups</PropLink>
 
-```tsx
-import type { InfiniteTablePropColumnGroups } from '@infinite-table/infinite-react';
+```tsx file="typescript-types.snippet.tsx" region="column-groups-type"
 ```
 
 <Note>
