@@ -76,7 +76,7 @@ html[data-no-bar] .proto-bar {
 .proto-bar button {
   all: unset;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 6px 9px;
   border-radius: 999px;
   color: #aab0bb;
 }
@@ -88,6 +88,29 @@ html[data-no-bar] .proto-bar {
 .proto-bar [aria-pressed='true'] {
   background: #fff;
   color: #111;
+}
+.proto-bar__select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 4px;
+  color: #7d8490;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.proto-bar__select select {
+  appearance: auto;
+  background: rgb(255 255 255 / 0.07);
+  color: #e8eaee;
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
 }
 .proto-bar__label {
   padding-left: 8px;

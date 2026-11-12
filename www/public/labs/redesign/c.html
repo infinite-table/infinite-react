@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Infinite Table redesign · Direction C · Paper</title>
-    <script src="./boot.js?v=2"></script>
-    <link rel="stylesheet" href="./shared.css?v=2" />
+    <script src="./boot.js?v=3"></script>
+    <link rel="stylesheet" href="./shared.css?v=3" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
     <style>
       /* ------------------------------------------------------------------
@@ -60,8 +60,14 @@
 
         --radius: 10px;
         --radius-sm: 8px;
-        --serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype',
-          Georgia, serif;
+        /* the display face: <html data-type> picks it (the prototype bar's
+           Type menu); --ds scales the sizes, which were set for the narrow
+           Instrument Serif, --dlh loosens the leading, --dw is the weight */
+        --serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia,
+          serif;
+        --ds: 0.8;
+        --dlh: 0.07;
+        --dw: 380;
         --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
           sans-serif;
         --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -199,7 +205,7 @@
       }
       .serif {
         font-family: var(--serif);
-        font-weight: 400;
+        font-weight: var(--dw);
       }
       em {
         font-style: italic;
@@ -247,8 +253,9 @@
       }
       .brand-name {
         font-family: var(--serif);
-        font-size: 23px;
-        line-height: 1;
+        font-weight: var(--dw);
+        font-size: calc(23px * var(--ds));
+        line-height: calc(1 + var(--dlh));
         letter-spacing: -0.005em;
         white-space: nowrap;
       }
@@ -472,9 +479,9 @@
       .display {
         margin-top: 26px;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(50px, 7.7vw, 112px);
-        line-height: 0.94;
+        font-weight: var(--dw);
+        font-size: calc(clamp(50px, 7.7vw, 112px) * var(--ds));
+        line-height: calc(0.94 + var(--dlh));
         letter-spacing: -0.022em;
         color: var(--ink);
       }
@@ -490,8 +497,9 @@
       }
       .standfirst {
         font-family: var(--serif);
-        font-size: 30px;
-        line-height: 1.18;
+        font-weight: var(--dw);
+        font-size: calc(30px * var(--ds));
+        line-height: calc(1.18 + var(--dlh));
         color: var(--ink);
         letter-spacing: -0.005em;
       }
@@ -542,8 +550,9 @@
       }
       figcaption .fig-no {
         font-family: var(--serif);
+        font-weight: var(--dw);
         font-style: italic;
-        font-size: 17px;
+        font-size: calc(17px * var(--ds));
         color: var(--ink);
         margin-right: 6px;
       }
@@ -636,9 +645,9 @@
       .sec-head h2,
       .h2 {
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(38px, 4.6vw, 66px);
-        line-height: 1;
+        font-weight: var(--dw);
+        font-size: calc(clamp(38px, 4.6vw, 66px) * var(--ds));
+        line-height: calc(1 + var(--dlh));
         letter-spacing: -0.018em;
         color: var(--ink);
       }
@@ -680,8 +689,9 @@
       .stat-num {
         margin-top: 10px;
         font-family: var(--serif);
-        font-size: clamp(72px, 7.4vw, 104px);
-        line-height: 0.95;
+        font-weight: var(--dw);
+        font-size: calc(clamp(72px, 7.4vw, 104px) * var(--ds));
+        line-height: calc(0.95 + var(--dlh));
         letter-spacing: -0.03em;
         color: var(--ink);
         white-space: nowrap;
@@ -743,9 +753,9 @@
       .stat-note b {
         display: block;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 34px;
-        line-height: 1.05;
+        font-weight: var(--dw);
+        font-size: calc(34px * var(--ds));
+        line-height: calc(1.05 + var(--dlh));
         color: var(--ink);
         margin-bottom: 6px;
       }
@@ -987,9 +997,9 @@
       }
       .toc-list h3 {
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 30px;
-        line-height: 1.1;
+        font-weight: var(--dw);
+        font-size: calc(30px * var(--ds));
+        line-height: calc(1.1 + var(--dlh));
         letter-spacing: -0.01em;
         color: var(--ink);
       }
@@ -1036,9 +1046,10 @@
       .principle p {
         margin-top: 16px;
         font-family: var(--serif);
+        font-weight: var(--dw);
         font-style: italic;
-        font-size: 25px;
-        line-height: 1.2;
+        font-size: calc(25px * var(--ds));
+        line-height: calc(1.2 + var(--dlh));
         color: var(--ink);
         letter-spacing: -0.005em;
       }
@@ -1070,9 +1081,9 @@
       }
       .vs-list strong {
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 32px;
-        line-height: 1.1;
+        font-weight: var(--dw);
+        font-size: calc(32px * var(--ds));
+        line-height: calc(1.1 + var(--dlh));
         letter-spacing: -0.01em;
         color: var(--ink);
         transition: color 0.15s ease;
@@ -1120,9 +1131,9 @@
       .edition h3 {
         margin-top: 18px;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(34px, 3.6vw, 50px);
-        line-height: 1.04;
+        font-weight: var(--dw);
+        font-size: calc(clamp(34px, 3.6vw, 50px) * var(--ds));
+        line-height: calc(1.04 + var(--dlh));
         letter-spacing: -0.015em;
         color: var(--ink);
       }
@@ -1163,9 +1174,10 @@
       .footer-brand p {
         margin-top: 18px;
         font-family: var(--serif);
+        font-weight: var(--dw);
         font-style: italic;
-        font-size: 21px;
-        line-height: 1.25;
+        font-size: calc(21px * var(--ds));
+        line-height: calc(1.25 + var(--dlh));
         color: var(--muted);
       }
       .footer-col h4 {
@@ -1305,9 +1317,9 @@
       .prose h1 {
         margin-top: 26px;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 64px;
-        line-height: 1;
+        font-weight: var(--dw);
+        font-size: calc(64px * var(--ds));
+        line-height: calc(1 + var(--dlh));
         letter-spacing: -0.02em;
         color: var(--ink);
       }
@@ -1358,9 +1370,9 @@
         margin-top: 72px;
         padding-top: 0;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 38px;
-        line-height: 1.08;
+        font-weight: var(--dw);
+        font-size: calc(38px * var(--ds));
+        line-height: calc(1.08 + var(--dlh));
         letter-spacing: -0.012em;
         color: var(--ink);
       }
@@ -1516,9 +1528,9 @@
         display: block;
         margin-top: 8px;
         font-family: var(--serif);
-        font-weight: 400;
-        font-size: 30px;
-        line-height: 1.1;
+        font-weight: var(--dw);
+        font-size: calc(30px * var(--ds));
+        line-height: calc(1.1 + var(--dlh));
         color: var(--ink);
         transition: color 0.15s ease;
       }
@@ -1904,7 +1916,45 @@
           scroll-behavior: auto;
         }
       }
-    </style>
+    
+      html[data-type='newsreader'] {
+        --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Georgia,
+          serif;
+        --ds: 0.86;
+        --dlh: 0.06;
+        --dw: 400;
+      }
+      html[data-type='sans'] {
+        --serif: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+          sans-serif;
+        --ds: 0.72;
+        --dlh: 0.1;
+        --dw: 600;
+      }
+      html[data-type='sans'] em {
+        font-style: normal;
+        color: var(--muted, inherit);
+      }
+      html[data-type='instrument'] {
+        --serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype',
+          Georgia, serif;
+        --ds: 1;
+        --dlh: 0;
+        --dw: 400;
+      }
+      .type-name::after {
+        content: 'Fraunces';
+      }
+      html[data-type='newsreader'] .type-name::after {
+        content: 'Newsreader';
+      }
+      html[data-type='sans'] .type-name::after {
+        content: 'Inter';
+      }
+      html[data-type='instrument'] .type-name::after {
+        content: 'Instrument Serif';
+      }
+</style>
   </head>
   <body>
     <!-- inline icon sprite -->
@@ -2475,7 +2525,7 @@
         </div>
         <div class="footer-bottom">
           <span>© 2026 Infinite Table</span>
-          <span>Set in Instrument Serif, Inter and JetBrains Mono.</span>
+          <span>Set in <span class="type-name"></span>, Inter and JetBrains Mono.</span>
         </div>
       </div>
     </footer>
@@ -2506,6 +2556,6 @@
       </div>
     </dialog>
 
-    <script type="module" src="./shared.js?v=2"></script>
+    <script type="module" src="./shared.js?v=3"></script>
   </body>
 </html>

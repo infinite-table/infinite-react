@@ -3,6 +3,7 @@
  *
  *   [data-toggle-theme]            flips light/dark
  *   [data-set-accent="ember|ion"]  direction D's accent palette (<html data-accent>)
+ *   [data-set-type]                direction C's display face (<html data-type>)
  *   [data-goto-page="home|docs"]   switches the page shown
  *   [data-set-framework="react|vue"]  the React | Vue switcher seam
  *     ([data-fw="react|vue"] content follows it)
@@ -27,11 +28,20 @@ const DIRECTIONS = [
   { id: 'f', label: 'F · Breeze' },
 ];
 
+// direction C's display face
+const TYPES = [
+  { id: 'fraunces', label: 'Fraunces' },
+  { id: 'newsreader', label: 'Newsreader' },
+  { id: 'sans', label: 'Sans (Inter)' },
+  { id: 'instrument', label: 'Instrument Serif' },
+];
+
 function syncUrl() {
   const next = new URLSearchParams(location.search);
   next.set('page', root.dataset.page);
   next.set('theme', root.dataset.theme);
   if (root.dataset.direction === 'd') next.set('accent', root.dataset.accent);
+  if (root.dataset.direction === 'c') next.set('type', root.dataset.type);
   history.replaceState(null, '', `${location.pathname}?${next}${location.hash}`);
 }
 
@@ -51,6 +61,14 @@ function setAccent(accent) {
   } catch {}
   syncUrl();
   renderBar();
+}
+
+function setType(type) {
+  root.dataset.type = type;
+  try {
+    localStorage.setItem('it-redesign-type', type);
+  } catch {}
+  syncUrl();
 }
 
 function setPage(page) {
@@ -104,6 +122,16 @@ function renderBar() {
       <button data-set-accent="ember" aria-pressed="${root.dataset.accent !== 'ion'}">Ember</button>
       <button data-set-accent="ion" aria-pressed="${root.dataset.accent === 'ion'}">Ion</button>
     </span>`
+        : ''
+    }
+    ${
+      current === 'c'
+        ? `<label class="proto-bar__select">Type
+      <select data-set-type>${TYPES.map(
+        (t) =>
+          `<option value="${t.id}"${t.id === root.dataset.type ? ' selected' : ''}>${t.label}</option>`,
+      ).join('')}</select>
+    </label>`
         : ''
     }
     <a href="./index.html">All</a>`;
@@ -191,6 +219,10 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
     openSearch();
   }
+});
+document.addEventListener('change', (event) => {
+  const select = event.target.closest?.('[data-set-type]');
+  if (select) setType(select.value);
 });
 document.addEventListener('input', (event) => {
   const dialog = event.target.closest?.('dialog[data-search]');

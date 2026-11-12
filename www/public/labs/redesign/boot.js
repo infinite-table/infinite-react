@@ -3,6 +3,7 @@
  * the page to show, so nothing flashes.
  *   ?theme=light|dark   ?page=home|docs   ?bar=0 (hide the prototype bar)
  *   ?accent=ember|ion   (direction D only: its two accent palettes)
+ *   ?type=fraunces|newsreader|sans|instrument   (direction C only: its display face)
  */
 (function () {
   var el = document.documentElement;
@@ -29,5 +30,11 @@
     }
   } catch (e) {}
   el.setAttribute('data-accent', accent === 'ion' ? 'ion' : 'ember');
+  var TYPES = ['fraunces', 'newsreader', 'sans', 'instrument'];
+  var type = params.get('type');
+  try {
+    if (TYPES.indexOf(type) < 0) type = localStorage.getItem('it-redesign-type');
+  } catch (e) {}
+  el.setAttribute('data-type', TYPES.indexOf(type) < 0 ? 'fraunces' : type);
   if (params.get('bar') === '0') el.setAttribute('data-no-bar', '');
 })();
