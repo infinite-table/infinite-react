@@ -1,0 +1,24 @@
+/*
+ * The Tailwind setup of the `*.tailwind.demo.tsx` docs demos
+ * (docs-kit.bootstrap.ts hands it to @tailwindcss/browser).
+ */
+
+/* Infinite Table's colors as Tailwind theme colors: `bg-background`, `text-accent`, … */
+@theme {
+  --color-foreground: var(--infinite-cell-color);
+  --color-background: var(--infinite-background);
+  --color-accent: var(--infinite-accent-color);
+  --color-success: var(--infinite-success-color);
+  --color-error: var(--infinite-error-color);
+}
+
+/*
+ * Tailwind's layers are imported one by one, so the `infinite-table` layer can
+ * sit between them: after `base`, so the Tailwind resets don't affect the
+ * component, and before `components` and `utilities`, so Tailwind classes can
+ * override the component's styles. The order itself is
+ * `@layer theme, base, infinite-table, components, utilities;`.
+ */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);

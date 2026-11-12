@@ -27,5 +27,6 @@
     ".contentlayer/generated",
     "contentlayer.config.ts"
   ],
-  "exclude": ["node_modules"]
+  // the docs demos and snippets have their own project: content/tsconfig.json
+  "exclude": ["node_modules", "content/docs", "content/blog"]
 }
