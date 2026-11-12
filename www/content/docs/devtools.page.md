@@ -17,10 +17,7 @@ Then visit [our live demo page](/demo) and open your browser devtools - you shou
 To see an Infinite Table instance in the devtools, specify the <PropLink name="debugId" /> prop.
 
 
-```tsx {2}
-<InfiniteTable
-  debugId="unique id for devtools"
-/>
+```tsx file="devtools.snippet.tsx" region="intro"
 ```
 
 </Note>
@@ -28,27 +25,7 @@ To see an Infinite Table instance in the devtools, specify the <PropLink name="d
 Infinite Table is the first DataGrid with a Chrome DevTools extension. Starting with version `7.0.0` of Infinite, you can specify the `debugId` property on the `<InfiniteTable />` instance and it will be picked up by the devtools.
 
 
-```tsx {16}
-const columns = {
-  name: {
-    field: 'firstName',
-  },
-  lastName: {
-    field: 'lastName',
-  },
-  age: {
-    field: 'age',
-  },
-}
-
-const App = () => {
-  return <DataSource primaryKey={'id'} data={[...]}>
-    <InfiniteTable
-      debugId="simple"
-      columns={columns}
-    />
-  </DataSource>
-}
+```tsx file="devtools.snippet.tsx" region="intro-2"
 ```
 
 <Note>

@@ -5,8 +5,7 @@ description: TypeScript type definitions for Infinite Table
 
 These are the public type definitions for `InfiniteTable` and related components, that you can import with named imports from the `@infinite-table/infinite-react` package.
 
-```tsx title="Importing the type for rowInfo"
-import type { InfiniteTableRowInfo } from '@infinite-table/infinite-react';
+```tsx file="index.snippet.tsx" region="importing-the-type-for-rowinfo" title="Importing the type for rowInfo"
 ```
 
 <Note title="Naming convention ⚠️">
@@ -34,8 +33,7 @@ Available properties:
 
 > Represents the selection state of the tree nodes. See <DPropLink name="treeSelection" /> for more details.
 
-```ts
-import type { TreeSelectionValue } from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="treeselectionvalue"
 ```
 
 The selection value is an object with the following properties:
@@ -44,15 +42,7 @@ The selection value is an object with the following properties:
 - `selectedPaths?`: `NodePath[]` - the paths of the selected nodes. Mandatory if `defaultSelection` is `false`.
 - `deselectedPaths`: `NodePath[]` - the paths of the deselected nodes. Mandatory if `defaultSelection` is `true`.
 
-```tsx title="Example of tree selection value"
-const treeSelection: TreeSelectionValue = {
-  defaultSelection: false,
-  selectedPaths: [['1'], ['2', '20']],
-  deselectedPaths: [['1','10']],
-};
-// node ['1'] will be selected but indeterminate
-// since ['1','10'] is in the deselectedPaths
-// node ['2','20'] will be fully selected
+```tsx file="index.snippet.tsx" region="example-of-tree-selection-value" title="Example of tree selection value"
 ```
 
 </Prop>
@@ -61,8 +51,7 @@ const treeSelection: TreeSelectionValue = {
 
 > Represents the expand/collapse state of the tree nodes. See <DPropLink name="treeExpandState" /> for more details.
 
-```ts
-import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="treeexpandstatevalue"
 ```
 
 You can specify the expand/collapse state of the tree nodes in two ways:
@@ -75,19 +64,7 @@ When using node paths, the object should have the following properties:
 - `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
 - `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
-```tsx title="Example of treeExpandState with node paths"
-const treeExpandState = {
-  defaultExpanded: true,
-  collapsedPaths: [
-    ['1', '10'],
-    ['2', '20'],
-    ['5']
-  ],
-  expandedPaths: [
-    ['1', '4'],
-    ['5','nested node in 5'],
-  ],
-};
+```tsx file="index.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths"
 ```
 
 2. With node ids
@@ -99,12 +76,7 @@ When using node ids, the object should have the following properties:
 - `expandedIds`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
 
-```tsx title="Example of treeExpandState with node ids"
-const treeExpandState = {
-  defaultExpanded: true,
-  collapsedIds: ['1', '2', '5'],
-  expandedIds: ['10', '20', 'nested node in 5'],
-};
+```tsx file="index.snippet.tsx" region="example-of-treeexpandstate-with-node-ids" title="Example of treeExpandState with node ids"
 ```
 
 </Prop>
@@ -115,22 +87,10 @@ const treeExpandState = {
 
 This class can be instantiated and the value passed to the <PropLink name="rowDetailState" /> prop (or its uncontrolled variant, <PropLink name="defaultRowDetailState" />).
 
-```tsx title="Passing an instance of RowDetailState to the InfiniteTable"
-const rowDetailState = new RowDetailState({
-  collapsedRows: true,
-  expandedRows: [2, 3, 4],
-});
-
-<InfiniteTable<DATA_TYPE> rowDetailState={rowDetailState} />;
+```tsx file="index.snippet.tsx" region="passing-an-instance-of-rowdetailstate-to-the" title="Passing an instance of RowDetailState to the InfiniteTable"
 ```
 
-```tsx title="Passing an object literal to the InfiniteTable"
-<InfiniteTable<DATA_TYPE>
-  rowDetailState={{
-    collapsedRows: true,
-    expandedRows: [2, 3, 4],
-  }}
-/>
+```tsx file="index.snippet.tsx" region="passing-an-object-literal-to-the-infinitetable" title="Passing an object literal to the InfiniteTable"
 ```
 
 <Note>
@@ -149,27 +109,12 @@ The object literal has the following properties:
 
 You can create an instance using the object literal notation and you can get the object literal from the instance using the `getState` method:
 
-```tsx
-const rowDetailState = new RowDetailState({
-  collapsedRows: true,
-  expandedRows: [2, 3, 4],
-});
-const clone = new RowDetailState(rowDetailState);
-
-const state = rowDetailState.getState();
+```tsx file="index.snippet.tsx" region="rowdetailstate"
 ```
 
 You can mark rows as expanded/collapsed even after creating the instance:
 
-```tsx
-const rowDetailState = new RowDetailState({
-  collapsedRows: true,
-  expandedRows: [2, 3, 4],
-});
-rowDetailState.expandRowDetails(5);
-rowDetailState.collapseRowDetails(2);
-
-// now you can pass this instance back to the InfiniteTable component
+```tsx file="index.snippet.tsx" region="rowdetailstate-2"
 ```
 
 </Prop>
@@ -222,32 +167,15 @@ It gives you the following additional utility methods:
 To create an instance, pass a plain object that describes the <PropLink name="groupRowsState" />/<PropLink name="defaultGroupRowsState" /> value:
 
 
-```tsx
-const state = new GroupRowsState({
-  expandedRows: true,
-  collapsedRows: [
-    ['Europe']
-    ['Europe','France'],
-    ['Italy']
-  ]
-})
-
-console.log(state.getState())
-// will log the above object that was used 
-// as the sole argument for the constructor
-
+```tsx file="index.snippet.tsx" region="grouprowsstate"
 ```
 
 <Note>
 
 When you call those methods, be aware you're not updating the React state! So you'll have to clone the object, call the method on the clone and then update the React state - in the code below, notice the `onClick` code for the `Expand all`/`Collapse all` buttons.
 
-<Sandpack title="Using the expandAll/collapseAll methods with cloning the GroupRowsState instance">
-
-```ts file="using-group-rows-state-controlled-example.page.tsx"
+```tsx file="using-group-rows-state-controlled-example.demo.tsx" title="Using the expandAll/collapseAll methods with cloning the GroupRowsState instance"
 ```
-
-</Sandpack>
 
 </Note>
 </Prop>
@@ -266,21 +194,7 @@ Another important property in this type is the `column`. It will be used to conf
 - if it's an object literal, it will be applied to all generated columns
 - if it's a function, it will be called for each generated column, and the return value will be used to configure the column.
 
-```tsx
-const pivotBy: DataSourcePivotBy<Developer>[] = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column: pivotCol }) => {
-      const lastKey =
-        pivotCol.pivotGroupKeys[pivotCol.pivotGroupKeys.length - 1];
-
-      return {
-        header: lastKey === 'yes' ? '💅 Designer' : '💻 Non-designer',
-      };
-    },
-  },
-];
+```tsx file="index.snippet.tsx" region="datasourcepivotby"
 ```
 
 </Prop>
@@ -305,21 +219,7 @@ It is an object with the following properties:
   - `filterIcon` - the default column filter icon
   - `selectionCheckBox` - the default column selection checkbox
 
-```tsx title="Example column.renderHeader function"
-const renderHeader = ({ renderBag }) => {
-  return (
-    <b style={{ display: 'flex', color: 'tomato', alignItems: 'center' }}>
-      ({renderBag.header}) {renderBag.sortIcon}
-    </b>
-  );
-};
-const columns = {
-  salary: {
-    field: 'salary',
-    type: 'number',
-    renderHeader,
-  },
-};
+```tsx file="index.snippet.tsx" region="example-column-renderheader-function" title="Example column.renderHeader function"
 ```
 
 </Prop>
@@ -514,24 +414,7 @@ Many methods in Infinite Table are called with `rowInfo` objects that are typed 
 
 This is a discriminated type, based on the `dataSourceHasGrouping` boolean property and the `isGroupRow` boolean property. This means that the type of the object will change based on the value of those properties.
 
-```ts
-
-export type InfiniteTableRowInfo<T> =
-  // dataSourceHasGrouping = false, isGroupRow = false
-  | InfiniteTable_NoGrouping_RowInfoNormal<T>;
-
-  // dataSourceHasGrouping = true, isGroupRow = false
-  | InfiniteTable_HasGrouping_RowInfoNormal<T>
-
-   // dataSourceHasGrouping = true, isGroupRow = true
-  | InfiniteTable_HasGrouping_RowInfoGroup<T>
-
-  // tree scenarios - leaf node
-  | InfiniteTable_Tree_RowInfoLeafNode<T>
-
-  // tree scenarios - parent node
-  | InfiniteTable_Tree_RowInfoParentNode<T>;
-
+```ts file="index.infinitetablerowinfo.snippet.tsx" region="infinitetablerowinfo"
 ```
 
 The common properties of the type (in all discriminated cases) are:

@@ -3,10 +3,7 @@ title: Infinite Table Cell Selection API
 layout: API
 ---
 
-```tsx title="Configuring the selection mode to be 'multi-cell'"
-<DataSource selectionMode="multi-cell" />
-
-// can be "single-row", "multi-row", "multi-cell" or false
+```tsx file="index.snippet.tsx" region="configuring-the-selection-mode-to-be-multi-cell" title="Configuring the selection mode to be 'multi-cell'"
 ```
 
 <Note>
@@ -17,17 +14,7 @@ To enable cell selection, you need to specify <DPropLink name="selectionMode">se
 
 You can retrieve the cell selection api by reading it from the `api.cellSelectionApi` property.
 
-```tsx {4}
-
-const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
-  // do something with it
-  api.cellSelectionApi.selectGroupRow(['USA'])
-}
-
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={onReady}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
@@ -64,13 +51,8 @@ This is important to keep in mind, as when columns are reordered or rows are sor
 
 This allows you to retrieve the values from the selected cells, by using a mapping function, so for each value (cell) in the selection, the passed `fn` is called, so you can return your own object with the values you need.
 
-<Sandpack title="Retrieving cell selection value by mapping over them" size="lg" deps="ag-charts-react,ag-charts-community">
-
-```ts file=cell-selection-mapping-example.page.tsx"
-
+```tsx file="cell-selection-mapping-example.demo.tsx" title="Retrieving cell selection value by mapping over them" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -97,13 +79,8 @@ In order to select a cell via mouse interaction, simply click the desired cell. 
 
 You can use `Cmd/Ctrl+Click` to add cells to the selection, or `Shift+Click` to select a range of cells.
 
-<Sandpack title="Selecting a cell via the Cell Selection API">
-
-```ts file="select-cell-example.page.tsx"
-
+```tsx file="select-cell-example.demo.tsx" title="Selecting a cell via the Cell Selection API"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -149,13 +126,8 @@ In order to select a range via mouse interaction, use `Cmd/Ctrl+Click` and `Shif
 
 Clicking a cell without holding the modifier keys will clear the selection and select the clicked cell.
 
-<Sandpack title="Selecting a range via the Cell Selection API">
-
-```ts file="select-range-example.page.tsx"
-
+```tsx file="select-range-example.demo.tsx" title="Selecting a range via the Cell Selection API"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -181,13 +153,8 @@ Don't worry if the `start` or `end` are not passed in the correct order - Infini
 
 For selecting a range see [selectRange](#selectRange).
 
-<Sandpack title="Deselecting a range via the Cell Selection API">
-
-```ts file="deselect-range-example.page.tsx"
-
+```tsx file="deselect-range-example.demo.tsx" title="Deselecting a range via the Cell Selection API"
 ```
-
-</Sandpack>
 
 </Prop>
 

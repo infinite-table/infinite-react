@@ -3,10 +3,7 @@ title: Infinite Table Row Selection API
 layout: API
 ---
 
-```tsx title="Configuring the selection mode to be 'multi-row'"
-<DataSource selectionMode="multi-row" />
-
-// can be "single-row", "multi-row", "multi-cell" or false
+```tsx file="index.snippet.tsx" region="configuring-the-selection-mode-to-be-multi-row" title="Configuring the selection mode to be 'multi-row'"
 ```
 
 <Note>
@@ -17,17 +14,7 @@ To enable multi-row selection, you need to specify <DPropLink name="selectionMod
 
 You can retrieve the row selection api by reading it from the `api.rowSelectionApi` property.
 
-```tsx {4}
-
-const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
-  // do something with it
-  api.rowSelectionApi.selectGroupRow(['USA'])
-}
-
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={onReady}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
@@ -91,8 +78,7 @@ For selecting all rows, see related [selectAll](#selectAll).
 
 Most often, you don't need to use this imperative way of deselecting all rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of
 
-```tsx
-{ defaultSelection: false, selectedRows: []}
+```tsx file="index.snippet.tsx" region="deselectall"
 ```
 
 </Note>
@@ -139,19 +125,15 @@ If you don't provide a value for the `rowSelection` and are calling this method 
 
 </Note>
 
-<Sandpack title="Using getSelectedPrimaryKeys in multi row checkbox selection with grouping" >
-
-<Description>
+<DemoTitle>Using getSelectedPrimaryKeys in multi row checkbox selection with grouping</DemoTitle>
+<DemoDescription>
 
 This example shows how you can use getSelectedPrimaryKeys with multiple row selection to retrieve the actual ids of the selected rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx"
-
+```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -190,8 +172,7 @@ For deselecting all rows, see related [deselectAll](#deselectAll).
 
 Most often, you don't need to use this imperative way of selecting rows. Simply update the <DPropLink name="rowSelection">DataSource.rowSelection</DPropLink> (when multiple row selection is enabled) to a value of
 
-```tsx
-{ defaultSelection: true, deselectedRows: []}
+```tsx file="index.snippet.tsx" region="selectall"
 ```
 
 </Note>

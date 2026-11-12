@@ -25,25 +25,18 @@ See [our blogpost on the devtools extension](/blog/2025/05/12/the-first-devtools
 
 See related <PropLink name="wrapRowsHorizontally" />.
 
-<Sandpack title="Horizontal Layout with repeated wrapped group rows">
-
-```tsx file="horizontal-layout-repeat-wrapped-groups-example.page.tsx"
+```tsx file="horizontal-layout-repeat-wrapped-groups-example.demo.tsx" title="Horizontal Layout with repeated wrapped group rows"
 ```
 
-</Sandpack>
-
-<Sandpack title="Tree with horizontal Layout and repeated wrapped tree rows">
-
-<Description>
+<DemoTitle>Tree with horizontal Layout and repeated wrapped tree rows</DemoTitle>
+<DemoDescription>
 
 In this example, parent nodes are repeated conditionally: only top-level parent nodes are repeated when wrapping happens.
 
-</Description>
+</DemoDescription>
 
-```tsx file="horizontal-layout-repeat-wrapped-tree-rows-example.page.tsx"
+```tsx file="horizontal-layout-repeat-wrapped-tree-rows-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -63,12 +56,8 @@ When horizontal layout is enabled, rows will wrap and the existing columns will 
 
 So for example when the DataGrid is configured with 3 columns and the DataSource has 25 rows, but only 10 rows fit in the vertical viewport, you will end up with 3 column-sets: the first with 10 rows, the second with the next 10 rows, and the third with the remaining 5 rows. The same columns are repeated for each column-set.
 
-<Sandpack title="Horizontal Layout example">
-
-```tsx file="horizontal-layout-example.page.tsx"
+```tsx file="horizontal-layout-example.demo.tsx" title="Horizontal Layout example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -83,12 +72,8 @@ When using horizontal layout, columns can't be configured to have a flexible wid
 </Note>
 
 
-<Sandpack title="Horizontal Layout example with column set index in header">
-
-```tsx file="horizontal-layout-with-column-set-index-in-header-example.page.tsx"
+```tsx file="horizontal-layout-with-column-set-index-in-header-example.demo.tsx" title="Horizontal Layout example with column set index in header"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -98,21 +83,17 @@ When using horizontal layout, columns can't be configured to have a flexible wid
 
 See related <PropLink name="rowDetailRenderer" />.
 
-<Sandpack title="Basic master detail DataGrid example" size="lg">
-
-<Description>
+<DemoTitle>Basic master detail DataGrid example</DemoTitle>
+<DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
 
 The details for each city shows a DataGrid with developers in that city.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-component-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 
 </Prop>
@@ -123,13 +104,8 @@ The details for each city shows a DataGrid with developers in that city.
 
 This also determines when the <PropLink name="onScrollStop" /> callback prop is called.
 
-<Sandpack title="Scroll stop delay for lazy loading">
-
-```ts file="scrollStopDelay-lazy-load-example.page.tsx"
-
+```tsx file="scrollStopDelay-lazy-load-example.demo.tsx" title="Scroll stop delay for lazy loading"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -143,11 +119,8 @@ For now, it has the following properties:
 
  - <PropLink name="headerOptions.alwaysReserveSpaceForSortIcon" />
 
-<Sandpack>
-
-```tsx file="sortIcon-reserve-space-example.page.tsx"
+```tsx file="sortIcon-reserve-space-example.demo.tsx"
 ```
-</Sandpack>
 
 </Prop>
 
@@ -157,11 +130,8 @@ For now, it has the following properties:
 
 When this is set to `true`, the space for the sort icon is always reserved, even if the column is not currently sorted.
 
-<Sandpack>
-
-```tsx file="sortIcon-reserve-space-example.page.tsx"
+```tsx file="sortIcon-reserve-space-example.demo.tsx"
 ```
-</Sandpack>
 
 </Prop>
 
@@ -206,12 +176,8 @@ The details for each city shows a DataGrid with developers in that city.
 
 When the `<DataSource>` is configured with <DPropLink name="defaultFilterValue" />, the column filters will be shown by default. Specify this prop as `false` to hide the column filters.
 
-<Sandpack title="Controling the visibility of column filters">
-
-```tsx file="column-filters-visibility-example.page.tsx"
+```tsx file="column-filters-visibility-example.demo.tsx" title="Controling the visibility of column filters"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -274,19 +240,15 @@ When you use this controlled property, make sure you pair it with the <PropLink 
 
 If <PropLink name="isRowDetailExpanded" /> is specified, it has the final say in deciding if a row detail is expanded or not, so it overrides the `rowDetailState` and <PropLink name="defaultRowDetailState" />.
 
-<Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
-
-<Description>
+<DemoTitle>Master detail DataGrid with some row details expanded by default</DemoTitle>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -317,19 +279,15 @@ This makes it easy for you to know which action was taken and on which row.
 
 See related <PropLink name="rowDetailState" /> and <PropLink name="defaultRowDetailState" />.
 
-<Sandpack title="Master detail DataGrid with listener to the row expand/collapse state change" size="lg">
-
-<Description>
+<DemoTitle>Master detail DataGrid with listener to the row expand/collapse state change</DemoTitle>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-controlled-expanded-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="rowDetailCache" type="boolean|number">
@@ -464,19 +422,14 @@ In addition to the props already in discussion, you can use the <PropLink name="
 
 By default, double-clicking an editable cell will show the cell editor. You can prevent this by returning `{preventEdit: true}` from the <PropLink name="onCellDoubleClick">onCellDoubleClick</PropLink> function prop.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 All columns are configured to not be editable, except the `salary` column.
 
-</Description>
+</DemoDescription>
 
-```ts file="global-should-accept-edit-example.page.tsx"
-
+```tsx file="global-should-accept-edit-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -535,13 +488,8 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 
 <PropLink name="columnMinWidth" /> and <PropLink name="columnMaxWidth" /> will be very useful once flex column sizing lands.
 
-<Sandpack>
-
-```ts files=["columnDefaultWidth-example.page.tsx","data.ts"]
-
+```tsx file="columnDefaultWidth-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columnHeaderHeight" type="number">
@@ -550,19 +498,14 @@ Use <PropLink name="columnMaxWidth" /> to set a maximum width for all columns.
 
 This only refers to the height of the header label - so if you have another row in the column header, for filters, the filters will also have this height. Also, for column groups, each additional group will have this height.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 The column header height is set to `60` pixels. The column filters will also pick up this height.
 
-</Description>
+</DemoDescription>
 
-```ts files=["columnHeaderHeight-example.page.tsx","data.ts"]
-
+```tsx file="columnHeaderHeight-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columnMaxWidth" type="number" defaultValue={2000}>
@@ -573,13 +516,8 @@ For specifying the minimum column width, see <PropLink name="columnMinWidth" />.
 
 Maximum column width can be controlled more granularly via <PropLink name="columnSizing.maxWidth" />, on a per column level.
 
-<Sandpack>
-
-```tsx file="columnMaxWidth-example.page.tsx"
-
+```tsx file="columnMaxWidth-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -591,13 +529,8 @@ For specifying the maximum column width, see <PropLink name="columnMaxWidth" />.
 
 Minimum column width can be controlled more granularly via <PropLink name="columnSizing.minWidth" /> or <PropLink name="columns.minWidth" />, on a per column level.
 
-<Sandpack>
-
-```tsx file="columnMinWidth-example.page.tsx"
-
+```tsx file="columnMinWidth-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -652,13 +585,8 @@ The following properties are available:
 - <PropLink name="columns.valueFormatter">valueFormatter</PropLink>
 - ...etc
 
-<Sandpack>
-
-```ts files=["columns-example.page.tsx","data.ts"]
-
+```tsx file="columns-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columns.className" type="string | (param: InfiniteTableColumnStyleFnParams) => string">
@@ -679,13 +607,8 @@ The `className` property can also be specified for <PropLink name="columnTypes"/
 
 </Note>
 
-<Sandpack>
-
-```ts files=["column-className-function-example.page.tsx","coloring.module.css"]
-
+```tsx file="column-className-function-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="components">
@@ -712,13 +635,8 @@ To better test this out, you can use the controlled <DPropLink name="loading" />
 
 For more components that can be overriden, see <PropLink name="components" />
 
-<Sandpack title="Custom LoadMask component">
-
-```tsx file="load-mask-example.page.tsx"
-
+```tsx file="load-mask-example.demo.tsx" title="Custom LoadMask component"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -762,18 +680,15 @@ You can also use <PropLink name="columns.renderTreeIconForParentNode" /> to spec
 ```
 
 
-<Sandpack title="Rendering a custom tree icon for both parent and leaf nodes" >
-
-<Description>
+<DemoTitle>Rendering a custom tree icon for both parent and leaf nodes</DemoTitle>
+<DemoDescription>
 
 This example renders a custom tree icon and uses the `toggleCurrentTreeNode` function to toggle the node state when Clicked. `toggleCurrentTreeNode` is a property of the `cellContext` argument passed to the `renderTreeIcon` function.
 
-</Description>
+</DemoDescription>
 
-```tsx file="tree-icon-custom-example-with-toggle.page.tsx"
+```tsx file="tree-icon-custom-example-with-toggle.demo.tsx"
 ```
-
-</Sandpack>
 
 
 </Prop>
@@ -825,14 +740,12 @@ Inside a component used as a cell, you have to use <HookLink name="useInfiniteCo
 
 It's very important that you take
 
-```tsx
-const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell"
 ```
 
 the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it on to the root DOM element of your cell component.
 
-```tsx
-<div ref={domRef}>...</div>
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-2"
 ```
 
 **If you don't do this, the column rendering will not work.**
@@ -843,33 +756,14 @@ the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it 
 
 Also note that your React Component should be a functional component and have this signature
 
-```tsx
-function CustomComponent(props: React.HTMLProps<HTMLDivElement>) {
-  return ...
-}
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-3"
 ```
 
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
 
-```tsx
-const ExampleCellComponent: React.FunctionComponent<
-  React.HTMLProps<HTMLDivElement>
-> = (props) => {
-  const { domRef } = useInfiniteColumnCell<Developer>();
-
-  return (
-    <div
-      ref={domRef}
-      {...props}
-      className={`${props.className} extra-cls`}
-      style={style}
-    >
-      {props.children} <div style={{ flex: 1 }} /> {emoji}
-    </div>
-  );
-};
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-4"
 ```
 
 </Note>
@@ -887,63 +781,18 @@ The editor component should use the <HookLink name="useInfiniteColumnEditor"/> h
 
 Here's the implementation for our default editor
 
-```tsx
-export function InfiniteTableColumnEditor<T>() {
-  const { initialValue, setValue, confirmEdit, cancelEdit, readOnly } =
-    useInfiniteColumnEditor<T>();
-
-  const domRef = useRef<HTMLInputElement>();
-  const refCallback = React.useCallback((node: HTMLInputElement) => {
-    domRef.current = node;
-
-    if (node) {
-      node.focus();
-    }
-  }, []);
-
-  const onKeyDown = useCallback((event: React.KeyboardEvent) => {
-    const { key } = event;
-    if (key === 'Enter' || key === 'Tab') {
-      confirmEdit();
-    } else if (key === 'Escape') {
-      cancelEdit();
-    } else {
-      event.stopPropagation();
-    }
-  }, []);
-
-  return (
-    <>
-      <input
-        readOnly={readOnly}
-        ref={refCallback}
-        onKeyDown={onKeyDown}
-        onBlur={() => confirmEdit()}
-        className={'...'}
-        type={'text'}
-        defaultValue={initialValue}
-        onChange={useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-          setValue(event.target.value);
-        }, [])}
-      />
-    </>
-  );
-}
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-editor"
 ```
 
-<Sandpack title="Column with custom editor">
-
-<Description>
+<DemoTitle>Column with custom editor</DemoTitle>
+<DemoDescription>
 
 Try editing the `salary` column - it has a custom editor
 
-</Description>
+</DemoDescription>
 
-```tsx file="$DOCS/reference/hooks/custom-editor-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/hooks/custom-editor-hooks-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -959,14 +808,12 @@ Inside a custom component used as a column header, you have to use <HookLink nam
 
 It's very important that you take
 
-```tsx
-const { domRef } = useInfiniteHeaderCell<DATA_TYPE>();
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell"
 ```
 
 the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it on to the root DOM element of your header component.
 
-```tsx
-<div ref={domRef}>...</div>
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-2"
 ```
 
 **If you don't do this, the column header rendering will not work.**
@@ -977,33 +824,14 @@ the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it 
 
 Also note that your React Component should be a functional component and have this signature
 
-```tsx
-function CustomHeaderComponent(props: React.HTMLProps<HTMLDivElement>) {
-  return ...
-}
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-3"
 ```
 
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
 
-```tsx
-const ExampleHeaderComponent: React.FunctionComponent<
-  React.HTMLProps<HTMLDivElement>
-> = (props) => {
-  const { domRef } = useInfiniteHeaderCell<Developer>();
-
-  return (
-    <div
-      ref={domRef}
-      {...props}
-      className={`${props.className} extra-cls`}
-      style={style}
-    >
-      {props.children} <div style={{ flex: 1 }} /> {emoji}
-    </div>
-  );
-};
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-4"
 ```
 
 </Note>
@@ -1017,13 +845,8 @@ const ExampleHeaderComponent: React.FunctionComponent<
 
 > Specifies if the column (or cell, if a function is used) renders content that will/should be focusable (via tab-navigation)
 
-<Sandpack title="Columns with cell content focusable">
-
-```ts file="column-contentFocusable-example.page.tsx"
-
+```tsx file="column-contentFocusable-example.demo.tsx" title="Columns with cell content focusable"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1037,13 +860,8 @@ For header ellipsis, see related <PropLink name="headerCssEllipsis" />.
 
 </Note>
 
-<Sandpack title="First name column(first) has cssEllipsis set to false">
-
-```ts file="columns-cssEllipsis-example.page.tsx"
-
+```tsx file="columns-cssEllipsis-example.demo.tsx" title="First name column(first) has cssEllipsis set to false"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1101,19 +919,14 @@ Making <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink
 
 By default, double-clicking an editable cell will show the cell editor. You can prevent this by returning `{preventEdit: true}` from the <PropLink name="onCellDoubleClick">onCellDoubleClick</PropLink> function prop.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Only the `salary` column is editable.
 
-</Description>
+</DemoDescription>
 
-```ts file="global-should-accept-edit-example.page.tsx"
-
+```tsx file="global-should-accept-edit-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1134,14 +947,7 @@ See related <PropLink name="columns.defaultWidth" />
 
 > Controls the visibility of column groups. By default, column groups are visible.
 
-```tsx
-<InfiniteTable<DATA_TYPE>
-  columnGroupVisibility={{
-    'country': false,
-    'city': true,
-  }}
-  columns={{...}}
-/>
+```tsx file="infinite-table-props.snippet.tsx" region="columngroupvisibility"
 ```
 
 </Prop>
@@ -1159,13 +965,8 @@ The value for this property can be one of the following:
 - `true` - the column is hidden when there grouping that uses the field that the column is bound to.
 - `an object with keys` of type `keyof DATA_TYPE` and values being `true` - whenever the grouping includes any of the fields that are in the keys of this object, the column is hidden.
 
-<Sandpack>
-
-```ts file="columnDefaultHiddenWhenGroupedBy-example.page.tsx"
-
+```tsx file="columnDefaultHiddenWhenGroupedBy-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1190,27 +991,19 @@ It can be the same or different to the column id. This is not used for referenci
 
 If no <PropLink name="columns.header" /> is specified, it will be used as the column header.
 
-<Sandpack>
-
-```ts files=["columns-example.page.tsx","data.ts"]
-
+```tsx file="columns-example.demo.tsx"
 ```
-
-</Sandpack>
 
 Group columns can also be bound to a field, like in the snippet below.
 
-<Sandpack>
+<DemoDescription>
 
-<Description>
 In this example, the group column is bound to the `firstName` field, so this field will be rendered in non-group rows for this column.
-</Description>
 
-```ts file="group-column-bound-to-field-example.page.tsx"
+</DemoDescription>
 
+```tsx file="group-column-bound-to-field-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1226,21 +1019,17 @@ If the type of filter you want to show does not match the column <PropLink name=
 
 </Note>
 
-<Sandpack title="Custom column filterType for the salary column">
-
-<Description>
+<DemoTitle>Custom column filterType for the salary column</DemoTitle>
+<DemoDescription>
 
 In this example, the `salary` column has `type="number"` and `filterType="salary"`.
 
 This means the sort order defined for `type="number"` will be used while displaying a custom type of filter.
 
-</Description>
+</DemoDescription>
 
-```ts file="column-filterType-example.page.tsx"
-
+```tsx file="column-filterType-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1266,21 +1055,16 @@ This function can be async. Return a `Promise` to wait for the value to be resol
 
 See related <PropLink name="columns.getValueToPersist" /> and <PropLink name="columns.shouldAcceptEdit" />.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 In this example, the `salary` for each row includes the currency string.
 
 <p>When editing starts, we want to remove the currency string and only show the numeric value in the editor - we do this via <PropLink name="columns.getValueToEdit" />.</p>
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1307,21 +1091,16 @@ This function can be async. Return a `Promise` to wait for the value to be resol
 
 See related <PropLink name="columns.getValueToEdit" /> and <PropLink name="columns.shouldAcceptEdit" />.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 In this example, the `salary` for each row includes the currency string.
 
 <p>When an edit is accepted, we want the persisted value to include the currency string as well (like the original value did) - we do this via <PropLink name="columns.getValueToPersist" />.</p>
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1363,13 +1142,8 @@ For configuring the column header height, see the <PropLink name="columnHeaderHe
 
 </Note>
 
-<Sandpack>
-
-```ts files=["columns-header-example.page.tsx","data.ts"]
-
+```tsx file="columns-header-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -1426,13 +1200,8 @@ For normal cell ellipsis, see related <PropLink name="cssEllipsis" />.
 
 </Note>
 
-<Sandpack title="Preferred Language column(second) has headerCssEllipsis set to false">
-
-```ts file="columns-cssEllipsis-example.page.tsx"
-
+```tsx file="columns-cssEllipsis-example.demo.tsx" title="Preferred Language column(second) has headerCssEllipsis set to false"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1544,13 +1313,8 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Note>
 
-<Sandpack title="Column with custom renderGroupIcon">
-
-```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
-
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.demo.tsx" title="Column with custom renderGroupIcon"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1597,17 +1361,15 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Note>
 
-<Sandpack title="Column with custom renderSelectionCheckBox">
+<DemoTitle>Column with custom renderSelectionCheckBox</DemoTitle>
+<DemoDescription>
 
-<Description>
 This example shows how you can use the default selection checkbox and decorate it.
-</Description>
 
-```tsx file="column-renderSelectionCheckBox-example.page.tsx"
+</DemoDescription>
 
+```tsx file="column-renderSelectionCheckBox-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1626,13 +1388,8 @@ This function prop is called with a parameter - the `value` property of this par
 See related <PropLink name="columns.renderGroupIcon" /> for customizing the collapse/expand group icon.
 See related <PropLink name="columns.renderLeafValue" /> for customizing the value for non-group rows in a group column.
 
-<Sandpack title="Column with custom renderGroupValue">
-
-```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
-
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.demo.tsx" title="Column with custom renderGroupValue"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1642,13 +1399,8 @@ See related <PropLink name="columns.renderLeafValue" /> for customizing the valu
 
 See related <PropLink name="columns.renderGroupValue" /> for customizing the value for group rows in a group column.
 
-<Sandpack title="Column with custom renderLeafValue">
-
-```tsx file="column-renderGroupValueAndRenderLeafValue-example.page.tsx"
-
+```tsx file="column-renderGroupValueAndRenderLeafValue-example.demo.tsx" title="Column with custom renderLeafValue"
 ```
-
-</Sandpack>
 
 </Prop>
 <Prop name="columns.renderValue" type="(cellContext) => Renderable">
@@ -1699,16 +1451,7 @@ Same as the table-level <PropLink name="repaintCellsKey" />, but only for the ce
 
 Typical use: a column whose <PropLink name="columns.render" /> or <PropLink name="columns.valueGetter" /> reads other rows (a group average, a running total, a cross-row lookup). Return the derived value from the function, and the cells repaint exactly when that value changes:
 
-```tsx
-const columns: InfiniteTablePropColumns<Sale> = {
-  segmentAverage: {
-    header: 'Segment avg',
-    repaintCellsKey: ({ rowInfo, dataSourceState }) =>
-      averageFor(dataSourceState.originalDataArray, rowInfo.data.segment),
-    render: ({ rowInfo, dataSourceApi }) =>
-      averageFor(dataSourceApi.getOriginalDataArray(), rowInfo.data.segment),
-  },
-};
+```tsx file="infinite-table-props.snippet.tsx" region="columns-repaintcellskey"
 ```
 
 <Note>
@@ -1743,13 +1486,8 @@ This function is called with an object that has the following properties:
 
 The `rowInfo` object contains information about grouping (if this row is a group row, the collapsed state, etc), parent groups, children of the current row (if it's a row group), etc. See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
-<Sandpack>
-
-```ts file="column-rowspan-example.page.tsx"
-
+```tsx file="column-rowspan-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1773,19 +1511,14 @@ The function is called with an object that has the following properties:
 - `api` - a reference to the [InfiniteTable API](/docs/reference/api)
 - `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Try editing the `salary` column. In the editor you can write whatever, but the column will only accept edits that are valid numbers.
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1837,13 +1570,8 @@ The `style` property can also be specified for <PropLink name="columnTypes"/>
 
 </Note>
 
-<Sandpack>
-
-```ts file="columns-style-example.page.tsx"
-
+```tsx file="columns-style-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1881,13 +1609,8 @@ If a column is sortable and does not explicitly specify a <PropLink name="column
 
 See the example below - `id` and `age` columns are `type='number'`.
 
-<Sandpack>
-
-```ts files=["columns-example.page.tsx","data.ts"]
-
+```tsx file="columns-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columns.valueFormatter" type="({ data?, isGroupRow, rowInfo, field?, rowSelected, rowActive, isGroupRow }) => Renderable">
@@ -1904,13 +1627,8 @@ Unlike `valueGetter`, it is being called with an object that has both the `data`
 
 If you want to further customize what's being rendered, see related <PropLink name="columns.valueGetter" />, <PropLink name="columns.renderValue" />, <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />, <PropLink name="columns.renderLeafValue" /> and <PropLink name="columns.renderGroupIcon" />.
 
-<Sandpack title="Column with custom valueFormatter">
-
-```tsx file="column-valueFormatter-example.page.tsx"
-
+```tsx file="column-valueFormatter-example.demo.tsx" title="Column with custom valueFormatter"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2027,29 +1745,12 @@ Press `Shift+Enter` to show an alert with the current active cell position.
 
 Infinite Table DataGrid comes with some predefined keyboard shorcuts.
 you can import from the `keyboardShortcuts` named export.
-```ts
-import { keyboardShortcuts } from '@infinite-table/infinite-react'
+```ts file="infinite-table-props.snippet.tsx" region="keyboardshortcuts"
 ```
 
 #### Instant Edit
 
-```ts {4,12}
-import {
-  DataSource,
-  InfiniteTable,
-  keyboardShortcuts
-} from '@infinite-table/infinite-react';
-
- function App() {
-  return <DataSource<Developer> primaryKey="id" data={dataSource}>
-    <InfiniteTable<Developer>
-      columns={columns}
-      keyboardShortcuts={[
-        keyboardShortcuts.instantEdit
-      ]}
-    />
-  </DataSource>
-}
+```ts file="infinite-table-props.keyboardshortcuts.snippet.tsx" region="keyboardshortcuts"
 ```
 
 
@@ -2163,13 +1864,8 @@ See docs at <PropLink name="columns.headerClassName" />.
 
 For css ellipsis, see <PropLink name="columns.cssEllipsis" />.
 
-<Sandpack title="Column align example">
-
-```tsx file="column-align-example.page.tsx"
-
+```tsx file="column-align-example.demo.tsx" title="Column align example"
 ```
-
-</Sandpack>
 
 
 </Prop>
@@ -2180,13 +1876,8 @@ For css ellipsis, see <PropLink name="columns.cssEllipsis" />.
 
 > Controls the vertical alignment of text in column cells. For horizontal alignment, see <PropLink name="columns.align" />.
 
-<Sandpack title="Column vertical align example">
-
-```tsx file="column-vertical-align-example.page.tsx"
-
+```tsx file="column-vertical-align-example.demo.tsx" title="Column vertical align example"
 ```
-
-</Sandpack>
 
 
 </Prop>
@@ -2196,13 +1887,8 @@ For css ellipsis, see <PropLink name="columns.cssEllipsis" />.
 
 > Controls the alignment of the column header. See related <PropLink name="columns.align" /> and <PropLink name="columns.headerCssEllipsis" />.
 
-<Sandpack title="Column header align example">
-
-```tsx file="column-header-align-example.page.tsx"
-
+```tsx file="column-header-align-example.demo.tsx" title="Column header align example"
 ```
-
-</Sandpack>
 
 
 </Prop>
@@ -2301,13 +1987,8 @@ Displaying the same column twice is a perfectly valid use case.
 
 See [Column Order](/docs/learn/columns/column-order) for more details on ordering columns both programatically and via drag & drop.
 
-<Sandpack title="Uncontrolled column order">
-
-```ts file="defaultColumnOrder-example.page.tsx"
-
+```tsx file="defaultColumnOrder-example.demo.tsx" title="Uncontrolled column order"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="defaultColumnSizing" type="Record<string,{width,flex,...}>">
@@ -2323,13 +2004,8 @@ It is an object that maps column ids to column sizing options. The values in the
 - <PropLink name="defaultColumnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 - <PropLink name="defaultColumnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
-<Sandpack title="Uncontrolled column sizing">
-
-```tsx file="defaultColumnSizing-example.page.tsx"
-
+```tsx file="defaultColumnSizing-example.demo.tsx" title="Uncontrolled column sizing"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -2379,13 +2055,8 @@ For applying a className when the component is focused, see <PropLink name="focu
 
 For applying a className when the focus is within the component, see <PropLink name="focusedWithinClassName" />
 
-<Sandpack>
-
-```ts files=["domprops-example.page.tsx","data.ts"]
-
+```tsx file="domprops-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2437,13 +2108,8 @@ For applying a className when the component root element is focused, see <PropLi
 
 > Specifies the `style` to be applied to the component root element when it has focus.
 
-<Sandpack title="focusedStyle example">
-
-```ts files=["focusedStyle-example.page.tsx","data.ts"]
-
+```tsx file="focusedStyle-example.demo.tsx" title="focusedStyle example"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="focusedWithinStyle">
@@ -2456,13 +2122,8 @@ To listen to focusWithin changes, listen to <PropLink name="onFocusWithin" /> an
 
 </Note>
 
-<Sandpack title="focusedWithinStyle example - focus an input inside the table to see it in action">
-
-```ts files=["focusedWithinStyle-example.page.tsx","data.ts"]
-
+```tsx file="focusedWithinStyle-example.demo.tsx" title="focusedWithinStyle example - focus an input inside the table to see it in action"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2483,13 +2144,8 @@ The `getCellContextMenuItems` function can return one of the following:
   - an optional `onClick(event)` callback function to handle the click event on the menu item.
   - an optional `hideMenuOnAction: boolean` - if `true`, it will close the context menu when the menu item is clicked
 
-<Sandpack title="Using context menus">
-
-```ts file="cell-basic-context-menu-example.page.tsx"
-
+```tsx file="cell-basic-context-menu-example.demo.tsx" title="Using context menus"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -2501,39 +2157,18 @@ When returning a `Promise`, the context menu will be shown after the promise res
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx
-const getCellContextMenuItems = () => {
-  return {
-    columns: [{ name: 'label' }, { name: 'icon' }],
-    items: [
-      {
-        label: 'Welcome',
-        icon: '👋',
-        key: 'hi',
-      },
-      {
-        label: 'Convert',
-        icon: '🔁',
-        key: 'convert',
-      },
-    ],
-  };
-};
+```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems"
 ```
 
-<Sandpack title="Customising columns in the context menu">
-
-<Description>
+<DemoTitle>Customising columns in the context menu</DemoTitle>
+<DemoDescription>
 
 Right-click any cell in the table to see a context menu with multiple columns (`icon`, `label` and `description`).
 
-</Description>
+</DemoDescription>
 
-```ts file="cells-with-custom-columns-context-menu-example.page.tsx"
-
+```tsx file="cells-with-custom-columns-context-menu-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2547,13 +2182,8 @@ The first argument this function is called with has the same shape as the one fo
 
 If this function returns null, the default context menu of the browser will be shown (default event behavior not prevented).
 
-<Sandpack title="Using context menus for the whole table">
-
-```ts file="table-basic-context-menu-example.page.tsx"
-
+```tsx file="table-basic-context-menu-example.demo.tsx" title="Using context menus for the whole table"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -2629,32 +2259,22 @@ This example shows how to use <PropLink name="groupColumn" /> as a function that
 
 > Determines how grouping is rendered - whether a single or multiple columns are generated.
 
-<Sandpack>
-
-```ts files=["groupRenderStrategy-example.page.tsx","employee-columns.ts"]
-
+```tsx file="groupRenderStrategy-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="hideColumnWhenGrouped" type="boolean" defaultValue={false}>
 
 > Allows you to hide group columns bound to fields that are grouped by (fields mentioned in <DataSourcePropLink name="groupBy">groupBy.field</DataSourcePropLink>).
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 In this example, toggle the checkbox to see the `stack` and `preferredLanguage` columns hide/show as the value of `hideColumnWhenGrouped` changes.
 
-</Description>
+</DemoDescription>
 
-```ts file="hideColumnWhenGrouped-example.page.tsx"
-
+```tsx file="hideColumnWhenGrouped-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="hideEmptyGroupColumns" type="boolean" defaultValue={false}>
@@ -2687,19 +2307,15 @@ This example starts with cell `[2,0]` already active.
 ```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Keyboard navigation"
 ```
 
-<Sandpack title="Disabled Keyboard navigation">
-
-<Description>
+<DemoTitle>Disabled Keyboard navigation</DemoTitle>
+<DemoDescription>
 
 In this example the keyboard navigation is disabled.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigation-disabled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigation-disabled-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2720,13 +2336,8 @@ For specifying the selection mode, use <DPropLink name="selectionMode" />
 
 > The text inside the load mask - displayed when <DataSourcePropLink name="loading">loading=true</DataSourcePropLink>.
 
-<Sandpack title="Customized loading text">
-
-```ts file="loadingText-example.page.tsx"
-
+```tsx file="loadingText-example.demo.tsx" title="Customized loading text"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2738,13 +2349,8 @@ When a function is given, it's called every time a menu is shown. Returning `nul
 
 Use it together with <PropLink name="menuPortalContainer" /> to let menus extend past the table, for example when the table sits in a pane that clips its content.
 
-<Sandpack title="Menus rendered into document.body and kept within the app">
-
-```ts file="menuPortalContainer-example.page.tsx"
-
+```tsx file="menuPortalContainer-example.demo.tsx" title="Menus rendered into document.body and kept within the app"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2756,13 +2362,8 @@ When a function is given, returning `null` uses the default element. Submenus ar
 
 Menus rendered inside the table can't extend past an ancestor that clips its content (`overflow: hidden`) - render them into an element outside that ancestor, such as `document.body`. They are still kept within the table area, unless you also specify <PropLink name="menuConstrainTo" />.
 
-<Sandpack title="Menus rendered into document.body and kept within the app">
-
-```ts file="menuPortalContainer-example.page.tsx"
-
+```tsx file="menuPortalContainer-example.demo.tsx" title="Menus rendered into document.body and kept within the app"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2851,13 +2452,8 @@ This callback is fired when a focusable element inside the component is blurred,
 
 </Note>
 
-<Sandpack title="Blur an input inside the table to see the callback fired">
-
-```ts files=["onBlurWithin-example.page.tsx","data.ts"]
-
+```tsx file="onBlurWithin-example.demo.tsx" title="Blur an input inside the table to see the callback fired"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="onCellDoubleClick" type="({ colIndex, rowIndex, column, columnApi, api, dataSourceApi }, event) => void | {preventEdit?: boolean} ">
@@ -2901,13 +2497,8 @@ This works well in combination with the controlled <PropLink name="columnSizing"
 
 See related <PropLink name="onViewportReservedWidthChange" />
 
-<Sandpack title="Controlled column sizing example with onColumnSizingChange">
-
-```ts file="onColumnSizingChange-example.page.tsx"
-
+```tsx file="onColumnSizingChange-example.demo.tsx" title="Controlled column sizing example with onColumnSizingChange"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2967,13 +2558,8 @@ This callback prop has almost the same signature as the <PropLink name="onEditAc
 
 For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
-<Sandpack title="Focus an input inside the table to see the callback fired">
-
-```ts files=["onFocusWithin-example.page.tsx","data.ts"]
-
+```tsx file="onFocusWithin-example.demo.tsx" title="Focus an input inside the table to see the callback fired"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="onKeyDown" type="({ api, dataSourceApi }, event) => void | InfiniteTablePropOnKeyDownResult">
@@ -3019,40 +2605,14 @@ It will never be called again after the component is ready.
 The first (and only) argument is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
 
  So if you want to get the start and end indexes, you can do
-
- ```ts
- const [startRow, startCol] = renderRange.start;
- const [endRow, endCol] = renderRange.end;
+ ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange"
  ```
 
 <Note>
 
 This callback is not debounced or throttled, so it can be called multiple times in a short period of time, especially while scrolling. Make sure your function is fast, or attach a debounced function, in order to avoid performance issues.
 
-```tsx
-import {
-  debounce,
-  InfiniteTable,
-  DataSource
-} from '@infinite-table/infinite-react';
-
-function App() {
-  const onRenderRangeChange = useMemo(() => {
-    return debounce((range) => {
-      console.log(range.start, range.end);
-    }, {wait: 100});
-  }, []);
-
-  return <DataSource<Developer>
-    primaryKey="id"
-    data={/*data*/}
-  >
-    <InfiniteTable<Developer>
-      onRenderRangeChange={onRenderRangeChange}
-      columns={/*columns*/}
-    />
-  </DataSource>
-}
+```tsx file="infinite-table-props.snippet.tsx" region="onrenderrangechange-2"
 ```
 </Note>
 
@@ -3069,10 +2629,7 @@ This is called when the user stops scrolling for a period of time - as configure
 
 The function is called with an object that has the following properties:
  - `renderRange` - the render range of the viewport. This is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
- So if you want to get the start and end indexes, you can do
- ```ts
- const [startRow, startCol] = renderRange.start;
- const [endRow, endCol] = renderRange.end;
+ So if you want to get the start and end indexes, you can do ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop"
  ```
 
  - `viewportSize` - the size of the viewport - `{width, height}`
@@ -3082,13 +2639,8 @@ The function is called with an object that has the following properties:
 
 Also see <PropLink name="onScrollToTop" />, <PropLink name="onScrollToBottom" /> and <PropLink name="onRenderRangeChange" />.
 
-<Sandpack title="onScrollStop is called with viewport info - scroll the grid and see the console" >
-
-```ts file="./onScrollStop-example.page.tsx"
-
+```tsx file="onScrollStop-example.demo.tsx" title="onScrollStop is called with viewport info - scroll the grid and see the console"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="onScrollToBottom" type="()=>void">
@@ -3191,13 +2743,8 @@ In case there are no pivot fields, but <DataSourcePropLink name="pivotBy"/> is a
 
 </Note>
 
-<Sandpack title="Pivoting with pivotTotalColumnPosition=start">
-
-```ts file="pivot-total-column-position-example.page.tsx"
-
+```tsx file="pivot-total-column-position-example.demo.tsx" title="Pivoting with pivotTotalColumnPosition=start"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3226,9 +2773,8 @@ The function form of `repaintCellsKey` runs for every rendered cell of every aff
 
 </Note>
 
-<Sandpack title="Repainting cells that depend on other rows">
-
-<Description>
+<DemoTitle>Repainting cells that depend on other rows</DemoTitle>
+<DemoDescription>
 
 Both "Country avg" columns render the average salary of the row's country. Edit a salary cell (or click "Update salary of first row"): the column without `repaintCellsKey` shows the stale average on the other rows of that country, while the column with `repaintCellsKey` is updated.
 
@@ -3236,13 +2782,10 @@ Both "Country avg" columns render the average salary of the row's country. Edit 
 
 Note: the example re-scans all the rows to compute the average for each cell - that's not a performant way to do aggregations and is only done here to keep the demo short.
 
-</Description>
+</DemoDescription>
 
-```ts file="repaintCellsKey-example.page.tsx"
-
+```tsx file="repaintCellsKey-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3252,19 +2795,17 @@ Note: the example re-scans all the rows to compute the average for each cell - t
 
 This property controls the behavior for all columns that don't have <PropLink name="columns.resizable" /> explicitly specified.
 
-<Sandpack title="Resizable columns example">
+<DemoTitle>Resizable columns example</DemoTitle>
+<DemoDescription>
 
-<Description>
 For resizable columns, hover the mouse between column headers to grab & drag the resize handle.
 
 Hold SHIFT when grabbing in order to **share space on resize**.
-</Description>
 
-```ts file="resizableColumns-example.page.tsx"
+</DemoDescription>
 
+```tsx file="resizableColumns-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3272,21 +2813,11 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 > Specifies the height for rows. If a string is passed, it should be the name of a CSS variable, eg `--row-height`
 
-<Sandpack title="rowHeight as number">
-
-```ts files=["rowHeight-number-example.page.tsx","data.ts"]
-
+```tsx file="rowHeight-number-example.demo.tsx" title="rowHeight as number"
 ```
 
-</Sandpack>
-
-<Sandpack title="rowHeight from CSS variable name">
-
-```ts files=["rowHeight-cssvar-example.page.tsx","data.ts"]
-
+```tsx file="rowHeight-cssvar-example.demo.tsx" title="rowHeight from CSS variable name"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3307,7 +2838,7 @@ In the example below, we applied `bg-orange-800!` (notice the Tailwind important
 </Note>
 
 
-```tsx title="Changing the row hover background" live file="row-hover-class-name-example.page.tsx" tailwind
+```tsx file="row-hover-class-name-example.tailwind.demo.tsx" title="Changing the row hover background"
 ```
 
 </Prop>
@@ -3347,23 +2878,7 @@ See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
 You can either return a valid style object, or undefined.
 
-```tsx
-const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
-  data,
-  rowInfo,
-}: {
-  data: Employee | null;
-  rowInfo: InfiniteTableRowInfo<Employee>;
-}) => {
-  const salary = data ? data.salary : 0;
-
-  if (salary > 150_000) {
-    return { background: 'tomato' };
-  }
-  if (rowInfo.indexInAll % 10 === 0) {
-    return { background: 'lightblue', color: 'black' };
-  }
-};
+```tsx file="infinite-table-props.snippet.tsx" region="rowstyle"
 ```
 
 ```tsx file="rowStyle-example.demo.tsx" title="rowStyle example usage"
@@ -3412,19 +2927,14 @@ The function is called with an object that has the following properties:
 - `api` - a reference to the [InfiniteTable API](/docs/reference/api)
 - `dataSourceApi` - - a reference to the [DataSource API](/docs/reference/datasource-api)
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Edit the `salary` column. Only valid numbers are persisted.
 
-</Description>
+</DemoDescription>
 
-```ts file="global-should-accept-edit-example.page.tsx"
-
+```tsx file="global-should-accept-edit-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3434,13 +2944,8 @@ Edit the `salary` column. Only valid numbers are persisted.
 
 Use this property to declaratively tell the `InfiniteTable` component to scroll to the top. Whenever a new value is provided for this property, it will scroll to the top.
 
-<Sandpack title="Declaratively scrolling to the top of the table">
-
-```ts file="scrollTopKey-example.page.tsx"
-
+```tsx file="scrollTopKey-example.demo.tsx" title="Declaratively scrolling to the top of the table"
 ```
-
-</Sandpack>
 
 </Prop>
 

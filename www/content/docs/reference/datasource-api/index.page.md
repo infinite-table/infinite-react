@@ -5,29 +5,12 @@ layout: API
 
 When rendering the `DataSource` component, you can get access to the API by getting it from the <DPropLink name="onReady" /> callback prop.
 
-```tsx {3}
-<DataSource<DATA_TYPE>
-  onReady={(api: DataSourceApi<DATA_TYPE>) => {
-    // api is accessible here
-    // you may want to store a reference to it in a ref or somewhere in your app state
-  }}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callback prop:
 
-```tsx {4}
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={(
-    {api, dataSourceApi}: {
-      api: InfiniteTableApi<DATA_TYPE>,
-      dataSourceApi: DataSourceApi<DATAT_TYPE>
-    }) => {
-
-    // both api and dataSourceApi are accessible here
-  }}
-/>
+```tsx file="index.snippet.tsx" region="intro-2"
 ```
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
@@ -44,12 +27,8 @@ For checking if a row is disabled by its primary key, see the <DApiLink name="is
 
 For changing the enable/disable state for the row, see the <DApiLink name="setRowEnabledAt" />.
 
-<Sandpack title="Changing the enable/disable state for a row">
-
-```ts file="../datasource-props/rowDisabledState-example.page.tsx"
+```tsx file="../datasource-props/rowDisabledState-example.demo.tsx" title="Changing the enable/disable state for a row"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -63,13 +42,8 @@ For checking if a row is disabled by its index, see the <DApiLink name="isRowDis
 
 For changing the enable/disable state for the row, see the <DApiLink name="setRowEnabled" />.
 
-<Sandpack title="Changing the enable/disable state for a row">
-
-```ts file="../datasource-props/rowDisabledState-example.page.tsx"
-
+```tsx file="../datasource-props/rowDisabledState-example.demo.tsx" title="Changing the enable/disable state for a row"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -81,13 +55,8 @@ See the <DPropLink name="rowDisabledState" /> prop for more information.
 
 For setting the enable/disable state for a row by its index, see the <DApiLink name="setRowEnabledAt" /> method.
 
-<Sandpack title="Changing the enable/disable state for a row">
-
-```ts file="../datasource-props/rowDisabledState-example.page.tsx"
-
+```tsx file="../datasource-props/rowDisabledState-example.demo.tsx" title="Changing the enable/disable state for a row"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -106,13 +75,8 @@ See the <DPropLink name="rowDisabledState" /> prop for more information.
 
 For setting the enable/disable state for a row by its primary key, see the <DApiLink name="setRowEnabled" /> method.
 
-<Sandpack title="Changing the enable/disable state for a row">
-
-```ts file="../datasource-props/rowDisabledState-example.page.tsx"
-
+```tsx file="../datasource-props/rowDisabledState-example.demo.tsx" title="Changing the enable/disable state for a row"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -154,15 +118,7 @@ This method batches data updates and waits for a request animation frame until i
 
 The return value is a `Promise` that resolves when the data has been added. When multiple `addData` (and friends) calls are executed in the same frame, the result of those calls is a reference to the same promise.
 
-```ts
-const promise1 = dataSourceApi.add({ ... })
-const promise2 = dataSourceApi.add({ ... })
-const promise3 = dataSourceApi.insertData({ ... }, { position: 'before', primaryKey: 4 })
-
-// promise1, promise2 and promise3 are the same promise
-// as the calls are run in the same raf and batched together
-// promise1 === promise2
-// promise1 === promise3
+```ts file="index.snippet.tsx" region="adddata"
 ```
 
 For adding an array of data, see the <DApiLink name="addDataArray" /> method.
@@ -170,13 +126,8 @@ For inserting data at a specific position, see the <DApiLink name="insertData" /
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
-<Sandpack title="Using DataSourceApi.addData to update the DataSource">
-
-```ts file="addData-example.page.tsx"
-
+```tsx file="addData-example.demo.tsx" title="Using DataSourceApi.addData to update the DataSource"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -196,12 +147,8 @@ For adding at the beginning of the data source, see the <DApiLink name="insertDa
 
 > Retrieves the data object for the specified node path.
 
-<Sandpack title="Retrieving data by node path">
-
-```tsx file="tree-getDataByNodePath-example.page.tsx"
+```tsx file="tree-getDataByNodePath-example.demo.tsx" title="Retrieving data by node path"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -253,12 +200,8 @@ The node path needs to be of an existing node. If you pass in a non-existent (or
 
 </Note>
 
-<Sandpack title="Retrieving data by node path">
-
-```tsx file="tree-getDataByNodePath-example.page.tsx"
+```tsx file="tree-getDataByNodePath-example.demo.tsx" title="Retrieving data by node path"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -319,19 +262,15 @@ For inserting an array of data, see the <DApiLink name="insertDataArray" /> meth
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
-<Sandpack title="Inserting data at various locations">
-
-<Description>
+<DemoTitle>Inserting data at various locations</DemoTitle>
+<DemoDescription>
 
 Click any row in the table to make it the current active row, and then use the second button to add a new row after the active row.
 
-</Description>
+</DemoDescription>
 
-```ts file="insert-example.page.tsx"
-
+```tsx file="insert-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -363,23 +302,7 @@ When using this method for tree nodes, `waitForNode` defaults to `true` (you can
 The first parameter should be an array of objects, where each object has a `data` property (the data to update) and a `nodePath` property (the path of the node to update).
 
 
-```tsx title="Updating an aray of tree nodes"
-dataSourceApi.updateDataArrayByNodePath([
-  {
-    data: {
-      fileName: 'Vacation.pdf',
-      sizeInKB: 1000,
-    },
-    nodePath: ['1', '10'],
-  },
-  {
-    data: {
-      fileName: 'Report.docx',
-      sizeInKB: 2000,
-    },
-    nodePath: ['1', '11'],
-  },
-]);
+```tsx file="index.snippet.tsx" region="updating-an-aray-of-tree-nodes" title="Updating an aray of tree nodes"
 ```
 
 </Prop>
@@ -395,19 +318,7 @@ The second parameter is the node path.
 
 When a function is passed as the first parameter, it will be called with the children of the node. The return value will be used as the new children of the node. This gives you an opportunity to update the children based on the current children state.
 
-```tsx title="Updating the children of a tree node"
-dataSourceApi.updateChildrenByNodePath(
-  (currentChildren) => {
-    return [
-      ...(currentChildren || []),
-      {
-        name: 'untitled.txt',
-        id: '8',
-      },
-    ];
-  },
-  ['1', '3'],
-);
+```tsx file="index.snippet.tsx" region="updating-the-children-of-a-tree-node" title="Updating the children of a tree node"
 ```
 
 <Note>
@@ -447,19 +358,11 @@ If the primary keys in your `<TreeDataSource />` are unique globally (not just w
 </Note>
 
 
-```tsx title="Updating a tree node by path"
-dataSourceApi.updateDataByNodePath({
-  fileName: 'New Name',
-  sizeInKB: 1000,
-}, ['1', '10']);
+```tsx file="index.snippet.tsx" region="updating-a-tree-node-by-path" title="Updating a tree node by path"
 ```
 
-<Sandpack title="Updating a tree node by path" size="lg">
-
-```ts file="tree-updateDataByPath-example.page.tsx"
+```tsx file="tree-updateDataByPath-example.demo.tsx" title="Updating a tree node by path" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -482,16 +385,11 @@ If the primary keys in your `<TreeDataSource />` are unique globally (not just w
 </Note>
 
 
-```tsx title="Removing a tree node by path"
-dataSourceApi.removeDataByNodePath(['1', '10']);
+```tsx file="index.snippet.tsx" region="removing-a-tree-node-by-path" title="Removing a tree node by path"
 ```
 
-<Sandpack title="Removing a tree node by path" size="lg">
-
-```ts file="tree-removeDataByNodePath-example.page.tsx"
+```tsx file="tree-removeDataByNodePath-example.demo.tsx" title="Removing a tree node by path" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -505,23 +403,11 @@ The data object must have a primary key that matches the primary key of the data
 
 </Note>
 
-```ts
-dataSourceApi.updateData({
-  // if the primaryKey is the id, make sure to include it
-  id: 1,
-
-  // and then include any properties you want to update - in this case, the name and age
-  name: 'John Doe',
-  age: 30,
-});
+```ts file="index.snippet.tsx" region="updatedata"
 ```
 
-<Sandpack title="Updating a row">
-
-```ts file="simple-updateData-example.page.tsx"
+```tsx file="simple-updateData-example.demo.tsx" title="Updating a row"
 ```
-
-</Sandpack>
 
 For updating an array of data, see the <DApiLink name="updateDataArray" /> method.
 
@@ -535,9 +421,8 @@ When `waitForNode` is used, if the node does not exist yet, it will wait for the
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
-<Sandpack title="Live data updates with DataSourceApi.updateData">
-
-<Description>
+<DemoTitle>Live data updates with DataSourceApi.updateData</DemoTitle>
+<DemoDescription>
 
 The DataSource has 10k items.
 
@@ -545,13 +430,10 @@ In this example, we're updating 5 rows (in the visible viewport) every 30ms.
 
 The update rate could be much higher, but we're keeping it at current levels to make it easier to see the changes.
 
-</Description>
+</DemoDescription>
 
-```ts file="live-updates-example.page.tsx"
-
+```tsx file="live-updates-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 

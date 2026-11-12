@@ -7,17 +7,7 @@ This API can be used when [master-detail](/docs/learn/master-detail/overview) is
 
 You can retrieve the row details api by reading it from the `api.rowDetailApi` property.
 
-```tsx {4}
-
-const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
-  // do something with it
-  api.rowDetailApi.collapseAllDetails()
-}
-
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={onReady}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
@@ -31,21 +21,17 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 > Collapses all row details.
 
-<Sandpack title="Master detail DataGrid with collapse all button" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail DataGrid with collapse all button</DemoTitle>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 You can collapse them via the Row Detail API.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -53,19 +39,15 @@ You can collapse them via the Row Detail API.
 
 > Expands all row details.
 
-<Sandpack title="Master detail DataGrid with expand all button" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail DataGrid with expand all button</DemoTitle>
+<DemoDescription>
 
 Click the `Expand All` button to expand all row details.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-api-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 

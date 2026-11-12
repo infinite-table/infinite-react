@@ -44,32 +44,12 @@ This release brings some changes and better clarity around sorting and filtering
 
 ### Breaking changes
 
-1. **Sorting and filtering happen in the browser by default.** A <DPropLink name="data" /> function no longer makes filtering remote, and a controlled <DPropLink name="sortInfo" /> no longer makes sorting remote. If your server sorts or filters - or you pass a controlled `sortInfo` / `filterValue` and sort or filter the data yourself - set <DPropLink name="shouldReloadData" />:
-
-   ```tsx
-   // before: implied by the data function / the controlled sortInfo
-   <DataSource data={fetchRows} sortInfo={sortInfo} />
-
-   // now
-   <DataSource
-     data={fetchRows}
-     sortInfo={sortInfo}
-     shouldReloadData={{ sortInfo: true, filterValue: true }}
-   />
+1. **Sorting and filtering happen in the browser by default.** A <DPropLink name="data" /> function no longer makes filtering remote, and a controlled <DPropLink name="sortInfo" /> no longer makes sorting remote. If your server sorts or filters - or you pass a controlled `sortInfo` / `filterValue` and sort or filter the data yourself - set <DPropLink name="shouldReloadData" />   ```tsx file="index.snippet.tsx" region="breaking-changes"
    ```
 
    With <DPropLink name="lazyLoad" />, sorting, filtering, grouping and pivoting still default to the server. With <DPropLink name="livePagination" />, sorting and filtering now default to the server (an uncontrolled sort change used to do nothing) and grouping stays in the browser - this also applies to array data with `livePagination`. In development, a warning is shown the first time the sorting or filtering changes for a `data` function without `shouldReloadData`. See [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
 
-2. **A <DPropLink name="filterFunction" /> (or <DPropLink name="treeFilterFunction" />) decides the filtering on its own.** Before, the column filters (<DPropLink name="filterValue" />) were also applied after your function. Now your function gets the column filters in its param and does whatever filtering you want with them - to filter by them the same way as the built-in filtering, call the new `defaultFilterFunction`:
-
-   ```tsx
-   import { defaultFilterFunction } from '@infinite-table/infinite-react';
-
-   // before
-   filterFunction={({ data }) => data.age > 30}
-
-   // now, to also apply the column filters
-   filterFunction={(param) => defaultFilterFunction(param) && param.data.age > 30}
+2. **A <DPropLink name="filterFunction" /> (or <DPropLink name="treeFilterFunction" />) decides the filtering on its own.** Before, the column filters (<DPropLink name="filterValue" />) were also applied after your function. Now your function gets the column filters in its param and does whatever filtering you want with them - to filter by them the same way as the built-in filtering, call the new `defaultFilterFunction`   ```tsx file="index.snippet.tsx" region="breaking-changes-2"
    ```
 
    In development, a warning is shown when a filter function is used with active column filters that it doesn't apply. The `filterDataArray` export follows the same rule, and no longer takes `operatorsByFilterType`.
@@ -303,11 +283,7 @@ Update shadcn theme to work well with the latest tailwind 4 colors.
 
 Starting with this release, the CSS for each theme (other than the `"default"`) is not included in the root CSS file (`@infinite-table/infinite-react/index.css`) and has to be imported explicitly:
 
-```ts
-import '@infinite-table/infinite-react/theme/shadcn.css'
-import '@infinite-table/infinite-react/theme/balsam.css'
-import '@infinite-table/infinite-react/theme/minimalist.css'
-import '@infinite-table/infinite-react/theme/ocean.css'
+```ts file="index.snippet.tsx" region="6-2-0"
 ```
 
 ## 6.1.1
@@ -526,20 +502,7 @@ This release, although a major one, does not introduce new major functionality, 
 
 Version `2.0.0` allows you to make group columns sortable, even when they are configured with `groupBy` fields that are not actually bound to columns.
 
-```tsx
-<DataSource<Person>
-  groupBy={[
-    // those fields are not bound to actual columns
-    {field: 'team'},
-    {field: 'age' },
-  ]}>
-  <InfiniteTable<Person>
-    groupColumn={{
-      sortType: ['string', 'number'], // <--- allows you to have
-      // the group column sortable
-    }}
-    ...
-/>
+```tsx file="index.snippet.tsx" region="improved-group-column-sorting"
 ```
 
 ### Updated column sortable behavior
