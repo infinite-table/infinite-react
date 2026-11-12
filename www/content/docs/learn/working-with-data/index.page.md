@@ -16,11 +16,7 @@ The `<DataSource/>` component is responsible for the data the management layer.
 
 Probably the most important prop for the `<DataSource />` component is the <DPropLink name="idProperty" /> prop. It specifies the property of the data object that is used as a unique identifier for data rows/items.
 
-```tsx
-<DataSource<DATA_TYPE>
-  idProperty="id"
-  data={[]} // or a Promise or function returning a Promise.
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 </Note>
@@ -31,40 +27,14 @@ The `<DataSource />` is a generic React TypeScript component that can be bound t
 
 In this documentation, we'll use `DATA_TYPE` when referring to the generic type. Rarely, we'll use `T`.
 
-```tsx
-<DataSource<DATA_TYPE>>
-  <InfiniteTable<DATA_TYPE> />
-</DataSource>
+```tsx file="index.snippet.tsx" region="intro-2"
 ```
 
 Most of our examples in these docs have a `Developer` or `Employee` TypeScript data type used as the generic type for the `<DataSource />` component.
 
 </Note>
 
-```tsx
-import { DataSource } from '@infinite-table/infinite-react';
-
-type Employee = {
-  id: string | number;
-  name: string;
-  salary: number;
-  department: string;
-  company: string;
-};
-
-const employees: Employee[] = [
-  { id: 1, name: 'Bob', salary: 10_000, department: 'IT', company: 'Bobsons' },
-  {
-    id: 2,
-    name: 'Alice',
-    salary: 20_000,
-    department: 'IT',
-    company: 'Bobsons',
-  },
-  { id: 3, name: 'John', salary: 30_000, department: 'IT', company: 'Bobsons' },
-];
-
-<DataSource<Employee> primaryKey={'id'} data={employees} />;
+```tsx file="index.snippet.tsx" region="intro-3"
 ```
 
 In the snippet above, we see 3 important details:
@@ -83,8 +53,7 @@ The <DataSourcePropLink name="data" /> prop can be either:
 
 </Note>
 
-```ts live title="Data loading example with promise" file="basic-example.page.tsx"
-
+```tsx file="basic-example.demo.tsx" title="Data loading example with promise"
 ```
 
 
@@ -102,13 +71,8 @@ While you're loading the data, you can always render a loading indicator - pass 
 
 For basic datasets, which have simple data requirements, using `fetch` is probably sufficient, so here is an example:
 
-<Sandpack title="Using fetch for remote data">
-
-```ts files=["using-fetch-example.page.tsx","columns.ts"]
-
+```tsx file="using-fetch-example.demo.tsx" title="Using fetch for remote data"
 ```
-
-</Sandpack>
 
 #### Re-fetching on change
 
@@ -122,13 +86,8 @@ Alternatively, you can use the <DPropLink name="refetchKey" /> prop to trigger a
 
 </Note>
 
-<Sandpack title="Re-fetching data">
-
-```ts files=["refetch-example.page.tsx","columns.ts"]
-
+```tsx file="refetch-example.demo.tsx" title="Re-fetching data"
 ```
-
-</Sandpack>
 
 ## Live Updates
 

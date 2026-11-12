@@ -17,21 +17,17 @@ When the <DPropLink name="data" /> property is a function, it's not called again
 
 In order to show the column filter editors in the column headers, you need to specify either the uncontrolled <DPropLink name="defaultFilterValue" /> property or the controlled <DPropLink name="filterValue" /> version.
 
-<Sandpack title="Client-side filtering in action">
-
-<Description>
+<DemoTitle>Client-side filtering in action</DemoTitle>
+<DemoDescription>
 
 This example shows remote data with local filtering - the data function is called once, and the filtering happens in the browser.
 
 In addition, the `filterDelay` property is set to `0` for instant feedback.
 
-</Description>
+</DemoDescription>
 
-```ts file="basic-local-filter-example.page.tsx"
-
+```tsx file="basic-local-filter-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -47,26 +43,7 @@ The default filter types are `string` and `number` - read the next section to se
 
 A filter type is basically a collection of operators available for a type of data. Each operator needs a name and a function that will be used to filter the data, when that operator is applied.
 
-```tsx {5,14} title="Using_filter_types_for_filterValue"
-filterValue={[
-  {
-    field: 'firstName',
-    filter: {
-      type: 'string',
-      operator: 'includes',
-      value: 'John'
-    }
-
-  },
-  {
-    field: 'age',
-    filter: {
-      type: 'number',
-      operator: 'gt',
-      value: 30
-    }
-  }
-]}
+```tsx file="filtering-client-side.snippet.tsx" region="using-filter-types-for-filtervalue" title="Using_filter_types_for_filterValue"
 ```
 
 The above filter value specifies that there are 2 filters applied:
@@ -78,40 +55,14 @@ When filtering client-side, the rows are filtered using the functions of the `in
 
 Here's a snippet of code from the `string` filter type showing the `includes` operator:
 
-```tsx
-operators: [
-  {
-    name: 'includes',
-    components: { Icon: /* a React Component */ },
-    label: 'Includes',
-    fn: ({ currentValue, filterValue }) => {
-      return (
-        typeof currentValue === 'string' &&
-        typeof filterValue == 'string' &&
-        currentValue.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    },
-  },
-  //...
-]
+```tsx file="filtering-client-side.snippet.tsx" region="using-filter-types"
 ```
 
 Let's now look at another example, of implementing a custom `salary` filter type.
 
 For this, we override the `filterTypes` property of the `<DataSource />` component:
 
-```tsx
-const filterTypes = {
-  salary: {
-    defaultOperator: 'gt',
-    emptyValues: ['', null, undefined],
-    operators: [ /*...*/ ]
-  }
-}
-
-<DataSource<Developer>
-  filterTypes={filterTypes}
-/>
+```tsx file="filtering-client-side.snippet.tsx" region="using-filter-types-2"
 ```
 
 <Note>
@@ -120,43 +71,34 @@ When you specify new <DPropLink name="filterTypes"/>, the default filter types o
 
 </Note>
 
-<Sandpack title="Client-side filtering in action with custom filter type">
-
-<Description>
+<DemoTitle>Client-side filtering in action with custom filter type</DemoTitle>
+<DemoDescription>
 
 The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
 
-</Description>
+</DemoDescription>
 
-```ts file="filter-custom-filter-type-example.page.tsx"
-
+```tsx file="filter-custom-filter-type-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ### Customizing Default Filter Types
 
 By default, the `string` and `number` filter types are available. You can import the default filter types like this:
 
-```ts
-import { defaultFilterTypes } from '@infinite-table/infinite-react';
+```ts file="filtering-client-side.snippet.tsx" region="customizing-default-filter-types"
 ```
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
 
-<Sandpack title="Enhanced string filter type - new 'Not includes' operator">
-
-<Description>
+<DemoTitle>Enhanced string filter type - new 'Not includes' operator</DemoTitle>
+<DemoDescription>
 
 The `string` columns have a new `Not includes` operator.
 
-</Description>
+</DemoDescription>
 
-```ts file="customised-default-filter-types-example.page.tsx"
-
+```tsx file="customised-default-filter-types-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -188,33 +130,15 @@ With a <DPropLink name="filterFunction" />, you decide how the rows are filtered
 - write your own logic;
 - or combine the two.
 
-```tsx
-import { defaultFilterFunction } from '@infinite-table/infinite-react';
-
-// the built-in column filtering
-<DataSource<Developer> filterFunction={defaultFilterFunction} />;
-
-// your own logic only
-<DataSource<Developer> filterFunction={(param) => param.data.id > 100} />;
-
-// the column filters, and your own condition
-<DataSource<Developer>
-  filterFunction={(param) =>
-    defaultFilterFunction(param) && param.data.id > 100
-  }
-/>;
+```tsx file="filtering-client-side.snippet.tsx" region="using-a-filter-function-instead-of-the-column"
 ```
 
-<Sandpack title="Custom filterFunction example">
-
-<Description>
+<DemoTitle>Custom filterFunction example</DemoTitle>
+<DemoDescription>
 
 Loads data from remote location but will only show rows that have `id > 100`.
 
-</Description>
+</DemoDescription>
 
-```ts file="filter-function-example.page.tsx"
-
+```tsx file="filter-function-example.demo.tsx"
 ```
-
-</Sandpack>

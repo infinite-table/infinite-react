@@ -5,50 +5,18 @@ description: InfiniteTable DataGrid allows you to easily configure context menus
 
 The easiest way to configure a context menu is to provide the <PropLink name="getCellContextMenuItems" /> callback function and use it to return the menu items you want to show in the context menu.
 
-```tsx
-const getCellContextMenuItems = ({ column, value }) => {
-  if (column.id === 'currency') {
-    return [
-      {
-        label: `Convert ${value}`,
-        key: 'currency-convert',
-      },
-    ];
-  }
-
-  if (column.id === 'age') {
-    return null;
-  }
-
-  return [
-    {
-      label: `Welcome ${value}`,
-      key: 'hi',
-    },
-  ];
-};
-
-<DataSource<Developer> data={data} primaryKey="id">
-  <InfiniteTable<Developer>
-    getCellContextMenuItems={getCellContextMenuItems}
-    columns={columns}
-  />
-</DataSource>;
+```tsx file="using-context-menus.snippet.tsx" region="intro"
 ```
 
-<Sandpack title="Using context menus">
-
-<Description>
+<DemoTitle>Using context menus</DemoTitle>
+<DemoDescription>
 
 Right-click any cell in the table to see the custom context menu.
 
-</Description>
+</DemoDescription>
 
-```ts file="basic-cells-context-menu-example.page.tsx"
-
+```tsx file="basic-cells-context-menu-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -63,43 +31,18 @@ The <PropLink name="getCellContextMenuItems" /> function can return one of the f
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx
-const getCellContextMenuItems = () => {
-  return {
-    columns: [{ name: 'label' }, { name: 'lcon' }],
-    items: [
-      {
-        label: 'Welcome',
-        icon: '👋',
-        key: 'hi',
-        onAction: () => {
-          // do something
-        },
-        hideMenuOnAction: true,
-      },
-      {
-        label: 'Convert',
-        icon: '🔁',
-        key: 'convert',
-      },
-    ],
-  };
-};
+```tsx file="using-context-menus.snippet.tsx" region="intro-2"
 ```
 
-<Sandpack title="Customising columns in the context menu">
-
-<Description>
+<DemoTitle>Customising columns in the context menu</DemoTitle>
+<DemoDescription>
 
 Right-click any cell in the table to see a context menu with multiple columns (`icon`, `label` and `description`).
 
-</Description>
+</DemoDescription>
 
-```ts file="custom-columns-context-menu-example.page.tsx"
-
+```tsx file="custom-columns-context-menu-example.demo.tsx"
 ```
-
-</Sandpack>
 </Note>
 
 ## Context Menus for the Table Body
@@ -113,19 +56,15 @@ This function has almost the same signature as <PropLink name="getCellContextMen
 - all cell-related properties (`column`, `data`, `value`, etc) can be `undefined`
 - it contains an `event` property with the original event object for the right-click event
 
-<Sandpack title="Context menu for outside cells">
-
-<Description>
+<DemoTitle>Context menu for outside cells</DemoTitle>
+<DemoDescription>
 
 Right-click outside cells in the table to see a context menu for the table body.
 
-</Description>
+</DemoDescription>
 
-```ts file="table-context-menu-example.page.tsx"
-
+```tsx file="table-context-menu-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Hiding the Context Menu
 
@@ -133,24 +72,7 @@ To hide the context menu when you click a menu item, you can use the `hideMenuOn
 
 Alternatively, you can use the object passed in as a parameter to the `item.onAction` callback function to hide the menu:
 
-```tsx {12}
-const getCellContextMenuItems = () => {
-  return {
-    items: [
-      {
-        label: 'Hello',
-        key: 'hi',
-        onAction: ({ key, hideMenu }) => {
-          // do something
-          console.log('Hello');
-
-          // hide the menu
-          hideMenu();
-        },
-      },
-    ],
-  };
-};
+```tsx file="using-context-menus.snippet.tsx" region="hiding-the-context-menu"
 ```
 
 The third option is to use the <ApiLink name="hideContextMenu" /> function in the [API](/docs/reference/api).

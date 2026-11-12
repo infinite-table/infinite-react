@@ -50,13 +50,8 @@ If no `treeExpandState` prop is specified, the tree will be rendered as fully ex
 
 When using the controlled version, make sure to update the `treeExpandState` prop by using the <DPropLink name="onTreeExpandStateChange" /> callback.
 
-<Sandpack title="Using controlled tree expand state" size="large">
-
-```ts file="tree-controlled-expandstate-example.page.tsx"
-
+```tsx file="tree-controlled-expandstate-example.demo.tsx" title="Using controlled tree expand state" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -73,13 +68,8 @@ The first parameter is the new tree state, and the second parameter is an object
 - `nodeState` - the new state of the node (`"collapsed"` or `"expanded"`)
 
 
-<Sandpack title="Using the onTreeExpandStateChange callback">
-
-```ts file="tree-controlled-expandstate-example.page.tsx"
-
+```tsx file="tree-controlled-expandstate-example.demo.tsx" title="Using the onTreeExpandStateChange callback"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -466,23 +456,13 @@ The `DataSourceAggregationReducer` type can have the following properties
 
 Aggregation reducers can be used in combination with grouping and pivoting. The example below shows aggregations used with server-side pivoting
 
-<Sandpack title="Aggregations used together with server-side pivoting">
-
-```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.demo.tsx" title="Aggregations used together with server-side pivoting"
 ```
-
-</Sandpack>
 
 Pivot columns generated for aggregations will inehrit from initial columns - the example shows how to leverage this behavior and how to extend it
 
-<Sandpack title="Pivot columns inherit from original columns bound to the same field">
-
-```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -540,13 +520,8 @@ const aggregationReducers = {
 };
 ```
 
-<Sandpack title="Pivot columns inherit from original columns bound to the same field">
-
-```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -580,13 +555,8 @@ It's important to note you can re-fetch data by changing the reference you pass 
 
 </Note>
 
-<Sandpack title="Re-fetching data">
-
-```ts files=["$DOCS/learn/working-with-data/refetch-example.page.tsx","$DOCS/learn/working-with-data/columns.ts"]
-
+```tsx file="/docs/learn/working-with-data/refetch-example.demo.tsx" title="Re-fetching data"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1191,13 +1161,8 @@ You can control the visibility of the column filters by using the <PropLink name
 
 > Whether the datasource will load data lazily - useful for server-side grouping and pivoting. If set to `true` or to an object (with `batchSize` property), the <DataSourcePropLink name="data" /> prop must be a function that returns a promise.
 
-<Sandpack title="Server-side pivoting with full lazy load">
-
-```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.demo.tsx" title="Server-side pivoting with full lazy load"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1316,13 +1281,8 @@ For more details on the type of the items in this array prop, see <TypeLink name
 
 </Note>
 
-<Sandpack title="Pivoting with customized pivot column">
-
-```ts file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.demo.tsx" title="Pivoting with customized pivot column"
 ```
-
-</Sandpack>
 
 </Prop>
  
@@ -1362,13 +1322,8 @@ This example uses `groupBy.column` to configure the generated columns correspond
 
 Use this in combination with <DataSourcePropLink name="livePaginationCursor" /> and <DataSourcePropLink name="onDataParamsChange" />
 
-<Sandpack  title="Live pagination - with react-query">
-
-```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
-
+```tsx file="/docs/learn/working-with-data/live-pagination-example.demo.tsx" title="Live pagination - with react-query"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1422,13 +1377,8 @@ When this is a function, it is called with a parameter object that has the follo
 
 </Note>
 
-<Sandpack  title="Live pagination - with react-query" deps="react-query">
-
-```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
-
+```tsx file="/docs/learn/working-with-data/live-pagination-example.demo.tsx" title="Live pagination - with react-query"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1445,13 +1395,8 @@ This applies to flat, grouped and tree data, both with primary keys and with <DP
 
 With <DPropLink name="lazyLoad" />, the server applies the target: the <DPropLink name="data" /> function receives `multiRowSelectionTarget` in its <TypeLink name="DataSourceDataParams">parameters</TypeLink>, and it should use it when working out which rows a stored selection covers. Changing this prop doesn't reload the data.
 
-<Sandpack title="Choosing which rows the selection acts on when the data is filtered">
-
-```ts file="$DOCS/learn/selection/row-selection-target-example.page.tsx"
-
+```tsx file="/docs/learn/selection/row-selection-target-example.demo.tsx" title="Choosing which rows the selection acts on when the data is filtered"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1469,13 +1414,8 @@ The function is called with an object that has the following properties:
 - `livePaginationCursor` - the value for the live pagination cursor - see <DataSourcePropLink name="livePaginationCursor" /> for details
 - `changes` - an object that can help you figure out what change caused `onDataParamsChange` to be called.
 
-<Sandpack  title="Live pagination - with react-query" deps="react-query">
-
-```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
-
+```tsx file="/docs/learn/working-with-data/live-pagination-example.demo.tsx" title="Live pagination - with react-query"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="onFilterValueChange" type="({field?, id?, filter: {type, operator, value}[]) => void">
@@ -1512,19 +1452,15 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 > A function to be called when the <DPropLink name="cellSelection" /> changes.
 
-<Sandpack  title="Controlled cell selection with onCellSelectionChange" size="lg">
-
-<Description>
+<DemoTitle>Controlled cell selection with onCellSelectionChange</DemoTitle>
+<DemoDescription>
 
 Use your mouse to select/deselect cells.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/selection/controlled-cell-selection-example.page.tsx"
-
+```tsx file="/docs/learn/selection/controlled-cell-selection-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1532,23 +1468,18 @@ Use your mouse to select/deselect cells.
 
 > A function to be called when the <DPropLink name="rowSelection" /> changes.
 
-<Sandpack  title="Controlled row selection with onRowSelectionChange">
-
-<Description>
+<DemoTitle>Controlled row selection with onRowSelectionChange</DemoTitle>
+<DemoDescription>
 
 Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx"
 ```
 
-</Sandpack>
-
-<Sandpack title="Multi row checkbox selection with grouping" >
-
-<Description>
+<DemoTitle>Multi row checkbox selection with grouping</DemoTitle>
+<DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
 
@@ -1556,13 +1487,10 @@ Go ahead and select some groups/rows and see the selection value adjust.
 
 The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="onSortInfoChange" type="(sortInfo | null) => void">
@@ -1633,19 +1561,15 @@ const rowSelection = {
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
 
-<Sandpack  title="Single row selection (controlled) with onRowSelectionChange">
-
-<Description>
+<DemoTitle>Single row selection (controlled) with onRowSelectionChange</DemoTitle>
+<DemoDescription>
 
 Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -1679,9 +1603,8 @@ The <DPropLink name="useGroupKeysForMultiRowSelection" /> prop can be used for b
 
 </Note>
 
-<Sandpack title="Multi row checkbox selection with grouping" >
-
-<Description>
+<DemoTitle>Multi row checkbox selection with grouping</DemoTitle>
+<DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
 
@@ -1689,13 +1612,10 @@ Go ahead and select some groups/rows and see the selection value adjust.
 
 The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 

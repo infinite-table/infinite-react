@@ -100,13 +100,8 @@ const CustomCellComponent = (props: React.HTMLProps<HTMLDivElement>) => {
 
 You should not pass the `domRef` along when using the hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> function.
 
-<Sandpack title="Column with render & useInfiniteColumnCell">
-
-```tsx file="$DOCS/reference/column-render-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/column-render-hooks-example.demo.tsx" title="Column with render & useInfiniteColumnCell"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -202,13 +197,8 @@ const CustomHeaderComponent = (props: React.HTMLProps<HTMLDivElement>) => {
 You should not pass the `domRef` along when using the hook inside the
 <PropLink name="columns.header" /> function.
 
-<Sandpack title="Column with custom header & useInfiniteHeaderCell">
-
-```tsx file="$DOCS/reference/column-header-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/column-header-hooks-example.demo.tsx" title="Column with custom header & useInfiniteHeaderCell"
 ```
-
-</Sandpack>
 
 </Prop>
 

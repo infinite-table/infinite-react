@@ -10,62 +10,26 @@ When using TypeScript, both `DataSource` and `InfiniteTable` components are gene
 
 </Note>
 
-```tsx
-type Person = {
-  name: string;
-  age: number;
-  country: string;
-  id: string;
-}
-
-const groupBy = [{field: 'country'}]
-
-<DataSource<Person> groupBy={groupBy}>
-  <InfiniteTable<Person> />
-</DataSource>
-
+```tsx file="grouping-rows.snippet.tsx" region="intro"
 ```
 
 In the example above, we're grouping by `country`, which is a field available in the `Person` type. Specifying a field not defined in the `Person` type would be a type error.
 
 Additionally, a `column` object can be used together with the `field` to define how the group column should be rendered.
 
-```tsx {4}
-const groupBy = [
-  {
-    field: 'country',
-    column: {
-      // custom column configuration for group column
-      width: 150,
-      header: 'Country group',
-    },
-  },
-];
+```tsx file="grouping-rows.snippet.tsx" region="intro-2"
 ```
 
 The example below puts it all together.
 
 Also see the <DataSourcePropLink name="groupBy" code={false}>groupBy API reference</DataSourcePropLink> to find out more.
 
-<Sandpack title="Simple row grouping">
-
-```ts file="row-grouping-example.page.tsx"
-
+```tsx file="row-grouping-example.demo.tsx" title="Simple row grouping"
 ```
-
-</Sandpack>
 
 In `groupBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
 
-```tsx {5}
-const groupBy = [
-  {
-    field: 'country',
-    column: {
-      renderValue: ({ value }) => <>Country: {value}</>,
-    },
-  },
-];
+```tsx file="grouping-rows.snippet.tsx" region="intro-3"
 ```
 
 <Note>
@@ -87,11 +51,7 @@ When you do grouping, by default, all row groups are expanded. Of course you hav
 
 If you simply want to specify the initial expanded/collapsed state, you should use the <DPropLink name="defaultGroupRowsState" /> prop.
 
-```tsx title="Specifying the default state for group rows"
-const defaultGroupRowsState: DataSourcePropGroupRowsStateObject = {
-  collapsedRows: true,
-  expandedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
-};
+```tsx file="grouping-rows.snippet.tsx" region="specifying-the-default-state-for-group-rows" title="Specifying the default state for group rows"
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -102,13 +62,8 @@ The two properties in this object are `collapsedRows` and `expandedRows`, and ea
 So if you have `collapsedRows` set to `true` and then `expandedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are collapsed by default, except the rows specified in the `expandedRows`.
 
 
-<Sandpack title="Everything is collapsed except a few rows">
-
-```ts file="row-grouping-state-example.page.tsx"
-
+```tsx file="row-grouping-state-example.demo.tsx" title="Everything is collapsed except a few rows"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -117,11 +72,7 @@ You can specify expand/collapse state at any level of nesting.
 Let's suppose by default all rows are collapsed - if you want a node to be visible then you have to specify all its parents as expanded.
 
 So having this
-```tsx 
-const defaultGroupRowsState = {
-  collapsedRows: true,
-  expandedRows: [['Mexico', 'backend']],
-};
+```tsx file="grouping-rows.snippet.tsx" region="controlling-the-collapse-expand-state"
 ```
 will show all rows as collapsed, and just as soon as you expand `Mexico` you will see the `backend` group row for Mexico to be expanded.
 </Note>
@@ -133,13 +84,8 @@ If you use the controlled <DPropLink name="groupRowsState" />, make sure you upd
 </Note>
 
 
-<Sandpack title="Using controlled expanded/collapsed state for group rows">
-
-```ts file="row-grouping-state-controlled-example.page.tsx"
-
+```tsx file="row-grouping-state-controlled-example.demo.tsx" title="Using controlled expanded/collapsed state for group rows"
 ```
-
-</Sandpack>
 
 In addition to simple objects with the shape described above, the <DPropLink name="groupRowsState" />/<DPropLink name="defaultGroupRowsState" /> can also be instanges of `GroupRowsState` class, which is exported by the Infinite Table package. This class is simply a wrapper around those objects, but it gives you additional utility methods.
 
@@ -163,43 +109,18 @@ You can specify the rendering strategy explicitly by setting the <PropLink name=
 
 When grouping by multiple fields, by default the component will render a group column for each group field
 
-```tsx
-const groupBy = [
-  {
-    field: 'age',
-    column: {
-      width: 100,
-      renderValue: ({ value }) => <>Age: {value}</>,
-    },
-  },
-  {
-    field: 'companyName',
-  },
-  {
-    field: 'country',
-  },
-];
+```tsx file="grouping-rows.snippet.tsx" region="multiple-groups-columns"
 ```
 
 Let's see an example of how the component would render the table with the multi-column strategy.
 
-<Sandpack title="Multi-column group render strategy">
-
-```ts files=["row-grouping-multi-column-example.page.tsx","columns.ts"]
-
+```tsx file="row-grouping-multi-column-example.demo.tsx" title="Multi-column group render strategy"
 ```
-
-</Sandpack>
 
 For the `multi-column` strategy, you can use <PropLink name="hideEmptyGroupColumns" /> in order to hide columns for groups which are currently not visible.
 
-<Sandpack title="Hide Empty Group Columns">
-
-```ts files=["$DOCS/reference/hideEmptyGroupColumns-example.page.tsx","$DOCS/reference/employee-columns.ts"]
-
+```tsx file="/docs/reference/hideEmptyGroupColumns-example.demo.tsx" title="Hide Empty Group Columns"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -219,13 +140,8 @@ By default the generated group column will "inherit" many of the properties (the
 
 </Note>
 
-<Sandpack title="Single-column group render strategy">
-
-```ts files=["row-grouping-single-column-example.page.tsx","columns.ts"]
-
+```tsx file="row-grouping-single-column-example.demo.tsx" title="Single-column group render strategy"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -249,66 +165,31 @@ There are many ways to customize the group column(s) and we're going to show a f
 
 By default, group columns only show values in the group rows - but they are normal columns, so why not bind them to a <PropLink name="columns.field" code={false}>field</PropLink> of the `DATA_TYPE`?
 
-```tsx {6,11}
-const groupColumn = {
-  id: 'the-group', // can specify an id
-  style: {
-    color: 'tomato',
-  },
-  field: 'firstName', // non-group rows will render the first name
-};
-const columns = {
-  theFirstName: {
-    field: 'firstName',
-    style: {
-      // this style will also be applied in the group column,
-      // since it is bound to this same `field`
-      fontWeight: 'bold',
-    },
-  },
-};
+```tsx file="grouping-rows.snippet.tsx" region="binding-the-group-column-to-a-field"
 ```
 
 This makes the column display the value of the `field` in non-group/normal rows, and in nested group rows when using multi-column grouping. Pivoted grids only render group rows, so that nested-row path is how a bound field still shows — indented one extra nesting level, like a leaf. With <PropLink name="groupRenderStrategy" /> set to `single-column`, the deepest (leaf) group rows in a pivot get that same extra indent. The field does not have to be a grouping key: nested rows show it when every item in the group has the same value (aggregators still win when the field is aggregated). Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in those rows.
 
-<Sandpack title="Bind group column to a field">
-
-```ts file="$DOCS/reference/bind-group-column-to-field-example.page.tsx"
-
+```tsx file="/docs/reference/bind-group-column-to-field-example.demo.tsx" title="Bind group column to a field"
 ```
-
-</Sandpack>
 
 ### Use `groupColumn` to customize rendering
 
 The <PropLink name="groupColumn" /> will inherit its own rendering and styling from the columns that are bound to the fields used in <DataSourcePropLink name="groupBy.field" />. However, you can override any of those properties so you have full control over the rendering process.
 
-```tsx {3,6}
-const groupColumn = {
-  field: 'firstName',
-  renderGroupValue: ({ value }) => {
-    return `Group: ${value}`;
-  },
-  renderLeafValue: ({ value }) => {
-    return `First name: ${value}`;
-  },
-};
+```tsx file="grouping-rows.snippet.tsx" region="use-groupcolumn-to-customize-rendering"
 ```
 
-<Sandpack title="Customize group column renderer">
-
-<Description>
+<DemoTitle>Customize group column renderer</DemoTitle>
+<DemoDescription>
 
 The column that renders the `firstName` has a custom renderer that adds a `.` at the end.
 The group column is bound to the same `firstName` field, but specifies a different renderer, which will be used instead.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/group-column-custom-renderers-example.page.tsx"
-
+```tsx file="/docs/reference/group-column-custom-renderers-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <HeroCards>
 <YouWillLearnCard title="Column rendering" path="../columns/column-rendering">
@@ -330,35 +211,23 @@ Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
 - `keyof DATA_TYPE` - specify an exact field that, when grouped by, makes this column be hidden
 - `{[k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
 
-<Sandpack title="Hide columns when grouping">
-
-<Description>
+<DemoTitle>Hide columns when grouping</DemoTitle>
+<DemoDescription>
 
 In this example, the column bound to `firstName` field is set to hide when any grouping is active, since the group column is anyways found to the `firstName` field.
 
 In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the `stack` and `preferredLanguage` columns are also hidden, since they are grouped by.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/hide-columns-when-grouping-example.page.tsx"
-
+```tsx file="/docs/reference/hide-columns-when-grouping-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Sorting the group column
 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
 
-```ts
-const sortInfo = [
-  {
-    dir: 1,
-    id: 'group-by',
-    field: ['stack', 'age'],
-    type: ['string', 'number'],
-  },
-];
+```ts file="grouping-rows.snippet.tsx" region="sorting-the-group-column"
 ```
 
 To start with that sort, `{ id: 'group-by', dir: 1 }` is enough — `field` is filled in from <DPropLink name="groupBy" />, and the sort type is taken from the <PropLink name="columns" /> bound to those fields.
@@ -371,13 +240,8 @@ The <PropLink name="columnDefaultSortable" /> property can be used to override t
 
  </Note>
 
-<Sandpack title="Group column with initial descending sorting">
-
-```ts file="$DOCS/reference/group-column-sorted-initially-example.page.tsx"
-
+```tsx file="/docs/reference/group-column-sorted-initially-example.demo.tsx" title="Group column with initial descending sorting"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -391,13 +255,8 @@ If you want to make it sortable, you have to specify a <PropLink name="columns.s
 
 When grouping, you can also aggregate the values of the grouped rows. This is done via the <DataSourcePropLink name="aggregationReducers" code>DataSource.aggregationReducers</DataSourcePropLink> property. See the example below
 
-<Sandpack title="Grouping with aggregations">
-
-```ts file="grouping-with-aggregations-example.page.tsx"
-
+```tsx file="grouping-with-aggregations-example.demo.tsx" title="Grouping with aggregations"
 ```
-
-</Sandpack>
 
 Each <DataSourcePropLink name="aggregationReducers" code={false}>reducer</DataSourcePropLink> from the `aggregationReducers` map can have the following properties:
 
@@ -414,13 +273,8 @@ If an aggregation reducer is bound to a `field` in the dataset, and there is a c
 
 If you want to prevent the user to expand the last level of group rows, you can override the `render` function for the group column
 
-<Sandpack title="Customized group expand on last group level">
-
-```ts file="grouping-with-aggregations-discard-expand-example.page.tsx"
-
+```tsx file="grouping-with-aggregations-discard-expand-example.demo.tsx" title="Customized group expand on last group level"
 ```
-
-</Sandpack>
 
 </Note>
 
@@ -454,98 +308,17 @@ Server side grouping needs two kinds of data responses in order to work properly
 
 Here's an example, that assumes grouping by `country` and `city` and aggregations by `age` and `salary` (average values):
 
-```tsx
-//request:
-groupKeys: [] // empty keys array, so it's a top-level group
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-// lazyLoadStartIndex: 0, - passed if lazyLoad is configured with a batchSize
-// lazyLoadBatchSize: 20 - passed if lazyLoad is configured with a batchSize
-
-//response
-{
-  cache: true,
-  totalCount: 20,
-  data: [
-    {
-      data: {country: "Argentina"},
-      aggregations: {avgSalary: 20000, avgAge: 30},
-      keys: ["Argentina"],
-    },
-    {
-      data: {country: "Australia"},
-      aggregations: {avgSalary: 25000, avgAge: 35},
-      keys: ["Australia"],
-    }
-    //...
-  ]
-}
+```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading"
 ```
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx
-
-//request:
-groupKeys: ["Argentina"]
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-
-//response
-{
-  totalCount: 4,
-  data: [
-    {
-      data: {country: "Argentina", city: "Buenos Aires"},
-      aggregations: {avgSalary: 20000, avgAge: 30},
-      keys: ["Argentina", "Buenos Aires"],
-    },
-    {
-      data: {country: "Argentina", city: "Cordoba"},
-      aggregations: {avgSalary: 25000, avgAge: 35},
-      keys: ["Argentina", "Cordoba"],
-    },
-    //...
-  ]
-}
+```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading-2"
 ```
 
 Finally, let's have a look at the leaf/normal rows and a request for them:
 
-```tsx
-
-//request
-groupKeys: ["Argentina","Buenos Aires"]
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-
-//response
-{
-  totalCount: 20,
-  data: [
-    {
-      id: 34,
-      country: "Argentina",
-      city: "Buenos Aires",
-      age: 30,
-      salary: 20000,
-      stack: "full-stack",
-      firstName: "John",
-      //...
-    },
-    {
-      id: 35,
-      country: "Argentina",
-      city: "Buenos Aires",
-      age: 35,
-      salary: 25000,
-      stack: "backend",
-      firstName: "Jane",
-      //...
-    },
-    //...
-  ]
-}
+```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading-3"
 ```
 
 <Note>
@@ -556,13 +329,8 @@ You know when to serve last-level rows, because in that case, the length of the 
 
 </Note>
 
-<Sandpack title="Server side grouping with lazy loding">
-
-```ts file="server-side-grouping-with-lazy-load-example.page.tsx"
-
+```tsx file="server-side-grouping-with-lazy-load-example.demo.tsx" title="Server side grouping with lazy loding"
 ```
-
-</Sandpack>
 
 ## Eager loading for group row nodes
 
@@ -574,48 +342,5 @@ This can be useful in combination with using `dataParams.groupRowsState` from th
 
 </Note>
 
-```tsx {18}
-//request:
-groupKeys: [] // empty keys array, so it's a top-level group
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-// lazyLoadStartIndex: 0, - passed if lazyLoad is configured with a batchSize
-// lazyLoadBatchSize: 20 - passed if lazyLoad is configured with a batchSize
-
-//response
-{
-  cache: true,
-  totalCount: 20,
-  data: [
-    {
-      data: {country: "Argentina"},
-      aggregations: {avgSalary: 20000, avgAge: 30},
-      keys: ["Argentina"],
-      // NOTE this dataset property used for eager-loading of group nodes
-      dataset: {
-        // the shape of the dataset is the same as the one normally returned by the datasource
-        cache: true,
-        totalCount: 4,
-        data: [
-          {
-            data: {country: "Argentina", city: "Buenos Aires"},
-            aggregations: {avgSalary: 20000, avgAge: 30},
-            keys: ["Argentina", "Buenos Aires"],
-          },
-          {
-            data: {country: "Argentina", city: "Cordoba"},
-            aggregations: {avgSalary: 25000, avgAge: 35},
-            keys: ["Argentina", "Cordoba"],
-          },
-        ]
-      }
-    },
-    {
-      data: {country: "Australia"},
-      aggregations: {avgSalary: 25000, avgAge: 35},
-      keys: ["Australia"],
-    }
-    //...
-  ]
-}
+```tsx file="grouping-rows.snippet.tsx" region="eager-loading-for-group-row-nodes"
 ```

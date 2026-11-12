@@ -19,9 +19,8 @@ The row detail in the DataGrid can contain another DataGrid or any other custom 
 It's very imporant that the <PropLink name="rowDetailRenderer" /> function prop you pass into `<InfiniteTable />` is stable and doesn't change on every render. So make sure you pass a reference to the same function every time - except of course if you want the row detail to change based on some other state.
 </Note>
 
-<Sandpack title="Basic master detail DataGrid example" size="lg">
-
-<Description>
+<DemoTitle>Basic master detail DataGrid example</DemoTitle>
+<DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
 
@@ -29,13 +28,10 @@ The details for each city shows a DataGrid with developers in that city.
 
 The detail DataGrid is configured with remote sorting.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-example.page.tsx"
-
+```tsx file="master-detail-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 
 If you want to use a component instead of the <PropLink name="rowDetailRenderer" /> function, you can use the <PropLink name="components.RowDetail" /> property. This works similarly and makes the DataGrid be considered master-detail. Inside the component, you can use the <HookLink name="useMasterRowInfo" /> hook to get the master row information.
@@ -46,19 +42,7 @@ If you want to use a component instead of the <PropLink name="rowDetailRenderer"
 
 When master-detail is configured and the row detail renders a DataGrid, the <DPropLink name="data" /> function for the detail `<DataSource />` will be called with the `masterRowInfo` as a property available in the object passed as argument.
 
-```tsx title="Loading the detail DataGrid data" {2}
-const detailDataFn: DataSourceData<Developer> = ({
-  masterRowInfo,
-  sortInfo,
-  ...
-}) => {
-
-  return Promise.resolve([...])
-}
-
-<DataSource<Developer> data={detailDataFn}>
-  {...}
-</DataSource>
+```tsx file="overview.snippet.tsx" region="loading-the-detail-datagrid-data" title="Loading the detail DataGrid data"
 ```
 
 You can see the live example above for more details.
@@ -71,30 +55,21 @@ The content doesn't need to include Infinite Table.
 
 You can, however, render an Infinite Table React DataGrid, at any level of nesting inside the row detail content.
 
-<Sandpack title="Master detail with custom content & DataGrid" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail with custom content & DataGrid</DemoTitle>
+<DemoDescription>
 
 In this example, the row detail contains custom content, along with another Infinite Table DataGrid. You can nest a child DataGrid inside the row details at any level of nesting.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-custom-datagrid-example.page.tsx"
-
+```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 ## Configuring the master-detail height
 
 In order to configure the height of the row details, you can use the <PropLink name="rowDetailHeight" /> prop.
 
-```tsx title="Configuring the row detail height" {3}
-<InfiniteTable<City>
-  columns={masterColumns}
-  rowDetailHeight={500}
-  rowDetailRenderer={renderDetail}
-/>
+```tsx file="overview.snippet.tsx" region="configuring-the-row-detail-height" title="Configuring the row detail height"
 ```
 
 The default value for the <PropLink name="rowDetailHeight" /> is `300` px.
@@ -105,49 +80,35 @@ The default value for the <PropLink name="rowDetailHeight" /> is `300` px.
 - `string` - the name of a CSS variable that configures the height - eg: `--master-detail-height`
 - `(rowInfo) => number` - a function that can return a different height for each row. The sole argument is the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink>.
 
-<Sandpack title="Master detail DataGrid with custom height for row details" size="lg">
-
-<Description>
+<DemoTitle>Master detail DataGrid with custom height for row details</DemoTitle>
+<DemoDescription>
 
 This master-detail DataGrid is configured with a custom <PropLink name="rowDetailHeight" /> of `200px`.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-custom-detail-height-example.page.tsx"
-
+```tsx file="master-detail-custom-detail-height-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 
 ## Conditional row details
 
 Not all rows in a DataGrid need to have details. To configure which rows have details, you can use the <PropLink name="isRowDetailEnabled" /> function prop.
 
-```tsx title="Using conditional row details" {5}
-<InfiniteTable<City>
-  columns={masterColumns}
-  rowDetailHeight={500}
-  rowDetailRenderer={renderDetail}
-  isRowDetailEnabled={(rowInfo) => rowInfo.data.cityName.contains('i')}
-/>
+```tsx file="overview.snippet.tsx" region="using-conditional-row-details" title="Using conditional row details"
 ```
 
 The <PropLink name="isRowDetailEnabled" /> function prop is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink> and is expected to return a boolean value.
 
 
-<Sandpack title="Master detail DataGrid with conditional details" size="lg">
-
-<Description>
+<DemoTitle>Master detail DataGrid with conditional details</DemoTitle>
+<DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
 
 Not all rows have details - every other row is configured without details via the <PropLink name="isRowDetailEnabled" /> function prop.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-per-row-example.page.tsx"
-
+```tsx file="master-detail-per-row-example.demo.tsx" height="large"
 ```
-
-</Sandpack>

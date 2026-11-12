@@ -15,24 +15,7 @@ You specify an uncontrolled <DPropLink name="defaultFilterValue" /> on the `<Dat
 
 Based on the <PropLink name="columns.type" code={false}>column type</PropLink>, the correct filter editor is displayed in the column header, along with the correct operator icon. In the UI, you can change the operator being used for the filter.
 
-```tsx title="Specifying an initial filter value for the DataSource"
-<DataSource<Developer>
-  data={...}
-  defaultFilterValue={[
-    {
-      field: 'age',
-      filter: {
-        operator: 'gt',
-        value: 30,
-        type: 'number'
-      }
-    }
-  ]}
->
-  <InfiniteTable<Developer>
-    columns={...}
-  />
-</DataSource>
+```tsx file="index.snippet.tsx" region="specifying-an-initial-filter-value-for-the" title="Specifying an initial filter value for the DataSource"
 ```
 
 <Note>
@@ -85,38 +68,7 @@ Let's imagine you have a `DataSource` with developers, each with a `salary` colu
 
 For this, you would define the following filter type:
 
-```tsx
-const filterTypes = {
-  income: {
-    label: 'Income',
-    emptyValues: ['', null, undefined],
-    defaultOperator: 'gt',
-    operators: [
-      {
-        name: 'gt',
-        label: 'Greater than',
-        fn: ({ currentValue, filterValue, emptyValues }) => {
-          if (emptyValues.has(currentValue)) {
-            return true;
-          }
-          return currentValue > filterValue;
-        },
-      },
-      {
-        name: 'gte',
-        //...
-      },
-      {
-        name: 'lt',
-        //...
-      },
-      {
-        name: 'lte',
-        //...
-      },
-    ],
-  },
-};
+```tsx file="index.snippet.tsx" region="understanding-filter-types"
 ```
 
 <Note>
@@ -133,19 +85,15 @@ Each operator for a certain filter type needs to at least have a `name` and `fn`
 
 </Note>
 
-<Sandpack title="Client-side filtering in action with custom filter type">
-
-<Description>
+<DemoTitle>Client-side filtering in action with custom filter type</DemoTitle>
+<DemoDescription>
 
 The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
 
-</Description>
+</DemoDescription>
 
-```ts file="filter-custom-filter-type-example.page.tsx"
-
+```tsx file="filter-custom-filter-type-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Client-side or server-side filtering
 
@@ -165,55 +113,36 @@ If you don't need a default filter value, the <DPropLink name="filterValue" /> t
 
 If however, you need initial filtering by that column, the <DPropLink name="filterValue" /> needs to specify a `valueGetter` itself.
 
-```tsx
-defaultFilterValue={[
-  {
-    id: 'salary',
-    valueGetter: ({ data }) => data.salary,
-    filter: {
-      operator: 'gt',
-      value: '',
-      type: 'number',
-    }
-  },
-]}
+```tsx file="index.snippet.tsx" region="filtering-columns-not-bound-to-a-field"
 ```
 
 </Note>
 
-<Sandpack title="Filtering a column not bound to a field">
-
-<Description>
+<DemoTitle>Filtering a column not bound to a field</DemoTitle>
+<DemoDescription>
 
 The `salary` column is not bound to a `field` - however, it can still be used for filtering, as it's configured with a `valueGetter`.
 
-</Description>
+</DemoDescription>
 
-```ts file="filter-column-with-id-example.page.tsx"
-
+```tsx file="filter-column-with-id-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Customizing the Filter Icon for Columns
 
 Columns can customize the filter icon by using the <PropLink name="columns.renderFilterIcon" /> property.
 
-<Sandpack title="Custom filter icons for salary and name columns">
-
-<Description>
+<DemoTitle>Custom filter icons for salary and name columns</DemoTitle>
+<DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
 
 The `firstName` column will show a custom filter icon when filtered.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
-
+```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <HeroCards>
 <YouWillLearnCard title="Client-side filtering" path="./filtering/filtering-client-side">

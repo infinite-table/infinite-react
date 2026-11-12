@@ -15,9 +15,8 @@ This will ensure that the column is sorted correctly (as per the available <DPro
 
 </Note>
 
-<Sandpack title="Using date objects">
-
-<Description>
+<DemoTitle>Using date objects</DemoTitle>
+<DemoDescription>
 
 In this example, the `birthDate` column contains dates and we customized the way they are displayed.
 
@@ -28,13 +27,11 @@ const renderValue = ({ value }: { value: Date }) => {
 ```
 
 If no custom `renderValue` was specified, the dates would have been formatted using the `Date.toLocaleDateString()`
-</Description>
 
-```ts file="dates-with-local-data-example.page.tsx"
+</DemoDescription>
 
+```tsx file="dates-with-local-data-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Using date strings
 
@@ -45,28 +42,17 @@ If your dates are not `instanceof Date` but strings or numbers (timestamps) then
 
 For the case when your dates are not actually dates, but date strings (the same applies to timestamps), you have to define your sorting function.
 
-```tsx
-const sortTypes = {
-  mydatestring: (a: string, b: string) => {
-    // use your preferred date parsing library
-    // to turn a string into date and then compare the two values
-    return new Date(a).getTime() - new Date(b).getTime();
-  },
-};
+```tsx file="handling-dates.snippet.tsx" region="using-date-strings"
 ```
 
 When then pass the <DPropLink name="sortTypes"/> to the `<DataSource />` component and configure our date column to be of type `"mydatestring"` (it should match the key you specified in your `sortTypes` definition).
 
-<Sandpack title="Using date strings">
-
-<Description>
+<DemoTitle>Using date strings</DemoTitle>
+<DemoDescription>
 
 In this example, the `birthDate` column contains dates as strings, so we have to define a custom column.type and sort type.
 
-</Description>
+</DemoDescription>
 
-```ts file="date-strings-with-local-data-example.page.tsx"
-
+```tsx file="date-strings-with-local-data-example.demo.tsx"
 ```
-
-</Sandpack>

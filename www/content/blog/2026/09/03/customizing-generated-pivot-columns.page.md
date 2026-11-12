@@ -55,19 +55,15 @@ That applies to leaf columns and totals. When totals should stay unsortable, pas
 
 The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation `field` — not the column id. A column defined as `stargazers: { field: 'stargazers_count', type: 'number' }` is enough for numeric sorting on the generated `stargazers_count:true` column.
 
-<Sandpack title="Sortable generated pivot columns" size="md" viewMode="preview">
-
-<Description>
+<DemoTitle>Sortable generated pivot columns</DemoTitle>
+<DemoDescription>
 
 The table starts sorted by the group column. `pivotColumn={{ defaultSortable: true }}` makes every generated pivot column sortable. Click a country / designer header to add a sort by that aggregated value.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-sorting-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-sorting-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Per pivot field: headers people recognize
 
@@ -101,19 +97,15 @@ const pivotBy = [
 ];
 ```
 
-<Sandpack title="Custom headers on generated pivot columns" size="md" viewMode="preview">
-
-<Description>
+<DemoTitle>Custom headers on generated pivot columns</DemoTitle>
+<DemoDescription>
 
 The `canDesign` pivot values are rewritten to Designer / Non-designer. Country groups stay as they are.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.demo.tsx"
 ```
-
-</Sandpack>
 
 The same callback is where you would map warehouse statuses to “Available” / “Reserved” / “Quarantine”, or support channels to the names operators already use. New warehouses or channels still become new columns — only the label changes.
 
@@ -200,19 +192,15 @@ const aggregationReducers = {
 
 `avgAge` still aggregates `age`, but the generated columns pick up the `preferredLanguage` column config, then apply `defaultWidth: 500` on top.
 
-<Sandpack title="Pivot columns inherit from original columns" size="md" viewMode="preview">
-
-<Description>
+<DemoTitle>Pivot columns inherit from original columns</DemoTitle>
+<DemoDescription>
 
 `avgSalary` inherits the red number styling from the `salary` column. `avgAge` inherits from `firstName` via `inheritFromColumn` and uses a wider default width.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx"
 ```
-
-</Sandpack>
 
 Use `inheritFromColumn: false` when the source column's `renderValue` or `style` would be wrong on an aggregated cell — for example a name renderer on a numeric average.
 

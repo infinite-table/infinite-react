@@ -7,35 +7,20 @@ You can control the collapsed/expanded state of rows in the master-detail config
 
 By default, all row details are collapsed. You can very easily change this by using the <PropLink name="defaultRowDetailState" /> prop.
 
-```tsx title="Specyfing the default row detail state" {8}
-const defaultRowDetailState = {
-  collapsedRows: true,
-  expandedRows: [39, 54],
-};
-
-<InfiniteTable
-  columns={...}
-  defaultRowDetailState={defaultRowDetailState}
-  rowDetailRenderer={...}
-/>
-
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="specyfing-the-default-row-detail-state" title="Specyfing the default row detail state"
 ```
 
-<Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail DataGrid with some row details expanded by default</DemoTitle>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 Also, we have a default sort defined, by the `country` and `city` columns.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-default-expanded-example.page.tsx"
-
+```tsx file="master-detail-default-expanded-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 ## Understanding and defining the collapse/expand state for row details
 
@@ -45,20 +30,12 @@ The <TypeLink name="RowDetailState" code={false}>row detail state</TypeLink> can
 
 - either specify `collapsedRows: true` (which means all rows are collapsed by default) and specify an array of `expandedRows`, which will contain the ids of the rows that should be rendered as expanded.
 
-```tsx
-const defaultRowDetailState = {
-  collapsedRows: true,
-  expandedRows: ['id-1', 'id-2', 'id-56'],
-};
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="understanding-and-defining-the-collapse-expand"
 ```
 
 - or specify `expandedRows: true` (which means all rows are expanded by default) and specify an array of `collapsedRows`, which will contain the ids of the rows that should be rendered as collapsed.
 
-```tsx
-const rowDetailState = {
-  expandedRows: true,
-  collapsedRows: ['id-1', 'id-2', 'id-56'],
-};
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="understanding-and-defining-the-collapse-expand-2"
 ```
 
 You can pass these objects into either the <PropLink name="defaultRowDetailState" /> (uncontrolled) or the <PropLink name="rowDetailState" /> (controlled).
@@ -73,45 +50,27 @@ If you're using the controlled <PropLink name="rowDetailState" /> prop, you'll n
 
 As an alternative to using the object literals as specified above, you can import the `RowDetailState` class from `@infinite-table/infinite-react` and use it to define the state of the row details. You can pass instances of `RowDetailState` into the <PropLink name="defaultRowDetailState" /> or <PropLink name="rowDetailState" /> props.
 
-```tsx title="Passing an instance of RowDetailState to the InfiniteTable"
-import { RowDetailState } from '@infinite-table/infinite-react';
-
-const rowDetailState = new RowDetailState({
-  collapsedRows: true,
-  expandedRows: [2, 3, 4],
-});
-
-<InfiniteTable<DATA_TYPE> rowDetailState={rowDetailState} />;
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="passing-an-instance-of-rowdetailstate-to-the" title="Passing an instance of RowDetailState to the InfiniteTable"
 ```
 
-```tsx title="Passing an object literal to the InfiniteTable"
-<InfiniteTable<DATA_TYPE>
-  rowDetailState={{
-    collapsedRows: true,
-    expandedRows: [2, 3, 4],
-  }}
-/>
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="passing-an-object-literal-to-the-infinitetable" title="Passing an object literal to the InfiniteTable"
 ```
 
 See our type definitions for <TypeLink name="RowDetailState" code={false}>more details on row detail state</TypeLink>.
 
 </Note>
 
-<Sandpack title="Master detail DataGrid with listener for row expand/collapse" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail DataGrid with listener for row expand/collapse</DemoTitle>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 We use the controlled <PropLink name="rowDetailState" /> prop to manage the state of the row details and update it by using <PropLink name="onRowDetailStateChange" />.
 
-</Description>
+</DemoDescription>
 
-```ts file=master-detail-controlled-expanded-enhanced-example.page.tsx
-
+```tsx file="master-detail-controlled-expanded-enhanced-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 ## Listening to row detail state changes
 
@@ -121,26 +80,7 @@ In order to be notified when the collapse/expand state of row details changes, y
 
 This function is called with only one argument - the new <PropLink name="rowDetailState" />. Please note this is an instance of <TypeLink name="RowDetailState"/>. If you want to use the object literal, make sure you call `getState()` on the instance of `RowDetailState`.
 
-```tsx title="Using the onRowDetailStateChange listener" {11}
-function App() {
-  const [rowDetailState, setRowDetailState] = React.useState<RowDetailStateObject>({
-    collapsedRows: true as const,
-    expandedRows: [39, 54],
-  });
-
-  return <DataSource<DATA_TYPE> {...}>
-    <InfiniteTable<DATA_TYPE>
-      rowDetailState={rowDetailState}
-      onRowDetailStateChange={(rowDetailStateInstance) => {
-        setRowDetailState(rowDetailStateInstance.getState());
-      }}
-      columnMinWidth={50}
-      columns={masterColumns}
-      rowDetailHeight={200}
-      rowDetailRenderer={renderDetail}
-    />
-  </DataSource>
-}
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="using-the-onrowdetailstatechange-listener" title="Using the onRowDetailStateChange listener"
 ```
 
 </Note>
@@ -149,33 +89,7 @@ When using the controlled <PropLink name="rowDetailState" />, you'll need to res
 
 This allows you to manage the state of the row details yourself - making it easy to expand/collapse all rows, or to expand/collapse a specific row by simply updating the value of the <PropLink name="rowDetailState" /> prop.
 
-```tsx
-const [rowDetailState, setRowDetailState] =
-  React.useState<RowDetailStateObject>({
-    collapsedRows: true,
-    expandedRows: [39, 54],
-  });
-
-const expandAll = () => {
-  setRowDetailState({
-    collapsedRows: [],
-    expandedRows: true,
-  });
-};
-const collapseAll = () => {
-  setRowDetailState({
-    collapsedRows: true,
-    expandedRows: [],
-  });
-};
-
-return (
-  <>
-    <button onClick={expandAll}>Expand All</button>
-    <button onClick={collapseAll}>Collapse All</button>
-    <InfiniteTable<DATA_TYPE> rowDetailState={rowDetailState} />
-  </>
-);
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="listening-to-row-detail-state-changes"
 ```
 
 <Note>
@@ -192,18 +106,14 @@ Using the controlled <PropLink name="rowDetailState" /> prop is very powerful - 
 This means that if any other row(s) are expanded and you expand a new row, the previously expanded rows will all be collapsed.
 
 
-<Sandpack title="Master detail only one row expanded at a time" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail only one row expanded at a time</DemoTitle>
+<DemoDescription>
 
 In this demo we allow only one row to be expanded at any given time.
 
 We use the controlled <PropLink name="rowDetailState" /> prop to manage the state of the row details and update it by using <PropLink name="onRowDetailStateChange" />.
 
-</Description>
+</DemoDescription>
 
-```ts file=master-detail-one-expanded-row-example.page.tsx
-
+```tsx file="master-detail-one-expanded-row-example.demo.tsx" height="large"
 ```
-
-</Sandpack>

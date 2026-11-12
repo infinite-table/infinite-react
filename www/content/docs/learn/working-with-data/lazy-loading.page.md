@@ -6,13 +6,8 @@ With `InfiniteTable` you can lazily load data on demand - loading data is trigge
 
 We call this `"lazy loading"`, and it needs to be enabled by specifying the <DataSourcePropLink name="lazyLoad">DataSource.lazyLoad</DataSourcePropLink> prop.
 
-<Sandpack title="Lazy loading ungrouped and unpivoted data">
-
-```ts file="simple-lazy-load-example.page.tsx"
-
+```tsx file="simple-lazy-load-example.demo.tsx" title="Lazy loading ungrouped and unpivoted data"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -24,11 +19,7 @@ Simply specifying `lazyLoad=true` makes more sense for grouped (or/and pivoted) 
 
 For lazy loading to work, the <DataSourcePropLink name="data" /> function in the `<DataSource/>` component must return a Promise that resolves to an an object with `data` and `totalCount` properties.
 
-```tsx
-{
-  data: [ ... ],
-  totalCount: 10000
-}
+```tsx file="lazy-loading.snippet.tsx" region="intro"
 ```
 
 The <DPropLink name="data">DataSource.data</DPropLink> function will be called with an object with the following properties:
@@ -55,21 +46,17 @@ Find out about server-side pivoting
 
 When lazy loading is enabled, and the <DPropLink name="sortInfo" />  changes (eg: user clicks on a column header), the DataGrid will discard current data and call the <DPropLink name="data" /> function prop again, to fetch the new data. The same happens when the <DPropLink name="filterValue" /> or <DPropLink name="groupBy" /> changes. This is done automatically by the component, and you don't need to do anything.
 
-<Sandpack title="Lazy loading grouped data" viewMode="preview">
-
-<Description>
+<DemoTitle>Lazy loading grouped data</DemoTitle>
+<DemoDescription>
 
 This demo lazily loads grouped data as the user scrolls down. Expand some groups to see the lazy loading in action.
 
 When the user stops scrolling, after <PropLink name="scrollStopDelay" /> milliseconds, the DataGrid will fetch the next batch of data from the server.
 
-</Description>
+</DemoDescription>
 
-```ts file="grouped-lazy-load-example.page.tsx"
-
+```tsx file="grouped-lazy-load-example.demo.tsx"
 ```
-
-</Sandpack>
 
 
 <Note>

@@ -50,24 +50,7 @@ The <PropLink name="columnSizing" /> entry for a column is the actual sizing and
 
 </Note>
 
-```tsx
-const columnSizing: InfiniteTablePropColumnSizing = {
-  country: {
-    flex: 1,
-    // minWidth is optional
-    minWidth: 200,
-  },
-  city: {
-    width: 400,
-    // and so is maxWidth
-    maxWidth: 500,
-  },
-  salary: {
-    flex: 3,
-  },
-};
-// any column not specified in the columnSizing (or defaultColumnSizing) prop
-// will have fixed width (defaulting to `columnDefaultWidth`, which in turn defaults to 200px)
+```tsx file="fixed-and-flexible-size.snippet.tsx" region="controlled-column-sizing"
 ```
 
 <Note>
@@ -118,29 +101,20 @@ This means columns will have the following sizes:
 
 The flexbox algorithm also uses <PropLink name="viewportReservedWidth" /> to determine the width of the viewport to use for sizing columns - you can use <PropLink name="viewportReservedWidth">viewportReservedWidth=100</PropLink> to always have a `100px` reserved area that won't be used for flexing columns.
 
- <Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
+ <DemoTitle>Using viewportReservedWidth to reserve whitespace when you have flexible columns</DemoTitle>
+ <DemoDescription>
 
- <Description>
+ This example has a `viewportReservedWidth` of `50px`.
 
-This example has a `viewportReservedWidth` of `50px`.
+ </DemoDescription>
 
- </Description>
-
-```tsx file="$DOCS/reference/viewportReservedWidth-example.page.tsx"
-
-```
-
-</Sandpack>
+ ```tsx file="/docs/reference/viewportReservedWidth-example.demo.tsx"
+ ```
 
 Take a look at the snippet below to see column sizing at work with flexible and fixed columns.
 
-<Sandpack title="Using controlled columnSizing">
-
-```tsx file="$DOCS/reference/columnSizing-example.page.tsx"
-
+```tsx file="/docs/reference/columnSizing-example.demo.tsx" title="Using controlled columnSizing"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -184,20 +158,12 @@ When flexible columns are resized, they are kept flexible even after the resize.
 
 More exactly, the new flex values will be the actual pixel widths. As an example, say there are 2 flex columns, first one with flex `1` and second one with flex `3` and they have an available space of `800px`.
 
-```ts
-const columns = {
-  first: { flex: 1, field: 'one' },
-  second: { flex: 2, field: 'two' },
-};
+```ts file="fixed-and-flexible-size.snippet.tsx" region="resizing-columns-via-drag-drop"
 ```
 
 Initially they will occupy `200px` and `600px` respectively. If the user resizes them to be of equal size, <PropLink name="onColumnSizingChange" /> will be called with an object like
 
-```ts
-{
-  first: { flex: 400 },
-  second: {flex: 400 }
-}
+```ts file="fixed-and-flexible-size.snippet.tsx" region="resizing-columns-via-drag-drop-2"
 ```
 
 since those are the actual widths measured from the DOM. This works out well, even if the available space of the table grows, as the proportions will be the same.
@@ -242,20 +208,17 @@ Once a min/max limit has been reached for a certain column in the group, the col
 
 </Note>
 
-<Sandpack title="Resizing column groups">
-<Description>
+<DemoTitle>Resizing column groups</DemoTitle>
+<DemoDescription>
 
 Try resizing the `Finance` and `Regional Info` column groups.
 
 The columns in the `Finance` group can be resized an extra `30px` (they have a `maxWidth` of `130px`).
 
-</Description>
+</DemoDescription>
 
-```tsx file="$DOCS/reference/column-groups-example.page.tsx"
-
+```tsx file="/docs/reference/column-groups-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ### Customizing the resize handle colors
 
@@ -285,10 +248,5 @@ When an object is used, the following properties are available:
 - `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
 - `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
 
-<Sandpack title="Auto-sizing columns">
-
-```tsx file="$DOCS/reference/autoSizeColumnsKey-example.page.tsx"
-
+```tsx file="/docs/reference/autoSizeColumnsKey-example.demo.tsx" title="Auto-sizing columns"
 ```
-
-</Sandpack>

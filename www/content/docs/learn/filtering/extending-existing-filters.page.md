@@ -16,20 +16,7 @@ You may find those operators limiting - but it's easy to extend them and add new
 
 You can import `defaultFilterTypes` from the root of the package.
 
-```ts title="Adding a new operator to the string filter type"
-import { defaultFilterTypes } from '@infinite-table/infinite-react';
-
-// add new operators for the `string` filter type
-defaultFilterTypes.string.operators.push({
-  name: 'notContains',
-  component: { Icon: ReactComponentForIcon }
-  label: 'Not Contains',
-  fn: ({currentValue, filterValue }) => {
-    return typeof currentValue === 'string' &&
-            typeof filterValue == 'string' &&
-            !currentValue.toLowerCase().includes(filterValue.toLowerCase())
-  }
-})
+```ts file="extending-existing-filters.snippet.tsx" region="adding-a-new-operator-to-the-string-filter-type" title="Adding a new operator to the string filter type"
 ```
 
 <Note>
@@ -40,19 +27,15 @@ If you don't want that, you need to use the `filterTypes` prop of the `<DataSour
 
 </Note>
 
-<Sandpack title="Enhanced string filter type - new 'Not includes' operator">
-
-<Description>
+<DemoTitle>Enhanced string filter type - new 'Not includes' operator</DemoTitle>
+<DemoDescription>
 
 The `string` columns have a new `Not includes` operator.
 
-</Description>
+</DemoDescription>
 
-```ts file="customised-default-filter-types-example.page.tsx"
-
+```tsx file="customised-default-filter-types-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Adding new filter types
 
@@ -60,40 +43,10 @@ If the existing filter types are not enough, it's easy to add new ones.
 
 As already mentioned, you can either update the value of `defaultFilterTypes` or use the `filterTypes` prop of the `<DataSource />` component. Updating the value `defaultFilterTypes` will affect all your `InfiniteTable` DataGrid components.
 
-```ts title="Adding a new filter type by updating defaultFilterTypes"
-import { defaultFilterTypes } from '@infinite-table/infinite-react';
-
-defaultFilterTypes.bool = {
-  defaultOperator: 'eq',
-  emptyValues: [null],
-  operators: [
-    {
-      name: 'eq',
-      label: 'Equals',
-      fn: ({ currentValue, filterValue }) => currentValue === filterValue,
-    },
-  ],
-};
+```ts file="extending-existing-filters.adding-a-new-filter-type-by-updating.snippet.tsx" region="adding-a-new-filter-type-by-updating" title="Adding a new filter type by updating defaultFilterTypes"
 ```
 
-```ts title="Adding a new filter type by using the filterTypes prop"
-import { DataSource } from '@infinite-table/infinite-react';
-
-<DataSource
-  filterTypes={{
-    bool: {
-      defaultOperator: 'eq',
-      emptyValues: [null],
-      operators: [
-        {
-          name: 'eq',
-          label: 'Equals',
-          fn: ({ currentValue, filterValue }) => currentValue === filterValue,
-        },
-      ],
-    },
-  }}
-/>;
+```ts file="extending-existing-filters.snippet.tsx" region="adding-a-new-filter-type-by-using-the" title="Adding a new filter type by using the filterTypes prop"
 ```
 
 <Note>
@@ -102,16 +55,12 @@ When passing `filterTypes` to the `<DataSource />` component, the object will be
 
 </Note>
 
-<Sandpack title="Writing a `bool` filter type with a custom filter editor">
-
-<Description>
+<DemoTitle>Writing a `bool` filter type with a custom filter editor</DemoTitle>
+<DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
 
-</Description>
+</DemoDescription>
 
-```ts file="checkbox-filter-editor-example.page.tsx"
-
+```tsx file="checkbox-filter-editor-example.demo.tsx"
 ```
-
-</Sandpack>

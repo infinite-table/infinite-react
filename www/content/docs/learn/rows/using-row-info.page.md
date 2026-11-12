@@ -25,8 +25,7 @@ When there is no <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === false;
+```ts file="using-row-info.snippet.tsx" region="discriminator"
 ```
 
 ## Grouped scenario - normal `rowInfo`
@@ -73,8 +72,7 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === true && rowInfo.isGroupRow === false;
+```ts file="using-row-info.snippet.tsx" region="discriminator-2"
 ```
 
 ## Grouped scenario - group `rowInfo`
@@ -132,6 +130,5 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === true && rowInfo.isGroupRow === true;
+```ts file="using-row-info.snippet.tsx" region="discriminator-3"
 ```

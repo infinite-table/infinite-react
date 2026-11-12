@@ -20,21 +20,17 @@ The returned JSON can include both
 
 </Note>
 
-<Sandpack title="Server-side filtering example">
-
-<Description>
+<DemoTitle>Server-side filtering example</DemoTitle>
+<DemoDescription>
 
 All the filtering in this example happens server-side.
 
 This example also does server-side (multiple) sorting.
 
-</Description>
+</DemoDescription>
 
-```ts file="server-side-example.page.tsx"
-
+```tsx file="server-side-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 

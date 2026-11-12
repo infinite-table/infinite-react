@@ -9,19 +9,15 @@ To enable editing globally, you can use the <PropLink name="columnDefaultEditabl
 
 Or you can be more specific and choose to make individual columns editable via the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> prop. This overrides the global <PropLink name="columnDefaultEditable" />.
 
-<Sandpack title="Inline Editing in action">
-
-<Description>
+<DemoTitle>Inline Editing in action</DemoTitle>
+<DemoDescription>
 
 All columns (except id) are editable.
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-example.page.tsx"
-
+```tsx file="inline-editing-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <HeroCards>
 <YouWillLearnCard title="Column Editors" path="/docs/learn/editing/column-editors">
@@ -72,13 +68,8 @@ The user can start editing by double-clicking on a cell or by pressing the `Ente
 
 To start editing programmatically, use the <ApiLink name="startEdit">{`startEdit({ columnId, rowIndex })`}</ApiLink> method.
 
-<Sandpack title="Starting an Edit via the API">
-
-```ts file="api-inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="api-inline-editing-custom-edit-value-example.demo.tsx" title="Starting an Edit via the API"
 ```
-
-</Sandpack>
 
 Either way, be it user interaction or API call, those actions will trigger checks to see if the cell is editable - taking into account the <PropLink name="columnDefaultEditable"/>, <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> or <PropLink name="editable" /> props, as described in the paragraphs above. Only if the result is `true` will the cell editor be displayed.
 
@@ -86,33 +77,18 @@ Either way, be it user interaction or API call, those actions will trigger check
 
 When editing starts, the column editor is displayed with the value that was in the cell. This (initial) edit value can be customized via the <PropLink name="columns.getValueToEdit">column.getValueToEdit</PropLink> prop. This allows you to start editing with a different value than the one that is displayed in the cell - and even with a value fetched asynchronously.
 
-```tsx
-const columns = {
-  salary: {
-    field: 'salary',
-    // this can return a Promise
-    getValueToEdit: ({ value, data, rowInfo, column }) => {
-      // suppose the value is a string like '$1000'
-      // but we want to start editing with the number 1000
-      return value.replace('$', '');
-    },
-  },
-};
+```tsx file="overview.snippet.tsx" region="customize-edit-value-when-editing-starts"
 ```
 
-<Sandpack title="Inline Editing with custom getter for edit value">
-
-<Description>
+<DemoTitle>Inline Editing with custom getter for edit value</DemoTitle>
+<DemoDescription>
 
 Try editing the salary column - it has a custom getter for the edit value, which removes the curency string.
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Finishing an Edit
 
@@ -138,19 +114,15 @@ The accept/reject status of an edit is decided by using the `shouldAcceptEdit` p
 
 </Note>
 
-<Sandpack title="Using shouldAcceptEdit to decide whether a value is acceptable or not">
-
-<Description>
+<DemoTitle>Using shouldAcceptEdit to decide whether a value is acceptable or not</DemoTitle>
+<DemoDescription>
 
 In this example, the `salary` column is configured with a <PropLink name="columns.shouldAcceptEdit">shouldAcceptEdit</PropLink> function property that rejects non-numeric values.
 
-</Description>
+</DemoDescription>
 
-```ts file="inline-editing-custom-edit-value-example.page.tsx"
-
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Persisting an Edit
 

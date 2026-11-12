@@ -78,13 +78,10 @@ This allows you to retrieve the values from the selected cells, by using a mappi
 
 > Selects all cells in the specified column.
 
-<Sandpack title="Using `selectColumn` with controlled selection" size="lg">
+<DemoTitle>Using `selectColumn` with controlled selection</DemoTitle>
 
-```ts file="$DOCS/reference/datasource-props/controlled-cell-selection-with-api-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/controlled-cell-selection-with-api-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 

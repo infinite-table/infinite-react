@@ -18,19 +18,15 @@ The DataGrid you're rendering inside the row detail doesn't need to be the retur
 
 </Note>
 
-<Sandpack title="Master detail with custom content & DataGrid" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail with custom content & DataGrid</DemoTitle>
+<DemoDescription>
 
 In this example, the row detail contains custom content, along with another Infinite Table DataGrid. You can nest a child DataGrid inside the row details at any level of nesting.
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-custom-datagrid-example.page.tsx"
-
+```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -41,13 +37,8 @@ You'll probably want to configure the height of the row detail content. Use the 
 ## Rendering a chart component as row detail
 
 
-<Sandpack title="Retrieving cell selection value by mapping over them" size="lg" deps="ag-charts-react,ag-charts-community">
-
-```ts file=master-detail-chart-detail-example.page.tsx"
-
+```tsx file="master-detail-chart-detail-example.demo.tsx" title="Retrieving cell selection value by mapping over them" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -62,9 +53,8 @@ The master-detail configuration for the DataGrid can contain any level of nestin
 
 The example below shows 3 levels of nesting - so a master DataGrid, a detail DataGrid and another third-level detail with custom content.
 
-<Sandpack title="Master detail with 3 levels of nesting" size="lg" viewMode="preview">
-
-<Description>
+<DemoTitle>Master detail with 3 levels of nesting</DemoTitle>
+<DemoDescription>
 
 In this example, we have 3 levels of nesting:
 
@@ -72,13 +62,10 @@ In this example, we have 3 levels of nesting:
 - The first level of detail shows developers in each city
 - The second level of detail shows custom data about each developer
 
-</Description>
+</DemoDescription>
 
-```ts file="master-detail-3-levels-example.page.tsx"
-
+```tsx file="master-detail-3-levels-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 ## Understanding the lifecycle of the row detail component
 

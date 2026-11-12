@@ -7,38 +7,7 @@ Column types allow you to specify common properties for multiple columns easily.
 
 You specify the type of a column via the <PropLink name="columns.type">column.type</PropLink> property:
 
-```tsx
-type Person = {
-  name: string;
-  dob: string;
-  age: number;
-}
-const columns = {
-  age: {
-    field: 'age',
-    type: 'custom',
-  },
-  date: {
-    field: 'dob',
-    // will be type default
-  },
-  name: {
-    field: 'name',
-    // will have both of those types
-    type: ['default', 'custom']
-  }
-}
-
-const columnTypes = {
-  default: {
-    width: 200
-  },
-  custom: {
-    align: 'center'
-  }
-}
-
-<InfiniteTable columnTypes={columnTypes} columns={columns} />
+```tsx file="column-types.snippet.tsx" region="intro"
 ```
 
 <Note>
@@ -57,22 +26,7 @@ When a column has multiple column types, they are applied in order, from left to
 
 Assume a column has the following types:
 
-```tsx
-const columns = {
-  salary: {
-    type: ['number', 'currency'],
-  },
-};
-
-const numberFormatter = new Intl.NumberFormat();
-const columnTypes = {
-  number: {
-    renderValue: ({ value }) => numberFormatter.format(value), // makes 12345 render as 12,345
-  },
-  currency: {
-    renderValue: ({ value }) => `USD: ${value}`, // makes 12345 render as USD: 12345
-  },
-};
+```tsx file="column-types.snippet.tsx" region="column-type-properties-order-and-precedence"
 ```
 
 <Note>

@@ -6,19 +6,7 @@ Disabling rows allows you to have some rows that are not selectable, not clickab
 
 The `DataSource` manages the disabled state of rows, via the <DPropLink name="defaultRowDisabledState" /> (uncontrolled) prop and <DPropLink name="rowDisabledState" /> (controlled) prop.
 
-```tsx
-<DataSource<DATA_TYPE>
-  idProperty="id"
-  data={[]}
-  defaultRowDisabledState={{
-    enabledRows: true,
-    disabledRows: ['id1', 'id4', 'id5']
-  }}
-/>
-  <InfiniteTable<DATA_TYPE>
-    {/* ... */}
-  />
-</DataSource>
+```tsx file="disabled-rows.snippet.tsx" region="intro"
 ```
 
 <Note>
@@ -27,27 +15,22 @@ In addition to using the <DPropLink name="defaultRowDisabledState" />/<DPropLink
 
 </Note>
 
-<Sandpack title="Specify some rows as initially disabled">
-
-```tsx file="initialRowDisabledState-example.page.tsx"
+```tsx file="initialRowDisabledState-example.demo.tsx" title="Specify some rows as initially disabled"
 ```
-
-</Sandpack>
 
 ## Using disabled rows while rendering
 
 When rendering a cell, you have access to the row disabled state - the <TypeLink name="InfiniteTableRowInfo" /> type has a `rowDisabled` property which is true if the row is disabled.
 
-<Sandpack title="Using the row disabled state while rendering">
+<DemoTitle>Using the row disabled state while rendering</DemoTitle>
+<DemoDescription>
 
-<Description>
-  This example uses custom rendering for the `firstName` column to render an emoji for disabled rows.
-</Description>
+This example uses custom rendering for the `firstName` column to render an emoji for disabled rows.
 
-```tsx file="custom-rendering-for-disabled-rows-example.page.tsx"
+</DemoDescription>
+
+```tsx file="custom-rendering-for-disabled-rows-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Using the API to enable/disable rows
 
@@ -55,24 +38,20 @@ You can use the `DataSourceApi` to enable or disable rows programmatically.
 
 <DApiLink name="setRowEnabled" />
 
-```tsx
-dataSourceApi.setRowEnabled(rowId, enabled);
-
+```tsx file="disabled-rows.snippet.tsx" region="using-the-api-to-enable-disable-rows"
 ```
 
 <DApiLink name="setRowEnabledAt" />
 
-```tsx
-dataSourceApi.setRowEnabledAt(rowIndex, enabled);
+```tsx file="disabled-rows.snippet.tsx" region="using-the-api-to-enable-disable-rows-2"
 ```
 
-<Sandpack title="Using the API to enable/disable rows">
+<DemoTitle>Using the API to enable/disable rows</DemoTitle>
+<DemoDescription>
 
-<Description>
 Use the context menu on each row to toggle the disabled state of the respective row.
-</Description>
 
-```tsx file="using-api-to-disable-rows-example.page.tsx"
+</DemoDescription>
+
+```tsx file="using-api-to-disable-rows-example.demo.tsx"
 ```
-
-</Sandpack>

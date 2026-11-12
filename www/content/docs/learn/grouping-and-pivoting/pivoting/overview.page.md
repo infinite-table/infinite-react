@@ -16,45 +16,22 @@ You do that by using a `function` as a direct child of the `DataSource`, and in 
 
 For more pivoting examples, see [our pivoting demos](/docs/learn/examples/dynamic-pivoting-example)
 
-```ts
-const pivotBy = [{ field: 'team' }]
- // field needs to be keyof DATA_TYPE both in `pivotBy` and `groupBy`
-const groupBy = [{field: 'department'}, {field: 'country'}]
-
-<DataSource<DATA_TYPE> pivotBy={pivotBy} groupBy={groupBy}>
-{ ({pivotColumns, pivotColumnGroups}) => {
-  return <InfiniteTable<DATA_TYPE>
-    pivotColumns={pivotColumns}
-    pivotColumnGroups={pivotColumnGroups}
-  />
-} }
-</DataSource>
+```ts file="overview.snippet.tsx" region="intro"
 ```
 
-<Sandpack title="Pivoting with avg aggregation">
-
-```ts file="pivoting-example.page.tsx"
-
+```tsx file="pivoting-example.demo.tsx" title="Pivoting with avg aggregation"
 ```
-
-</Sandpack>
 
 ## Sorting the group column and pivot columns
 
 Sorting the group column in a pivot table uses the same <DPropLink name="sortInfo" /> as in [row grouping](/docs/learn/grouping-and-pivoting/grouping-rows#sorting-the-group-column). For a single group column it is enough to pass `{ id: 'group-by', dir: 1 }`. Based on the current <DPropLink name="groupBy" />and your columns, it will detect the fields and the sorting it needs to apply.
 
-```ts
-const defaultSortInfo = [{ id: 'group-by', dir: 1 }];
+```ts file="overview.snippet.tsx" region="sorting-the-group-column-and-pivot-columns"
 ```
 
 Generated pivot columns inherit sortability from the original <PropLink name="columns" /> bound to the aggregation field — including <PropLink name="columnDefaultSortable" />. You can override that with `defaultSortable` on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
 
-```tsx
-<InfiniteTable
-  pivotColumn={{
-    defaultSortable: true,
-  }}
-/>
+```tsx file="overview.snippet.tsx" region="sorting-the-group-column-and-pivot-columns-2"
 ```
 
 That applies <PropLink name="columns.defaultSortable" nocode>defaultSortable</PropLink> to every generated pivot column. The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation field.
@@ -63,19 +40,15 @@ For narrower control — only one aggregation, or only columns in a specific piv
 
 Passing `defaultSortInfo` as an array enables multiple sorting. Combined with <PropLink name="multiSortBehavior">multiSortBehavior="append"</PropLink>, clicking a pivot column adds that sort instead of replacing the group-column sort.
 
-<Sandpack title="Pivoting with initial group-column sort and sortable leaf pivot columns">
-
-<Description>
+<DemoTitle>Pivoting with initial group-column sort and sortable leaf pivot columns</DemoTitle>
+<DemoDescription>
 
 This table starts sorted by the group column (`preferredLanguage`, then `stack`). Click a pivot column header — for example a `yes` or `no` column under a country — to add a sort by that aggregated value.
 
-</Description>
+</DemoDescription>
 
-```ts file="pivoting-sorting-example.page.tsx"
-
+```tsx file="pivoting-sorting-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Customizing Pivot Columns
 
@@ -83,73 +56,25 @@ There are a number of ways to customize the pivot columns and <DataSourcePropLin
 
 The default behavior for pivot columns generated for aggregations is that they inherit the properties of the original columns bound to the same field as the aggregation.
 
-```ts
-const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
-  initialValue: 0,
-  reducer: (acc, sum) => acc + sum,
-  done: (sum, arr) => {
-    return Math.floor(arr.length ? sum / arr.length : 0);
-  },
-};
-const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
-  // will have the same configuration as the `salary` column
-  avgSalary: { field: 'salary', ...avgReducer },
-  avgAge: {
-    field: 'age',
-    ...avgReducer,
-    pivotColumn: {
-      // will have the same configuration as the `preferredLanguage` column
-      inheritFromColumn: 'preferredLanguage',
-      // but specify a custom default width
-      defaultWidth: 500,
-    },
-  },
-};
+```ts file="overview.snippet.tsx" region="customizing-pivot-columns"
 ```
 
-<Sandpack title="Pivot columns inherit from original columns bound to the same field">
-
-```ts file="pivot-column-inherit-example.page.tsx"
-
+```tsx file="pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
 ```
-
-</Sandpack>
 
 Another way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
 If you pass an object, it will be applied to all pivot columns in the column group generated for the `field` property.
 
-```tsx
-const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
-  { field: 'country' },
-  { field: 'canDesign', column: { defaultWidth: 400 } },
-];
-
-<DataSource pivotBy={pivotBy} />;
+```tsx file="overview.snippet.tsx" region="customizing-pivot-columns-2"
 ```
 
 In the above example, the `column.defaultWidth=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
 
-```tsx
-const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column }) => {
-      return {
-        header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Not a Designer',
-      };
-    },
-  },
-];
+```tsx file="overview.snippet.tsx" region="customizing-pivot-columns-3"
 ```
 
-<Sandpack title="Pivoting with customized pivot column">
-
-```ts file="pivoting-customize-column-example.page.tsx"
-
+```tsx file="pivoting-customize-column-example.demo.tsx" title="Pivoting with customized pivot column"
 ```
-
-</Sandpack>
 
 ## Total and grand-total columns
 
@@ -162,13 +87,8 @@ The example below pivots by `stack` and `canDesign` so both total and grand-tota
 
 </Note>
 
-<Sandpack title="Pivoting with customized position for totals and grand-total columns">
-
-```ts file="$DOCS/reference/pivot-grand-total-column-position-example.page.tsx"
-
+```tsx file="/docs/reference/pivot-grand-total-column-position-example.demo.tsx" title="Pivoting with customized position for totals and grand-total columns"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -195,102 +115,17 @@ The <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> fu
 
 In the example below, let's assume the following practical scenario, with the data-type being a `Developer{country, stack, preferredLanguage, canDesign, age, salary}`.
 
-```tsx
-const groupBy = [
-  { field: 'country' }, // possible values: any valid country
-  { field: 'stack' }, // possible values: "backend", "frontend", "full-stack"
-];
-const pivotBy = [
-  { field: 'preferredLanguage' }, // possible values: "TypeScript","JavaScript","Go"
-  { field: 'canDesign' }, // possible values: "yes" or "no"
-];
-
-const aggregationReducers = {
-  salary: { name: 'Salary (avg)', field: 'salary', reducer: 'avg' },
-  age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
-};
+```tsx file="overview.snippet.tsx" region="server-side-pivoting"
 ```
 
-```tsx
-
-const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
-  // make sure you return a Promise that resolves to the correct structure - see details below
-
-  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
-  //    groupKeys: [], - so we're requesting top-level data
-
-  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
-  //    groupKeys: ["Canada"], - so we're requesting Canada's data
-
-  //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
-  //    groupKeys: ["Canada"], - so we're requesting Canada's data
-
-}
-
-<DataSource lazyLoad data={dataSource}>
+```tsx file="overview.snippet.tsx" region="server-side-pivoting-2"
 ```
 
-```js
-{
-  data: [
-    {
-      aggregations: {
-        // for each aggregation id, have an entry
-        salary: <SALARY_AGGREGATION_VALUE>,
-        age: <AGE_AGGREGATION_VALUE>,
-      },
-      data: {
-        // data is an object with the common group values
-        country: "Canada"
-      },
-      // the array of keys that uniquely identify this group, including all parent keys
-      keys: ["Canada"],
-      pivot: {
-        totals: {
-          // for each aggregation id, have an entry
-          salary: <SALARY_AGGREGATION_VALUE>,
-          age: <AGE_AGGREGATION_VALUE>,
-        },
-        values: {
-          [for each unique value]: { // eg: for country
-            totals: {
-              // for each aggregation, have an entry
-              salary: <SALARY_AGGREGATION_VALUE>,
-              age: <AGE_AGGREGATION_VALUE>,
-            },
-            values: {
-              [for each unique value]: { // eg: for stack
-                totals: {
-                  salary: <SALARY_AGGREGATION_VALUE>,
-                  age: <AGE_AGGREGATION_VALUE>,
-                }
-
-              }
-            }
-          }
-        }
-      }
-    }
-  ],
-  // the total number of rows in the remote data set
-  totalCount: 10,
-
-  // you can map "values" and "totals" above to shorter names
-
-  mappings: {
-    values: "values",
-    totals: "totals"
-  }
-}
+```js file="overview.snippet.tsx" region="server-side-pivoting-3"
 ```
 
-<Sandpack title="Server-side pivoting example">
-
-```ts file="remote-pivoting-example.page.tsx"
-
+```tsx file="remote-pivoting-example.demo.tsx" title="Server-side pivoting example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -306,124 +141,19 @@ Just like server-side grouping, server-side pivoting also supports batching - ma
 
 The example below also shows you how to customize the table rows while records are still loading.
 
-<Sandpack title="Server side pivoting with lazy loding batching">
-
-```ts file="server-side-pivoting-with-lazy-load-batching-example.page.tsx"
-
+```tsx file="server-side-pivoting-with-lazy-load-batching-example.demo.tsx" title="Server side pivoting with lazy loding batching"
 ```
-
-</Sandpack>
 
 Here's another example, that assumes grouping by `country` and `city`, aggregations by `age` and `salary` (average values) and pivot by `preferredLanguage` and `canDesign` (a boolean property):
 
-```tsx
-//request:
-groupKeys: [] // empty keys array, so it's a top-level group
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-lazyLoadStartIndex: 0
-lazyLoadBatchSize: 10
-pivotBy: [{"field":"preferredLanguage"},{"field":"canDesign"}]
-
-//response
-{
-  cache: true,
-  totalCount: 20,
-  data: [
-    {
-      data: {country: "Argentina"},
-      aggregations: {avgSalary: 20000, avgAge: 30},
-      keys: ["Argentina"],
-      pivot: {
-        totals: {avgSalary: 20000, avgAge: 30},
-        values: {
-          Csharp: {
-            totals: {avgSalary: 19000, avgAge: 29},
-            values: {
-              no: {totals: {salary: 188897, age: 34}},
-              yes: {totals: {salary: 196000, age: 36}}
-            }
-          },
-          Go: {
-            totals: {salary: 164509, age: 36},
-            values: {
-              no: {totals: {salary: 189202, age: 37}},
-              yes: {totals: {salary: 143977, age: 35}}
-            }
-          },
-          Java: {
-            totals: {salary: 124809, age: 32},
-            values: {
-              no: {totals: {salary: 129202, age: 47}},
-              yes: {totals: {salary: 233977, age: 25}}
-            }
-          },
-          //...
-        }
-      }
-    },
-    //...
-  ]
-}
+```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching"
 ```
 
 If we were to scroll down, the next batch of data would have the same structure as the previous one, but with `lazyLoadStartIndex` set to 10 (if `lazyLoad.batchSize = 10`).
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx
-//request:
-groupKeys: ["Argentina"]
-groupBy: [{"field":"country"},{"field":"city"}]
-reducers: [{"field":"salary","id":"avgSalary","name":"avg"},{"field":"age","id":"avgAge","name":"avg"}]
-lazyLoadStartIndex: 0
-lazyLoadBatchSize: 10
-pivotBy: [{"field":"preferredLanguage"},{"field":"canDesign"}]
-
-//response
-{
-  mappings: {
-    totals: "totals",
-    values: "values"
-  },
-  cache: true,
-  totalCount: 20,
-  data: [
-    {
-      data: {country: "Argentina", city: "Buenos Aires"},
-      aggregations: {avgSalary: 20000, avgAge: 30},
-      keys: ["Argentina", "Buenos Aires"],
-      pivot: {
-        totals: {avgSalary: 20000, avgAge: 30},
-        values: {
-          Csharp: {
-            totals: {avgSalary: 39000, avgAge: 29},
-            values: {
-              no: {totals: {salary: 208897, age: 34}},
-              yes: {totals: {salary: 296000, age: 36}}
-            }
-          },
-          Go: {
-            totals: {salary: 164509, age: 36},
-            values: {
-              no: {totals: {salary: 189202, age: 37}},
-              yes: {totals: {salary: 143977, age: 35}}
-            }
-          },
-          Java: {
-            totals: {salary: 124809, age: 32},
-            values: {
-              no: {totals: {salary: 129202, age: 47}},
-              yes: {totals: {salary: 233977, age: 25}}
-            }
-          },
-          //...
-        }
-      }
-    },
-    //...
-  ]
-}
+```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-2"
 ```
 
 <Note>
@@ -432,60 +162,12 @@ The response can contain a `mappings` key with values for `totals` and `values` 
 
 If `mappings` would be `{totals: "t", values: "v"}`, the response would look like this:
 
-```tsx
-{
-  totalCount: 20,
-  data: {...},
-  pivot: {
-    t: {avgSalary: 10000, avgAge: 30},
-    v: {
-      Go: {
-        t: {...},
-        v: {...}
-      },
-      Java: {
-        t: {...},
-        v: {...}
-      }
-    }
-  }
-
+```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-3"
 ```
 
 More-over, you can also give aggregationReducers shorter keys to make the server response even more compact
 
-```tsx
-const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
-  {
-    s: {
-      name: 'Salary (avg)',
-      field: 'salary',
-      reducer: 'avg',
-    },
-    a: {
-      name: 'Age (avg)',
-      field: 'age',
-      reducer: 'avg',
-    },
-  };
-
-// pivot response
-{
-  totalCount: 20,
-  data: {...},
-  pivot: {
-    t: {s: 10000, a: 30},
-    v: {
-      Go: {
-        t: { s: 10000, a: 30 },
-        v: {...}
-      },
-      Java: {
-        t: {...},
-        v: {...}
-      }
-    }
-  }
+```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-4"
 ```
 
 </Note>
