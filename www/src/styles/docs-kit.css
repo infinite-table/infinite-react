@@ -110,8 +110,42 @@ body > .dk-demo-overlay {
   --dk-framework-fallback-label: 'React only for now';
 }
 
-.dk-framework-switcher {
-  font-size: var(--text-base);
+/* the switcher in the site header: the accent color, so it stands out */
+.docs-framework-switcher {
+  border-color: var(--color-glow);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.docs-framework-switcher .dk-framework-option {
+  padding: 2px 10px;
+  color: var(--color-glow);
+  font-weight: 600;
+}
+
+.docs-framework-switcher .dk-framework-option:hover {
+  background: var(--color-glow-dark);
+  color: var(--color-glow);
+}
+
+.docs-framework-switcher .dk-framework-option--active,
+.docs-framework-switcher .dk-framework-option--active:hover {
+  background: var(--color-glow);
+  color: #000;
+}
+
+.docs-framework-switcher .dk-framework-option:focus-visible {
+  outline-color: var(--color-glow);
+}
+
+@media (min-width: 768px) {
+  .docs-framework-switcher {
+    font-size: 1rem;
+  }
+
+  .docs-framework-switcher .dk-framework-option {
+    padding: 2px 14px;
+  }
 }
 
 /* a demo, example or card on a Vue page that only exists for React */

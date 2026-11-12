@@ -24,9 +24,9 @@ export const DOCS_FRAMEWORKS_CONFIG: FrameworksConfig<DocsFrameworkId> = {
 
 export const docsFrameworks = defineFrameworks(DOCS_FRAMEWORKS_CONFIG);
 
-/** Where the switcher goes from a page that isn't docs (blog, pricing). */
+/** Each framework's home page: the site's homepage is the React one. */
 export const DOCS_FRAMEWORK_HOME: Record<DocsFrameworkId, string> = {
-  react: '/docs',
+  react: '/',
   vue: '/vue',
 };
 

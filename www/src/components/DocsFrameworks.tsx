@@ -4,11 +4,13 @@ import {
   createHasPage,
   mapRouteTree,
   resolveFrameworkLink,
+  resolveSwitchTarget,
 } from '@thedatagrid/docs-kit/frameworks';
 import {
+  EXPLICIT_LINK_ATTRIBUTE,
   FrameworkBanner,
   FrameworkLinks,
-  FrameworkSwitcher,
+  useFrameworkPreference,
 } from '@thedatagrid/docs-kit/frameworks/react';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
@@ -86,22 +88,97 @@ export function useDocsFramework() {
 }
 
 /**
- * React | Vue. Each option links to the same page in that framework (or the
- * nearest parent that exists there) and remembers the choice.
+ * React | Vue, in the site header.
+ *
+ * - On a docs page, each option links to the same page in that framework (or
+ *   the nearest parent that exists there).
+ * - On a home page (`/` is the React one, `/vue` the Vue one), to the other
+ *   framework's home page.
+ * - Anywhere else (blog, pricing) it only remembers the choice.
+ *
+ * The choice is stored, and docs links then follow it (`DocsFrameworkLinks`).
  */
 export function DocsFrameworkSwitcher(props: { className?: string }) {
   const pages = React.useContext(PagesContext);
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   const router = useRouter();
+  const [preference, setPreference] = useFrameworkPreference(docsFrameworks);
+  const hasPage = React.useMemo(
+    () => createHasPage<DocsFrameworkId>(pages),
+    [pages],
+  );
+
+  const pageFramework = docsFrameworks.frameworkOf(pathname);
+  const homeFramework =
+    docsFrameworks.ids.find((id) => DOCS_FRAMEWORK_HOME[id] === pathname) ??
+    null;
+  const current =
+    pageFramework ?? homeFramework ?? preference ?? docsFrameworks.default;
+
   return (
-    <FrameworkSwitcher
-      config={DOCS_FRAMEWORKS_CONFIG}
-      pages={pages}
-      pathname={pathname}
-      navigate={router.push}
-      home={DOCS_FRAMEWORK_HOME}
-      className={props.className}
-    />
+    <div
+      className={`dk-framework-switcher docs-framework-switcher ${
+        props.className ?? ''
+      }`}
+      role="group"
+      aria-label="Framework"
+    >
+      {docsFrameworks.ids.map((id) => {
+        let href: string | undefined;
+        if (pageFramework) {
+          href =
+            resolveSwitchTarget(docsFrameworks, pathname, id, hasPage)?.href ??
+            docsFrameworks.pathFor('/docs', id);
+        } else if (homeFramework) {
+          href = DOCS_FRAMEWORK_HOME[id];
+        }
+        const active = id === current;
+        const className = `dk-framework-option${
+          active ? ' dk-framework-option--active' : ''
+        }`;
+        const onClick = (event: React.MouseEvent<HTMLElement>) => {
+          setPreference(id);
+          const plainClick =
+            event.button === 0 &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.shiftKey &&
+            !event.altKey;
+          if (!href || !plainClick) {
+            return;
+          }
+          event.preventDefault();
+          if (href !== pathname) {
+            router.push(href);
+          }
+        };
+        return href ? (
+          <a
+            key={id}
+            href={href}
+            className={className}
+            data-framework={id}
+            aria-current={active ? 'true' : undefined}
+            onClick={onClick}
+            // the visitor's stored framework must not rewrite the switcher's own links
+            {...{ [EXPLICIT_LINK_ATTRIBUTE]: '' }}
+          >
+            {docsFrameworks.label(id)}
+          </a>
+        ) : (
+          <button
+            key={id}
+            type="button"
+            className={className}
+            data-framework={id}
+            aria-current={active ? 'true' : undefined}
+            onClick={onClick}
+          >
+            {docsFrameworks.label(id)}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

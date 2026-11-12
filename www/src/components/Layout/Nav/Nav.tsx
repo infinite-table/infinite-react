@@ -1,8 +1,5 @@
 import { newvars } from '@www/styles/www-utils';
-import {
-  DocsFrameworkSwitcher,
-  useDocsFramework,
-} from '@www/components/DocsFrameworks';
+import { useDocsFramework } from '@www/components/DocsFrameworks';
 
 import { inferSection } from './inferSection';
 import NavLink from './NavLink';
@@ -122,9 +119,6 @@ export default function Nav() {
         >
           Releases
         </NavLink>
-      </div>
-      <div className="hidden lg:flex justify-center pt-3">
-        <DocsFrameworkSwitcher />
       </div>
       {/* this is hidden on large screens, since the Buy button is on sidebar for >= large  */}
       {/* <div

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { createDemoComponents } from '@thedatagrid/docs-kit/react';
 
 import { AccentButton } from '@www/components/AccentButton';
+import { OtherFrameworkNote } from '@www/components/OtherFrameworkNote';
 import TerminalBlock from '@www/components/MDX/TerminalBlock';
 import { asMeta } from '@www/utils/asMeta';
 import {
@@ -79,6 +80,7 @@ export default function VueLandingPage() {
         Infinite Table to Vue 3: a virtualized DataGrid with sorting, row
         grouping, pivoting, aggregations, filtering and lazy loading.
       </p>
+      <OtherFrameworkNote framework="react" className="mt-4" />
 
       <div className="mt-8 flex flex-wrap items-center gap-4">
         <AccentButton
@@ -153,17 +155,6 @@ export default function VueLandingPage() {
           </li>
         ))}
       </ul>
-
-      <p className="mt-16 text-lg">
-        Using React?{' '}
-        <Link
-          className="text-link hover:underline underline-offset-4"
-          href="/docs"
-        >
-          The React docs are here
-        </Link>
-        .
-      </p>
     </main>
   );
 }

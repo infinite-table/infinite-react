@@ -83,8 +83,9 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
         )}
       </div>
 
+      {/* on a phone the header has no room for the switcher on docs pages */}
       {isBlog ? null : (
-        <div className="py-2 px-5 bg-black flex flex-row">
+        <div className="sm:hidden py-3 px-5 bg-black flex flex-row">
           <DocsFrameworkSwitcher />
         </div>
       )}

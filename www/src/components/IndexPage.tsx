@@ -14,6 +14,7 @@ import { SecondaryButton } from './SecondaryButton';
 
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
+import { OtherFrameworkNote } from '@www/components/OtherFrameworkNote';
 
 function NpmCmd() {
   const [copyTimestamp, setCopyTimestamp] = React.useState(0);
@@ -110,7 +111,13 @@ export function IndexPage({ posts }: { posts?: BlogPost[] }) {
     );
   }
   return (
-    <MainLayout seoTitle={seoTitle} seoDescription={seoDescription}>
+    <MainLayout
+      seoTitle={seoTitle}
+      seoDescription={seoDescription}
+      heroFooter={
+        <OtherFrameworkNote framework="vue" className="mt-10 relative z-10" />
+      }
+    >
       <div className="mx-auto w-full max-w-[1480px] px-4 md:px-8 pt-2 pb-4">
         <HeroShowcase />
         <div className="mt-3 text-right text-sm">

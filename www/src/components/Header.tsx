@@ -16,7 +16,10 @@ import { usePathname } from 'next/navigation';
 import { MenuContext } from './useMenu';
 import { IconHamburger } from './Icon/IconHamburger';
 import { IconClose } from './Icon/IconClose';
-import { useDocsFramework } from '@www/components/DocsFrameworks';
+import {
+  DocsFrameworkSwitcher,
+  useDocsFramework,
+} from '@www/components/DocsFrameworks';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -148,6 +151,13 @@ export const NavBarContent = ({
         className={`${itemCls} `}
         style={{ flex: 1, margin: 0, marginLeft: 0 }}
       ></li>
+      {/*
+        No room for it in a phone's header: there, the docs menu has the
+        switcher and the home pages link to each other under the hero text.
+      */}
+      <li className={`${itemCls} hover:opacity-100 max-sm:hidden`}>
+        <DocsFrameworkSwitcher />
+      </li>
       <li className={`${itemCls} ${activePage.pricing ? activeCls : ''} `}>
         <Link href="/pricing">Pricing</Link>
       </li>
