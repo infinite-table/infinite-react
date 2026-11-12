@@ -12,9 +12,10 @@ on:
       - 'examples/src/**/*.spec.ts'
       - 'examples/src/**/*.page.tsx'
       - 'examples/src/**/*.ts'
+      - '.github/workflows/ci.yml'
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
