@@ -9,14 +9,12 @@ import {
 import { NonUndefined } from '../../types/NonUndefined';
 import { CheckBoxCls } from './CheckBox.css';
 
-export type InfiniteCheckBoxPropChecked = true | false | null;
-export type InfiniteCheckBoxProps = {
-  disabled?: boolean;
-  checked?: InfiniteCheckBoxPropChecked;
-  defaultChecked?: InfiniteCheckBoxPropChecked;
-  onChange?: (checked: InfiniteCheckBoxPropChecked) => void;
-  domProps?: React.HTMLProps<HTMLElement>;
-};
+import type {
+  InfiniteCheckBoxPropChecked,
+  InfiniteCheckBoxProps,
+} from './CheckBoxTypes';
+
+export type { InfiniteCheckBoxPropChecked, InfiniteCheckBoxProps };
 
 export type InfiniteCheckBoxMappedState = {
   checked: NonUndefined<InfiniteCheckBoxProps['checked']>;

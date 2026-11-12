@@ -25,7 +25,7 @@ export {
 
 export { Menu } from './components/Menu/MenuForVue.vue';
 export type * from './components/Menu/MenuProps';
-export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
+export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIconTypes';
 export { useOverlay } from './components/hooks/useOverlay/useOverlayForVue.vue';
 
 export { useInfiniteColumnEditor } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnEditorForVue.vue';

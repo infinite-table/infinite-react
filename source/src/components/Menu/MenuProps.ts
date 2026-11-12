@@ -1,4 +1,8 @@
-import { CSSProperties, HTMLProps } from 'react';
+import type {
+  CSSProperties,
+  HTMLProps,
+  MouseEvent,
+} from '../types/FrameworkTypes';
 import { ElementContainerGetter, OverlayShowParams } from '../hooks/useOverlay';
 import { NonUndefined } from '../types/NonUndefined';
 import { RemoveObject } from '../types/RemoveObject';
@@ -80,7 +84,7 @@ export type MenuItemObject = {
   menu?: MenuItemSubMenu | (() => MenuItemSubMenu);
   style?: CSSProperties;
   className?: string;
-  onClick?: (event: React.MouseEvent) => void;
+  onClick?: (event: MouseEvent) => void;
   onAction?: (params: MenuItemActionContext) => void;
   hideMenuOnAction?: boolean;
   [k: string]: any;

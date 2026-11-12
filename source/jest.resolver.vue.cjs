@@ -16,7 +16,13 @@ module.exports = (request, options) => {
     try {
       return defaultResolver(`${request}.vue`, options);
     } catch (err) {
-      // no .vue sibling - fall through to the default resolution
+      // no .vue sibling - try a directory import next
+    }
+    try {
+      // directory imports: prefer index.vue.ts over index.tsx
+      return defaultResolver(`${request}/index.vue`, options);
+    } catch (err) {
+      // no index.vue sibling - fall through to the default resolution
     }
   }
 
