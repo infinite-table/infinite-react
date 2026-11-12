@@ -281,7 +281,8 @@ function setupGridDemos() {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         observer.unobserve(entry.target);
-        modulePromise ??= import('./grid-demos.js');
+        // the site caches .js for a year: bump the version when a shared file changes
+        modulePromise ??= import('./grid-demos.js?v=2');
         modulePromise
           .then((mod) => mod.mountGridDemo(entry.target))
           .catch((error) => {
