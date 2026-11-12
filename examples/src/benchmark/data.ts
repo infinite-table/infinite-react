@@ -1,19 +1,19 @@
 /**
- * Shared, deterministic dataset for the AG Grid vs Infinite Table benchmark.
+ * Shared, deterministic dataset for the grid benchmark.
  *
- * Both benchmark pages import this exact module, so both grids receive the
- * same rows (same values, same order, same object shape). `getDataChecksum`
+ * Every benchmark page imports this exact module, so all the grids receive
+ * the same rows (same values, same order, same object shape). `getDataChecksum`
  * lets the Playwright spec assert that.
  */
 
-// each size has its own pair of pages: /benchmark/<grid>-<size>
+// each size has its own page for every grid: /benchmark/<grid>-<size>
 export const BENCH_SIZES = {
   '300k': 300_000,
   '1m': 1_000_000,
 } as const;
 export type BenchSize = keyof typeof BENCH_SIZES;
 
-// keep these identical in both grids - the spec relies on them for
+// keep these identical in every grid - the spec relies on them for
 // computing "which row/column should be at this pixel"
 export const BENCH_ROW_HEIGHT = 40;
 export const BENCH_HEADER_HEIGHT = 40;
@@ -25,8 +25,10 @@ export type BenchRow = {
   id: number;
   /**
    * random lowercase a-z string - used for the string sort scenario.
-   * a-z only so `<` (AG Grid default) and `localeCompare` (Infinite
-   * default) produce the same order and the expected result is unambiguous
+   * a-z only, so the default string comparison of every grid (character
+   * codes in AG Grid and TanStack Table, the browser's locale in Infinite
+   * Table and MUI X) gives the same order and the expected result is
+   * unambiguous
    */
   code: string;
   firstName: string;

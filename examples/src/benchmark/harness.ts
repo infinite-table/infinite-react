@@ -1,10 +1,10 @@
 /**
- * In-page side of the AG Grid vs Infinite Table benchmark.
+ * In-page side of the grid benchmark.
  *
  * Each benchmark page provides a small `BenchAdapter` (DOM knowledge about its
  * grid) and calls `installBenchmark`. The Playwright spec only talks to
- * `window.__bench` - it never uses grid-specific selectors - so both grids go
- * through exactly the same measuring code.
+ * `window.__bench` - it never uses grid-specific selectors - so every grid
+ * goes through exactly the same measuring code.
  *
  * Timing marks (`performance.mark`) end up in the Chrome trace
  * (`blink.user_timing` category), which the spec uses to find the exact
@@ -21,7 +21,7 @@ import {
   getDataChecksum,
 } from './data';
 
-export type BenchGridName = 'ag-grid' | 'infinite';
+export type BenchGridName = 'mui' | 'ag-grid' | 'tanstack' | 'infinite';
 
 export type BenchRect = {
   left: number;
@@ -33,6 +33,7 @@ export type BenchRect = {
 export type BenchAdapter = {
   grid: BenchGridName;
   version: string;
+
   /** grid root element - null before mount */
   getRoot(): HTMLElement | null;
   /** element whose native scrollTop drives the vertical scroll */
@@ -155,6 +156,11 @@ function createBench(
    * more than that, so grids map the scrollbar onto the rows linearly
    * (AG Grid "stretches"). The linear mapping is exact when there's no
    * stretching (ratio 1) and matches AG Grid's when there is.
+   *
+   * It is only the fallback: a grid that doesn't map the scrollbar at all
+   * (and so can't reach its last rows) has a ratio of 1 whatever the scroll
+   * range is - the spec gives each page the ratio measured by
+   * calibrateScroll() (see setScrollRatio).
    */
   const getLinearScrollRatio = () => {
     const scroller = adapter.getVerticalScroller();
@@ -166,7 +172,8 @@ function createBench(
     const contentMax = data.length * BENCH_ROW_HEIGHT - body.height;
     return scrollMax > 0 ? contentMax / scrollMax : 1;
   };
-  // set by calibrateScroll() - the grid's own scrollTop -> row mapping
+  // set by calibrateScroll() / setScrollRatio() - the grid's own
+  // scrollTop -> row mapping
   let calibratedRatio: number | null = null;
 
   const getContentOffset = (scrollTop?: number) => {
@@ -344,6 +351,7 @@ function createBench(
   return {
     grid: adapter.grid,
     version: adapter.version,
+
     env: process.env.NODE_ENV,
     dev: typeof __DEV__ !== 'undefined' ? __DEV__ : null,
     rowCount: data.length,
@@ -507,6 +515,14 @@ function createBench(
         lastVisibleRow: atEnd.last.index + 1,
         rowCount: data.length,
       };
+    },
+
+    /**
+     * the scrollTop -> row mapping measured by calibrateScroll() on another
+     * page of the same grid, with the same rows
+     */
+    setScrollRatio(ratio: number) {
+      calibratedRatio = ratio;
     },
 
     getScrollMax() {
