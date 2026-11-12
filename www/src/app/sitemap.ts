@@ -3,6 +3,8 @@ import { MetadataRoute } from 'next';
 import { competitors } from '@www/compare/matrix';
 import { siteContent } from '@www/content';
 import { getBlogPosts } from '@www/utils/blogUtils';
+import { getDocsPagePaths } from '@www/utils/docsFrameworkContent';
+import { docsFrameworks } from '@www/utils/docsFrameworks';
 
 import { getAllTagsFromPosts, tagHref } from './blog/blogTagUtils';
 
@@ -50,6 +52,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       return;
     }
     add(path);
+  });
+
+  // the Vue docs: /vue and the pages that have a Vue version, under /vue/docs
+  add('/vue');
+  getDocsPagePaths('vue').forEach((neutralPath) => {
+    add(docsFrameworks.pathFor(neutralPath, 'vue'));
   });
 
   const posts = getBlogPosts({ skipDrafts: true });

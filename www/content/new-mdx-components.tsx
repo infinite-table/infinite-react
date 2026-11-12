@@ -54,13 +54,22 @@ import {
 } from '../src/components/MDX/Prop';
 import { DocsLink } from '../src/components/DocsLink';
 import { createDemoComponents } from '@thedatagrid/docs-kit/react';
+import { createFrameworkContent } from '@thedatagrid/docs-kit/frameworks/react';
+import { resolveFrameworkLink } from '@thedatagrid/docs-kit/frameworks';
 import {
   DOCS_CODE_THEMES,
   DOCS_CONTENT_DIR,
   DOCS_DEMO_ANCHOR_PREFIX,
   DOCS_DEMO_HEIGHTS,
   DOCS_DEMO_MANIFEST,
+  DOCS_DEMO_MANIFEST_VUE,
 } from '../src/utils/docsKit';
+import { docsHasPage } from '../src/utils/docsFrameworkContent';
+import {
+  docsFrameworks,
+  REACT_ONLY_NOTICE,
+  type DocsFrameworkId,
+} from '../src/utils/docsFrameworks';
 // import { Note } from '@www/components/Note';
 
 type IgnoreChildrenCmpProps = { className?: string; children: React.ReactNode };
@@ -78,9 +87,39 @@ const Description = (props: { children: React.ReactNode }) => (
   <>{props.children}</>
 );
 
-export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
+/** On a page of another framework: this demo, snippet or link has no version for it yet. */
+const ReactOnlyNotice = () => (
+  <span className="docs-framework-notice">{REACT_ONLY_NOTICE}</span>
+);
+
+export function useMDXComponents(
+  fileInfo: MarkdownFileInfo,
+  framework: DocsFrameworkId = docsFrameworks.default,
+): MDXComponents {
+  const otherFramework = framework !== docsFrameworks.default;
+
   const CodeSnippet = (props: CodeSnippetProps) => {
-    return <CodeSnippetCmp {...props} cwd={fileInfo.folderPath} />;
+    const snippet = <CodeSnippetCmp {...props} cwd={fileInfo.folderPath} />;
+    // the Sandpack examples only exist for React
+    return otherFramework && props.live ? (
+      <div className="docs-framework-fallback">
+        <ReactOnlyNotice />
+        {snippet}
+      </div>
+    ) : (
+      snippet
+    );
+  };
+
+  /** A docs link built by a component, for the page's framework. */
+  const linkFor = (href: string) => {
+    const link = resolveFrameworkLink(
+      docsFrameworks,
+      href,
+      framework,
+      docsHasPage,
+    );
+    return link.kind === 'missing' ? href : link.href;
   };
 
   const components: MDXComponents = {
@@ -88,18 +127,36 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
     ...createDemoComponents({
       contentDir: DOCS_CONTENT_DIR,
       folder: fileInfo.folderPath,
-      manifest: DOCS_DEMO_MANIFEST,
+      manifest:
+        framework === 'vue' ? DOCS_DEMO_MANIFEST_VUE : DOCS_DEMO_MANIFEST,
       heights: DOCS_DEMO_HEIGHTS,
       themes: DOCS_CODE_THEMES,
       anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
+      // a demo or snippet without a Vue sibling: the React one, with a notice
+      fallback: otherFramework
+        ? { manifest: DOCS_DEMO_MANIFEST, notice: REACT_ONLY_NOTICE }
+        : undefined,
     }),
-    HomepageHero,
+    // <FrameworkContent framework="vue"> … </FrameworkContent>
+    FrameworkContent: createFrameworkContent(framework),
+    HomepageHero: () => <HomepageHero linkFor={linkFor} />,
     TerminalBlock,
     BenchmarkChart,
     HeroCards,
     Illustration,
     IllustrationBlock,
-    YouWillLearnCard,
+    // `frameworkFallback` is set by the link plugin when `path` has no page for this framework
+    YouWillLearnCard: ({
+      frameworkFallback,
+      ...props
+    }: React.ComponentProps<typeof YouWillLearnCard> & {
+      frameworkFallback?: string;
+    }) => (
+      <YouWillLearnCard
+        {...props}
+        notice={frameworkFallback ? <ReactOnlyNotice /> : undefined}
+      />
+    ),
     Description,
     Intro,
     Note,

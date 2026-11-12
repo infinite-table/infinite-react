@@ -16,6 +16,7 @@ import { usePathname } from 'next/navigation';
 import { MenuContext } from './useMenu';
 import { IconHamburger } from './Icon/IconHamburger';
 import { IconClose } from './Icon/IconClose';
+import { useDocsFramework } from '@www/components/DocsFrameworks';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -100,10 +101,11 @@ export const NavBarContent = ({
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
 
   const pathname = usePathname() || '';
+  const docs = useDocsFramework();
 
   const activePage = {
     pricing: pathname.startsWith('/pricing'),
-    docs: pathname.startsWith('/docs'),
+    docs: docs.framework != null,
     blog: pathname.startsWith('/blog'),
   };
 
@@ -150,7 +152,7 @@ export const NavBarContent = ({
         <Link href="/pricing">Pricing</Link>
       </li>
       <li className={`${itemCls} ${activePage.docs ? activeCls : ''} `}>
-        <Link href="/docs">Docs</Link>
+        <Link href={docs.hrefFor('/docs')}>Docs</Link>
       </li>
       <li className={`${itemCls} ${activePage.blog ? activeCls : ''} `}>
         <Link href="/blog">Blog</Link>

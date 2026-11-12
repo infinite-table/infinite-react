@@ -9,7 +9,7 @@ This example show how you can change the data source and the columns of the Data
 Find out more about how to work with data - both client-side and server-side.
 </YouWillLearnCard>
 
-<YouWillLearnCard title="Working with Columns" path="/docs/learn/working-with-columns">
+<YouWillLearnCard title="Working with Columns" path="/docs/learn/columns">
 See our page on using and configuring columns. It shows you how to use and customize columns to your needs.
 </YouWillLearnCard>
 </HeroCards>

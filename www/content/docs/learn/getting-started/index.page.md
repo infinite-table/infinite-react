@@ -1,11 +1,23 @@
 ---
 title: Getting Started
 description: Get help starting with Infinite Table for React. Our DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
+vue:
+  description: Get started with Infinite Table for Vue. Our Vue DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
 ---
 
 > `Infinite Table` is a UI component for data virtualization - helps you display huge datasets of tabular data.
 
+<FrameworkContent framework="react">
+
 It's built specifically for React from the ground up and with performance in mind.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+`@infinite-table/infinite-vue` is Infinite Table for Vue 3: the same DataGrid, built from the same source and with the same focus on performance, with Vue components and composables.
+
+</FrameworkContent>
 
 # Installation
 
@@ -71,6 +83,21 @@ Read more about how to use our TypeScript types.
 
 </HeroCards>
 
+<FrameworkContent framework="vue">
+
+## Built for Vue
+
+`Infinite Table` for Vue is fully declarative and fully typed, and it's configured through props - the same props as the React version:
+
+- bind props in the template, as you do with any Vue component - `:columns="columns"`, `:rowHeight="40"`.
+- the `on*Change` callbacks are props as well, not emitted events - bind them with `:onSortInfoChange="onSortInfoChange"` (not with `@sort-info-change`).
+- for controlled props, bind a `ref` and update it in the corresponding callback - for example `:sortInfo="sortInfo"` together with `:onSortInfoChange`. The uncontrolled version of a prop (`defaultSortInfo`) needs no callback.
+- column `render` functions and custom components return VNodes - use `h()` from `vue`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="react">
+
 ## Built for React from the ground-up
 
 `Infinite Table` is built specifically for React and is fully declarative and fully typed. When you use `Infinite Table`, it feels at-home in your React application - every prop has both a controlled and uncontrolled version so you get full control over every area of the component.
@@ -96,7 +123,17 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 
 </Snippet>
 
+</FrameworkContent>
+
 ## Licensing
+
+<FrameworkContent framework="vue">
+
+`@infinite-table/infinite-vue` is published under the same license as the React package.
+
+</FrameworkContent>
+
+<FrameworkContent framework="react">
 
 You can use `@infinite-table/infinite-react` in 2 ways:
 
@@ -105,6 +142,8 @@ You can use `@infinite-table/infinite-react` in 2 ways:
 
 ```ts live title="Invalid License Demo" files="invalid-license.page.tsx,data.tsx"
 ```
+
+</FrameworkContent>
 
 <HeroCards>
 <YouWillLearnCard title="More on Licensing" path="/docs/learn/getting-started/licensing">

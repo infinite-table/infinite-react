@@ -13,6 +13,8 @@ interface SidebarLinkProps {
   selected?: boolean;
   title: string;
   badge?: string;
+  /** The page only exists for this framework (e.g. "React") - shown as a small marker. */
+  frameworkFallback?: string;
   level: number;
   icon?: React.ReactNode;
   heading?: boolean;
@@ -26,6 +28,7 @@ export function SidebarLink({
   selected = false,
   title,
   badge,
+  frameworkFallback,
   level,
   heading = false,
   isExpanded,
@@ -72,6 +75,14 @@ export function SidebarLink({
     >
       <span className="relative">
         {title}
+        {frameworkFallback ? (
+          <span
+            className="docs-framework-marker"
+            title={`${frameworkFallback} only for now`}
+          >
+            {frameworkFallback}
+          </span>
+        ) : null}
         {badge ? (
           <span className="text-xs  uppercase ml-2  text-black font-extrabold bg-glow p-1 absolute rounded-md">
             {badge}

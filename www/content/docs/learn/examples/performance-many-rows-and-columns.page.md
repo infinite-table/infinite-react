@@ -11,7 +11,7 @@ For a reproducible benchmark with 300,000 and 1,000,000 rows, see [Infinite Tabl
 Find out more about how to work with data - both client-side and server-side.
 </YouWillLearnCard>
 
-<YouWillLearnCard title="Working with Columns" path="/docs/learn/working-with-columns">
+<YouWillLearnCard title="Working with Columns" path="/docs/learn/columns">
 See our page on using and configuring columns. It shows you how to use and customize columns to your needs.
 </YouWillLearnCard>
 </HeroCards>
