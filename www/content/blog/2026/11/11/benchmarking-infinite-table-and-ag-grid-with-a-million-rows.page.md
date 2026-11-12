@@ -4,6 +4,7 @@ description: An open, reproducible benchmark of Infinite Table and AG Grid Commu
 date: 2026-11-11
 author: radu
 tags: performance, benchmark, ag-grid
+draft: true
 ---
 
 With our latest release [10.1.4](/docs/releases#10-1-4) we improved Infinite Table rendering to make it possible to render huge amounts of data in your favorite React DataGrid. Previously, we were capped at about 400k records, but now you can go much higher, so we wanted to test 1 million records and see if performance stays sharp with this many records. So we decided to put it to work and compare it against the [AG Grid React DataGrid](https://www.ag-grid.com/react-data-grid).
