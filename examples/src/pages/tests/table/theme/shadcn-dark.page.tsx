@@ -2,6 +2,7 @@ import {
   InfiniteTable,
   DataSource,
   type InfiniteTablePropColumns,
+  type RowDisabledStateObject,
 } from '@infinite-table/infinite-react';
 
 import * as React from 'react';
@@ -35,10 +36,10 @@ const columns: InfiniteTablePropColumns<Developer> = {
 
 const columnPinning = { id: 'start' } as const;
 
-const rowDisabledState = {
+const rowDisabledState: RowDisabledStateObject<number> = {
   enabledRows: true,
   disabledRows: [2, 3],
-} as const;
+};
 
 const domProps = {
   style: {
