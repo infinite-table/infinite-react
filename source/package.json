@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/infinite-table/infinite-react/issues"
   },
-  "version": "10.1.4",
+  "version": "10.1.5",
   "main": "index.js",
   "module": "index.mjs",
   "typings": "index.d.ts",
