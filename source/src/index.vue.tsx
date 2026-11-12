@@ -12,6 +12,7 @@ export { debounce } from './components/utils/debounce';
 export {
   DataSource,
   useDataSourceContext,
+  useDataSourceState,
   DataSourceInjectionKeyForVue,
 } from './components/DataSource/DataSourceForVue.vue';
 
@@ -23,6 +24,8 @@ export {
 } from './components/InfiniteTable/InfiniteTableForVue.vue';
 
 export { Menu } from './components/Menu/MenuForVue.vue';
+export type * from './components/Menu/MenuProps';
+export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIcon';
 export { useOverlay } from './components/hooks/useOverlay/useOverlayForVue.vue';
 
 export { useInfiniteColumnEditor } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnEditorForVue.vue';
@@ -58,6 +61,7 @@ export const components = {
 
 export { group, flatten } from './utils/groupAndPivot';
 export { DeepMap } from './utils/DeepMap';
+export { debug, type DebugLogger } from './utils/debugPackage';
 
 export { keyboardShortcuts } from './components/InfiniteTable/eventHandlers/keyboardShortcuts';
 export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';

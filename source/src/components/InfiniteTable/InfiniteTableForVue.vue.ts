@@ -2156,7 +2156,12 @@ export const InfiniteTable = defineComponent({
                   getComputedRowHeightResult().computedRowSizeCacheForDetails
                     ?.getRowHeight || getComputedRowHeight(),
               }),
-              h(LoadMask, { visible: !!loading }, () => s.loadingText),
+              h(
+                // same override point as the React body: components.LoadMask
+                (s.components?.LoadMask as any) ?? LoadMask,
+                { visible: !!loading },
+                () => s.loadingText,
+              ),
             ],
           ),
           // the portal container for menus/overlays - same classnames and
