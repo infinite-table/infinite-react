@@ -4,7 +4,7 @@
  * scrollbar + pinned measurements). Extracted from useDOMProps so the React
  * hook and the Vue root component produce identical vars.
  */
-import type { CSSProperties } from 'react';
+import type { CSSProperties } from '../../types/FrameworkTypes';
 
 import { stripVar } from '../../../utils/stripVar';
 import { getScrollbarWidth } from '../../utils/getScrollbarWidth';
