@@ -24,6 +24,12 @@
 /comparison /compare 301
 /comparison/* /compare 301
 
+# React docs have no prefix: /docs/... (the Vue docs are under /vue/docs/...)
+/react/docs /docs 301
+/react/docs/* /docs/:splat 301
+# a docs page that has no Vue version yet: the React one (until the Vue page exists)
+/vue/docs/* /docs/:splat 302
+
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
 

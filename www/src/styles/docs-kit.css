@@ -99,3 +99,82 @@ body > .dk-demo-overlay {
   font-family: var(--dk-font-mono);
   font-size: 0.9em;
 }
+
+/*
+ * Docs per framework (@thedatagrid/docs-kit/frameworks/styles.css): the
+ * React | Vue switcher, the "view this page for Vue" banner, and the marks on
+ * what a Vue page still shows from the React docs.
+ */
+:root {
+  /* after a link to a page that has no Vue version yet */
+  --dk-framework-fallback-label: 'React only for now';
+}
+
+/* the switcher in the site header: the accent color, so it stands out */
+.docs-framework-switcher {
+  border-color: var(--color-glow);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.docs-framework-switcher .dk-framework-option {
+  padding: 2px 10px;
+  color: var(--color-glow);
+  font-weight: 600;
+}
+
+.docs-framework-switcher .dk-framework-option:hover {
+  background: var(--color-glow-dark);
+  color: var(--color-glow);
+}
+
+.docs-framework-switcher .dk-framework-option--active,
+.docs-framework-switcher .dk-framework-option--active:hover {
+  background: var(--color-glow);
+  color: #000;
+}
+
+.docs-framework-switcher .dk-framework-option:focus-visible {
+  outline-color: var(--color-glow);
+}
+
+@media (min-width: 768px) {
+  .docs-framework-switcher {
+    font-size: 1rem;
+  }
+
+  .docs-framework-switcher .dk-framework-option {
+    padding: 2px 14px;
+  }
+}
+
+/* a demo, example or card on a Vue page that only exists for React */
+.docs-framework-notice,
+.dk-demo-notice {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--dk-border);
+  border-radius: 999px;
+  color: var(--dk-muted);
+  font-family: var(--dk-font-sans);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.docs-framework-fallback > .docs-framework-notice {
+  margin-top: 1rem;
+}
+
+/* sidebar entries of the Vue docs that go to the React page */
+.docs-framework-marker {
+  margin-left: 0.5rem;
+  padding: 0 6px;
+  border: 1px solid var(--dk-border);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 400;
+  line-height: 1.6;
+  opacity: 0.7;
+  vertical-align: middle;
+}

@@ -1,6 +1,7 @@
 ---
 title: Single Sorting
 description: Docs and examples on single-column sorting for Infinite Table DataGrid
+vue: true
 ---
 
 By default, the Infinite Table is sortable - clicking a column will sort the grid by that column. Clicking again will reverse the sort and a third click on the column removes the sort altogether.

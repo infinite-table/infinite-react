@@ -11,6 +11,23 @@ export const DOCS_DEMO_MANIFEST = path.join(
   'public/gen/demos/manifest.json',
 );
 
+/** The Vue build of the same config: `x.demo.vue` siblings of the React demos. */
+export const DOCS_DEMO_MANIFEST_VUE = path.join(
+  process.cwd(),
+  'public/gen/demos/_vue/manifest.json',
+);
+
+/**
+ * On a Vue page, a fence naming `x.demo.tsx` / `x.snippet.tsx` shows the
+ * sibling `x.demo.vue` / `x.snippet.vue` (or `x.snippet.vue.ts`). Without a
+ * sibling, the React file is shown with a "React only for now" notice.
+ */
+export const DOCS_VUE_SIBLINGS = {
+  '.demo.tsx': '.demo.vue',
+  '.snippet.tsx': ['.snippet.vue', '.snippet.vue.ts'],
+  '.snippet.ts': ['.snippet.vue', '.snippet.vue.ts'],
+};
+
 /** Demo card anchors are `#demo-<title>` (keep in sync with docs-kit.config.mjs). */
 export const DOCS_DEMO_ANCHOR_PREFIX = 'demo-';
 

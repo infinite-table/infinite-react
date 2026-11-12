@@ -1,13 +1,24 @@
 ---
 title: Infinite Table Documentation
 description: Developer Documentation for Infinite Table, your go-to React DataGrid component to handle huge amounts of data
+vue: true
 ---
 
 <HomepageHero />
 
 ## What is Infinite Table?
 
+<FrameworkContent framework="react">
+
 Infinite Table is a React DataGrid component for displaying virtualized tabular data.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+Infinite Table is a Vue DataGrid component for displaying virtualized tabular data.
+
+</FrameworkContent>
 
 It helps you display huge datasets and get the most out of your data by providing you the right tools to enjoy these features:
 
@@ -54,6 +65,8 @@ Infinite Table is ready to power your enterprise apps, as it supports advanced [
 
 You can choose to leverage our built-in implementations in the browser, or you can process your data on the server with full support from our-side.
 
+<FrameworkContent framework="react">
+
 ### 🔒 Secure by Default
 
 We take security seriously and only have a total of 3 dependencies in our full dependency graph - and this number will only go down.
@@ -69,6 +82,8 @@ See our bundle size in BundlePhobia
 
 </YouWillLearnCard>
 </HeroCards>
+
+</FrameworkContent>
 
 ### 🧪 Automated End-to-End Tests
 

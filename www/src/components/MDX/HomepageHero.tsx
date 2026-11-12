@@ -1,6 +1,10 @@
 import HeroCards from './HeroCards';
 
-function HomepageHero() {
+function HomepageHero(props: {
+  /** Maps the docs links to the page's framework. */
+  linkFor?: (href: string) => string;
+}) {
+  const linkFor = props.linkFor ?? ((href: string) => href);
   return (
     <>
       <HeroCards
@@ -8,12 +12,12 @@ function HomepageHero() {
           {
             title: 'Learn how to use Infinite Table',
             description: 'Unleash the power of Infinite Table',
-            link: '/docs/learn/getting-started',
+            link: linkFor('/docs/learn/getting-started'),
           },
           {
             title: 'API Reference',
             description: 'Look up the component props',
-            link: '/docs/reference',
+            link: linkFor('/docs/reference'),
           },
         ]}
       />

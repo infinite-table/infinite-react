@@ -21,6 +21,12 @@ const siteContent = require(path.join(WWW_DIR, 'src/.gen/index.json'));
 /** @thedatagrid/docs-kit/code - regions and highlight markers (loaded in `main`). */
 let docsKitCode = null;
 
+/**
+ * src/utils/docsFrameworkPages.ts (loaded in `main`). The .md pages are the
+ * React docs: `<FrameworkContent>` blocks for other frameworks are left out.
+ */
+let contentForFramework = (content) => content;
+
 // maps MDX link components to the reference page they link into
 const LINK_COMPONENTS = {
   PropLink: '/docs/reference/infinite-table-props',
@@ -270,7 +276,9 @@ function transformContent(route) {
   );
 
   // split into code fences and prose so transforms never touch code
-  const segments = route.content.split(/(```[\s\S]*?```)/);
+  const segments = contentForFramework(route.content, 'react').split(
+    /(```[\s\S]*?```)/,
+  );
 
   return segments
     .map((segment) =>
@@ -439,10 +447,15 @@ function run() {
   );
 }
 
-import('./docs-kit-import.mjs')
-  .then(({ importDocsKit }) => importDocsKit('code'))
-  .then((code) => {
+Promise.all([
+  import('./docs-kit-import.mjs').then(({ importDocsKit }) =>
+    importDocsKit('code'),
+  ),
+  import('../src/utils/docsFrameworkPages.ts'),
+])
+  .then(([code, frameworkPages]) => {
     docsKitCode = code;
+    contentForFramework = frameworkPages.contentForFramework;
     run();
   })
   .catch((error) => {

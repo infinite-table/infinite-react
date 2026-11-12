@@ -2,6 +2,10 @@
 // Every `content/**/*.demo.tsx` becomes an iframe page under public/gen/demos;
 // `@infinite-table/infinite-react` is built from ../source/src into the shared
 // import map, so the docs always show the current source.
+//
+// A sibling `x.demo.vue` is the Vue version of `x.demo.tsx`: those are built
+// into public/gen/demos/_vue, against `@infinite-table/infinite-vue` (the Vue
+// entry of the same source tree).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -10,6 +14,7 @@ import nextEnv from '@next/env';
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
 import { DOCS_FENCE_DEFAULTS } from './src/utils/docsKit.ts';
+import { pageSourceHasFramework } from './src/utils/docsFrameworkPages.ts';
 
 // the docs-kit CLI isn't Next, so it doesn't read .env* (the license key lives in .env.local)
 nextEnv.loadEnvConfig(
@@ -32,6 +37,22 @@ const BASE_URL =
 const INFINITE_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || sourcePackage.version;
 
+const SOURCE_DIR = path.resolve(import.meta.dirname, '../source/src');
+
+const FORK_STYLES = `.Infinite {
+  flex: 1;
+}
+
+body {
+  background: rgb(35, 39, 47);
+}`;
+
+const forkPrelude = (packageName) =>
+  [
+    `import '${packageName}/index.css';`,
+    "document.documentElement.classList.add('infinite-theme-mode--dark');",
+  ].join('\n');
+
 /** @type {import('@thedatagrid/docs-kit/demos').DocsKitConfig} */
 export default {
   contentDir: 'content',
@@ -44,7 +65,7 @@ export default {
     '@infinite-table/infinite-react': {
       entry: '../source/src/index.tsx',
       plugins: () => [frameworkResolvePlugin('react'), vanillaConfig],
-      watch: [path.resolve(import.meta.dirname, '../source/src')],
+      watch: [SOURCE_DIR],
     },
   },
   // the library CSS comes from the vanilla-extract build above
@@ -76,16 +97,39 @@ export default {
   `,
   fork: {
     dependencies: { '@infinite-table/infinite-react': INFINITE_VERSION },
-    entryPrelude: [
-      "import '@infinite-table/infinite-react/index.css';",
-      "document.documentElement.classList.add('infinite-theme-mode--dark');",
-    ].join('\n'),
-    styles: `.Infinite {
-  flex: 1;
-}
-
-body {
-  background: rgb(35, 39, 47);
-}`,
+    entryPrelude: forkPrelude('@infinite-table/infinite-react'),
+    styles: FORK_STYLES,
+  },
+  frameworks: {
+    vue: {
+      libraries: {
+        '@infinite-table/infinite-vue': {
+          entry: '../source/src/index.vue.tsx',
+          plugins: () => [frameworkResolvePlugin('vue'), vanillaConfig],
+          watch: [SOURCE_DIR],
+        },
+      },
+      stubImports: [/^@infinite-table\/infinite-vue\/.+\.css$/],
+      // a Vue demo opened on its own links back to the Vue page, when there is one
+      routeForPage: (pagePath) => {
+        const pageFile = path.join(
+          import.meta.dirname,
+          'content',
+          `${pagePath}.page.md`,
+        );
+        const source = fs.existsSync(pageFile)
+          ? fs.readFileSync(pageFile, 'utf8')
+          : null;
+        return pageSourceHasFramework(source, 'vue')
+          ? `/vue/${pagePath}`.replace(/\/index$/, '')
+          : null;
+      },
+      // the React and Vue packages are versioned and published together
+      fork: {
+        dependencies: { '@infinite-table/infinite-vue': INFINITE_VERSION },
+        entryPrelude: forkPrelude('@infinite-table/infinite-vue'),
+        styles: FORK_STYLES,
+      },
+    },
   },
 };

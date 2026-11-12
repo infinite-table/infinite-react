@@ -1,5 +1,5 @@
 import { newvars } from '@www/styles/www-utils';
-import { usePathname } from 'next/navigation';
+import { useDocsFramework } from '@www/components/DocsFrameworks';
 
 import { inferSection } from './inferSection';
 import NavLink from './NavLink';
@@ -55,10 +55,10 @@ export const lightIcon = (
 );
 
 export default function Nav() {
-  // const { pathname } = useRouter();
-  const pathname = usePathname();
+  // the same sections for /docs/... and /vue/docs/...
+  const docs = useDocsFramework();
 
-  const section = inferSection(pathname || '');
+  const section = inferSection(docs.neutralPath);
 
   return (
     <nav
@@ -102,15 +102,21 @@ export default function Nav() {
         style={{ marginTop: newvars.header.lineHeight }}
       >
         <NavLink
-          href="/docs/learn/getting-started"
+          href={docs.hrefFor('/docs/learn/getting-started')}
           isActive={section === 'learn'}
         >
           Learn
         </NavLink>
-        <NavLink href="/docs/reference" isActive={section === 'reference'}>
+        <NavLink
+          href={docs.hrefFor('/docs/reference')}
+          isActive={section === 'reference'}
+        >
           Reference
         </NavLink>
-        <NavLink href="/docs/releases" isActive={section === 'releases'}>
+        <NavLink
+          href={docs.hrefFor('/docs/releases')}
+          isActive={section === 'releases'}
+        >
           Releases
         </NavLink>
       </div>
