@@ -111,7 +111,7 @@ function loadPage(file, text = fs.readFileSync(file, 'utf8')) {
       entry: references[0],
       extras: references.slice(1),
       title: stringOrNull(wrapper.attrs.title ?? first.props.title),
-      description: wrapper.description,
+      descriptionRange: wrapper.descriptionRange,
       size: wrapper.attrs.size ?? first.props.size,
       tailwind: Boolean(wrapper.attrs.tailwind || first.props.tailwind),
     });
@@ -133,7 +133,7 @@ function loadPage(file, text = fs.readFileSync(file, 'utf8')) {
       entry: references[0],
       extras: references.slice(1),
       title: stringOrNull(fence.props.title),
-      description: null,
+      descriptionRange: null,
       size: fence.props.size,
       tailwind: Boolean(fence.props.tailwind),
     });
@@ -186,8 +186,21 @@ function demoReference(reference, suffix) {
     .concat(suffix);
 }
 
-function renderDemoBlock(block, suffix) {
-  const { title, description } = block;
+/** `text.slice(start, end)` with the edits that fall inside it applied. */
+function sliceWithEdits(text, start, end, edits) {
+  let result = text.slice(start, end);
+  for (const edit of edits.filter((e) => e.start >= start && e.end <= end).sort((a, b) => b.start - a.start)) {
+    result = result.slice(0, edit.start - start) + edit.text + result.slice(edit.end - start);
+  }
+  return result;
+}
+
+/** `inlineEdits`: the page's converted inline fences (one can sit in the description). */
+function renderDemoBlock(page, block, suffix, inlineEdits) {
+  const { title } = block;
+  const description = block.descriptionRange
+    ? sliceWithEdits(page.text, block.descriptionRange.start, block.descriptionRange.end, inlineEdits).trim()
+    : null;
   // A title with markup (`code`, JSX) stays a <DemoTitle>: a fence info string
   // can't hold a backtick, and `title="…"` is plain text.
   const titleInFence = title && !/[`"{}<>]/.test(title);
@@ -463,6 +476,8 @@ async function convert() {
   let pulledIn = 0;
   let inlineFences = 0;
   for (const page of pages) {
+    const inlineEdits = [];
+    if (selected.has(page.file)) inlineFences += await convertInlineFences(page, inlineEdits, writes);
     const edits = [];
     for (const block of page.blocks) {
       const rename = renames.get(block.entryFile);
@@ -473,11 +488,12 @@ async function convert() {
           warn(`${contentRelative(page.file)}:${block.line} \`${extra}\` isn't imported by ${block.entry}: it won't show as a tab`);
         }
       }
-      edits.push({ start: block.start, end: block.end, text: renderDemoBlock(block, rename.suffix) });
+      edits.push({ start: block.start, end: block.end, text: renderDemoBlock(page, block, rename.suffix, inlineEdits) });
       demoBlocks++;
       if (!selected.has(page.file)) pulledIn++;
     }
-    if (selected.has(page.file)) inlineFences += await convertInlineFences(page, edits, writes);
+    // an inline fence inside a converted block is already part of that block's text
+    edits.push(...inlineEdits.filter((edit) => !edits.some((block) => edit.start >= block.start && edit.end <= block.end)));
     if (!edits.length) continue;
     let text = page.text;
     for (const edit of edits.sort((a, b) => b.start - a.start)) {

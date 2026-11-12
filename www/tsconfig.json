@@ -38,5 +38,6 @@
     "contentlayer.config.ts"
   ],
   // the docs demos and snippets have their own project: content/tsconfig.json
-  "exclude": ["node_modules", "content/docs", "content/blog"]
+  // (and `out` is the static export, which holds a copied .ts worker file)
+  "exclude": ["node_modules", "out", "content/docs", "content/blog"]
 }
