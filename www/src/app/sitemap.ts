@@ -3,7 +3,10 @@ import { MetadataRoute } from 'next';
 import { competitors } from '@www/compare/matrix';
 import { siteContent } from '@www/content';
 import { getBlogPosts } from '@www/utils/blogUtils';
-import { getDocsPagePaths } from '@www/utils/docsFrameworkContent';
+import {
+  getDocsPage,
+  getDocsPagePaths,
+} from '@www/utils/docsFrameworkContent';
 import { docsFrameworks } from '@www/utils/docsFrameworks';
 
 import { getAllTagsFromPosts, tagHref } from './blog/blogTagUtils';
@@ -57,6 +60,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // the Vue docs: /vue and the pages that have a Vue version, under /vue/docs
   add('/vue');
   getDocsPagePaths('vue').forEach((neutralPath) => {
+    // like the React pages above: drafts stay out
+    if (getDocsPage(neutralPath)?.frontmatter?.draft === true) {
+      return;
+    }
     add(docsFrameworks.pathFor(neutralPath, 'vue'));
   });
 
