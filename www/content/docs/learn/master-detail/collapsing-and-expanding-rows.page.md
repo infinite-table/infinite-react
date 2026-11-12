@@ -35,7 +35,7 @@ The <TypeLink name="RowDetailState" code={false}>row detail state</TypeLink> can
 
 - or specify `expandedRows: true` (which means all rows are expanded by default) and specify an array of `collapsedRows`, which will contain the ids of the rows that should be rendered as collapsed.
 
-```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="understanding-and-defining-the-collapse-expand-2"
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="expanded-rows-true"
 ```
 
 You can pass these objects into either the <PropLink name="defaultRowDetailState" /> (uncontrolled) or the <PropLink name="rowDetailState" /> (controlled).

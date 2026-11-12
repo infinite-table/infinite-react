@@ -1,11 +1,18 @@
-// Snippets shown on column-rendering.page.md, one `#region` per code block.
+// Snippet shown on column-rendering.page.md (in its own file, as it has imports).
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 
-//#region hook
+type Employee = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
+
+//#region use-infinite-header-cell
 import {
   useInfiniteHeaderCell,
   InfiniteTableColumn,
-} from '@infinite-table/infintie-react';
+} from '@infinite-table/infinite-react';
 
 function CustomHeader() {
   const { column } = useInfiniteHeaderCell<Employee>();
@@ -14,8 +21,9 @@ function CustomHeader() {
 }
 
 const nameColumn: InfiniteTableColumn<Employee> = {
-  header: 'Employee Name',
   field: 'firstName',
   header: () => <CustomHeader />,
 };
 //#endregion
+
+export { nameColumn };

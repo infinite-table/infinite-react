@@ -281,7 +281,7 @@ When you have both grouping and <DPropLink name="lazyLoad">lazy loading</DPropLi
 
 When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
-```ts file="row-selection.snippet.tsx" region="specify-a-rowselection-value-2"
+```ts file="row-selection.snippet.tsx" region="row-selection-with-lazy-load"
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.

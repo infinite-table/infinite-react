@@ -1,4 +1,4 @@
-// Snippets shown on column-rendering.page.md, one `#region` per code block.
+// Snippet shown on column-rendering.page.md (in its own file, as it has an import).
 // Type-checked against the library source (`npm run tsc:content`).
 import * as React from 'react';
 import {
@@ -6,8 +6,13 @@ import {
   useInfiniteHeaderCell,
 } from '@infinite-table/infinite-react';
 
+type Developer = {
+  id: number;
+  firstName: string;
+};
+
 //#region use-column-components-to-customize-the-column
-import { InfiniteTableColumn } from '@infinite-table/infintie-react';
+import { InfiniteTableColumn } from '@infinite-table/infinite-react';
 
 const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
   const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
@@ -20,11 +25,11 @@ const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
 };
 
 const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, sortTool } = useInfiniteHeaderCell<Developer>();
+  const { domRef, renderBag } = useInfiniteHeaderCell<Developer>();
 
   return (
     <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {sortTool}
+      {renderBag.sortIcon}
       First name
     </div>
   );
@@ -39,3 +44,5 @@ const nameColumn: InfiniteTableColumn<Developer> = {
   },
 };
 //#endregion
+
+export { nameColumn };

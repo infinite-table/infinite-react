@@ -1,9 +1,16 @@
 // Snippets shown on overview.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: number;
+  firstName: string;
+  salary: string;
+};
+
+export function columnsWithValueToEdit() {
   //#region customize-edit-value-when-editing-starts
-  const columns = {
+  const columns: InfiniteTablePropColumns<Developer> = {
     salary: {
       field: 'salary',
       // this can return a Promise
@@ -15,6 +22,5 @@
     },
   };
   //#endregion
+  return columns;
 }
-
-export {};

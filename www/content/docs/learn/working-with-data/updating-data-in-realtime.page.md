@@ -21,7 +21,7 @@ You can get a reference to the [DataSource API](/docs/reference/datasource-api)
 
 - or by using the <PropLink name="onReady" code={false}>InfiniteTable onReady</PropLink> prop.
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="getting-a-reference-to-the-datasource-api-2"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="infinite-table-on-ready"
 ```
 
 </Note>
@@ -87,7 +87,7 @@ Valid values for the insert `position` are:
 
 - `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows-2"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows-before-after"
 ```
 
 <DemoTitle>Using dataSourceApi.insertData</DemoTitle>

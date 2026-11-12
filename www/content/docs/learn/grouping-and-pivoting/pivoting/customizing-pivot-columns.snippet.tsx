@@ -1,35 +1,55 @@
-// Snippets shown on customizing-pivot-columns.page.md, one `#region` per code block.
-// Type-checked against the library source (`npm run tsc:content`).
+// Code shown on the "Customizing Pivot Columns" page, one `#region` per snippet.
+// Type-checked with the rest of the docs against the current source.
+import * as React from 'react';
 import {
-  DataSourcePivotBy,
-  DataSourceProps,
   InfiniteTable,
-  InfiniteTableColumnAggregator,
-  InfiniteTablePropColumns,
+  type DataSourcePivotBy,
+  type DataSourceProps,
+  type InfiniteTableColumnAggregator,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region global-the-pivotcolumn-prop
-  <InfiniteTable
-    pivotColumn={{
-      defaultSortable: true,
-      defaultWidth: 180,
-    }}
-  />
-  //#endregion
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+  preferredLanguage: string;
+  canDesign: 'yes' | 'no';
+  license: string;
+  age: number;
+  salary: number;
+};
+
+declare const columns: InfiniteTablePropColumns<Developer>;
+
+export function PivotColumnObject() {
+  return (
+    //#region global-the-pivotcolumn-prop
+    <InfiniteTable
+      columns={columns}
+      pivotColumn={{
+        defaultSortable: true,
+        defaultWidth: 180,
+      }}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region global-the-pivotcolumn-prop-2
-  <InfiniteTable
-    pivotColumn={({ column }) => ({
-      defaultSortable: !column.pivotTotalColumn,
-    })}
-  />
-  //#endregion
+export function PivotColumnFunction() {
+  return (
+    //#region pivot-column-function
+    <InfiniteTable
+      columns={columns}
+      pivotColumn={({ column }) => ({
+        defaultSortable: !column.pivotTotalColumn,
+      })}
+    />
+    //#endregion
+  );
 }
 
-{
+export function pivotByColumnObject() {
   //#region per-pivot-field-pivotby-column
   const pivotBy: DataSourcePivotBy<Developer>[] = [
     { field: 'country' },
@@ -42,10 +62,11 @@ import {
     },
   ];
   //#endregion
+  return pivotBy;
 }
 
-{
-  //#region per-pivot-field-pivotby-column-2
+export function pivotByColumnFunction() {
+  //#region pivot-by-column-function
   const pivotBy: DataSourcePivotBy<Developer>[] = [
     { field: 'country' },
     {
@@ -56,9 +77,10 @@ import {
     },
   ];
   //#endregion
+  return pivotBy;
 }
 
-{
+export function aggregationPivotColumn() {
   //#region per-aggregation-aggregationreducers-pivotcolumn
   const aggregationReducers: DataSourceProps<Developer>['aggregationReducers'] = {
     salary: {
@@ -76,9 +98,10 @@ import {
     },
   };
   //#endregion
+  return aggregationReducers;
 }
 
-{
+export function inheritFromColumns() {
   //#region inheriting-from-initial-columns
   const columns: InfiniteTablePropColumns<Developer> = {
     preferredLanguage: {
@@ -128,6 +151,5 @@ import {
     },
   };
   //#endregion
+  return { columns, aggregationReducers };
 }
-
-export {};

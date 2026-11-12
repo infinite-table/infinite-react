@@ -5,7 +5,9 @@ import {
   InfiniteTableColumnGroup,
 } from '@infinite-table/infinite-react';
 
-{
+import type { Person } from './column-groups-data';
+
+export function defineColumnGroups() {
   //#region defining-column-groups
   const columnGroups: Record<string, InfiniteTableColumnGroup> = {
     'contact info': { header: 'Contact info' },
@@ -14,12 +16,13 @@ import {
     location: { header: 'location', columnGroup: 'address' },
 
     // this is a top-level group
-    address, { header: 'Address' }
+    address: { header: 'Address' }
   }
   //#endregion
+  return columnGroups;
 }
 
-{
+export function defineColumnsWithGroups() {
   //#region defining-columns-with-groups
   const columns: Record<string, InfiniteTableColumn<Person>> = {
     id: { field: 'id' },
@@ -38,6 +41,5 @@ import {
     phone: { field: 'phone', columnGroup: 'contact info' },
   };
   //#endregion
+  return columns;
 }
-
-export {};

@@ -20,10 +20,7 @@ This will ensure that the column is sorted correctly (as per the available <DPro
 
 In this example, the `birthDate` column contains dates and we customized the way they are displayed.
 
-```tsx
-const renderValue = ({ value }: { value: Date }) => {
-  return <b>{value.toISOString().split('T')[0]}</b>;
-};
+```tsx file="handling-dates.snippet.tsx" region="render-value"
 ```
 
 If no custom `renderValue` was specified, the dates would have been formatted using the `Date.toLocaleDateString()`

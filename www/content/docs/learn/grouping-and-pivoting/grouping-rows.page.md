@@ -17,7 +17,7 @@ In the example above, we're grouping by `country`, which is a field available in
 
 Additionally, a `column` object can be used together with the `field` to define how the group column should be rendered.
 
-```tsx file="grouping-rows.snippet.tsx" region="intro-2"
+```tsx file="grouping-rows.snippet.tsx" region="group-by-column"
 ```
 
 The example below puts it all together.
@@ -29,7 +29,7 @@ Also see the <DataSourcePropLink name="groupBy" code={false}>groupBy API referen
 
 In `groupBy.column` you can use any column property - so, for example, you can define a custom `renderValue` function to customize the rendering.
 
-```tsx file="grouping-rows.snippet.tsx" region="intro-3"
+```tsx file="grouping-rows.snippet.tsx" region="group-by-column-render-value"
 ```
 
 <Note>
@@ -313,12 +313,12 @@ Here's an example, that assumes grouping by `country` and `city` and aggregation
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading-2"
+```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-expanded-group"
 ```
 
 Finally, let's have a look at the leaf/normal rows and a request for them:
 
-```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading-3"
+```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-leaf-rows"
 ```
 
 <Note>

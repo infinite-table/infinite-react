@@ -1,13 +1,26 @@
 // Snippets shown on using-context-menus.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   DataSource,
   InfiniteTable,
+  type InfiniteTablePropColumns,
+  type InfiniteTablePropGetCellContextMenuItems,
 } from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: number;
+  firstName: string;
+  age: number;
+  currency: string;
+};
+
+declare const data: Developer[];
+declare const columns: InfiniteTablePropColumns<Developer>;
+
+export function CellContextMenu() {
   //#region intro
-  const getCellContextMenuItems = ({ column, value }) => {
+  const getCellContextMenuItems: InfiniteTablePropGetCellContextMenuItems<Developer> = ({ column, value }) => {
     if (column.id === 'currency') {
       return [
         {
@@ -36,13 +49,14 @@ import {
     />
   </DataSource>;
   //#endregion
+  return null;
 }
 
-{
-  //#region intro-2
+export function contextMenuWithColumns() {
+  //#region columns-and-items
   const getCellContextMenuItems = () => {
     return {
-      columns: [{ name: 'label' }, { name: 'lcon' }],
+      columns: [{ name: 'label' }, { name: 'icon' }],
       items: [
         {
           label: 'Welcome',
@@ -62,12 +76,17 @@ import {
     };
   };
   //#endregion
+  // declared without a type on the page, so check it here
+  const checked: InfiniteTablePropGetCellContextMenuItems<Developer> =
+    getCellContextMenuItems;
+  return checked;
 }
 
-{
+export function hidingTheContextMenu() {
   //#region hiding-the-context-menu
-  const getCellContextMenuItems = () => {
+  const getCellContextMenuItems: InfiniteTablePropGetCellContextMenuItems<Developer> = () => {
     return {
+      columns: [{ name: 'label' }],
       items: [
         {
           label: 'Hello',
@@ -84,6 +103,5 @@ import {
     };
   };
   //#endregion
+  return getCellContextMenuItems;
 }
-
-export {};

@@ -22,7 +22,7 @@ If you enable selection, don't forget to specify which column should render a se
 ```tsx file="tree-selection.snippet.tsx" region="example-of-tree-selection-value-with-default" title="Example of tree selection value with default selection set to false"
 ```
 
-```tsx file="tree-selection.snippet.tsx" region="example-of-tree-selection-value-with-default-2" title="Example of tree selection value with default selection set to true"
+```tsx file="tree-selection.snippet.tsx" region="default-selection-true" title="Example of tree selection value with default selection set to true"
 ```
 
 ```tsx file="tree-default-selection-example.demo.tsx" title="Using default tree selection" height="large"

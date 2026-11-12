@@ -1,6 +1,12 @@
 // Snippets shown on providing-a-custom-filter-editor.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
 
+type Developer = {
+  id: number;
+  firstName: string;
+  canDesign: boolean;
+};
+
 //#region boolfiltereditor
 import {
   components,
@@ -32,3 +38,6 @@ function BoolFilterEditor() {
   );
 }
 //#endregion
+
+// used by the `filterTypes` snippets in providing-a-custom-filter-editor.snippet.tsx
+export { BoolFilterEditor };

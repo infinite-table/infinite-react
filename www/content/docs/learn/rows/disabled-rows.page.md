@@ -43,7 +43,7 @@ You can use the `DataSourceApi` to enable or disable rows programmatically.
 
 <DApiLink name="setRowEnabledAt" />
 
-```tsx file="disabled-rows.snippet.tsx" region="using-the-api-to-enable-disable-rows-2"
+```tsx file="disabled-rows.snippet.tsx" region="set-row-enabled-at"
 ```
 
 <DemoTitle>Using the API to enable/disable rows</DemoTitle>

@@ -1,7 +1,8 @@
 // Snippets shown on tree-expand-and-collapse-state.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import { type TreeExpandStateValue } from '@infinite-table/infinite-react';
 
-{
+export function expandStateWithNodePaths() {
   //#region example-of-treeexpandstate-with-node-paths
   const treeExpandState = {
     defaultExpanded: true,
@@ -16,9 +17,11 @@
     ],
   };
   //#endregion
+  const expandState: TreeExpandStateValue = treeExpandState;
+  return expandState;
 }
 
-{
+export function expandStateWithNodeIds() {
   //#region example-of-treeexpandstate-with-node-ids
   const treeExpandState = {
     defaultExpanded: true,
@@ -26,6 +29,6 @@
     expandedIds: ['10', '20', 'nested node in 5'],
   };
   //#endregion
+  const expandState: TreeExpandStateValue = treeExpandState;
+  return expandState;
 }
-
-export {};

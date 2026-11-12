@@ -1,9 +1,18 @@
 // Snippets shown on using-sparklines.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+import { Sparklines, SparklinesLine } from 'react-sparklines';
 
-{
+type Employee = {
+  id: number;
+  firstName: string;
+  department: string;
+  bugFixes: number[];
+};
+
+export function getColumns() {
   //#region using-column-rendervalue-to-render-a-sparkline
-  const columns = {
+  const columns: InfiniteTablePropColumns<Employee> = {
     // ... other columns
     id: {
       field: 'id',
@@ -35,6 +44,5 @@
     },
   }
   //#endregion
+  return columns;
 }
-
-export {};

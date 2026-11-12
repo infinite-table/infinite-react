@@ -1,48 +1,85 @@
-// Snippets shown on overview.page.md, one `#region` per code block.
-// Type-checked against the library source (`npm run tsc:content`).
+// Code shown on the pivoting "Overview" page, one `#region` per snippet.
+// Type-checked with the rest of the docs against the current source.
+import * as React from 'react';
 import {
   DataSource,
-  DataSourcePivotBy,
-  DataSourcePropAggregationReducers,
-  DataSourceProps,
   InfiniteTable,
-  InfiniteTableColumnAggregator,
+  type DataSourceData,
+  type DataSourceDataParams,
+  type DataSourcePivotBy,
+  type DataSourcePropAggregationReducers,
+  type DataSourcePropGroupBy,
+  type DataSourcePropPivotBy,
+  type DataSourceProps,
+  type DataSourceRemoteData,
+  type InfiniteTableColumnAggregator,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region intro
-  const pivotBy = [{ field: 'team' }]
-   // field needs to be keyof DATA_TYPE both in `pivotBy` and `groupBy`
-  const groupBy = [{field: 'department'}, {field: 'country'}]
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+  city: string;
+  stack: string;
+  preferredLanguage: string;
+  canDesign: 'yes' | 'no';
+  age: number;
+  salary: number;
+};
 
-  <DataSource<DATA_TYPE> pivotBy={pivotBy} groupBy={groupBy}>
+declare const data: Developer[];
+declare const columns: InfiniteTablePropColumns<Developer>;
+
+export function Intro() {
+  type DATA_TYPE = {
+    id: number;
+    team: string;
+    department: string;
+    country: string;
+  };
+  const data: DATA_TYPE[] = [];
+  const columns: InfiniteTablePropColumns<DATA_TYPE> = {};
+
+  //#region intro
+  const pivotBy: DataSourcePropPivotBy<DATA_TYPE> = [{ field: 'team' }]
+   // field needs to be keyof DATA_TYPE both in `pivotBy` and `groupBy`
+  const groupBy: DataSourcePropGroupBy<DATA_TYPE> = [{field: 'department'}, {field: 'country'}];
+
+  <DataSource<DATA_TYPE> primaryKey="id" data={data} pivotBy={pivotBy} groupBy={groupBy}>
   { ({pivotColumns, pivotColumnGroups}) => {
     return <InfiniteTable<DATA_TYPE>
+      columns={columns}
       pivotColumns={pivotColumns}
       pivotColumnGroups={pivotColumnGroups}
     />
   } }
   </DataSource>
   //#endregion
+  return null;
 }
 
-{
+export function groupColumnSortInfo() {
   //#region sorting-the-group-column-and-pivot-columns
   const defaultSortInfo = [{ id: 'group-by', dir: 1 }];
   //#endregion
+  return defaultSortInfo;
 }
 
-{
-  //#region sorting-the-group-column-and-pivot-columns-2
-  <InfiniteTable
-    pivotColumn={{
-      defaultSortable: true,
-    }}
-  />
-  //#endregion
+export function SortablePivotColumns() {
+  return (
+    //#region pivot-column-default-sortable
+    <InfiniteTable
+      columns={columns}
+      pivotColumn={{
+        defaultSortable: true,
+      }}
+    />
+    //#endregion
+  );
 }
 
-{
+export function inheritedPivotColumns() {
   //#region customizing-pivot-columns
   const avgReducer: InfiniteTableColumnAggregator<Developer, any> = {
     initialValue: 0,
@@ -66,21 +103,25 @@ import {
     },
   };
   //#endregion
+  return aggregationReducers;
 }
 
-{
-  //#region customizing-pivot-columns-2
+export function PivotByColumnObject() {
+  type DATA_TYPE = Developer;
+  //#region pivot-by-column-object
   const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
     { field: 'country' },
     { field: 'canDesign', column: { defaultWidth: 400 } },
   ];
 
-  <DataSource pivotBy={pivotBy} />;
+  <DataSource primaryKey="id" data={data} pivotBy={pivotBy} />;
   //#endregion
+  return null;
 }
 
-{
-  //#region customizing-pivot-columns-3
+export function pivotByColumnFunction() {
+  type DATA_TYPE = Developer;
+  //#region pivot-by-column-function
   const pivotBy: DataSourcePivotBy<DATA_TYPE>[] = [
     { field: 'country' },
     {
@@ -93,9 +134,10 @@ import {
     },
   ];
   //#endregion
+  return pivotBy;
 }
 
-{
+export function serverSidePivotingConfig() {
   //#region server-side-pivoting
   const groupBy = [
     { field: 'country' }, // possible values: any valid country
@@ -111,12 +153,20 @@ import {
     age: { name: 'Age (avg)', field: 'age', reducer: 'avg' },
   };
   //#endregion
+  return { groupBy, pivotBy, aggregationReducers };
 }
 
-{
-  //#region server-side-pivoting-2
+declare function fetchPivotData(
+  params: Pick<
+    DataSourceDataParams<Developer>,
+    'groupBy' | 'pivotBy' | 'groupKeys' | 'aggregationReducers'
+  >,
+): Promise<DataSourceRemoteData<Developer>>;
 
-  const dataSource = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
+export function ServerSidePivotingDataFunction() {
+  //#region server-side-pivoting-data-function
+
+  const dataSource: DataSourceData<Developer> = ({ groupBy, pivotBy, groupKeys, aggregationReducers }) => {
     // make sure you return a Promise that resolves to the correct structure - see details below
 
     //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
@@ -128,21 +178,28 @@ import {
     //eg: groupBy: [{ field: 'country' }, { field: 'stack' }],
     //    groupKeys: ["Canada"], - so we're requesting Canada's data
 
+    return fetchPivotData({ groupBy, pivotBy, groupKeys, aggregationReducers });
   }
 
-  <DataSource lazyLoad data={dataSource}>
+  <DataSource primaryKey="id" lazyLoad data={dataSource} />
   //#endregion
+  return null;
 }
 
-{
-  //#region server-side-pivoting-3
+// placeholders used in the description of the response
+declare const SALARY_AGGREGATION_VALUE: number;
+declare const AGE_AGGREGATION_VALUE: number;
+declare const FOR_EACH_UNIQUE_VALUE: string;
+
+export const serverSidePivotingResponse: DataSourceRemoteData<Developer> =
+  //#region server-side-pivoting-response
   {
     data: [
       {
         aggregations: {
           // for each aggregation id, have an entry
-          salary: <SALARY_AGGREGATION_VALUE>,
-          age: <AGE_AGGREGATION_VALUE>,
+          salary: SALARY_AGGREGATION_VALUE,
+          age: AGE_AGGREGATION_VALUE,
         },
         data: {
           // data is an object with the common group values
@@ -153,21 +210,21 @@ import {
         pivot: {
           totals: {
             // for each aggregation id, have an entry
-            salary: <SALARY_AGGREGATION_VALUE>,
-            age: <AGE_AGGREGATION_VALUE>,
+            salary: SALARY_AGGREGATION_VALUE,
+            age: AGE_AGGREGATION_VALUE,
           },
           values: {
-            [for each unique value]: { // eg: for country
+            [FOR_EACH_UNIQUE_VALUE]: { // eg: for country
               totals: {
                 // for each aggregation, have an entry
-                salary: <SALARY_AGGREGATION_VALUE>,
-                age: <AGE_AGGREGATION_VALUE>,
+                salary: SALARY_AGGREGATION_VALUE,
+                age: AGE_AGGREGATION_VALUE,
               },
               values: {
-                [for each unique value]: { // eg: for stack
+                [FOR_EACH_UNIQUE_VALUE]: { // eg: for stack
                   totals: {
-                    salary: <SALARY_AGGREGATION_VALUE>,
-                    age: <AGE_AGGREGATION_VALUE>,
+                    salary: SALARY_AGGREGATION_VALUE,
+                    age: AGE_AGGREGATION_VALUE,
                   }
 
                 }
@@ -188,9 +245,16 @@ import {
     }
   }
   //#endregion
-}
+;
 
-{
+// The batching examples below show a request and the response to it.
+//
+// The request lines are only an illustration of what the `data` function can
+// send to the server (the format is up to the app): they are written as
+// `name: value` lines, which TypeScript reads as labeled statements.
+// The response is the object the `data` function has to resolve to, so it is
+// checked against the `DataSourceRemoteData` type.
+export function batchingTopLevelGroups() {
   //#region another-pivoting-example-with-batching
   //request:
   groupKeys: [] // empty keys array, so it's a top-level group
@@ -201,7 +265,7 @@ import {
   pivotBy: [{"field":"preferredLanguage"},{"field":"canDesign"}]
 
   //response
-  {
+  const response: DataSourceRemoteData<Developer> = {
     cache: true,
     totalCount: 20,
     data: [
@@ -241,10 +305,11 @@ import {
     ]
   }
   //#endregion
+  return response;
 }
 
-{
-  //#region another-pivoting-example-with-batching-2
+export function batchingExpandedGroup() {
+  //#region batching-expanded-group
   //request:
   groupKeys: ["Argentina"]
   groupBy: [{"field":"country"},{"field":"city"}]
@@ -254,7 +319,7 @@ import {
   pivotBy: [{"field":"preferredLanguage"},{"field":"canDesign"}]
 
   //response
-  {
+  const response: DataSourceRemoteData<Developer> = {
     mappings: {
       totals: "totals",
       values: "values"
@@ -298,31 +363,36 @@ import {
     ]
   }
   //#endregion
+  return response;
 }
 
-{
-  //#region another-pivoting-example-with-batching-3
+// With `mappings`, the `pivot` object has the mapped keys (`t`, `v`), which
+// the `DataSourceRemoteData` type does not describe: these two responses are
+// plain objects.
+export const responseWithMappings =
+  //#region response-with-mappings
   {
     totalCount: 20,
-    data: {...},
+    data: {/* ... */},
     pivot: {
       t: {avgSalary: 10000, avgAge: 30},
       v: {
         Go: {
-          t: {...},
-          v: {...}
+          t: {/* ... */},
+          v: {/* ... */}
         },
         Java: {
-          t: {...},
-          v: {...}
+          t: {/* ... */},
+          v: {/* ... */}
         }
       }
     }
+  }
   //#endregion
-}
+;
 
-{
-  //#region another-pivoting-example-with-batching-4
+export function shortAggregationKeys() {
+  //#region short-aggregation-keys
   const aggregationReducers: DataSourcePropAggregationReducers<Developer> =
     {
       s: {
@@ -338,23 +408,23 @@ import {
     };
 
   // pivot response
-  {
+  const response = {
     totalCount: 20,
-    data: {...},
+    data: {/* ... */},
     pivot: {
       t: {s: 10000, a: 30},
       v: {
         Go: {
           t: { s: 10000, a: 30 },
-          v: {...}
+          v: {/* ... */}
         },
         Java: {
-          t: {...},
-          v: {...}
+          t: {/* ... */},
+          v: {/* ... */}
         }
       }
     }
+  }
   //#endregion
+  return { aggregationReducers, response };
 }
-
-export {};

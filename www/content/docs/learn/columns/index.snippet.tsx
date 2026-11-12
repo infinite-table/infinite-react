@@ -1,5 +1,6 @@
 // Snippets shown on index.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   DataSource,
   InfiniteTable,
@@ -43,24 +44,28 @@ export const columns: Record<string, InfiniteTableColumn<Employee>> = {
     field: 'salary',
     type: 'number'
   },
-}
+};
 <InfiniteTable columns={columns} />
 //#endregion
 
-{
+// used as `DATA_TYPE` in the snippet below
+type DATA_TYPE = Employee;
+declare const data: DATA_TYPE[];
+
+export function columnOrderExample() {
   //#region column-order
 
   const columnOrder = ['firstName','id','curency']
 
   const App = () => {
-    return <DataSource<DATA_TYPE> primaryKey={"id"} dataSource={...}>
+    return <DataSource<DATA_TYPE> primaryKey={"id"} data={data}>
       <InfiniteTable<DATA_TYPE>
+        columns={columns}
         columnOrder={columnOrder}
         onColumnOrderChange={(columnOrder: string[]) => {}}
       />
     </DataSource>
   }
   //#endregion
+  return App;
 }
-
-export {};

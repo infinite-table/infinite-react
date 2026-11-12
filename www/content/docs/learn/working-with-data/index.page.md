@@ -14,7 +14,7 @@ The `<DataSource/>` component is responsible for the data the management layer.
 
 <Note>
 
-Probably the most important prop for the `<DataSource />` component is the <DPropLink name="idProperty" /> prop. It specifies the property of the data object that is used as a unique identifier for data rows/items.
+Probably the most important prop for the `<DataSource />` component is the <DPropLink name="primaryKey" /> prop. It specifies the property of the data object that is used as a unique identifier for data rows/items.
 
 ```tsx file="index.snippet.tsx" region="intro"
 ```
@@ -27,14 +27,14 @@ The `<DataSource />` is a generic React TypeScript component that can be bound t
 
 In this documentation, we'll use `DATA_TYPE` when referring to the generic type. Rarely, we'll use `T`.
 
-```tsx file="index.snippet.tsx" region="intro-2"
+```tsx file="index.snippet.tsx" region="generic-type"
 ```
 
 Most of our examples in these docs have a `Developer` or `Employee` TypeScript data type used as the generic type for the `<DataSource />` component.
 
 </Note>
 
-```tsx file="index.snippet.tsx" region="intro-3"
+```tsx file="index.snippet.tsx" region="local-data"
 ```
 
 In the snippet above, we see 3 important details:

@@ -5,7 +5,7 @@ description: Writing a custom editor for a inline editing in Infinite Table for 
 
 For writing a custom editor, you can use the <HookLink name="useInfiniteColumnEditor" /> hook.
 
-For any column (or <PropLink name="columnTypes" code={false}>column type</PropLink> - which can then get applied to multiple columns), you can specify a custom editor component to be used for editing the column's value, via the <PropLink name="columns.components.editor">column.components.editor</PropLink> property.
+For any column (or <PropLink name="columnTypes" code={false}>column type</PropLink> - which can then get applied to multiple columns), you can specify a custom editor component to be used for editing the column's value, via the <PropLink name="columns.components.Editor">column.components.Editor</PropLink> property.
 
 ```tsx file="custom-editor.snippet.tsx" region="intro"
 ```

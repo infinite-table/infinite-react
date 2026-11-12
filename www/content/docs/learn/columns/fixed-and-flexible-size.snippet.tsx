@@ -1,10 +1,16 @@
 // Snippets shown on fixed-and-flexible-size.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
-import {
+import type {
+  InfiniteTableColumn,
   InfiniteTablePropColumnSizing,
 } from '@infinite-table/infinite-react';
 
-{
+type Data = {
+  one: string;
+  two: string;
+};
+
+export function controlledColumnSizing() {
   //#region controlled-column-sizing
   const columnSizing: InfiniteTablePropColumnSizing = {
     country: {
@@ -24,24 +30,29 @@ import {
   // any column not specified in the columnSizing (or defaultColumnSizing) prop
   // will have fixed width (defaulting to `columnDefaultWidth`, which in turn defaults to 200px)
   //#endregion
+  return columnSizing;
 }
 
-{
+export function flexColumns() {
   //#region resizing-columns-via-drag-drop
   const columns = {
-    first: { flex: 1, field: 'one' },
-    second: { flex: 2, field: 'two' },
+    first: { defaultFlex: 1, field: 'one' },
+    second: { defaultFlex: 2, field: 'two' },
   };
   //#endregion
+
+  // the snippet has no type annotation, so check it against the column type here
+  // (without `field`, which is just a `string` in an object that has no annotation)
+  const checked: Record<string, Omit<InfiniteTableColumn<Data>, 'field'>> = columns;
+  return checked;
 }
 
-{
-  //#region resizing-columns-via-drag-drop-2
+// what `onColumnSizingChange` is called with
+export const columnSizingAfterResize: InfiniteTablePropColumnSizing = (
+  //#region column-sizing-after-resize
   {
     first: { flex: 400 },
     second: {flex: 400 }
   }
   //#endregion
-}
-
-export {};
+);

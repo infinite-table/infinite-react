@@ -2,9 +2,10 @@
 // Type-checked against the library source (`npm run tsc:content`).
 import {
   TreeDataSource,
+  type TreeExpandStateValue,
 } from '@infinite-table/infinite-react';
 
-{
+export function nodePaths() {
   //#region node-path-vs-row-id
   const data = [
     { id: '1', name: 'Documents',                // path: ['1'] // #highlight
@@ -29,19 +30,10 @@ import {
     },
   ];
   //#endregion
+  return data;
 }
 
-{
-  //#region using-the-nodeskey-prop-to-specify-where-the
-  <TreeDataSource
-    nodesKey="children" // #highlight
-    primaryKey="id"
-    data={dataSource}
-  />
-  //#endregion
-}
-
-{
+export function NodesKey() {
   //#region nested-data-structure-for-the-treedatasource
   const dataSource = [
     { // #highlight
@@ -71,9 +63,19 @@ import {
     },
   ];
   //#endregion
+
+  return (
+    //#region using-the-nodeskey-prop-to-specify-where-the
+    <TreeDataSource
+      nodesKey="children" // #highlight
+      primaryKey="id"
+      data={dataSource}
+    />
+    //#endregion
+  );
 }
 
-{
+export function expandStateWithNodePaths() {
   //#region example-of-treeexpandstate-with-node-paths
   const treeExpandState = {
     defaultExpanded: true,
@@ -88,6 +90,6 @@ import {
     ],
   };
   //#endregion
+  const expandState: TreeExpandStateValue = treeExpandState;
+  return expandState;
 }
-
-export {};

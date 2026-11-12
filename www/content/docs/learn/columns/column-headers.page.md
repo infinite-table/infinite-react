@@ -88,7 +88,7 @@ Inside that function you can either use the object passed as a parameter to get 
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon-2" title="Customizing_the_column_sort_icon"
+```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon-hook" title="Customizing_the_column_sort_icon"
 ```
 
 ```tsx file="column-sort-icon-example.demo.tsx" title="Custom sort icon for the name column"
@@ -139,7 +139,7 @@ Inside that function you can either use the object passed as a parameter to get 
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx file="column-headers.customizing-the-menu-icon-2.snippet.tsx" region="customizing-the-menu-icon-2" title="Customizing_the_menu_icon"
+```tsx file="column-headers.customizing-the-filter-icon-hook.snippet.tsx" region="customizing-the-filter-icon-hook" title="Customizing_the_menu_icon"
 ```
 
 In addition, you can use the `filtered` property in the <PropLink name="columns.header">column.header</PropLink> function to determine if the column is filtered or not and render a different header label.

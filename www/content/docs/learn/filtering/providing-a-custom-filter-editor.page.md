@@ -18,7 +18,7 @@ This `NumberFilterEditor` is configured in the `components.FilterEditor` propert
 
 If you want to import the `NumberFilterEditor`, you can do so with the following code:
 
-```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="intro-2"
+```tsx file="providing-a-custom-filter-editor.built-in-editors.snippet.tsx" region="built-in-editors"
 ```
 
 </Note>

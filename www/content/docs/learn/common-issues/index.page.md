@@ -16,7 +16,7 @@ Passing new props on every render to the `<InfiniteTable />` component or to the
 
 Instead pass the **same** reference when things do change - stored in state or any other place:
 
-```ts file="index.snippet.tsx" region="issue-performance-degradation-because-props-are-2"
+```ts file="index.snippet.tsx" region="issue-performance-degradation-stable-props"
 ```
 
 <Note>

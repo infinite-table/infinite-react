@@ -62,7 +62,7 @@ Let's now look at another example, of implementing a custom `salary` filter type
 
 For this, we override the `filterTypes` property of the `<DataSource />` component:
 
-```tsx file="filtering-client-side.snippet.tsx" region="using-filter-types-2"
+```tsx file="filtering-client-side.snippet.tsx" region="salary-filter-type"
 ```
 
 <Note>

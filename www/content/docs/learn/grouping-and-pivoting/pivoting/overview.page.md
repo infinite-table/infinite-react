@@ -31,7 +31,7 @@ Sorting the group column in a pivot table uses the same <DPropLink name="sortInf
 
 Generated pivot columns inherit sortability from the original <PropLink name="columns" /> bound to the aggregation field — including <PropLink name="columnDefaultSortable" />. You can override that with `defaultSortable` on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
 
-```tsx file="overview.snippet.tsx" region="sorting-the-group-column-and-pivot-columns-2"
+```tsx file="overview.snippet.tsx" region="pivot-column-default-sortable"
 ```
 
 That applies <PropLink name="columns.defaultSortable" nocode>defaultSortable</PropLink> to every generated pivot column. The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation field.
@@ -65,12 +65,12 @@ The default behavior for pivot columns generated for aggregations is that they i
 Another way to do it is to specify <DataSourcePropLink name="pivotBy.column" />, as either an object, or (more importantly) as a function.
 If you pass an object, it will be applied to all pivot columns in the column group generated for the `field` property.
 
-```tsx file="overview.snippet.tsx" region="customizing-pivot-columns-2"
+```tsx file="overview.snippet.tsx" region="pivot-by-column-object"
 ```
 
 In the above example, the `column.defaultWidth=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
 
-```tsx file="overview.snippet.tsx" region="customizing-pivot-columns-3"
+```tsx file="overview.snippet.tsx" region="pivot-by-column-function"
 ```
 
 ```tsx file="pivoting-customize-column-example.demo.tsx" title="Pivoting with customized pivot column"
@@ -118,10 +118,10 @@ In the example below, let's assume the following practical scenario, with the da
 ```tsx file="overview.snippet.tsx" region="server-side-pivoting"
 ```
 
-```tsx file="overview.snippet.tsx" region="server-side-pivoting-2"
+```tsx file="overview.snippet.tsx" region="server-side-pivoting-data-function"
 ```
 
-```js file="overview.snippet.tsx" region="server-side-pivoting-3"
+```js file="overview.snippet.tsx" region="server-side-pivoting-response"
 ```
 
 ```tsx file="remote-pivoting-example.demo.tsx" title="Server-side pivoting example"
@@ -153,7 +153,7 @@ If we were to scroll down, the next batch of data would have the same structure 
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-2"
+```tsx file="overview.snippet.tsx" region="batching-expanded-group"
 ```
 
 <Note>
@@ -162,12 +162,12 @@ The response can contain a `mappings` key with values for `totals` and `values` 
 
 If `mappings` would be `{totals: "t", values: "v"}`, the response would look like this:
 
-```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-3"
+```tsx file="overview.snippet.tsx" region="response-with-mappings"
 ```
 
 More-over, you can also give aggregationReducers shorter keys to make the server response even more compact
 
-```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching-4"
+```tsx file="overview.snippet.tsx" region="short-aggregation-keys"
 ```
 
 </Note>

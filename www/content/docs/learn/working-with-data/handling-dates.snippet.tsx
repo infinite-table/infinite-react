@@ -1,5 +1,14 @@
 // Snippets shown on handling-dates.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
+
+{
+  //#region render-value
+  const renderValue = ({ value }: { value: Date }) => {
+    return <b>{value.toISOString().split('T')[0]}</b>;
+  };
+  //#endregion
+}
 
 {
   //#region using-date-strings

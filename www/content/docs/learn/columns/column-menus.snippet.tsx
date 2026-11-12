@@ -1,9 +1,20 @@
 // Snippets shown on column-menus.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
+import type {
+  InfiniteTableColumn,
+  InfiniteTablePropGetColumnMenuItems,
+} from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: number;
+  firstName: string;
+  salary: number;
+};
+
+export function customColumnMenu() {
   //#region customizing-column-menu
-  function getColumnMenuItems(items, { column }) {
+  const getColumnMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (items, { column }) => {
     if (column.id === 'firstName') {
       // you can adjust the default items for a specific column
       items.splice(0, 0, {
@@ -24,13 +35,14 @@
       },
     });
     return items;
-  }
+  };
   //#endregion
+  return getColumnMenuItems;
 }
 
-{
+export function menuItemsWithSubmenus() {
   //#region menu-items-with-submenus
-  function getColumnMenuItems(items, { column }) {
+  const getColumnMenuItems: InfiniteTablePropGetColumnMenuItems<Developer> = (defaultItems, { column }) => {
     const items = [
       {
         key: 'translate',
@@ -57,11 +69,12 @@
     ];
 
     return items;
-  }
+  };
   //#endregion
+  return getColumnMenuItems;
 }
 
-{
+export function customMenuIcon() {
   //#region custom-menu-icon
   const columns = {
     name: {
@@ -74,6 +87,9 @@
     },
   };
   //#endregion
-}
 
-export {};
+  // the snippet has no type annotation, so check it against the column type here
+  // (without `field`, which is just a `string` in an object that has no annotation)
+  const checked: Record<string, Omit<InfiniteTableColumn<Developer>, 'field'>> = columns;
+  return checked;
+}

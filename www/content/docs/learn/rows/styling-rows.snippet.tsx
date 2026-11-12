@@ -5,16 +5,22 @@ import {
   InfiniteTableRowInfo,
 } from '@infinite-table/infinite-react';
 
+type Employee = {
+  id: number;
+  name: string;
+  salary: number;
+};
+
 {
   //#region defining-a-rowstyle-function
   const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
     data,
     rowInfo,
   }: {
-    data: Employee | null;
+    data: Partial<Employee> | null;
     rowInfo: InfiniteTableRowInfo<Employee>;
   }) => {
-    const salary = data ? data.salary : 0;
+    const salary = data?.salary ?? 0;
 
     if (salary > 150_000) {
       return { background: 'tomato' };
@@ -22,6 +28,7 @@ import {
     if (rowInfo.indexInAll % 10 === 0) {
       return { background: 'lightblue', color: 'black' };
     }
+    return undefined;
   };
   //#endregion
 }

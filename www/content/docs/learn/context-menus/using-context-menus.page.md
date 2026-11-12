@@ -31,7 +31,7 @@ The <PropLink name="getCellContextMenuItems" /> function can return one of the f
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx file="using-context-menus.snippet.tsx" region="intro-2"
+```tsx file="using-context-menus.snippet.tsx" region="columns-and-items"
 ```
 
 <DemoTitle>Customising columns in the context menu</DemoTitle>

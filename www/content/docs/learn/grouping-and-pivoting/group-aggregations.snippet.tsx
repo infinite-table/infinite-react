@@ -1,26 +1,63 @@
-// Snippets shown on group-aggregations.page.md, one `#region` per code block.
-// Type-checked against the library source (`npm run tsc:content`).
+// Code shown on the "Group Aggregations" page, one `#region` per snippet.
+// Type-checked with the rest of the docs against the current source.
+import * as React from 'react';
+import type {
+  DataSourceAggregationReducer,
+  DataSourceData,
+  InfiniteTablePropColumns,
+} from '@infinite-table/infinite-react';
 
-{
-  //#region aggregation-custom-getter-function
-  // useful for retrieving nested values
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+  stack: string;
+  age: number;
+  salary: number;
+};
 
-  getter: (dataItem: Developer) => data.salary.net;
-  //#endregion
+declare const data: Developer[];
+declare const BASE_URL: string;
+
+export function nestedValueGetter() {
+  // here the salary is a nested object
+  type Developer = {
+    id: number;
+    salary: { net: number; gross: number };
+  };
+
+  const netSalary: DataSourceAggregationReducer<Developer, number> = {
+    initialValue: 0,
+    reducer: (acc: number, value: number) => acc + value,
+    //#region aggregation-custom-getter-function
+    // useful for retrieving nested values
+
+    getter: (dataItem: Developer) => dataItem.salary.net,
+    //#endregion
+  };
+
+  return netSalary;
 }
 
-{
+export const avgAge: DataSourceAggregationReducer<Developer, number> = {
+  initialValue: 0,
+  field: 'age',
+  reducer: (acc: number, value: number) => acc + value,
   //#region done-function-for-avg-reducer
-  done: (acc, data) => acc / data.length;
+  done: (acc, data) => acc / data.length,
   //#endregion
-}
+};
 
 //#region average-aggregation
-import { DataSource, InfiniteTable } from '@infinite-table/infinite-react';
+import {
+  DataSource,
+  InfiniteTable,
+  type DataSourcePropAggregationReducers,
+} from '@infinite-table/infinite-react';
 
 const sum = (a: number, b: number) => a + b;
 
-const reducers = {
+const reducers: DataSourcePropAggregationReducers<Developer> = {
   avg: {
     initialValue: 0,
     field: 'age',
@@ -37,14 +74,16 @@ const reducers = {
 
 function App() {
   return <DataSource<Developer>
+    primaryKey="id"
+    data={data}
     aggregationReducers={reducers}
   >
-    <InfiniteTable<Developer> {...} />
+    <InfiniteTable<Developer> columns={columns} />
   </DataSource>
 }
 //#endregion
 
-{
+const columns: InfiniteTablePropColumns<Developer> = {
   //#region custom-group-row-rendering-for-the-country
 
   country: {
@@ -59,20 +98,26 @@ function App() {
     },
   },
   //#endregion
+};
+
+// `otherProps` stands for the rest of the `<DataSource />` props
+export function LazyLoadEnabled(otherProps: {
+  primaryKey: keyof Developer;
+  data: DataSourceData<Developer>;
+}) {
+  return (
+    //#region datasourcewith-lazyload-enabled
+    <DataSource
+      lazyLoad // #highlight
+      {...otherProps}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region datasourcewith-lazyload-enabled
-  <DataSource
-    lazyLoad // #highlight
-    ...
-  />
-  //#endregion
-}
-
-{
+export function LazyLoadDataFunction(otherProps: { primaryKey: keyof Developer }) {
   //#region data-function-sending-configurations-to-the
-  const data = ({ groupBy, aggregationReducers, sortInfo, groupKeys }) => {
+  const data: DataSourceData<Developer> = ({ groupBy, aggregationReducers, sortInfo, groupKeys }) => {
      // it's important to send the current group keys - for top level, this will be []
     const args: string[] = [`groupKeys=${JSON.stringify(groupKeys)}`];
 
@@ -123,9 +168,10 @@ function App() {
   <DataSource
     data={data}
     lazyLoad
-    ...
+    {...otherProps}
   />
   //#endregion
+  return null;
 }
 
-export {};
+export { App };

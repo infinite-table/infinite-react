@@ -1,10 +1,24 @@
 // Snippets shown on tree-icon-rendering.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
-import {
-  InfiniteTableColumn,
-} from '@infinite-table/infinite-react';
+import * as React from 'react';
+import { type InfiniteTableColumn } from '@infinite-table/infinite-react';
 
-{
+type FileSystemNode = {
+  id: string;
+  name: string;
+  type: 'folder' | 'file';
+  extension?: string;
+  sizeInKB: number;
+  children?: FileSystemNode[];
+};
+
+declare function FileIcon(): React.ReactElement;
+declare function FolderIcon(props: {
+  open: boolean;
+  onClick: () => void;
+}): React.ReactElement;
+
+export function treeIconColumn() {
   //#region specifying-the-tree-icon-for-a-column
   const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
     name: {
@@ -16,11 +30,14 @@ import {
     size: { field: 'sizeInKB', type: 'number' },
   };
   //#endregion
+  return columns;
 }
 
-{
+// the page shows `toggleCurrentTreeNode` as a free variable:
+// it is a property of the `renderTreeIcon` argument, next to `rowInfo`
+export function parentNodeCheck(toggleCurrentTreeNode: () => void) {
   //#region checking-if-the-node-is-a-parent-node
-  const renderTreeIcon = ({ rowInfo }) => {
+  const renderTreeIcon: InfiniteTableColumn<FileSystemNode>['renderTreeIcon'] = ({ rowInfo }) => {
     if (!rowInfo.isParentNode) {
       // rowInfo.nodeExpanded not available here
       return <FileIcon />;
@@ -30,6 +47,5 @@ import {
     return  <FolderIcon open={rowInfo.nodeExpanded} onClick={toggleCurrentTreeNode} />
   };
   //#endregion
+  return renderTreeIcon;
 }
-
-export {};

@@ -1,10 +1,17 @@
 // Snippets shown on tree-column.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
-import {
-  InfiniteTableColumn,
-} from '@infinite-table/infinite-react';
+import { type InfiniteTableColumn } from '@infinite-table/infinite-react';
 
-{
+type FileSystemNode = {
+  id: string;
+  name: string;
+  type: 'folder' | 'file';
+  extension?: string;
+  sizeInKB: number;
+  children?: FileSystemNode[];
+};
+
+export function treeColumn() {
   //#region specifying-the-tree-column
   const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
     name: { 
@@ -16,6 +23,5 @@ import {
     size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
   };
   //#endregion
+  return columns;
 }
-
-export {};

@@ -6,7 +6,15 @@ import {
   InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: number;
+  firstName: string;
+  age: number;
+  stack: string;
+  currency: string;
+};
+
+export function columnsWithCustomEditor() {
   //#region intro
   const columns: InfiniteTablePropColumns<Developer> = {
     id: {
@@ -17,7 +25,7 @@ import {
       field: 'firstName',
       components: {
         // this is using a custom editor component
-        editor: CustomEditor, // #highlight
+        Editor: CustomEditor, // #highlight
       },
     },
     age: {
@@ -29,6 +37,7 @@ import {
     currency: { field: 'currency' },
   };
   //#endregion
+  return columns;
 }
 
 //#region customeditor-tsx
@@ -62,5 +71,3 @@ const CustomEditor = () => {
   );
 };
 //#endregion
-
-export {};

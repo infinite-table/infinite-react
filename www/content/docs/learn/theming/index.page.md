@@ -22,7 +22,7 @@ The other available themes are
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
-```ts file="index.snippet.tsx" region="intro-2"
+```ts file="index.snippet.tsx" region="theme-css-imports"
 ```
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
@@ -188,7 +188,7 @@ The `terminal` theme is made for dense, data-heavy screens, like trading desks: 
 ```ts file="index.snippet.tsx" region="terminal-theme"
 ```
 
-```tsx file="index.snippet.tsx" region="terminal-theme-2"
+```tsx file="index.snippet.tsx" region="terminal-theme-class-names"
 ```
 
 It works with the density classNames - since the theme is already dense, `infinite-density--compact` makes it even denser.

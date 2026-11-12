@@ -21,7 +21,7 @@ Those objects have the same shape as a normal <PropLink name="columns">column</P
 
 You can also pass a function when the config should depend on the generated column — for example to make leaf columns sortable but keep totals unsortable:
 
-```tsx file="customizing-pivot-columns.snippet.tsx" region="global-the-pivotcolumn-prop-2"
+```tsx file="customizing-pivot-columns.snippet.tsx" region="pivot-column-function"
 ```
 
 ## Per pivot field: `pivotBy.column`
@@ -33,7 +33,7 @@ You can also pass a function when the config should depend on the generated colu
 
 A function receives the generated column, so you can vary the header (or any other property) per pivot value:
 
-```tsx file="customizing-pivot-columns.snippet.tsx" region="per-pivot-field-pivotby-column-2"
+```tsx file="customizing-pivot-columns.snippet.tsx" region="pivot-by-column-function"
 ```
 
 ## Per aggregation: `aggregationReducers.pivotColumn`

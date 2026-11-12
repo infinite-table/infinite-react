@@ -1,27 +1,12 @@
 // Snippets shown on index.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   InfiniteTable,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region intro
-  <DataSource<DATA_TYPE>
-    idProperty="id"
-    data={[]} // or a Promise or function returning a Promise.
-  />
-  //#endregion
-}
-
-{
-  //#region intro-2
-  <DataSource<DATA_TYPE>>
-    <InfiniteTable<DATA_TYPE> />
-  </DataSource>
-  //#endregion
-}
-
-//#region intro-3
+//#region local-data
 import { DataSource } from '@infinite-table/infinite-react';
 
 type Employee = {
@@ -47,4 +32,29 @@ const employees: Employee[] = [
 <DataSource<Employee> primaryKey={'id'} data={employees} />;
 //#endregion
 
-export {};
+// the name the docs use for the generic type
+type DATA_TYPE = Employee;
+
+declare const data: DATA_TYPE[];
+declare const columns: InfiniteTablePropColumns<DATA_TYPE>;
+
+export function PrimaryKey() {
+  return (
+    //#region intro
+    <DataSource<DATA_TYPE>
+      primaryKey="id"
+      data={[]} // or a Promise or function returning a Promise.
+    />
+    //#endregion
+  );
+}
+
+export function GenericComponents() {
+  return (
+    //#region generic-type
+    <DataSource<DATA_TYPE> primaryKey="id" data={data}>
+      <InfiniteTable<DATA_TYPE> columns={columns} />
+    </DataSource>
+    //#endregion
+  );
+}

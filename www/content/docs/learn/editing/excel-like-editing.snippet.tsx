@@ -1,5 +1,16 @@
 // Snippets shown on excel-like-editing.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
+
+type Developer = {
+  id: number;
+  firstName: string;
+  salary: number;
+};
+
+declare const dataSource: Developer[];
+declare const columns: InfiniteTablePropColumns<Developer>;
 
 //#region intro
 import {
@@ -20,9 +31,9 @@ import {
 }
 //#endregion
 
-{
+export function columnsWithFormula() {
   //#region simulating-formulas-with-column-valuegetter
-  const columns = {
+  const columns: InfiniteTablePropColumns<Developer> = {
     salary: {
       field: 'salary'
     },
@@ -31,6 +42,7 @@ import {
     }
   }
   //#endregion
+  return columns;
 }
 
-export {};
+export { App };

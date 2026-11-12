@@ -1,16 +1,56 @@
 // Snippets shown on column-rendering.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 
-{
+type Employee = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
+
+// used as `DATA_TYPE` and `T` in the snippets below
+type DATA_TYPE = Employee;
+type T = {
+  id: number;
+  person: {
+    salary: number;
+  };
+};
+
+// this snippet shows its imports, which the other snippets in the file use as well
+//#region use-infinite-column-cell
+import {
+  useInfiniteColumnCell,
+  InfiniteTableColumn,
+} from '@infinite-table/infinite-react';
+
+function CustomName() {
+  const { data, rowInfo } = useInfiniteColumnCell<Employee>();
+
+  return (
+    <>
+      <b>{data?.firstName}</b>, {data?.lastName}
+    </>
+  );
+}
+
+const nameColumn: InfiniteTableColumn<Employee> = {
+  header: 'Employee Name',
+  renderValue: () => <CustomName />,
+};
+//#endregion
+
+export function valueGetterColumn() {
   //#region change-the-value-using-valuegetter
   const nameColumn: InfiniteTableColumn<Employee> = {
     header: 'Employee Name',
     valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
   };
   //#endregion
+  return nameColumn;
 }
 
-{
+export function renderValueWithComponent() {
   //#region use-rendervalue-and-render-to-display-custom
   type Developer = { country: string; name: string; id: string };
 
@@ -27,31 +67,14 @@
     },
   };
   //#endregion
+
+  // the snippet has no type annotation, so check it against the column type here
+  // (without `field`, which is just a `string` in an object that has no annotation)
+  const checked: Record<string, Omit<InfiniteTableColumn<Developer>, 'field'>> = columns;
+  return checked;
 }
 
-//#region hook
-import {
-  useInfiniteColumnCell,
-  InfiniteTableColumn,
-} from '@infinite-table/infintie-react';
-
-function CustomName() {
-  const { data, rowInfo } = useInfiniteColumnCell<Employee>();
-
-  return (
-    <>
-      <b>{data.firstName}</b>, {data.lastName}
-    </>
-  );
-}
-
-const nameColumn: InfiniteTableColumn<Employee> = {
-  header: 'Employee Name',
-  renderValue: () => <CustomName />,
-};
-//#endregion
-
-{
+export function ColumnCell() {
   //#region use-column-components-to-customize-the-column
   // inside a component specified in column.components.ColumnCell
   const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
@@ -60,7 +83,7 @@ const nameColumn: InfiniteTableColumn<Employee> = {
   //#endregion
 }
 
-{
+export function renderBagValue() {
   //#region rendering-pipeline-renderbag-value
   const column: InfiniteTableColumn<T> = {
     // the valueGetter can be useful when rows are nested objects
@@ -82,10 +105,11 @@ const nameColumn: InfiniteTableColumn<Employee> = {
     },
   };
   //#endregion
+  return column;
 }
 
-{
-  //#region rendering-pipeline-renderbag-value-2
+export function renderBagValueInRender() {
+  //#region rendering-pipeline-renderbag-value-in-render
   const column: InfiniteTableColumn<T> = {
     valueGetter: () => 'world',
     renderValue: ({ value, renderBag, rowInfo }) => { // #highlight
@@ -100,9 +124,10 @@ const nameColumn: InfiniteTableColumn<Employee> = {
     }, // #highlight
   };
   //#endregion
+  return column;
 }
 
-{
+export function renderBagGroupIcon() {
   //#region rendering-pipeline-renderbag-groupicon
   const column: InfiniteTableColumn<T> = {
     renderGroupIcon: ({ renderBag, toggleGroupRow }) => { // #highlight
@@ -112,25 +137,31 @@ const nameColumn: InfiniteTableColumn<Employee> = {
       return (
         <>
           {/* use the groupIcon from the renderBag */}
-          {renderBag.groupIcon} // #highlight
+          {renderBag.groupIcon} {/* #highlight */}
           {renderBag.value}
         </>
       );
     },
   };
   //#endregion
+  return column;
 }
 
-{
+export function renderBagSelectionCheckBox() {
   //#region rendering-pipeline-renderbag-selectioncheckbox
   const column: InfiniteTableColumn<T> = {
-    renderSelectionCheckBox: ({ // #highlight
-      renderBag,
-      rowSelected,
-      isGroupRow,
-      toggleCurrentRowSelection,
-      toggleCurrentGroupRowSelection,
-    }) => {
+    renderSelectionCheckBox: (params) => { // #highlight
+      if (params.rowInfo === null) {
+        // the function is also called for the column header
+        return params.renderBag.selectionCheckBox;
+      }
+      const {
+        renderBag,
+        rowSelected,
+        isGroupRow,
+        toggleCurrentRowSelection,
+        toggleCurrentGroupRowSelection,
+      } = params;
       const toggle = isGroupRow
         ? toggleCurrentGroupRowSelection
         : toggleCurrentRowSelection;
@@ -158,6 +189,5 @@ const nameColumn: InfiniteTableColumn<Employee> = {
     },
   };
   //#endregion
+  return column;
 }
-
-export {};

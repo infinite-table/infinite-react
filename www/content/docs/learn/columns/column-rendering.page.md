@@ -122,7 +122,7 @@ Inside the <PropLink name="columns.render" /> and <PropLink name="columns.render
 
 When you're inside a rendering function for a column cell, you can use <HookLink name="useInfiniteColumnCell">useInfiniteColumnCell hook</HookLink> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions.
 
-```tsx file="column-rendering.snippet.tsx" region="hook"
+```tsx file="column-rendering.snippet.tsx" region="use-infinite-column-cell"
 ```
 
 ```tsx file="/docs/reference/column-render-hooks-example.demo.tsx" title="Column with render & useInfiniteColumnCell"
@@ -132,7 +132,7 @@ When you're inside a rendering function for a column cell, you can use <HookLink
 
 For column headers, you can use <HookLink name="useInfiniteHeaderCell" /> hook to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function.
 
-```tsx file="column-rendering.hook.snippet.tsx" region="hook"
+```tsx file="column-rendering.use-infinite-header-cell.snippet.tsx" region="use-infinite-header-cell"
 ```
 
 ```tsx file="/docs/reference/column-header-hooks-example.demo.tsx" title="Column Header with render & useInfiniteHeaderCell"
@@ -206,7 +206,7 @@ After <PropLink name="columns.valueGetter">valueGetter</PropLink> and <PropLink 
 
 When <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> are called by `InfiniteTable`, both `value` and `renderBag` will be available as properties to the arguments object.
 
-```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value-2"
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value-in-render"
 ```
 
 <Note>

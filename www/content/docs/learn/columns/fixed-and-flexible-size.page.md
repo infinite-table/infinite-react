@@ -163,7 +163,7 @@ More exactly, the new flex values will be the actual pixel widths. As an example
 
 Initially they will occupy `200px` and `600px` respectively. If the user resizes them to be of equal size, <PropLink name="onColumnSizingChange" /> will be called with an object like
 
-```ts file="fixed-and-flexible-size.snippet.tsx" region="resizing-columns-via-drag-drop-2"
+```ts file="fixed-and-flexible-size.snippet.tsx" region="column-sizing-after-resize"
 ```
 
 since those are the actual widths measured from the DOM. This works out well, even if the available space of the table grows, as the proportions will be the same.

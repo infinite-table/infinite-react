@@ -1,5 +1,7 @@
 // Snippets shown on keyboard-shortcuts.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-react';
 
 //#region instant-edit
 import {
@@ -19,3 +21,13 @@ import {
   </DataSource>
 }
 //#endregion
+
+type Developer = {
+  id: number;
+  firstName: string;
+};
+
+declare const dataSource: Developer[];
+declare const columns: InfiniteTablePropColumns<Developer>;
+
+export { App };

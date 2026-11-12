@@ -3,23 +3,35 @@
 import { useState } from 'react';
 import {
   DataSource,
+  type DataSourcePropGroupBy,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region issue-performance-degradation-because-props-are
-  <DataSource
-    // dont do this
-    groupBy={[{ field: 'country' }]}
-  />
-  //#endregion
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+};
+
+declare const data: Developer[];
+
+export function NewPropsOnEveryRender() {
+  return (
+    //#region issue-performance-degradation-because-props-are
+    <DataSource
+      primaryKey="id"
+      data={data}
+      // dont do this
+      groupBy={[{ field: 'country' }]}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region issue-performance-degradation-because-props-are-2
-  const [groupBy, setGroupBy] = useState([{ field: 'country' }]);
+export function StablePropsInState() {
+  //#region issue-performance-degradation-stable-props
+  const [groupBy, setGroupBy] = useState<DataSourcePropGroupBy<Developer>>([{ field: 'country' }]);
 
-  <DataSource groupBy={groupBy} onGroupByChange={setGroupBy} />;
+  <DataSource primaryKey="id" data={data} groupBy={groupBy} onGroupByChange={setGroupBy} />;
   //#endregion
+  return null;
 }
-
-export {};

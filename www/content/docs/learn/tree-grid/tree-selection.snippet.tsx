@@ -13,8 +13,8 @@ const treeSelectioDefaultDeselected: TreeSelectionValue = {
 };
 //#endregion
 
-{
-  //#region example-of-tree-selection-value-with-default-2
+export function defaultSelectionTrue() {
+  //#region default-selection-true
   // Default selection is true, with some deselected node paths: ['2'] and ['3']
   // however, inside ['3'], we have a selected node ['3','30','301']
   const treeSelectionDefaultSelected: TreeSelectionValue = {
@@ -23,24 +23,25 @@ const treeSelectioDefaultDeselected: TreeSelectionValue = {
     selectedPaths: [['3','30','301']],
   };
   //#endregion
+  return treeSelectionDefaultSelected;
 }
 
-{
+export const allNodesSelected: TreeSelectionValue = (
   //#region tree-selection-value-to-show-all-nodes-as
   {
     defaultSelection: true,
     deselectedPaths: [],
   }
   //#endregion
-}
+);
 
-{
+export const allNodesDeselected: TreeSelectionValue = (
   //#region all-nodes-as-deselected
   {
     defaultSelection: false,
     selectedPaths: [],
   }
   //#endregion
-}
+);
 
-export {};
+export { treeSelectioDefaultDeselected };
