@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Infinite Table redesign · three directions</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #fafafa;
+        --card: #ffffff;
+        --line: #e4e4e7;
+        --fg: #18181b;
+        --muted: #62626b;
+        --chip: #f1f1f3;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e0f11;
+          --card: #17181b;
+          --line: #2a2b30;
+          --fg: #f1f1f3;
+          --muted: #a0a1a9;
+          --chip: #222327;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 56px 24px 96px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .lead {
+        margin: 0 0 40px;
+        max-width: 68ch;
+        color: var(--muted);
+      }
+      .direction {
+        display: grid;
+        grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+        gap: 28px;
+        padding: 28px;
+        margin-bottom: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+      }
+      @media (max-width: 900px) {
+        .direction {
+          grid-template-columns: minmax(0, 1fr);
+          padding: 20px;
+        }
+      }
+      h2 {
+        margin: 0 0 6px;
+        font-size: 24px;
+        letter-spacing: -0.01em;
+      }
+      .direction p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      ul {
+        margin: 0 0 18px;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .open {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        background: var(--fg);
+        color: var(--bg);
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      @media (max-width: 560px) {
+        .shots {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .shot {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+      .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 10;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        transition: transform 0.15s ease;
+      }
+      .shot:hover img {
+        transform: translateY(-2px);
+      }
+      .shot span {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--chip);
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .note {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 14px;
+        max-width: 80ch;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .shot img {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Three directions for infinite-table.com</h1>
+      <p class="lead">
+        Each one is the homepage and a docs page, in light and dark, with the
+        same content. Open one, then use the bar at the bottom of the page to
+        flip between direction, page and mode.
+      </p>
+
+      <section class="direction">
+        <div>
+          <h2>A · Terminal</h2>
+          <p>A trading desk. Dark first, exact, alive with numbers.</p>
+          <ul>
+            <li>Mono labels and figures, hairline rules, square corners</li>
+            <li>Amber accent, a ticker strip, a status bar on the demo</li>
+            <li>Palette of the grid's <code>terminal</code> theme</li>
+          </ul>
+          <a class="open" href="./a.html?page=home&theme=dark">Open A</a>
+        </div>
+        <div class="shots">
+          <a class="shot" href="./a.html?page=home&theme=dark"
+            ><img src="./thumbs/a-home-dark.jpg" width="960" height="600" alt="Direction A homepage, dark" /><span>Home · dark</span></a
+          >
+          <a class="shot" href="./a.html?page=home&theme=light"
+            ><img src="./thumbs/a-home-light.jpg" width="960" height="600" alt="Direction A homepage, light" /><span>Home · light</span></a
+          >
+          <a class="shot" href="./a.html?page=docs&theme=dark"
+            ><img src="./thumbs/a-docs-dark.jpg" width="960" height="600" alt="Direction A docs page, dark" loading="lazy" /><span>Docs · dark</span></a
+          >
+          <a class="shot" href="./a.html?page=docs&theme=light"
+            ><img src="./thumbs/a-docs-light.jpg" width="960" height="600" alt="Direction A docs page, light" loading="lazy" /><span>Docs · light</span></a
+          >
+        </div>
+      </section>
+
+      <section class="direction">
+        <div>
+          <h2>B · Aurora</h2>
+          <p>Today's brand, turned up. Glow, depth and the logo gradient.</p>
+          <ul>
+            <li>Green to blue gradient on headlines, borders and bars</li>
+            <li>Glass cards in dark, white cards with soft shadows in light</li>
+            <li>Pills, large radii, features as a bento grid</li>
+          </ul>
+          <a class="open" href="./b.html?page=home&theme=dark">Open B</a>
+        </div>
+        <div class="shots">
+          <a class="shot" href="./b.html?page=home&theme=dark"
+            ><img src="./thumbs/b-home-dark.jpg" width="960" height="600" alt="Direction B homepage, dark" loading="lazy" /><span>Home · dark</span></a
+          >
+          <a class="shot" href="./b.html?page=home&theme=light"
+            ><img src="./thumbs/b-home-light.jpg" width="960" height="600" alt="Direction B homepage, light" loading="lazy" /><span>Home · light</span></a
+          >
+          <a class="shot" href="./b.html?page=docs&theme=dark"
+            ><img src="./thumbs/b-docs-dark.jpg" width="960" height="600" alt="Direction B docs page, dark" loading="lazy" /><span>Docs · dark</span></a
+          >
+          <a class="shot" href="./b.html?page=docs&theme=light"
+            ><img src="./thumbs/b-docs-light.jpg" width="960" height="600" alt="Direction B docs page, light" loading="lazy" /><span>Docs · light</span></a
+          >
+        </div>
+      </section>
+
+      <section class="direction">
+        <div>
+          <h2>C · Paper</h2>
+          <p>Editorial. Light first, quiet, carried by type and white space.</p>
+          <ul>
+            <li>Serif display type, rules instead of boxes, one ink</li>
+            <li>The grids as plates with figure captions</li>
+            <li>Palette of the grid's <code>paper</code> theme</li>
+          </ul>
+          <a class="open" href="./c.html?page=home&theme=light">Open C</a>
+        </div>
+        <div class="shots">
+          <a class="shot" href="./c.html?page=home&theme=light"
+            ><img src="./thumbs/c-home-light.jpg" width="960" height="600" alt="Direction C homepage, light" loading="lazy" /><span>Home · light</span></a
+          >
+          <a class="shot" href="./c.html?page=home&theme=dark"
+            ><img src="./thumbs/c-home-dark.jpg" width="960" height="600" alt="Direction C homepage, dark" loading="lazy" /><span>Home · dark</span></a
+          >
+          <a class="shot" href="./c.html?page=docs&theme=light"
+            ><img src="./thumbs/c-docs-light.jpg" width="960" height="600" alt="Direction C docs page, light" loading="lazy" /><span>Docs · light</span></a
+          >
+          <a class="shot" href="./c.html?page=docs&theme=dark"
+            ><img src="./thumbs/c-docs-dark.jpg" width="960" height="600" alt="Direction C docs page, dark" loading="lazy" /><span>Docs · dark</span></a
+          >
+        </div>
+      </section>
+
+      <p class="note">
+        These are static prototypes. The hero is a screenshot of the live demo;
+        the grids further down (one million rows, the theme gallery, the pivot,
+        the docs example) are the real component, loaded from the published
+        package, so they show its license footer.
+      </p>
+    </main>
+  </body>
+</html>

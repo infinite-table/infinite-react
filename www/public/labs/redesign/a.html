@@ -1,0 +1,2627 @@
+<!doctype html>
+<html lang="en" data-direction="a">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Infinite Table redesign · Direction A · Terminal</title>
+    <script src="./boot.js"></script>
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ---- tokens: dark is the primary mode ------------------------------ */
+      :root {
+        color-scheme: dark;
+        --bg: #0b0e13;
+        --surface: #10151c;
+        --raised: #151b24;
+        --line: #1a212b;
+        --line-strong: #273140;
+        --fg: #c9d1db;
+        --heading: #e8edf3;
+        --muted: #7c8796;
+        --accent: #f5a524;
+        --accent-text: #f5a524;
+        --accent-fg: #0b0e13;
+        --accent-soft: rgb(245 165 36 / 0.12);
+        --accent-line: rgb(245 165 36 / 0.45);
+        --up: #1fd17b;
+        --down: #ff4d5e;
+        --bar-other: #3a4657;
+        --rule-grid: rgb(255 255 255 / 0.035);
+        --header-bg: rgb(11 14 19 / 0.88);
+        --backdrop: rgb(3 5 8 / 0.7);
+
+        --syn-keyword: #f5a524;
+        --syn-string: #7fd49b;
+        --syn-number: #ff9e64;
+        --syn-tag: #6cc7e6;
+        --syn-prop: #b8a6f0;
+        --syn-punct: #7c8796;
+        --syn-comment: #5d6876;
+        --syn-plain: #c9d1db;
+
+        --radius: 2px;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system,
+          'Segoe UI', sans-serif;
+        --header-h: 52px;
+        --wrap: 1360px;
+        --gutter: 32px;
+
+        /* live grid demos (shared.css) */
+        --p-surface: var(--surface);
+        --p-border: var(--line-strong);
+        --p-fg: var(--fg);
+        --p-muted: var(--muted);
+        --p-accent: var(--accent);
+        --p-accent-fg: var(--accent-fg);
+        --p-radius: 2px;
+        --p-mono: var(--mono);
+        --gd-up: var(--up);
+        --gd-down: var(--down);
+      }
+
+      [data-theme='light'] {
+        color-scheme: light;
+        --bg: #fbfbf9;
+        --surface: #f1f1ed;
+        --raised: #e9e9e4;
+        --line: #e3e3dd;
+        --line-strong: #cfcfc7;
+        --fg: #1d2329;
+        --heading: #0f1418;
+        --muted: #59616d;
+        --accent: #b45f06;
+        --accent-text: #9a5005;
+        --accent-fg: #ffffff;
+        --accent-soft: rgb(180 95 6 / 0.1);
+        --accent-line: rgb(180 95 6 / 0.45);
+        --up: #0f8a4a;
+        --down: #d1243a;
+        --bar-other: #b9b9b0;
+        --rule-grid: rgb(29 35 41 / 0.05);
+        --header-bg: rgb(251 251 249 / 0.9);
+        --backdrop: rgb(29 35 41 / 0.35);
+
+        --syn-keyword: #9a5005;
+        --syn-string: #0f7a43;
+        --syn-number: #b3361f;
+        --syn-tag: #0b6a94;
+        --syn-prop: #6941b8;
+        --syn-punct: #6b7280;
+        --syn-comment: #7d838c;
+        --syn-plain: #1d2329;
+      }
+
+      /* ---- base ---------------------------------------------------------- */
+      * {
+        /* code reads literally: no => or != ligatures */
+        font-variant-ligatures: none;
+      }
+      html {
+        scroll-padding-top: calc(var(--header-h) + 16px);
+      }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font: 400 16px/1.6 var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      img,
+      svg {
+        display: block;
+      }
+      ::selection {
+        background: var(--accent-soft);
+        color: var(--heading);
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .label {
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .ico {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: square;
+        stroke-linejoin: miter;
+        flex: none;
+      }
+      code {
+        font-family: var(--mono);
+      }
+
+      /* the frame: every band is a ruled pane */
+      .wrap {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+        border-inline: 1px solid var(--line);
+      }
+
+      /* ---- keys (buttons) ------------------------------------------------ */
+      .key {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: var(--heading);
+        font: 500 13px/1 var(--mono);
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        box-shadow: inset 0 -2px 0 var(--line-strong);
+        transition: background 0.12s, border-color 0.12s, transform 0.06s;
+      }
+      .key:hover {
+        background: var(--raised);
+        border-color: var(--muted);
+      }
+      .key:active {
+        transform: translateY(1px);
+        box-shadow: inset 0 -1px 0 var(--line-strong);
+      }
+      .key--primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-fg);
+        font-weight: 600;
+        box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.22);
+      }
+      .key--primary:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        filter: brightness(1.08);
+      }
+      .key--ghost {
+        background: transparent;
+        box-shadow: none;
+        color: var(--fg);
+      }
+      .key--sm {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 12px;
+      }
+      .link {
+        color: var(--accent-text);
+        font: 500 13px/1.4 var(--mono);
+        border-bottom: 1px solid var(--accent-line);
+        padding-bottom: 1px;
+      }
+      .link:hover {
+        border-bottom-color: var(--accent-text);
+      }
+
+      /* ---- header -------------------------------------------------------- */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: var(--header-h);
+        background: var(--header-bg);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .site-header .wrap {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font: 600 13px/1 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--heading);
+        white-space: nowrap;
+      }
+      .brand-mark {
+        width: 40px;
+        height: 19px;
+        background: var(--accent);
+        -webkit-mask: url('/logo-infinite.svg') center / contain no-repeat;
+        mask: url('/logo-infinite.svg') center / contain no-repeat;
+      }
+      .nav {
+        display: flex;
+        align-items: stretch;
+        height: 100%;
+        gap: 2px;
+      }
+      .nav a {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 12px;
+        font: 500 12px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+      }
+      .nav a:hover {
+        color: var(--heading);
+      }
+      html[data-page='docs'] .nav a[data-nav='docs'] {
+        color: var(--heading);
+        border-bottom-color: var(--accent);
+      }
+      .header-tools {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .search-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 32px;
+        min-width: 210px;
+        padding: 0 8px 0 10px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: var(--muted);
+        font: 400 12px/1 var(--mono);
+      }
+      .search-trigger:hover {
+        border-color: var(--muted);
+        color: var(--fg);
+      }
+      .search-trigger span {
+        flex: 1;
+        text-align: left;
+      }
+      kbd {
+        font: 500 11px/1 var(--mono);
+        padding: 4px 6px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        color: var(--muted);
+        background: var(--bg);
+      }
+      .seg {
+        display: inline-flex;
+        height: 32px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .seg button {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        padding: 0 11px;
+        font: 500 12px/1 var(--mono);
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .seg button + button {
+        border-left: 1px solid var(--line-strong);
+      }
+      .seg button:hover {
+        color: var(--heading);
+      }
+      .seg button[aria-pressed='true'] {
+        background: var(--accent-soft);
+        color: var(--accent-text);
+      }
+      .icon-btn {
+        display: inline-grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted);
+        padding: 0;
+      }
+      .icon-btn:hover {
+        color: var(--heading);
+        border-color: var(--muted);
+      }
+
+      /* ---- ticker -------------------------------------------------------- */
+      .ticker {
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+        overflow: hidden;
+      }
+      .ticker-track {
+        display: flex;
+        width: max-content;
+        animation: ticker 110s linear infinite;
+      }
+      .ticker:hover .ticker-track {
+        animation-play-state: paused;
+      }
+      .ticker-set {
+        display: flex;
+      }
+      .tick {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 10px;
+        height: 32px;
+        padding: 0 18px;
+        border-right: 1px solid var(--line);
+        font: 500 12px/32px var(--mono);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .tick b {
+        color: var(--heading);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+      .tick .px {
+        color: var(--fg);
+        padding: 0 3px;
+        margin: 0 -3px;
+        transition: background 0.5s, color 0.5s;
+      }
+      .px.is-up {
+        background: color-mix(in srgb, var(--up) 26%, transparent);
+        color: var(--heading);
+        transition: none;
+      }
+      .px.is-down {
+        background: color-mix(in srgb, var(--down) 26%, transparent);
+        color: var(--heading);
+        transition: none;
+      }
+      .chg {
+        color: var(--up);
+      }
+      .chg[data-negative] {
+        color: var(--down);
+      }
+      @keyframes ticker {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ---- hero ---------------------------------------------------------- */
+      .hero {
+        position: relative;
+        border-bottom: 1px solid var(--line);
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(to right, var(--rule-grid) 1px, transparent 1px)
+            0 0 / 48px 48px,
+          linear-gradient(to bottom, var(--rule-grid) 1px, transparent 1px) 0 0 /
+            48px 48px;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+        mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+      }
+      .hero .wrap {
+        position: relative;
+        padding-top: 36px;
+        padding-bottom: 56px;
+      }
+      .announce {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        height: 28px;
+        padding: 0 12px 0 0;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        font: 400 12px/1 var(--mono);
+        color: var(--fg);
+      }
+      .announce b {
+        align-self: stretch;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 9px;
+        background: var(--accent);
+        color: var(--accent-fg);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+      }
+      .announce:hover {
+        border-color: var(--muted);
+      }
+      .hero-top {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+        gap: 56px;
+        align-items: end;
+        margin-top: 26px;
+      }
+      .tagline {
+        font: 500 12px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent-text);
+        margin-bottom: 18px;
+      }
+      .tagline::before {
+        content: '> ';
+        color: var(--muted);
+      }
+      h1 {
+        font: 600 clamp(38px, 4.9vw, 68px) / 1.02 var(--sans);
+        letter-spacing: -0.035em;
+        color: var(--heading);
+        text-wrap: balance;
+      }
+      .cursor {
+        display: inline-block;
+        width: 0.42em;
+        height: 0.82em;
+        margin-left: 0.08em;
+        background: var(--accent);
+        vertical-align: -0.04em;
+        animation: blink 1.1s steps(1) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .hero-side p {
+        font-size: 17px;
+        line-height: 1.55;
+        color: var(--fg);
+        max-width: 46ch;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+      .install {
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--bg);
+        font: 400 13px/1 var(--mono);
+        color: var(--heading);
+        max-width: 100%;
+      }
+      .install .cmd {
+        padding: 0 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .install .cmd::before {
+        content: '$ ';
+        color: var(--accent-text);
+      }
+      .install button {
+        align-self: stretch;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 0;
+        border-left: 1px solid var(--line-strong);
+        background: var(--surface);
+        padding: 0 11px;
+        color: var(--muted);
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .install button:hover {
+        color: var(--heading);
+      }
+      .install button .done,
+      .install button[data-copied] .idle {
+        display: none;
+      }
+      .install button[data-copied] .done {
+        display: inline;
+        color: var(--up);
+      }
+      .hero-more {
+        margin-top: 14px;
+      }
+
+      /* the hero frame: ours; the picture inside is the live demo's */
+      .frame {
+        margin-top: 40px;
+        border: 1px solid var(--line-strong);
+        border-radius: 3px;
+        background: var(--surface);
+      }
+      .frame-bar {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        height: 34px;
+        padding: 0 12px;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .frame-bar--top {
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .frame-bar .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--up);
+        font-weight: 600;
+      }
+      .frame-bar .live::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--up);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .frame-bar b {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .frame-bar .hint {
+        color: var(--fg);
+        text-transform: none;
+        letter-spacing: 0.02em;
+      }
+      .frame-bar .grow {
+        flex: 1;
+      }
+      .frame-bar a {
+        color: var(--accent-text);
+      }
+      .frame-bar a:hover {
+        text-decoration: underline;
+      }
+      .frame-pic {
+        padding: 10px;
+        background: var(--bg);
+      }
+      .frame-pic img {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        /* the screenshot carries its own dark outline: trim it */
+        clip-path: inset(2px round 15px);
+      }
+
+      /* ---- sections ------------------------------------------------------ */
+      .sec {
+        border-bottom: 1px solid var(--line);
+      }
+      .sec .wrap {
+        padding-top: 0;
+        padding-bottom: 72px;
+      }
+      .sec-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        height: 40px;
+        margin: 0 calc(var(--gutter) * -1) 56px;
+        padding: 0 var(--gutter);
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .sec-no {
+        white-space: nowrap;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .sec-no b {
+        color: var(--accent-text);
+        font-weight: 600;
+      }
+      .sec-head {
+        display: grid;
+        grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+        gap: 56px;
+        align-items: end;
+        margin-bottom: 36px;
+      }
+      h2 {
+        font: 600 clamp(28px, 3vw, 42px) / 1.08 var(--sans);
+        letter-spacing: -0.028em;
+        color: var(--heading);
+        text-wrap: balance;
+      }
+      .sec-head p {
+        color: var(--fg);
+        max-width: 56ch;
+      }
+      .sec-head p + p {
+        margin-top: 12px;
+      }
+
+      /* ---- benchmark readouts -------------------------------------------- */
+      .readouts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .readout {
+        padding: 22px 22px 24px;
+        border-left: 1px solid var(--line-strong);
+        min-width: 0;
+      }
+      .readout:first-child {
+        border-left: 0;
+      }
+      .readout-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .ratio {
+        font: 600 11px/1 var(--mono);
+        padding: 4px 6px;
+        border: 1px solid var(--accent-line);
+        color: var(--accent-text);
+        border-radius: var(--radius);
+        white-space: nowrap;
+      }
+      .readout-num {
+        margin-top: 22px;
+        font: 600 clamp(40px, 4vw, 56px) / 1 var(--mono);
+        letter-spacing: -0.04em;
+        color: var(--heading);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .readout-num small {
+        font-size: 0.36em;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      .bars {
+        margin-top: 24px;
+        display: grid;
+        gap: 9px;
+      }
+      .bar-row {
+        display: grid;
+        grid-template-columns: 62px minmax(0, 1fr) 58px;
+        align-items: center;
+        gap: 10px;
+        font: 500 11px/1 var(--mono);
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .bar-row .val {
+        text-align: right;
+        color: var(--fg);
+      }
+      .bar {
+        height: 10px;
+        background: var(--line);
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        width: var(--w);
+        background: var(--bar-other);
+      }
+      .bar-row--us {
+        color: var(--accent-text);
+      }
+      .bar-row--us .val {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .bar-row--us .bar i {
+        background: var(--accent);
+      }
+      .readout-note {
+        margin-top: 24px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--fg);
+      }
+      .readout-note b {
+        font: 600 14px/1 var(--mono);
+        color: var(--heading);
+      }
+      .footnote {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px 24px;
+        margin-top: 18px;
+        font: 400 12px/1.6 var(--mono);
+        color: var(--muted);
+      }
+
+      /* ---- live grids ---------------------------------------------------- */
+      .grid-host {
+        min-height: var(--h, 580px);
+      }
+      .gd {
+        border-color: var(--line-strong);
+      }
+      .gd-controls {
+        background: var(--surface);
+        border-bottom-color: var(--line-strong);
+      }
+      .gd-seg {
+        padding: 0;
+        gap: 0;
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .gd-seg button {
+        border-radius: 0;
+        font: 500 12px/1 var(--mono);
+        padding: 8px 10px;
+      }
+      .gd-seg button + button {
+        border-left: 1px solid var(--line-strong);
+      }
+      .gd-seg button[aria-pressed='true'] {
+        background: var(--accent);
+        color: var(--accent-fg);
+        font-weight: 600;
+      }
+      .gd-btn {
+        border-radius: 2px;
+        font: 500 12px/1 var(--mono);
+        padding: 8px 10px;
+        background: var(--bg);
+        border-color: var(--line-strong);
+      }
+      .gd-btn:hover {
+        border-color: var(--muted);
+      }
+      .gd-snippet {
+        background: var(--bg);
+        border-top-color: var(--line-strong);
+      }
+
+      /* ---- pivot --------------------------------------------------------- */
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      /* ---- code ---------------------------------------------------------- */
+      .code {
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .code-bar {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        height: 34px;
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .code-file {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 14px;
+        font: 500 12px/1 var(--mono);
+        color: var(--heading);
+        border-right: 1px solid var(--line-strong);
+        box-shadow: inset 0 2px 0 var(--accent);
+        background: var(--bg);
+      }
+      .code-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 0;
+        border-left: 1px solid var(--line-strong);
+        background: transparent;
+        padding: 0 12px;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .code-copy:hover {
+        color: var(--heading);
+      }
+      .code-copy .done,
+      .code-copy[data-copied] .idle {
+        display: none;
+      }
+      .code-copy[data-copied] .done {
+        display: inline;
+        color: var(--up);
+      }
+      .code pre {
+        margin: 0;
+        padding: 14px 0;
+        overflow-x: auto;
+        white-space: normal;
+        font: 400 13px/1.75 var(--mono);
+        color: var(--syn-plain);
+        background: var(--bg);
+        flex: 1;
+        counter-reset: line;
+        tab-size: 2;
+        font-variant-ligatures: none;
+      }
+      .code pre code {
+        display: block;
+        min-width: max-content;
+      }
+      .code .line {
+        display: block;
+        white-space: pre;
+        padding: 0 18px 0 0;
+        border-left: 2px solid transparent;
+      }
+      .code .line::before {
+        counter-increment: line;
+        content: counter(line);
+        display: inline-block;
+        width: 40px;
+        margin-right: 16px;
+        text-align: right;
+        color: var(--syn-comment);
+        user-select: none;
+      }
+      .code .line.hl {
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+      }
+      .code .line.hl::before {
+        color: var(--accent-text);
+      }
+      .k {
+        color: var(--syn-keyword);
+      }
+      .n {
+        color: var(--syn-number);
+      }
+      .s {
+        color: var(--syn-string);
+      }
+      .t {
+        color: var(--syn-tag);
+      }
+      .p {
+        color: var(--syn-prop);
+      }
+      .x {
+        color: var(--syn-punct);
+      }
+      .c {
+        color: var(--syn-comment);
+        font-style: italic;
+      }
+
+      /* ---- features ------------------------------------------------------ */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .feature {
+        position: relative;
+        display: block;
+        padding: 20px 20px 22px;
+        border-left: 1px solid var(--line-strong);
+        border-top: 1px solid var(--line-strong);
+        margin: -1px 0 0 -1px;
+        min-width: 0;
+        transition: background 0.12s;
+      }
+      .feature:hover {
+        background: var(--raised);
+      }
+      .feature-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--accent-text);
+      }
+      .feature-top .ico {
+        width: 20px;
+        height: 20px;
+      }
+      .feature-top span {
+        font: 500 11px/1 var(--mono);
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .feature h3 {
+        margin-top: 18px;
+        font: 600 16px/1.3 var(--sans);
+        color: var(--heading);
+        letter-spacing: -0.01em;
+      }
+      .feature p {
+        margin-top: 6px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--fg);
+      }
+      .feature .go {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        color: var(--accent-text);
+        opacity: 0;
+        transition: opacity 0.12s;
+        font: 500 12px/1 var(--mono);
+      }
+      .feature:hover .go {
+        opacity: 1;
+      }
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0 32px;
+        margin-top: 40px;
+      }
+      .principle {
+        border-top: 2px solid var(--accent);
+        padding-top: 14px;
+      }
+      .principle h3 {
+        font: 600 12px/1 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--heading);
+      }
+      .principle p {
+        margin-top: 8px;
+        font-size: 14.5px;
+        line-height: 1.5;
+        color: var(--fg);
+      }
+
+      /* ---- compare ------------------------------------------------------- */
+      .versus {
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .versus a {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        height: 54px;
+        padding: 0 20px;
+        border-top: 1px solid var(--line-strong);
+        font: 500 13px/1 var(--mono);
+        color: var(--muted);
+      }
+      .versus a:first-child {
+        border-top: 0;
+      }
+      .versus a b {
+        font: 600 17px/1 var(--sans);
+        color: var(--heading);
+        letter-spacing: -0.01em;
+      }
+      .versus a .arrow {
+        color: var(--accent-text);
+      }
+      .versus a:hover {
+        background: var(--raised);
+      }
+      .versus a.all {
+        color: var(--accent-text);
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      /* ---- editions ------------------------------------------------------ */
+      .editions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+      .edition {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        padding: 26px 26px 28px;
+      }
+      .edition--pro {
+        border-color: var(--accent-line);
+        box-shadow: inset 0 2px 0 var(--accent);
+      }
+      .edition-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .edition h3 {
+        margin-top: 18px;
+        font: 600 26px/1.15 var(--sans);
+        letter-spacing: -0.02em;
+        color: var(--heading);
+      }
+      .edition p {
+        margin-top: 10px;
+        color: var(--fg);
+        max-width: 48ch;
+        flex: 1;
+      }
+      .edition .hero-actions {
+        margin-top: 24px;
+      }
+
+      /* ---- footer -------------------------------------------------------- */
+      .site-footer .wrap {
+        padding-top: 48px;
+        padding-bottom: 96px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+        gap: 32px;
+      }
+      .footer-brand p {
+        margin-top: 14px;
+        font-size: 14px;
+        color: var(--muted);
+        max-width: 30ch;
+      }
+      .footer-col h3 {
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+      .footer-col a {
+        display: block;
+        padding: 5px 0;
+        font-size: 14.5px;
+        color: var(--fg);
+      }
+      .footer-col a:hover {
+        color: var(--accent-text);
+      }
+      .footer-base {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 44px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        font: 400 12px/1.4 var(--mono);
+        color: var(--muted);
+      }
+
+      /* ---- docs ---------------------------------------------------------- */
+      .docs {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        border-inline: 1px solid var(--line);
+        display: grid;
+        --side-w: 272px;
+        grid-template-columns: var(--side-w) minmax(0, 1fr) 232px;
+        align-items: start;
+        /* the sidebar pane runs the full height of the page */
+        background: linear-gradient(
+          to right,
+          var(--surface) 0 calc(var(--side-w) - 1px),
+          var(--line) calc(var(--side-w) - 1px) var(--side-w),
+          transparent var(--side-w)
+        );
+      }
+      .docs-side {
+        position: sticky;
+        top: var(--header-h);
+        height: calc(100vh - var(--header-h));
+        overflow-y: auto;
+        padding: 16px 1px 96px 0;
+      }
+      .docs-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin: 0 16px 18px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .docs-tabs a {
+        text-align: center;
+        padding: 9px 0;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: var(--bg);
+      }
+      .docs-tabs a + a {
+        border-left: 1px solid var(--line-strong);
+      }
+      .docs-tabs a[aria-current='true'] {
+        background: var(--accent-soft);
+        color: var(--accent-text);
+      }
+      .side-nav a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 7px 16px 7px 18px;
+        border-left: 2px solid transparent;
+        font: 500 12.5px/1.35 var(--mono);
+        color: var(--fg);
+      }
+      .side-nav a:hover {
+        color: var(--heading);
+        background: var(--raised);
+      }
+      .side-nav .ico {
+        width: 12px;
+        height: 12px;
+        color: var(--muted);
+      }
+      .side-nav .open > a .ico {
+        transform: rotate(90deg);
+      }
+      .side-nav .open > a {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .side-sub a {
+        padding-left: 34px;
+        font-family: var(--sans);
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .side-sub a[aria-current='page'] {
+        border-left-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--heading);
+        font-weight: 500;
+      }
+      .docs-main {
+        min-width: 0;
+        padding: 30px 56px 110px;
+      }
+      .docs-article {
+        max-width: 760px;
+      }
+      .crumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .crumbs a:hover {
+        color: var(--heading);
+      }
+      .crumbs .cur {
+        color: var(--accent-text);
+      }
+      .docs-title {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px 24px;
+        margin-top: 20px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .docs-title h1 {
+        font-size: 44px;
+        line-height: 1.05;
+      }
+      .docs-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .prose > * + * {
+        margin-top: 20px;
+      }
+      .prose {
+        margin-top: 26px;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      .prose .lead {
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--heading);
+      }
+      .prose h2 {
+        font-size: 26px;
+        letter-spacing: -0.02em;
+        margin-top: 52px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+      }
+      .prose h2 a {
+        color: var(--muted);
+        font: 500 16px/1 var(--mono);
+        margin-right: 10px;
+      }
+      .prose :not(pre) > code {
+        font-size: 0.86em;
+        padding: 2px 5px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: var(--heading);
+      }
+      .prose p a {
+        color: var(--accent-text);
+        border-bottom: 1px solid var(--accent-line);
+      }
+      .note {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        border: 1px solid var(--line-strong);
+        border-left: 2px solid var(--accent);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .note-label {
+        padding: 15px 14px;
+        border-right: 1px solid var(--line-strong);
+        font: 600 11px/1.6 var(--mono);
+        letter-spacing: 0.14em;
+        color: var(--accent-text);
+      }
+      .note p {
+        padding: 12px 16px;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .demo {
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .demo-bar {
+        display: flex;
+        align-items: stretch;
+        height: 38px;
+        border-bottom: 1px solid var(--line-strong);
+        overflow: auto hidden;
+        scrollbar-width: none;
+      }
+      .demo-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 0 14px;
+        font: 600 13px/1 var(--sans);
+        color: var(--heading);
+        border-right: 1px solid var(--line-strong);
+        white-space: nowrap;
+      }
+      .demo-title::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--up);
+        border-radius: 50%;
+      }
+      .demo-tab {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 13px;
+        font: 500 12px/1 var(--mono);
+        color: var(--muted);
+        border: 0;
+        border-right: 1px solid var(--line-strong);
+        background: transparent;
+        white-space: nowrap;
+      }
+      .demo-tab[aria-selected='true'] {
+        color: var(--heading);
+        background: var(--bg);
+        box-shadow: inset 0 2px 0 var(--accent);
+      }
+      .demo-tools {
+        margin-left: auto;
+        display: flex;
+      }
+      .demo-tools button {
+        display: inline-grid;
+        place-items: center;
+        width: 38px;
+        border: 0;
+        border-left: 1px solid var(--line-strong);
+        background: transparent;
+        color: var(--muted);
+        padding: 0;
+      }
+      .demo-tools button:hover {
+        color: var(--heading);
+        background: var(--raised);
+      }
+      .demo-body {
+        min-height: 360px;
+        background: var(--bg);
+      }
+
+      .props {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--line-strong);
+        font-size: 14px;
+      }
+      .props th {
+        text-align: left;
+        padding: 9px 14px;
+        font: 500 11px/1 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: var(--surface);
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .props td {
+        padding: 10px 14px;
+        border-top: 1px solid var(--line);
+        font: 400 12.5px/1.5 var(--mono);
+        vertical-align: top;
+      }
+      .props td:first-child {
+        color: var(--accent-text);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .props-wrap {
+        overflow-x: auto;
+      }
+
+      .pager {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 56px;
+      }
+      .pager a {
+        display: block;
+        padding: 16px 18px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+      .pager a:hover {
+        border-color: var(--accent-line);
+      }
+      .pager a + a {
+        text-align: right;
+      }
+      .pager b {
+        display: block;
+        margin-top: 8px;
+        font: 600 17px/1.2 var(--sans);
+        color: var(--heading);
+      }
+      .docs-foot {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        font: 400 12px/1.4 var(--mono);
+        color: var(--muted);
+      }
+      .docs-foot a {
+        color: var(--accent-text);
+      }
+
+      .toc {
+        position: sticky;
+        top: var(--header-h);
+        padding: 34px 20px 40px 4px;
+      }
+      .toc .label {
+        display: block;
+        padding-left: 16px;
+        margin-bottom: 12px;
+      }
+      .toc nav {
+        border-left: 1px solid var(--line-strong);
+      }
+      .toc a {
+        display: block;
+        margin-left: -1px;
+        padding: 6px 0 6px 15px;
+        border-left: 1px solid transparent;
+        font-size: 13.5px;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+      .toc a:hover {
+        color: var(--heading);
+      }
+      .toc a[aria-current='true'] {
+        border-left-color: var(--accent);
+        color: var(--accent-text);
+      }
+      .toc-meta {
+        margin: 26px 0 0 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 10px;
+        font: 400 12px/1.3 var(--mono);
+        color: var(--muted);
+      }
+      .toc-meta a {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        font: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .toc-meta .ico {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* ---- search dialog ------------------------------------------------- */
+      dialog[data-search] {
+        width: min(620px, calc(100vw - 32px));
+        margin-top: 12vh;
+        padding: 0;
+        border: 1px solid var(--line-strong);
+        border-radius: 3px;
+        background: var(--surface);
+        color: var(--fg);
+        box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.6);
+      }
+      dialog[data-search]::backdrop {
+        background: var(--backdrop);
+        backdrop-filter: blur(2px);
+      }
+      .search-input {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 52px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line-strong);
+        color: var(--accent-text);
+        font: 500 14px/1 var(--mono);
+      }
+      .search-input input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--heading);
+        font: 400 15px/1 var(--mono);
+        caret-color: var(--accent);
+      }
+      .search-input input::placeholder {
+        color: var(--muted);
+      }
+      .search-results {
+        max-height: min(440px, 60vh);
+        overflow-y: auto;
+        padding: 6px 0 8px;
+        background: var(--bg);
+      }
+      .search-results .label {
+        display: block;
+        padding: 12px 16px 8px;
+      }
+      .search-results a {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 16px;
+        border-left: 2px solid transparent;
+        font-size: 14.5px;
+        color: var(--fg);
+      }
+      .search-results a[hidden] {
+        display: none;
+      }
+      .search-results a .ico {
+        color: var(--muted);
+      }
+      .search-results a small {
+        font: 400 11px/1 var(--mono);
+        color: var(--muted);
+      }
+      .search-results a:hover,
+      .search-results a.active {
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+        color: var(--heading);
+      }
+      .search-results a code {
+        font-size: 13px;
+        color: var(--accent-text);
+      }
+      .search-foot {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        height: 38px;
+        padding: 0 14px;
+        border-top: 1px solid var(--line-strong);
+        font: 400 11px/1 var(--mono);
+        color: var(--muted);
+      }
+      .search-foot span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .search-foot .grow {
+        flex: 1;
+      }
+
+      /* ---- responsive ---------------------------------------------------- */
+      @media (max-width: 1240px) {
+        .docs {
+          --side-w: 252px;
+          grid-template-columns: var(--side-w) minmax(0, 1fr);
+        }
+        .toc {
+          display: none;
+        }
+        .search-trigger {
+          min-width: 0;
+        }
+        .search-trigger span {
+          display: none;
+        }
+      }
+      @media (max-width: 1080px) {
+        .nav {
+          display: none;
+        }
+        .readouts {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .readout:nth-child(3) {
+          border-left: 0;
+        }
+        .readout:nth-child(n + 3) {
+          border-top: 1px solid var(--line-strong);
+        }
+        .features,
+        .principles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .principles {
+          gap: 28px 32px;
+        }
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .footer-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .footer-brand {
+          grid-column: 1 / -1;
+        }
+      }
+      @media (max-width: 860px) {
+        :root {
+          --gutter: 16px;
+        }
+        .hero-top,
+        .sec-head {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 20px;
+          align-items: start;
+        }
+        .hero .wrap {
+          padding-top: 24px;
+          padding-bottom: 36px;
+        }
+        .sec .wrap {
+          padding-bottom: 48px;
+        }
+        .sec-bar {
+          margin-bottom: 36px;
+        }
+        .sec-bar span.sec-no + span.sec-no {
+          display: none;
+        }
+        .frame {
+          margin-top: 28px;
+        }
+        .frame-bar .hide-sm {
+          display: none;
+        }
+        .frame-pic {
+          padding: 6px;
+        }
+        .frame-pic img {
+          border-radius: 8px;
+        }
+        .editions {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .docs {
+          grid-template-columns: minmax(0, 1fr);
+          background: none;
+        }
+        .docs-side {
+          display: none;
+        }
+        .docs-main {
+          padding: 22px 16px 96px;
+        }
+        .docs-title h1 {
+          font-size: 34px;
+        }
+        .seg button {
+          padding: 0 8px;
+        }
+        .site-header .wrap {
+          gap: 12px;
+        }
+        .header-tools {
+          gap: 6px;
+        }
+        .versus a {
+          grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .versus a .what {
+          display: none;
+        }
+        .announce {
+          height: auto;
+          min-height: 28px;
+          line-height: 1.4;
+        }
+        .announce span {
+          padding: 5px 0;
+        }
+      }
+      @media (max-width: 560px) {
+        .brand span {
+          display: none;
+        }
+        .search-foot .grow,
+        .search-foot .grow + span,
+        .demo-tab[aria-selected='false'] {
+          display: none;
+        }
+        .search-results a small {
+          display: none;
+        }
+        .readouts,
+        .features,
+        .principles {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .readout {
+          border-left: 0;
+        }
+        .readout + .readout {
+          border-top: 1px solid var(--line-strong);
+        }
+        .footer-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .pager {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .hero-actions .key,
+        .hero-actions .install {
+          width: 100%;
+          justify-content: center;
+        }
+        .hero-actions .install .cmd {
+          flex: 1;
+        }
+        .gd-grid {
+          height: 380px;
+        }
+        .grid-host {
+          min-height: 440px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ticker-track,
+        .cursor,
+        .frame-bar .live::before {
+          animation: none;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- shared icon sprites -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-search" viewBox="0 0 16 16">
+          <circle cx="7" cy="7" r="4.5" />
+          <path d="M10.5 10.5 14 14" />
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 16 16">
+          <circle cx="8" cy="8" r="2.8" />
+          <path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.4 3.4l1.3 1.3M11.3 11.3l1.3 1.3M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3" />
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 16 16">
+          <path d="M13.5 9.6A5.8 5.8 0 0 1 6.4 2.5a5.8 5.8 0 1 0 7.1 7.1Z" />
+        </symbol>
+        <symbol id="i-github" viewBox="0 0 16 16">
+          <path
+            fill="currentColor"
+            stroke="none"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+          />
+        </symbol>
+        <symbol id="i-copy" viewBox="0 0 16 16">
+          <path d="M5.5 5.5h8v8h-8zM2.5 10.5v-8h8" />
+        </symbol>
+        <symbol id="i-chev" viewBox="0 0 16 16">
+          <path d="m6 3.5 4.5 4.5L6 12.5" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 16 16">
+          <path d="M3 8h10M9 4l4 4-4 4" />
+        </symbol>
+        <symbol id="i-doc" viewBox="0 0 16 16">
+          <path d="M3.5 1.5h6l3 3v10h-9zM9.5 1.5v3h3M5.5 8h5M5.5 11h5" />
+        </symbol>
+        <symbol id="i-code" viewBox="0 0 16 16">
+          <path d="M5.5 4 1.5 8l4 4M10.5 4l4 4-4 4" />
+        </symbol>
+        <symbol id="i-edit" viewBox="0 0 16 16">
+          <path d="M2.5 13.5h3l8-8-3-3-8 8zM9 4l3 3" />
+        </symbol>
+        <symbol id="i-fork" viewBox="0 0 16 16">
+          <path d="M8 1.5 14 5v6l-6 3.5L2 11V5zM2 5l6 3.5L14 5M8 8.5v6" />
+        </symbol>
+        <symbol id="i-reset" viewBox="0 0 16 16">
+          <path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" />
+        </symbol>
+        <symbol id="i-full" viewBox="0 0 16 16">
+          <path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" />
+        </symbol>
+        <symbol id="i-md" viewBox="0 0 16 16">
+          <path d="M1.5 3.5h13v9h-13zM4 10.5v-5l2 2.5 2-2.5v5M11.5 5.5v5M9.8 8.8l1.7 1.7 1.7-1.7" />
+        </symbol>
+        <!-- features, 20px -->
+        <symbol id="f-sort" viewBox="0 0 20 20">
+          <path d="M6 16V4M6 4 3 7M6 4l3 3M14 4v12M14 16l-3-3M14 16l3-3" />
+        </symbol>
+        <symbol id="f-group" viewBox="0 0 20 20">
+          <path d="M3 4.5h14M7 10h10M7 15.5h10M3.5 8.5v7" />
+        </symbol>
+        <symbol id="f-pivot" viewBox="0 0 20 20">
+          <path d="M3 3h14v14H3zM3 8h14M8 8v9M11 5.5h3.5M5.5 11v3.5" />
+        </symbol>
+        <symbol id="f-agg" viewBox="0 0 20 20">
+          <path d="M15 6V4H5l5.5 6L5 16h10v-2" />
+        </symbol>
+        <symbol id="f-colgroup" viewBox="0 0 20 20">
+          <path d="M3 4h14v12H3zM3 8h14M10 8v8M6.5 12v4M13.5 12v4M3 12h14" />
+        </symbol>
+        <symbol id="f-lazy" viewBox="0 0 20 20">
+          <path d="M3 4h14M3 8h14M3 12h5M3 16h5M14 11v6M11.5 14.5 14 17l2.5-2.5" />
+        </symbol>
+        <symbol id="f-keys" viewBox="0 0 20 20">
+          <path d="M2 5.5h16v9H2zM5 8.5h1M8 8.5h1M11 8.5h1M14 8.5h1M6 11.5h8" />
+        </symbol>
+        <symbol id="f-theme" viewBox="0 0 20 20">
+          <circle cx="10" cy="10" r="7" />
+          <path d="M10 3v14M10 6.5h5.9M10 10h7M10 13.5h5.9" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="#" data-goto-page="home" aria-label="Infinite Table home">
+          <i class="brand-mark"></i><span>Infinite Table</span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="#" data-nav="docs" data-goto-page="docs">Docs</a>
+          <a href="#">Demo</a>
+          <a href="#">Themes</a>
+          <a href="#">Compare</a>
+          <a href="#">Pricing</a>
+          <a href="#">Blog</a>
+        </nav>
+        <div class="header-tools">
+          <button class="search-trigger" type="button" data-open-search aria-label="Search">
+            <svg class="ico"><use href="#i-search" /></svg>
+            <span>Search…</span>
+            <kbd>⌘K</kbd>
+          </button>
+          <div class="seg" role="group" aria-label="Framework">
+            <button type="button" data-set-framework="react">React</button>
+            <button type="button" data-set-framework="vue">Vue</button>
+          </div>
+          <button class="icon-btn" type="button" data-toggle-theme aria-label="Switch color mode">
+            <svg class="ico" data-only="dark"><use href="#i-sun" /></svg>
+            <svg class="ico" data-only="light"><use href="#i-moon" /></svg>
+          </button>
+          <a
+            class="icon-btn"
+            href="https://github.com/infinite-table/infinite-react"
+            aria-label="Infinite Table on GitHub"
+          >
+            <svg class="ico"><use href="#i-github" /></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================================================================ -->
+    <!-- HOME                                                             -->
+    <!-- ================================================================ -->
+    <main data-page-view="home">
+      <div class="ticker mono" aria-label="Sample market data, simulated">
+        <div class="ticker-track">
+          <div class="ticker-set">
+            <span class="tick"><b>BVP</b><span class="px" data-tick>18.17</span><span class="chg" data-tick data-negative>−0.31%</span></span>
+            <span class="tick"><b>NOE</b><span class="px" data-tick>94.59</span><span class="chg" data-tick data-negative>−0.08%</span></span>
+            <span class="tick"><b>ZGT</b><span class="px" data-tick>80.93</span><span class="chg" data-tick>+1.45%</span></span>
+            <span class="tick"><b>KZI</b><span class="px" data-tick>34.77</span><span class="chg" data-tick data-negative>−1.10%</span></span>
+            <span class="tick"><b>WRX</b><span class="px" data-tick>402.22</span><span class="chg" data-tick data-negative>−0.50%</span></span>
+            <span class="tick"><b>IKM</b><span class="px" data-tick>26.69</span><span class="chg" data-tick>+0.11%</span></span>
+            <span class="tick"><b>UDB</b><span class="px" data-tick>37.77</span><span class="chg" data-tick>+0.20%</span></span>
+            <span class="tick"><b>FVQ</b><span class="px" data-tick>59.15</span><span class="chg" data-tick>+0.54%</span></span>
+            <span class="tick"><b>ROF</b><span class="px" data-tick>516.83</span><span class="chg" data-tick>+0.02%</span></span>
+            <span class="tick"><b>DGU</b><span class="px" data-tick>131.65</span><span class="chg" data-tick>+0.92%</span></span>
+            <span class="tick"><b>OZJ</b><span class="px" data-tick>331.99</span><span class="chg" data-tick data-negative>−0.03%</span></span>
+            <span class="tick"><b>MKN</b><span class="px" data-tick>304.91</span><span class="chg" data-tick data-negative>−2.43%</span></span>
+            <span class="tick"><b>YDC</b><span class="px" data-tick>80.28</span><span class="chg" data-tick data-negative>−0.59%</span></span>
+            <span class="tick"><b>JVR</b><span class="px" data-tick>115.97</span><span class="chg" data-tick>+0.65%</span></span>
+            <span class="tick"><b>VOG</b><span class="px" data-tick>323.63</span><span class="chg" data-tick data-negative>−0.37%</span></span>
+            <span class="tick"><b>ARY</b><span class="px" data-tick>68.63</span><span class="chg" data-tick data-negative>−0.44%</span></span>
+            <span class="tick"><b>AUT</b><span class="px" data-tick>400.72</span><span class="chg" data-tick>+0.32%</span></span>
+            <span class="tick"><b>HCV</b><span class="px" data-tick>28.14</span><span class="chg" data-tick>+0.40%</span></span>
+            <span class="tick"><b>SOV</b><span class="px" data-tick>212.40</span><span class="chg" data-tick>+1.12%</span></span>
+            <span class="tick"><b>JKB</b><span class="px" data-tick>47.06</span><span class="chg" data-tick data-negative>−0.21%</span></span>
+            <span class="tick"><b>ODR</b><span class="px" data-tick>152.88</span><span class="chg" data-tick>+0.73%</span></span>
+            <span class="tick"><b>CSY</b><span class="px" data-tick>63.41</span><span class="chg" data-tick data-negative>−0.95%</span></span>
+            <span class="tick"><b>BXW</b><span class="px" data-tick>271.19</span><span class="chg" data-tick>+0.28%</span></span>
+            <span class="tick"><b>XMH</b><span class="px" data-tick>19.84</span><span class="chg" data-tick data-negative>−1.36%</span></span>
+          </div>
+        </div>
+      </div>
+      <script>
+        // a second copy of the tape, so the marquee loops without a seam
+        (function () {
+          var set = document.querySelector('.ticker-set');
+          var copy = set.cloneNode(true);
+          copy.setAttribute('aria-hidden', 'true');
+          set.parentNode.appendChild(copy);
+        })();
+      </script>
+
+      <!-- hero -->
+      <section class="hero">
+        <div class="wrap">
+          <a class="announce" href="#">
+            <b>NEW IN 10.1</b>
+            <span>Terminal, Sheet and Paper themes, plus a density setting →</span>
+          </a>
+
+          <div class="hero-top">
+            <div>
+              <p class="tagline">One Table — Infinite Applications</p>
+              <h1>
+                The DataGrid for React and Vue, built for
+                speed.<span class="cursor" aria-hidden="true"></span>
+              </h1>
+            </div>
+            <div class="hero-side">
+              <p>
+                A million rows, zero dependencies, fully declarative. Grouping,
+                pivoting, aggregations, lazy loading and live updates, in one
+                component.
+              </p>
+              <div class="hero-actions">
+                <a class="key key--primary" href="#" data-goto-page="docs">
+                  Get started
+                  <svg class="ico"><use href="#i-arrow" /></svg>
+                </a>
+                <div class="install">
+                  <span class="cmd" data-fw="react">npm i @infinite-table/infinite-react</span>
+                  <span class="cmd" data-fw="vue">npm i @infinite-table/infinite-vue</span>
+                  <button type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                  <button type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="frame">
+            <div class="frame-bar frame-bar--top">
+              <span class="live">Live</span>
+              <span class="hint">Live demo · click the grid to take over</span>
+              <span class="grow"></span>
+              <span class="hide-sm"><b data-tick>2,556</b> ticks/s</span>
+              <span class="hide-sm"><b data-tick="0.02">56</b> fps</span>
+              <a href="#">Open full-page demo ↗</a>
+            </div>
+            <div class="frame-pic">
+              <img
+                data-only="dark"
+                src="/hero/hero-poster-dark.webp"
+                width="1704"
+                height="1080"
+                alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap"
+              />
+              <img
+                data-only="light"
+                src="/hero/hero-poster-light.webp"
+                width="1704"
+                height="1080"
+                alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 01 performance -->
+      <section class="sec" id="performance">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>01</b> / Performance</span>
+            <span class="sec-no">Infinite Table vs AG Grid Community</span>
+          </div>
+          <div class="sec-head">
+            <h2>Measured, not claimed.</h2>
+            <p>
+              The same data, the same machine, the same gestures, seven runs
+              each. The benchmark is open: read the method, then run it
+              yourself.
+            </p>
+          </div>
+
+          <div class="readouts">
+            <div class="readout">
+              <div class="readout-top">
+                <span class="label">Mount 1,000,000 rows</span>
+                <span class="ratio">0.71×</span>
+              </div>
+              <div class="readout-num">352<small>ms</small></div>
+              <div class="bars">
+                <div class="bar-row bar-row--us">
+                  <span>Infinite</span>
+                  <span class="bar"><i style="--w: 70.7%"></i></span>
+                  <span class="val">352 ms</span>
+                </div>
+                <div class="bar-row">
+                  <span>AG Grid</span>
+                  <span class="bar"><i style="--w: 100%"></i></span>
+                  <span class="val">498 ms</span>
+                </div>
+              </div>
+            </div>
+            <div class="readout">
+              <div class="readout-top">
+                <span class="label">Sort 1,000,000 rows · text</span>
+                <span class="ratio">0.41×</span>
+              </div>
+              <div class="readout-num">1.40<small>s</small></div>
+              <div class="bars">
+                <div class="bar-row bar-row--us">
+                  <span>Infinite</span>
+                  <span class="bar"><i style="--w: 41.4%"></i></span>
+                  <span class="val">1.40 s</span>
+                </div>
+                <div class="bar-row">
+                  <span>AG Grid</span>
+                  <span class="bar"><i style="--w: 100%"></i></span>
+                  <span class="val">3.38 s</span>
+                </div>
+              </div>
+            </div>
+            <div class="readout">
+              <div class="readout-top">
+                <span class="label">Memory · 1,000,000 rows</span>
+                <span class="ratio">0.42×</span>
+              </div>
+              <div class="readout-num">90.7<small>MB</small></div>
+              <div class="bars">
+                <div class="bar-row bar-row--us">
+                  <span>Infinite</span>
+                  <span class="bar"><i style="--w: 42.6%"></i></span>
+                  <span class="val">90.7 MB</span>
+                </div>
+                <div class="bar-row">
+                  <span>AG Grid</span>
+                  <span class="bar"><i style="--w: 100%"></i></span>
+                  <span class="val">213 MB</span>
+                </div>
+              </div>
+            </div>
+            <div class="readout">
+              <div class="readout-top">
+                <span class="label">Dependencies</span>
+                <span class="ratio" style="visibility: hidden">0</span>
+              </div>
+              <div class="readout-num">0</div>
+              <p class="readout-note">
+                Nothing but your framework.<br />
+                <b>145 kB</b> gzipped JavaScript.
+              </p>
+            </div>
+          </div>
+          <div class="footnote">
+            <span>
+              Infinite Table 10.1.4 vs AG Grid Community 36.3.0. Chrome 136,
+              Apple M1 Pro, medians of 7 runs. Scrolling is a tie in this run.
+            </span>
+            <a class="link" href="#">Read the method and run it yourself →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 scale -->
+      <section class="sec" id="scale">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>02</b> / Scale</span>
+            <span class="sec-no">Live · rows and columns virtualized</span>
+          </div>
+          <div class="sec-head">
+            <h2>A million rows. Go on, scroll.</h2>
+            <div>
+              <p>
+                You scroll an empty container sized like the content; the grid
+                moves its header and body itself, on the same frame. The header
+                never trails the cells, and a fast fling never shows blank
+                rows.
+              </p>
+              <p>
+                Rows and columns are both virtualized: only what is on screen
+                is ever rendered.
+              </p>
+            </div>
+          </div>
+          <div class="grid-host" style="--h: 577px" data-grid-demo="million" data-theme-name="terminal"></div>
+        </div>
+      </section>
+
+      <!-- 03 themes -->
+      <section class="sec" id="themes">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>03</b> / Themes</span>
+            <a class="sec-no" href="#" style="color: var(--accent-text)">Open the theme gallery →</a>
+          </div>
+          <div class="sec-head">
+            <h2>Themes that change more than color.</h2>
+            <p>
+              Terminal, Sheet and Paper change spacing, borders, type and even
+              the icons, all through CSS variables. Density is a separate
+              setting: compact, comfortable or spacious.
+            </p>
+          </div>
+          <div class="grid-host" style="--h: 618px" data-grid-demo="themes" data-default-theme="terminal"></div>
+        </div>
+      </section>
+
+      <!-- 04 pivot -->
+      <section class="sec" id="pivot">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>04</b> / Pivot</span>
+            <a class="sec-no" href="#" style="color: var(--accent-text)">Pivoting docs →</a>
+          </div>
+          <div class="sec-head">
+            <h2>Pivot in a few lines.</h2>
+            <p>
+              Group by one field, pivot by another, add an aggregation. The
+              pivot columns are generated for you.
+            </p>
+          </div>
+          <div class="split">
+            <div class="code">
+              <div class="code-bar">
+                <span class="code-file">pivot.tsx</span>
+                <button
+                  class="code-copy"
+                  type="button"
+                  data-copy="<DataSource data={trades} primaryKey=&quot;id&quot; groupBy={[{ field: 'sector' }]} pivotBy={[{ field: 'region' }]} aggregationReducers={{ pnl: { field: 'pnl', initialValue: 0, reducer: (a, b) => a + b } }}>{({ pivotColumns, pivotColumnGroups }) => (<InfiniteTable pivotColumns={pivotColumns} pivotColumnGroups={pivotColumnGroups} />)}</DataSource>"
+                >
+                  <svg class="ico"><use href="#i-copy" /></svg>
+                  <span class="idle">Copy</span><span class="done">Copied</span>
+                </button>
+              </div>
+              <pre><code><span class="line"><span class="x">&lt;</span><span class="t">DataSource</span></span><span class="line">  <span class="p">data</span><span class="x">={</span>trades<span class="x">}</span></span><span class="line">  <span class="p">primaryKey</span><span class="x">=</span><span class="s">"id"</span></span><span class="line hl">  <span class="p">groupBy</span><span class="x">={[{</span> field<span class="x">:</span> <span class="s">'sector'</span> <span class="x">}]}</span></span><span class="line hl">  <span class="p">pivotBy</span><span class="x">={[{</span> field<span class="x">:</span> <span class="s">'region'</span> <span class="x">}]}</span></span><span class="line">  <span class="p">aggregationReducers</span><span class="x">={{</span></span><span class="line">    pnl<span class="x">:</span> <span class="x">{</span></span><span class="line">      field<span class="x">:</span> <span class="s">'pnl'</span><span class="x">,</span></span><span class="line">      initialValue<span class="x">:</span> <span class="n">0</span><span class="x">,</span></span><span class="line">      reducer<span class="x">:</span> <span class="x">(</span>a<span class="x">,</span> b<span class="x">)</span> <span class="k">=&gt;</span> a <span class="x">+</span> b<span class="x">,</span></span><span class="line">    <span class="x">},</span></span><span class="line">  <span class="x">}}</span></span><span class="line"><span class="x">&gt;</span></span><span class="line">  <span class="x">{({</span> pivotColumns<span class="x">,</span> pivotColumnGroups <span class="x">})</span> <span class="k">=&gt;</span> <span class="x">(</span></span><span class="line">    <span class="x">&lt;</span><span class="t">InfiniteTable</span></span><span class="line">      <span class="p">pivotColumns</span><span class="x">={</span>pivotColumns<span class="x">}</span></span><span class="line">      <span class="p">pivotColumnGroups</span><span class="x">={</span>pivotColumnGroups<span class="x">}</span></span><span class="line">    <span class="x">/&gt;</span></span><span class="line">  <span class="x">)}</span></span><span class="line"><span class="x">&lt;/</span><span class="t">DataSource</span><span class="x">&gt;</span></span></code></pre>
+            </div>
+            <div class="grid-host" style="--h: 442px" data-grid-demo="pivot" data-theme-name="terminal"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 features -->
+      <section class="sec" id="features">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>05</b> / Features</span>
+            <span class="sec-no">Everything in one component</span>
+          </div>
+          <div class="sec-head">
+            <h2>The enterprise feature set, built in.</h2>
+            <p>
+              No plugins to wire up and no modules to register. Every feature
+              is a prop on the same two components.
+            </p>
+          </div>
+          <div class="features">
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-sort" /></svg><span>F1</span></div>
+              <h3>Sorting</h3>
+              <p>Single and multi-column, local or remote.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-group" /></svg><span>F2</span></div>
+              <h3>Row grouping</h3>
+              <p>By one or many fields, works with lazy data.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-pivot" /></svg><span>F3</span></div>
+              <h3>Pivoting</h3>
+              <p>Generated columns, totals, custom headers.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-agg" /></svg><span>F4</span></div>
+              <h3>Aggregations</h3>
+              <p>Built-in and custom reducers, client or server.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-colgroup" /></svg><span>F5</span></div>
+              <h3>Column grouping</h3>
+              <p>Nested headers that resize and reorder together.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-lazy" /></svg><span>F6</span></div>
+              <h3>Lazy loading</h3>
+              <p>Load batches as you scroll, per group if needed.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-keys" /></svg><span>F7</span></div>
+              <h3>Keyboard navigation</h3>
+              <p>Cells or rows, selection, shortcuts.</p>
+              <span class="go">→</span>
+            </a>
+            <a class="feature" href="#">
+              <div class="feature-top"><svg class="ico"><use href="#f-theme" /></svg><span>F8</span></div>
+              <h3>Theming</h3>
+              <p>CSS variables, seven themes, three densities.</p>
+              <span class="go">→</span>
+            </a>
+          </div>
+          <div class="principles">
+            <div class="principle">
+              <h3>Declarative</h3>
+              <p>Every prop has a controlled and an uncontrolled form.</p>
+            </div>
+            <div class="principle">
+              <h3>Typed</h3>
+              <p>Written in TypeScript, generic over your data type.</p>
+            </div>
+            <div class="principle">
+              <h3>Zero dependencies</h3>
+              <p>Nothing but your framework.</p>
+            </div>
+            <div class="principle">
+              <h3>React and Vue</h3>
+              <p>The same grid, the same docs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 compare -->
+      <section class="sec" id="compare">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>06</b> / Compare</span>
+            <span class="sec-no">13 grids, one matrix</span>
+          </div>
+          <div class="sec-head">
+            <h2>How it compares.</h2>
+            <p>Feature by feature, with sources and the honest no's.</p>
+          </div>
+          <div class="versus">
+            <a href="#"><span class="what">Infinite Table vs</span><b>AG Grid</b><span class="arrow">→</span></a>
+            <a href="#"><span class="what">Infinite Table vs</span><b>MUI X Data Grid</b><span class="arrow">→</span></a>
+            <a href="#"><span class="what">Infinite Table vs</span><b>TanStack Table</b><span class="arrow">→</span></a>
+            <a href="#"><span class="what">Infinite Table vs</span><b>Handsontable</b><span class="arrow">→</span></a>
+            <a class="all" href="#"><span>All 13 comparisons</span><span class="arrow">→</span></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 editions -->
+      <section class="sec" id="editions">
+        <div class="wrap">
+          <div class="sec-bar">
+            <span class="sec-no"><b>07</b> / Editions</span>
+            <span class="sec-no">One license, unlimited applications</span>
+          </div>
+          <div class="editions">
+            <div class="edition">
+              <div class="edition-top">
+                <span class="label">Community</span>
+                <span class="label">Free</span>
+              </div>
+              <h3>Free in any app.</h3>
+              <p>Shows a “Powered by Infinite Table” footer.</p>
+              <div class="hero-actions">
+                <div class="install">
+                  <span class="cmd" data-fw="react">npm i @infinite-table/infinite-react</span>
+                  <span class="cmd" data-fw="vue">npm i @infinite-table/infinite-vue</span>
+                  <button type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                  <button type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="edition edition--pro">
+              <div class="edition-top">
+                <span class="label" style="color: var(--accent-text)">Enterprise</span>
+                <span class="label">Licensed</span>
+              </div>
+              <h3>One license, unlimited applications.</h3>
+              <p>A license removes the footer and adds dedicated support.</p>
+              <div class="hero-actions">
+                <a class="key key--primary" href="#">See pricing <svg class="ico"><use href="#i-arrow" /></svg></a>
+                <a class="key key--ghost" href="#" data-goto-page="docs">Read the docs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <div class="wrap">
+          <div class="footer-grid">
+            <div class="footer-brand">
+              <a class="brand" href="#" data-goto-page="home"><i class="brand-mark"></i><span>Infinite Table</span></a>
+              <p>One Table — Infinite Applications.</p>
+            </div>
+            <div class="footer-col">
+              <h3>Product</h3>
+              <a href="#" data-goto-page="docs">Docs</a><a href="#">Demo</a><a href="#">Themes</a><a href="#">Pricing</a><a href="#">Blog</a>
+            </div>
+            <div class="footer-col">
+              <h3>Compare</h3>
+              <a href="#">AG Grid</a><a href="#">MUI X Data Grid</a><a href="#">TanStack Table</a><a href="#">Benchmark</a>
+            </div>
+            <div class="footer-col">
+              <h3>Resources</h3>
+              <a href="#">API reference</a><a href="#">Releases</a><a href="#">DevTools</a><a href="#">llms.txt</a>
+            </div>
+            <div class="footer-col">
+              <h3>Company</h3>
+              <a href="https://github.com/infinite-table/infinite-react">GitHub</a><a href="#">X</a><a href="#">Contact</a><a href="#">EULA</a>
+            </div>
+          </div>
+          <div class="footer-base">
+            <span>© 2026 Infinite Table</span>
+            <span>infinite-react 10.1 · infinite-vue 10.1</span>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ================================================================ -->
+    <!-- DOCS                                                             -->
+    <!-- ================================================================ -->
+    <div data-page-view="docs">
+      <div class="docs">
+        <aside class="docs-side" aria-label="Docs navigation">
+          <div class="docs-tabs">
+            <a href="#" aria-current="true">Learn</a>
+            <a href="#">Reference</a>
+            <a href="#">Releases</a>
+          </div>
+          <nav class="side-nav">
+            <div><a href="#">Overview</a></div>
+            <div><a href="#">Getting Started<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Working with Data<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Working with Columns<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Working with Rows<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Selection<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Keyboard Navigation<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Sorting<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div class="open">
+              <a href="#">Grouping and Pivoting<svg class="ico"><use href="#i-chev" /></svg></a>
+              <div class="side-sub">
+                <a href="#" aria-current="page">Grouping rows</a>
+                <a href="#">Group aggregations</a>
+                <a href="#">Pivoting</a>
+              </div>
+            </div>
+            <div><a href="#">Filtering<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Editing<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Context Menus<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Master-Detail<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Tree Data<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">DevTools</a></div>
+            <div><a href="#">Theming<svg class="ico"><use href="#i-chev" /></svg></a></div>
+            <div><a href="#">Common Issues</a></div>
+            <div><a href="#">Examples<svg class="ico"><use href="#i-chev" /></svg></a></div>
+          </nav>
+        </aside>
+
+        <div class="docs-main">
+          <article class="docs-article">
+            <nav class="crumbs" aria-label="Breadcrumb">
+              <a href="#">Docs</a><span>/</span><a href="#">Grouping and Pivoting</a><span>/</span><span class="cur">Grouping rows</span>
+            </nav>
+            <div class="docs-title">
+              <h1>Grouping rows</h1>
+              <div class="docs-actions">
+                <a class="key key--sm" href="#"><svg class="ico"><use href="#i-md" /></svg>View as Markdown</a>
+                <button class="key key--sm" type="button" data-copy="# Grouping rows"><svg class="ico"><use href="#i-copy" /></svg>Copy page</button>
+              </div>
+            </div>
+
+            <div class="prose">
+              <p class="lead">
+                You can use any <code>field</code> available in the
+                <code>DataSource</code> to do the grouping. It can even be a
+                field that is not a column.
+              </p>
+
+              <div class="note">
+                <span class="note-label">NOTE</span>
+                <p>
+                  When using TypeScript, both <code>DataSource</code> and
+                  <code>InfiniteTable</code> are generic and take a
+                  <code>DATA_TYPE</code> parameter. The fields in that type can
+                  then be used for grouping.
+                </p>
+              </div>
+
+              <div class="code">
+                <div class="code-bar">
+                  <span class="code-file">grouping.tsx</span>
+                  <button class="code-copy" type="button" data-copy="const groupBy = [{ field: 'country' }]">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+                <pre><code><span class="line"><span class="k">import</span> <span class="x">{</span> InfiniteTable<span class="x">,</span> DataSource <span class="x">}</span> <span class="k">from</span> <span class="s">'<span data-fw="react">@infinite-table/infinite-react</span><span data-fw="vue">@infinite-table/infinite-vue</span>'</span></span><span class="line"> </span><span class="line"><span class="k">type</span> <span class="t">Person</span> <span class="x">=</span> <span class="x">{</span> id<span class="x">:</span> <span class="t">string</span><span class="x">;</span> name<span class="x">:</span> <span class="t">string</span><span class="x">;</span> age<span class="x">:</span> <span class="t">number</span><span class="x">;</span> country<span class="x">:</span> <span class="t">string</span> <span class="x">}</span></span><span class="line"> </span><span class="line hl"><span class="k">const</span> groupBy <span class="x">=</span> <span class="x">[{</span> field<span class="x">:</span> <span class="s">'country'</span> <span class="x">}]</span></span><span class="line"> </span><span class="line"><span class="x">&lt;</span><span class="t">DataSource</span><span class="x">&lt;</span><span class="t">Person</span><span class="x">&gt;</span> <span class="p">data</span><span class="x">={</span>people<span class="x">}</span> <span class="p">primaryKey</span><span class="x">=</span><span class="s">"id"</span> <span class="p">groupBy</span><span class="x">={</span>groupBy<span class="x">}&gt;</span></span><span class="line">  <span class="x">&lt;</span><span class="t">InfiniteTable</span><span class="x">&lt;</span><span class="t">Person</span><span class="x">&gt;</span> <span class="p">columns</span><span class="x">={</span>columns<span class="x">}</span> <span class="x">/&gt;</span></span><span class="line"><span class="x">&lt;/</span><span class="t">DataSource</span><span class="x">&gt;</span></span></code></pre>
+              </div>
+
+              <p>
+                In the example above, we're grouping by <code>country</code>.
+                Specifying a field that is not in the <code>Person</code> type
+                is a type error.
+              </p>
+
+              <div class="demo">
+                <div class="demo-bar">
+                  <span class="demo-title">Simple row grouping</span>
+                  <button class="demo-tab" type="button" role="tab" aria-selected="true">Preview</button>
+                  <button class="demo-tab" type="button" role="tab" aria-selected="false">row-grouping.demo.tsx</button>
+                  <div class="demo-tools">
+                    <button type="button" title="Edit" aria-label="Edit"><svg class="ico"><use href="#i-edit" /></svg></button>
+                    <button type="button" title="Fork to CodeSandbox" aria-label="Fork to CodeSandbox"><svg class="ico"><use href="#i-fork" /></svg></button>
+                    <button type="button" title="Reset" aria-label="Reset"><svg class="ico"><use href="#i-reset" /></svg></button>
+                    <button type="button" title="Full screen" aria-label="Full screen"><svg class="ico"><use href="#i-full" /></svg></button>
+                  </div>
+                </div>
+                <div class="demo-body" data-grid-demo="grouped" data-theme-name="terminal"></div>
+              </div>
+
+              <h2 id="group-column"><a href="#group-column" aria-hidden="true">#</a>Customizing the group column</h2>
+              <p>
+                In <code>groupBy.column</code> you can use any column property,
+                for example a custom <code>renderValue</code>.
+              </p>
+              <div class="code">
+                <div class="code-bar">
+                  <span class="code-file">group-column.tsx</span>
+                  <button class="code-copy" type="button" data-copy="const groupBy = [{ field: 'country', column: { renderValue: ({ value }) => <>Country: {value}</> } }]">
+                    <svg class="ico"><use href="#i-copy" /></svg>
+                    <span class="idle">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+                <pre><code><span class="line"><span class="k">const</span> groupBy <span class="x">=</span> <span class="x">[</span></span><span class="line">  <span class="x">{</span></span><span class="line">    field<span class="x">:</span> <span class="s">'country'</span><span class="x">,</span></span><span class="line">    column<span class="x">:</span> <span class="x">{</span></span><span class="line hl">      renderValue<span class="x">:</span> <span class="x">({</span> value <span class="x">})</span> <span class="k">=&gt;</span> <span class="x">&lt;&gt;</span>Country: <span class="x">{</span>value<span class="x">}&lt;/&gt;,</span></span><span class="line">    <span class="x">},</span></span><span class="line">  <span class="x">},</span></span><span class="line"><span class="x">]</span></span></code></pre>
+              </div>
+
+              <h2 id="strategies"><a href="#strategies" aria-hidden="true">#</a>Grouping strategies</h2>
+              <p>
+                Multiple grouping levels can be rendered as one column per
+                group (<code>multi-column</code>, the default) or as a single
+                column (<code>single-column</code>). Set it with
+                <code>groupRenderStrategy</code>.
+              </p>
+              <div class="props-wrap">
+                <table class="props">
+                  <thead>
+                    <tr><th>Prop</th><th>Type</th><th>Default</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>groupRenderStrategy</td>
+                      <td>'multi-column' | 'single-column'</td>
+                      <td>'multi-column'</td>
+                    </tr>
+                    <tr>
+                      <td>groupColumn</td>
+                      <td>InfiniteTableColumn | (options) =&gt; InfiniteTableColumn</td>
+                      <td>—</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2 id="aggregations"><a href="#aggregations" aria-hidden="true">#</a>Aggregations</h2>
+              <p>
+                Group rows can show aggregated values, such as a sum or an
+                average of the rows they contain, computed on the client or
+                returned by the server. <a href="#">Group aggregations →</a>
+              </p>
+            </div>
+
+            <div class="pager">
+              <a href="#"><span class="label">← Previous</span><b>Sorting</b></a>
+              <a href="#"><span class="label">Next →</span><b>Group aggregations</b></a>
+            </div>
+            <div class="docs-foot">
+              <span>Was this page helpful? &nbsp;<a href="#">Yes</a> · <a href="#">No</a></span>
+              <a href="#">Edit this page on GitHub ↗</a>
+            </div>
+          </article>
+        </div>
+
+        <aside class="toc" aria-label="On this page">
+          <span class="label">On this page</span>
+          <nav>
+            <a href="#group-column" aria-current="true">Customizing the group column</a>
+            <a href="#strategies">Grouping strategies</a>
+            <a href="#aggregations">Aggregations</a>
+          </nav>
+          <div class="toc-meta">
+            <a href="#"><svg class="ico"><use href="#i-md" /></svg>View as Markdown</a>
+            <a href="#"><svg class="ico"><use href="#i-edit" /></svg>Edit on GitHub</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- command-K search -->
+    <dialog data-search aria-label="Search the docs">
+      <div class="search-input">
+        <span>&gt;</span>
+        <input type="text" placeholder="Search the docs…" aria-label="Search the docs" />
+        <kbd>esc</kbd>
+      </div>
+      <div class="search-results">
+        <span class="label">Learn</span>
+        <a href="#" class="active" data-search-item><svg class="ico"><use href="#i-doc" /></svg><span>Grouping rows</span><small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-doc" /></svg><span>Group aggregations</span><small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-doc" /></svg><span>Pivoting</span><small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-doc" /></svg><span>Lazy loading</span><small>Working with Data</small></a>
+        <span class="label">API reference</span>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-code" /></svg><code>groupBy</code><small>DataSource</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-code" /></svg><code>groupRenderStrategy</code><small>InfiniteTable</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-code" /></svg><code>pivotBy</code><small>DataSource</small></a>
+        <a href="#" data-search-item><svg class="ico"><use href="#i-code" /></svg><code>aggregationReducers</code><small>DataSource</small></a>
+      </div>
+      <div class="search-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> close</span>
+        <span class="grow"></span>
+        <span>8 results</span>
+      </div>
+    </dialog>
+
+    <script type="module" src="./shared.js"></script>
+  </body>
+</html>

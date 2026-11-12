@@ -1,0 +1,234 @@
+/*
+ * Shared by the three direction prototypes: page switching, the prototype
+ * bar, and a neutral base for the live grid demos (grid-demos.js).
+ *
+ * Each direction sets these on :root / [data-theme='dark'] and may restyle
+ * any .gd-* class on top:
+ *   --p-surface --p-border --p-fg --p-muted --p-accent --p-accent-fg
+ *   --p-radius --p-mono
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+}
+
+html[data-page='home'] [data-page-view='docs'],
+html[data-page='docs'] [data-page-view='home'] {
+  display: none !important;
+}
+
+html[data-framework='react'] [data-fw='vue'],
+html[data-framework='vue'] [data-fw='react'] {
+  display: none !important;
+}
+
+html[data-theme='dark'] [data-only='light'],
+html[data-theme='light'] [data-only='dark'] {
+  display: none !important;
+}
+
+/* ---- prototype bar ------------------------------------------------------ */
+
+.proto-bar {
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgb(18 20 24 / 0.92);
+  color: #e8eaee;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  box-shadow: 0 10px 40px -8px rgb(0 0 0 / 0.55);
+  backdrop-filter: blur(10px);
+  font: 500 12px/1 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  white-space: nowrap;
+  max-width: calc(100vw - 16px);
+  overflow-x: auto;
+}
+html[data-no-bar] .proto-bar {
+  display: none;
+}
+.proto-bar__group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.07);
+}
+.proto-bar a,
+.proto-bar button {
+  all: unset;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #aab0bb;
+}
+.proto-bar a:hover,
+.proto-bar button:hover {
+  color: #fff;
+}
+.proto-bar [aria-current='true'],
+.proto-bar [aria-pressed='true'] {
+  background: #fff;
+  color: #111;
+}
+.proto-bar__label {
+  padding-left: 8px;
+  color: #7d8490;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+@media (max-width: 720px) {
+  .proto-bar__label {
+    display: none;
+  }
+}
+
+/* ---- live grid demos ---------------------------------------------------- */
+
+:root {
+  --gd-up: #0f8a5f;
+  --gd-down: #cf3a4b;
+}
+html[data-theme='dark'] {
+  --gd-up: #35d39a;
+  --gd-down: #ff6b7d;
+}
+
+.gd {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--p-border, #ddd);
+  border-radius: var(--p-radius, 10px);
+  background: var(--p-surface, #fff);
+  color: var(--p-fg, #111);
+  overflow: hidden;
+}
+.gd-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--p-border, #ddd);
+}
+.gd-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.gd-label {
+  font: 500 11px/1 var(--p-mono, ui-monospace, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-muted, #666);
+}
+.gd-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--p-border, #ddd);
+  border-radius: calc(var(--p-radius, 10px) * 0.8);
+}
+.gd-seg button,
+.gd-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--p-muted, #666);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: calc(var(--p-radius, 10px) * 0.6);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gd-seg button:hover,
+.gd-btn:hover {
+  color: var(--p-fg, #111);
+}
+.gd-seg button[aria-pressed='true'] {
+  background: var(--p-accent, #2563eb);
+  color: var(--p-accent-fg, #fff);
+}
+.gd-btn {
+  border: 1px solid var(--p-border, #ddd);
+  color: var(--p-fg, #111);
+}
+.gd-spacer {
+  flex: 1;
+}
+.gd-readout {
+  font: 500 12px/1.4 var(--p-mono, ui-monospace, monospace);
+  color: var(--p-muted, #666);
+  font-variant-numeric: tabular-nums;
+}
+.gd-readout b {
+  color: var(--p-fg, #111);
+  font-weight: 600;
+}
+.gd-grid {
+  height: 440px;
+  min-height: 0;
+  position: relative;
+}
+.gd-grid--tall {
+  height: 520px;
+}
+.gd-grid--bare {
+  height: 360px;
+}
+.gd-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font: 500 13px/1 var(--p-mono, ui-monospace, monospace);
+  color: var(--p-muted, #666);
+}
+.gd-snippet {
+  margin: 0;
+  padding: 12px 14px;
+  border-top: 1px solid var(--p-border, #ddd);
+  font: 12.5px/1.6 var(--p-mono, ui-monospace, monospace);
+  color: var(--p-muted, #666);
+  overflow-x: auto;
+  white-space: pre;
+}
+.gd-snippet b {
+  color: var(--p-accent, #2563eb);
+  font-weight: 500;
+}
+.gd-up {
+  color: var(--gd-up);
+}
+.gd-down {
+  color: var(--gd-down);
+}
+
+/* numbers that tick (shared.js): directions style the flash */
+[data-tick] {
+  font-variant-numeric: tabular-nums;
+}
