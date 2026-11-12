@@ -48,6 +48,34 @@ async function getThemeVars(page: Page, section: Section) {
   }, section);
 }
 
+/**
+ * The color a variable gives, as the browser computes it. A production build
+ * can write the same color in another way (`#eeeeee` as `#eee`), so colors
+ * that come from the stylesheets are compared like this, not as text.
+ */
+async function getColors(page: Page, section: Section, names: string[]) {
+  return await page.evaluate(
+    ({ section, names }) => {
+      const grid = document.querySelector(
+        `[data-name="${section}"] .InfiniteHeader`,
+      )!;
+      const probe = document.createElement('div');
+      grid.appendChild(probe);
+
+      const colors = Object.fromEntries(
+        names.map((name) => {
+          probe.style.color = `var(${name})`;
+          return [name, getComputedStyle(probe).color];
+        }),
+      );
+      probe.remove();
+
+      return colors;
+    },
+    { section, names },
+  );
+}
+
 // the values of the shadcn/ui variables in dark mode
 const DARK = {
   background: 'oklch(0.145 0 0)',
@@ -98,14 +126,25 @@ export default test.describe('shadcn theme', () => {
 
     expect(light['--infinite-theme-mode']).toEqual('light');
     expect(light['--infinite-background']).toEqual('oklch(1 0 0)');
-    expect(light['--infinite-cell-border-color']).toEqual('#c6c6c6');
+
+    // the light colors of the default theme
+    expect(
+      await getColors(page, 'light', [
+        '--infinite-cell-border-color',
+        '--infinite-row-disabled-background',
+        '--infinite-row-odd-disabled-background',
+        '--infinite-rowdetail-background',
+      ]),
+    ).toEqual({
+      '--infinite-cell-border-color': 'rgb(198, 198, 198)',
+      '--infinite-row-disabled-background': 'rgb(238, 238, 238)',
+      '--infinite-row-odd-disabled-background': 'rgb(249, 249, 249)',
+      '--infinite-rowdetail-background': 'rgb(219, 219, 219)',
+    });
     expect(light['--infinite-pinned-cell-border']).toEqual('1px solid #c6c6c6');
     expect(light['--infinite-filter-editor-border']).toEqual(
       '1px solid #c6c6c6',
     );
-    expect(light['--infinite-row-disabled-background']).toEqual('#eeeeee');
-    expect(light['--infinite-row-odd-disabled-background']).toEqual('#f9f9f9');
-    expect(light['--infinite-rowdetail-background']).toEqual('#dbdbdb');
   });
 
   test('does not depend on the color scheme of the OS', async ({ page }) => {
