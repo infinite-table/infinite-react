@@ -3,7 +3,7 @@
 // in headless Chromium and reports the ones that don't render: an uncaught
 // error, the error overlay, an empty page, or the license footer.
 //
-//   node scripts/migrate-examples/check-demos.mjs [id-prefix…] [--shots <dir>]
+//   npm run check:demos -- [id-prefix…] [--shots <dir>]
 //
 // Playwright comes from the examples app (`npm ci --prefix examples`).
 import fs from 'node:fs';
@@ -11,7 +11,7 @@ import http from 'node:http';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-const WWW_DIR = path.resolve(import.meta.dirname, '../..');
+const WWW_DIR = path.resolve(import.meta.dirname, '..');
 const PUBLIC_DIR = path.join(WWW_DIR, 'public');
 const CONCURRENCY = 6;
 

@@ -108,13 +108,14 @@ export async function renderMarkdownPage(options: {
           fileInfo,
           env,
         }),
-        // file="x.demo.tsx" / file="x.snippet.tsx" fences (prebuilt, editable
-        // demos and type-checked snippets); everything else stays on Sandpack
+        // file="x.demo.tsx" / file="x.snippet.tsx" fences: prebuilt, editable
+        // demos and type-checked snippets. Inline ts/tsx/js code fails the
+        // build - it has to live in a snippet file.
         remarkDemoFences({
           contentDir: DOCS_CONTENT_DIR,
           folder: fileInfo.folderPath,
           claim: isDocsKitFence,
-          banInlineCode: false,
+          banInlineCode: true,
           staticFences: 'card',
           fenceDefaults: DOCS_FENCE_DEFAULTS,
           siblings: framework === 'vue' ? DOCS_VUE_SIBLINGS : undefined,
@@ -122,10 +123,8 @@ export async function renderMarkdownPage(options: {
             'process.env.NEXT_PUBLIC_BASE_URL': `'${env.NEXT_PUBLIC_BASE_URL}'`,
           },
         }),
-        snippetTransformer({
-          fileInfo,
-          env,
-        }),
+        // the other inline fences (css, sh, json…)
+        snippetTransformer(),
       ],
     }),
   );

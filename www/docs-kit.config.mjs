@@ -61,7 +61,7 @@ const DEMO_ANCHOR_PREFIX = 'demo-';
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || 'https://data.infinite-table.com';
 
-// Same fallback as Sandpack's examples: the published version the docs build
+// Forked demos use the published version the docs build
 // is pinned to (next.config.js), else the version in source/package.json.
 const INFINITE_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || sourcePackage.version;
@@ -127,7 +127,7 @@ export default {
       process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY || '',
     ),
   },
-  // shown, edited and forked code gets the URL inlined (as the Sandpack examples do)
+  // shown, edited and forked code gets the URL inlined
   sourceReplacements: {
     'process.env.NEXT_PUBLIC_BASE_URL': `'${BASE_URL}'`,
   },

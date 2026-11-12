@@ -28,7 +28,7 @@
 
   /*
    * The code editor (the card's Edit button). Unset ones follow the card
-   * values above; the syntax colors are the Sandpack palette, like the
+   * values above; the syntax colors are the same palette as the
    * highlighted code (DOCS_CODE_THEMES).
    */
   --dk-editor-bg: #101419;
@@ -52,7 +52,7 @@
   --dk-editor-punctuation: #939293;
 }
 
-/* the size and font of the Sandpack examples' file tabs */
+/* the size and font of the file tabs */
 .dk-demo-tab,
 .dk-demo-file,
 .dk-demo-filename {

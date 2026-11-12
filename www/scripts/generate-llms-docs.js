@@ -50,7 +50,6 @@ const STRIP_WRAPPERS = [
   'PropTable',
   'YouWillLearnCard',
   'HeroCards',
-  'Snippet',
   'TerminalBlock',
   // docs-kit demo cards (<DemoTitle> becomes an "Example" heading below)
   'Demo',
@@ -86,12 +85,6 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (fileRef.startsWith('/')) {
     // docs-kit fences: `/docs/...` is relative to the content folder
     fileAbsolutePath = path.join(CONTENT_DIR, fileRef);
-  } else if (fileRef.startsWith('$DOCS/')) {
-    fileAbsolutePath = path.join(
-      CONTENT_DIR,
-      'docs',
-      fileRef.replace('$DOCS/', ''),
-    );
   } else {
     fileAbsolutePath = path.resolve(
       path.dirname(mdFileAbsolutePath),
@@ -116,7 +109,7 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (docsKitCode && /\.(demo|snippet)\.[cm]?[jt]sx?$/.test(fileRef)) {
     code = docsKitCode.extractCodeMarkers(code, context).source;
   }
-  // a titled docs-kit live demo: same "Example" heading as <Sandpack title>.
+  // a titled docs-kit live demo gets an "Example" heading.
   // Demo fences are live unless they say `live=false` (DOCS_FENCE_DEFAULTS
   // in src/utils/docsKit.ts).
   const live = /\.demo\.[cm]?[jt]sx?$/.test(fileRef)
@@ -166,16 +159,6 @@ function transformProse(text) {
     },
   );
   result = result.replace(/<\/Prop>/g, '');
-
-  // <Sandpack title="..."> -> "Example: ..." (code fences inside are kept)
-  result = result.replace(
-    new RegExp(`<Sandpack\\b${ATTRS}>`, 'g'),
-    (_all, attrs) => {
-      const title = getAttr(attrs, 'title');
-      return title ? `**Example: ${title}**` : '**Example**';
-    },
-  );
-  result = result.replace(/<\/Sandpack>/g, '');
 
   // CodeSandbox / YouTube embeds -> plain links
   result = result.replace(
