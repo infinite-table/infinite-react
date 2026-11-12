@@ -105,21 +105,21 @@ export class DragManager {
   public static registerDragInteractionTarget(
     dragInteractionTarget: DragInteractionTarget,
   ) {
-    if (
-      DragManager.dragInteractionTargetsMap.has(dragInteractionTarget.listId)
-    ) {
+    const { listId } = dragInteractionTarget;
+    const current = DragManager.dragInteractionTargetsMap.get(listId);
+
+    if (current && current !== dragInteractionTarget) {
       console.warn(
-        `DragInteractionTarget with listId ${dragInteractionTarget.listId} already registered`,
+        `DragInteractionTarget with listId ${listId} already registered`,
       );
       return;
     }
 
-    DragManager.dragInteractionTargetsMap.set(
-      dragInteractionTarget.listId,
-      dragInteractionTarget,
-    );
+    if (!current) {
+      DragManager.dragInteractionTargetsMap.set(listId, dragInteractionTarget);
 
-    DragManager.emit('register', dragInteractionTarget);
+      DragManager.emit('register', dragInteractionTarget);
+    }
 
     return () => {
       DragManager.unregisterDragInteractionTarget(dragInteractionTarget);
@@ -139,16 +139,20 @@ export class DragManager {
       return;
     }
 
+    const { listId } = dragInteractionTarget;
+
+    // it could have been unregistered already (all targets are unregistered
+    // on drop), or it was never registered, as another list has the same id.
+    // In both cases there's nothing to do, and the target that is registered
+    // under this id has to stay.
     if (
-      !DragManager.dragInteractionTargetsMap.has(dragInteractionTarget.listId)
+      DragManager.dragInteractionTargetsMap.get(listId) !==
+      dragInteractionTarget
     ) {
-      console.warn(
-        `DragInteractionTarget with listId ${dragInteractionTarget.listId} not found`,
-      );
       return;
     }
 
-    DragManager.dragInteractionTargetsMap.delete(dragInteractionTarget.listId);
+    DragManager.dragInteractionTargetsMap.delete(listId);
     dragInteractionTarget.unregister();
     DragManager.emit('unregister', dragInteractionTarget);
   }
