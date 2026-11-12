@@ -2,6 +2,7 @@
  * Behaviour shared by the three direction prototypes. Markup hooks:
  *
  *   [data-toggle-theme]            flips light/dark
+ *   [data-set-accent="ember|ion"]  direction D's accent palette (<html data-accent>)
  *   [data-goto-page="home|docs"]   switches the page shown
  *   [data-set-framework="react|vue"]  the React | Vue switcher seam
  *     ([data-fw="react|vue"] content follows it)
@@ -21,12 +22,16 @@ const DIRECTIONS = [
   { id: 'a', label: 'A · Terminal' },
   { id: 'b', label: 'B · Aurora' },
   { id: 'c', label: 'C · Paper' },
+  { id: 'd', label: 'D · Orbit' },
+  { id: 'e', label: 'E · Vector' },
+  { id: 'f', label: 'F · Breeze' },
 ];
 
 function syncUrl() {
   const next = new URLSearchParams(location.search);
   next.set('page', root.dataset.page);
   next.set('theme', root.dataset.theme);
+  if (root.dataset.direction === 'd') next.set('accent', root.dataset.accent);
   history.replaceState(null, '', `${location.pathname}?${next}${location.hash}`);
 }
 
@@ -34,6 +39,15 @@ function setTheme(theme) {
   root.dataset.theme = theme;
   try {
     localStorage.setItem('it-redesign-theme', theme);
+  } catch {}
+  syncUrl();
+  renderBar();
+}
+
+function setAccent(accent) {
+  root.dataset.accent = accent;
+  try {
+    localStorage.setItem('it-redesign-accent', accent);
   } catch {}
   syncUrl();
   renderBar();
@@ -84,6 +98,14 @@ function renderBar() {
       <button data-set-theme="light" aria-pressed="${theme === 'light'}">Light</button>
       <button data-set-theme="dark" aria-pressed="${theme === 'dark'}">Dark</button>
     </span>
+    ${
+      current === 'd'
+        ? `<span class="proto-bar__group">
+      <button data-set-accent="ember" aria-pressed="${root.dataset.accent !== 'ion'}">Ember</button>
+      <button data-set-accent="ion" aria-pressed="${root.dataset.accent === 'ion'}">Ion</button>
+    </span>`
+        : ''
+    }
     <a href="./index.html">All</a>`;
 }
 
@@ -103,6 +125,12 @@ document.addEventListener('click', (event) => {
   if (themeSet) {
     event.preventDefault();
     setTheme(themeSet.dataset.setTheme);
+    return;
+  }
+  const accentSet = target.closest('[data-set-accent]');
+  if (accentSet) {
+    event.preventDefault();
+    setAccent(accentSet.dataset.setAccent);
     return;
   }
   const goto = target.closest('[data-goto-page]');

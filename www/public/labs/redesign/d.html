@@ -1,0 +1,2991 @@
+<!doctype html>
+<html lang="en" data-direction="d">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Infinite Table redesign · Direction D · Orbit</title>
+    <script src="./boot.js"></script>
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ---- tokens -------------------------------------------------------
+       * Four combinations: mode (data-theme) x accent (data-accent).
+       * Ember is the coral/magenta/amber palette, Ion the logo's green/blue.
+       * Components only ever read the variables. */
+      :root {
+        /* light · ember: daylight on the launch pad */
+        --canvas: #f6f2f6;
+        --surface: #ffffff;
+        --raised: #fbf8fb;
+        --well: #efe8ef;
+        --edge: #e2d9e2;
+        --edge-strong: #cbbccb;
+        --ink: #1c0f18;
+        --ink-2: #35252f;
+        --muted: #5d4f5a;
+        --faint: #746571;
+        --a1: #d9461c;
+        --a2: #d6176b;
+        --a-solid: #c4125e;
+        --eyebrow: #a25b00;
+        --link: #a25b00;
+        --btn-1: #d93a14;
+        --btn-2: #d6176b;
+        --btn-fg: #ffffff;
+        --glow: rgb(214 23 107 / 0.26);
+        --glow-soft: rgb(253 104 68 / 0.2);
+        --nebula-1: rgb(253 104 68 / 0.3);
+        --nebula-2: rgb(255 48 126 / 0.2);
+        --nebula-3: rgb(252 180 66 / 0.26);
+        --floor-line: rgb(28 15 24 / 0.22);
+        --floor-cell: rgb(214 23 107 / 0.16);
+        --card: #ffffff;
+        --card-shadow: 0 1px 2px rgb(28 15 24 / 0.05),
+          0 14px 34px -18px rgb(28 15 24 / 0.2);
+        --header-bg: rgb(246 242 246 / 0.82);
+        --ghost-alpha: 0.16;
+        --stars: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22820%22 height=%22620%22 fill=%22%232a1a26%22%3E%3Ccircle cx=%22269.1%22 cy=%22100.5%22 r=%221%22 opacity=%220.23%22/%3E%3Ccircle cx=%22530.7%22 cy=%2253.5%22 r=%220.8%22 opacity=%220.12%22/%3E%3Ccircle cx=%22438.7%22 cy=%22229.4%22 r=%220.8%22 opacity=%220.22%22/%3E%3Ccircle cx=%2256.4%22 cy=%22314.5%22 r=%221%22 opacity=%220.23%22/%3E%3Ccircle cx=%2240.0%22 cy=%22270.2%22 r=%220.8%22 opacity=%220.28%22/%3E%3Ccircle cx=%2265.9%22 cy=%2264.4%22 r=%221.2%22 opacity=%220.19%22/%3E%3Ccircle cx=%22349.6%22 cy=%22506.1%22 r=%221.2%22 opacity=%220.17%22/%3E%3Ccircle cx=%22109.0%22 cy=%22143.9%22 r=%221%22 opacity=%220.23%22/%3E%3Ccircle cx=%22511.9%22 cy=%22578.6%22 r=%221%22 opacity=%220.14%22/%3E%3Ccircle cx=%22471.7%22 cy=%22248.0%22 r=%221%22 opacity=%220.3%22/%3E%3Ccircle cx=%22791.0%22 cy=%2237.9%22 r=%221%22 opacity=%220.21%22/%3E%3Ccircle cx=%22696.8%22 cy=%22183.8%22 r=%221%22 opacity=%220.14%22/%3E%3Ccircle cx=%22125.4%22 cy=%2280.7%22 r=%220.8%22 opacity=%220.25%22/%3E%3Ccircle cx=%22256.8%22 cy=%22499.7%22 r=%221.2%22 opacity=%220.17%22/%3E%3Ccircle cx=%22154.6%22 cy=%22359.0%22 r=%221.2%22 opacity=%220.15%22/%3E%3Ccircle cx=%22521.1%22 cy=%22233.4%22 r=%220.8%22 opacity=%220.16%22/%3E%3Ccircle cx=%22448.2%22 cy=%2247.7%22 r=%221.2%22 opacity=%220.19%22/%3E%3Ccircle cx=%2257.7%22 cy=%22133.6%22 r=%221.2%22 opacity=%220.22%22/%3E%3Ccircle cx=%22554.3%22 cy=%22266.6%22 r=%220.8%22 opacity=%220.26%22/%3E%3Ccircle cx=%22261.3%22 cy=%22361.3%22 r=%221%22 opacity=%220.3%22/%3E%3Ccircle cx=%22372.5%22 cy=%22189.9%22 r=%220.8%22 opacity=%220.25%22/%3E%3Ccircle cx=%22645.5%22 cy=%22429.4%22 r=%221%22 opacity=%220.21%22/%3E%3Ccircle cx=%22205.3%22 cy=%22354.7%22 r=%220.8%22 opacity=%220.18%22/%3E%3Ccircle cx=%22430.2%22 cy=%22535.1%22 r=%220.8%22 opacity=%220.22%22/%3E%3Ccircle cx=%22593.6%22 cy=%22182.8%22 r=%221.2%22 opacity=%220.18%22/%3E%3Ccircle cx=%22794.1%22 cy=%2280.8%22 r=%220.8%22 opacity=%220.23%22/%3E%3Ccircle cx=%22344.5%22 cy=%22464.3%22 r=%220.8%22 opacity=%220.27%22/%3E%3Ccircle cx=%22131.6%22 cy=%22303.4%22 r=%221%22 opacity=%220.25%22/%3E%3Ccircle cx=%2241.4%22 cy=%22410.9%22 r=%220.8%22 opacity=%220.16%22/%3E%3Ccircle cx=%22621.7%22 cy=%22353.8%22 r=%221%22 opacity=%220.18%22/%3E%3Ccircle cx=%22710.4%22 cy=%22198.2%22 r=%220.8%22 opacity=%220.3%22/%3E%3Ccircle cx=%22566.2%22 cy=%22366.6%22 r=%221%22 opacity=%220.21%22/%3E%3Ccircle cx=%22473.9%22 cy=%22283.7%22 r=%220.8%22 opacity=%220.24%22/%3E%3Ccircle cx=%22682.0%22 cy=%22576.8%22 r=%221%22 opacity=%220.2%22/%3E%3Ccircle cx=%22389.3%22 cy=%22408.5%22 r=%221.2%22 opacity=%220.3%22/%3E%3Ccircle cx=%2258.5%22 cy=%22430.9%22 r=%221%22 opacity=%220.13%22/%3E%3Ccircle cx=%22527.7%22 cy=%22605.9%22 r=%220.8%22 opacity=%220.16%22/%3E%3Ccircle cx=%22667.5%22 cy=%22180.8%22 r=%220.8%22 opacity=%220.18%22/%3E%3Ccircle cx=%22318.6%22 cy=%22411.2%22 r=%221%22 opacity=%220.23%22/%3E%3Ccircle cx=%2228.1%22 cy=%22287.0%22 r=%221.2%22 opacity=%220.27%22/%3E%3Ccircle cx=%22144.4%22 cy=%2280.3%22 r=%221%22 opacity=%220.28%22/%3E%3Ccircle cx=%2257.2%22 cy=%22470.9%22 r=%221%22 opacity=%220.26%22/%3E%3Ccircle cx=%22113.5%22 cy=%22158.6%22 r=%220.8%22 opacity=%220.27%22/%3E%3Ccircle cx=%22322.8%22 cy=%22532.9%22 r=%220.8%22 opacity=%220.28%22/%3E%3Ccircle cx=%2274.5%22 cy=%22279.5%22 r=%221.2%22 opacity=%220.26%22/%3E%3Ccircle cx=%22449.6%22 cy=%22540.0%22 r=%221%22 opacity=%220.28%22/%3E%3Ccircle cx=%22665.4%22 cy=%22528.4%22 r=%221%22 opacity=%220.26%22/%3E%3Ccircle cx=%22232.7%22 cy=%22259.2%22 r=%221%22 opacity=%220.14%22/%3E%3Ccircle cx=%22297.0%22 cy=%22540.5%22 r=%221.2%22 opacity=%220.19%22/%3E%3Ccircle cx=%22776.2%22 cy=%22100.6%22 r=%221%22 opacity=%220.25%22/%3E%3Ccircle cx=%22151.0%22 cy=%22149.2%22 r=%220.8%22 opacity=%220.25%22/%3E%3Ccircle cx=%22196.7%22 cy=%22301.0%22 r=%220.8%22 opacity=%220.3%22/%3E%3Ccircle cx=%22481.3%22 cy=%22167.6%22 r=%220.8%22 opacity=%220.15%22/%3E%3Ccircle cx=%2213.3%22 cy=%22261.4%22 r=%221%22 opacity=%220.27%22/%3E%3Ccircle cx=%22305.4%22 cy=%22349.8%22 r=%220.8%22 opacity=%220.23%22/%3E%3Ccircle cx=%22772.5%22 cy=%22424.3%22 r=%221.2%22 opacity=%220.3%22/%3E%3Ccircle cx=%22422.4%22 cy=%22380.6%22 r=%221.2%22 opacity=%220.29%22/%3E%3Ccircle cx=%22551.0%22 cy=%2242.4%22 r=%220.8%22 opacity=%220.22%22/%3E%3Ccircle cx=%22729.6%22 cy=%22478.0%22 r=%220.8%22 opacity=%220.12%22/%3E%3Ccircle cx=%22709.6%22 cy=%22488.7%22 r=%221.2%22 opacity=%220.24%22/%3E%3Ccircle cx=%22323.9%22 cy=%22249.4%22 r=%221.2%22 opacity=%220.25%22/%3E%3Ccircle cx=%2292.8%22 cy=%22390.6%22 r=%220.8%22 opacity=%220.2%22/%3E%3Ccircle cx=%2259.8%22 cy=%2250.4%22 r=%220.8%22 opacity=%220.27%22/%3E%3Ccircle cx=%22177.0%22 cy=%22107.4%22 r=%220.8%22 opacity=%220.13%22/%3E%3Cpath d=%22M182 311h8M186 307v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M612 209h8M616 205v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M441 504h8M445 500v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M64 449h8M68 445v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M716 404h8M720 400v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M652 320h8M656 316v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M661 529h8M665 525v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M118 108h8M122 104v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M414 526h8M418 522v8%22 stroke=%22%232a1a26%22 stroke-width=%221%22 opacity=%22.3%22 fill=%22none%22/%3E%3Cpath d=%22M438.7 229.4L372.5 189.9%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M438.7 229.4L473.9 283.7%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M56.4 314.5L40.0 270.2%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M56.4 314.5L131.6 303.4%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M65.9 64.4L144.4 80.3%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M349.6 506.1L256.8 499.7%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M349.6 506.1L430.2 535.1%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M349.6 506.1L344.5 464.3%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M109.0 143.9L125.4 80.7%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M109.0 143.9L144.4 80.3%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M511.9 578.6L449.6 540.0%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M471.7 248.0L521.1 233.4%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M791.0 37.9L776.2 100.6%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3Cpath d=%22M256.8 499.7L344.5 464.3%22 stroke=%22%232a1a26%22 stroke-width=%22.7%22 opacity=%22.06%22 fill=%22none%22/%3E%3C/svg%3E");
+        --stars-alpha: 1;
+        --veil-1: rgb(246 242 246 / 0.2);
+        --veil-2: rgb(246 242 246 / 0.7);
+        --up: #0b7d49;
+        --down: #c92a40;
+        --bar-ag: #b5a8b3;
+        --track: #ece4ec;
+        --hl: rgb(214 23 107 / 0.08);
+        --tok-kw: #bd1160;
+        --tok-str: #8f4f00;
+        --tok-tag: #c23d16;
+        --tok-prop: #6541b8;
+        --tok-punc: #756672;
+        --tok-com: #7f707b;
+        --grid-bg: #ffffff;
+        --grid-head: #f6f1f6;
+        --grid-line: #ebe3eb;
+
+        --radius: 6px;
+        --wrap: 1180px;
+        --sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system,
+          'Segoe UI', sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        /* the live grid demos' controls (shared.css) */
+        --p-surface: var(--card);
+        --p-border: var(--edge);
+        --p-fg: var(--ink);
+        --p-muted: var(--faint);
+        --p-accent: var(--a-solid);
+        --p-accent-fg: #ffffff;
+        --p-radius: 6px;
+        --p-mono: var(--mono);
+        color-scheme: light;
+      }
+
+      [data-accent='ion'] {
+        /* light · ion */
+        --canvas: #f2f5fa;
+        --surface: #ffffff;
+        --raised: #f8fafd;
+        --well: #e8edf5;
+        --edge: #dbe2ee;
+        --edge-strong: #bcc8da;
+        --ink: #0b1220;
+        --ink-2: #212b3d;
+        --muted: #4c586c;
+        --faint: #627087;
+        --a1: #0a8f57;
+        --a2: #2b5cff;
+        --a-solid: #2b5cff;
+        --eyebrow: #0a7a4b;
+        --link: #1f4fe0;
+        --btn-1: #08804d;
+        --btn-2: #2b5cff;
+        --btn-fg: #ffffff;
+        --glow: rgb(43 92 255 / 0.26);
+        --glow-soft: rgb(10 159 99 / 0.2);
+        --nebula-1: rgb(59 255 127 / 0.3);
+        --nebula-2: rgb(73 122 255 / 0.24);
+        --nebula-3: rgb(47 211 208 / 0.26);
+        --floor-line: rgb(11 18 32 / 0.22);
+        --floor-cell: rgb(43 92 255 / 0.16);
+        --header-bg: rgb(242 245 250 / 0.82);
+        --veil-1: rgb(242 245 250 / 0.2);
+        --veil-2: rgb(242 245 250 / 0.7);
+        --card-shadow: 0 1px 2px rgb(11 18 32 / 0.05),
+          0 14px 34px -18px rgb(11 18 32 / 0.2);
+        --bar-ag: #a9b4c6;
+        --track: #e4eaf3;
+        --hl: rgb(43 92 255 / 0.08);
+        --tok-kw: #2450e6;
+        --tok-str: #0a7a4b;
+        --tok-tag: #0b6a8f;
+        --tok-prop: #6541b8;
+        --tok-punc: #627087;
+        --tok-com: #6b788e;
+        --grid-head: #f1f4f9;
+        --grid-line: #e4e9f1;
+      }
+
+      [data-theme='dark'] {
+        /* dark · ember: the reference palette */
+        --canvas: #13060f;
+        --surface: #200f1b;
+        --raised: #2e1a28;
+        --well: #1a0b15;
+        --edge: #4b2d3e;
+        --edge-strong: #6a4259;
+        --ink: #faf9fc;
+        --ink-2: #e4dde5;
+        --muted: #c2bbc4;
+        --faint: #9a8998;
+        --a1: #fd6844;
+        --a2: #ff307e;
+        --a-solid: #ff5c8f;
+        --eyebrow: #fcb442;
+        --link: #fcb442;
+        --btn-1: #d93a14;
+        --btn-2: #d6176b;
+        --btn-fg: #ffffff;
+        --glow: rgb(255 48 126 / 0.4);
+        --glow-soft: rgb(253 104 68 / 0.28);
+        --nebula-1: rgb(253 104 68 / 0.42);
+        --nebula-2: rgb(255 48 126 / 0.34);
+        --nebula-3: rgb(140 40 150 / 0.3);
+        --floor-line: rgb(255 92 143 / 0.5);
+        --floor-cell: rgb(253 104 68 / 0.34);
+        --card: rgb(32 15 27 / 0.8);
+        --card-shadow: none;
+        --header-bg: rgb(19 6 15 / 0.78);
+        --ghost-alpha: 0.3;
+        --stars: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22820%22 height=%22620%22%3E%3Ccircle cx=%22523.2%22 cy=%2219.3%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.33%22/%3E%3Ccircle cx=%22602.0%22 cy=%22418.1%22 r=%220.8%22 fill=%22%23ffe1d1%22 opacity=%220.23%22/%3E%3Ccircle cx=%2229.8%22 cy=%2261.3%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.49%22/%3E%3Ccircle cx=%22459.7%22 cy=%22442.2%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.52%22/%3E%3Ccircle cx=%22368.8%22 cy=%22174.3%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.18%22/%3E%3Ccircle cx=%22570.9%22 cy=%22212.2%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.31%22/%3E%3Ccircle cx=%2287.0%22 cy=%22236.5%22 r=%220.6%22 fill=%22%23dfe6ff%22 opacity=%220.71%22/%3E%3Ccircle cx=%22218.8%22 cy=%2230.6%22 r=%220.7%22 fill=%22%23ffe1d1%22 opacity=%220.51%22/%3E%3Ccircle cx=%2268.0%22 cy=%22183.4%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.56%22/%3E%3Ccircle cx=%22472.8%22 cy=%22435.2%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.59%22/%3E%3Ccircle cx=%22804.0%22 cy=%22527.5%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.24%22/%3E%3Ccircle cx=%22372.2%22 cy=%22514.5%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.41%22/%3E%3Ccircle cx=%22548.2%22 cy=%22433.5%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.58%22/%3E%3Ccircle cx=%22519.6%22 cy=%22330.9%22 r=%220.5%22 fill=%22%23ffe1d1%22 opacity=%220.28%22/%3E%3Ccircle cx=%22223.2%22 cy=%22570.3%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.53%22/%3E%3Ccircle cx=%22688.4%22 cy=%22478.9%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.69%22/%3E%3Ccircle cx=%22329.7%22 cy=%2244.5%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.72%22/%3E%3Ccircle cx=%22176.7%22 cy=%22309.5%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.46%22/%3E%3Ccircle cx=%22117.4%22 cy=%22459.9%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.34%22/%3E%3Ccircle cx=%22351.9%22 cy=%22361.1%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.32%22/%3E%3Ccircle cx=%22417.7%22 cy=%2259.6%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.71%22/%3E%3Ccircle cx=%22513.5%22 cy=%22488.8%22 r=%220.7%22 fill=%22%23ffe1d1%22 opacity=%220.55%22/%3E%3Ccircle cx=%22313.9%22 cy=%22613.6%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.34%22/%3E%3Ccircle cx=%22703.0%22 cy=%2211.0%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.25%22/%3E%3Ccircle cx=%22613.7%22 cy=%22474.4%22 r=%220.6%22 fill=%22%23ffe1d1%22 opacity=%220.25%22/%3E%3Ccircle cx=%22132.4%22 cy=%226.0%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.72%22/%3E%3Ccircle cx=%22793.2%22 cy=%22470.3%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.75%22/%3E%3Ccircle cx=%22687.4%22 cy=%22314.7%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.27%22/%3E%3Ccircle cx=%22442.0%22 cy=%22480.5%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.75%22/%3E%3Ccircle cx=%22267.2%22 cy=%2215.9%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.72%22/%3E%3Ccircle cx=%22198.4%22 cy=%22151.4%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.77%22/%3E%3Ccircle cx=%22598.3%22 cy=%22503.4%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.51%22/%3E%3Ccircle cx=%22108.3%22 cy=%22294.9%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.28%22/%3E%3Ccircle cx=%22712.4%22 cy=%22263.0%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.76%22/%3E%3Ccircle cx=%22582.9%22 cy=%22248.2%22 r=%220.9%22 fill=%22%23ffe1d1%22 opacity=%220.58%22/%3E%3Ccircle cx=%22734.5%22 cy=%22280.3%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.32%22/%3E%3Ccircle cx=%2221.1%22 cy=%22343.0%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.32%22/%3E%3Ccircle cx=%22578.8%22 cy=%2240.0%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.74%22/%3E%3Ccircle cx=%2261.5%22 cy=%22149.7%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.48%22/%3E%3Ccircle cx=%22111.4%22 cy=%22576.5%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.54%22/%3E%3Ccircle cx=%22641.1%22 cy=%22498.2%22 r=%220.5%22 fill=%22%23ffe1d1%22 opacity=%220.24%22/%3E%3Ccircle cx=%22291.7%22 cy=%22255.6%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.63%22/%3E%3Ccircle cx=%2253.2%22 cy=%22449.7%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.71%22/%3E%3Ccircle cx=%22159.6%22 cy=%22332.2%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.44%22/%3E%3Ccircle cx=%22379.7%22 cy=%22539.2%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.45%22/%3E%3Ccircle cx=%2283.5%22 cy=%22403.1%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.7%22/%3E%3Ccircle cx=%22756.2%22 cy=%22523.4%22 r=%220.5%22 fill=%22%23ffe1d1%22 opacity=%220.43%22/%3E%3Ccircle cx=%22177.6%22 cy=%22249.4%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.28%22/%3E%3Ccircle cx=%22804.1%22 cy=%22166.3%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.67%22/%3E%3Ccircle cx=%22347.5%22 cy=%22589.9%22 r=%221.1%22 fill=%22%23ffe1d1%22 opacity=%220.52%22/%3E%3Ccircle cx=%22129.7%22 cy=%22185.6%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.54%22/%3E%3Ccircle cx=%2253.5%22 cy=%22195.9%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.54%22/%3E%3Ccircle cx=%22750.5%22 cy=%22329.0%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.78%22/%3E%3Ccircle cx=%22695.3%22 cy=%2245.9%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.6%22/%3E%3Ccircle cx=%22331.9%22 cy=%22580.3%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.33%22/%3E%3Ccircle cx=%2236.3%22 cy=%2254.2%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.54%22/%3E%3Ccircle cx=%22260.9%22 cy=%22163.6%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.62%22/%3E%3Ccircle cx=%22219.7%22 cy=%2284.1%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.37%22/%3E%3Ccircle cx=%22758.4%22 cy=%22576.7%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.46%22/%3E%3Ccircle cx=%22812.8%22 cy=%2248.8%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.49%22/%3E%3Ccircle cx=%22761.8%22 cy=%22543.1%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.41%22/%3E%3Ccircle cx=%22359.8%22 cy=%22336.4%22 r=%220.6%22 fill=%22%23dfe6ff%22 opacity=%220.56%22/%3E%3Ccircle cx=%2210.4%22 cy=%22504.1%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.76%22/%3E%3Ccircle cx=%22766.4%22 cy=%2286.2%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.73%22/%3E%3Ccircle cx=%22130.2%22 cy=%22176.4%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.62%22/%3E%3Ccircle cx=%22562.2%22 cy=%22526.0%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.48%22/%3E%3Ccircle cx=%2278.9%22 cy=%22263.2%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.21%22/%3E%3Ccircle cx=%22630.1%22 cy=%22393.9%22 r=%220.6%22 fill=%22%23ffe1d1%22 opacity=%220.28%22/%3E%3Ccircle cx=%22452.0%22 cy=%22265.7%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.25%22/%3E%3Ccircle cx=%22447.0%22 cy=%22514.8%22 r=%220.8%22 fill=%22%23ffe1d1%22 opacity=%220.52%22/%3E%3Ccircle cx=%22107.5%22 cy=%22192.7%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.78%22/%3E%3Ccircle cx=%22733.9%22 cy=%22132.6%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.59%22/%3E%3Ccircle cx=%22637.5%22 cy=%22545.1%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.78%22/%3E%3Ccircle cx=%22755.7%22 cy=%22148.9%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.79%22/%3E%3Ccircle cx=%22719.7%22 cy=%2219.2%22 r=%220.9%22 fill=%22%23ffe1d1%22 opacity=%220.75%22/%3E%3Ccircle cx=%22655.4%22 cy=%22532.8%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.33%22/%3E%3Ccircle cx=%22643.3%22 cy=%2270.2%22 r=%221.1%22 fill=%22%23ffe1d1%22 opacity=%220.2%22/%3E%3Ccircle cx=%22184.6%22 cy=%22503.8%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.4%22/%3E%3Ccircle cx=%22185.0%22 cy=%22407.9%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.38%22/%3E%3Ccircle cx=%22789.1%22 cy=%22174.8%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.5%22/%3E%3Ccircle cx=%22272.9%22 cy=%2220.9%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.29%22/%3E%3Ccircle cx=%2235.1%22 cy=%22369.1%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.63%22/%3E%3Ccircle cx=%22358.4%22 cy=%22606.4%22 r=%220.45%22 fill=%22%23dfe6ff%22 opacity=%220.42%22/%3E%3Ccircle cx=%22158.3%22 cy=%2231.2%22 r=%220.7%22 fill=%22%23dfe6ff%22 opacity=%220.18%22/%3E%3Ccircle cx=%22561.7%22 cy=%22579.4%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.6%22/%3E%3Ccircle cx=%22354.2%22 cy=%22584.7%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.57%22/%3E%3Ccircle cx=%22588.4%22 cy=%22187.8%22 r=%220.6%22 fill=%22%23fff%22 opacity=%220.59%22/%3E%3Ccircle cx=%22330.7%22 cy=%22184.9%22 r=%220.5%22 fill=%22%23ffe1d1%22 opacity=%220.3%22/%3E%3Ccircle cx=%22554.0%22 cy=%22556.5%22 r=%220.8%22 fill=%22%23ffe1d1%22 opacity=%220.53%22/%3E%3Ccircle cx=%22448.9%22 cy=%224.2%22 r=%220.6%22 fill=%22%23dfe6ff%22 opacity=%220.31%22/%3E%3Ccircle cx=%22496.6%22 cy=%22201.2%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.45%22/%3E%3Ccircle cx=%22419.1%22 cy=%22489.8%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.64%22/%3E%3Ccircle cx=%22234.4%22 cy=%22410.3%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.39%22/%3E%3Ccircle cx=%22550.3%22 cy=%22141.5%22 r=%220.5%22 fill=%22%23fff%22 opacity=%220.27%22/%3E%3Ccircle cx=%22202.8%22 cy=%22294.8%22 r=%221.1%22 fill=%22%23ffe1d1%22 opacity=%220.66%22/%3E%3Ccircle cx=%22340.5%22 cy=%22389.4%22 r=%220.5%22 fill=%22%23ffe1d1%22 opacity=%220.63%22/%3E%3Ccircle cx=%22405.4%22 cy=%22153.3%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.61%22/%3E%3Ccircle cx=%22636.1%22 cy=%22137.9%22 r=%221.1%22 fill=%22%23dfe6ff%22 opacity=%220.77%22/%3E%3Ccircle cx=%22381.2%22 cy=%22345.1%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.26%22/%3E%3Ccircle cx=%22654.8%22 cy=%22412.6%22 r=%220.8%22 fill=%22%23ffe1d1%22 opacity=%220.55%22/%3E%3Ccircle cx=%22501.5%22 cy=%22444.2%22 r=%220.8%22 fill=%22%23dfe6ff%22 opacity=%220.44%22/%3E%3Ccircle cx=%22366.1%22 cy=%22101.4%22 r=%221.1%22 fill=%22%23fff%22 opacity=%220.47%22/%3E%3Ccircle cx=%22614.4%22 cy=%22518.0%22 r=%220.6%22 fill=%22%23dfe6ff%22 opacity=%220.65%22/%3E%3Ccircle cx=%22397.5%22 cy=%22150.4%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.23%22/%3E%3Ccircle cx=%22194.4%22 cy=%22209.5%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.23%22/%3E%3Ccircle cx=%22191.8%22 cy=%22428.7%22 r=%220.9%22 fill=%22%23ffe1d1%22 opacity=%220.31%22/%3E%3Ccircle cx=%22335.0%22 cy=%22336.1%22 r=%220.7%22 fill=%22%23ffe1d1%22 opacity=%220.22%22/%3E%3Ccircle cx=%22320.3%22 cy=%22475.1%22 r=%220.9%22 fill=%22%23dfe6ff%22 opacity=%220.19%22/%3E%3Ccircle cx=%22312.9%22 cy=%227.6%22 r=%220.6%22 fill=%22%23ffe1d1%22 opacity=%220.37%22/%3E%3Ccircle cx=%22697.0%22 cy=%22587.5%22 r=%220.7%22 fill=%22%23dfe6ff%22 opacity=%220.51%22/%3E%3Ccircle cx=%22653.5%22 cy=%22553.5%22 r=%220.7%22 fill=%22%23ffe1d1%22 opacity=%220.32%22/%3E%3Ccircle cx=%22398.3%22 cy=%22242.0%22 r=%220.9%22 fill=%22%23ffe1d1%22 opacity=%220.6%22/%3E%3Ccircle cx=%22592.0%22 cy=%22518.4%22 r=%220.5%22 fill=%22%23dfe6ff%22 opacity=%220.79%22/%3E%3Ccircle cx=%2225.9%22 cy=%22245.1%22 r=%220.8%22 fill=%22%23fff%22 opacity=%220.59%22/%3E%3Ccircle cx=%22525.9%22 cy=%2287.0%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.29%22/%3E%3Ccircle cx=%22311.8%22 cy=%22133.5%22 r=%220.6%22 fill=%22%23ffe1d1%22 opacity=%220.39%22/%3E%3Ccircle cx=%22229.9%22 cy=%22586.1%22 r=%220.7%22 fill=%22%23fff%22 opacity=%220.34%22/%3E%3Ccircle cx=%22385.9%22 cy=%22462.4%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.8%22/%3E%3Ccircle cx=%22186.1%22 cy=%2246.0%22 r=%220.9%22 fill=%22%23fff%22 opacity=%220.2%22/%3E%3Ccircle cx=%22775.1%22 cy=%22126.0%22 r=%220.45%22 fill=%22%23fff%22 opacity=%220.57%22/%3E%3Ccircle cx=%22118.5%22 cy=%22408.3%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22118.5%22 cy=%22408.3%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22459.9%22 cy=%22146.4%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22459.9%22 cy=%22146.4%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22565.6%22 cy=%22464.8%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22565.6%22 cy=%22464.8%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22150.9%22 cy=%22372.2%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22150.9%22 cy=%22372.2%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22603.4%22 cy=%2286.4%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22603.4%22 cy=%2286.4%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22659.1%22 cy=%22579.5%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22659.1%22 cy=%22579.5%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3Ccircle cx=%22104.3%22 cy=%2234.9%22 r=%222.6%22 fill=%22%23fff%22 opacity=%22.1%22/%3E%3Ccircle cx=%22104.3%22 cy=%2234.9%22 r=%221.25%22 fill=%22%23fff%22 opacity=%22.9%22/%3E%3C/svg%3E");
+        --veil-1: rgb(19 6 15 / 0.3);
+        --veil-2: rgb(19 6 15 / 0.72);
+        --up: #3ddc97;
+        --down: #ff6b81;
+        --bar-ag: #6f5b6b;
+        --track: #2c1826;
+        --hl: rgb(255 48 126 / 0.13);
+        --tok-kw: #ff7aa5;
+        --tok-str: #fcc46a;
+        --tok-tag: #ff8f6b;
+        --tok-prop: #cdbcff;
+        --tok-punc: #9a8998;
+        --tok-com: #8f7e8c;
+        --grid-bg: #170912;
+        --grid-head: #200f1b;
+        --grid-line: #321c2a;
+        --p-accent-fg: #1c0610;
+        color-scheme: dark;
+      }
+
+      [data-theme='dark'][data-accent='ion'] {
+        /* dark · ion */
+        --canvas: #060a14;
+        --surface: #0d1322;
+        --raised: #161f33;
+        --well: #090e1a;
+        --edge: #26334d;
+        --edge-strong: #3a4b6c;
+        --ink: #f5f8fc;
+        --ink-2: #dbe2ee;
+        --muted: #b9c3d4;
+        --faint: #8493ac;
+        --a1: #3bff7f;
+        --a2: #5b8cff;
+        --a-solid: #6f9bff;
+        --eyebrow: #7df0c8;
+        --link: #7df0c8;
+        --btn-1: #3bff7f;
+        --btn-2: #6f9bff;
+        --btn-fg: #04101c;
+        --glow: rgb(73 122 255 / 0.42);
+        --glow-soft: rgb(59 255 127 / 0.22);
+        --nebula-1: rgb(59 255 127 / 0.3);
+        --nebula-2: rgb(73 122 255 / 0.4);
+        --nebula-3: rgb(47 211 208 / 0.26);
+        --floor-line: rgb(111 155 255 / 0.5);
+        --floor-cell: rgb(59 255 127 / 0.3);
+        --card: rgb(13 19 34 / 0.8);
+        --header-bg: rgb(6 10 20 / 0.78);
+        --veil-1: rgb(6 10 20 / 0.3);
+        --veil-2: rgb(6 10 20 / 0.72);
+        --bar-ag: #55637d;
+        --track: #141d30;
+        --hl: rgb(91 140 255 / 0.15);
+        --tok-kw: #8fb0ff;
+        --tok-str: #7df0c8;
+        --tok-tag: #6fe3a6;
+        --tok-prop: #cdbcff;
+        --tok-punc: #8493ac;
+        --tok-com: #7b8aa3;
+        --grid-bg: #080d19;
+        --grid-head: #0d1322;
+        --grid-line: #1a2439;
+        --p-accent-fg: #04101c;
+      }
+
+      /* ---- base ---------------------------------------------------------- */
+      html {
+        background: var(--canvas);
+        scroll-padding-top: 88px;
+      }
+      body {
+        font: 400 17px/1.5 var(--sans);
+        color: var(--ink);
+        background: linear-gradient(var(--veil-1), var(--veil-2)), var(--stars),
+          var(--canvas);
+        background-size: auto, 820px 620px, auto;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+      html[data-page='docs'] body {
+        background: var(--canvas);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol,
+      pre,
+      figure {
+        margin: 0;
+      }
+      ul,
+      ol {
+        padding: 0;
+        list-style: none;
+      }
+      code,
+      pre,
+      kbd {
+        font-family: var(--mono);
+        font-variant-ligatures: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--a-solid);
+        outline-offset: 2px;
+        border-radius: 3px;
+      }
+      ::selection {
+        background: color-mix(in srgb, var(--a2) 30%, transparent);
+      }
+      .ic {
+        width: 16px;
+        height: 16px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .ic--fill {
+        fill: currentColor;
+        stroke: none;
+      }
+      .wrap {
+        width: min(100% - 48px, var(--wrap));
+        margin-inline: auto;
+      }
+      .grad {
+        background: linear-gradient(90deg, var(--a1), var(--a2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .eyebrow {
+        font-size: 12.75px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---- header -------------------------------------------------------- */
+      .hdr {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--header-bg);
+        backdrop-filter: blur(14px) saturate(1.3);
+        -webkit-backdrop-filter: blur(14px) saturate(1.3);
+        border-bottom: 1px solid var(--edge);
+      }
+      .hdr__in {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        height: 60px;
+        width: min(100% - 48px, 1380px);
+        margin-inline: auto;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        white-space: nowrap;
+      }
+      .brand__mark {
+        width: 40px;
+        height: 19px;
+        background: linear-gradient(90deg, var(--a1), var(--a2));
+        -webkit-mask: url('/logo-infinite.svg') center / contain no-repeat;
+        mask: url('/logo-infinite.svg') center / contain no-repeat;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+      }
+      .nav a {
+        padding: 8px 11px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-radius: 4px;
+        transition: color 0.15s;
+      }
+      .nav a:hover {
+        color: var(--ink);
+      }
+      html[data-page='docs'] .nav a[data-nav='docs'] {
+        color: var(--ink);
+        box-shadow: inset 0 -2px 0 var(--a2);
+        border-radius: 0;
+      }
+      .hdr__right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .search-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        height: 34px;
+        min-width: 190px;
+        padding: 0 8px 0 11px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--surface) 60%, transparent);
+        color: var(--faint);
+        font-size: 14px;
+      }
+      .search-btn:hover {
+        border-color: var(--edge-strong);
+        color: var(--muted);
+      }
+      .search-btn kbd {
+        margin-left: auto;
+        padding: 2px 6px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .fw {
+        display: inline-flex;
+        padding: 2px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+      }
+      .fw button {
+        border: 0;
+        background: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .fw button[aria-pressed='true'] {
+        background: linear-gradient(90deg, var(--btn-1), var(--btn-2));
+        color: var(--btn-fg);
+      }
+      .icon-btn {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        background: none;
+        color: var(--muted);
+      }
+      .icon-btn:hover {
+        color: var(--ink);
+        border-color: var(--edge-strong);
+      }
+
+      /* ---- buttons ------------------------------------------------------- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        height: 46px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 4px;
+        font-size: 14.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      }
+      .btn--primary {
+        background: linear-gradient(90deg, var(--btn-1), var(--btn-2));
+        color: var(--btn-fg);
+        box-shadow: 0 0 24px var(--glow);
+      }
+      .btn--primary:hover {
+        box-shadow: 0 0 36px var(--glow), 0 0 0 1px var(--btn-2);
+        transform: translateY(-1px);
+      }
+      .btn--ghost {
+        border: 1px solid var(--edge-strong);
+        background: color-mix(in srgb, var(--surface) 55%, transparent);
+        color: var(--ink);
+      }
+      .btn--ghost:hover {
+        border-color: var(--a-solid);
+      }
+      .btn--sm {
+        height: 38px;
+        padding: 0 14px;
+        font-size: 13px;
+      }
+      .install {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        max-width: 100%;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--surface) 70%, transparent);
+        font: 500 14px/1 var(--mono);
+        color: var(--ink-2);
+        overflow: hidden;
+      }
+      .install__cmd {
+        display: flex;
+        gap: 10px;
+        padding: 0 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+      .install__cmd::before {
+        content: '$';
+        color: var(--eyebrow);
+      }
+      .install button {
+        display: inline-grid;
+        place-items: center;
+        align-self: stretch;
+        width: 44px;
+        border: 0;
+        border-left: 1px solid var(--edge);
+        background: none;
+        color: var(--faint);
+      }
+      .install button:hover {
+        color: var(--ink);
+      }
+      [data-copy] .ic-check {
+        display: none;
+      }
+      [data-copy][data-copied] .ic-copy {
+        display: none;
+      }
+      [data-copy][data-copied] .ic-check {
+        display: block;
+        color: var(--up);
+      }
+      .textlink {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--link);
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+        text-underline-offset: 4px;
+      }
+      .textlink:hover {
+        text-decoration-color: var(--link);
+      }
+
+      /* ---- hero ---------------------------------------------------------- */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid var(--edge);
+      }
+      .hero__copy {
+        position: relative;
+        z-index: 2;
+        padding-top: 38px;
+      }
+      .ann {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 5px 12px 5px 5px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--surface) 60%, transparent);
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .ann b {
+        padding: 3px 8px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, var(--btn-1), var(--btn-2));
+        color: var(--btn-fg);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .ann:hover {
+        border-color: var(--edge-strong);
+        color: var(--ink);
+      }
+      .hero h1 {
+        margin-top: 26px;
+        font-size: clamp(42px, 5.6vw, 76px);
+        font-weight: 700;
+        line-height: 1.03;
+        letter-spacing: -0.03em;
+      }
+      .hero h1 > span {
+        display: block;
+      }
+      .hero__sub {
+        margin-top: 22px;
+        max-width: 610px;
+        font-size: 19px;
+        line-height: 1.55;
+        color: var(--muted);
+      }
+      .hero__sub b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .hero__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      /* the scene: starlight, a nebula on the horizon, an infinity orbit and
+         a floor of table cells running to the vanishing point */
+      .stage {
+        position: relative;
+        z-index: 1;
+        margin-top: 38px;
+        padding: 76px 0 84px;
+      }
+      /* the glow's reflection on the floor */
+      .stage::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 190px;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse 46% 100% at 62% 0,
+          var(--glow-soft),
+          transparent 72%
+        );
+      }
+      .nebula {
+        position: absolute;
+        left: 50%;
+        bottom: 100%;
+        width: min(1500px, 130vw);
+        height: 480px;
+        transform: translateX(-50%);
+        pointer-events: none;
+        background: radial-gradient(
+            ellipse 34% 62% at 70% 100%,
+            var(--nebula-1),
+            transparent 72%
+          ),
+          radial-gradient(
+            ellipse 28% 78% at 86% 100%,
+            var(--nebula-2),
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 42% 100%,
+            var(--nebula-3),
+            transparent 72%
+          );
+      }
+      .horizon {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--a1) 22%,
+          var(--a2) 72%,
+          transparent
+        );
+        box-shadow: 0 0 22px 1px var(--glow), 0 -10px 46px 4px var(--glow-soft);
+      }
+      /* a floor of table cells running to the vanishing point (the SVG is
+         stretched to the stage; rows are spaced as perspective would) */
+      .floor {
+        --fade: 34px;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent 0,
+          #000 var(--fade),
+          #000 55%,
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          to bottom,
+          transparent 0,
+          #000 var(--fade),
+          #000 55%,
+          transparent 100%
+        );
+      }
+      .floor--low {
+        --fade: 18px;
+      }
+      .floor path {
+        fill: none;
+        stroke: var(--floor-line);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+      }
+      .floor .row {
+        opacity: 0.8;
+      }
+      .floor .cell {
+        fill: var(--floor-cell);
+        opacity: 0.5;
+      }
+      .orbit {
+        position: absolute;
+        right: max(8px, calc(50% - var(--wrap) / 2 - 30px));
+        bottom: calc(100% + 8px);
+        width: min(540px, 42vw);
+        height: auto;
+        overflow: visible;
+        pointer-events: none;
+        transform: rotate(-9deg);
+      }
+      .orbit .ring {
+        fill: none;
+        stroke: url(#orbit-grad);
+        stroke-width: 1.4;
+      }
+      .orbit .cells {
+        fill: none;
+        stroke: url(#orbit-grad);
+        stroke-width: 11;
+        stroke-dasharray: 13 6;
+        opacity: 0.2;
+      }
+      .orbit .far {
+        fill: none;
+        stroke: var(--edge-strong);
+        stroke-width: 1;
+        stroke-dasharray: 2 7;
+        opacity: 0.8;
+      }
+      .orbit .probe {
+        fill: var(--ink);
+        filter: drop-shadow(0 0 7px var(--a2));
+        offset-path: path(
+          'M0,0 C56,-92 210,-92 210,0 C210,92 56,92 0,0 C-56,-92 -210,-92 -210,0 C-210,92 -56,92 0,0 Z'
+        );
+        offset-distance: 16%;
+      }
+      .spark {
+        position: absolute;
+        width: var(--s, 14px);
+        height: var(--s, 14px);
+        background: var(--eyebrow);
+        clip-path: polygon(
+          50% 0,
+          58% 42%,
+          100% 50%,
+          58% 58%,
+          50% 100%,
+          42% 58%,
+          0 50%,
+          42% 42%
+        );
+        opacity: 0.85;
+        pointer-events: none;
+      }
+      html[data-theme='light'] .spark {
+        opacity: 0.6;
+      }
+
+      /* the console: the live demo, framed like an instrument window */
+      .console {
+        position: relative;
+        border: 1px solid var(--edge-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--a2) 14%, transparent),
+          0 30px 90px -30px var(--glow), 0 24px 60px -40px rgb(0 0 0 / 0.6);
+      }
+      .console__bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 40px;
+        padding: 6px 14px;
+        border-bottom: 1px solid var(--edge);
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--faint);
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .console__bar .lbl {
+        color: var(--ink);
+      }
+      .console__bar .grow {
+        flex: 1;
+      }
+      .console__bar b {
+        font-family: var(--mono);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+      }
+      .console__bar a {
+        color: var(--link);
+      }
+      .console__bar a:hover {
+        color: var(--ink);
+      }
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--up);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 26%, transparent);
+        flex: none;
+      }
+      .console__pic {
+        padding: 8px;
+      }
+      .console__pic img {
+        width: 100%;
+        border-radius: 16px;
+        /* the screenshots carry their own dark outline: trim it */
+        clip-path: inset(2px round 15px);
+      }
+      .console > .tick {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border: 0 solid var(--a-solid);
+        pointer-events: none;
+      }
+      .tick.tl {
+        left: -7px;
+        top: -7px;
+        border-width: 1px 0 0 1px;
+      }
+      .tick.tr {
+        right: -7px;
+        top: -7px;
+        border-width: 1px 1px 0 0;
+      }
+      .tick.bl {
+        left: -7px;
+        bottom: -7px;
+        border-width: 0 0 1px 1px;
+      }
+      .tick.br {
+        right: -7px;
+        bottom: -7px;
+        border-width: 0 1px 1px 0;
+      }
+      [data-tick].is-up {
+        color: var(--up) !important;
+      }
+      [data-tick].is-down {
+        color: var(--down) !important;
+      }
+
+      /* ---- sections ------------------------------------------------------ */
+      .sec {
+        position: relative;
+        padding: 104px 0 0;
+      }
+      .sec:last-of-type {
+        padding-bottom: 104px;
+      }
+      .sec__head {
+        max-width: 760px;
+        margin: 0 auto 44px;
+        text-align: center;
+      }
+      .sec__head h2 {
+        margin-top: 18px;
+        font-size: clamp(32px, 4vw, 50px);
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -0.028em;
+      }
+      .sec__head p {
+        margin: 18px auto 0;
+        max-width: 640px;
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+      .sec__head p + p {
+        margin-top: 10px;
+      }
+      .sec__foot {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px 24px;
+        margin-top: 18px;
+        font-size: 14px;
+        color: var(--faint);
+      }
+      .card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--edge);
+        border-radius: var(--radius);
+        background: var(--card);
+        box-shadow: var(--card-shadow);
+      }
+      .ghost {
+        position: absolute;
+        top: -26px;
+        right: 12px;
+        font-size: 76px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        background: linear-gradient(90deg, var(--a2), var(--a1));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        opacity: var(--ghost-alpha);
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+      }
+      .card > :not(.ghost) {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* telemetry */
+      .tele {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .tile {
+        display: flex;
+        flex-direction: column;
+        padding: 24px 22px 22px;
+      }
+      .tile__label {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--faint);
+        min-height: 51px;
+        max-width: 66%;
+      }
+      .tile__num {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-top: 14px;
+        font-size: 62px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        font-variant-numeric: tabular-nums;
+      }
+      .tile__num small {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--muted);
+      }
+      .chip {
+        margin-left: auto;
+        align-self: center;
+        padding: 4px 8px;
+        border: 1px solid color-mix(in srgb, var(--up) 45%, transparent);
+        border-radius: 3px;
+        font: 600 12.5px/1 var(--mono);
+        letter-spacing: 0;
+        color: var(--up);
+      }
+      .bars {
+        position: relative;
+        margin-top: auto;
+        padding: 26px 0 12px;
+        display: grid;
+        gap: 9px;
+      }
+      /* a ruler under the bars: a tick every 10% */
+      .bars::after {
+        content: '';
+        position: absolute;
+        left: 66px;
+        right: 64px;
+        bottom: 0;
+        height: 5px;
+        background: repeating-linear-gradient(
+          to right,
+          var(--edge-strong) 0 1px,
+          transparent 1px 10%
+        );
+        border-right: 1px solid var(--edge-strong);
+      }
+      .bar {
+        display: grid;
+        grid-template-columns: 66px minmax(0, 1fr) 64px;
+        align-items: center;
+        font-size: 12.5px;
+        color: var(--faint);
+      }
+      .bar span:first-child {
+        font-weight: 600;
+      }
+      .bar i {
+        display: block;
+        height: 8px;
+        background: var(--track);
+        border-radius: 1px;
+        position: relative;
+      }
+      .bar i::after {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: var(--w);
+        background: var(--bar-ag);
+        border-radius: 1px;
+      }
+      .bar--inf {
+        color: var(--ink);
+      }
+      .bar--inf i::after {
+        background: linear-gradient(90deg, var(--a1), var(--a2));
+        box-shadow: 0 0 12px var(--glow);
+      }
+      .bar b {
+        text-align: right;
+        font: 500 12.5px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .tile__note {
+        margin-top: 16px;
+        font-size: 14.5px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      .tile__split {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid var(--edge);
+      }
+      .tile__split .tile__num {
+        font-size: 38px;
+        margin-top: 10px;
+      }
+
+      /* live grids in console frames */
+      .console .gd {
+        border: 0;
+        border-radius: 0 0 7px 7px;
+        background: transparent;
+      }
+      .gd-controls {
+        gap: 10px 20px;
+        padding: 10px 14px;
+      }
+      .gd-label {
+        font-family: var(--sans);
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        font-size: 10.5px;
+      }
+      .gd-seg {
+        border-radius: 4px;
+      }
+      .gd-seg button,
+      .gd-btn {
+        font-family: var(--sans);
+        font-weight: 500;
+        border-radius: 3px;
+      }
+      .gd-seg button[aria-pressed='true'] {
+        background: linear-gradient(90deg, var(--btn-1), var(--btn-2));
+        color: var(--btn-fg);
+      }
+      .gd-btn {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-radius: 4px;
+      }
+      .gd-btn:hover {
+        border-color: var(--a-solid);
+      }
+      .gd-readout {
+        font-size: 12.5px;
+      }
+      .gd-snippet {
+        background: var(--well);
+        color: var(--muted);
+      }
+      /* the grid is themed with CSS variables, so the site can tint it */
+      .gd-million .gd-grid,
+      .gd-pivot .gd-grid,
+      .gd-grid--bare {
+        --infinite-background: var(--grid-bg);
+        --infinite-row-background: var(--grid-bg);
+        --infinite-row-odd-background: var(--grid-bg);
+        --infinite-header-background: var(--grid-head);
+        --infinite-header-cell-background: var(--grid-head);
+        --infinite-cell-border-color: var(--grid-line);
+        --infinite-cell-border: 1px solid var(--grid-line);
+        --infinite-cell-border-top: 1px solid var(--grid-line);
+        --infinite-cell-border-right: 1px solid var(--grid-line);
+        --infinite-row-hover-background: var(--raised);
+        --infinite-color: var(--ink-2);
+        --infinite-header-color: var(--faint);
+        --infinite-accent-color: var(--a-solid);
+      }
+      .host-million {
+        min-height: 577px;
+      }
+      .host-themes {
+        min-height: 606px;
+      }
+      .host-pivot {
+        min-height: 398px;
+      }
+      .gd-pivot .gd-grid {
+        height: 396px;
+      }
+      /* the control row is too wide for one line: Copy CSS sits on the snippet */
+      .gd-themes {
+        position: relative;
+      }
+      .gd-themes .gd-spacer {
+        display: none;
+      }
+      .gd-themes .gd-copy {
+        position: absolute;
+        right: 12px;
+        bottom: 12px;
+        background: var(--surface);
+      }
+      .host-grouped {
+        min-height: 360px;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 28px;
+        margin-top: 22px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .legend span::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 10px;
+        vertical-align: 2px;
+        background: linear-gradient(90deg, var(--a1), var(--a2));
+        transform: rotate(45deg);
+      }
+
+      /* pivot */
+      .pivot {
+        display: grid;
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        gap: 44px;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+      .pivot__copy h2 {
+        margin-top: 18px;
+        font-size: clamp(32px, 4vw, 50px);
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -0.028em;
+      }
+      .pivot__copy > p {
+        margin-top: 18px;
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+      .steps {
+        margin-top: 26px;
+        display: grid;
+        gap: 12px;
+      }
+      .steps li {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+        font-size: 15.5px;
+        color: var(--muted);
+      }
+      .steps li b {
+        font: 600 12px/1 var(--mono);
+        color: var(--eyebrow);
+      }
+      .steps code {
+        color: var(--ink);
+        font-size: 0.9em;
+      }
+
+      /* code */
+      .code {
+        border: 1px solid var(--edge);
+        border-radius: var(--radius);
+        background: var(--surface);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+      }
+      [data-theme='dark'] .code {
+        background: color-mix(in srgb, var(--surface) 86%, transparent);
+      }
+      .code__bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 38px;
+        padding: 0 6px 0 14px;
+        border-bottom: 1px solid var(--edge);
+        font: 500 12.5px/1 var(--mono);
+        color: var(--muted);
+      }
+      .code__bar .grow {
+        flex: 1;
+      }
+      .code__bar button {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 28px;
+        border: 0;
+        background: none;
+        border-radius: 3px;
+        color: var(--faint);
+      }
+      .code__bar button:hover {
+        color: var(--ink);
+        background: var(--well);
+      }
+      .code pre {
+        padding: 14px 0;
+        overflow-x: auto;
+        font-size: 13.5px;
+        line-height: 1.7;
+        color: var(--ink-2);
+      }
+      .code code {
+        display: grid;
+        min-width: max-content;
+      }
+      .code .l {
+        display: block;
+        padding: 0 18px;
+        min-height: 1.7em;
+        white-space: pre;
+        border-left: 2px solid transparent;
+      }
+      .code--num code {
+        counter-reset: ln;
+      }
+      .code--num .l {
+        padding-left: 0;
+      }
+      .code--num .l::before {
+        counter-increment: ln;
+        content: counter(ln);
+        display: inline-block;
+        width: 42px;
+        margin-right: 14px;
+        text-align: right;
+        color: var(--tok-com);
+        opacity: 0.75;
+      }
+      .code .l.hl {
+        background: var(--hl);
+        border-left-color: var(--a2);
+      }
+      .k {
+        color: var(--tok-kw);
+      }
+      .s {
+        color: var(--tok-str);
+      }
+      .t {
+        color: var(--tok-tag);
+      }
+      .a {
+        color: var(--tok-prop);
+      }
+      .p {
+        color: var(--tok-punc);
+      }
+      .c {
+        color: var(--tok-com);
+        font-style: italic;
+      }
+
+      /* features */
+      .feats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .feat {
+        display: block;
+        padding: 26px 22px 22px;
+        transition: border-color 0.15s, transform 0.15s;
+      }
+      .feat:hover {
+        border-color: var(--a-solid);
+        transform: translateY(-2px);
+      }
+      .feat h3 {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .feat p {
+        margin-top: 8px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--muted);
+        min-height: 3em;
+      }
+      .feat .go {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--link);
+      }
+      .principles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 44px;
+        border-top: 1px solid var(--edge);
+        border-bottom: 1px solid var(--edge);
+      }
+      .principles li {
+        padding: 22px 22px 24px;
+        border-left: 1px solid var(--edge);
+      }
+      .principles li:first-child {
+        border-left: 0;
+        padding-left: 0;
+      }
+      .principles b {
+        display: block;
+        font-size: 11.5px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .principles span {
+        display: block;
+        margin-top: 10px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      /* compare */
+      .vs {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .vs a {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 20px 20px 18px;
+        transition: border-color 0.15s;
+      }
+      .vs a:hover {
+        border-color: var(--a-solid);
+      }
+      .vs small {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .vs strong {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 21px;
+        letter-spacing: -0.015em;
+      }
+      .vs .ic {
+        color: var(--link);
+      }
+      .center {
+        display: flex;
+        justify-content: center;
+        margin-top: 26px;
+      }
+
+      /* editions */
+      .editions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .edition {
+        padding: 32px 30px 30px;
+      }
+      .edition h3 {
+        margin-top: 14px;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.12;
+      }
+      .edition p {
+        margin-top: 12px;
+        font-size: 16.5px;
+        line-height: 1.55;
+        color: var(--muted);
+        max-width: 440px;
+      }
+      .edition__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 26px;
+      }
+      .edition--pro {
+        border-color: transparent;
+        background: linear-gradient(var(--surface), var(--surface)) padding-box,
+          linear-gradient(120deg, var(--a1), var(--a2)) border-box;
+        box-shadow: 0 0 60px -24px var(--glow);
+      }
+
+      /* closing band */
+      .closing {
+        position: relative;
+        overflow: hidden;
+        margin-top: 104px;
+        border-top: 1px solid var(--edge);
+        text-align: center;
+      }
+      .closing__copy {
+        position: relative;
+        z-index: 2;
+        padding: 96px 0 0;
+      }
+      .closing h2 {
+        margin-top: 18px;
+        font-size: clamp(34px, 4.6vw, 60px);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      .closing .hero__actions {
+        justify-content: center;
+        margin-top: 30px;
+      }
+      .closing .stage {
+        margin-top: 64px;
+        padding: 0;
+        height: 190px;
+      }
+      .closing .nebula {
+        bottom: 100%;
+        height: 320px;
+        background: radial-gradient(
+            ellipse 34% 70% at 50% 100%,
+            var(--nebula-1),
+            transparent 72%
+          ),
+          radial-gradient(
+            ellipse 50% 46% at 50% 100%,
+            var(--nebula-2),
+            transparent 72%
+          );
+      }
+
+      /* footer */
+      .ftr {
+        position: relative;
+        border-top: 1px solid var(--edge);
+        background: color-mix(in srgb, var(--canvas) 86%, transparent);
+      }
+      .ftr__in {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr));
+        gap: 32px;
+        padding: 56px 0 40px;
+      }
+      .ftr p {
+        margin-top: 14px;
+        max-width: 280px;
+        font-size: 15px;
+        color: var(--faint);
+      }
+      .ftr h4 {
+        margin: 0 0 14px;
+        font-size: 11.5px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .ftr li {
+        margin: 9px 0;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .ftr li a:hover {
+        color: var(--ink);
+      }
+      .ftr__base {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 0 88px;
+        border-top: 1px solid var(--edge);
+        font-size: 14px;
+        color: var(--faint);
+      }
+
+      /* ---- docs ---------------------------------------------------------- */
+      .docs {
+        position: relative;
+      }
+      /* a little starlight behind the header and the title, nothing below */
+      .docs::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 300px;
+        pointer-events: none;
+        background: radial-gradient(
+            ellipse 40% 90% at 62% 0,
+            var(--glow-soft),
+            transparent 70%
+          ),
+          var(--stars);
+        background-size: auto, 820px 620px;
+        opacity: 0.55;
+        -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+        mask-image: linear-gradient(to bottom, #000, transparent);
+      }
+      .docs__grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: 268px minmax(0, 1fr) 232px;
+        width: min(100% - 48px, 1380px);
+        margin-inline: auto;
+      }
+      .side {
+        position: sticky;
+        top: 61px;
+        align-self: start;
+        height: calc(100vh - 61px);
+        overflow-y: auto;
+        padding: 26px 22px 40px 0;
+        border-right: 1px solid var(--edge);
+        scrollbar-width: thin;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 2px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+      }
+      .tabs button {
+        border: 0;
+        background: none;
+        padding: 7px 0;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .tabs button[aria-pressed='true'] {
+        background: var(--raised);
+        color: var(--ink);
+        box-shadow: inset 0 0 0 1px var(--edge);
+      }
+      .side__label {
+        margin: 26px 0 10px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .side__nav a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px 6px 0;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .side__nav a:hover {
+        color: var(--ink);
+      }
+      .side__nav .ic {
+        width: 13px;
+        height: 13px;
+        color: var(--faint);
+      }
+      .side__nav .open > a {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .side__sub {
+        margin: 2px 0 8px;
+        border-left: 1px solid var(--edge);
+      }
+      .side__sub a {
+        position: relative;
+        padding: 6px 10px 6px 16px;
+        font-size: 14.5px;
+      }
+      .side__sub a[aria-current='page'] {
+        color: var(--ink);
+        font-weight: 600;
+        background: linear-gradient(90deg, var(--hl), transparent);
+      }
+      .side__sub a[aria-current='page']::before {
+        content: '';
+        position: absolute;
+        left: -1px;
+        top: 4px;
+        bottom: 4px;
+        width: 2px;
+        background: linear-gradient(var(--a1), var(--a2));
+        box-shadow: 0 0 10px var(--glow);
+      }
+      .doc {
+        min-width: 0;
+        padding: 30px 56px 80px;
+        font-size: 16.5px;
+        line-height: 1.7;
+      }
+      .doc__in {
+        max-width: 736px;
+        margin-inline: auto;
+      }
+      .crumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .crumbs b {
+        color: var(--eyebrow);
+      }
+      .doc__title {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px 20px;
+        margin-top: 18px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--edge);
+      }
+      .doc h1 {
+        font-size: clamp(34px, 4vw, 46px);
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+      }
+      .doc__tools {
+        display: flex;
+        gap: 8px;
+      }
+      .tool {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        height: 32px;
+        padding: 0 11px;
+        border: 1px solid var(--edge);
+        border-radius: 4px;
+        background: color-mix(in srgb, var(--surface) 60%, transparent);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .tool:hover {
+        color: var(--ink);
+        border-color: var(--edge-strong);
+      }
+      .tool .ic {
+        width: 14px;
+        height: 14px;
+      }
+      .doc p {
+        margin-top: 20px;
+        color: var(--ink-2);
+      }
+      .doc .lead {
+        margin-top: 26px;
+        font-size: 19px;
+        line-height: 1.6;
+        color: var(--ink);
+      }
+      .doc :not(pre) > code {
+        padding: 2px 6px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        background: var(--well);
+        font-size: 0.86em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .doc a.inline {
+        color: var(--link);
+        text-decoration: underline;
+        text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+        text-underline-offset: 4px;
+      }
+      .doc h2 {
+        margin-top: 56px;
+        padding-top: 4px;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+      }
+      .note {
+        margin-top: 24px;
+        padding: 16px 20px 18px;
+        border: 1px solid var(--edge);
+        border-left: 2px solid var(--eyebrow);
+        border-radius: var(--radius);
+        background: var(--card);
+      }
+      .note__lbl {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .doc .note p {
+        margin-top: 6px;
+        font-size: 15.5px;
+        line-height: 1.65;
+      }
+      .doc .code,
+      .demo,
+      .props {
+        margin-top: 24px;
+      }
+      .demo {
+        overflow: hidden;
+        border: 1px solid var(--edge-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: 0 24px 60px -34px var(--glow);
+      }
+      .demo__bar {
+        display: flex;
+        align-items: stretch;
+        min-height: 42px;
+        border-bottom: 1px solid var(--edge);
+        font-size: 13px;
+      }
+      .demo__title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 16px 0 14px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink);
+        white-space: nowrap;
+        border-right: 1px solid var(--edge);
+      }
+      .demo__tab {
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        border: 0;
+        border-right: 1px solid var(--edge);
+        background: none;
+        font: 500 12.5px/1 var(--mono);
+        color: var(--faint);
+        white-space: nowrap;
+      }
+      .demo__tab[aria-selected='true'] {
+        color: var(--ink);
+        box-shadow: inset 0 -2px 0 var(--a2);
+      }
+      .demo__bar .grow {
+        flex: 1;
+        min-width: 0;
+      }
+      .demo__btn {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        border: 0;
+        border-left: 1px solid var(--edge);
+        background: none;
+        color: var(--faint);
+      }
+      .demo__btn:hover {
+        color: var(--ink);
+        background: var(--well);
+      }
+      .demo__btn .ic {
+        width: 15px;
+        height: 15px;
+      }
+      .props {
+        border: 1px solid var(--edge);
+        border-radius: var(--radius);
+        overflow-x: auto;
+        background: var(--card);
+      }
+      .props table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .props th {
+        padding: 10px 16px;
+        text-align: left;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--faint);
+        border-bottom: 1px solid var(--edge);
+      }
+      .props td {
+        padding: 12px 16px;
+        vertical-align: top;
+        border-top: 1px solid var(--edge);
+        font: 400 13px/1.6 var(--mono);
+        color: var(--muted);
+      }
+      .props tr:first-child td {
+        border-top: 0;
+      }
+      .props td:first-child {
+        color: var(--link);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .props td:last-child {
+        white-space: nowrap;
+      }
+      .pn {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 60px;
+      }
+      .pn a {
+        display: block;
+        padding: 18px 20px;
+        transition: border-color 0.15s;
+      }
+      .pn a:hover {
+        border-color: var(--a-solid);
+      }
+      .pn small {
+        display: block;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+      .pn strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 19px;
+        letter-spacing: -0.01em;
+      }
+      .pn .next {
+        text-align: right;
+      }
+      .pn .ghost {
+        top: -18px;
+        font-size: 84px;
+      }
+      .pn .prev .ghost {
+        right: auto;
+        left: 60%;
+      }
+      .pn .next .ghost {
+        right: 60%;
+      }
+      .doc__foot {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px 20px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--edge);
+        font-size: 14px;
+        color: var(--faint);
+      }
+      .doc__foot a {
+        color: var(--link);
+      }
+      .toc {
+        position: sticky;
+        top: 61px;
+        align-self: start;
+        padding: 34px 0 40px 26px;
+        font-size: 14px;
+      }
+      .toc__lbl {
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .toc ul {
+        margin-top: 14px;
+        border-left: 1px solid var(--edge);
+      }
+      .toc li a {
+        position: relative;
+        display: block;
+        padding: 5px 0 5px 14px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
+      .toc li a:hover {
+        color: var(--ink);
+      }
+      .toc li a[aria-current='true'] {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .toc li a[aria-current='true']::before {
+        content: '';
+        position: absolute;
+        left: -1px;
+        top: 3px;
+        bottom: 3px;
+        width: 2px;
+        background: linear-gradient(var(--a1), var(--a2));
+        box-shadow: 0 0 10px var(--glow);
+      }
+      .toc__more {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--edge);
+        display: grid;
+        gap: 10px;
+        color: var(--faint);
+      }
+      .toc__more a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+      }
+      .toc__more a:hover {
+        color: var(--ink);
+      }
+      .toc__more .ic {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* ---- search dialog ------------------------------------------------- */
+      dialog[data-search] {
+        width: min(620px, calc(100vw - 32px));
+        margin-top: 12vh;
+        padding: 0;
+        border: 1px solid var(--edge-strong);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--a2) 20%, transparent),
+          0 40px 120px -30px var(--glow), 0 30px 80px -30px rgb(0 0 0 / 0.6);
+        overflow: hidden;
+      }
+      dialog[data-search]::backdrop {
+        background: color-mix(in srgb, var(--canvas) 72%, transparent);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+      }
+      .srch__input {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--edge);
+        color: var(--faint);
+      }
+      .srch__input input {
+        flex: 1;
+        min-width: 0;
+        height: 54px;
+        border: 0;
+        outline: 0;
+        background: none;
+        font: 500 17px/1 var(--sans);
+        color: var(--ink);
+      }
+      .srch__input input::placeholder {
+        color: var(--faint);
+      }
+      .srch__list {
+        max-height: min(52vh, 420px);
+        overflow-y: auto;
+        padding: 8px;
+      }
+      .srch__grp {
+        padding: 12px 10px 6px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--eyebrow);
+      }
+      .srch__list a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 10px;
+        border-radius: 4px;
+        font-size: 15.5px;
+        color: var(--ink-2);
+      }
+      .srch__list a[hidden] {
+        display: none;
+      }
+      .srch__list a small {
+        margin-left: auto;
+        font-size: 12.5px;
+        color: var(--faint);
+      }
+      .srch__list a code {
+        font-size: 14px;
+      }
+      .srch__list a:hover,
+      .srch__list a.is-active {
+        background: var(--hl);
+        box-shadow: inset 2px 0 0 var(--a2);
+        color: var(--ink);
+      }
+      .srch__list .ic {
+        color: var(--faint);
+      }
+      .srch__foot {
+        display: flex;
+        gap: 18px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--edge);
+        font-size: 12px;
+        color: var(--faint);
+      }
+      .srch__foot kbd,
+      .srch__input kbd {
+        padding: 2px 6px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* ---- motion (only when welcome) ------------------------------------ */
+      @media (prefers-reduced-motion: no-preference) {
+        .floor .row {
+          animation: pulse 6.5s ease-in-out infinite;
+          animation-delay: calc(var(--i) * 0.32s);
+        }
+        .floor .cell {
+          animation: blink 5s ease-in-out infinite;
+          animation-delay: var(--d, 0s);
+        }
+        .orbit .probe {
+          animation: travel 22s linear infinite;
+        }
+        .spark {
+          animation: twinkle 4.5s ease-in-out infinite;
+          animation-delay: var(--d, 0s);
+        }
+        .live-dot {
+          animation: twinkle 2.4s ease-in-out infinite;
+        }
+        /* a pulse that runs from the viewer to the horizon */
+        @keyframes pulse {
+          0%,
+          70%,
+          100% {
+            opacity: 0.55;
+          }
+          12% {
+            opacity: 1;
+          }
+        }
+        @keyframes blink {
+          0%,
+          100% {
+            opacity: 0.12;
+          }
+          50% {
+            opacity: 0.75;
+          }
+        }
+        @keyframes travel {
+          from {
+            offset-distance: 16%;
+          }
+          to {
+            offset-distance: 116%;
+          }
+        }
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.35;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+      }
+
+      /* ---- responsive ---------------------------------------------------- */
+      @media (max-width: 1240px) {
+        .docs__grid {
+          grid-template-columns: 248px minmax(0, 1fr);
+        }
+        .toc {
+          display: none;
+        }
+      }
+      @media (max-width: 1080px) {
+        .nav {
+          display: none;
+        }
+        .tele,
+        .feats,
+        .vs {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .principles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .principles li:nth-child(3) {
+          border-left: 0;
+          padding-left: 0;
+        }
+        .principles li:nth-child(n + 3) {
+          border-top: 1px solid var(--edge);
+        }
+        .pivot {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 28px;
+        }
+        .ftr__in {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .ftr__brand {
+          grid-column: 1 / -1;
+        }
+        .orbit {
+          opacity: 0.5;
+        }
+      }
+      @media (max-width: 860px) {
+        .docs__grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .side {
+          display: none;
+        }
+        .doc {
+          padding: 26px 0 64px;
+        }
+        .console__bar .hide-sm {
+          display: none;
+        }
+      }
+      @media (max-width: 640px) {
+        body {
+          font-size: 16px;
+        }
+        .wrap,
+        .hdr__in,
+        .docs__grid {
+          width: calc(100% - 32px);
+        }
+        .hdr__in {
+          gap: 10px;
+        }
+        .fw,
+        .search-btn span,
+        .search-btn kbd {
+          display: none;
+        }
+        .search-btn {
+          min-width: 0;
+          width: 34px;
+          padding: 0;
+          justify-content: center;
+        }
+        .brand {
+          font-size: 19px;
+        }
+        .hero__copy {
+          padding-top: 30px;
+        }
+        .hero__sub {
+          font-size: 17px;
+        }
+        .ann {
+          font-size: 12.5px;
+          align-items: flex-start;
+        }
+        .install {
+          width: 100%;
+        }
+        .install__cmd {
+          flex: 1;
+          font-size: 12.5px;
+        }
+        .orbit,
+        .spark {
+          display: none;
+        }
+        .stage {
+          margin-top: 34px;
+          padding: 26px 0 48px;
+        }
+        .console__bar {
+          letter-spacing: 0.12em;
+          gap: 10px;
+        }
+        .sec {
+          padding-top: 72px;
+        }
+        .sec__head {
+          margin-bottom: 30px;
+        }
+        .sec__head p,
+        .pivot__copy > p {
+          font-size: 16.5px;
+        }
+        .tele,
+        .feats,
+        .vs,
+        .editions,
+        .principles,
+        .pn {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .principles li,
+        .principles li:nth-child(3) {
+          border-left: 0;
+          padding-left: 0;
+        }
+        .principles li + li {
+          border-top: 1px solid var(--edge);
+        }
+        .feat p {
+          min-height: 0;
+        }
+        .edition {
+          padding: 26px 22px;
+        }
+        .ftr__in {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .ftr__base {
+          flex-direction: column;
+        }
+        .closing {
+          margin-top: 72px;
+        }
+        .closing__copy {
+          padding-top: 64px;
+        }
+        .doc__tools {
+          width: 100%;
+        }
+        .demo__title {
+          display: none;
+        }
+        .demo__btn {
+          width: 34px;
+        }
+        .gd-controls {
+          gap: 8px 12px;
+        }
+        .host-themes {
+          min-height: 760px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- icons -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19" /></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A8.7 8.7 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></symbol>
+        <symbol id="i-github" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h9" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" /></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
+        <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" /></symbol>
+        <symbol id="i-ext" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" /></symbol>
+        <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" /></symbol>
+        <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3ZM12 12l8-4.5M12 12v9M12 12 4 7.5" /></symbol>
+        <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v5h5" /></symbol>
+        <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5ZM14 3v5h5" /></symbol>
+        <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4 7 20M17 4l-2 16M4 9h17M3 15h17" /></symbol>
+      </defs>
+    </svg>
+
+    <!-- ================= header (both pages) ================= -->
+    <header class="hdr">
+      <div class="hdr__in">
+        <a class="brand" href="#" data-goto-page="home" aria-label="Infinite Table, home">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span><span class="grad">infinite</span>table</span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="#" data-nav="docs" data-goto-page="docs">Docs</a>
+          <a href="#">Demo</a>
+          <a href="#">Themes</a>
+          <a href="#">Compare</a>
+          <a href="#">Pricing</a>
+          <a href="#">Blog</a>
+        </nav>
+        <div class="hdr__right">
+          <button class="search-btn" type="button" data-open-search aria-label="Search the docs">
+            <svg class="ic"><use href="#i-search" /></svg><span>Search</span><kbd>⌘K</kbd>
+          </button>
+          <div class="fw" role="group" aria-label="Framework">
+            <button type="button" data-set-framework="react">React</button>
+            <button type="button" data-set-framework="vue">Vue</button>
+          </div>
+          <button class="icon-btn" type="button" data-toggle-theme aria-label="Switch color mode">
+            <svg class="ic" data-only="dark"><use href="#i-sun" /></svg>
+            <svg class="ic" data-only="light"><use href="#i-moon" /></svg>
+          </button>
+          <a class="icon-btn" href="https://github.com/infinite-table/infinite-react" aria-label="Infinite Table on GitHub">
+            <svg class="ic ic--fill"><use href="#i-github" /></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= homepage ================= -->
+    <main data-page-view="home">
+      <section class="hero">
+        <div class="wrap hero__copy">
+          <a class="ann" href="#">
+            <b>New in 10.1</b>
+            <span>Terminal, Sheet and Paper themes, plus a density setting</span>
+            <svg class="ic"><use href="#i-arrow" /></svg>
+          </a>
+          <h1>
+            <span>One Table —</span>
+            <span><span class="grad">Infinite</span> Applications</span>
+          </h1>
+          <p class="hero__sub">
+            <b>The DataGrid for React and Vue, built for speed.</b> A million
+            rows, zero dependencies, fully declarative. Grouping, pivoting,
+            aggregations, lazy loading and live updates, in one component.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#" data-goto-page="docs">
+              Get started <svg class="ic"><use href="#i-arrow" /></svg>
+            </a>
+            <div class="install">
+              <span class="install__cmd" data-fw="react">npm i @infinite-table/infinite-react</span>
+              <span class="install__cmd" data-fw="vue">npm i @infinite-table/infinite-vue</span>
+              <button type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+              </button>
+              <button type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage">
+          <div class="nebula" aria-hidden="true"></div>
+          <svg class="orbit" viewBox="-230 -110 460 220" aria-hidden="true">
+            <defs>
+              <linearGradient id="orbit-grad" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" style="stop-color: var(--a1)" />
+                <stop offset="1" style="stop-color: var(--a2)" />
+              </linearGradient>
+            </defs>
+            <ellipse class="far" cx="0" cy="0" rx="226" ry="104" />
+            <path class="cells" d="M0,0 C56,-92 210,-92 210,0 C210,92 56,92 0,0 C-56,-92 -210,-92 -210,0 C-210,92 -56,92 0,0 Z" />
+            <path class="ring" d="M0,0 C56,-92 210,-92 210,0 C210,92 56,92 0,0 C-56,-92 -210,-92 -210,0 C-210,92 -56,92 0,0 Z" />
+            <circle class="probe" r="4.5" />
+          </svg>
+          <span class="spark" style="right: 9%; bottom: calc(100% + 250px); --s: 16px; --d: 0.4s" aria-hidden="true"></span>
+          <span class="spark" style="right: 31%; bottom: calc(100% + 330px); --s: 10px; --d: 1.6s" aria-hidden="true"></span>
+          <span class="spark" style="right: 4%; bottom: calc(100% + 96px); --s: 9px; --d: 2.3s" aria-hidden="true"></span>
+          <span class="spark" style="left: 46%; bottom: calc(100% + 60px); --s: 8px; --d: 3.1s" aria-hidden="true"></span>
+          <svg class="floor" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path class="rays" d="M327.5 10L-16753 1000M332.3 10L-16267 1000M337.2 10L-15781 1000M342.1 10L-15295 1000M346.9 10L-14809 1000M351.8 10L-14323 1000M356.6 10L-13837 1000M361.5 10L-13351 1000M366.4 10L-12865 1000M371.2 10L-12379 1000M376.1 10L-11893 1000M380.9 10L-11407 1000M385.8 10L-10921 1000M390.6 10L-10435 1000M395.5 10L-9949 1000M400.4 10L-9463 1000M405.2 10L-8977 1000M410.1 10L-8491 1000M414.9 10L-8005 1000M419.8 10L-7519 1000M424.7 10L-7033 1000M429.5 10L-6547 1000M434.4 10L-6061 1000M439.2 10L-5575 1000M444.1 10L-5089 1000M449.0 10L-4603 1000M453.8 10L-4117 1000M458.7 10L-3631 1000M463.6 10L-3145 1000M468.4 10L-2659 1000M473.3 10L-2173 1000M478.1 10L-1687 1000M483.0 10L-1201 1000M487.9 10L-715 1000M492.7 10L-229 1000M497.6 10L257 1000M502.4 10L743 1000M507.3 10L1229 1000M512.1 10L1715 1000M517.0 10L2201 1000M521.9 10L2687 1000M526.7 10L3173 1000M531.6 10L3659 1000M536.5 10L4145 1000M541.3 10L4631 1000M546.2 10L5117 1000M551.0 10L5603 1000M555.9 10L6089 1000M560.8 10L6575 1000M565.6 10L7061 1000M570.5 10L7547 1000M575.3 10L8033 1000M580.2 10L8519 1000M585.0 10L9005 1000M589.9 10L9491 1000M594.8 10L9977 1000M599.6 10L10463 1000M604.5 10L10949 1000M609.4 10L11435 1000M614.2 10L11921 1000M619.1 10L12407 1000M623.9 10L12893 1000M628.8 10L13379 1000M633.6 10L13865 1000M638.5 10L14351 1000M643.4 10L14837 1000M648.2 10L15323 1000M653.1 10L15809 1000M658.0 10L16295 1000M662.8 10L16781 1000M667.7 10L17267 1000M672.5 10L17753 1000"/><path class="row" style="--i:0" d="M-200 1000.0H1200"/><path class="row" style="--i:1" d="M-200 312.5H1200"/><path class="row" style="--i:2" d="M-200 185.2H1200"/><path class="row" style="--i:3" d="M-200 131.6H1200"/><path class="row" style="--i:4" d="M-200 102.0H1200"/><path class="row" style="--i:5" d="M-200 83.3H1200"/><path class="row" style="--i:6" d="M-200 70.4H1200"/><path class="row" style="--i:7" d="M-200 61.0H1200"/><path class="row" style="--i:8" d="M-200 53.8H1200"/><path class="row" style="--i:9" d="M-200 48.1H1200"/><path class="row" style="--i:10" d="M-200 43.5H1200"/><path class="row" style="--i:11" d="M-200 39.7H1200"/><path class="row" style="--i:12" d="M-200 36.5H1200"/><path class="row" style="--i:13" d="M-200 33.8H1200"/><path class="row" style="--i:14" d="M-200 31.4H1200"/><path class="row" style="--i:15" d="M-200 29.4H1200"/><polygon class="cell" style="--d:0.0s" points="-229.0,1000.0 257.0,1000.0 424.1,312.5 272.2,312.5"/><polygon class="cell" style="--d:1.3s" points="1229.0,1000.0 1715.0,1000.0 879.7,312.5 727.8,312.5"/><polygon class="cell" style="--d:2.6s" points="439.2,83.3 479.8,83.3 482.9,70.4 448.7,70.4"/><polygon class="cell" style="--d:3.9s" points="551.3,70.4 585.6,70.4 574.1,61.0 544.5,61.0"/><polygon class="cell" style="--d:0.2s" points="396.3,61.0 425.9,61.0 434.7,53.8 408.5,53.8"/><polygon class="cell" style="--d:1.5s" points="641.8,83.3 682.2,83.3 654.0,70.4 619.8,70.4"/><polygon class="cell" style="--d:2.8s" points="513.1,53.8 539.2,53.8 535.0,48.1 511.7,48.1"/><polygon class="cell" style="--d:4.1s" points="311.8,70.4 346.0,70.4 366.6,61.0 337.0,61.0"/><polygon class="cell" style="--d:0.4s" points="663.0,61.0 692.6,61.0 669.8,53.8 643.7,53.8"/><polygon class="cell" style="--d:1.7s" points="468.0,131.6 532.0,131.6 524.8,102.0 475.2,102.0"/><polygon class="cell" style="--d:3.0s" points="725.0,185.2 815.0,185.2 723.8,131.6 659.9,131.6"/><polygon class="cell" style="--d:4.3s" points="447.2,43.5 468.3,43.5 471.1,39.7 451.8,39.7"/><polygon class="cell" style="--d:0.6s" points="586.8,39.7 606.1,39.7 597.6,36.5 579.8,36.5"/></svg>
+          <div class="horizon" aria-hidden="true"></div>
+
+          <div class="wrap">
+            <div class="console">
+              <i class="tick tl"></i><i class="tick tr"></i><i class="tick bl"></i><i class="tick br"></i>
+              <div class="console__bar">
+                <span class="live-dot"></span>
+                <span class="lbl">Live demo</span>
+                <span class="hide-sm">click the grid to take over</span>
+                <span class="grow"></span>
+                <span class="hide-sm"><b data-tick>2,556</b> ticks/s</span>
+                <span class="hide-sm"><b data-tick="0.02">56</b> fps</span>
+                <a href="#">Open full-page demo ↗</a>
+              </div>
+              <div class="console__pic">
+                <img data-only="dark" src="/hero/hero-poster-dark.webp" width="1704" height="1080" alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap" />
+                <img data-only="light" src="/hero/hero-poster-light.webp" width="1704" height="1080" alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- telemetry -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">Telemetry</div>
+            <h2>Measured, <span class="grad">not claimed.</span></h2>
+            <p>Infinite Table next to AG Grid, on the same data and the same machine, at one million rows.</p>
+          </header>
+          <div class="tele">
+            <article class="card tile">
+              <span class="ghost" aria-hidden="true">01</span>
+              <div class="tile__label">Mount 1,000,000 rows</div>
+              <div class="tile__num">352<small>ms</small><span class="chip">0.71×</span></div>
+              <div class="bars">
+                <div class="bar bar--inf"><span>Infinite</span><i style="--w: 70.7%"></i><b>352 ms</b></div>
+                <div class="bar"><span>AG Grid</span><i style="--w: 100%"></i><b>498 ms</b></div>
+              </div>
+            </article>
+            <article class="card tile">
+              <span class="ghost" aria-hidden="true">02</span>
+              <div class="tile__label">Sort 1,000,000 rows by a text column</div>
+              <div class="tile__num">1.40<small>s</small><span class="chip">0.41×</span></div>
+              <div class="bars">
+                <div class="bar bar--inf"><span>Infinite</span><i style="--w: 41.4%"></i><b>1.40 s</b></div>
+                <div class="bar"><span>AG Grid</span><i style="--w: 100%"></i><b>3.38 s</b></div>
+              </div>
+            </article>
+            <article class="card tile">
+              <span class="ghost" aria-hidden="true">03</span>
+              <div class="tile__label">Memory at 1,000,000 rows</div>
+              <div class="tile__num">90.7<small>MB</small><span class="chip">0.42×</span></div>
+              <div class="bars">
+                <div class="bar bar--inf"><span>Infinite</span><i style="--w: 42.6%"></i><b>90.7 MB</b></div>
+                <div class="bar"><span>AG Grid</span><i style="--w: 100%"></i><b>213 MB</b></div>
+              </div>
+            </article>
+            <article class="card tile">
+              <span class="ghost" aria-hidden="true">04</span>
+              <div class="tile__label">Dependencies</div>
+              <div class="tile__num"><span class="grad">0</span></div>
+              <p class="tile__note">Nothing but your framework.</p>
+              <div class="tile__split">
+                <div class="tile__label" style="min-height: 0">Gzipped JavaScript</div>
+                <div class="tile__num">145<small>kB</small></div>
+              </div>
+            </article>
+          </div>
+          <div class="sec__foot">
+            <span>Infinite Table 10.1.4 vs AG Grid Community 36.3.0. Chrome 136, Apple M1 Pro, medians of 7 runs. Scrolling is a tie in this run.</span>
+            <a class="textlink" href="#">Read the method and run it yourself <svg class="ic"><use href="#i-arrow" /></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- one million rows -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">To the horizon</div>
+            <h2>A million rows. <span class="grad">Go on, scroll.</span></h2>
+            <p>
+              You scroll an empty container sized like the content; the grid
+              moves its header and body itself, on the same frame. The header
+              never trails the cells, and a fast fling never shows blank rows.
+            </p>
+          </header>
+          <div class="console">
+            <i class="tick tl"></i><i class="tick tr"></i><i class="tick bl"></i><i class="tick br"></i>
+            <div class="console__bar">
+              <span class="live-dot"></span>
+              <span class="lbl">Grid</span>
+              <span class="hide-sm">generated in your browser</span>
+              <span class="grow"></span>
+              <span class="hide-sm">Rows and columns virtualized</span>
+            </div>
+            <div class="host-million" data-grid-demo="million" data-theme-name="terminal"></div>
+          </div>
+          <div class="legend">
+            <span>Rows virtualized</span>
+            <span>Columns virtualized</span>
+            <span>Header and body on one frame</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- themes -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">Flight deck</div>
+            <h2>Themes that change <span class="grad">more than color.</span></h2>
+            <p>
+              Terminal, Sheet and Paper change spacing, borders, type and even
+              the icons, all through CSS variables. Density is a separate
+              setting: compact, comfortable or spacious.
+            </p>
+          </header>
+          <div class="console">
+            <i class="tick tl"></i><i class="tick tr"></i><i class="tick bl"></i><i class="tick br"></i>
+            <div class="console__bar">
+              <span class="live-dot"></span>
+              <span class="lbl">Theme gallery</span>
+              <span class="hide-sm">theme × mode × density</span>
+              <span class="grow"></span>
+              <a href="#">Open the theme gallery ↗</a>
+            </div>
+            <div class="host-themes" data-grid-demo="themes" data-default-theme="terminal"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- pivot -->
+      <section class="sec">
+        <div class="wrap">
+          <div class="pivot">
+            <div class="pivot__copy">
+              <div class="eyebrow">Coordinates</div>
+              <h2>Pivot in <span class="grad">a few lines.</span></h2>
+              <p>
+                Group by one field, pivot by another, add an aggregation. The
+                pivot columns are generated for you.
+              </p>
+              <ol class="steps">
+                <li><b>01</b><span><code>groupBy</code> makes the rows</span></li>
+                <li><b>02</b><span><code>pivotBy</code> makes the columns</span></li>
+                <li><b>03</b><span><code>aggregationReducers</code> fill the cells</span></li>
+              </ol>
+            </div>
+            <div class="code">
+              <div class="code__bar">
+                <span>pivot.tsx</span><span class="grow"></span>
+                <button type="button" aria-label="Copy the code" data-copy="<DataSource data={trades} primaryKey=&quot;id&quot; groupBy={[{ field: 'sector' }]} pivotBy={[{ field: 'region' }]} />">
+                  <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+                </button>
+              </div>
+              <pre><code><span class="l"><span class="p">&lt;</span><span class="t">DataSource</span></span>
+<span class="l">  <span class="a">data</span><span class="p">={</span>trades<span class="p">}</span></span>
+<span class="l">  <span class="a">primaryKey</span><span class="p">=</span><span class="s">"id"</span></span>
+<span class="l hl">  <span class="a">groupBy</span><span class="p">={[{</span> field<span class="p">:</span> <span class="s">'sector'</span> <span class="p">}]}</span></span>
+<span class="l hl">  <span class="a">pivotBy</span><span class="p">={[{</span> field<span class="p">:</span> <span class="s">'region'</span> <span class="p">}]}</span></span>
+<span class="l">  <span class="a">aggregationReducers</span><span class="p">={{</span></span>
+<span class="l">    pnl<span class="p">: {</span> field<span class="p">:</span> <span class="s">'pnl'</span><span class="p">,</span> initialValue<span class="p">:</span> 0<span class="p">,</span> reducer<span class="p">: (</span>a<span class="p">,</span> b<span class="p">)</span> <span class="k">=&gt;</span> a + b <span class="p">},</span></span>
+<span class="l">  <span class="p">}}</span></span>
+<span class="l"><span class="p">&gt;</span></span>
+<span class="l">  <span class="p">{({</span> pivotColumns<span class="p">,</span> pivotColumnGroups <span class="p">})</span> <span class="k">=&gt;</span> <span class="p">(</span></span>
+<span class="l">    <span class="p">&lt;</span><span class="t">InfiniteTable</span></span>
+<span class="l">      <span class="a">pivotColumns</span><span class="p">={</span>pivotColumns<span class="p">}</span></span>
+<span class="l">      <span class="a">pivotColumnGroups</span><span class="p">={</span>pivotColumnGroups<span class="p">}</span></span>
+<span class="l">    <span class="p">/&gt;</span></span>
+<span class="l">  <span class="p">)}</span></span>
+<span class="l"><span class="p">&lt;/</span><span class="t">DataSource</span><span class="p">&gt;</span></span></code></pre>
+            </div>
+          </div>
+          <div class="console">
+            <i class="tick tl"></i><i class="tick tr"></i><i class="tick bl"></i><i class="tick br"></i>
+            <div class="console__bar">
+              <span class="live-dot"></span>
+              <span class="lbl">Pivot</span>
+              <span class="hide-sm">20,000 trades · sector × region</span>
+              <span class="grow"></span>
+              <a href="#">Pivoting docs ↗</a>
+            </div>
+            <div class="host-pivot" data-grid-demo="pivot" data-theme-name="terminal"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- features -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">Payload</div>
+            <h2>The whole feature set, <span class="grad">in one component.</span></h2>
+          </header>
+          <div class="feats">
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">01</span>
+              <h3>Sorting</h3><p>Single and multi-column, local or remote.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#" data-goto-page="docs"><span class="ghost" aria-hidden="true">02</span>
+              <h3>Row grouping</h3><p>By one or many fields, works with lazy data.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">03</span>
+              <h3>Pivoting</h3><p>Generated columns, totals, custom headers.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">04</span>
+              <h3>Aggregations</h3><p>Built-in and custom reducers, client or server.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">05</span>
+              <h3>Column grouping</h3><p>Nested headers that resize and reorder together.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">06</span>
+              <h3>Lazy loading</h3><p>Load batches as you scroll, per group if needed.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">07</span>
+              <h3>Keyboard navigation</h3><p>Cells or rows, selection, shortcuts.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+            <a class="card feat" href="#"><span class="ghost" aria-hidden="true">08</span>
+              <h3>Theming</h3><p>CSS variables, seven themes, three densities.</p><span class="go">Docs <svg class="ic"><use href="#i-arrow" /></svg></span></a>
+          </div>
+          <ul class="principles">
+            <li><b>Declarative</b><span>Every prop has a controlled and an uncontrolled form.</span></li>
+            <li><b>Typed</b><span>Written in TypeScript, generic over your data type.</span></li>
+            <li><b>Zero dependencies</b><span>Nothing but your framework.</span></li>
+            <li><b>React and Vue</b><span>The same grid, the same docs.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- compare -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">Side by side</div>
+            <h2>How it <span class="grad">compares.</span></h2>
+            <p>Feature by feature, with sources and the honest no's.</p>
+          </header>
+          <div class="vs">
+            <a class="card" href="#"><small>Infinite Table vs</small><strong>AG Grid <svg class="ic"><use href="#i-arrow" /></svg></strong></a>
+            <a class="card" href="#"><small>Infinite Table vs</small><strong>MUI X Data Grid <svg class="ic"><use href="#i-arrow" /></svg></strong></a>
+            <a class="card" href="#"><small>Infinite Table vs</small><strong>TanStack Table <svg class="ic"><use href="#i-arrow" /></svg></strong></a>
+            <a class="card" href="#"><small>Infinite Table vs</small><strong>Handsontable <svg class="ic"><use href="#i-arrow" /></svg></strong></a>
+          </div>
+          <div class="center">
+            <a class="textlink" href="#">All 13 comparisons <svg class="ic"><use href="#i-arrow" /></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- editions -->
+      <section class="sec">
+        <div class="wrap">
+          <header class="sec__head">
+            <div class="eyebrow">Editions</div>
+            <h2>One grid, <span class="grad">two ways to use it.</span></h2>
+          </header>
+          <div class="editions">
+            <article class="card edition">
+              <span class="ghost" aria-hidden="true">CE</span>
+              <div class="eyebrow">Community</div>
+              <h3>Free in any app.</h3>
+              <p>Shows a "Powered by Infinite Table" footer.</p>
+              <div class="edition__actions">
+                <div class="install">
+                  <span class="install__cmd" data-fw="react">npm i @infinite-table/infinite-react</span>
+                  <span class="install__cmd" data-fw="vue">npm i @infinite-table/infinite-vue</span>
+                  <button type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                    <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+                  </button>
+                  <button type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                    <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+            <article class="card edition edition--pro">
+              <span class="ghost" aria-hidden="true">EE</span>
+              <div class="eyebrow">Enterprise</div>
+              <h3>One license, unlimited applications.</h3>
+              <p>A license removes the footer and adds dedicated support.</p>
+              <div class="edition__actions">
+                <a class="btn btn--primary" href="#">See pricing <svg class="ic"><use href="#i-arrow" /></svg></a>
+                <a class="btn btn--ghost" href="#" data-goto-page="docs">Read the docs</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- closing band: the horizon again -->
+      <section class="closing">
+        <div class="wrap closing__copy">
+          <div class="eyebrow">Ready when you are</div>
+          <h2>One Table — <span class="grad">Infinite</span> Applications</h2>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#" data-goto-page="docs">Get started <svg class="ic"><use href="#i-arrow" /></svg></a>
+            <a class="btn btn--ghost" href="#">Open full-page demo</a>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="nebula" aria-hidden="true"></div>
+          <svg class="floor floor--low" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path class="rays" d="M287.1 30L-6595 1000M297.1 30L-6265 1000M306.9 30L-5935 1000M316.9 30L-5605 1000M326.8 30L-5275 1000M336.6 30L-4945 1000M346.6 30L-4615 1000M356.4 30L-4285 1000M366.4 30L-3955 1000M376.2 30L-3625 1000M386.1 30L-3295 1000M396.1 30L-2965 1000M405.9 30L-2635 1000M415.9 30L-2305 1000M425.8 30L-1975 1000M435.6 30L-1645 1000M445.6 30L-1315 1000M455.4 30L-985 1000M465.4 30L-655 1000M475.2 30L-325 1000M485.1 30L5 1000M495.1 30L335 1000M504.9 30L665 1000M514.9 30L995 1000M524.8 30L1325 1000M534.6 30L1655 1000M544.5 30L1985 1000M554.5 30L2315 1000M564.4 30L2645 1000M574.2 30L2975 1000M584.1 30L3305 1000M594.0 30L3635 1000M604.0 30L3965 1000M613.9 30L4295 1000M623.8 30L4625 1000M633.6 30L4955 1000M643.5 30L5285 1000M653.5 30L5615 1000M663.4 30L5945 1000M673.2 30L6275 1000M683.1 30L6605 1000M693.0 30L6935 1000M703.0 30L7265 1000M712.9 30L7595 1000"/><path class="row" style="--i:0" d="M-200 1000.0H1200"/><path class="row" style="--i:1" d="M-200 526.3H1200"/><path class="row" style="--i:2" d="M-200 357.1H1200"/><path class="row" style="--i:3" d="M-200 270.3H1200"/><path class="row" style="--i:4" d="M-200 217.4H1200"/><path class="row" style="--i:5" d="M-200 181.8H1200"/><path class="row" style="--i:6" d="M-200 156.2H1200"/><path class="row" style="--i:7" d="M-200 137.0H1200"/><path class="row" style="--i:8" d="M-200 122.0H1200"/><path class="row" style="--i:9" d="M-200 109.9H1200"/><path class="row" style="--i:10" d="M-200 100.0H1200"/><path class="row" style="--i:11" d="M-200 91.7H1200"/><path class="row" style="--i:12" d="M-200 84.7H1200"/><path class="row" style="--i:13" d="M-200 78.7H1200"/><path class="row" style="--i:14" d="M-200 73.5H1200"/><polygon class="cell" style="--d:0.0s" points="65.8,526.3 239.5,526.3 323.2,357.1 205.4,357.1"/><polygon class="cell" style="--d:1.3s" points="676.8,357.1 794.6,357.1 723.0,270.3 633.8,270.3"/><polygon class="cell" style="--d:2.6s" points="1655.0,1000.0 1985.0,1000.0 1281.6,526.3 1107.9,526.3"/><polygon class="cell" style="--d:3.9s" points="464.1,217.4 535.9,217.4 530.0,181.8 470.0,181.8"/><polygon class="cell" style="--d:0.2s" points="901.4,270.3 990.5,270.3 894.6,217.4 822.8,217.4"/><polygon class="cell" style="--d:1.5s" points="-30.4,357.1 87.5,357.1 187.8,270.3 98.6,270.3"/><polygon class="cell" style="--d:2.8s" points="525.8,156.2 577.3,156.2 567.8,137.0 522.6,137.0"/><polygon class="cell" style="--d:4.1s" points="5.0,1000.0 335.0,1000.0 413.2,526.3 239.5,526.3"/><polygon class="cell" style="--d:0.4s" points="600.6,122.0 640.9,122.0 626.9,109.9 590.7,109.9"/><polygon class="cell" style="--d:1.7s" points="373.1,109.9 409.3,109.9 417.5,100.0 384.5,100.0"/></svg>
+          <div class="horizon" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <footer class="ftr">
+        <div class="wrap">
+          <div class="ftr__in">
+            <div class="ftr__brand">
+              <a class="brand" href="#" data-goto-page="home"><span class="brand__mark" aria-hidden="true"></span><span><span class="grad">infinite</span>table</span></a>
+              <p>One Table — Infinite Applications. The DataGrid for React and Vue.</p>
+            </div>
+            <div><h4>Product</h4><ul><li><a href="#" data-goto-page="docs">Docs</a></li><li><a href="#">Demo</a></li><li><a href="#">Themes</a></li><li><a href="#">Pricing</a></li><li><a href="#">Blog</a></li></ul></div>
+            <div><h4>Compare</h4><ul><li><a href="#">AG Grid</a></li><li><a href="#">MUI X Data Grid</a></li><li><a href="#">TanStack Table</a></li><li><a href="#">Benchmark</a></li></ul></div>
+            <div><h4>Resources</h4><ul><li><a href="#">API reference</a></li><li><a href="#">Releases</a></li><li><a href="#">DevTools</a></li><li><a href="#">llms.txt</a></li></ul></div>
+            <div><h4>Company</h4><ul><li><a href="https://github.com/infinite-table/infinite-react">GitHub</a></li><li><a href="#">X</a></li><li><a href="#">Contact</a></li><li><a href="#">EULA</a></li></ul></div>
+          </div>
+          <div class="ftr__base"><span>© 2026 Infinite Table</span><span>infinite-table.com</span></div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ================= docs page ================= -->
+    <div class="docs" data-page-view="docs">
+      <div class="docs__grid">
+        <aside class="side" aria-label="Docs navigation">
+          <div class="tabs" role="group" aria-label="Docs section">
+            <button type="button" aria-pressed="true">Learn</button>
+            <button type="button" aria-pressed="false">Reference</button>
+            <button type="button" aria-pressed="false">Releases</button>
+          </div>
+          <div class="side__label">Guides</div>
+          <ul class="side__nav">
+            <li><a href="#">Overview</a></li>
+            <li><a href="#">Getting Started <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Data <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Columns <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Rows <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Selection <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Keyboard Navigation <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Sorting <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li class="open">
+              <a href="#">Grouping and Pivoting <svg class="ic"><use href="#i-down" /></svg></a>
+              <ul class="side__sub">
+                <li><a href="#" aria-current="page">Grouping rows</a></li>
+                <li><a href="#">Group aggregations</a></li>
+                <li><a href="#">Pivoting</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Filtering <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Editing <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Context Menus <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Master-Detail <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Tree Data <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">DevTools</a></li>
+            <li><a href="#">Theming <svg class="ic"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Common Issues</a></li>
+            <li><a href="#">Examples <svg class="ic"><use href="#i-chev" /></svg></a></li>
+          </ul>
+        </aside>
+
+        <article class="doc">
+          <div class="doc__in">
+            <nav class="crumbs" aria-label="Breadcrumb">
+              <span>Docs</span><span>/</span><span>Grouping and Pivoting</span><span>/</span><b>Grouping rows</b>
+            </nav>
+            <div class="doc__title">
+              <h1>Grouping rows</h1>
+              <div class="doc__tools">
+                <a class="tool" href="#"><svg class="ic"><use href="#i-file" /></svg>View as Markdown</a>
+                <button class="tool" type="button" data-copy="# Grouping rows"><svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>Copy page</button>
+              </div>
+            </div>
+
+            <p class="lead">
+              You can use any <code>field</code> available in the
+              <code>DataSource</code> to do the grouping. It can even be a
+              field that is not a column.
+            </p>
+
+            <div class="note">
+              <div class="note__lbl">Note</div>
+              <p>
+                When using TypeScript, both <code>DataSource</code> and
+                <code>InfiniteTable</code> are generic and take a
+                <code>DATA_TYPE</code> parameter. The fields in that type can
+                then be used for grouping.
+              </p>
+            </div>
+
+            <div class="code code--num">
+              <div class="code__bar">
+                <span>grouping.tsx</span><span class="grow"></span>
+                <button type="button" aria-label="Copy the code" data-copy="const groupBy = [{ field: 'country' }]">
+                  <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+                </button>
+              </div>
+              <pre><code><span class="l" data-fw="react"><span class="k">import</span> <span class="p">{</span> InfiniteTable<span class="p">,</span> DataSource <span class="p">}</span> <span class="k">from</span> <span class="s">'@infinite-table/infinite-react'</span></span>
+<span class="l" data-fw="vue"><span class="k">import</span> <span class="p">{</span> InfiniteTable<span class="p">,</span> DataSource <span class="p">}</span> <span class="k">from</span> <span class="s">'@infinite-table/infinite-vue'</span></span>
+<span class="l"> </span>
+<span class="l"><span class="k">type</span> <span class="t">Person</span> <span class="p">= {</span> id<span class="p">:</span> <span class="a">string</span><span class="p">;</span> name<span class="p">:</span> <span class="a">string</span><span class="p">;</span> age<span class="p">:</span> <span class="a">number</span><span class="p">;</span> country<span class="p">:</span> <span class="a">string</span> <span class="p">}</span></span>
+<span class="l"> </span>
+<span class="l hl"><span class="k">const</span> groupBy <span class="p">= [{</span> field<span class="p">:</span> <span class="s">'country'</span> <span class="p">}]</span></span>
+<span class="l"> </span>
+<span class="l"><span class="p">&lt;</span><span class="t">DataSource</span><span class="p">&lt;</span><span class="t">Person</span><span class="p">&gt;</span> <span class="a">data</span><span class="p">={</span>people<span class="p">}</span> <span class="a">primaryKey</span><span class="p">=</span><span class="s">"id"</span> <span class="a">groupBy</span><span class="p">={</span>groupBy<span class="p">}&gt;</span></span>
+<span class="l">  <span class="p">&lt;</span><span class="t">InfiniteTable</span><span class="p">&lt;</span><span class="t">Person</span><span class="p">&gt;</span> <span class="a">columns</span><span class="p">={</span>columns<span class="p">}</span> <span class="p">/&gt;</span></span>
+<span class="l"><span class="p">&lt;/</span><span class="t">DataSource</span><span class="p">&gt;</span></span></code></pre>
+            </div>
+
+            <p>
+              In the example above, we're grouping by <code>country</code>.
+              Specifying a field that is not in the <code>Person</code> type is
+              a type error.
+            </p>
+
+            <div class="demo">
+              <div class="demo__bar">
+                <span class="demo__title"><span class="live-dot"></span>Simple row grouping</span>
+                <button class="demo__tab" type="button" role="tab" aria-selected="true">Preview</button>
+                <button class="demo__tab" type="button" role="tab" aria-selected="false">row-grouping.demo.tsx</button>
+                <span class="grow"></span>
+                <button class="demo__btn" type="button" aria-label="Edit" title="Edit"><svg class="ic"><use href="#i-edit" /></svg></button>
+                <button class="demo__btn" type="button" aria-label="Fork to CodeSandbox" title="Fork to CodeSandbox"><svg class="ic"><use href="#i-box" /></svg></button>
+                <button class="demo__btn" type="button" aria-label="Reset" title="Reset"><svg class="ic"><use href="#i-reset" /></svg></button>
+                <button class="demo__btn" type="button" aria-label="Full screen" title="Full screen"><svg class="ic"><use href="#i-full" /></svg></button>
+              </div>
+              <div class="host-grouped" data-grid-demo="grouped" data-theme-name="terminal"></div>
+            </div>
+
+            <h2 id="group-column">Customizing the group column</h2>
+            <p>
+              In <code>groupBy.column</code> you can use any column property,
+              for example a custom <code>renderValue</code>.
+            </p>
+            <div class="code code--num">
+              <div class="code__bar">
+                <span>group-column.tsx</span><span class="grow"></span>
+                <button type="button" aria-label="Copy the code" data-copy="const groupBy = [{ field: 'country', column: { renderValue: ({ value }) => <>Country: {value}</> } }]">
+                  <svg class="ic ic-copy"><use href="#i-copy" /></svg><svg class="ic ic-check"><use href="#i-check" /></svg>
+                </button>
+              </div>
+              <pre><code><span class="l"><span class="k">const</span> groupBy <span class="p">= [</span></span>
+<span class="l">  <span class="p">{</span></span>
+<span class="l">    field<span class="p">:</span> <span class="s">'country'</span><span class="p">,</span></span>
+<span class="l">    column<span class="p">: {</span></span>
+<span class="l hl">      renderValue<span class="p">: ({</span> value <span class="p">})</span> <span class="k">=&gt;</span> <span class="p">&lt;&gt;</span>Country: <span class="p">{</span>value<span class="p">}&lt;/&gt;,</span></span>
+<span class="l">    <span class="p">},</span></span>
+<span class="l">  <span class="p">},</span></span>
+<span class="l"><span class="p">]</span></span></code></pre>
+            </div>
+
+            <h2 id="strategies">Grouping strategies</h2>
+            <p>
+              Multiple grouping levels can be rendered as one column per group
+              (<code>multi-column</code>, the default) or as a single column
+              (<code>single-column</code>). Set it with
+              <code>groupRenderStrategy</code>.
+            </p>
+            <div class="props">
+              <table>
+                <thead>
+                  <tr><th>Prop</th><th>Type</th><th>Default</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>groupRenderStrategy</td><td>'multi-column' | 'single-column'</td><td>'multi-column'</td></tr>
+                  <tr><td>groupColumn</td><td>InfiniteTableColumn | (options) =&gt; InfiniteTableColumn</td><td>none</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h2 id="aggregations">Aggregations</h2>
+            <p>
+              Group rows can show a value computed from the rows in the group,
+              such as a sum or an average.
+              <a class="inline" href="#">Group aggregations →</a>
+            </p>
+
+            <nav class="pn" aria-label="Previous and next page">
+              <a class="card prev" href="#"><span class="ghost" aria-hidden="true">←</span><small>Previous</small><strong>Sorting</strong></a>
+              <a class="card next" href="#"><span class="ghost" aria-hidden="true">→</span><small>Next</small><strong>Group aggregations</strong></a>
+            </nav>
+            <div class="doc__foot">
+              <span>Was this page helpful? <a href="#">Yes</a> · <a href="#">No</a></span>
+              <a href="#">Edit this page on GitHub ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <div class="toc__lbl">On this page</div>
+          <ul>
+            <li><a href="#group-column" aria-current="true">Customizing the group column</a></li>
+            <li><a href="#strategies">Grouping strategies</a></li>
+            <li><a href="#aggregations">Aggregations</a></li>
+          </ul>
+          <div class="toc__more">
+            <a href="#"><svg class="ic"><use href="#i-file" /></svg>View as Markdown</a>
+            <a href="#"><svg class="ic"><use href="#i-edit" /></svg>Edit on GitHub</a>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="ftr">
+        <div class="wrap">
+          <div class="ftr__in">
+            <div class="ftr__brand">
+              <a class="brand" href="#" data-goto-page="home"><span class="brand__mark" aria-hidden="true"></span><span><span class="grad">infinite</span>table</span></a>
+              <p>One Table — Infinite Applications. The DataGrid for React and Vue.</p>
+            </div>
+            <div><h4>Product</h4><ul><li><a href="#">Docs</a></li><li><a href="#">Demo</a></li><li><a href="#">Themes</a></li><li><a href="#">Pricing</a></li><li><a href="#">Blog</a></li></ul></div>
+            <div><h4>Compare</h4><ul><li><a href="#">AG Grid</a></li><li><a href="#">MUI X Data Grid</a></li><li><a href="#">TanStack Table</a></li><li><a href="#">Benchmark</a></li></ul></div>
+            <div><h4>Resources</h4><ul><li><a href="#">API reference</a></li><li><a href="#">Releases</a></li><li><a href="#">DevTools</a></li><li><a href="#">llms.txt</a></li></ul></div>
+            <div><h4>Company</h4><ul><li><a href="https://github.com/infinite-table/infinite-react">GitHub</a></li><li><a href="#">X</a></li><li><a href="#">Contact</a></li><li><a href="#">EULA</a></li></ul></div>
+          </div>
+          <div class="ftr__base"><span>© 2026 Infinite Table</span><span>infinite-table.com</span></div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= command-K search ================= -->
+    <dialog data-search aria-label="Search the docs">
+      <div class="srch__input">
+        <svg class="ic"><use href="#i-search" /></svg>
+        <input type="text" placeholder="Search the docs…" aria-label="Search the docs" />
+        <kbd>esc</kbd>
+      </div>
+      <div class="srch__list">
+        <div class="srch__grp">Learn</div>
+        <a href="#" class="is-active" data-search-item><svg class="ic"><use href="#i-file" /></svg>Grouping rows<small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-file" /></svg>Group aggregations<small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-file" /></svg>Pivoting<small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-file" /></svg>Lazy loading<small>Working with Data</small></a>
+        <div class="srch__grp">API reference</div>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-hash" /></svg><code>groupBy</code><small>DataSource</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-hash" /></svg><code>groupRenderStrategy</code><small>InfiniteTable</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-hash" /></svg><code>pivotBy</code><small>DataSource</small></a>
+        <a href="#" data-search-item><svg class="ic"><use href="#i-hash" /></svg><code>aggregationReducers</code><small>DataSource</small></a>
+      </div>
+      <div class="srch__foot">
+        <span><kbd>↑</kbd> <kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </dialog>
+
+    <script type="module" src="./shared.js"></script>
+  </body>
+</html>
