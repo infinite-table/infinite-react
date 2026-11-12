@@ -13,16 +13,9 @@ import {
 
 export { MenuIconDataAttributes, MenuIconDataAttributesValues };
 
-export type MenuIconProps = {
-  lineWidth?: number;
-  lineStyle?: React.CSSProperties;
-  style?: React.CSSProperties;
-  className?: string;
-  domProps?: React.HTMLAttributes<HTMLDivElement>;
-  reserveSpaceWhenHidden?: boolean;
-  menuVisible?: boolean;
-  children?: React.ReactNode;
-};
+import type { MenuIconProps } from './MenuIconTypes';
+
+export type { MenuIconProps };
 
 const defaultLineStyle: React.CSSProperties = {
   width: '100%',

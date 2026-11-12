@@ -1,4 +1,4 @@
-import type { KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent } from '../../types/FrameworkTypes';
 
 // neutral replacement for React's createRef - this file is shared across
 // framework builds, so it cannot have a runtime dependency on react

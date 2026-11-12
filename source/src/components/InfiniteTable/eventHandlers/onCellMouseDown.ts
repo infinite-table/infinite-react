@@ -1,3 +1,4 @@
+import type { MouseEvent } from '../../types/FrameworkTypes';
 import {
   InfiniteTableCellClickEventHandlerContext,
   InfiniteTableEventHandlerAbstractContext,
@@ -10,7 +11,7 @@ export type OnCellMouseDownContext<T> =
 
 export function onCellMouseDown<T>(
   context: OnCellMouseDownContext<T>,
-  event: React.MouseEvent<Element>,
+  event: MouseEvent<Element>,
 ) {
   context.getComputed().multiRowSelector.lastPointerDown = {
     rowIndex: context.rowIndex,

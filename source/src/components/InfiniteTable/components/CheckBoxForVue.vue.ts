@@ -3,7 +3,7 @@ import type { PropType } from 'vue';
 
 import { join } from '../../../utils/join';
 import { CheckBoxCls } from './CheckBox.css';
-import type { InfiniteCheckBoxPropChecked } from './CheckBox';
+import type { InfiniteCheckBoxPropChecked } from './CheckBoxTypes';
 
 /**
  * Vue sibling of InfiniteCheckBox. Renders the same
