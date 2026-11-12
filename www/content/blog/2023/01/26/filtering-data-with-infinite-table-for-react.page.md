@@ -28,27 +28,14 @@ The recently-released version `1.1.0` of Infinite Table for React introduces sup
 
 In order to enable filtering - specify the <DPropLink name="defaultFilterValue"/> property on the `<DataSource />` component, as shown below:
 
-```tsx {4} title="Enabling_filters_on_the_DataSource"
-<DataSource<Developer> data={/* ... */} primaryKey="id" defaultFilterValue={[]}>
-  <InfiniteTable<Developer> columns={columns} />
-</DataSource>
+```tsx file="filtering-data-with-infinite-table-for-react.snippet.tsx" region="enabling-filters-on-the-datasource" title="Enabling_filters_on_the_DataSource"
 ```
 
 This configures the `<DataSource />` component with an empty array of filters; columns will pick this up and each will display a filter editor in the column header.
 
 Of course, you can define some initial filters:
 
-```tsx title="Initial_filters:_filter_by_age_greater_than_40"
-defaultFilterValue={[
-  {
-    field: 'age',
-    filter: {
-      type: 'number',
-      operator: 'gt',
-      value: 40
-    }
-  }
-]}
+```tsx file="filtering-data-with-infinite-table-for-react.snippet.tsx" region="initial-filters-filter-by-age-greater-than-40" title="Initial_filters:_filter_by_age_greater_than_40"
 ```
 
 You can see how all of this looks like when we put it all together in the examples below.
@@ -68,8 +55,7 @@ Whenever filters change, when remote filtering is configured, the <DPropLink nam
 
 However, we can use the <DPropLink name="filterMode"/> to force client-side filtering:
 
-```tsx
-<DataSource<Developer> filterMode="local" filterDelay={0} />
+```tsx file="filtering-data-with-infinite-table-for-react.snippet.tsx" region="local-and-remote-filtering"
 ```
 
 We also specify the <DPropLink name="filterDelay">filterDelay=0</DPropLink> in order to perform filtering immediately, without debouncing and batching filter changes, for a quicker response ⚡️ 🏎
@@ -101,13 +87,7 @@ The example above, besides showing how to define <DPropLink name="filterTypes" c
 
 For defining a custom filter editor to be used in a filter type, we need to write a new React component that uses the <HookLink name="useInfiniteColumnFilterEditor" /> hook.
 
-```tsx
-import { useInfiniteColumnFilterEditor } from '@infinite-table/infinite-react';
-
-export function BoolFilterEditor() {
-  const { value, setValue } = useInfiniteColumnFilterEditor<Developer>();
-  return <>{/* ... */}</>;
-}
+```tsx file="filtering-data-with-infinite-table-for-react.snippet.tsx" region="defining-filter-types-and-custom-filter-editors"
 ```
 
 This custom hook allows you to get the current `value` of the filter and also to retrieve the `setValue` function that we need to call when we want to update filtering.

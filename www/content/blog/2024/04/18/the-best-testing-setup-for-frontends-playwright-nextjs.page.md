@@ -46,12 +46,7 @@ Check out our repo for this stage of the setup - [Step 1 - setting up NextJS](ht
 
 Before you go to the next step, you can configure your `next.config.mjs` to use the `.page` extension for your pages.
 
-```js
-const nextConfig = {
-  reactStrictMode: true,
-  pageExtensions: ["page.tsx", "page.ts", "page.js"],
-};
-export default nextConfig
+```js file="the-best-testing-setup-for-frontends-playwright-nextjs.snippet.tsx" region="step-1-creating-the-nextjs-app"
 ```
 
 This is useful so NextJS will only compile those files as pages that your tests will be targeting, and not all the files in the `pages` folder, which will also contain your tests.
@@ -80,13 +75,7 @@ Check out our repo for this stage of the setup - [Step 2 - setting up Playwright
 
 There are some additional configurations you might want to do in this step.
 You probably want to change the default `reporter` from `'html'` to `'list'` in your `playwright.config.ts` - the `'html'` reporter will open a browser window with the test results, which you might not prefer. You'd rather see the results in the terminal.
-
- ```ts {3} title="Configure the reporter in playwright.config.ts"
-export default defineConfig({
-  testDir: "./src/pages",
-  reporter: "list", // the 'html' reporter will open a browser window with the test results
-  // ...
-})
+ ```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.configure-the-reporter-in-playwright-config-ts.snippet.tsx" region="configure-the-reporter-in-playwright-config-ts" title="Configure the reporter in playwright.config.ts"
  ```
 
 <Note>
@@ -114,15 +103,7 @@ Executing the `npm run test` command will run the tests in the `src/pages` folde
 
 Your initial test file was something very basic. This file is importing the `test` (and `expect`) function from `@playwright/test` - and this is what you're using to define tests (and write assertions).
 
-```ts {1} title="example.spec.ts"
-import { test, expect } from "@playwright/test";
-
-test("has title", async ({ page }) => {
-  await page.goto("https://playwright.dev/");
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.snippet.tsx" region="example-spec-ts" title="example.spec.ts"
 ```
 
 ### Step 3 - configuring the naming convention in Playwright to open the right pages
@@ -132,33 +113,7 @@ This step is probably the most important one in your configuration. Normally you
 Think of a fixture as some code that's configuring the testing environment for each of your tests.
 A fixture will extend the `test` function from `@playwright/test` with additional functionalities. Mainly, we want before every test to open the correct page, without writing this explicitly in every test. Based on the location of the test file in the file system, we want to navigate to a webpage for it and we assume it will have the same path as the test file. This is possible because NextJS is configured to use file-system routing.
 
-```ts {1,3-5} title="Defining the fixture file - test-fixtures.ts"
-import {
-  test as base,
-  expect,
-  PlaywrightTestArgs,
-  PlaywrightTestOptions,
-  Page,
-} from "@playwright/test";
-
-export * from "@playwright/test";
-
-export const test = base.extend<
-  PlaywrightTestArgs &
-    PlaywrightTestOptions
->({
-  //@ts-ignore
-  page: async ({ baseURL, page }, use, testInfo) => {
-    const testFilePath = testInfo.titlePath[0];
-    const fileName = testFilePath.replace(".spec.ts", "");
-    const url = `${baseURL}${fileName}`;
-
-    // navigate to the corresponding page for this test
-    await page.goto(url);
-
-    await use(page);
-  },
-});
+```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.defining-the-fixture-file-test-fixtures-ts.snippet.tsx" region="defining-the-fixture-file-test-fixtures-ts" title="Defining the fixture file - test-fixtures.ts"
 ```
 
 We'll give this fixture file the name `test-fixtures.ts` and put it in the root of the project.
@@ -177,19 +132,10 @@ Now instead of importing the `test` function from `@playwright/test` we want to 
 
 We're ready to write our first test page in NextJS and use the new fixture in the Playwright test.
 
-```tsx title="src/pages/example.page.tsx"
-export default function App() {
-  return <div>Hello world</div>;
-}
+```tsx file="the-best-testing-setup-for-frontends-playwright-nextjs.src-pages-example-page-tsx.snippet.tsx" region="src-pages-example-page-tsx" title="src/pages/example.page.tsx"
 ```
 
-```ts {1} title="src/pages/example.spec.ts"
-import { test, expect } from "@testing"; // notice the import
-
-test("Main example has corrent content", async ({ page }) => {
-  // notice we don't need to navigate to the page, this is done by the fixture
-  await expect(await page.innerText("body")).toContain("Hello world");
-});
+```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.src-pages-example-spec-ts.snippet.tsx" region="src-pages-example-spec-ts" title="src/pages/example.spec.ts"
 ```
 
 For our tests against the NextJS app, we obviously need to start the app.
@@ -207,21 +153,7 @@ Let's configure a custom port of `5432` in the package.json `dev` script.
 We need to use the same port in the Playwright configuration file.
 Also we'll use a smaller test `timeout` (the default is 30s).
 
-```ts {9,11} title="playwright.config.ts"
-import { defineConfig } from "@playwright/test";
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
-export default defineConfig({
-  testDir: "./src/pages",
-  reporter: "list",
-  use: {
-    baseURL: "http://localhost:5432/",
-  },
-  timeout: process.env.CI ? 10000 : 4000,
-  // ... more options
-});
-
+```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.playwright-config-ts.snippet.tsx" region="playwright-config-ts" title="playwright.config.ts"
 ```
 
 We're now ready to roll!
@@ -280,14 +212,7 @@ In the last step, we want to build a production build of the NextJS app and run 
 
 So first let's configure the `next.config.mjs` file to build a static site when `npm run build` is run.
 
-```js {3} title="next.config.mjs - configured to export a static site"
-const nextConfig = {
-  reactStrictMode: true,
-  output: "export",
-  pageExtensions: ["page.tsx", "page.ts", "page.js"],
-};
-
-export default nextConfig;
+```js file="the-best-testing-setup-for-frontends-playwright-nextjs.next-config-mjs-configured-to-export-a-static.snippet.tsx" region="next-config-mjs-configured-to-export-a-static" title="next.config.mjs - configured to export a static site"
 ```
 Notice the `"output": "export"` property. Having configured this, the `npm run build` will create an `/out` folder with the compiled assets and pages of the app.
 
@@ -304,30 +229,14 @@ Next we need an NPM script to serve the compiled app with a static server.
 
 We could either run this `serve` script ourselves to start the webserver before running our tests or even better, we can instruct Playwright to [use this webserver automatically](https://playwright.dev/docs/test-webserver#configuring-a-web-server). So let's do that in our `playwright.config.ts` file.
 
-```ts {3,5} title="playwright.config.ts - configured to use a custom server"
-export default defineConfig({
-  //... other options
-
-  // on CI, run the static server to serve the built app
-  webServer: process.env.CI
-    ? {
-        command: "npm run serve",
-        url: "http://localhost:5432",
-        reuseExistingServer: true,
-        timeout: 120 * 1000,
-      }
-    : undefined,
-})
+```ts file="the-best-testing-setup-for-frontends-playwright-nextjs.playwright-config-ts-configured-to-use-a-custom.snippet.tsx" region="playwright-config-ts-configured-to-use-a-custom" title="playwright.config.ts - configured to use a custom server"
 ```
 
 <Note>
 
 In order for Playwright to correctly detect the webserver is running ok, we need to make sure we have a valid index page at that address, so we need to add a `index.page.tsx` file in the `pages` folder.
 
-```tsx title="src/pages/index.page.tsx"
-export default function App() {
-  return <div>Index page</div>;
-}
+```tsx file="the-best-testing-setup-for-frontends-playwright-nextjs.src-pages-index-page-tsx.snippet.tsx" region="src-pages-index-page-tsx" title="src/pages/index.page.tsx"
 ```
 
 This is just useful in the CI environment so that Playwright can detect the server is running and the app is served correctly.

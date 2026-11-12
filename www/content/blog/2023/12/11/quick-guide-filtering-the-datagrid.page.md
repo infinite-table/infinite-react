@@ -12,17 +12,5 @@ This is the first article in a series of quick guides that will help you get sta
 
 You apply filters on the `DataSource` component
 
-```tsx {4-11} title="Specifying an initial filter value for the DataSource"
-<DataSource<Developer>
-  data={...}
-  primaryKey="id"
-  defaultFilterValue={[
-    field: 'salary',
-    filter: {
-      operator: 'gt',
-      value: 50000,
-      type: 'number',
-    },
-  ]}
-/>
+```tsx file="quick-guide-filtering-the-datagrid.snippet.tsx" region="specifying-an-initial-filter-value-for-the" title="Specifying an initial filter value for the DataSource"
 ```

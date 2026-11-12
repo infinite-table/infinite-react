@@ -11,14 +11,7 @@ With version `7.2.0`, we added another component to make your interaction with t
 
 This toolbar allows users to interact with row grouping very easily, via drag and drop. Drag column headers on the GroupingToolbar component and off you go, grouping is updated. Additionally, you can drag items on the GroupingToolbar in order to change the order of the row grouping.
 
-```tsx {3} title="Base structure for using the grouping toolbar"
-<DataSource>
-  <InfiniteTable>
-    <InfiniteTable.GroupingToolbar />
-    <InfiniteTable.Header />
-    <InfiniteTable.Body />
-  </InfiniteTable>
-</DataSource>
+```tsx file="grouping-toolbar-now-available-in-the-datagrid.snippet.tsx" region="base-structure-for-using-the-grouping-toolbar" title="Base structure for using the grouping toolbar"
 ```
 
 Simply reference the component via `InfiniteTable.GroupingToolbar` and nest it under `<InfiniteTable />`.
@@ -31,18 +24,7 @@ In the above and below examples, for simplicity, we're not showing the whole con
 
 The good part is that you can very easily add additional elements to your structure and have the grouping toolbar displayed on the side, vertically.
 
-```tsx {8} title="Example structure for vertical grouping toolbar"
-<DataSource>
-  <InfiniteTable>
-    <div className="flex flex-1 flex-row">
-      <div className="flex-1 flex flex-col">
-        <InfiniteTable.Header />
-        <InfiniteTable.Body />
-      </div>
-      <InfiniteTable.GroupingToolbar orientation="vertical" />
-    </div>
-  </InfiniteTable>
-</DataSource>
+```tsx file="grouping-toolbar-now-available-in-the-datagrid.snippet.tsx" region="example-structure-for-vertical-grouping-toolbar" title="Example structure for vertical grouping toolbar"
 ```
 
 <CSEmbed id="wandering-leftpad-2zxwxr" code={false} title="Using the GroupingToolbar" />

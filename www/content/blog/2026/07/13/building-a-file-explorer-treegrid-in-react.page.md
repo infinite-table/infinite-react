@@ -14,40 +14,17 @@ Infinite Table's [TreeGrid docs](/docs/learn/tree-grid/overview) cover this shap
 
 For tree data, use `<TreeDataSource />` instead of `<DataSource />`, and `<TreeGrid />` instead of `<InfiniteTable />`.
 
-```tsx {1,2}
-<TreeDataSource nodesKey="children" primaryKey="id" data={dataSource}>
-  <TreeGrid columns={columns} />
-</TreeDataSource>
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="start-with-nested-data"
 ```
 
 The `nodesKey` prop tells the data source where child nodes live on each data item. In the docs, the examples use a file-system shape where folders contain a `children` array and files are leaf nodes.
 
-```tsx {6,12}
-const dataSource = [
-  {
-    id: '1',
-    name: 'Documents',
-    type: 'folder',
-    children: [
-      {
-        id: '10',
-        name: 'Report.docx',
-        type: 'file',
-      },
-    ],
-  },
-];
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="start-with-nested-data-2"
 ```
 
 Once the data has a nested structure, choose the column that should render the expand/collapse affordance by setting <PropLink name="columns.renderTreeIcon" />.
 
-```tsx {4}
-const columns = {
-  name: {
-    field: 'name',
-    renderTreeIcon: true,
-  },
-};
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="start-with-nested-data-3"
 ```
 
 With this setup, you're already good to go and have an interactive tree grid.
@@ -69,35 +46,7 @@ The TreeGrid docs use the term `node` for a rendered item/row in the tree, and `
 The top-level of your `TreeDataSource` doesn't need to be only one item - you can have multiple roots that are siblings to each other.
 </Note>
 
-```tsx title="Node path example"
-const data = [
-  {
-    id: '1', // path: ['1']
-    name: 'Documents',
-    children: [
-      {
-        id: '10', // path: ['1', '10']
-        name: 'Private',
-        children: [
-          {
-            id: '100', // path: ['1', '10', '100']
-            name: 'Report.docx',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2', // path: ['2']
-    name: 'Media',
-    children: [
-      {
-        id: '20', // path: ['2','20']
-        name: 'FamilyTrip.mpeg'
-      }
-    ]
-  }
-];
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="node-path-example" title="Node path example"
 ```
 
 Paths are important because tree UIs often need to preserve state at a specific location in the hierarchy. The same node id could be meaningful in different branches, while a node path describes the exact branch the user interacted with.
@@ -108,17 +57,7 @@ By default, the TreeGrid renders all nodes expanded. For product UIs, you will o
 
 Use <DPropLink name="defaultTreeExpandState" /> for an initial uncontrolled value:
 
-```tsx
-const defaultTreeExpandState = {
-  defaultExpanded: true,
-  collapsedPaths: [
-    ['1', '10'],
-    ['3', '31'],
-  ],
-  expandedPaths: [['3']],
-};
-
-<TreeDataSource defaultTreeExpandState={defaultTreeExpandState} />;
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="restore-expand-and-collapse-state"
 ```
 
 For fully controlled state, use <DPropLink name="treeExpandState" /> together with <DPropLink name="onTreeExpandStateChange" />. The same docs page also shows the imperative Tree API methods such as <TreeApiLink name="expandAll" /> and <TreeApiLink name="collapseAll" />.
@@ -136,23 +75,7 @@ This demo starts with a custom expand state and exposes buttons that call the Tr
 
 Selection works at the tree level too. Configure <DPropLink name="defaultTreeSelection" /> or <DPropLink name="treeSelection" /> on `<TreeDataSource />`, and render a checkbox in the tree column with <PropLink name="columns.renderSelectionCheckBox" />.
 
-```tsx {2,7}
-const defaultTreeSelection = {
-  defaultSelection: true,
-  deselectedPaths: [
-    ['1', '10'],
-    ['3', '31'],
-  ],
-  selectedPaths: [['3']],
-};
-
-const columns = {
-  name: {
-    field: 'name',
-    renderTreeIcon: true,
-    renderSelectionCheckBox: true,
-  },
-};
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="add-tree-aware-selection"
 ```
 
 This include/exclude shape scales well for large trees because you can describe "everything is selected except these branches" or "nothing is selected except these branches" without enumerating every leaf node.
@@ -177,16 +100,7 @@ The [tree icon docs](/docs/learn/tree-grid/tree-icon-rendering) show two useful 
 
 When `renderTreeIcon` is a function, it receives tree-specific row information. Check `rowInfo.isParentNode` before reading parent-only state such as `rowInfo.nodeExpanded`.
 
-```tsx title="Rendering a custom tree icon"
-const renderTreeIcon = ({ rowInfo, toggleCurrentTreeNode }) => {
-  if (!rowInfo.isParentNode) {
-    return <FileIcon />;
-  }
-
-  return (
-    <FolderIcon open={rowInfo.nodeExpanded} onClick={toggleCurrentTreeNode} />
-  );
-};
+```tsx file="building-a-file-explorer-treegrid-in-react.snippet.tsx" region="rendering-a-custom-tree-icon" title="Rendering a custom tree icon"
 ```
 
 ## When to reach for TreeGrid

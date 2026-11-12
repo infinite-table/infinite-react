@@ -64,48 +64,14 @@ It had a rich API, exposing lots of events, callbacks and methods for things lik
 
 Here's some code showcasing the YUI DataTable
 
-```js {6} title="YUI DataTable with sorting"
-var table = new Y.DataTable({
-  columns: [
-    { key: 'item', width: '125px' },
-    {
-      key: 'cost',
-      formatter: '£: {value}',
-      sortable: true,
-    },
-  ],
-  sortable: true,
-  data: data,
-}).render('#example');
-
-// to programatically sort
-table.sort({ cost: 'asc' });
+```js file="why-another-datagrid.snippet.tsx" region="yui-datatable-with-sorting" title="YUI DataTable with sorting"
 ```
 
 Notice in the code above, the component had support for custom formatters via a template (in the style of Mustache templates). YUI DataTable was a great component, certainly lacking some features by modern standards, but it was amazingly rich for its time. In some respects, it's still better than some of the modern DataGrids out there. The major missing piece is virtualization for both rows and columns in the table.
 
 A nice feature YUI DataTable had was the ability to separate the DataSource component and the data loading into a separate abstraction layer, so it would be somewhat decoupled from the main UI component.
 
-```js
-var dataSource = new Y.DataSource.IO({
-  source: '/restaurants/fetch.php?',
-});
-
-dataSource.plug(Y.Plugin.DataSourceXMLSchema, {
-  schema: {
-    resultListLocator: 'Result',
-    resultFields: [{ key: 'Title' }, { key: 'Phone' }, { key: 'Rating' }],
-  },
-});
-var table = new Y.DataTable({
-  columns: ['Title', 'Phone', 'Rating'],
-  summary: 'Chinese restaurants near 98089',
-});
-
-table.plug(Y.Plugin.DataTableDataSource, {
-  datasource: dataSource,
-  initialRequest: 'zip=94089&query=chinese',
-});
+```js file="why-another-datagrid.snippet.tsx" region="yui-datatable"
 ```
 
 Infinite Table is getting this a step further and splitting the data loading and the rendering into two separate components - `<DataSource />` and `<InfiniteTable />`:
@@ -113,13 +79,7 @@ Infinite Table is getting this a step further and splitting the data loading and
 - the `<DataSource />` component is responsible for managing the data - fetching it, sorting, grouping, pivoting, filtering, etc and making it available via the React context to the UI component.
 - the `<InfiniteTable />` component is responsible only for rendering the data. This means you can even use the `<DataSource />` component with another React component and implement your own rendering and virtualization.
 
-```tsx
-<DataSource<DataEntity> primaryKey="id" data={...}>
-  {/* if you wanted to, you can replace
-   <InfiniteTable/> with your own custom component */}
-
-  <InfiniteTable<DataEntity> columns={...}>
-</DataSource>
+```tsx file="why-another-datagrid.snippet.tsx" region="yui-datatable-2"
 ```
 
 This level of separation allows us to iterate more rapidly on new features and also makes testing 🧪 easier.
@@ -134,59 +94,7 @@ The ExtJS 3 DataGrid brought excellent product execution in a few areas:
 - it came together with a rich set of components for building complex UIs - grids, trees, combo-boxes, form inputs, menus, dialogs, etc. Powerful layout components were available, which allowed developers to build complex app layouts by composing components together - and everything felt like it was part of the same story, which it was.
 - enthusiastic community - the forums were very active and the community was writing lots of good plugins.
 
-```js title="ExtJS 3 DataGrid code snippet"
-var grid = new Ext.grid.GridPanel({
-  // data fetching abstracted in a "Store" component
-  store: new Ext.data.Store({
-    // ...
-  }),
-  // columns abstracted in a ColumnModel
-  colModel: new Ext.grid.ColumnModel({
-    defaults: {
-      width: 120,
-      sortable: true,
-    },
-    columns: [
-      {
-        id: 'company',
-        header: 'Company',
-        width: 200,
-        sortable: true,
-        dataIndex: 'company',
-      },
-      {
-        header: 'Price',
-        renderer: Ext.util.Format.usMoney,
-        dataIndex: 'price',
-      },
-      { header: 'Change', dataIndex: 'change' },
-      { header: '% Change', dataIndex: 'pctChange' },
-      {
-        header: 'Last Updated',
-        width: 135,
-        dataIndex: 'lastChange',
-        xtype: 'datecolumn',
-        format: 'M d, Y',
-      },
-    ],
-  }),
-  viewConfig: {
-    forceFit: true,
-    // Return CSS class to apply to rows depending upon data values
-    getRowClass: function (record, index) {
-      var c = record.get('change');
-      if (c < 0) {
-        return 'price-fall';
-      } else if (c > 0) {
-        return 'price-rise';
-      }
-    },
-  },
-  sm: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-  // size need if not inside a layout
-  width: 600,
-  height: 300,
-});
+```js file="why-another-datagrid.snippet.tsx" region="extjs-3-datagrid-code-snippet" title="ExtJS 3 DataGrid code snippet"
 ```
 
 Building on the legacy of YUI 3, the ExtJS added virtualization to make the DataGrid perform well for large datasets - it really made the component fly - since there was no framework overhead, and ExtJS was working directly with the DOM, the scrolling experience was pretty smooth.
@@ -307,53 +215,7 @@ We want Infinite Table to feel at home in any React app. Everything about the Da
 
 Let's take for example how you would switch a column from a column group to another:
 
-```tsx {35} title="Fully declarative way to update columns"
-function getColumns() {
-  return {
-    firstName: {
-      field: 'firstName',
-      width: 200,
-      columnGroup: 'personalInfo',
-    },
-    address: {
-      field: 'address',
-      width: 200,
-      columnGroup: 'personalInfo',
-    },
-    age: {
-      field: 'age',
-      columnGroup: 'about'
-    }
-  } as InfiniteTablePropColumns<DataType>
-}
-
-const columnGroups = {
-  personalInfo: { header: "Personal info" },
-  about: { header: "About" }
-};
-
-function App() {
-  const [columns, setColumns] = useState<InfiniteTablePropColumns<DataType>>(getColumns)
-  const [colGroupForAddress, setColGroupForAddress] = useState('personalInfo')
-
-  const toggle = () => {
-    const cols = getColumns()
-
-    const newColGroup = colGroupForAddress === 'personalInfo' ? 'about' : 'personalInfo'
-    cols.address.columnGroup = newColGroup
-
-    setColumns(cols)
-    setColGroupForAddress(newColGroup)
-  }}
-  const btn = <button onClick={toggle}> Toggle group for address </button>
-
-  return <>
-    {btn}
-    <DataSource<DataType> data={...} primaryKey="id">
-      <InfiniteTable columns={columns} columnGroups={columnGroups}/>
-    </DataSource>
-  </>
-}
+```tsx file="why-another-datagrid.snippet.tsx" region="fully-declarative-way-to-update-columns" title="Fully declarative way to update columns"
 ```
 
 Note in the code above that in order to update the column group for the `address` column, we simply change the `columnGroup` prop of the column and then we update the state of the component. The table will automatically re-render and update the column group for the `address` column. This is a fully declarative way to update the table. You don't need to call any imperative API to update it - change the props and the table will reflect the changes.
@@ -380,26 +242,12 @@ A good example of composability is the <PropLink name="groupColumn" /> prop - it
 - when it's a column object, it makes the table render a single column for grouping (as if <PropLink name="groupRenderStrategy" /> was set to `"single-column"`)
 - when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
 
-```tsx title="Group column as an object"
-<InfiniteTable
-  //...
-  groupColumn={{
-    header: 'Groups',
-  }}
-/>
+```tsx file="why-another-datagrid.snippet.tsx" region="group-column-as-an-object" title="Group column as an object"
 ```
 
 vs
 
-```tsx title="Group column as a function"
-<InfiniteTable
-  //...
-  groupColumn={() => {
-    // this allows you to affect all generated group columns in a single place
-    // especially useful when the generated columns are dynamic or generated via a pivot
-    return {...}
-  }}
-/>
+```tsx file="why-another-datagrid.snippet.tsx" region="group-column-as-a-function" title="Group column as a function"
 ```
 
 We've learned from our experience with other DataGrid components that the more features you add, the more complex your API becomes. So we tried to keep the API surface as small as possible, while still offering a rich set of declarative props as building blocks that can be composed to accomplish more complex functionalities.

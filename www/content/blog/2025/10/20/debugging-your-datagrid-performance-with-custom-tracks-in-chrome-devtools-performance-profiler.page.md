@@ -26,12 +26,7 @@ Basically, if you have multiple grids in your app, you'll be able to see a dedic
 </Note>
 
 
-```tsx {3} title="Specify the debugId prop to see the DataGrid in the Chrome Profiler"
-<DataSource>
-  <InfiniteTable
-    debugId="your-datagrid"
-  />
-</DataSource>
+```tsx file="debugging-your-datagrid-performance-with-custom-tracks-in-chrome-devtools-performance-profiler.snippet.tsx" region="specify-the-debugid-prop-to-see-the-datagrid-in" title="Specify the debugId prop to see the DataGrid in the Chrome Profiler"
 ```
 
 Once your <PropLink name="debugId" /> prop is configured, you can hit the recording the performance profile in Chrome DevTools, and once the profile is done, you'll see something similar to the image below.
@@ -40,7 +35,7 @@ Once your <PropLink name="debugId" /> prop is configured, you can hit the record
 
 For now, we mainly show data-heavy operations, like sorting, grouping/filtering and flattening the data array, but more will be added in the near future.
 
-```tsx live viewMode="preview" file="debugging-with-custom-tracks.page.tsx" title="Start recording a performance profile - while recording, click a column header to trigger a sort"
+```tsx file="debugging-with-custom-tracks.demo.tsx" title="Start recording a performance profile - while recording, click a column header to trigger a sort"
 ```
 
 The custom tracks give you high-fidelity information about the time the operation took, but give you additional insights - like the count of your data-array for sorting operations, what types of manipulations actually take place with the data and more.

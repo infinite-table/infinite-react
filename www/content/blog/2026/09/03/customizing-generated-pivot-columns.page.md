@@ -34,23 +34,12 @@ If the same property is set in more than one place, <PropLink name="pivotColumn"
 
 <PropLink name="pivotColumn" /> is the simplest layer. Generated pivot columns inherit sortability from the source column, so <PropLink name="columnDefaultSortable" /> applies the same way as for normal columns. Override with `defaultSortable` on <PropLink name="pivotColumn" /> when you want a different rule.
 
-```tsx
-<InfiniteTable
-  pivotColumn={{
-    defaultSortable: true,
-    defaultWidth: 180,
-  }}
-/>
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="global-defaults-width-and-sorting"
 ```
 
 That applies to leaf columns and totals. When totals should stay unsortable, pass a function. The generated column includes `pivotTotalColumn`:
 
-```tsx
-<InfiniteTable
-  pivotColumn={({ column }) => ({
-    defaultSortable: !column.pivotTotalColumn,
-  })}
-/>
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="global-defaults-width-and-sorting-2"
 ```
 
 The sort type is taken from the original <PropLink name="columns" /> bound to the aggregation `field` — not the column id. A column defined as `stargazers: { field: 'stargazers_count', type: 'number' }` is enough for numeric sorting on the generated `stargazers_count:true` column.
@@ -70,30 +59,12 @@ Raw pivot keys rarely belong in a header. Inventory statuses (`in_stock`, `reser
 
 <DataSourcePropLink name="pivotBy.column" /> as an object applies to every column in that field's group:
 
-```tsx
-const pivotBy = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: {
-      defaultWidth: 160,
-    },
-  },
-];
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="per-pivot-field-headers-people-recognize"
 ```
 
 As a function, it receives the generated column, so you can vary the header per value. `column.pivotGroupKey` is the key at that pivot level:
 
-```tsx
-const pivotBy = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column }) => ({
-      header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer',
-    }),
-  },
-];
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="per-pivot-field-headers-people-recognize-2"
 ```
 
 <DemoDescription>
@@ -113,23 +84,7 @@ When the grid shows more than one aggregation, you usually do not want the same 
 
 Each reducer can define <DataSourcePropLink name="aggregationReducers.pivotColumn" />. That object applies only to columns generated for **that** aggregation.
 
-```ts
-const aggregationReducers = {
-  salary: {
-    field: 'salary',
-    initialValue: 0,
-    reducer: (acc, value) => acc + value,
-    pivotColumn: {
-      defaultSortable: true,
-      type: 'number',
-    },
-  },
-  license: {
-    field: 'license',
-    initialValue: 0,
-    reducer: (acc) => acc + 1,
-  },
-};
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="per-aggregation-configure-one-measure"
 ```
 
 Only the `salary` pivot columns become sortable. The `license` count columns stay with the generated defaults.
@@ -140,32 +95,12 @@ This is also the right place to set a reducer-specific `header`, `defaultWidth`,
 
 Pivoting is aggregations. Each reducer usually has a `field`. If `<InfiniteTable />` already has a column bound to that same `field`, the generated pivot column inherits that column's configuration — `type`, `style`, `header`, `renderValue`, default width.
 
-```ts
-const columns = {
-  salary: {
-    field: 'salary',
-    type: 'number',
-    style: { color: 'red' },
-  },
-};
-
-const aggregationReducers = {
-  avgSalary: {
-    field: 'salary',
-    reducer: 'avg',
-  },
-};
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-the-columns-you-already-wrote"
 ```
 
 You do not re-declare number formatting for every generated `United States / yes` salary column. Inheritance looks up the original column by **field**, not by column id, so this also works:
 
-```ts
-const columns = {
-  stargazers: {
-    field: 'stargazers_count',
-    type: 'number',
-  },
-};
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-the-columns-you-already-wrote-2"
 ```
 
 Override the default with <DataSourcePropLink name="aggregationReducers.pivotColumn.inheritFromColumn" />:
@@ -174,18 +109,7 @@ Override the default with <DataSourcePropLink name="aggregationReducers.pivotCol
 - `false` — inherit from none
 - `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
 
-```ts
-const aggregationReducers = {
-  avgSalary: { field: 'salary', ...avgReducer },
-  avgAge: {
-    field: 'age',
-    ...avgReducer,
-    pivotColumn: {
-      inheritFromColumn: 'preferredLanguage',
-      defaultWidth: 500,
-    },
-  },
-};
+```ts file="customizing-generated-pivot-columns.snippet.tsx" region="inherit-from-the-columns-you-already-wrote-3"
 ```
 
 `avgAge` still aggregates `age`, but the generated columns pick up the `preferredLanguage` column config, then apply `defaultWidth: 500` on top.
@@ -205,40 +129,7 @@ Use `inheritFromColumn: false` when the source column's `renderValue` or `style`
 
 A typical analytics grid uses more than one layer:
 
-```tsx
-const pivotBy = [
-  { field: 'country' },
-  {
-    field: 'canDesign',
-    column: ({ column }) => ({
-      header: column.pivotGroupKey === 'yes' ? 'Designer' : 'Non-designer',
-    }),
-  },
-];
-
-const aggregationReducers = {
-  salary: {
-    field: 'salary',
-    reducer: 'avg',
-    pivotColumn: {
-      defaultSortable: true,
-    },
-  },
-  headcount: {
-    initialValue: 0,
-    reducer: (acc) => acc + 1,
-    pivotColumn: {
-      inheritFromColumn: false,
-      header: 'Count',
-    },
-  },
-};
-
-<InfiniteTable
-  pivotColumn={{
-    defaultWidth: 140,
-  }}
-/>
+```tsx file="customizing-generated-pivot-columns.snippet.tsx" region="combining-layers"
 ```
 
 Shared width comes from <PropLink name="pivotColumn" />. Designer labels come from <DataSourcePropLink name="pivotBy.column" />. Only salary columns are sortable; headcount opts out of inheritance so it does not pick up salary formatting.
