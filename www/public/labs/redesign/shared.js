@@ -26,6 +26,8 @@ const DIRECTIONS = [
   { id: 'd', label: 'D · Orbit' },
   { id: 'e', label: 'E · Vector' },
   { id: 'f', label: 'F · Breeze' },
+  { id: 'g', label: 'G · Foundry' },
+  { id: 'h', label: 'H · Mach' },
 ];
 
 // direction C's display face

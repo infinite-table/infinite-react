@@ -1,0 +1,3047 @@
+<!doctype html>
+<html lang="en" data-direction="h">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Infinite Table redesign · Direction H · Mach</title>
+    <script src="./boot.js?v=4"></script>
+    <link rel="stylesheet" href="./shared.css?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Saira:ital,wdth,wght@0,75..125,400..900;1,75..125,400..900&family=Inter:wght@400;500;600&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,500;1,700;1,800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ================================================================
+       * Direction H · Mach: slant, flow and livery.
+       * Tokens live on :root (carbon, the primary mode) and are overridden
+       * under [data-theme='light'] (fuselage white). Components only read
+       * variables.
+       * ============================================================== */
+      :root {
+        --bg: #0c0d0f;
+        --panel: #131518;
+        --raised: #1a1d21;
+        --line: #272b31;
+        --line-strong: #3a4049;
+        --text: #d8dce2;
+        --heading: #f5f7fa;
+        --muted: #8d95a0;
+
+        /* livery */
+        --accent: #ff3b2f;
+        --accent-text: #ff6156;
+        --on-accent: #0c0d0f;
+        --stripe-2: #f5f7fa;
+        --stripe-3: #5b6470;
+
+        /* timing board */
+        --fast: #b97aff;
+        --slow: #4a515b;
+        --up: #2fe38a;
+
+        /* flow study */
+        --flow: rgb(216 220 226 / 0.2);
+        --flow-streak: rgb(245 247 250 / 0.8);
+        --foil-fill: rgb(255 255 255 / 0.04);
+        --foil-line: rgb(245 247 250 / 0.7);
+
+        --texture: repeating-linear-gradient(
+            45deg,
+            rgb(255 255 255 / 0.016) 0 2px,
+            transparent 2px 5px
+          ),
+          repeating-linear-gradient(
+            -45deg,
+            rgb(255 255 255 / 0.016) 0 2px,
+            transparent 2px 5px
+          );
+        --header-bg: rgb(12 13 15 / 0.86);
+        --shadow: 0 30px 70px -34px rgb(0 0 0 / 0.9);
+        --hl: rgb(255 59 47 / 0.13);
+        --backdrop: rgb(4 5 6 / 0.7);
+
+        /* code */
+        --c-kw: #ff8a80;
+        --c-str: #a8e07a;
+        --c-tag: #7cc4ff;
+        --c-prop: #d4b0ff;
+        --c-punc: #7d8590;
+        --c-com: #6f7782;
+        --c-fn: #ffd38a;
+
+        --display: 'Saira', 'Exo 2', 'Titillium Web', ui-sans-serif, system-ui,
+          sans-serif;
+        --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+          sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        --skew: -12deg;
+        --cut: 26px;
+        --wrap: 1320px;
+
+        /* handed to the live grid demos (shared.css) */
+        --p-surface: var(--panel);
+        --p-border: var(--line);
+        --p-fg: var(--text);
+        --p-muted: var(--muted);
+        --p-accent: var(--accent);
+        --p-accent-fg: var(--on-accent);
+        --p-radius: 2px;
+        --p-mono: var(--mono);
+      }
+
+      [data-theme='light'] {
+        --bg: #f4f5f6;
+        --panel: #ffffff;
+        --raised: #eceef0;
+        --line: #d9dde2;
+        --line-strong: #b3bac3;
+        --text: #1c2733;
+        --heading: #0d1520;
+        --muted: #566270;
+
+        --accent: #e3261b;
+        --accent-text: #c41d13;
+        --on-accent: #ffffff;
+        --stripe-2: #0d1520;
+        --stripe-3: #9aa4b0;
+
+        --fast: #7a2fd6;
+        --slow: #c3cad2;
+        --up: #0f8a5f;
+
+        --flow: rgb(13 21 32 / 0.2);
+        --flow-streak: rgb(13 21 32 / 0.75);
+        --foil-fill: rgb(255 255 255 / 0.7);
+        --foil-line: rgb(13 21 32 / 0.8);
+
+        /* panel lines and flush rivets */
+        --texture: linear-gradient(
+            to right,
+            rgb(13 21 32 / 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(to bottom, rgb(13 21 32 / 0.05) 1px, transparent 1px),
+          radial-gradient(circle, rgb(13 21 32 / 0.13) 0.8px, transparent 1.4px),
+          radial-gradient(circle, rgb(13 21 32 / 0.13) 0.8px, transparent 1.4px);
+        --texture-size: 240px 100%, 100% 180px, 30px 180px, 240px 30px;
+        --texture-pos: 0 0, 0 0, -15px -84px, -114px -15px;
+        --header-bg: rgb(244 245 246 / 0.88);
+        --shadow: 0 30px 60px -36px rgb(13 21 32 / 0.35);
+        --hl: rgb(227 38 27 / 0.09);
+        --backdrop: rgb(13 21 32 / 0.4);
+
+        --c-kw: #c41d13;
+        --c-str: #1a7f37;
+        --c-tag: #0b5cad;
+        --c-prop: #7a2fd6;
+        --c-punc: #6b7785;
+        --c-com: #7b8794;
+        --c-fn: #9a5b00;
+      }
+
+      /* ---- base -------------------------------------------------------- */
+      html {
+        scroll-padding-top: 90px;
+      }
+      body {
+        background-color: var(--bg);
+        background-image: var(--texture);
+        background-size: var(--texture-size, auto);
+        background-position: var(--texture-pos, 0 0);
+        color: var(--text);
+        font: 16px/1.6 var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      ul,
+      ol,
+      figure,
+      pre {
+        margin: 0;
+        padding: 0;
+      }
+      ul,
+      ol {
+        list-style: none;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img,
+      svg {
+        display: block;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      ::selection {
+        background: color-mix(in srgb, var(--accent) 30%, transparent);
+      }
+      code,
+      kbd,
+      pre {
+        font-family: var(--mono);
+        font-variant-ligatures: none;
+      }
+      .wrap {
+        width: 100%;
+        max-width: calc(var(--wrap) + 48px);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      .ico {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: none;
+      }
+
+      /* ---- the parallelogram: a skewed plate behind upright content ------ */
+      .pg {
+        position: relative;
+        z-index: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        --pg-bg: transparent;
+        --pg-line: transparent;
+      }
+      .pg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        background: var(--pg-bg);
+        border: 1px solid var(--pg-line);
+        border-radius: 2px;
+        transition: background-color 0.18s ease, border-color 0.18s ease;
+      }
+
+      /* stencilled servicing label */
+      .stencil {
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .stencil b {
+        color: var(--accent-text);
+        font-weight: 700;
+      }
+
+      /* the tri-stripe */
+      .livery {
+        height: 8px;
+        background: linear-gradient(
+          to bottom,
+          var(--accent) 0 3px,
+          transparent 3px 4px,
+          var(--stripe-2) 4px 5.5px,
+          transparent 5.5px 6.5px,
+          var(--stripe-3) 6.5px 8px
+        );
+      }
+
+      /* ---- buttons ------------------------------------------------------ */
+      .btn {
+        padding: 15px 26px;
+        font: italic 700 13.5px/1 var(--display);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--heading);
+        --pg-line: var(--line-strong);
+        white-space: nowrap;
+      }
+      .btn:hover {
+        --pg-line: var(--heading);
+      }
+      .btn .ico {
+        transition: transform 0.18s ease;
+      }
+      .btn:hover .ico {
+        transform: translateX(4px);
+      }
+      .btn--primary {
+        color: var(--on-accent);
+        --pg-bg: var(--accent);
+        --pg-line: var(--accent);
+      }
+      .btn--primary:hover {
+        --pg-line: var(--accent);
+      }
+      .btn--primary::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        background: linear-gradient(
+            100deg,
+            transparent 35%,
+            rgb(255 255 255 / 0.42) 50%,
+            transparent 65%
+          )
+          no-repeat 160% 0 / 260% 100%;
+        transition: background-position 0.55s ease;
+      }
+      .btn--primary:hover::after {
+        background-position: -60% 0;
+      }
+
+      .install {
+        padding: 0 6px 0 22px;
+        height: 46px;
+        font: 500 13.5px/1 var(--mono);
+        color: var(--heading);
+        --pg-bg: var(--panel);
+        --pg-line: var(--line-strong);
+        min-width: 0;
+      }
+      .install .prompt {
+        color: var(--accent-text);
+      }
+      .install span[data-fw] {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 12px;
+        color: var(--muted);
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .copy:hover {
+        color: var(--heading);
+      }
+      .copy .done,
+      .copy[data-copied] .todo {
+        display: none;
+      }
+      .copy[data-copied] .done {
+        display: inline;
+        color: var(--up);
+      }
+
+      /* ---- header ------------------------------------------------------- */
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--header-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .header-row {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        height: 60px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        color: var(--heading);
+        font: italic 800 19px/1 var(--display);
+        font-stretch: 108%;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .brand .slash {
+        color: var(--accent);
+        margin: 0 1px;
+      }
+      .logo {
+        width: 45px;
+        height: 21px;
+        background: currentColor;
+        -webkit-mask: url(/logo-infinite.svg) center / contain no-repeat;
+        mask: url(/logo-infinite.svg) center / contain no-repeat;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nav a {
+        position: relative;
+        padding: 8px 12px;
+        font: italic 600 12.5px/1 var(--display);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        transition: color 0.15s ease;
+      }
+      .nav a:hover {
+        color: var(--heading);
+      }
+      html[data-page='docs'] .nav a[data-nav='docs'] {
+        color: var(--heading);
+      }
+      html[data-page='docs'] .nav a[data-nav='docs']::after {
+        content: '';
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: -12px;
+        height: 3px;
+        background: var(--accent);
+        transform: skewX(-40deg);
+      }
+      .header-tools {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .search-trigger {
+        height: 36px;
+        padding: 0 10px 0 14px;
+        min-width: 210px;
+        color: var(--muted);
+        font-size: 13.5px;
+        --pg-bg: var(--panel);
+        --pg-line: var(--line);
+      }
+      .search-trigger:hover {
+        --pg-line: var(--line-strong);
+        color: var(--heading);
+      }
+      .search-trigger span {
+        flex: 1;
+        text-align: left;
+      }
+      kbd {
+        font-size: 10.5px;
+        line-height: 1;
+        padding: 4px 6px;
+        border: 1px solid var(--line-strong);
+        border-radius: 2px;
+        color: var(--muted);
+      }
+      .fw {
+        height: 36px;
+        padding: 3px;
+        gap: 0;
+        --pg-bg: var(--panel);
+        --pg-line: var(--line);
+      }
+      .fw button {
+        position: relative;
+        z-index: 0;
+        height: 100%;
+        padding: 0 14px;
+        font: italic 700 11.5px/1 var(--display);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .fw button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        border-radius: 1px;
+        transition: background-color 0.15s ease;
+      }
+      .fw button:hover {
+        color: var(--heading);
+      }
+      .fw button[aria-pressed='true'] {
+        color: var(--on-accent);
+      }
+      .fw button[aria-pressed='true']::before {
+        background: var(--accent);
+      }
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+        color: var(--muted);
+        --pg-line: var(--line);
+      }
+      .icon-btn:hover {
+        color: var(--heading);
+        --pg-line: var(--line-strong);
+      }
+
+      /* ---- hero --------------------------------------------------------- */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 40px 0 0;
+      }
+      .flow {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1920px;
+        height: 620px;
+        transform: translateX(-50%);
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          transparent 12%,
+          rgb(0 0 0 / 0.1) 30%,
+          rgb(0 0 0 / 0.3) 50%,
+          #000 60%,
+          #000 90%,
+          transparent
+        );
+        mask-image: linear-gradient(
+          90deg,
+          transparent 12%,
+          rgb(0 0 0 / 0.1) 30%,
+          rgb(0 0 0 / 0.3) 50%,
+          #000 60%,
+          #000 90%,
+          transparent
+        );
+      }
+      /* no ancestor in the selector: the closing band re-uses these paths
+         through <use>, and only rules that match inside the clone apply */
+      .lines path {
+        stroke: var(--flow);
+        stroke-width: 1;
+        fill: none;
+      }
+      .flow .streaks path {
+        stroke: var(--flow-streak);
+        stroke-width: 1.4;
+        fill: none;
+        stroke-linecap: round;
+        stroke-dasharray: 70 2300;
+        stroke-dashoffset: 70;
+        animation: streak 7s linear infinite;
+      }
+      @keyframes streak {
+        from {
+          stroke-dashoffset: 70;
+        }
+        to {
+          stroke-dashoffset: -2300;
+        }
+      }
+      .flow .foil-body {
+        fill: var(--foil-fill);
+        stroke: var(--foil-line);
+        stroke-width: 1.4;
+        stroke-linejoin: round;
+      }
+      .flow .foil-chord {
+        stroke: var(--accent);
+        stroke-width: 1;
+        stroke-dasharray: 3 5;
+        fill: none;
+      }
+      .flow .foil-stripe {
+        fill: var(--accent);
+      }
+      .flow .foil-stripe2 {
+        fill: var(--stripe-2);
+      }
+      .flow text {
+        font: italic 700 9.5px var(--display);
+        letter-spacing: 0.2em;
+        fill: var(--muted);
+        text-transform: uppercase;
+      }
+      .flow .lead {
+        stroke: var(--muted);
+        stroke-width: 0.8;
+        fill: none;
+        opacity: 0.7;
+      }
+
+      /* tail-fin stripes at the hero's right edge */
+      .fin {
+        position: absolute;
+        top: -30px;
+        height: 380px;
+        left: calc(50% + 640px);
+        width: 38px;
+        transform: skewX(var(--skew));
+        transform-origin: top;
+        pointer-events: none;
+        background: linear-gradient(
+          to right,
+          var(--accent) 0 17px,
+          transparent 17px 22px,
+          var(--stripe-2) 22px 27px,
+          transparent 27px 32px,
+          var(--stripe-3) 32px 38px
+        );
+        -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+        mask-image: linear-gradient(to bottom, #000 40%, transparent);
+      }
+
+      .hero-top {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+        gap: 40px;
+        align-items: end;
+      }
+      .announce {
+        gap: 0;
+        height: 30px;
+        font-size: 13px;
+        color: var(--text);
+        --pg-line: var(--line-strong);
+        --pg-bg: var(--panel);
+        max-width: 100%;
+      }
+      .announce .tagged {
+        position: relative;
+        z-index: 0;
+        align-self: stretch;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 13px;
+        font: italic 800 11px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--on-accent);
+        white-space: nowrap;
+      }
+      .announce .tagged::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        background: var(--accent);
+        border-radius: 2px 0 0 2px;
+      }
+      .announce .msg {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 0 16px 0 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .announce:hover .msg {
+        color: var(--heading);
+      }
+      .display {
+        margin-top: 22px;
+        font: italic 800 clamp(36px, 5.1vw, 74px) / 0.98 var(--display);
+        font-stretch: 88%;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        color: var(--heading);
+      }
+      .display span {
+        display: block;
+        white-space: nowrap;
+      }
+      .display em {
+        font-style: inherit;
+        color: var(--accent);
+      }
+      .hero-sub {
+        margin-top: 20px;
+        max-width: 650px;
+        font-size: 18px;
+        line-height: 1.55;
+        color: var(--muted);
+      }
+      .hero-sub strong {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .hero-actions {
+        margin-top: 26px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px 22px;
+      }
+      .spec {
+        display: grid;
+        grid-template-columns: repeat(4, auto);
+        justify-content: end;
+        margin-bottom: 2px;
+      }
+      .spec div {
+        position: relative;
+        padding: 4px 20px 4px 22px;
+      }
+      .spec div + div::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--line-strong);
+        transform: skewX(var(--skew));
+      }
+      .spec dt {
+        font: italic 700 10px/1 var(--display);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .spec dd {
+        margin: 7px 0 0;
+        font: italic 700 19px/1 var(--mono);
+        color: var(--heading);
+        white-space: nowrap;
+      }
+      dl {
+        margin: 0;
+      }
+
+      /* the hero frame: the live demo */
+      .frame {
+        position: relative;
+        margin-top: 50px;
+        border: 1px solid var(--line-strong);
+        border-top: 2px solid var(--accent);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      .frame-tab,
+      .rig-tab {
+        position: absolute;
+        left: 22px;
+        bottom: 100%;
+        height: 28px;
+        padding: 0 18px;
+        color: var(--on-accent);
+        font: italic 800 11px/1 var(--display);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        --pg-bg: var(--accent);
+        --pg-line: var(--accent);
+        white-space: nowrap;
+      }
+      .frame-bar {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-height: 40px;
+        padding: 6px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .frame-bar .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font: italic 800 11px/1 var(--display);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--heading);
+      }
+      .frame-bar .live::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--up);
+        transform: skewX(var(--skew));
+      }
+      .frame-bar .grow {
+        flex: 1;
+      }
+      .frame-bar a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font: italic 700 11px/1 var(--display);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent-text);
+        white-space: nowrap;
+      }
+      .frame-bar a:hover {
+        color: var(--heading);
+      }
+      .frame-pic {
+        padding: 10px;
+      }
+      .frame-pic picture {
+        display: block;
+      }
+      .frame-pic img {
+        width: 100%;
+        height: auto;
+        border-radius: 14px;
+        /* the screenshot carries its own dark outline: trim it */
+        clip-path: inset(2px round 14px);
+      }
+      .frame-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 9px 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      /* ---- sections ----------------------------------------------------- */
+      .sec {
+        position: relative;
+        padding: 104px 0;
+      }
+      /* an angled cut instead of a horizontal rule */
+      .sec--alt {
+        background: var(--panel);
+        margin: calc(var(--cut) * -1) 0;
+        padding: calc(104px + var(--cut)) 0;
+        clip-path: polygon(
+          0 var(--cut),
+          100% 0,
+          100% calc(100% - var(--cut)),
+          0 100%
+        );
+        --p-surface: var(--bg);
+      }
+      .sec-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 24px 64px;
+        align-items: end;
+        margin-bottom: 44px;
+      }
+      .marker {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .marker .no {
+        height: 22px;
+        padding: 0 11px;
+        color: var(--on-accent);
+        font: italic 800 11px/1 var(--mono);
+        --pg-bg: var(--accent);
+      }
+      .h2 {
+        font: italic 800 clamp(30px, 3.5vw, 50px) / 1 var(--display);
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        color: var(--heading);
+        text-wrap: balance;
+      }
+      .h2 em {
+        font-style: inherit;
+        color: var(--accent);
+      }
+      .lede {
+        font-size: 17px;
+        line-height: 1.6;
+        color: var(--muted);
+        max-width: 560px;
+      }
+      .lede strong {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .more {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 16px;
+        font: italic 700 12px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--accent-text);
+      }
+      .more .ico {
+        transition: transform 0.18s ease;
+      }
+      .more:hover .ico {
+        transform: translateX(4px);
+      }
+
+      /* ---- timing board ------------------------------------------------- */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: 1px solid var(--line-strong);
+        border-top: 2px solid var(--accent);
+        background: var(--panel);
+      }
+      .sec--alt .board {
+        background: var(--bg);
+      }
+      .lap {
+        padding: 22px 22px 20px;
+        border-left: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .lap:first-child {
+        border-left: 0;
+      }
+      .lap h3 {
+        margin-top: 10px;
+        min-height: 40px;
+        font: 600 14.5px/1.35 var(--sans);
+        color: var(--heading);
+      }
+      .tower {
+        margin-top: 16px;
+      }
+      .tower li {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr) auto;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .tower .pos {
+        font: italic 800 11px/1 var(--display);
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+      .tower .who {
+        font: italic 700 11px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .tower .p1 {
+        padding-bottom: 12px;
+      }
+      .tower .p1 .pos,
+      .tower .p1 .who {
+        color: var(--fast);
+      }
+      .tower .p1 .time {
+        grid-column: 1 / -1;
+        margin-top: 10px;
+        font: italic 800 clamp(40px, 4.3vw, 60px) / 0.95 var(--mono);
+        letter-spacing: -0.04em;
+        color: var(--fast);
+        white-space: nowrap;
+      }
+      .tower .p1 .time small {
+        margin-left: 6px;
+        font-size: 0.36em;
+        font-weight: 700;
+        letter-spacing: 0;
+        color: var(--muted);
+      }
+      .tower .p2 {
+        padding: 11px 0;
+        border-top: 1px solid var(--line);
+      }
+      .tower .p2 .time {
+        font: italic 500 13px/1 var(--mono);
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .tower .p2 .gap {
+        grid-column: 2 / -1;
+        justify-self: end;
+        margin-top: 6px;
+        font: italic 500 12px/1 var(--mono);
+        color: var(--muted);
+      }
+      .bars {
+        margin-top: auto;
+        padding-top: 6px;
+        display: grid;
+        gap: 5px;
+      }
+      .bars i {
+        display: block;
+        height: 7px;
+        width: var(--w, 100%);
+        background: var(--slow);
+        transform: skewX(-30deg);
+        transform-origin: bottom left;
+      }
+      .bars i.it {
+        background: var(--fast);
+      }
+      .lap-foot {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .ratio {
+        height: 22px;
+        padding: 0 10px;
+        font: italic 700 12px/1 var(--mono);
+        color: var(--heading);
+        --pg-line: var(--line-strong);
+      }
+      .lap--spec .big {
+        margin-top: 16px;
+        font: italic 800 clamp(40px, 4.3vw, 60px) / 0.95 var(--mono);
+        letter-spacing: -0.04em;
+        color: var(--heading);
+      }
+      .lap--spec .big small {
+        margin-left: 6px;
+        font-size: 0.36em;
+        font-weight: 700;
+        letter-spacing: 0;
+        color: var(--muted);
+      }
+      .lap--spec p {
+        margin-top: 8px;
+        font-size: 13.5px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .lap--spec .split {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+      }
+      .lap--spec .split .big {
+        margin-top: 10px;
+        font-size: clamp(30px, 3vw, 40px);
+      }
+      .footnote {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px 24px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .footnote .more {
+        margin-top: 0;
+      }
+
+      /* ---- rigs: the live grids ----------------------------------------- */
+      .rig {
+        position: relative;
+        margin-top: 46px;
+        border: 1px solid var(--line-strong);
+        border-top: 2px solid var(--accent);
+        background: var(--p-surface);
+        box-shadow: var(--shadow);
+      }
+      .rig-tab {
+        z-index: 1;
+      }
+      .rig .gd {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+      [data-grid-demo='themes'] {
+        min-height: 632px;
+      }
+      [data-grid-demo='million'] {
+        min-height: 580px;
+      }
+      [data-grid-demo='pivot'] {
+        min-height: 440px;
+      }
+      [data-grid-demo='grouped'] {
+        min-height: 360px;
+      }
+      .gd-controls {
+        gap: 10px 20px;
+      }
+      .gd-label {
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.18em;
+      }
+      .gd-seg {
+        border-radius: 0;
+        gap: 0;
+      }
+      .gd-seg button {
+        border-radius: 0;
+        padding: 7px 11px;
+        font: italic 600 12.5px/1 var(--display);
+        letter-spacing: 0.04em;
+      }
+      /* the selected segment is a parallelogram */
+      .gd-seg button[aria-pressed='true'] {
+        font-weight: 700;
+        clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+      }
+      .gd-btn {
+        border-radius: 0;
+        font: italic 700 11px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 9px 12px;
+      }
+      .gd-btn:hover {
+        border-color: var(--heading);
+      }
+      .gd-readout b {
+        color: var(--heading);
+      }
+      .gd-snippet {
+        color: var(--muted);
+      }
+      .rig-notes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 34px;
+        margin-top: 18px;
+      }
+
+      /* ---- pivot -------------------------------------------------------- */
+      .pivot-top {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: 56px;
+        align-items: start;
+      }
+      .steps {
+        margin-top: 26px;
+        display: grid;
+        gap: 12px;
+      }
+      .steps li {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        font-size: 15px;
+        color: var(--text);
+      }
+      .steps .no {
+        font: italic 800 11px/1 var(--mono);
+        color: var(--accent-text);
+      }
+      .steps code,
+      .prose :not(pre) > code,
+      .inline-code {
+        font-size: 0.86em;
+        padding: 2px 6px;
+        border: 1px solid var(--line);
+        background: var(--raised);
+        border-radius: 2px;
+        color: var(--heading);
+      }
+
+      /* ---- code panels -------------------------------------------------- */
+      .code {
+        position: relative;
+        border: 1px solid var(--line-strong);
+        background: var(--panel);
+        min-width: 0;
+      }
+      .sec--alt .code {
+        background: var(--bg);
+      }
+      .code-head {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        height: 36px;
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .code-file {
+        position: relative;
+        z-index: 0;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 26px 0 16px;
+        margin-left: -8px;
+        padding-left: 24px;
+        font: 500 12px/1 var(--mono);
+        color: var(--heading);
+      }
+      .code-file::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        background: var(--raised);
+        border-right: 2px solid var(--accent);
+      }
+      .code pre {
+        margin: 0;
+        padding: 14px 0;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.75;
+        color: var(--text);
+      }
+      .code .l {
+        display: block;
+        padding: 0 18px 0 0;
+        min-width: max-content;
+      }
+      .code .l > i {
+        display: inline-block;
+        width: 44px;
+        padding-right: 14px;
+        text-align: right;
+        font-style: normal;
+        color: var(--c-com);
+        user-select: none;
+      }
+      .code .l.hl {
+        background: var(--hl);
+        box-shadow: inset 3px 0 0 var(--accent);
+      }
+      .k {
+        color: var(--c-kw);
+      }
+      .s {
+        color: var(--c-str);
+      }
+      .t {
+        color: var(--c-tag);
+      }
+      .a {
+        color: var(--c-prop);
+      }
+      .x {
+        color: var(--c-punc);
+      }
+      .c {
+        color: var(--c-com);
+        font-style: italic;
+      }
+      .f {
+        color: var(--c-fn);
+      }
+
+      /* ---- features ----------------------------------------------------- */
+      .feats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .feat {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 22px 22px 20px 26px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        transition: border-color 0.18s ease, transform 0.18s ease;
+      }
+      .feat::before {
+        content: '';
+        position: absolute;
+        left: -1px;
+        top: -1px;
+        bottom: -1px;
+        width: 3px;
+        background: var(--accent);
+      }
+      .feat:hover {
+        border-color: var(--line-strong);
+        transform: translateX(3px);
+      }
+      .feat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .feat svg.art {
+        width: 34px;
+        height: 34px;
+        fill: none;
+        stroke: var(--heading);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transform: skewX(var(--skew));
+      }
+      .feat svg.art .r {
+        stroke: var(--accent);
+      }
+      .feat h3 {
+        margin-top: 18px;
+        font: italic 700 18px/1.15 var(--display);
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        color: var(--heading);
+      }
+      .feat p {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      .principles {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-top: 1px solid var(--line-strong);
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .principle {
+        position: relative;
+        padding: 22px 26px 22px 30px;
+      }
+      .principle + .principle::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--line-strong);
+        transform: skewX(var(--skew));
+      }
+      .principle p {
+        margin-top: 10px;
+        font-size: 14.5px;
+        line-height: 1.5;
+        color: var(--text);
+      }
+
+      /* ---- compare ------------------------------------------------------ */
+      .vs-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 22px;
+      }
+      .vs {
+        height: 54px;
+        padding: 0 26px;
+        gap: 12px;
+        font: italic 700 17px/1 var(--display);
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--heading);
+        --pg-bg: var(--panel);
+        --pg-line: var(--line-strong);
+      }
+      .vs small {
+        font: italic 800 10.5px/1 var(--display);
+        letter-spacing: 0.16em;
+        color: var(--accent-text);
+      }
+      .vs .ico {
+        color: var(--muted);
+        transition: transform 0.18s ease;
+      }
+      .vs:hover {
+        --pg-line: var(--accent);
+      }
+      .vs:hover .ico {
+        transform: translateX(4px);
+        color: var(--accent-text);
+      }
+      .vs--all {
+        --pg-bg: transparent;
+        color: var(--accent-text);
+        font-size: 13px;
+        letter-spacing: 0.12em;
+      }
+
+      /* ---- editions ----------------------------------------------------- */
+      .editions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+      .edition {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 30px 30px 28px;
+        border: 1px solid var(--line-strong);
+        background: var(--bg);
+        overflow: hidden;
+      }
+      .edition--pro {
+        border-top: 2px solid var(--accent);
+      }
+      .edition--pro::after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: 54px;
+        width: 34px;
+        height: 200%;
+        transform: skewX(var(--skew));
+        background: linear-gradient(
+          to right,
+          var(--accent) 0 14px,
+          transparent 14px 19px,
+          var(--stripe-2) 19px 23px,
+          transparent 23px 28px,
+          var(--stripe-3) 28px 34px
+        );
+        opacity: 0.9;
+        pointer-events: none;
+      }
+      .edition h3 {
+        margin-top: 16px;
+        font: italic 800 30px/1.02 var(--display);
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        color: var(--heading);
+        max-width: 420px;
+      }
+      .edition p {
+        margin-top: 12px;
+        max-width: 420px;
+        font-size: 15.5px;
+        color: var(--muted);
+      }
+      .edition .acts {
+        margin-top: auto;
+        padding-top: 26px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px 20px;
+        padding-left: 6px;
+      }
+
+      /* ---- closing band ------------------------------------------------- */
+      .closing {
+        position: relative;
+        overflow: hidden;
+        padding: 96px 0 104px;
+        border-top: 1px solid var(--line);
+      }
+      .closing .flow {
+        height: 100%;
+        top: 0;
+      }
+      .closing .inner {
+        position: relative;
+      }
+      .closing .display {
+        margin-top: 0;
+        font-size: clamp(34px, 4.6vw, 66px);
+      }
+      .closing .hero-actions {
+        margin-top: 30px;
+        padding-left: 6px;
+      }
+
+      /* ---- footer ------------------------------------------------------- */
+      .footer {
+        background: var(--panel);
+        padding: 56px 0 96px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(4, 1fr);
+        gap: 40px;
+      }
+      .footer-brand p {
+        margin-top: 14px;
+        max-width: 260px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .footer h4 {
+        font: italic 700 11px/1 var(--display);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .footer ul {
+        margin-top: 16px;
+        display: grid;
+        gap: 10px;
+      }
+      .footer li a {
+        font-size: 14.5px;
+        color: var(--text);
+      }
+      .footer li a:hover {
+        color: var(--accent-text);
+      }
+      .footer-end {
+        margin-top: 44px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      /* ================================================================
+       * Docs
+       * ============================================================== */
+      .docs {
+        display: grid;
+        grid-template-columns: 276px minmax(0, 1fr) 236px;
+        max-width: 1440px;
+        margin: 0 auto;
+      }
+      .side {
+        position: sticky;
+        top: 68px;
+        height: calc(100vh - 68px);
+        overflow-y: auto;
+        padding: 24px 18px 90px 24px;
+        border-right: 1px solid var(--line);
+        scrollbar-width: thin;
+      }
+      .side-tabs {
+        display: flex;
+        width: 100%;
+        height: 34px;
+        padding: 3px;
+        gap: 0;
+        --pg-bg: var(--panel);
+        --pg-line: var(--line);
+      }
+      .side-tabs button {
+        position: relative;
+        z-index: 0;
+        flex: 1 1 auto;
+        height: 100%;
+        padding: 0 9px;
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .side-tabs button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+      }
+      .side-tabs button[aria-pressed='true'] {
+        color: var(--heading);
+      }
+      .side-tabs button[aria-pressed='true']::before {
+        background: var(--raised);
+        border-bottom: 2px solid var(--accent);
+      }
+      .side-group {
+        margin: 26px 0 8px;
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .side-nav a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 8px 7px 12px;
+        font-size: 14.5px;
+        color: var(--text);
+      }
+      .side-nav a:hover {
+        color: var(--heading);
+      }
+      .side-nav .ico {
+        width: 13px;
+        height: 13px;
+        color: var(--muted);
+      }
+      .side-nav .open > a {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .side-nav .open > a .ico {
+        transform: rotate(90deg);
+      }
+      .side-nav .sub {
+        margin: 2px 0 6px 12px;
+        border-left: 1px solid var(--line);
+      }
+      .side-nav .sub a {
+        position: relative;
+        padding-left: 18px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .side-nav .sub a[aria-current='page'] {
+        color: var(--heading);
+        font-weight: 600;
+        background: linear-gradient(
+          100deg,
+          var(--hl),
+          transparent 85%
+        );
+      }
+      /* the red slanted tick */
+      .side-nav .sub a[aria-current='page']::before {
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: 6px;
+        bottom: 6px;
+        width: 5px;
+        background: var(--accent);
+        transform: skewX(var(--skew));
+      }
+
+      .article {
+        min-width: 0;
+        padding: 40px 64px 96px;
+      }
+      .prose {
+        max-width: 736px;
+        font-size: 16.5px;
+        line-height: 1.7;
+      }
+      .crumbs {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        font: italic 600 11.5px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .crumbs .sep {
+        width: 1px;
+        height: 11px;
+        background: var(--line-strong);
+        transform: skewX(-24deg);
+      }
+      .crumbs [aria-current] {
+        color: var(--accent-text);
+      }
+      .title-row {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px 24px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+      }
+      .prose h1 {
+        font: italic 800 50px/1 var(--display);
+        letter-spacing: -0.02em;
+        color: var(--heading);
+      }
+      .page-actions {
+        display: flex;
+        gap: 14px;
+        padding: 0 6px 4px;
+      }
+      .page-actions button {
+        height: 30px;
+        padding: 0 13px;
+        gap: 7px;
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text);
+        --pg-line: var(--line-strong);
+      }
+      .page-actions button:hover {
+        --pg-line: var(--heading);
+        color: var(--heading);
+      }
+      .page-actions .ico {
+        width: 13px;
+        height: 13px;
+      }
+      .page-actions .done,
+      .page-actions [data-copied] .todo {
+        display: none;
+      }
+      .page-actions [data-copied] .done {
+        display: inline;
+      }
+      .prose .lead {
+        margin-top: 26px;
+        font-size: 19px;
+        line-height: 1.6;
+        color: var(--heading);
+      }
+      .prose p {
+        margin-top: 20px;
+      }
+      .prose a.link {
+        color: var(--accent-text);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+      .prose h2 {
+        margin-top: 60px;
+        padding-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font: italic 700 29px/1.1 var(--display);
+        letter-spacing: -0.01em;
+        color: var(--heading);
+      }
+      .prose h2::before {
+        content: '';
+        width: 16px;
+        height: 16px;
+        flex: none;
+        background: linear-gradient(
+          to right,
+          var(--accent) 0 7px,
+          transparent 7px 10px,
+          var(--stripe-3) 10px 16px
+        );
+        transform: skewX(var(--skew));
+      }
+      .note {
+        margin-top: 26px;
+        padding: 16px 20px 18px 22px;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        background: var(--panel);
+      }
+      .note p {
+        margin-top: 8px;
+        font-size: 15.5px;
+        line-height: 1.65;
+      }
+      .prose .code {
+        margin-top: 24px;
+      }
+      /* demo card */
+      .demo {
+        margin-top: 30px;
+        border: 1px solid var(--line-strong);
+        border-top: 2px solid var(--accent);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      .demo-head {
+        display: flex;
+        align-items: stretch;
+        height: 40px;
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .demo-title {
+        position: relative;
+        z-index: 0;
+        display: inline-flex;
+        align-items: center;
+        margin-left: -8px;
+        padding: 0 22px 0 24px;
+        font: italic 800 11px/1 var(--display);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--on-accent);
+        white-space: nowrap;
+      }
+      .demo-title::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        transform: skewX(var(--skew));
+        background: var(--accent);
+      }
+      .demo-tabs {
+        display: flex;
+        align-items: stretch;
+        margin-left: 8px;
+        min-width: 0;
+      }
+      .demo-tabs button {
+        position: relative;
+        padding: 0 14px;
+        font: 500 12px/1 var(--mono);
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .demo-tabs button[aria-pressed='true'] {
+        color: var(--heading);
+      }
+      .demo-tabs button[aria-pressed='true']::after {
+        content: '';
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: skewX(-40deg);
+      }
+      .demo-tools {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding-right: 8px;
+      }
+      .demo-tools button {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+      }
+      .demo-tools button:hover {
+        color: var(--heading);
+      }
+      .demo-tools .ico {
+        width: 15px;
+        height: 15px;
+      }
+      /* props table */
+      .props {
+        width: 100%;
+        margin-top: 24px;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      .props th {
+        padding: 0 12px 10px 0;
+        text-align: left;
+        font: italic 700 10.5px/1 var(--display);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line-strong);
+      }
+      .props td {
+        padding: 13px 12px 13px 0;
+        vertical-align: top;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .props td:first-child {
+        color: var(--accent-text);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .pager {
+        margin-top: 64px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 26px;
+        padding: 0 8px;
+      }
+      .pager a {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        padding: 18px 26px;
+        --pg-bg: var(--panel);
+        --pg-line: var(--line-strong);
+        align-items: flex-start;
+      }
+      .pager a.next {
+        align-items: flex-end;
+      }
+      .pager a:hover {
+        --pg-line: var(--accent);
+      }
+      .pager strong {
+        font: italic 700 20px/1.1 var(--display);
+        color: var(--heading);
+      }
+      .page-foot {
+        margin-top: 34px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      .page-foot a {
+        color: var(--accent-text);
+      }
+      .page-foot a:hover {
+        color: var(--heading);
+      }
+
+      .toc {
+        position: sticky;
+        top: 68px;
+        align-self: start;
+        max-height: calc(100vh - 68px);
+        overflow-y: auto;
+        padding: 44px 24px 40px 4px;
+      }
+      .toc ul {
+        margin-top: 14px;
+        border-left: 1px solid var(--line);
+      }
+      .toc li a {
+        position: relative;
+        display: block;
+        padding: 6px 0 6px 16px;
+        font-size: 13.5px;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+      .toc li a:hover {
+        color: var(--heading);
+      }
+      .toc li a[aria-current] {
+        color: var(--heading);
+        font-weight: 600;
+      }
+      .toc li a[aria-current]::before {
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: 6px;
+        bottom: 6px;
+        width: 5px;
+        background: var(--accent);
+        transform: skewX(var(--skew));
+      }
+      .toc-links {
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 10px;
+      }
+      .toc-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .toc-links a:hover {
+        color: var(--heading);
+      }
+      .toc-links .ico {
+        width: 13px;
+        height: 13px;
+      }
+
+      /* ---- search ------------------------------------------------------- */
+      dialog.search {
+        width: min(620px, calc(100vw - 32px));
+        margin-top: 12vh;
+        padding: 0;
+        border: 1px solid var(--line-strong);
+        border-top: 2px solid var(--accent);
+        background: var(--panel);
+        color: var(--text);
+        box-shadow: var(--shadow);
+      }
+      dialog.search::backdrop {
+        background: var(--backdrop);
+        backdrop-filter: blur(3px);
+      }
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 16px;
+        height: 54px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+      }
+      .search-box input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--heading);
+        font: 16px var(--sans);
+      }
+      .search-box input::placeholder {
+        color: var(--muted);
+      }
+      .search-results {
+        max-height: 50vh;
+        overflow-y: auto;
+        padding: 8px;
+      }
+      .search-group {
+        padding: 12px 10px 8px;
+      }
+      .search-results a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 10px;
+        font-size: 14.5px;
+        color: var(--text);
+      }
+      .search-results a small {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .search-results a:hover,
+      .search-results a.is-active {
+        background: var(--hl);
+        box-shadow: inset 3px 0 0 var(--accent);
+        color: var(--heading);
+      }
+      .search-results a code {
+        font-size: 13px;
+      }
+      .search-foot {
+        display: flex;
+        gap: 18px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .search-foot span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* ---- responsive --------------------------------------------------- */
+      @media (max-width: 1240px) {
+        .docs {
+          grid-template-columns: 250px minmax(0, 1fr);
+        }
+        .toc {
+          display: none;
+        }
+        .fin {
+          display: none;
+        }
+      }
+      @media (max-width: 1100px) {
+        .nav {
+          display: none;
+        }
+        .hero-top {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .spec {
+          justify-content: start;
+          margin-left: -22px;
+        }
+        .flow .foil {
+          display: none;
+        }
+        .flow {
+          opacity: 0.5;
+        }
+        .board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .lap:nth-child(3) {
+          border-left: 0;
+        }
+        .lap:nth-child(n + 3) {
+          border-top: 1px solid var(--line);
+        }
+        .feats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .principles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .principle:nth-child(3)::before {
+          display: none;
+        }
+        .principle:nth-child(n + 3) {
+          border-top: 1px solid var(--line);
+        }
+        .pivot-top {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 32px;
+        }
+        .footer-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .footer-brand {
+          grid-column: 1 / -1;
+        }
+      }
+      @media (max-width: 860px) {
+        .docs {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .side {
+          display: none;
+        }
+        .article {
+          padding: 28px 20px 72px;
+        }
+        .sec-head {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .editions {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .sec {
+          padding: 72px 0;
+        }
+        .sec--alt {
+          padding: calc(72px + var(--cut)) 0;
+        }
+        .prose h1 {
+          font-size: 38px;
+        }
+      }
+      @media (max-width: 640px) {
+        :root {
+          --cut: 14px;
+        }
+        .wrap {
+          padding: 0 16px;
+        }
+        .fw,
+        .search-trigger span,
+        .search-trigger kbd {
+          display: none;
+        }
+        .search-trigger {
+          min-width: 0;
+          width: 36px;
+          padding: 0;
+          justify-content: center;
+        }
+        .header-row {
+          gap: 12px;
+        }
+        .brand {
+          font-size: 16px;
+        }
+        .logo {
+          width: 36px;
+          height: 17px;
+        }
+        .display span {
+          white-space: normal;
+        }
+        .announce .msg {
+          display: block;
+          padding-right: 14px;
+        }
+        .announce .msg .ico {
+          display: none;
+        }
+        .frame-foot .stencil {
+          white-space: normal;
+          line-height: 1.6;
+        }
+        .props {
+          display: block;
+          overflow-x: auto;
+        }
+        .hero-sub {
+          font-size: 16.5px;
+        }
+        .install {
+          font-size: 11.5px;
+          padding-left: 16px;
+          max-width: 100%;
+        }
+        .copy .todo,
+        .copy .done {
+          display: none !important;
+        }
+        .spec {
+          grid-template-columns: repeat(2, auto);
+          gap: 16px 0;
+        }
+        .spec div:nth-child(3)::before {
+          display: none;
+        }
+        .frame {
+          margin-top: 46px;
+        }
+        .frame-bar .hint,
+        .frame-foot .stencil + .stencil {
+          display: none;
+        }
+        .frame-pic {
+          padding: 5px;
+        }
+        .frame-pic img {
+          border-radius: 6px;
+          clip-path: inset(1px round 6px);
+        }
+        .board,
+        .feats,
+        .principles {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .lap {
+          border-left: 0;
+        }
+        .lap + .lap {
+          border-top: 1px solid var(--line);
+        }
+        .lap h3 {
+          min-height: 0;
+        }
+        .principle + .principle::before {
+          display: none;
+        }
+        .principle + .principle {
+          border-top: 1px solid var(--line);
+        }
+        .vs {
+          height: 46px;
+          padding: 0 18px;
+          font-size: 14.5px;
+        }
+        .edition {
+          padding: 24px 20px;
+        }
+        .edition--pro::after {
+          right: 20px;
+          opacity: 0.5;
+        }
+        .footer-grid {
+          gap: 28px 20px;
+        }
+        .footer-end {
+          flex-direction: column;
+        }
+        .pager {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 14px;
+        }
+        .rig-tab,
+        .frame-tab {
+          left: 12px;
+          font-size: 10px;
+          padding: 0 12px;
+        }
+        .demo-tabs button:nth-child(2) {
+          display: none;
+        }
+        .page-actions {
+          padding-left: 6px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flow .streaks {
+          display: none;
+        }
+        .btn .ico,
+        .more .ico,
+        .vs .ico,
+        .feat,
+        .btn--primary::after {
+          transition: none;
+        }
+        .feat:hover {
+          transform: none;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- icons -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M2.5 8h10M9 4l4 4-4 4" /></symbol>
+      <symbol id="i-out" viewBox="0 0 16 16"><path d="M5 11 11.5 4.5M6 4.5h5.5V10" /></symbol>
+      <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.3" /><path d="m10.4 10.4 3.1 3.1" /></symbol>
+      <symbol id="i-copy" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8" rx="1" /><path d="M10.5 5.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.8" /><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1" /></symbol>
+      <symbol id="i-moon" viewBox="0 0 16 16"><path d="M13.5 9.2A5.8 5.8 0 1 1 6.8 2.5a4.6 4.6 0 0 0 6.7 6.7Z" /></symbol>
+      <symbol id="i-chev" viewBox="0 0 16 16"><path d="m6 3.5 4.5 4.5L6 12.5" /></symbol>
+      <symbol id="i-doc" viewBox="0 0 16 16"><path d="M4 1.5h5.5L12.5 4.5v10h-8.5zM9.5 1.5v3h3M6 8.5h4.5M6 11h4.5" /></symbol>
+      <symbol id="i-edit" viewBox="0 0 16 16"><path d="m10.5 2.5 3 3L6 13l-3.5.5L3 10z" /></symbol>
+      <symbol id="i-box" viewBox="0 0 16 16"><path d="m8 1.8 5.5 3v6.4L8 14.2l-5.5-3V4.8zM2.5 4.8 8 7.9l5.5-3.1M8 7.9v6.3" /></symbol>
+      <symbol id="i-reset" viewBox="0 0 16 16"><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8M2.5 2.2v2.6h2.6" /></symbol>
+      <symbol id="i-full" viewBox="0 0 16 16"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" /></symbol>
+      <symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" /></symbol>
+    </svg>
+
+    <header class="header">
+      <div class="wrap header-row">
+        <a class="brand" href="#" data-goto-page="home" aria-label="Infinite Table, home">
+          <span class="logo" aria-hidden="true"></span>
+          <span>Infinite<span class="slash">/</span>Table</span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="#" data-nav="docs" data-goto-page="docs">Docs</a>
+          <a href="#">Demo</a>
+          <a href="#">Themes</a>
+          <a href="#">Compare</a>
+          <a href="#">Pricing</a>
+          <a href="#">Blog</a>
+        </nav>
+        <div class="header-tools">
+          <button class="pg search-trigger" type="button" data-open-search aria-label="Search the docs">
+            <svg class="ico"><use href="#i-search" /></svg>
+            <span>Search</span>
+            <kbd>⌘K</kbd>
+          </button>
+          <div class="pg fw" role="group" aria-label="Framework">
+            <button type="button" data-set-framework="react">React</button>
+            <button type="button" data-set-framework="vue">Vue</button>
+          </div>
+          <button class="pg icon-btn" type="button" data-toggle-theme aria-label="Switch color mode">
+            <svg class="ico" data-only="dark"><use href="#i-sun" /></svg>
+            <svg class="ico" data-only="light"><use href="#i-moon" /></svg>
+          </button>
+          <a class="pg icon-btn" href="https://github.com/infinite-table/infinite-react" aria-label="Infinite Table on GitHub">
+            <svg class="ico"><use href="#i-gh" /></svg>
+          </a>
+        </div>
+      </div>
+      <div class="livery" aria-hidden="true"></div>
+    </header>
+
+    <!-- ================================================================
+         HOME
+         ============================================================== -->
+    <main data-page-view="home">
+      <section class="hero">
+        <svg class="flow" viewBox="-240 0 1920 620" aria-hidden="true">
+          <g class="lines" id="flow-lines">
+            <path d="M-240 18.0 L-200 18.0 L-160 18.0 L-120 18.0 L-80 18.0 L-40 18.0 L0 18.0 L40 18.0 L80 18.0 L120 18.0 L160 18.0 L200 18.0 L240 18.0 L280 18.0 L320 18.0 L360 18.0 L400 18.0 L440 18.0 L480 18.0 L520 18.0 L560 18.0 L600 17.9 L640 17.6 L680 17.2 L720 16.3 L760 15.2 L800 13.8 L840 12.6 L880 11.6 L920 5.9 L960 0.8 L1000 -2.4 L1040 -3.1 L1080 -1.8 L1120 1.0 L1160 5.1 L1200 10.2 L1240 16.2 L1280 20.0 L1320 19.9 L1360 19.7 L1400 19.5 L1440 19.3 L1480 19.0 L1520 18.7 L1560 18.5 L1600 18.4 L1640 18.2 L1680 18.2" opacity="0.51"/>
+            <path d="M-240 44.0 L-200 44.0 L-160 44.0 L-120 44.0 L-80 44.0 L-40 44.0 L0 44.0 L40 44.0 L80 44.0 L120 44.0 L160 44.0 L200 44.0 L240 44.0 L280 44.0 L320 44.0 L360 44.0 L400 44.0 L440 44.0 L480 44.0 L520 44.0 L560 44.0 L600 43.9 L640 43.6 L680 43.2 L720 42.3 L760 41.2 L800 39.8 L840 38.6 L880 37.5 L920 31.5 L960 26.1 L1000 22.7 L1040 22.0 L1080 23.4 L1120 26.4 L1160 30.8 L1200 36.1 L1240 42.1 L1280 46.0 L1320 45.9 L1360 45.7 L1400 45.5 L1440 45.3 L1480 45.0 L1520 44.7 L1560 44.5 L1600 44.4 L1640 44.2 L1680 44.2" opacity="0.57"/>
+            <path d="M-240 70.0 L-200 70.0 L-160 70.0 L-120 70.0 L-80 70.0 L-40 70.0 L0 70.0 L40 70.0 L80 70.0 L120 70.0 L160 70.0 L200 70.0 L240 70.0 L280 70.0 L320 70.0 L360 70.0 L400 70.0 L440 70.0 L480 70.0 L520 70.0 L560 70.0 L600 69.9 L640 69.6 L680 69.2 L720 68.3 L760 67.2 L800 65.8 L840 64.6 L880 63.5 L920 56.9 L960 51.1 L1000 47.6 L1040 46.9 L1080 48.5 L1120 51.7 L1160 56.3 L1200 61.8 L1240 68.0 L1280 72.0 L1320 71.9 L1360 71.7 L1400 71.5 L1440 71.3 L1480 71.0 L1520 70.7 L1560 70.5 L1600 70.4 L1640 70.2 L1680 70.2" opacity="0.64"/>
+            <path d="M-240 96.0 L-200 96.0 L-160 96.0 L-120 96.0 L-80 96.0 L-40 96.0 L0 96.0 L40 96.0 L80 96.0 L120 96.0 L160 96.0 L200 96.0 L240 96.0 L280 96.0 L320 96.0 L360 96.0 L400 96.0 L440 96.0 L480 96.0 L520 96.0 L560 96.0 L600 95.9 L640 95.6 L680 95.2 L720 94.3 L760 93.2 L800 91.8 L840 90.6 L880 89.3 L920 82.1 L960 75.8 L1000 72.0 L1040 71.3 L1080 73.1 L1120 76.7 L1160 81.6 L1200 87.5 L1240 93.9 L1280 98.0 L1320 97.9 L1360 97.7 L1400 97.5 L1440 97.3 L1480 97.0 L1520 96.7 L1560 96.5 L1600 96.4 L1640 96.2 L1680 96.2" opacity="0.71"/>
+            <path d="M-240 122.0 L-200 122.0 L-160 122.0 L-120 122.0 L-80 122.0 L-40 122.0 L0 122.0 L40 122.0 L80 122.0 L120 122.0 L160 122.0 L200 122.0 L240 122.0 L280 122.0 L320 122.0 L360 122.0 L400 122.0 L440 122.0 L480 122.0 L520 122.0 L560 122.0 L600 121.9 L640 121.6 L680 121.2 L720 120.3 L760 119.2 L800 117.8 L840 116.6 L880 115.1 L920 106.9 L960 99.8 L1000 95.5 L1040 94.9 L1080 97.0 L1120 101.1 L1160 106.6 L1200 112.9 L1240 119.6 L1280 123.9 L1320 123.9 L1360 123.7 L1400 123.5 L1440 123.3 L1480 123.0 L1520 122.7 L1560 122.5 L1600 122.4 L1640 122.2 L1680 122.2" opacity="0.77"/>
+            <path d="M-240 148.0 L-200 148.0 L-160 148.0 L-120 148.0 L-80 148.0 L-40 148.0 L0 148.0 L40 148.0 L80 148.0 L120 148.0 L160 148.0 L200 148.0 L240 148.0 L280 148.0 L320 148.0 L360 148.0 L400 148.0 L440 148.0 L480 148.0 L520 148.0 L560 148.0 L600 147.9 L640 147.6 L680 147.2 L720 146.3 L760 145.2 L800 143.8 L840 142.5 L880 140.8 L920 130.8 L960 122.5 L1000 117.6 L1040 117.0 L1080 119.6 L1120 124.4 L1160 130.8 L1200 138.0 L1240 145.3 L1280 149.9 L1320 149.9 L1360 149.7 L1400 149.5 L1440 149.3 L1480 149.0 L1520 148.7 L1560 148.5 L1600 148.4 L1640 148.2 L1680 148.2" opacity="0.83"/>
+            <path d="M-240 174.0 L-200 174.0 L-160 174.0 L-120 174.0 L-80 174.0 L-40 174.0 L0 174.0 L40 174.0 L80 174.0 L120 174.0 L160 174.0 L200 174.0 L240 174.0 L280 174.0 L320 174.0 L360 174.0 L400 174.0 L440 174.0 L480 174.0 L520 174.0 L560 174.0 L600 173.9 L640 173.6 L680 173.2 L720 172.3 L760 171.2 L800 169.8 L840 168.5 L880 166.0 L920 152.6 L960 142.5 L1000 136.7 L1040 136.2 L1080 139.5 L1120 145.4 L1160 153.2 L1200 161.9 L1240 170.4 L1280 175.9 L1320 175.9 L1360 175.7 L1400 175.5 L1440 175.3 L1480 175.0 L1520 174.7 L1560 174.5 L1600 174.4 L1640 174.2 L1680 174.2" opacity="0.90"/>
+            <path d="M-240 200.0 L-200 200.0 L-160 200.0 L-120 200.0 L-80 200.0 L-40 200.0 L0 200.0 L40 200.0 L80 200.0 L120 200.0 L160 200.0 L200 200.0 L240 200.0 L280 200.0 L320 200.0 L360 200.0 L400 200.0 L440 200.0 L480 200.0 L520 200.0 L560 200.0 L600 199.9 L640 199.6 L680 199.2 L720 198.3 L760 197.2 L800 195.8 L840 194.2 L880 189.1 L920 168.5 L960 155.9 L1000 149.0 L1040 148.6 L1080 152.7 L1120 160.0 L1160 170.0 L1200 181.6 L1240 193.2 L1280 201.7 L1320 201.9 L1360 201.7 L1400 201.5 L1440 201.3 L1480 201.0 L1520 200.7 L1560 200.5 L1600 200.4 L1640 200.2 L1680 200.2" opacity="0.96"/>
+            <path d="M-240 226.0 L-200 226.0 L-160 226.0 L-120 226.0 L-80 226.0 L-40 226.0 L0 226.0 L40 226.0 L80 226.0 L120 226.0 L160 226.0 L200 226.0 L240 226.0 L280 226.0 L320 226.0 L360 226.0 L400 226.0 L440 226.0 L480 226.0 L520 226.0 L560 226.0 L600 225.9 L640 225.6 L680 225.2 L720 224.3 L760 223.2 L800 221.8 L840 221.2 L880 225.6 L920 240.4 L960 246.6 L1000 249.5 L1040 248.3 L1080 244.9 L1120 240.7 L1160 236.1 L1200 232.2 L1240 230.7 L1280 228.4 L1320 227.9 L1360 227.7 L1400 227.5 L1440 227.3 L1480 227.0 L1520 226.7 L1560 226.5 L1600 226.4 L1640 226.2 L1680 226.2" opacity="0.97"/>
+            <path d="M-240 252.0 L-200 252.0 L-160 252.0 L-120 252.0 L-80 252.0 L-40 252.0 L0 252.0 L40 252.0 L80 252.0 L120 252.0 L160 252.0 L200 252.0 L240 252.0 L280 252.0 L320 252.0 L360 252.0 L400 252.0 L440 252.0 L480 252.0 L520 252.0 L560 252.0 L600 251.9 L640 251.6 L680 251.2 L720 250.3 L760 249.2 L800 247.8 L840 246.8 L880 248.1 L920 255.4 L960 259.3 L1000 261.2 L1040 260.0 L1080 257.4 L1120 254.5 L1160 252.1 L1200 251.2 L1240 253.0 L1280 254.1 L1320 253.9 L1360 253.7 L1400 253.5 L1440 253.3 L1480 253.0 L1520 252.7 L1560 252.5 L1600 252.4 L1640 252.2 L1680 252.2" opacity="0.91"/>
+            <path d="M-240 278.0 L-200 278.0 L-160 278.0 L-120 278.0 L-80 278.0 L-40 278.0 L0 278.0 L40 278.0 L80 278.0 L120 278.0 L160 278.0 L200 278.0 L240 278.0 L280 278.0 L320 278.0 L360 278.0 L400 278.0 L440 278.0 L480 278.0 L520 278.0 L560 278.0 L600 277.9 L640 277.6 L680 277.2 L720 276.3 L760 275.2 L800 273.8 L840 272.7 L880 273.3 L920 277.0 L960 278.9 L1000 279.8 L1040 278.8 L1080 276.9 L1120 275.2 L1160 274.3 L1200 275.0 L1240 278.0 L1280 280.1 L1320 279.9 L1360 279.7 L1400 279.5 L1440 279.3 L1480 279.0 L1520 278.7 L1560 278.5 L1600 278.4 L1640 278.2 L1680 278.2" opacity="0.84"/>
+            <path d="M-240 304.0 L-200 304.0 L-160 304.0 L-120 304.0 L-80 304.0 L-40 304.0 L0 304.0 L40 304.0 L80 304.0 L120 304.0 L160 304.0 L200 304.0 L240 304.0 L280 304.0 L320 304.0 L360 304.0 L400 304.0 L440 304.0 L480 304.0 L520 304.0 L560 304.0 L600 303.9 L640 303.6 L680 303.2 L720 302.3 L760 301.2 L800 299.8 L840 298.7 L880 298.9 L920 300.8 L960 301.5 L1000 301.8 L1040 300.8 L1080 299.4 L1120 298.4 L1160 298.5 L1200 300.0 L1240 303.6 L1280 306.0 L1320 305.9 L1360 305.7 L1400 305.5 L1440 305.3 L1480 305.0 L1520 304.7 L1560 304.5 L1600 304.4 L1640 304.2 L1680 304.2" opacity="0.78"/>
+            <path d="M-240 330.0 L-200 330.0 L-160 330.0 L-120 330.0 L-80 330.0 L-40 330.0 L0 330.0 L40 330.0 L80 330.0 L120 330.0 L160 330.0 L200 330.0 L240 330.0 L280 330.0 L320 330.0 L360 330.0 L400 330.0 L440 330.0 L480 330.0 L520 330.0 L560 330.0 L600 329.9 L640 329.6 L680 329.2 L720 328.3 L760 327.2 L800 325.8 L840 324.7 L880 324.7 L920 325.5 L960 325.4 L1000 325.3 L1040 324.3 L1080 323.2 L1120 322.8 L1160 323.4 L1200 325.5 L1240 329.4 L1280 332.0 L1320 331.9 L1360 331.7 L1400 331.5 L1440 331.3 L1480 331.0 L1520 330.7 L1560 330.5 L1600 330.4 L1640 330.2 L1680 330.2" opacity="0.71"/>
+            <path d="M-240 356.0 L-200 356.0 L-160 356.0 L-120 356.0 L-80 356.0 L-40 356.0 L0 356.0 L40 356.0 L80 356.0 L120 356.0 L160 356.0 L200 356.0 L240 356.0 L280 356.0 L320 356.0 L360 356.0 L400 356.0 L440 356.0 L480 356.0 L520 356.0 L560 356.0 L600 355.9 L640 355.6 L680 355.2 L720 354.3 L760 353.2 L800 351.8 L840 350.7 L880 350.6 L920 350.7 L960 350.1 L1000 349.6 L1040 348.6 L1080 347.8 L1120 347.7 L1160 348.7 L1200 351.1 L1240 355.3 L1280 358.0 L1320 357.9 L1360 357.7 L1400 357.5 L1440 357.3 L1480 357.0 L1520 356.7 L1560 356.5 L1600 356.4 L1640 356.2 L1680 356.2" opacity="0.65"/>
+            <path d="M-240 382.0 L-200 382.0 L-160 382.0 L-120 382.0 L-80 382.0 L-40 382.0 L0 382.0 L40 382.0 L80 382.0 L120 382.0 L160 382.0 L200 382.0 L240 382.0 L280 382.0 L320 382.0 L360 382.0 L400 382.0 L440 382.0 L480 382.0 L520 382.0 L560 382.0 L600 381.9 L640 381.6 L680 381.2 L720 380.3 L760 379.2 L800 377.8 L840 376.7 L880 376.5 L920 376.1 L960 375.1 L1000 374.4 L1040 373.5 L1080 372.8 L1120 372.9 L1160 374.2 L1200 376.8 L1240 381.2 L1280 384.0 L1320 383.9 L1360 383.7 L1400 383.5 L1440 383.3 L1480 383.0 L1520 382.7 L1560 382.5 L1600 382.4 L1640 382.2 L1680 382.2" opacity="0.58"/>
+            <path d="M-240 408.0 L-200 408.0 L-160 408.0 L-120 408.0 L-80 408.0 L-40 408.0 L0 408.0 L40 408.0 L80 408.0 L120 408.0 L160 408.0 L200 408.0 L240 408.0 L280 408.0 L320 408.0 L360 408.0 L400 408.0 L440 408.0 L480 408.0 L520 408.0 L560 408.0 L600 407.9 L640 407.6 L680 407.2 L720 406.3 L760 405.2 L800 403.8 L840 402.7 L880 402.4 L920 401.7 L960 400.4 L1000 399.5 L1040 398.6 L1080 398.1 L1120 398.4 L1160 399.8 L1200 402.7 L1240 407.1 L1280 410.0 L1320 409.9 L1360 409.7 L1400 409.5 L1440 409.3 L1480 409.0 L1520 408.7 L1560 408.5 L1600 408.4 L1640 408.2 L1680 408.2" opacity="0.52"/>
+            <path d="M-240 434.0 L-200 434.0 L-160 434.0 L-120 434.0 L-80 434.0 L-40 434.0 L0 434.0 L40 434.0 L80 434.0 L120 434.0 L160 434.0 L200 434.0 L240 434.0 L280 434.0 L320 434.0 L360 434.0 L400 434.0 L440 434.0 L480 434.0 L520 434.0 L560 434.0 L600 433.9 L640 433.6 L680 433.2 L720 432.3 L760 431.2 L800 429.8 L840 428.7 L880 428.4 L920 427.3 L960 425.8 L1000 424.8 L1040 423.9 L1080 423.5 L1120 424.0 L1160 425.5 L1200 428.5 L1240 433.0 L1280 436.0 L1320 435.9 L1360 435.7 L1400 435.5 L1440 435.3 L1480 435.0 L1520 434.7 L1560 434.5 L1600 434.4 L1640 434.2 L1680 434.2" opacity="0.45"/>
+            <path d="M-240 460.0 L-200 460.0 L-160 460.0 L-120 460.0 L-80 460.0 L-40 460.0 L0 460.0 L40 460.0 L80 460.0 L120 460.0 L160 460.0 L200 460.0 L240 460.0 L280 460.0 L320 460.0 L360 460.0 L400 460.0 L440 460.0 L480 460.0 L520 460.0 L560 460.0 L600 459.9 L640 459.6 L680 459.2 L720 458.3 L760 457.2 L800 455.8 L840 454.7 L880 454.4 L920 453.1 L960 451.4 L1000 450.3 L1040 449.4 L1080 449.0 L1120 449.6 L1160 451.3 L1200 454.4 L1240 459.0 L1280 462.0 L1320 461.9 L1360 461.7 L1400 461.5 L1440 461.3 L1480 461.0 L1520 460.7 L1560 460.5 L1600 460.4 L1640 460.2 L1680 460.2" opacity="0.39"/>
+            <path d="M-240 486.0 L-200 486.0 L-160 486.0 L-120 486.0 L-80 486.0 L-40 486.0 L0 486.0 L40 486.0 L80 486.0 L120 486.0 L160 486.0 L200 486.0 L240 486.0 L280 486.0 L320 486.0 L360 486.0 L400 486.0 L440 486.0 L480 486.0 L520 486.0 L560 486.0 L600 485.9 L640 485.6 L680 485.2 L720 484.3 L760 483.2 L800 481.8 L840 480.7 L880 480.3 L920 478.8 L960 477.0 L1000 475.8 L1040 474.9 L1080 474.7 L1120 475.3 L1160 477.2 L1200 480.3 L1240 485.0 L1280 488.0 L1320 487.9 L1360 487.7 L1400 487.5 L1440 487.3 L1480 487.0 L1520 486.7 L1560 486.5 L1600 486.4 L1640 486.2 L1680 486.2" opacity="0.35"/>
+            <path d="M-240 512.0 L-200 512.0 L-160 512.0 L-120 512.0 L-80 512.0 L-40 512.0 L0 512.0 L40 512.0 L80 512.0 L120 512.0 L160 512.0 L200 512.0 L240 512.0 L280 512.0 L320 512.0 L360 512.0 L400 512.0 L440 512.0 L480 512.0 L520 512.0 L560 512.0 L600 511.9 L640 511.6 L680 511.2 L720 510.3 L760 509.2 L800 507.8 L840 506.7 L880 506.3 L920 504.7 L960 502.7 L1000 501.5 L1040 500.6 L1080 500.4 L1120 501.1 L1160 503.0 L1200 506.2 L1240 510.9 L1280 514.0 L1320 513.9 L1360 513.7 L1400 513.5 L1440 513.3 L1480 513.0 L1520 512.7 L1560 512.5 L1600 512.4 L1640 512.2 L1680 512.2" opacity="0.35"/>
+            <path d="M-240 538.0 L-200 538.0 L-160 538.0 L-120 538.0 L-80 538.0 L-40 538.0 L0 538.0 L40 538.0 L80 538.0 L120 538.0 L160 538.0 L200 538.0 L240 538.0 L280 538.0 L320 538.0 L360 538.0 L400 538.0 L440 538.0 L480 538.0 L520 538.0 L560 538.0 L600 537.9 L640 537.6 L680 537.2 L720 536.3 L760 535.2 L800 533.8 L840 532.7 L880 532.3 L920 530.5 L960 528.5 L1000 527.1 L1040 526.3 L1080 526.1 L1120 526.9 L1160 528.9 L1200 532.2 L1240 536.9 L1280 540.0 L1320 539.9 L1360 539.7 L1400 539.5 L1440 539.3 L1480 539.0 L1520 538.7 L1560 538.5 L1600 538.4 L1640 538.2 L1680 538.2" opacity="0.35"/>
+            <path d="M-240 564.0 L-200 564.0 L-160 564.0 L-120 564.0 L-80 564.0 L-40 564.0 L0 564.0 L40 564.0 L80 564.0 L120 564.0 L160 564.0 L200 564.0 L240 564.0 L280 564.0 L320 564.0 L360 564.0 L400 564.0 L440 564.0 L480 564.0 L520 564.0 L560 564.0 L600 563.9 L640 563.6 L680 563.2 L720 562.3 L760 561.2 L800 559.8 L840 558.7 L880 558.3 L920 556.4 L960 554.2 L1000 552.9 L1040 552.0 L1080 551.9 L1120 552.7 L1160 554.8 L1200 558.1 L1240 562.9 L1280 566.0 L1320 565.9 L1360 565.7 L1400 565.5 L1440 565.3 L1480 565.0 L1520 564.7 L1560 564.5 L1600 564.4 L1640 564.2 L1680 564.2" opacity="0.35"/>
+            <path d="M-240 590.0 L-200 590.0 L-160 590.0 L-120 590.0 L-80 590.0 L-40 590.0 L0 590.0 L40 590.0 L80 590.0 L120 590.0 L160 590.0 L200 590.0 L240 590.0 L280 590.0 L320 590.0 L360 590.0 L400 590.0 L440 590.0 L480 590.0 L520 590.0 L560 590.0 L600 589.9 L640 589.6 L680 589.2 L720 588.3 L760 587.2 L800 585.8 L840 584.6 L880 584.2 L920 582.3 L960 580.1 L1000 578.7 L1040 577.8 L1080 577.7 L1120 578.6 L1160 580.7 L1200 584.1 L1240 588.9 L1280 592.0 L1320 591.9 L1360 591.7 L1400 591.5 L1440 591.3 L1480 591.0 L1520 590.7 L1560 590.5 L1600 590.4 L1640 590.2 L1680 590.2" opacity="0.35"/>
+          </g>
+          <g class="streaks">
+            <path d="M-240 44.0 L-200 44.0 L-160 44.0 L-120 44.0 L-80 44.0 L-40 44.0 L0 44.0 L40 44.0 L80 44.0 L120 44.0 L160 44.0 L200 44.0 L240 44.0 L280 44.0 L320 44.0 L360 44.0 L400 44.0 L440 44.0 L480 44.0 L520 44.0 L560 44.0 L600 43.9 L640 43.6 L680 43.2 L720 42.3 L760 41.2 L800 39.8 L840 38.6 L880 37.5 L920 31.5 L960 26.1 L1000 22.7 L1040 22.0 L1080 23.4 L1120 26.4 L1160 30.8 L1200 36.1 L1240 42.1 L1280 46.0 L1320 45.9 L1360 45.7 L1400 45.5 L1440 45.3 L1480 45.0 L1520 44.7 L1560 44.5 L1600 44.4 L1640 44.2 L1680 44.2" style="animation-duration:7.2s;animation-delay:-2.3s"/>
+            <path d="M-240 122.0 L-200 122.0 L-160 122.0 L-120 122.0 L-80 122.0 L-40 122.0 L0 122.0 L40 122.0 L80 122.0 L120 122.0 L160 122.0 L200 122.0 L240 122.0 L280 122.0 L320 122.0 L360 122.0 L400 122.0 L440 122.0 L480 122.0 L520 122.0 L560 122.0 L600 121.9 L640 121.6 L680 121.2 L720 120.3 L760 119.2 L800 117.8 L840 116.6 L880 115.1 L920 106.9 L960 99.8 L1000 95.5 L1040 94.9 L1080 97.0 L1120 101.1 L1160 106.6 L1200 112.9 L1240 119.6 L1280 123.9 L1320 123.9 L1360 123.7 L1400 123.5 L1440 123.3 L1480 123.0 L1520 122.7 L1560 122.5 L1600 122.4 L1640 122.2 L1680 122.2" style="animation-duration:8.3s;animation-delay:-0.9s"/>
+            <path d="M-240 200.0 L-200 200.0 L-160 200.0 L-120 200.0 L-80 200.0 L-40 200.0 L0 200.0 L40 200.0 L80 200.0 L120 200.0 L160 200.0 L200 200.0 L240 200.0 L280 200.0 L320 200.0 L360 200.0 L400 200.0 L440 200.0 L480 200.0 L520 200.0 L560 200.0 L600 199.9 L640 199.6 L680 199.2 L720 198.3 L760 197.2 L800 195.8 L840 194.2 L880 189.1 L920 168.5 L960 155.9 L1000 149.0 L1040 148.6 L1080 152.7 L1120 160.0 L1160 170.0 L1200 181.6 L1240 193.2 L1280 201.7 L1320 201.9 L1360 201.7 L1400 201.5 L1440 201.3 L1480 201.0 L1520 200.7 L1560 200.5 L1600 200.4 L1640 200.2 L1680 200.2" style="animation-duration:9.4s;animation-delay:-6.7s"/>
+            <path d="M-240 278.0 L-200 278.0 L-160 278.0 L-120 278.0 L-80 278.0 L-40 278.0 L0 278.0 L40 278.0 L80 278.0 L120 278.0 L160 278.0 L200 278.0 L240 278.0 L280 278.0 L320 278.0 L360 278.0 L400 278.0 L440 278.0 L480 278.0 L520 278.0 L560 278.0 L600 277.9 L640 277.6 L680 277.2 L720 276.3 L760 275.2 L800 273.8 L840 272.7 L880 273.3 L920 277.0 L960 278.9 L1000 279.8 L1040 278.8 L1080 276.9 L1120 275.2 L1160 274.3 L1200 275.0 L1240 278.0 L1280 280.1 L1320 279.9 L1360 279.7 L1400 279.5 L1440 279.3 L1480 279.0 L1520 278.7 L1560 278.5 L1600 278.4 L1640 278.2 L1680 278.2" style="animation-duration:6.5s;animation-delay:-3.5s"/>
+            <path d="M-240 356.0 L-200 356.0 L-160 356.0 L-120 356.0 L-80 356.0 L-40 356.0 L0 356.0 L40 356.0 L80 356.0 L120 356.0 L160 356.0 L200 356.0 L240 356.0 L280 356.0 L320 356.0 L360 356.0 L400 356.0 L440 356.0 L480 356.0 L520 356.0 L560 356.0 L600 355.9 L640 355.6 L680 355.2 L720 354.3 L760 353.2 L800 351.8 L840 350.7 L880 350.6 L920 350.7 L960 350.1 L1000 349.6 L1040 348.6 L1080 347.8 L1120 347.7 L1160 348.7 L1200 351.1 L1240 355.3 L1280 358.0 L1320 357.9 L1360 357.7 L1400 357.5 L1440 357.3 L1480 357.0 L1520 356.7 L1560 356.5 L1600 356.4 L1640 356.2 L1680 356.2" style="animation-duration:7.6s;animation-delay:-7.1s"/>
+            <path d="M-240 434.0 L-200 434.0 L-160 434.0 L-120 434.0 L-80 434.0 L-40 434.0 L0 434.0 L40 434.0 L80 434.0 L120 434.0 L160 434.0 L200 434.0 L240 434.0 L280 434.0 L320 434.0 L360 434.0 L400 434.0 L440 434.0 L480 434.0 L520 434.0 L560 434.0 L600 433.9 L640 433.6 L680 433.2 L720 432.3 L760 431.2 L800 429.8 L840 428.7 L880 428.4 L920 427.3 L960 425.8 L1000 424.8 L1040 423.9 L1080 423.5 L1120 424.0 L1160 425.5 L1200 428.5 L1240 433.0 L1280 436.0 L1320 435.9 L1360 435.7 L1400 435.5 L1440 435.3 L1480 435.0 L1520 434.7 L1560 434.5 L1600 434.4 L1640 434.2 L1680 434.2" style="animation-duration:8.7s;animation-delay:-2.0s"/>
+            <path d="M-240 512.0 L-200 512.0 L-160 512.0 L-120 512.0 L-80 512.0 L-40 512.0 L0 512.0 L40 512.0 L80 512.0 L120 512.0 L160 512.0 L200 512.0 L240 512.0 L280 512.0 L320 512.0 L360 512.0 L400 512.0 L440 512.0 L480 512.0 L520 512.0 L560 512.0 L600 511.9 L640 511.6 L680 511.2 L720 510.3 L760 509.2 L800 507.8 L840 506.7 L880 506.3 L920 504.7 L960 502.7 L1000 501.5 L1040 500.6 L1080 500.4 L1120 501.1 L1160 503.0 L1200 506.2 L1240 510.9 L1280 514.0 L1320 513.9 L1360 513.7 L1400 513.5 L1440 513.3 L1480 513.0 L1520 512.7 L1560 512.5 L1600 512.4 L1640 512.2 L1680 512.2" style="animation-duration:5.8s;animation-delay:-3.1s"/>
+            <path d="M-240 590.0 L-200 590.0 L-160 590.0 L-120 590.0 L-80 590.0 L-40 590.0 L0 590.0 L40 590.0 L80 590.0 L120 590.0 L160 590.0 L200 590.0 L240 590.0 L280 590.0 L320 590.0 L360 590.0 L400 590.0 L440 590.0 L480 590.0 L520 590.0 L560 590.0 L600 589.9 L640 589.6 L680 589.2 L720 588.3 L760 587.2 L800 585.8 L840 584.6 L880 584.2 L920 582.3 L960 580.1 L1000 578.7 L1040 577.8 L1080 577.7 L1120 578.6 L1160 580.7 L1200 584.1 L1240 588.9 L1280 592.0 L1320 591.9 L1360 591.7 L1400 591.5 L1440 591.3 L1480 591.0 L1520 590.7 L1560 590.5 L1600 590.4 L1640 590.2 L1680 590.2" style="animation-duration:6.9s;animation-delay:-2.3s"/>
+          </g>
+          <g class="foil">
+            <path class="foil-body" d="M890.0 208.0 L890.4 204.6 L891.6 201.1 L893.6 197.7 L896.3 194.4 L899.9 191.0 L904.2 187.8 L909.2 184.7 L914.9 181.6 L921.3 178.8 L928.4 176.1 L936.2 173.6 L944.5 171.4 L953.4 169.4 L962.8 167.7 L972.7 166.3 L983.0 165.3 L993.7 164.5 L1004.8 164.0 L1016.2 163.9 L1027.9 164.1 L1039.7 164.6 L1051.7 165.4 L1063.8 166.5 L1076.0 167.9 L1088.2 169.5 L1100.3 171.3 L1112.3 173.4 L1124.1 175.6 L1135.8 178.0 L1147.2 180.5 L1158.3 183.2 L1169.0 185.9 L1179.3 188.6 L1189.2 191.4 L1198.6 194.2 L1207.5 196.9 L1215.8 199.5 L1223.6 202.1 L1230.7 204.5 L1237.1 206.7 L1242.8 208.8 L1247.8 210.6 L1252.1 212.2 L1255.7 213.6 L1258.4 214.6 L1260.4 215.4 L1261.6 215.8 L1262.0 216.0 L1262.0 216.0 L1261.6 216.0 L1260.4 216.1 L1258.4 216.2 L1255.7 216.4 L1252.1 216.7 L1247.8 217.0 L1242.8 217.3 L1237.1 217.7 L1230.7 218.2 L1223.6 218.6 L1215.8 219.2 L1207.5 219.8 L1198.6 220.4 L1189.2 221.1 L1179.3 221.8 L1169.0 222.6 L1158.3 223.5 L1147.2 224.3 L1135.8 225.3 L1124.1 226.2 L1112.3 227.2 L1100.3 228.2 L1088.2 229.2 L1076.0 230.1 L1063.8 231.1 L1051.7 232.0 L1039.7 232.8 L1027.9 233.6 L1016.2 234.2 L1004.8 234.7 L993.7 235.1 L983.0 235.2 L972.7 235.2 L962.8 235.0 L953.4 234.6 L944.5 233.9 L936.2 233.0 L928.4 231.9 L921.3 230.5 L914.9 228.9 L909.2 227.1 L904.2 225.0 L899.9 222.7 L896.3 220.2 L893.6 217.4 L891.6 214.5 L890.4 211.3 L890.0 208.0Z" />
+            <path class="foil-chord" d="M890 208 L1262 216" />
+            <path class="foil-stripe" d="M1135.5 177.9 L1156.0 182.6 L1144.8 224.5 L1124.4 226.2Z" />
+            <path class="foil-stripe2" d="M1163.4 184.4 L1169.0 185.9 L1157.8 223.5 L1152.3 223.9Z" />
+            <path class="lead" d="M972 163 l-22 -42 h-30" />
+            <text x="914" y="124" text-anchor="end">Suction side</text>
+            <path class="lead" d="M1248 221 l-20 46 h-28" />
+            <text x="1192" y="270" text-anchor="end">Trailing edge</text>
+            <text x="740" y="102">Airflow ▸</text>
+          </g>
+        </svg>
+        <div class="fin" aria-hidden="true"></div>
+
+        <div class="wrap">
+          <div class="hero-top">
+            <div>
+              <a class="pg announce" href="#">
+                <span class="tagged">New in 10.1</span>
+                <span class="msg">Terminal, Sheet and Paper themes, plus a density setting <svg class="ico"><use href="#i-arrow" /></svg></span>
+              </a>
+              <h1 class="display">
+                <span>One Table —</span>
+                <span><em>Infinite</em> Applications</span>
+              </h1>
+              <p class="hero-sub">
+                <strong>The DataGrid for React and Vue, built for speed.</strong>
+                A million rows, zero dependencies, fully declarative. Grouping,
+                pivoting, aggregations, lazy loading and live updates, in one
+                component.
+              </p>
+              <div class="hero-actions">
+                <a class="pg btn btn--primary" href="#" data-goto-page="docs">Get started <svg class="ico"><use href="#i-arrow" /></svg></a>
+                <div class="pg install">
+                  <span class="prompt">$</span>
+                  <span data-fw="react">npm i @infinite-table/infinite-react</span>
+                  <span data-fw="vue">npm i @infinite-table/infinite-vue</span>
+                  <button class="copy" type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                  </button>
+                  <button class="copy" type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <dl class="spec" aria-label="Key figures">
+              <div><dt>Rows</dt><dd>1,000,000</dd></div>
+              <div><dt>Dependencies</dt><dd>0</dd></div>
+              <div><dt>Gzip</dt><dd>145 kB</dd></div>
+              <div><dt>Frameworks</dt><dd>React / Vue</dd></div>
+            </dl>
+          </div>
+
+          <div class="frame">
+            <span class="pg frame-tab">Live demo ▸</span>
+            <div class="frame-bar">
+              <span class="live">Live</span>
+              <span class="stencil hint">Click the grid to take over</span>
+              <span class="grow"></span>
+              <a href="#">Open full-page demo <svg class="ico"><use href="#i-out" /></svg></a>
+            </div>
+            <div class="frame-pic">
+              <picture data-only="dark">
+                <source media="(max-width: 639px)" srcset="/hero/hero-poster-dark-mobile.webp" width="736" height="1722" />
+                <img src="/hero/hero-poster-dark.webp" width="1704" height="1080" alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap" />
+              </picture>
+              <img data-only="light" src="/hero/hero-poster-light.webp" width="1704" height="1080" alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap" />
+            </div>
+            <div class="frame-foot">
+              <span class="stencil"><b>▸</b> 10,000 instruments ticking · grouped, pivoted and re-themed live</span>
+              <span class="stencil">No step <b>◂</b></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 01 performance -->
+      <section class="sec">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">01</span><span class="stencil">Performance <b>▸</b> Timing board</span></div>
+              <h2 class="h2">Measured, <em>not claimed.</em></h2>
+            </div>
+            <p class="lede">
+              The same data on the same machine, seven runs each, Infinite Table
+              next to AG Grid at one million rows. The benchmark is open: read
+              the method, then run it yourself.
+            </p>
+          </div>
+
+          <div class="board">
+            <article class="lap">
+              <span class="stencil"><b>▸</b> Test 01</span>
+              <h3>Mount 1,000,000 rows</h3>
+              <ol class="tower">
+                <li class="p1"><span class="pos">P1</span><span class="who">Infinite Table</span><b class="time">352<small>ms</small></b></li>
+                <li class="p2"><span class="pos">P2</span><span class="who">AG Grid</span><span class="time">498 ms</span><span class="gap">+146 ms</span></li>
+              </ol>
+              <div class="bars" aria-hidden="true"><i class="it" style="--w: 70.7%"></i><i></i></div>
+              <div class="lap-foot"><span class="pg ratio">0.71×</span> of AG Grid's time</div>
+            </article>
+            <article class="lap">
+              <span class="stencil"><b>▸</b> Test 02</span>
+              <h3>Sort 1,000,000 rows by a text column</h3>
+              <ol class="tower">
+                <li class="p1"><span class="pos">P1</span><span class="who">Infinite Table</span><b class="time">1.40<small>s</small></b></li>
+                <li class="p2"><span class="pos">P2</span><span class="who">AG Grid</span><span class="time">3.38 s</span><span class="gap">+1.98 s</span></li>
+              </ol>
+              <div class="bars" aria-hidden="true"><i class="it" style="--w: 41.4%"></i><i></i></div>
+              <div class="lap-foot"><span class="pg ratio">0.41×</span> of AG Grid's time</div>
+            </article>
+            <article class="lap">
+              <span class="stencil"><b>▸</b> Test 03</span>
+              <h3>Memory at 1,000,000 rows</h3>
+              <ol class="tower">
+                <li class="p1"><span class="pos">P1</span><span class="who">Infinite Table</span><b class="time">90.7<small>MB</small></b></li>
+                <li class="p2"><span class="pos">P2</span><span class="who">AG Grid</span><span class="time">213 MB</span><span class="gap">+122.3 MB</span></li>
+              </ol>
+              <div class="bars" aria-hidden="true"><i class="it" style="--w: 42.6%"></i><i></i></div>
+              <div class="lap-foot"><span class="pg ratio">0.42×</span> of AG Grid's memory</div>
+            </article>
+            <article class="lap lap--spec">
+              <span class="stencil"><b>▸</b> Dependencies</span>
+              <div class="big">0</div>
+              <p>Nothing but your framework.</p>
+              <div class="split">
+                <span class="stencil"><b>▸</b> Dry weight</span>
+                <div class="big">145<small>kB</small></div>
+                <p>of gzipped JavaScript.</p>
+              </div>
+            </article>
+          </div>
+          <div class="footnote">
+            <span>Infinite Table 10.1.4 vs AG Grid Community 36.3.0. Chrome 136, Apple M1 Pro, medians of 7 runs. Scrolling is a tie in this run.</span>
+            <a class="more" href="#">Read the method and run it yourself <svg class="ico"><use href="#i-arrow" /></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 scale -->
+      <section class="sec sec--alt">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">02</span><span class="stencil">Scale <b>▸</b> One million rows</span></div>
+              <h2 class="h2">A million rows. <em>Go on, scroll.</em></h2>
+            </div>
+            <p class="lede">
+              You scroll an empty container sized like the content; the grid
+              moves its header and body itself, on the same frame.
+              <strong>The header never trails the cells,</strong> and a fast
+              fling never shows blank rows.
+            </p>
+          </div>
+          <div class="rig">
+            <span class="pg rig-tab">Test 02 // 1,000,000 rows</span>
+            <div data-grid-demo="million" data-theme-name="minimalist"></div>
+          </div>
+          <div class="rig-notes">
+            <span class="stencil"><b>▸</b> Rows virtualized</span>
+            <span class="stencil"><b>▸</b> Columns virtualized</span>
+            <span class="stencil"><b>▸</b> Header and body move on the same frame</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 themes -->
+      <section class="sec">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">03</span><span class="stencil">Themes <b>▸</b> Liveries</span></div>
+              <h2 class="h2">Themes that change <em>more than color.</em></h2>
+            </div>
+            <div>
+              <p class="lede">
+                Terminal, Sheet and Paper change spacing, borders, type and even
+                the icons, all through CSS variables. Density is a separate
+                setting: compact, comfortable or spacious.
+              </p>
+              <a class="more" href="#">Open the theme gallery <svg class="ico"><use href="#i-arrow" /></svg></a>
+            </div>
+          </div>
+          <div class="rig">
+            <span class="pg rig-tab">Paint shop // theme × mode × density</span>
+            <div data-grid-demo="themes" data-default-theme="minimalist"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 pivot -->
+      <section class="sec sec--alt">
+        <div class="wrap">
+          <div class="pivot-top">
+            <div>
+              <div class="marker"><span class="pg no">04</span><span class="stencil">Pivot <b>▸</b> Generated columns</span></div>
+              <h2 class="h2">Pivot <em>in a few lines.</em></h2>
+              <p class="lede" style="margin-top: 20px">
+                Group by one field, pivot by another, add an aggregation. The
+                pivot columns are generated for you.
+              </p>
+              <ol class="steps">
+                <li><span class="no">01</span><span><code>groupBy</code> makes the rows</span></li>
+                <li><span class="no">02</span><span><code>pivotBy</code> makes the columns</span></li>
+                <li><span class="no">03</span><span><code>aggregationReducers</code> fill the cells</span></li>
+              </ol>
+            </div>
+            <div class="code">
+              <div class="code-head">
+                <span class="code-file">pivot.tsx</span>
+                <button class="copy" type="button" data-copy="<DataSource data={trades} primaryKey=&quot;id&quot; groupBy={[{ field: 'sector' }]} pivotBy={[{ field: 'region' }]} aggregationReducers={{ pnl: { field: 'pnl', initialValue: 0, reducer: (a, b) => a + b } }}>{({ pivotColumns, pivotColumnGroups }) => (<InfiniteTable pivotColumns={pivotColumns} pivotColumnGroups={pivotColumnGroups} />)}</DataSource>" aria-label="Copy the code">
+                  <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                </button>
+              </div>
+              <pre><code><span class="l"><i>1</i><span class="x">&lt;</span><span class="t">DataSource</span></span
+><span class="l"><i>2</i>  <span class="a">data</span><span class="x">={</span>trades<span class="x">}</span></span
+><span class="l"><i>3</i>  <span class="a">primaryKey</span><span class="x">=</span><span class="s">"id"</span></span
+><span class="l hl"><i>4</i>  <span class="a">groupBy</span><span class="x">={[{</span> field<span class="x">:</span> <span class="s">'sector'</span> <span class="x">}]}</span></span
+><span class="l hl"><i>5</i>  <span class="a">pivotBy</span><span class="x">={[{</span> field<span class="x">:</span> <span class="s">'region'</span> <span class="x">}]}</span></span
+><span class="l"><i>6</i>  <span class="a">aggregationReducers</span><span class="x">={{</span></span
+><span class="l"><i>7</i>    pnl<span class="x">: {</span> field<span class="x">:</span> <span class="s">'pnl'</span><span class="x">,</span> initialValue<span class="x">:</span> <span class="f">0</span><span class="x">,</span> <span class="f">reducer</span><span class="x">: (</span>a<span class="x">,</span> b<span class="x">)</span> <span class="k">=&gt;</span> a <span class="x">+</span> b <span class="x">},</span></span
+><span class="l"><i>8</i>  <span class="x">}}</span></span
+><span class="l"><i>9</i><span class="x">&gt;</span></span
+><span class="l"><i>10</i>  <span class="x">{({</span> pivotColumns<span class="x">,</span> pivotColumnGroups <span class="x">})</span> <span class="k">=&gt;</span> <span class="x">(</span></span
+><span class="l"><i>11</i>    <span class="x">&lt;</span><span class="t">InfiniteTable</span></span
+><span class="l"><i>12</i>      <span class="a">pivotColumns</span><span class="x">={</span>pivotColumns<span class="x">}</span></span
+><span class="l"><i>13</i>      <span class="a">pivotColumnGroups</span><span class="x">={</span>pivotColumnGroups<span class="x">}</span></span
+><span class="l"><i>14</i>    <span class="x">/&gt;</span></span
+><span class="l"><i>15</i>  <span class="x">)}</span></span
+><span class="l"><i>16</i><span class="x">&lt;/</span><span class="t">DataSource</span><span class="x">&gt;</span></span
+></code></pre>
+            </div>
+          </div>
+          <div class="rig" style="margin-top: 56px">
+            <span class="pg rig-tab">Test 04 // 20,000 trades, sector × region</span>
+            <div data-grid-demo="pivot" data-theme-name="minimalist"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 features -->
+      <section class="sec">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">05</span><span class="stencil">Features <b>▸</b> Standard equipment</span></div>
+              <h2 class="h2">The full feature set, <em>on board.</em></h2>
+            </div>
+            <p class="lede">
+              Eight things you will reach for first. Each one is a prop or two on
+              the same component, and each has its own chapter in the docs.
+            </p>
+          </div>
+          <div class="feats">
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><path d="M9 6v22M5 24l4 4 4-4" /><path class="r" d="M18 9h12M18 16h9M18 23h6" /></svg>
+                <span class="stencil">F.01</span>
+              </div>
+              <h3>Sorting</h3>
+              <p>Single and multi-column, local or remote.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><path d="M5 8h24M11 14h18M11 20h18" /><path class="r" d="M5 26h24" /><path d="m5 12 2.500 2.500L5 17" /></svg>
+                <span class="stencil">F.02</span>
+              </div>
+              <h3>Row grouping</h3>
+              <p>By one or many fields, works with lazy data.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><rect x="5" y="5" width="24" height="24" /><path d="M5 13h24M13 5v24" /><path class="r" d="M17 17h8M17 21h8M17 25h8" /></svg>
+                <span class="stencil">F.03</span>
+              </div>
+              <h3>Pivoting</h3>
+              <p>Generated columns, totals, custom headers.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><path d="M25 7H9l8 10-8 10h16" /><path class="r" d="M22 17h8" /></svg>
+                <span class="stencil">F.04</span>
+              </div>
+              <h3>Aggregations</h3>
+              <p>Built-in and custom reducers, client or server.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><rect x="5" y="6" width="24" height="8" /><path class="r" d="M5 19h11v9H5zM18 19h11v9H18z" /></svg>
+                <span class="stencil">F.05</span>
+              </div>
+              <h3>Column grouping</h3>
+              <p>Nested headers that resize and reorder together.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><path d="M5 8h24M5 14h24" /><path d="M5 20h14" opacity="0.5" /><path class="r" d="M5 26h6M24 18v10M20 24l4 4 4-4" /></svg>
+                <span class="stencil">F.06</span>
+              </div>
+              <h3>Lazy loading</h3>
+              <p>Load batches as you scroll, per group if needed.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><rect x="4" y="9" width="26" height="17" rx="1" /><path d="M9 14h2M14 14h2M19 14h2M24 14h1" /><path class="r" d="M10 21h14" /></svg>
+                <span class="stencil">F.07</span>
+              </div>
+              <h3>Keyboard navigation</h3>
+              <p>Cells or rows, selection, shortcuts.</p>
+            </a>
+            <a class="feat" href="#" data-goto-page="docs">
+              <div class="feat-top">
+                <svg class="art" viewBox="0 0 34 34"><rect x="5" y="5" width="24" height="24" /><path class="r" d="M5 12h24" /><path d="M11 5v24" /><path d="M16 18h8M16 23h5" /></svg>
+                <span class="stencil">F.08</span>
+              </div>
+              <h3>Theming</h3>
+              <p>CSS variables, seven themes, three densities.</p>
+            </a>
+          </div>
+
+          <div class="principles">
+            <div class="principle">
+              <span class="stencil"><b>▸</b> Declarative</span>
+              <p>Every prop has a controlled and an uncontrolled form.</p>
+            </div>
+            <div class="principle">
+              <span class="stencil"><b>▸</b> Typed</span>
+              <p>Written in TypeScript, generic over your data type.</p>
+            </div>
+            <div class="principle">
+              <span class="stencil"><b>▸</b> Zero dependencies</span>
+              <p>Nothing but your framework.</p>
+            </div>
+            <div class="principle">
+              <span class="stencil"><b>▸</b> React and Vue</span>
+              <p>The same grid, the same docs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 compare -->
+      <section class="sec sec--alt">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">06</span><span class="stencil">Compare <b>▸</b> Side by side</span></div>
+              <h2 class="h2">How it <em>compares.</em></h2>
+            </div>
+            <p class="lede">Feature by feature, with sources and the honest no's.</p>
+          </div>
+          <div class="vs-row">
+            <a class="pg vs" href="#"><small>VS</small> AG Grid <svg class="ico"><use href="#i-arrow" /></svg></a>
+            <a class="pg vs" href="#"><small>VS</small> MUI X Data Grid <svg class="ico"><use href="#i-arrow" /></svg></a>
+            <a class="pg vs" href="#"><small>VS</small> TanStack Table <svg class="ico"><use href="#i-arrow" /></svg></a>
+            <a class="pg vs" href="#"><small>VS</small> Handsontable <svg class="ico"><use href="#i-arrow" /></svg></a>
+            <a class="pg vs vs--all" href="#">All 13 comparisons <svg class="ico"><use href="#i-arrow" /></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 editions -->
+      <section class="sec">
+        <div class="wrap">
+          <div class="sec-head">
+            <div>
+              <div class="marker"><span class="pg no">07</span><span class="stencil">Editions <b>▸</b> Two ways to fly</span></div>
+              <h2 class="h2">One grid, <em>two editions.</em></h2>
+            </div>
+            <p class="lede">The same component and the same features in both. The license changes the footer and the support.</p>
+          </div>
+          <div class="editions">
+            <div class="edition">
+              <span class="stencil"><b>▸</b> Community</span>
+              <h3>Free in any app.</h3>
+              <p>Shows a "Powered by Infinite Table" footer.</p>
+              <div class="acts">
+                <div class="pg install">
+                  <span class="prompt">$</span>
+                  <span data-fw="react">npm i @infinite-table/infinite-react</span>
+                  <span data-fw="vue">npm i @infinite-table/infinite-vue</span>
+                  <button class="copy" type="button" data-fw="react" data-copy="npm i @infinite-table/infinite-react" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                  </button>
+                  <button class="copy" type="button" data-fw="vue" data-copy="npm i @infinite-table/infinite-vue" aria-label="Copy the install command">
+                    <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="edition edition--pro">
+              <span class="stencil"><b>▸</b> Enterprise</span>
+              <h3>One license, unlimited applications.</h3>
+              <p>A license removes the footer and adds dedicated support.</p>
+              <div class="acts">
+                <a class="pg btn btn--primary" href="#">See pricing <svg class="ico"><use href="#i-arrow" /></svg></a>
+                <a class="pg btn" href="#" data-goto-page="docs">Read the docs</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <svg class="flow" viewBox="-240 300 1920 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <use href="#flow-lines" class="lines" />
+        </svg>
+        <div class="wrap inner">
+          <div class="marker"><span class="pg no">GO</span><span class="stencil">Cleared for take-off <b>▸</b></span></div>
+          <p class="display">
+            <span>One Table —</span>
+            <span><em>Infinite</em> Applications</span>
+          </p>
+          <div class="hero-actions">
+            <a class="pg btn btn--primary" href="#" data-goto-page="docs">Get started <svg class="ico"><use href="#i-arrow" /></svg></a>
+            <a class="pg btn" href="#">Open full-page demo</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="livery" aria-hidden="true" style="margin-top: -56px; margin-bottom: 48px"></div>
+        <div class="wrap">
+          <div class="footer-grid">
+            <div class="footer-brand">
+              <a class="brand" href="#" data-goto-page="home"><span class="logo" aria-hidden="true"></span><span>Infinite<span class="slash">/</span>Table</span></a>
+              <p>One Table — Infinite Applications. The DataGrid for React and Vue.</p>
+            </div>
+            <div><h4>Product</h4><ul><li><a href="#" data-goto-page="docs">Docs</a></li><li><a href="#">Demo</a></li><li><a href="#">Themes</a></li><li><a href="#">Pricing</a></li><li><a href="#">Blog</a></li></ul></div>
+            <div><h4>Compare</h4><ul><li><a href="#">AG Grid</a></li><li><a href="#">MUI X Data Grid</a></li><li><a href="#">TanStack Table</a></li><li><a href="#">Benchmark</a></li></ul></div>
+            <div><h4>Resources</h4><ul><li><a href="#">API reference</a></li><li><a href="#">Releases</a></li><li><a href="#">DevTools</a></li><li><a href="#">llms.txt</a></li></ul></div>
+            <div><h4>Company</h4><ul><li><a href="https://github.com/infinite-table/infinite-react">GitHub</a></li><li><a href="#">X</a></li><li><a href="#">Contact</a></li><li><a href="#">EULA</a></li></ul></div>
+          </div>
+          <div class="footer-end">
+            <span class="stencil">© 2026 Infinite Table</span>
+            <span class="stencil">infinite-table.com <b>▸</b></span>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- ================================================================
+         DOCS
+         ============================================================== -->
+    <div data-page-view="docs">
+      <div class="docs">
+        <aside class="side" aria-label="Docs navigation">
+          <div class="pg side-tabs" role="group" aria-label="Docs section">
+            <button type="button" aria-pressed="true">Learn</button>
+            <button type="button" aria-pressed="false">Reference</button>
+            <button type="button" aria-pressed="false">Releases</button>
+          </div>
+          <div class="side-group">Guides</div>
+          <ul class="side-nav">
+            <li><a href="#">Overview</a></li>
+            <li><a href="#">Getting Started <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Data <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Columns <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Working with Rows <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Selection <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Keyboard Navigation <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Sorting <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li class="open">
+              <a href="#">Grouping and Pivoting <svg class="ico"><use href="#i-chev" /></svg></a>
+              <ul class="sub">
+                <li><a href="#" aria-current="page">Grouping rows</a></li>
+                <li><a href="#">Group aggregations</a></li>
+                <li><a href="#">Pivoting</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Filtering <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Editing <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Context Menus <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Master-Detail <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Tree Data <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">DevTools</a></li>
+            <li><a href="#">Theming <svg class="ico"><use href="#i-chev" /></svg></a></li>
+            <li><a href="#">Common Issues</a></li>
+            <li><a href="#">Examples <svg class="ico"><use href="#i-chev" /></svg></a></li>
+          </ul>
+        </aside>
+
+        <article class="article">
+          <div class="prose">
+            <nav class="crumbs" aria-label="Breadcrumb">
+              <a href="#">Docs</a><span class="sep"></span><a href="#">Grouping and Pivoting</a><span class="sep"></span><span aria-current="page">Grouping rows</span>
+            </nav>
+            <div class="title-row">
+              <h1>Grouping rows</h1>
+              <div class="page-actions">
+                <button class="pg" type="button"><svg class="ico"><use href="#i-doc" /></svg>View as Markdown</button>
+                <button class="pg" type="button" data-copy="# Grouping rows"><svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy page</span><span class="done">Copied</span></button>
+              </div>
+            </div>
+
+            <p class="lead">
+              You can use any <code>field</code> available in the
+              <code>DataSource</code> to do the grouping. It can even be a field
+              that is not a column.
+            </p>
+
+            <div class="note">
+              <span class="stencil"><b>Note ▸</b></span>
+              <p>
+                When using TypeScript, both <code>DataSource</code> and
+                <code>InfiniteTable</code> are generic and take a
+                <code>DATA_TYPE</code> parameter. The fields in that type can
+                then be used for grouping.
+              </p>
+            </div>
+
+            <div class="code">
+              <div class="code-head">
+                <span class="code-file">grouping.tsx</span>
+                <button class="copy" type="button" data-copy="const groupBy = [{ field: 'country' }]" aria-label="Copy the code">
+                  <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                </button>
+              </div>
+              <pre><code><span class="l"><i>1</i><span class="k">import</span> <span class="x">{</span> InfiniteTable<span class="x">,</span> DataSource <span class="x">}</span> <span class="k">from</span> <span class="s" data-fw="react">'@infinite-table/infinite-react'</span><span class="s" data-fw="vue">'@infinite-table/infinite-vue'</span></span
+><span class="l"><i>2</i> </span
+><span class="l"><i>3</i><span class="k">type</span> <span class="t">Person</span> <span class="x">= {</span> id<span class="x">:</span> <span class="a">string</span><span class="x">;</span> name<span class="x">:</span> <span class="a">string</span><span class="x">;</span> age<span class="x">:</span> <span class="a">number</span><span class="x">;</span> country<span class="x">:</span> <span class="a">string</span> <span class="x">}</span></span
+><span class="l"><i>4</i> </span
+><span class="l hl"><i>5</i><span class="k">const</span> groupBy <span class="x">= [{</span> field<span class="x">:</span> <span class="s">'country'</span> <span class="x">}]</span></span
+><span class="l"><i>6</i> </span
+><span class="l"><i>7</i><span class="x">&lt;</span><span class="t">DataSource</span><span class="x">&lt;</span><span class="t">Person</span><span class="x">&gt;</span> <span class="a">data</span><span class="x">={</span>people<span class="x">}</span> <span class="a">primaryKey</span><span class="x">=</span><span class="s">"id"</span> <span class="a">groupBy</span><span class="x">={</span>groupBy<span class="x">}&gt;</span></span
+><span class="l"><i>8</i>  <span class="x">&lt;</span><span class="t">InfiniteTable</span><span class="x">&lt;</span><span class="t">Person</span><span class="x">&gt;</span> <span class="a">columns</span><span class="x">={</span>columns<span class="x">} /&gt;</span></span
+><span class="l"><i>9</i><span class="x">&lt;/</span><span class="t">DataSource</span><span class="x">&gt;</span></span
+></code></pre>
+            </div>
+
+            <p>
+              In the example above, we're grouping by <code>country</code>.
+              Specifying a field that is not in the <code>Person</code> type is a
+              type error.
+            </p>
+
+            <div class="demo">
+              <div class="demo-head">
+                <span class="demo-title">Simple row grouping</span>
+                <div class="demo-tabs" role="group" aria-label="Demo view">
+                  <button type="button" aria-pressed="true">Preview</button>
+                  <button type="button" aria-pressed="false">row-grouping.demo.tsx</button>
+                </div>
+                <div class="demo-tools">
+                  <button type="button" aria-label="Edit" title="Edit"><svg class="ico"><use href="#i-edit" /></svg></button>
+                  <button type="button" aria-label="Fork to CodeSandbox" title="Fork to CodeSandbox"><svg class="ico"><use href="#i-box" /></svg></button>
+                  <button type="button" aria-label="Reset" title="Reset"><svg class="ico"><use href="#i-reset" /></svg></button>
+                  <button type="button" aria-label="Full screen" title="Full screen"><svg class="ico"><use href="#i-full" /></svg></button>
+                </div>
+              </div>
+              <div data-grid-demo="grouped" data-theme-name="minimalist"></div>
+            </div>
+
+            <h2 id="group-column">Customizing the group column</h2>
+            <p>
+              In <code>groupBy.column</code> you can use any column property, for
+              example a custom <code>renderValue</code>.
+            </p>
+            <div class="code">
+              <div class="code-head">
+                <span class="code-file">group-column.tsx</span>
+                <button class="copy" type="button" data-copy="const groupBy = [{ field: 'country', column: { renderValue: ({ value }) => <>Country: {value}</> } }]" aria-label="Copy the code">
+                  <svg class="ico"><use href="#i-copy" /></svg><span class="todo">Copy</span><span class="done">Copied</span>
+                </button>
+              </div>
+              <pre><code><span class="l"><i>1</i><span class="k">const</span> groupBy <span class="x">= [</span></span
+><span class="l"><i>2</i>  <span class="x">{</span></span
+><span class="l"><i>3</i>    field<span class="x">:</span> <span class="s">'country'</span><span class="x">,</span></span
+><span class="l"><i>4</i>    column<span class="x">: {</span></span
+><span class="l hl"><i>5</i>      <span class="f">renderValue</span><span class="x">: ({</span> value <span class="x">})</span> <span class="k">=&gt;</span> <span class="x">&lt;&gt;</span>Country: <span class="x">{</span>value<span class="x">}&lt;/&gt;,</span></span
+><span class="l"><i>6</i>    <span class="x">},</span></span
+><span class="l"><i>7</i>  <span class="x">},</span></span
+><span class="l"><i>8</i><span class="x">]</span></span
+></code></pre>
+            </div>
+
+            <h2 id="strategies">Grouping strategies</h2>
+            <p>
+              Multiple grouping levels can be rendered as one column per group
+              (<code>multi-column</code>, the default) or as a single column
+              (<code>single-column</code>). Set it with
+              <code>groupRenderStrategy</code>.
+            </p>
+            <table class="props">
+              <thead>
+                <tr><th>Prop</th><th>Type</th><th>Default</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>groupRenderStrategy</td><td>'multi-column' | 'single-column'</td><td>'multi-column'</td></tr>
+                <tr><td>groupColumn</td><td>InfiniteTableColumn | (options) =&gt; InfiniteTableColumn</td><td>none</td></tr>
+              </tbody>
+            </table>
+
+            <h2 id="aggregations">Aggregations</h2>
+            <p>
+              Group rows can show a value computed from the rows in the group,
+              such as a sum or an average.
+              <a class="link" href="#">Group aggregations →</a>
+            </p>
+
+            <nav class="pager" aria-label="Previous and next page">
+              <a class="pg" href="#"><span class="stencil">◂ Previous</span><strong>Sorting</strong></a>
+              <a class="pg next" href="#"><span class="stencil">Next <b>▸</b></span><strong>Group aggregations</strong></a>
+            </nav>
+            <div class="page-foot">
+              <span>Was this page helpful? <a href="#">Yes</a> · <a href="#">No</a></span>
+              <a href="#">Edit this page on GitHub ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <aside class="toc" aria-label="On this page">
+          <span class="stencil">On this page</span>
+          <ul>
+            <li><a href="#group-column" aria-current="true">Customizing the group column</a></li>
+            <li><a href="#strategies">Grouping strategies</a></li>
+            <li><a href="#aggregations">Aggregations</a></li>
+          </ul>
+          <div class="toc-links">
+            <a href="#"><svg class="ico"><use href="#i-doc" /></svg>View as Markdown</a>
+            <a href="#"><svg class="ico"><use href="#i-edit" /></svg>Edit on GitHub</a>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="footer">
+        <div class="livery" aria-hidden="true" style="margin-top: -56px; margin-bottom: 48px"></div>
+        <div class="wrap">
+          <div class="footer-grid">
+            <div class="footer-brand">
+              <a class="brand" href="#" data-goto-page="home"><span class="logo" aria-hidden="true"></span><span>Infinite<span class="slash">/</span>Table</span></a>
+              <p>One Table — Infinite Applications. The DataGrid for React and Vue.</p>
+            </div>
+            <div><h4>Product</h4><ul><li><a href="#">Docs</a></li><li><a href="#">Demo</a></li><li><a href="#">Themes</a></li><li><a href="#">Pricing</a></li><li><a href="#">Blog</a></li></ul></div>
+            <div><h4>Compare</h4><ul><li><a href="#">AG Grid</a></li><li><a href="#">MUI X Data Grid</a></li><li><a href="#">TanStack Table</a></li><li><a href="#">Benchmark</a></li></ul></div>
+            <div><h4>Resources</h4><ul><li><a href="#">API reference</a></li><li><a href="#">Releases</a></li><li><a href="#">DevTools</a></li><li><a href="#">llms.txt</a></li></ul></div>
+            <div><h4>Company</h4><ul><li><a href="https://github.com/infinite-table/infinite-react">GitHub</a></li><li><a href="#">X</a></li><li><a href="#">Contact</a></li><li><a href="#">EULA</a></li></ul></div>
+          </div>
+          <div class="footer-end">
+            <span class="stencil">© 2026 Infinite Table</span>
+            <span class="stencil">infinite-table.com <b>▸</b></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- command-K -->
+    <dialog class="search" data-search aria-label="Search the docs">
+      <div class="search-box">
+        <svg class="ico"><use href="#i-search" /></svg>
+        <input type="text" placeholder="Search the docs…" aria-label="Search the docs" />
+        <kbd>esc</kbd>
+      </div>
+      <div class="search-results">
+        <div class="search-group stencil"><b>▸</b> Learn</div>
+        <a href="#" class="is-active" data-search-item>Grouping rows <small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item>Group aggregations <small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item>Pivoting <small>Grouping and Pivoting</small></a>
+        <a href="#" data-search-item>Lazy loading <small>Working with Data</small></a>
+        <div class="search-group stencil"><b>▸</b> API reference</div>
+        <a href="#" data-search-item><code>groupBy</code> <small>DataSource prop</small></a>
+        <a href="#" data-search-item><code>groupRenderStrategy</code> <small>InfiniteTable prop</small></a>
+        <a href="#" data-search-item><code>pivotBy</code> <small>DataSource prop</small></a>
+        <a href="#" data-search-item><code>aggregationReducers</code> <small>DataSource prop</small></a>
+      </div>
+      <div class="search-foot">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+    </dialog>
+
+    <script type="module" src="./shared.js?v=4"></script>
+  </body>
+</html>
