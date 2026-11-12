@@ -116,7 +116,7 @@ export default {
     __VERSION_TIMESTAMP__: JSON.stringify(sourcePackage.publishedAt || 0),
   },
   bootstrapDefine: {
-    // the Tailwind setup of `*.tailwind.demo.tsx` demos
+    // the Tailwind setup of `*-tailwind.demo.tsx` demos
     'process.env.DOCS_TAILWIND_STYLE': JSON.stringify(
       fs.readFileSync(
         new URL('./docs-kit.tailwind.css', import.meta.url),

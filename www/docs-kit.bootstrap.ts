@@ -16,8 +16,10 @@ export async function setup() {
     InfiniteTable.licenseKey = licenseKey;
   }
 
-  // /gen/demos/<folder>/<name>.tailwind/index.html
-  if (/\.tailwind\/(?:index\.html)?$/.test(location.pathname)) {
+  // a demo named `<name>-tailwind.demo.tsx`: its page is
+  // /gen/demos/<folder>/<name>-tailwind/index.html (which a host may serve as
+  // `…/<name>-tailwind/` or `…/<name>-tailwind/index`)
+  if (/-tailwind(?:\/(?:index(?:\.html)?)?)?$/.test(location.pathname)) {
     await setupTailwind();
   }
 }
