@@ -40,6 +40,13 @@ type EndMethod<T extends Omit<DevToolsMarkerDetails, 'track' | 'label'>> =
     ? (markerDetails: T) => DevToolsMarker
     : (markerDetails?: T) => DevToolsMarker;
 
+/**
+ * `performance.clearMeasures(name)` removes all the measures with that name,
+ * so our measures need names that an app would not use for its own measures.
+ * A zero-width space does that without changing what the profiler shows.
+ */
+const MEASURE_NAME_PREFIX = '\u200b';
+
 export class DevToolsMarker implements PerfMarker {
   static create(debugId: string) {
     return new DevToolsMarker(debugId);
@@ -194,7 +201,9 @@ export class DevToolsMarker implements PerfMarker {
     const label = markerDetails.label || this.markerDetails.label || 'Unknown';
     const track = markerDetails.track || this.markerDetails.track || 'Unknown';
 
-    performance.measure(label, {
+    const measureName = MEASURE_NAME_PREFIX + label;
+
+    performance.measure(measureName, {
       start,
       end,
       detail: {
@@ -211,6 +220,11 @@ export class DevToolsMarker implements PerfMarker {
         },
       },
     });
+    // The profiler has the entry from the moment it's recorded. The page's
+    // performance timeline would keep it as well, forever - and a grid makes
+    // a few of these on every data update - so we drop it from there.
+    performance.clearMeasures(measureName);
+
     return this;
   };
 }
