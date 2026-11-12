@@ -126,7 +126,7 @@ function loadPage(file, text = fs.readFileSync(file, 'utf8')) {
       continue;
     }
     blocks.push({
-      start: fence.start - fence.indent.length,
+      start: fence.start,
       end: fence.end,
       indent: fence.indent,
       line: fence.line,
@@ -408,7 +408,7 @@ async function convertInlineFences(page, edits, writes) {
       meta = `file="${sharedName}" region="${region}"${title}`;
     }
     edits.push({
-      start: fence.start - fence.indent.length,
+      start: fence.start,
       end: fence.end,
       text: `${fence.indent}\`\`\`${fence.lang} ${meta}\n${fence.indent}\`\`\``,
     });

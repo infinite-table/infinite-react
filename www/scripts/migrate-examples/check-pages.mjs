@@ -49,9 +49,15 @@ let failed = 0;
 for (const route of routes) {
   const page = await context.newPage();
   const problems = [];
-  page.on('pageerror', (error) => problems.push(`uncaught: ${error.message.split('\n')[0]}`));
+  // only what the site itself throws or logs, not the CodeSandbox embeds on some pages
+  page.on('pageerror', (error) => {
+    if (error.stack && !error.stack.includes(origin)) return;
+    problems.push(`uncaught: ${error.message.split('\n')[0]}`);
+  });
   page.on('console', (message) => {
     if (message.type() !== 'error') return;
+    const from = message.location().url;
+    if (from && !from.startsWith(origin)) return;
     const text = message.text().split('\n')[0].slice(0, 300);
     // the license demo logs this on purpose; failed requests are reported with their URL
     if (/Failed to load resource|Infinite Table license|infinite-table\.com|playing fair|^\*+$/.test(text)) return;
@@ -67,6 +73,13 @@ for (const route of routes) {
 
   const response = await page.goto(`${origin}${route}`, { waitUntil: 'load', timeout: 180000 });
   if (!response || response.status() >= 400) problems.push(`HTTP ${response?.status()} for the page`);
+
+  // the reference pages keep each prop's details (and its demos) collapsed
+  for (let guard = 0; guard < 2000; guard++) {
+    const toggle = page.getByRole('button', { name: 'Show Details' }).first();
+    if (!(await toggle.count())) break;
+    await toggle.click();
+  }
 
   // demo iframes load lazily: bring each one into view and wait for its grid
   const cards = page.locator('.dk-demo');
