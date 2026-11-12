@@ -49,30 +49,42 @@ async function getThemeVars(page: Page, section: Section) {
 }
 
 /**
- * The color a variable gives, as the browser computes it. A production build
- * can write the same color in another way (`#eeeeee` as `#eee`), so colors
- * that come from the stylesheets are compared like this, not as text.
+ * What the browser computes for CSS values, on the grid of a section: the
+ * color of a color value, and the width and color of a border value.
+ *
+ * A production build can write the same color in another way (`#eeeeee` as
+ * `#eee`), so colors that come from the stylesheets are compared like this,
+ * not as text.
  */
-async function getColors(page: Page, section: Section, names: string[]) {
+async function compute(
+  page: Page,
+  section: Section,
+  values: { colors?: string[]; borders?: string[] },
+) {
   return await page.evaluate(
-    ({ section, names }) => {
+    ({ section, values }) => {
       const grid = document.querySelector(
         `[data-name="${section}"] .InfiniteHeader`,
       )!;
       const probe = document.createElement('div');
       grid.appendChild(probe);
 
-      const colors = Object.fromEntries(
-        names.map((name) => {
-          probe.style.color = `var(${name})`;
-          return [name, getComputedStyle(probe).color];
-        }),
-      );
+      const colors = (values.colors ?? []).map((value) => {
+        probe.style.color = '';
+        probe.style.color = value;
+        return getComputedStyle(probe).color;
+      });
+      const borders = (values.borders ?? []).map((value) => {
+        probe.style.border = '';
+        probe.style.border = value;
+        const { borderTopWidth, borderTopColor } = getComputedStyle(probe);
+        return { width: borderTopWidth, color: borderTopColor };
+      });
       probe.remove();
 
-      return colors;
+      return { colors, borders };
     },
-    { section, names },
+    { section, values },
   );
 }
 
@@ -128,23 +140,67 @@ export default test.describe('shadcn theme', () => {
     expect(light['--infinite-background']).toEqual('oklch(1 0 0)');
 
     // the light colors of the default theme
-    expect(
-      await getColors(page, 'light', [
-        '--infinite-cell-border-color',
-        '--infinite-row-disabled-background',
-        '--infinite-row-odd-disabled-background',
-        '--infinite-rowdetail-background',
-      ]),
-    ).toEqual({
-      '--infinite-cell-border-color': 'rgb(198, 198, 198)',
-      '--infinite-row-disabled-background': 'rgb(238, 238, 238)',
-      '--infinite-row-odd-disabled-background': 'rgb(249, 249, 249)',
-      '--infinite-rowdetail-background': 'rgb(219, 219, 219)',
+    const { colors } = await compute(page, 'light', {
+      colors: [
+        'var(--infinite-cell-border-color)',
+        'var(--infinite-row-disabled-background)',
+        'var(--infinite-row-odd-disabled-background)',
+        'var(--infinite-rowdetail-background)',
+      ],
     });
+    expect(colors).toEqual([
+      'rgb(198, 198, 198)',
+      'rgb(238, 238, 238)',
+      'rgb(249, 249, 249)',
+      'rgb(219, 219, 219)',
+    ]);
     expect(light['--infinite-pinned-cell-border']).toEqual('1px solid #c6c6c6');
     expect(light['--infinite-filter-editor-border']).toEqual(
       '1px solid #c6c6c6',
     );
+  });
+
+  test('uses the --primary color of the page where the default theme uses its accent', async ({
+    page,
+  }) => {
+    await page.waitForInfinite();
+
+    const PRIMARY = 'var(--primary)';
+
+    for (const section of ['light', 'dark'] as const) {
+      const { colors, borders } = await compute(page, section, {
+        colors: [
+          PRIMARY,
+          'var(--infinite-accent-color)',
+          'var(--infinite-expand-collapse-icon-color)',
+          'var(--infinite-filter-editor-focus-border-color)',
+          // the fill of the selected cells is the accent, made transparent
+          `color-mix(in srgb, ${PRIMARY}, transparent 90%)`,
+          'var(--infinite-selected-cell-background-default)',
+        ],
+        borders: [
+          'var(--infinite-focus-outline)',
+          'var(--infinite-grouping-toolbar-item-active-border)',
+        ],
+      });
+
+      const [
+        primary,
+        accent,
+        expandIcon,
+        filterFocusBorder,
+        transparentPrimary,
+        selectedCellBackground,
+      ] = colors;
+
+      expect(accent, section).toEqual(primary);
+      expect(expandIcon, section).toEqual(primary);
+      expect(filterFocusBorder, section).toEqual(primary);
+      expect(selectedCellBackground, section).toEqual(transparentPrimary);
+
+      expect(borders[0], section).toEqual({ width: '2px', color: primary });
+      expect(borders[1], section).toEqual({ width: '1px', color: primary });
+    }
   });
 
   test('does not depend on the color scheme of the OS', async ({ page }) => {

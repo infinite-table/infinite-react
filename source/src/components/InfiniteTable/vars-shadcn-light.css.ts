@@ -45,8 +45,25 @@ const DefaultLightModeVars = Object.fromEntries(
   MODE_DEPENDENT_VARS.map((cssVar) => [cssVar, getDefaultLightValue(cssVar)]),
 ) as Record<string, string>;
 
+/**
+ * The default theme makes these from its accent color. They are declared
+ * again here, as they are in the default theme, so they are made from the
+ * accent of this theme (the `--primary` color of shadcn/ui)
+ * and not from the blue of the default theme.
+ */
+const AccentVars = Object.fromEntries(
+  [
+    ThemeVars.focusOutline,
+    ThemeVars.components.ExpandCollapseIcon.color,
+    ThemeVars.components.HeaderCell.filterEditorFocusBorderColor,
+    ThemeVars.components.GroupingToolbarItem.activeBorder,
+    ThemeVars.components.Cell.selectedBackgroundDefault,
+  ].map((cssVar) => [cssVar, LightVars[cssVar as keyof typeof LightVars]]),
+) as Record<string, string>;
+
 export const ShadcnLightVars = {
   ...DefaultLightModeVars,
+  ...AccentVars,
   ...CommonThemeVars,
   [ThemeVars.themeName]: 'shadcn',
   [ThemeVars.themeMode]: 'light',
