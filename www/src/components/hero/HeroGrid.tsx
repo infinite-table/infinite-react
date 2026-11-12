@@ -27,10 +27,6 @@ export type HeroGridApis = {
 };
 
 const PIVOT_BY: DataSourcePivotBy<Instrument>[] = [{ field: 'assetClass' }];
-// Leaving pivot mode with `pivotColumnGroups` going back to undefined keeps the
-// two-row pivot header height; handing the grid an empty map makes it
-// recompute the header depth.
-const NO_PIVOT_COLUMN_GROUPS = {};
 // the generated group column ('group-by') goes first, then the ticker
 const COLUMN_PINNING = { 'group-by': 'start', symbol: 'start' } as const;
 
@@ -166,7 +162,7 @@ export function HeroGrid({
           debugId={devToolsConnected ? DEVTOOLS_DEBUG_ID : undefined}
           columns={columns}
           pivotColumns={pivotColumns}
-          pivotColumnGroups={pivot ? pivotColumnGroups : NO_PIVOT_COLUMN_GROUPS}
+          pivotColumnGroups={pivotColumnGroups}
           pivotTotalColumnPosition="end"
           groupColumn={groupColumn}
           getColumnMenuItems={getColumnMenuItems}

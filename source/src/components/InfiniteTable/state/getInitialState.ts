@@ -527,10 +527,11 @@ export const mapPropsToState = <T>(params: {
     (state.columnGroups && state.columnGroups != oldState?.columnGroups) ||
     (state.columnGroups &&
       state.columnGroupVisibility != oldState?.columnGroupVisibility) ||
-    (state.pivotColumnGroups &&
-      state.pivotColumnGroups != oldState?.pivotColumnGroups)
+    // also when the pivot column groups go away, as the header has to go back
+    // to the depth of `columnGroups` (or to a single row, when there are none)
+    state.pivotColumnGroups != oldState?.pivotColumnGroups
       ? computeColumnGroupsDepths(
-          computedColumnGroups,
+          computedColumnGroups ?? EMPTY_OBJECT,
           state.columnGroupVisibility,
         )
       : state.columnGroupsDepthsMap;
