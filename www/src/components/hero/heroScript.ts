@@ -11,7 +11,7 @@ import {
   tween,
   waitFor,
   type ShowcaseScriptContext,
-} from '../showcase';
+} from '@thedatagrid/docs-kit/showcase';
 import type { HeroView } from './ControlBar';
 import type { HeroFeed } from './data/feed';
 import type { Instrument } from './data/instruments';

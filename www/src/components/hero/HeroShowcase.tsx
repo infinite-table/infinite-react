@@ -1,10 +1,10 @@
 'use client';
 
-import { LazyShowcase } from '../showcase/LazyShowcase';
+import { LazyShowcase } from '@thedatagrid/docs-kit/showcase';
 import type { HeroDemoProps } from './HeroDemo';
 import { HeroPoster } from './HeroPoster';
 
-import '../showcase/showcase.css';
+import '@thedatagrid/docs-kit/showcase/styles.css';
 import './hero-frame.css';
 
 const loadHeroDemo = () => import('./HeroDemo');
