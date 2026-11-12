@@ -1,20 +1,33 @@
 // Snippets shown on devtools.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
+import * as React from 'react';
 import {
   DataSource,
   InfiniteTable,
+  type InfiniteTablePropColumns,
 } from '@infinite-table/infinite-react';
 
-{
-  //#region intro
-  <InfiniteTable
-    debugId="unique id for devtools" // #highlight
-  />
-  //#endregion
+type Developer = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  age: number;
+};
+
+export function DebugId(props: { columns: InfiniteTablePropColumns<Developer> }) {
+  const { columns } = props;
+  return (
+    //#region debug-id
+    <InfiniteTable
+      debugId="unique id for devtools" // #highlight
+      columns={columns}
+    />
+    //#endregion
+  );
 }
 
-{
-  //#region intro-2
+export function debugIdApp() {
+  //#region debug-id-app
   const columns = {
     name: {
       field: 'firstName',
@@ -28,7 +41,7 @@ import {
   }
 
   const App = () => {
-    return <DataSource primaryKey={'id'} data={[...]}>
+    return <DataSource primaryKey={'id'} data={[/* ... */]}>
       <InfiniteTable
         debugId="simple" // #highlight
         columns={columns}
@@ -36,6 +49,5 @@ import {
     </DataSource>
   }
   //#endregion
+  return App;
 }
-
-export {};

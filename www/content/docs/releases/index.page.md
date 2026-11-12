@@ -44,12 +44,16 @@ This release brings some changes and better clarity around sorting and filtering
 
 ### Breaking changes
 
-1. **Sorting and filtering happen in the browser by default.** A <DPropLink name="data" /> function no longer makes filtering remote, and a controlled <DPropLink name="sortInfo" /> no longer makes sorting remote. If your server sorts or filters - or you pass a controlled `sortInfo` / `filterValue` and sort or filter the data yourself - set <DPropLink name="shouldReloadData" />   ```tsx file="index.snippet.tsx" region="breaking-changes"
+1. **Sorting and filtering happen in the browser by default.** A <DPropLink name="data" /> function no longer makes filtering remote, and a controlled <DPropLink name="sortInfo" /> no longer makes sorting remote. If your server sorts or filters - or you pass a controlled `sortInfo` / `filterValue` and sort or filter the data yourself - set <DPropLink name="shouldReloadData" />:
+
+   ```tsx file="index.snippet.tsx" region="should-reload-data"
    ```
 
    With <DPropLink name="lazyLoad" />, sorting, filtering, grouping and pivoting still default to the server. With <DPropLink name="livePagination" />, sorting and filtering now default to the server (an uncontrolled sort change used to do nothing) and grouping stays in the browser - this also applies to array data with `livePagination`. In development, a warning is shown the first time the sorting or filtering changes for a `data` function without `shouldReloadData`. See [Sorting and filtering the data yourself](/docs/learn/working-with-data/sorting-and-filtering-the-data-yourself).
 
-2. **A <DPropLink name="filterFunction" /> (or <DPropLink name="treeFilterFunction" />) decides the filtering on its own.** Before, the column filters (<DPropLink name="filterValue" />) were also applied after your function. Now your function gets the column filters in its param and does whatever filtering you want with them - to filter by them the same way as the built-in filtering, call the new `defaultFilterFunction`   ```tsx file="index.snippet.tsx" region="breaking-changes-2"
+2. **A <DPropLink name="filterFunction" /> (or <DPropLink name="treeFilterFunction" />) decides the filtering on its own.** Before, the column filters (<DPropLink name="filterValue" />) were also applied after your function. Now your function gets the column filters in its param and does whatever filtering you want with them - to filter by them the same way as the built-in filtering, call the new `defaultFilterFunction`:
+
+   ```tsx file="index.filterfunction.snippet.tsx" region="filter-function"
    ```
 
    In development, a warning is shown when a filter function is used with active column filters that it doesn't apply. The `filterDataArray` export follows the same rule, and no longer takes `operatorsByFilterType`.
@@ -283,7 +287,7 @@ Update shadcn theme to work well with the latest tailwind 4 colors.
 
 Starting with this release, the CSS for each theme (other than the `"default"`) is not included in the root CSS file (`@infinite-table/infinite-react/index.css`) and has to be imported explicitly:
 
-```ts file="index.snippet.tsx" region="6-2-0"
+```ts file="index.snippet.tsx" region="theme-imports"
 ```
 
 ## 6.1.1

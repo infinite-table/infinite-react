@@ -2,17 +2,36 @@
 // Type-checked against the library source (`npm run tsc:content`).
 import * as React from 'react';
 import {
+  type DataSourceAggregationReducer,
+  type DataSourcePropAggregationReducers,
+  type DataSourcePropFilterTypes,
   DataSourcePropGroupRowsStateObject,
+  type DataSourcePropRowSelection_MultiRow,
+  type DataSourcePropSortTypes,
+  type DataSourceSingleSortInfo,
+  type InfiniteTableColumnAggregator,
 } from '@infinite-table/infinite-react';
 
-{
+type Developer = {
+  id: number;
+  name: string;
+  age: number;
+  salary: number;
+  license: string;
+  preferredLanguage: string;
+  color: string;
+};
+
+declare const data: Developer[];
+
+export function nodePaths() {
   //#region node-path-vs-row-id
   const data = [
     { id: '1', name: 'Documents',                // path: ['1'] // #highlight
       children: [
         { id: '10', name: 'Private',             // path: ['1', '10']
           children: [
-            { id: '100', name: 'Report.docx' },  // path: ['1', '10', '100'] 
+            { id: '100', name: 'Report.docx' },  // path: ['1', '10', '100']
             { id: '101', name: 'Vacation.docx' },// path: ['1', '10', '101']
           ],
         },
@@ -30,6 +49,7 @@ import {
     },
   ];
   //#endregion
+  return data;
 }
 
 //#region onrowdisabledstatechange
@@ -59,9 +79,9 @@ function App() {
 }
 //#endregion
 
-{
+export function pivotColumnOfAnAggregation() {
   //#region aggregationreducers-pivotcolumn
-  const aggregationReducers = {
+  const aggregationReducers: DataSourcePropAggregationReducers<Developer> = {
     salary: {
       field: 'salary',
       initialValue: 0,
@@ -77,10 +97,16 @@ function App() {
     },
   };
   //#endregion
+  return aggregationReducers;
 }
 
-{
-  //#region aggregationreducers-pivotcolumn-2
+export function pivotColumnInheritFromColumn() {
+  const avgReducer: InfiniteTableColumnAggregator<Developer, number> = {
+    initialValue: 0,
+    reducer: (acc, sum) => acc + sum,
+    done: (sum, arr) => (arr.length ? sum / arr.length : 0),
+  };
+  //#region aggregationreducers-pivotcolumn-inheritfromcolumn
   const aggregationReducers = {
     avgSalary: { field: 'salary', ...avgReducer },
     avgAge: {
@@ -93,23 +119,29 @@ function App() {
     },
   };
   //#endregion
+  // declared without a type on the page, so check the `pivotColumn` here
+  const checked: DataSourceAggregationReducer<Developer, number>['pivotColumn'] =
+    aggregationReducers.avgAge.pivotColumn;
+  return checked;
 }
 
-{
-  //#region defaultrowselection
-  const rowSelection = {
+// shown for both `defaultRowSelection` and `rowSelection`
+export function rowSelectionValues() {
+  let rowSelection: DataSourcePropRowSelection_MultiRow;
+  //#region rowselection
+  rowSelection = {
     selectedRows: [3, 6, 100, 23], // those specific rows are selected
     defaultSelection: false, // all rows deselected by default
   };
 
   // or
-  const rowSelection = {
+  rowSelection = {
     deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
     defaultSelection: true, // all other rows are selected
   };
 
   // or, for grouped data - this example assumes groupBy=continent,country,city
-  const rowSelection = {
+  rowSelection = {
     selectedRows: [
       45, // row with id 45 is selected, no matter the group
       ['Europe', 'France'], // all rows in Europe/France are selected
@@ -121,48 +153,58 @@ function App() {
     defaultSelection: false, // all other rows are selected
   };
   //#endregion
+  return rowSelection;
 }
 
-{
-  //#region defaultsortinfo
-  defaultSortInfo={{
-    field: 'color',
-    dir: 1,
-    // note this custom sort type
-    type: 'color',
-  }}
+export function lazyLoadRowSelection() {
+  //#region rowselection-lazyload
+  // this example assumes groupBy=continent,country,city
+  const rowSelection = {
+    selectedRows: [
+      // row with id 45 is selected - we need this because in the lazyLoad scenario,
+      // not all parents might have been made available yet
+      ['Europe','Italy', 'Rome', 45], // #highlight
+      ['Europe','France'], // all rows in Europe/France are selected
+      ['Asia'] // all rows in Asia are selected
+    ],
+    deselectedRows: [
+      ['Europe','Italy','Rome'] // all rows in Rome are deselected
+      // but note that row with id 45 is selected, so Rome will be rendered with an indeterminate selection state
+    ],
+    defaultSelection: false // all other rows are selected
+  }
   //#endregion
+  // declared without a type on the page, so check it here
+  const checked: DataSourcePropRowSelection_MultiRow = rowSelection;
+  return checked;
 }
 
-{
-  //#region defaultsortinfo-2
-  sortTypes={{
-    color: (a, b) => //...
-  }}
-  //#endregion
+export function CustomSortType() {
+  const colorOrder = ['magenta', 'blue', 'green'];
+  return (
+    <DataSource<Developer>
+      primaryKey="id"
+      data={data}
+      //#region defaultsortinfo
+      defaultSortInfo={{
+        field: 'color',
+        dir: 1,
+        // note this custom sort type
+        type: 'color',
+      }}
+      //#endregion
+      //#region defaultsortinfo-sorttypes
+      sortTypes={{
+        color: (a, b) => colorOrder.indexOf(a) - colorOrder.indexOf(b),
+      }}
+      //#endregion
+    />
+  );
 }
 
-//#region treefilterfunction
-import {
-  defaultFilterFunction,
-  defaultTreeFilterFunction,
-} from '@infinite-table/infinite-react';
-
-// the built-in tree filtering: leaf nodes are matched against the column filters,
-// a parent node is kept when at least one of its descendants is kept
-treeFilterFunction={defaultTreeFilterFunction}
-
-// also keep the parent nodes that match the column filters themselves
-treeFilterFunction={(param) =>
-  param.isLeafNode
-    ? defaultFilterFunction(param)
-    : defaultFilterFunction(param) || param.filterTreeNode(param.data)
-}
-//#endregion
-
-{
+export function incomeFilterType() {
   //#region filtertypes
-  const filterTypes = {
+  const filterTypes: DataSourcePropFilterTypes<Developer> = {
     income: {
       label: 'Income',
       emptyValues: ['', null, undefined],
@@ -177,90 +219,45 @@ treeFilterFunction={(param) =>
         },
         {
           name: 'gte',
+          fn: ({ currentValue, filterValue }) => currentValue >= filterValue,
           //...
         },
         {
           name: 'lt',
+          fn: ({ currentValue, filterValue }) => currentValue < filterValue,
           //...
         },
         {
           name: 'lte',
+          fn: ({ currentValue, filterValue }) => currentValue <= filterValue,
           //...
         },
       ],
     },
   };
   //#endregion
+  return filterTypes;
 }
 
-//#region filtertypes-2
+//#region filtertypes-import
 import { defaultFilterTypes } from '@infinite-table/infinite-react';
 //#endregion
 
-{
+export function groupRowsStates() {
   //#region specifying-the-state-for-group-rows
   const groupRowsState: DataSourcePropGroupRowsStateObject = {
     collapsedRows: true,
     expandedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
   };
   //#endregion
-}
 
-{
   //#region specifying-the-initial-state-for-group-rows
   const defaultGroupRowsState: DataSourcePropGroupRowsStateObject = {
     expandedRows: true,
     collapsedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
   };
   //#endregion
-}
-
-{
-  //#region rowselection
-  const rowSelection = {
-    selectedRows: [3, 6, 100, 23], // those specific rows are selected
-    defaultSelection: false, // all rows deselected by default
-  };
-
-  // or
-  const rowSelection = {
-    deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
-    defaultSelection: true, // all other rows are selected
-  };
-
-  // or, for grouped data - this example assumes groupBy=continent,country,city
-  const rowSelection = {
-    selectedRows: [
-      45, // row with id 45 is selected, no matter the group
-      ['Europe', 'France'], // all rows in Europe/France are selected
-      ['Asia'], // all rows in Asia are selected
-    ],
-    deselectedRows: [
-      ['Europe', 'France', 'Paris'], // all rows in Paris are deselected
-    ],
-    defaultSelection: false, // all other rows are selected
-  };
-  //#endregion
-}
-
-{
-  //#region rowselection-2
-  // this example assumes groupBy=continent,country,city
-  const rowSelection = {
-    selectedRows: [
-      // row with id 45 is selected - we need this because in the lazyLoad scenario,
-      // not all parents might have been made available yet
-      ['Europe','Italy', 'Rome', 45], // #highlight
-      ['Europe','France'], // all rows in Europe/France are selected
-      ['Asia'] // all rows in Asia are selected
-    ]
-    deselectedRows: [
-      ['Europe','Italy','Rome'] // all rows in Rome are deselected
-      // but note that row with id 45 is selected, so Rome will be rendered with an indeterminate selection state
-    ],
-    defaultSelection: false // all other rows are selected
-  }
-  //#endregion
+  return [groupRowsState, defaultGroupRowsState];
 }
 
 //#region sortfunction
@@ -269,7 +266,7 @@ import { multisort } from '@infinite-table/infinite-react';
 const arr: Developer[] = [
   /*...*/
 ];
-const sortInfo = [
+const sortInfo: DataSourceSingleSortInfo<Developer>[] = [
   {
     field: 'age',
     dir: -1,
@@ -282,15 +279,14 @@ const sortInfo = [
 multisort(sortInfo, arr);
 //#endregion
 
-{
+export function defaultSortTypes() {
   //#region sorttypes
   // default implementation
-  const sortTypes = {
+  const sortTypes: DataSourcePropSortTypes = {
     string: (a, b) => a.localeCompare(b),
     number: (a, b) => a - b,
     date: (a, b) => a - b,
   };
   //#endregion
+  return sortTypes;
 }
-
-export {};

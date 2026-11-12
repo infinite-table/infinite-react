@@ -1,10 +1,15 @@
-// Snippets shown on index.page.md, one `#region` per code block.
-// Type-checked against the library source (`npm run tsc:content`).
+// Code shown on the "Type Definitions" page, one `#region` per snippet.
+// Type-checked with the rest of the docs against the current source.
+import * as React from 'react';
 import {
-  DataSourcePivotBy,
   GroupRowsState,
   InfiniteTable,
   RowDetailState,
+  type DataSourcePivotBy,
+  type DataSourcePropGroupRowsStateObject,
+  type InfiniteTableColumn,
+  type InfiniteTablePropColumns,
+  type RowDetailStateObject,
 } from '@infinite-table/infinite-react';
 
 //#region importing-the-type-for-rowinfo
@@ -15,7 +20,25 @@ import type { InfiniteTableRowInfo } from '@infinite-table/infinite-react';
 import type { TreeSelectionValue } from '@infinite-table/infinite-react';
 //#endregion
 
-{
+//#region treeexpandstatevalue
+import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
+//#endregion
+
+type Developer = {
+  id: number;
+  firstName: string;
+  country: string;
+  canDesign: 'yes' | 'no';
+  salary: number;
+};
+
+type DATA_TYPE = Developer;
+
+declare const columns: InfiniteTablePropColumns<DATA_TYPE>;
+
+export type RowInfoOfDeveloper = InfiniteTableRowInfo<Developer>;
+
+export function treeSelectionValue() {
   //#region example-of-tree-selection-value
   const treeSelection: TreeSelectionValue = {
     defaultSelection: false,
@@ -26,13 +49,10 @@ import type { TreeSelectionValue } from '@infinite-table/infinite-react';
   // since ['1','10'] is in the deselectedPaths
   // node ['2','20'] will be fully selected
   //#endregion
+  return treeSelection;
 }
 
-//#region treeexpandstatevalue
-import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
-//#endregion
-
-{
+export function treeExpandStateWithNodePaths() {
   //#region example-of-treeexpandstate-with-node-paths
   const treeExpandState = {
     defaultExpanded: true,
@@ -47,9 +67,11 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
     ],
   };
   //#endregion
+  const value: TreeExpandStateValue = treeExpandState;
+  return value;
 }
 
-{
+export function treeExpandStateWithNodeIds() {
   //#region example-of-treeexpandstate-with-node-ids
   const treeExpandState = {
     defaultExpanded: true,
@@ -57,31 +79,37 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
     expandedIds: ['10', '20', 'nested node in 5'],
   };
   //#endregion
+  const value: TreeExpandStateValue = treeExpandState;
+  return value;
 }
 
-{
+export function RowDetailStateInstance() {
   //#region passing-an-instance-of-rowdetailstate-to-the
   const rowDetailState = new RowDetailState({
     collapsedRows: true,
     expandedRows: [2, 3, 4],
   });
 
-  <InfiniteTable<DATA_TYPE> rowDetailState={rowDetailState} />;
+  <InfiniteTable<DATA_TYPE> columns={columns} rowDetailState={rowDetailState} />;
   //#endregion
+  return null;
 }
 
-{
-  //#region passing-an-object-literal-to-the-infinitetable
-  <InfiniteTable<DATA_TYPE>
-    rowDetailState={{
-      collapsedRows: true,
-      expandedRows: [2, 3, 4],
-    }}
-  />
-  //#endregion
+export function RowDetailStateObjectLiteral() {
+  return (
+    //#region passing-an-object-literal-to-the-infinitetable
+    <InfiniteTable<DATA_TYPE>
+      columns={columns}
+      rowDetailState={{
+        collapsedRows: true,
+        expandedRows: [2, 3, 4],
+      }}
+    />
+    //#endregion
+  );
 }
 
-{
+export function rowDetailStateCloneAndGetState() {
   //#region rowdetailstate
   const rowDetailState = new RowDetailState({
     collapsedRows: true,
@@ -91,10 +119,12 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
 
   const state = rowDetailState.getState();
   //#endregion
+  const stateObject: RowDetailStateObject = state;
+  return [clone, stateObject];
 }
 
-{
-  //#region rowdetailstate-2
+export function rowDetailStateExpandCollapse() {
+  //#region rowdetailstate-expand-collapse
   const rowDetailState = new RowDetailState({
     collapsedRows: true,
     expandedRows: [2, 3, 4],
@@ -104,26 +134,29 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
 
   // now you can pass this instance back to the InfiniteTable component
   //#endregion
+  return rowDetailState;
 }
 
-{
+export function groupRowsState() {
   //#region grouprowsstate
   const state = new GroupRowsState({
     expandedRows: true,
     collapsedRows: [
-      ['Europe']
+      ['Europe'],
       ['Europe','France'],
       ['Italy']
     ]
   })
 
   console.log(state.getState())
-  // will log the above object that was used 
+  // will log the above object that was used
   // as the sole argument for the constructor
   //#endregion
+  const stateObject: DataSourcePropGroupRowsStateObject = state.getState();
+  return stateObject;
 }
 
-{
+export function pivotByWithColumnFunction() {
   //#region datasourcepivotby
   const pivotBy: DataSourcePivotBy<Developer>[] = [
     { field: 'country' },
@@ -140,11 +173,12 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
     },
   ];
   //#endregion
+  return pivotBy;
 }
 
-{
+export function columnRenderHeader() {
   //#region example-column-renderheader-function
-  const renderHeader = ({ renderBag }) => {
+  const renderHeader: InfiniteTableColumn<Developer>['renderHeader'] = ({ renderBag }) => {
     return (
       <b style={{ display: 'flex', color: 'tomato', alignItems: 'center' }}>
         ({renderBag.header}) {renderBag.sortIcon}
@@ -159,6 +193,12 @@ import type { TreeExpandStateValue } from '@infinite-table/infinite-react';
     },
   };
   //#endregion
-}
 
-export {};
+  // the function above is a valid `renderHeader` for a column
+  const salary: InfiniteTableColumn<Developer> = {
+    field: 'salary',
+    type: 'number',
+    renderHeader,
+  };
+  return [columns, salary];
+}

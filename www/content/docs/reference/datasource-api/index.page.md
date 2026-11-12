@@ -10,7 +10,7 @@ When rendering the `DataSource` component, you can get access to the API by gett
 
 You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callback prop:
 
-```tsx file="index.snippet.tsx" region="intro-2"
+```tsx file="index.snippet.tsx" region="intro-infinitetable-onready"
 ```
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).

@@ -745,7 +745,7 @@ It's very important that you take
 
 the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it on to the root DOM element of your cell component.
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-2"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-dom-ref"
 ```
 
 **If you don't do this, the column rendering will not work.**
@@ -756,14 +756,14 @@ the `domRef` from the <HookLink name="useInfiniteColumnCell"/> hook and pass it 
 
 Also note that your React Component should be a functional component and have this signature
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-3"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-signature"
 ```
 
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the cell-related information, you don't use the props, but you call the <HookLink name="useInfiniteColumnCell"/> hook.
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-4"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-example"
 ```
 
 </Note>
@@ -813,7 +813,7 @@ It's very important that you take
 
 the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it on to the root DOM element of your header component.
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-2"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-dom-ref"
 ```
 
 **If you don't do this, the column header rendering will not work.**
@@ -824,14 +824,14 @@ the `domRef` from the <HookLink name="useInfiniteHeaderCell"/> hook and pass it 
 
 Also note that your React Component should be a functional component and have this signature
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-3"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-signature"
 ```
 
 that is, the `props` that the component is rendered with (is called with) are `HTMLProps` (more exactly `HTMLProps<HTMLDivElement>`) that you need to spread on the root DOM element of your component. If you want to customize anything, you can, for example, append a `className` or specify some extra styles.
 
 In order to access the column header-related information, you don't use the props, but you call the <HookLink name="useInfiniteHeaderCell"/> hook.
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-4"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-example"
 ```
 
 </Note>
@@ -1130,7 +1130,7 @@ If a function is provided, it will be called with an argument with the following
 
 - `column`
 - `columnSortInfo` - will allow you to render custom header based on the sort state of the column.
-- `columnApi` - [API](reference/column-api) for the current column. Can be useful if you customize the header and want to programatically trigger actions like sorting, show/hide column menu, etc.
+- `columnApi` - [API](/docs/reference/column-api) for the current column. Can be useful if you customize the header and want to programatically trigger actions like sorting, show/hide column menu, etc.
 
 When we implement filtering, you'll also have access to the column filter.
 
@@ -2474,7 +2474,7 @@ The first argument of the function is an object that contains the following prop
 - `colIndex: number` - the index of the column that was clicked. This index is the index in the array of visible columns.
 - `column: InfiniteTableComputedColumn<DATA_TYPE>` - the column that has been clicked
 - `columnApi: InfiniteTableColumnApi<DATA_TYPE>` - the [column API](/docs/reference/column-api)
-- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](/docs/reference/api)
 - `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
 
 The second argument is the original browser click event.
@@ -2568,7 +2568,7 @@ For the corresponding blur event, see <PropLink name="onBlurWithin" />
 
 The first argument of the function is an object that contains the following properties:
 
-- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](docs/reference/api)
+- `api: InfiniteTableApi<DATA_TYPE>` - a reference to the [API](/docs/reference/api)
 - `dataSourceApi: DataSourceApi<DATA_TYPE>` - a reference to the [Data Source API](/docs/reference/datasource-api). Can be used to get the current data.
 
 The second argument is the original browser `keydown` event.
@@ -2605,6 +2605,7 @@ It will never be called again after the component is ready.
 The first (and only) argument is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
 
  So if you want to get the start and end indexes, you can do
+
  ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange"
  ```
 
@@ -2612,7 +2613,7 @@ The first (and only) argument is an object with `{start, end}` where both `start
 
 This callback is not debounced or throttled, so it can be called multiple times in a short period of time, especially while scrolling. Make sure your function is fast, or attach a debounced function, in order to avoid performance issues.
 
-```tsx file="infinite-table-props.snippet.tsx" region="onrenderrangechange-2"
+```tsx file="infinite-table-props.snippet.tsx" region="onrenderrangechange-debounced"
 ```
 </Note>
 
@@ -2629,7 +2630,8 @@ This is called when the user stops scrolling for a period of time - as configure
 
 The function is called with an object that has the following properties:
  - `renderRange` - the render range of the viewport. This is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
- So if you want to get the start and end indexes, you can do ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop"
+ So if you want to get the start and end indexes, you can do
+ ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop"
  ```
 
  - `viewportSize` - the size of the viewport - `{width, height}`
@@ -2838,7 +2840,7 @@ In the example below, we applied `bg-orange-800!` (notice the Tailwind important
 </Note>
 
 
-```tsx file="row-hover-class-name-example.tailwind.demo.tsx" title="Changing the row hover background"
+```tsx file="row-hover-class-name-example-tailwind.demo.tsx" title="Changing the row hover background"
 ```
 
 </Prop>

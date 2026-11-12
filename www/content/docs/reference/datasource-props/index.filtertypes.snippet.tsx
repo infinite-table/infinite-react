@@ -1,8 +1,29 @@
 // Snippets shown on index.page.md, one `#region` per code block.
 // Type-checked against the library source (`npm run tsc:content`).
 import {
-  DataSourceFilterType,
+  components,
+  type DataSourceFilterOperator,
+  type DataSourceFilterType,
 } from '@infinite-table/infinite-react';
+
+// the default filter types are the same for any type of rows
+type T = unknown;
+
+const { StringFilterEditor, NumberFilterEditor } = components;
+
+// the operator icons are internal components of the library
+type OperatorIcon = NonNullable<
+  NonNullable<DataSourceFilterOperator<T>['components']>['Icon']
+>;
+declare const IncludesOperatorIcon: OperatorIcon;
+declare const EqualOperatorIcon: OperatorIcon;
+declare const NotEqualOperatorIcon: OperatorIcon;
+declare const StartsWithOperatorIcon: OperatorIcon;
+declare const EndsWithOperatorIcon: OperatorIcon;
+declare const GTOperatorIcon: OperatorIcon;
+declare const GTEOperatorIcon: OperatorIcon;
+declare const LTOperatorIcon: OperatorIcon;
+declare const LTEOperatorIcon: OperatorIcon;
 
 //#region filtertypes
 export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
@@ -17,7 +38,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'includes',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: IncludesOperatorIcon, // custom icon as a React component ...
           },
           label: 'includes',
           fn: ({ currentValue, filterValue }) => {
@@ -31,7 +52,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           label: 'Equals',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: EqualOperatorIcon, // custom icon as a React component ...
           },
           name: 'eq',
           fn: ({ currentValue: value, filterValue }) => {
@@ -41,7 +62,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'startsWith',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: StartsWithOperatorIcon, // custom icon as a React component ...
           },
           label: 'Starts With',
           fn: ({ currentValue: value, filterValue }) => {
@@ -51,7 +72,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'endsWith',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: EndsWithOperatorIcon, // custom icon as a React component ...
           },
           label: 'Ends With',
           fn: ({ currentValue: value, filterValue }) => {
@@ -71,7 +92,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           label: 'Equals',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: EqualOperatorIcon, // custom icon as a React component ...
           },
           name: 'eq',
           fn: ({ currentValue, filterValue }) => {
@@ -81,7 +102,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           label: 'Not Equals',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: NotEqualOperatorIcon, // custom icon as a React component ...
           },
           name: 'neq',
           fn: ({ currentValue, filterValue }) => {
@@ -92,7 +113,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
           name: 'gt',
           label: 'Greater Than',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: GTOperatorIcon, // custom icon as a React component ...
           },
           fn: ({ currentValue, filterValue, emptyValues }) => {
             if (emptyValues.includes(currentValue)) {
@@ -104,7 +125,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'gte',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: GTEOperatorIcon, // custom icon as a React component ...
           },
           label: 'Greater Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {
@@ -117,7 +138,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'lt',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: LTOperatorIcon, // custom icon as a React component ...
           },
           label: 'Less Than',
           fn: ({ currentValue, filterValue, emptyValues }) => {
@@ -130,7 +151,7 @@ export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
         {
           name: 'lte',
           components: {
-            Icon: // custom icon as a React component ...
+            Icon: LTEOperatorIcon, // custom icon as a React component ...
           },
           label: 'Less Than or Equal',
           fn: ({ currentValue, filterValue, emptyValues }) => {

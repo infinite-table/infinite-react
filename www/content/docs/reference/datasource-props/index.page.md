@@ -395,7 +395,7 @@ By default, pivot columns inherit the configuration of the initial column bound 
 - `false` — do not inherit from any column
 - `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
 
-```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn-2"
+```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn-inheritfromcolumn"
 ```
 
 ```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
@@ -462,7 +462,7 @@ For single selection, the prop will be of type: `number | string | null`. Use `n
 
 For multiple selection, the prop will have the following shape:
 
-```ts file="index.snippet.tsx" region="defaultrowselection"
+```ts file="index.snippet.tsx" region="rowselection"
 ```
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
@@ -487,7 +487,7 @@ When you provide a `defaultSortInfo` prop and the sorting information uses a cus
 
 You will need to have a property for that type in your <DataSourcePropLink name="sortTypes"/> object as well.
 
-```tsx file="index.snippet.tsx" region="defaultsortinfo-2"
+```tsx file="index.snippet.tsx" region="defaultsortinfo-sorttypes"
 ```
 
 </Note>
@@ -566,7 +566,7 @@ You can opt to not use this helper function, and instead implement your own filt
 
 When there is no `treeFilterFunction`, the column filters are applied with `defaultTreeFilterFunction`, which you can also import and call from your own function:
 
-```ts file="index.snippet.tsx" region="treefilterfunction"
+```ts file="index.treefilterfunction.snippet.tsx" region="treefilterfunction"
 ```
 
 `defaultTreeFilterFunction` matches only the leaf nodes against the column filters - the fields of a parent node are not matched.
@@ -674,7 +674,7 @@ The `salary` column has a custom filter type, with the following operators: `gt`
 
 By default, the `string` and `number` filter types are available. You can import the default filter types like this:
 
-```ts file="index.snippet.tsx" region="filtertypes-2"
+```ts file="index.snippet.tsx" region="filtertypes-import"
 ```
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
@@ -1123,7 +1123,7 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
-```ts file="index.snippet.tsx" region="rowselection-2"
+```ts file="index.snippet.tsx" region="rowselection-lazyload"
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.

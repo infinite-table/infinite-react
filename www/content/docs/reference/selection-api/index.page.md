@@ -4,7 +4,7 @@ layout: API
 redirect_to: /docs/reference/row-selection-api
 ---
 
-When rendering the `InfiniteTable` component, you can get access to the [API](./api/) by getting it from the <PropLink name="onReady" /> callback prop. You can retrieve the selection api by reading it from the `api.selectionApi` property.
+When rendering the `InfiniteTable` component, you can get access to the [API](./api/) by getting it from the <PropLink name="onReady" /> callback prop. You can retrieve the selection api by reading it from the `api.rowSelectionApi` property.
 
 ```tsx file="index.snippet.tsx" region="intro"
 ```

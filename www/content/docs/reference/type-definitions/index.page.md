@@ -114,7 +114,7 @@ You can create an instance using the object literal notation and you can get the
 
 You can mark rows as expanded/collapsed even after creating the instance:
 
-```tsx file="index.snippet.tsx" region="rowdetailstate-2"
+```tsx file="index.snippet.tsx" region="rowdetailstate-expand-collapse"
 ```
 
 </Prop>
