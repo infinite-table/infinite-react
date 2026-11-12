@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import type { RefObject } from '../../../../types/FrameworkTypes';
 
 import { InfiniteTableComputedColumn } from '../../../types';
 import {
