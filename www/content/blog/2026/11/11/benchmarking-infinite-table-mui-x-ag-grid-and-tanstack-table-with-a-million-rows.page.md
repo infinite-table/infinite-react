@@ -342,10 +342,6 @@ npm run benchmark:serve
 
 Then open [localhost:3000](http://localhost:3000) for the list of pages: `/benchmark/infinite-1m`, `/benchmark/mui-1m`, `/benchmark/ag-grid-1m` and `/benchmark/tanstack-1m` (or `-300k`). If port 3000 is taken, pick another one with `npm run benchmark:serve -- -p 4000`.
 
-### In the Infinite Table repository
-
-The same harness also lives in the Infinite Table repository, under [`examples/src/benchmark`](https://github.com/infinite-table/infinite-react/tree/master/examples/src/benchmark). There it measures Infinite Table's source, instead of the npm package, against AG Grid - that's the one we use while working on the grid.
-
 ### The full report
 
 The report and raw data behind this post:
