@@ -85,14 +85,13 @@ Each operator for a certain filter type needs to at least have a `name` and `fn`
 
 </Note>
 
-<DemoTitle>Client-side filtering in action with custom filter type</DemoTitle>
 <DemoDescription>
 
 The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
 
 </DemoDescription>
 
-```tsx file="filter-custom-filter-type-example.demo.tsx"
+```tsx file="filter-custom-filter-type-example.demo.tsx" title="Client-side filtering in action with custom filter type"
 ```
 
 ## Client-side or server-side filtering
@@ -118,21 +117,19 @@ If however, you need initial filtering by that column, the <DPropLink name="filt
 
 </Note>
 
-<DemoTitle>Filtering a column not bound to a field</DemoTitle>
 <DemoDescription>
 
 The `salary` column is not bound to a `field` - however, it can still be used for filtering, as it's configured with a `valueGetter`.
 
 </DemoDescription>
 
-```tsx file="filter-column-with-id-example.demo.tsx"
+```tsx file="filter-column-with-id-example.demo.tsx" title="Filtering a column not bound to a field"
 ```
 
 ## Customizing the Filter Icon for Columns
 
 Columns can customize the filter icon by using the <PropLink name="columns.renderFilterIcon" /> property.
 
-<DemoTitle>Custom filter icons for salary and name columns</DemoTitle>
 <DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
@@ -141,7 +138,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx"
+```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx" title="Custom filter icons for salary and name columns"
 ```
 
 <HeroCards>

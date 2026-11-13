@@ -19,7 +19,6 @@ The row detail in the DataGrid can contain another DataGrid or any other custom 
 It's very imporant that the <PropLink name="rowDetailRenderer" /> function prop you pass into `<InfiniteTable />` is stable and doesn't change on every render. So make sure you pass a reference to the same function every time - except of course if you want the row detail to change based on some other state.
 </Note>
 
-<DemoTitle>Basic master detail DataGrid example</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
@@ -30,7 +29,7 @@ The detail DataGrid is configured with remote sorting.
 
 </DemoDescription>
 
-```tsx file="master-detail-example.demo.tsx" height="large"
+```tsx file="master-detail-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
 
 
@@ -55,14 +54,13 @@ The content doesn't need to include Infinite Table.
 
 You can, however, render an Infinite Table React DataGrid, at any level of nesting inside the row detail content.
 
-<DemoTitle>Master detail with custom content & DataGrid</DemoTitle>
 <DemoDescription>
 
 In this example, the row detail contains custom content, along with another Infinite Table DataGrid. You can nest a child DataGrid inside the row details at any level of nesting.
 
 </DemoDescription>
 
-```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large"
+```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large" title="Master detail with custom content & DataGrid"
 ```
 
 ## Configuring the master-detail height
@@ -80,14 +78,13 @@ The default value for the <PropLink name="rowDetailHeight" /> is `300` px.
 - `string` - the name of a CSS variable that configures the height - eg: `--master-detail-height`
 - `(rowInfo) => number` - a function that can return a different height for each row. The sole argument is the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink>.
 
-<DemoTitle>Master detail DataGrid with custom height for row details</DemoTitle>
 <DemoDescription>
 
 This master-detail DataGrid is configured with a custom <PropLink name="rowDetailHeight" /> of `200px`.
 
 </DemoDescription>
 
-```tsx file="master-detail-custom-detail-height-example.demo.tsx" height="large"
+```tsx file="master-detail-custom-detail-height-example.demo.tsx" height="large" title="Master detail DataGrid with custom height for row details"
 ```
 
 
@@ -101,7 +98,6 @@ Not all rows in a DataGrid need to have details. To configure which rows have de
 The <PropLink name="isRowDetailEnabled" /> function prop is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo object</TypeLink> and is expected to return a boolean value.
 
 
-<DemoTitle>Master detail DataGrid with conditional details</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
@@ -110,5 +106,5 @@ Not all rows have details - every other row is configured without details via th
 
 </DemoDescription>
 
-```tsx file="master-detail-per-row-example.demo.tsx" height="large"
+```tsx file="master-detail-per-row-example.demo.tsx" height="large" title="Master detail DataGrid with conditional details"
 ```

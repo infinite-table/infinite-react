@@ -8,14 +8,13 @@ The easiest way to configure a context menu is to provide the <PropLink name="ge
 ```tsx file="using-context-menus.snippet.tsx" region="intro"
 ```
 
-<DemoTitle>Using context menus</DemoTitle>
 <DemoDescription>
 
 Right-click any cell in the table to see the custom context menu.
 
 </DemoDescription>
 
-```tsx file="basic-cells-context-menu-example.demo.tsx"
+```tsx file="basic-cells-context-menu-example.demo.tsx" title="Using context menus"
 ```
 
 <Note>
@@ -34,14 +33,13 @@ In addition, if you need to configure the context menu to have other columns rat
 ```tsx file="using-context-menus.snippet.tsx" region="columns-and-items"
 ```
 
-<DemoTitle>Customising columns in the context menu</DemoTitle>
 <DemoDescription>
 
 Right-click any cell in the table to see a context menu with multiple columns (`icon`, `label` and `description`).
 
 </DemoDescription>
 
-```tsx file="custom-columns-context-menu-example.demo.tsx"
+```tsx file="custom-columns-context-menu-example.demo.tsx" title="Customising columns in the context menu"
 ```
 </Note>
 
@@ -56,14 +54,13 @@ This function has almost the same signature as <PropLink name="getCellContextMen
 - all cell-related properties (`column`, `data`, `value`, etc) can be `undefined`
 - it contains an `event` property with the original event object for the right-click event
 
-<DemoTitle>Context menu for outside cells</DemoTitle>
 <DemoDescription>
 
 Right-click outside cells in the table to see a context menu for the table body.
 
 </DemoDescription>
 
-```tsx file="table-context-menu-example.demo.tsx"
+```tsx file="table-context-menu-example.demo.tsx" title="Context menu for outside cells"
 ```
 
 ## Hiding the Context Menu

@@ -101,14 +101,13 @@ This means columns will have the following sizes:
 
 The flexbox algorithm also uses <PropLink name="viewportReservedWidth" /> to determine the width of the viewport to use for sizing columns - you can use <PropLink name="viewportReservedWidth">viewportReservedWidth=100</PropLink> to always have a `100px` reserved area that won't be used for flexing columns.
 
- <DemoTitle>Using viewportReservedWidth to reserve whitespace when you have flexible columns</DemoTitle>
  <DemoDescription>
 
  This example has a `viewportReservedWidth` of `50px`.
 
  </DemoDescription>
 
- ```tsx file="/docs/reference/viewportReservedWidth-example.demo.tsx"
+ ```tsx file="/docs/reference/viewportReservedWidth-example.demo.tsx" title="Using viewportReservedWidth to reserve whitespace when you have flexible columns"
  ```
 
 Take a look at the snippet below to see column sizing at work with flexible and fixed columns.
@@ -208,7 +207,6 @@ Once a min/max limit has been reached for a certain column in the group, the col
 
 </Note>
 
-<DemoTitle>Resizing column groups</DemoTitle>
 <DemoDescription>
 
 Try resizing the `Finance` and `Regional Info` column groups.
@@ -217,7 +215,7 @@ The columns in the `Finance` group can be resized an extra `30px` (they have a `
 
 </DemoDescription>
 
-```tsx file="/docs/reference/column-groups-example.demo.tsx"
+```tsx file="/docs/reference/column-groups-example.demo.tsx" title="Resizing column groups"
 ```
 
 ### Customizing the resize handle colors

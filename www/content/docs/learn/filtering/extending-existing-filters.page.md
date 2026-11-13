@@ -27,14 +27,13 @@ If you don't want that, you need to use the `filterTypes` prop of the `<DataSour
 
 </Note>
 
-<DemoTitle>Enhanced string filter type - new 'Not includes' operator</DemoTitle>
 <DemoDescription>
 
 The `string` columns have a new `Not includes` operator.
 
 </DemoDescription>
 
-```tsx file="customised-default-filter-types-example.demo.tsx"
+```tsx file="customised-default-filter-types-example.demo.tsx" title="Enhanced string filter type - new 'Not includes' operator"
 ```
 
 ## Adding new filter types

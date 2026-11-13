@@ -1452,14 +1452,13 @@ Also see related <DataSourcePropLink name="onDataParamsChange" />.
 
 > A function to be called when the <DPropLink name="cellSelection" /> changes.
 
-<DemoTitle>Controlled cell selection with onCellSelectionChange</DemoTitle>
 <DemoDescription>
 
 Use your mouse to select/deselect cells.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/selection/controlled-cell-selection-example.demo.tsx" height="large"
+```tsx file="/docs/learn/selection/controlled-cell-selection-example.demo.tsx" height="large" title="Controlled cell selection with onCellSelectionChange"
 ```
 
 </Prop>
@@ -1468,17 +1467,15 @@ Use your mouse to select/deselect cells.
 
 > A function to be called when the <DPropLink name="rowSelection" /> changes.
 
-<DemoTitle>Controlled row selection with onRowSelectionChange</DemoTitle>
 <DemoDescription>
 
 Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx" title="Controlled row selection with onRowSelectionChange"
 ```
 
-<DemoTitle>Multi row checkbox selection with grouping</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
@@ -1489,7 +1486,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with grouping"
 ```
 </Prop>
 
@@ -1561,14 +1558,13 @@ const rowSelection = {
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
 
-<DemoTitle>Single row selection (controlled) with onRowSelectionChange</DemoTitle>
 <DemoDescription>
 
 Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx" title="Single row selection (controlled) with onRowSelectionChange"
 ```
 
 <Note>
@@ -1603,7 +1599,6 @@ The <DPropLink name="useGroupKeysForMultiRowSelection" /> prop can be used for b
 
 </Note>
 
-<DemoTitle>Multi row checkbox selection with grouping</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
@@ -1614,7 +1609,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with grouping"
 ```
 
 </Prop>

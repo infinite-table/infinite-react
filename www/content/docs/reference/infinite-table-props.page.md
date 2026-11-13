@@ -187,7 +187,6 @@ To configure the height of the row details section, use the <PropLink name="rowD
 
 For rendering some row details as already expanded, see <PropLink name="defaultRowDetailState" />.
 
-<DemoTitle>Basic master detail DataGrid example</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
@@ -196,7 +195,7 @@ The details for each city shows a DataGrid with developers in that city.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
 
 </Prop>
@@ -224,14 +223,13 @@ For the controlled version, see <PropLink name="rowDetailState" />.
 
 If <PropLink name="isRowDetailExpanded" /> is specified, it has the last word in deciding if a row detail is expanded or not, so it overrides the `defaultRowDetailState`.
 
-<DemoTitle>Master detail DataGrid with some row details expanded by default</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-default-expanded-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with some row details expanded by default"
 ```
 
 </Prop>
@@ -255,14 +253,13 @@ This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</
 
 It's useful when you don't want to show the row detail for some rows.
 
-<DemoTitle>Master detail DataGrid with some row not having details</DemoTitle>
 <DemoDescription>
 
 All the odd rows don't have details.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-per-row-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-per-row-example.demo.tsx" height="large" title="Master detail DataGrid with some row not having details"
 ```
 
 </Prop>
@@ -344,7 +341,6 @@ It can be one of the following:
 - `true` - enables caching for all detail DataGrids
 - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
-<DemoTitle>Master detail DataGrid with caching for 5 detail DataGrids</DemoTitle>
 <DemoDescription>
 
 This example will cache the last 5 detail DataGrids - meaning they won't reload when you expand them again.
@@ -353,7 +349,7 @@ But when you open up a row that hasn't been opened before, it will load the data
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-caching-with-default-expanded-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-caching-with-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with caching for 5 detail DataGrids"
 ```
 
 </Prop>
@@ -366,14 +362,13 @@ The default value is `300` pixels.
 
 This can be a number, a string (the name of a CSS variable - eg `--detail-height`), or a function. When a function is defined, it's called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object for the corresponding row.
 
-<DemoTitle>Master detail DataGrid with custom detail height</DemoTitle>
 <DemoDescription>
 
 In this example we configure the height of row details to be 200px.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-custom-detail-height-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-custom-detail-height-example.demo.tsx" height="large" title="Master detail DataGrid with custom detail height"
 ```
 
 </Prop>
@@ -388,14 +383,13 @@ Use the <PropLink name="onActiveCellIndexChange" /> callback to be notified when
 
 `null` is a valid value, and it means no cell is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
-<DemoTitle>Controlled keyboard navigation for cells</DemoTitle>
 <DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx" title="Controlled keyboard navigation for cells"
 ```
 
 </Prop>
@@ -410,14 +404,13 @@ Use the <PropLink name="onActiveRowIndexChange" /> callback to be notified when 
 
 `null` is a valid value, and it means no row is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
-<DemoTitle>Controlled keyboard navigation for rows</DemoTitle>
 <DemoDescription>
 
 This example starts with row at index `2` already active.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx" title="Controlled keyboard navigation for rows"
 ```
 
 </Prop>
@@ -793,14 +786,13 @@ If this function is a prop, it can be used to customize the icon rendered for ex
 
 See related <PropLink name="rowDetailRenderer" /> for configuring master-detail.
 
-<DemoTitle>Basic master detail DataGrid example</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with the ID column configured to show the row detail expand icon.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
 
 </Prop>
@@ -1388,7 +1380,6 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 ```tsx file="column-header-hooks-example.demo.tsx" title="Column with custom header that uses useInfiniteHeaderCell"
 ```
 
-<DemoTitle>Custom header with button to trigger the column context menu</DemoTitle>
 <DemoDescription>
 
 The `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
@@ -1397,7 +1388,7 @@ In addition, the currency and preferredLanguage columns have a custom context me
 
 </DemoDescription>
 
-```tsx file="getColumnMenuItems-example.demo.tsx"
+```tsx file="getColumnMenuItems-example.demo.tsx" title="Custom header with button to trigger the column context menu"
 ```
 
 </Prop>
@@ -1528,7 +1519,6 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 > Customizes the rendering of the filter icon for the column.
 
-<DemoTitle>Custom filter icons for salary and name columns</DemoTitle>
 <DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
@@ -1537,7 +1527,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx"
+```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx" title="Custom filter icons for salary and name columns"
 ```
 
 </Prop>
@@ -1575,7 +1565,6 @@ Use a function to render a custom icon. The function is called with an object th
 - `column`
 - `columnApi` - an API object for controlling the column programatically (toggle sort, toggle column context menu, etc)
 
-<DemoTitle>Custom menu icons and custom menu items</DemoTitle>
 <DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
@@ -1584,7 +1573,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </DemoDescription>
 
-```tsx file="getColumnMenuItems-example.demo.tsx"
+```tsx file="getColumnMenuItems-example.demo.tsx" title="Custom menu icons and custom menu items"
 ```
 
 </Prop>
@@ -2123,7 +2112,6 @@ When any of the properties defined in a column type are also defined in a column
 The only exception to this rule is the <PropLink name="columns.components">components</PropLink> property, which is merged from column types into the column.
 </Note>
 
-<DemoTitle>Using MUI X Date Picker with custom 'date' type columns</DemoTitle>
 <DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired** columns to show the date picker.
@@ -2132,7 +2120,7 @@ This example uses the <PropLink name="columnTypes" code={false}>column types</Pr
 
 </DemoDescription>
 
-```tsx file="/docs/learn/editing/column-types-date-editor-example.demo.tsx" height="large"
+```tsx file="/docs/learn/editing/column-types-date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker with custom 'date' type columns"
 ```
 
 </Prop>
@@ -2258,14 +2246,13 @@ See related <PropLink name="columnTypes.maxWidth" /> and <PropLink name="columns
 See <PropLink name="activeCellIndex" /> for the controlled version of this prop and
 <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<DemoTitle>Uncontrolled keyboard navigation for cells</DemoTitle>
 <DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Uncontrolled keyboard navigation for cells"
 ```
 
 </Prop>
@@ -2285,14 +2272,13 @@ Overrides the global <PropLink name="sortable" /> prop, but is overriden by the 
 See <PropLink name="activeRowIndex" /> for the controlled version of this prop and
 <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<DemoTitle>Uncontrolled keyboard navigation for rows</DemoTitle>
 <DemoDescription>
 
 This example starts with row at index `2` already active.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-rows-uncontrolled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-uncontrolled-example.demo.tsx" title="Uncontrolled keyboard navigation for rows"
 ```
 
 </Prop>
@@ -2590,7 +2576,6 @@ Use this function to customize the context menu for columns. The function is cal
   - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
   - `context.api` - a reference to the [api](./reference/api)
 
-<DemoTitle>getColumnMenuItems example - custom menu item and icon</DemoTitle>
 <DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
@@ -2599,7 +2584,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </DemoDescription>
 
-```tsx file="getColumnMenuItems-example.demo.tsx"
+```tsx file="getColumnMenuItems-example.demo.tsx" title="getColumnMenuItems example - custom menu item and icon"
 ```
 
 </Prop>
@@ -2629,14 +2614,13 @@ You can still use <PropLink name="groupColumn" /> as a function with single colu
 ```tsx file="group-column-custom-renderers-example.demo.tsx" title="groupColumn used as an object"
 ```
 
-<DemoTitle>groupColumn used as a function</DemoTitle>
 <DemoDescription>
 
 This example shows how to use <PropLink name="groupColumn" /> as a function that allows you to customize all generated group columns in a single place.
 
 </DemoDescription>
 
-```tsx file="group-column-custom-renderers-example.demo.tsx"
+```tsx file="group-column-custom-renderers-example.demo.tsx" title="groupColumn used as a function"
 ```
 
 </Prop>
@@ -2694,14 +2678,13 @@ Available values:
 For cell keyboard navigation, see <PropLink name="activeCellIndex" />.
 For row keyboard navigation, see <PropLink name="activeRowIndex" />.
 
-<DemoTitle>Keyboard navigation</DemoTitle>
 <DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Keyboard navigation"
 ```
 
 <Sandpack title="Disabled Keyboard navigation">
@@ -2828,14 +2811,13 @@ If the multi-sort behavior is `append`, clicking the second column will add it t
 
 See related <PropLink name="activeCellIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<DemoTitle>Controlled keyboard navigation (for cells) with callback</DemoTitle>
 <DemoDescription>
 
 This example uses `onActiveCellIndexChange` to react to changes in the `activeCellIndex`.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx" title="Controlled keyboard navigation (for cells) with callback"
 ```
 
 </Prop>
@@ -2846,14 +2828,13 @@ This example uses `onActiveCellIndexChange` to react to changes in the `activeCe
 
 See related <PropLink name="activeRowIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<DemoTitle>Controlled keyboard navigation (for rows) with callback</DemoTitle>
 <DemoDescription>
 
 This example uses `onActiveRowIndexChange` to react to changes in the `activeRowIndex`.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx" title="Controlled keyboard navigation (for rows) with callback"
 ```
 
 </Prop>
@@ -3137,14 +3118,13 @@ See <PropLink name="viewportReservedWidth" /> for details. See related <PropLink
 
 When he user is performing a column resize (via drag & drop), <PropLink name="onViewportReservedWidthChange" /> is called when the resize is finished (not the case for resizing with the **SHIFT** key pressed, when adjacent columns share the space between them since the reserved width is preserved).
 
-<DemoTitle>Using onViewportReservedWidth to respond to user column resizing</DemoTitle>
 <DemoDescription>
 
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
 
 </DemoDescription>
 
-```tsx file="viewportReservedWidth-example.demo.tsx"
+```tsx file="viewportReservedWidth-example.demo.tsx" title="Using onViewportReservedWidth to respond to user column resizing"
 ```
 
 </Prop>
@@ -3401,14 +3381,13 @@ Or you can use a negative value, eg `-200` so the flexbox algorithm will use ano
 
 For reacting to column resizing, you need to listen to <PropLink name="onViewportReservedWidthChange" />
 
-<DemoTitle>Using viewportReservedWidth to reserve whitespace when you have flexible columns</DemoTitle>
 <DemoDescription>
 
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
 
 </DemoDescription>
 
-```tsx file="viewportReservedWidth-example.demo.tsx"
+```tsx file="viewportReservedWidth-example.demo.tsx" title="Using viewportReservedWidth to reserve whitespace when you have flexible columns"
 ```
 
 </Prop>

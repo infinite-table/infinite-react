@@ -58,14 +58,13 @@ You will want to apply the theme name and theme mode classNames to the same elem
 
 
 
-<DemoTitle>Theme switching demo - defaults to minimalist theme in dark mode</DemoTitle>
 <DemoDescription>
 
 Example configured with `minimalist` theme and `dark` mode by default.
 
 </DemoDescription>
 
-```tsx file="theme-switching-minimalist-theme-default-example.demo.tsx"
+```tsx file="theme-switching-minimalist-theme-default-example.demo.tsx" title="Theme switching demo - defaults to minimalist theme in dark mode"
 ```
 
 

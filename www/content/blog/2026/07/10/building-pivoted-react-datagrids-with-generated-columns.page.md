@@ -59,14 +59,13 @@ That is the classic “compare compensation across geography while keeping role 
 
 The demo below groups developers, pivots the salary aggregation into generated columns, and starts with groups collapsed so the cross-tab is easy to scan.
 
-<DemoTitle>Pivoting with generated columns</DemoTitle>
 <DemoDescription>
 
 Expand a group to see aggregated salary values distributed across generated pivot columns. Full walkthrough: [pivoting overview](/docs/learn/grouping-and-pivoting/pivoting/overview).
 
 </DemoDescription>
 
-```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-example.demo.tsx"
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-example.demo.tsx" title="Pivoting with generated columns"
 ```
 
 In product terms, the same shape answers questions like:
@@ -134,14 +133,13 @@ const pivotBy = [{ field: 'stack' }, { field: 'canDesign' }];
 />
 ```
 
-<DemoTitle>Pivot totals and grand-total columns</DemoTitle>
 <DemoDescription>
 
 Pivot total columns sit at the end of each stack group. Grand-total columns are placed at the start of the grid.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/pivot-grand-total-column-position-example.demo.tsx"
+```tsx file="/docs/reference/pivot-grand-total-column-position-example.demo.tsx" title="Pivot totals and grand-total columns"
 ```
 
 For a commerce grid, that reads as: revenue for each region/channel cell, a subtotal per region, and a grand total for the selected filters — spreadsheet expectations, without building spreadsheet UI yourself.
@@ -171,14 +169,13 @@ const aggregationReducers = {
 };
 ```
 
-<DemoTitle>Generated pivot columns inherit column config</DemoTitle>
 <DemoDescription>
 
 Aggregations bound to `salary` / `age` pick up the original column styling. See also [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns).
 
 </DemoDescription>
 
-```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx"
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Generated pivot columns inherit column config"
 ```
 
 ### Rename raw values into business labels
@@ -203,14 +200,13 @@ const pivotBy: DataSourcePivotBy<Developer>[] = [
 
 That callback turns raw pivot keys into labels operators recognize, while column generation stays automatic.
 
-<DemoTitle>Custom headers on generated pivot columns</DemoTitle>
 <DemoDescription>
 
 The `canDesign` pivot values are rewritten to Designer / Non-designer headers. Try collapsing and expanding groups to see the column groups stay aligned.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.demo.tsx"
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.demo.tsx" title="Custom headers on generated pivot columns"
 ```
 
 A warehouse dashboard might look like:
@@ -282,14 +278,13 @@ Typical SaaS mappings:
 - **Activation by acquisition channel** — `groupBy`: `week` → `cohort`; `pivotBy`: `channel`; aggregation: `avg(activationRate)`
 - **Churn by region and product** — `groupBy`: `region`; `pivotBy`: `product` → `plan`; aggregation: `sum(churnedMrr)`
 
-<DemoTitle>Server-side pivoting</DemoTitle>
 <DemoDescription>
 
 Grouping and pivot aggregations are loaded remotely. Expand countries to fetch nested groups with pivot values already computed on the server.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.demo.tsx"
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.demo.tsx" title="Server-side pivoting"
 ```
 
 For very large trees, the same guide covers [lazy-load batching](/docs/learn/grouping-and-pivoting/pivoting/overview#another-pivoting-example-with-batching) so groups stream in pages while the pivot column model stays consistent.

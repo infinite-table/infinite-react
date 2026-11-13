@@ -180,7 +180,6 @@ The <PropLink name="groupColumn" /> will inherit its own rendering and styling f
 ```tsx file="grouping-rows.snippet.tsx" region="use-groupcolumn-to-customize-rendering"
 ```
 
-<DemoTitle>Customize group column renderer</DemoTitle>
 <DemoDescription>
 
 The column that renders the `firstName` has a custom renderer that adds a `.` at the end.
@@ -188,7 +187,7 @@ The group column is bound to the same `firstName` field, but specifies a differe
 
 </DemoDescription>
 
-```tsx file="/docs/reference/group-column-custom-renderers-example.demo.tsx"
+```tsx file="/docs/reference/group-column-custom-renderers-example.demo.tsx" title="Customize group column renderer"
 ```
 
 <HeroCards>
@@ -211,7 +210,6 @@ Valid values for <PropLink name="columns.defaultHiddenWhenGroupedBy" /> are:
 - `keyof DATA_TYPE` - specify an exact field that, when grouped by, makes this column be hidden
 - `{[k in keyof DATA_TYPE]: true}` - an object that can specify more fields. When there is grouping by any of those fields, the current column gets hidden.
 
-<DemoTitle>Hide columns when grouping</DemoTitle>
 <DemoDescription>
 
 In this example, the column bound to `firstName` field is set to hide when any grouping is active, since the group column is anyways found to the `firstName` field.
@@ -220,7 +218,7 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 
 </DemoDescription>
 
-```tsx file="/docs/reference/hide-columns-when-grouping-example.demo.tsx"
+```tsx file="/docs/reference/hide-columns-when-grouping-example.demo.tsx" title="Hide columns when grouping"
 ```
 
 ## Sorting the group column

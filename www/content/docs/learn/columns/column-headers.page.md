@@ -108,7 +108,6 @@ or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same
 ```tsx file="column-headers.customizing-the-menu-icon.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon"
 ```
 
-<DemoTitle>Custom menu icon for the name and age columns</DemoTitle>
 <DemoDescription>
 
 Hover over the header for the `Name` and `Age` columns to see the custom menu icon.
@@ -117,7 +116,7 @@ Also, the id column has `renderMenuIcon: false` set, so it doesn't show a column
 
 </DemoDescription>
 
-```tsx file="column-menu-icon-example.demo.tsx"
+```tsx file="column-menu-icon-example.demo.tsx" title="Custom menu icon for the name and age columns"
 ```
 
 <Note>
@@ -150,7 +149,6 @@ If specified, the <PropLink name="columns.renderFilterIcon">column.renderFilterI
 
 </Note>
 
-<DemoTitle>Custom filter icons for salary and name columns</DemoTitle>
 <DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
@@ -159,7 +157,7 @@ The `firstName` column will show a custom filter icon when filtered.
 
 </DemoDescription>
 
-```tsx file="column-filter-icon-example.demo.tsx"
+```tsx file="column-filter-icon-example.demo.tsx" title="Custom filter icons for salary and name columns"
 ```
 
 #### Changing the display of filters
@@ -187,12 +185,11 @@ If you want another column, other than the group column, to show a selection che
 
 </Note>
 
-<DemoTitle>Custom header checkbox selection for columns</DemoTitle>
 <DemoDescription>
 
 The group column, as well as the `stack` column display a custom selection checkbox in the column header.
 
 </DemoDescription>
 
-```tsx file="column-header-selection-checkbox-example.demo.tsx"
+```tsx file="column-header-selection-checkbox-example.demo.tsx" title="Custom header checkbox selection for columns"
 ```

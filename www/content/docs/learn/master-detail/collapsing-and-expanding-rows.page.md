@@ -10,7 +10,6 @@ By default, all row details are collapsed. You can very easily change this by us
 ```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="specyfing-the-default-row-detail-state" title="Specyfing the default row detail state"
 ```
 
-<DemoTitle>Master detail DataGrid with some row details expanded by default</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
@@ -19,7 +18,7 @@ Also, we have a default sort defined, by the `country` and `city` columns.
 
 </DemoDescription>
 
-```tsx file="master-detail-default-expanded-example.demo.tsx" height="large"
+```tsx file="master-detail-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with some row details expanded by default"
 ```
 
 ## Understanding and defining the collapse/expand state for row details
@@ -60,7 +59,6 @@ See our type definitions for <TypeLink name="RowDetailState" code={false}>more d
 
 </Note>
 
-<DemoTitle>Master detail DataGrid with listener for row expand/collapse</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
@@ -69,7 +67,7 @@ We use the controlled <PropLink name="rowDetailState" /> prop to manage the stat
 
 </DemoDescription>
 
-```tsx file="master-detail-controlled-expanded-enhanced-example.demo.tsx" height="large"
+```tsx file="master-detail-controlled-expanded-enhanced-example.demo.tsx" height="large" title="Master detail DataGrid with listener for row expand/collapse"
 ```
 
 ## Listening to row detail state changes
@@ -106,7 +104,6 @@ Using the controlled <PropLink name="rowDetailState" /> prop is very powerful - 
 This means that if any other row(s) are expanded and you expand a new row, the previously expanded rows will all be collapsed.
 
 
-<DemoTitle>Master detail only one row expanded at a time</DemoTitle>
 <DemoDescription>
 
 In this demo we allow only one row to be expanded at any given time.
@@ -115,5 +112,5 @@ We use the controlled <PropLink name="rowDetailState" /> prop to manage the stat
 
 </DemoDescription>
 
-```tsx file="master-detail-one-expanded-row-example.demo.tsx" height="large"
+```tsx file="master-detail-one-expanded-row-example.demo.tsx" height="large" title="Master detail only one row expanded at a time"
 ```

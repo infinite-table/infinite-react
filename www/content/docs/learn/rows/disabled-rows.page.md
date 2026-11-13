@@ -22,14 +22,13 @@ In addition to using the <DPropLink name="defaultRowDisabledState" />/<DPropLink
 
 When rendering a cell, you have access to the row disabled state - the <TypeLink name="InfiniteTableRowInfo" /> type has a `rowDisabled` property which is true if the row is disabled.
 
-<DemoTitle>Using the row disabled state while rendering</DemoTitle>
 <DemoDescription>
 
 This example uses custom rendering for the `firstName` column to render an emoji for disabled rows.
 
 </DemoDescription>
 
-```tsx file="custom-rendering-for-disabled-rows-example.demo.tsx"
+```tsx file="custom-rendering-for-disabled-rows-example.demo.tsx" title="Using the row disabled state while rendering"
 ```
 
 ## Using the API to enable/disable rows
@@ -46,12 +45,11 @@ You can use the `DataSourceApi` to enable or disable rows programmatically.
 ```tsx file="disabled-rows.snippet.tsx" region="set-row-enabled-at"
 ```
 
-<DemoTitle>Using the API to enable/disable rows</DemoTitle>
 <DemoDescription>
 
 Use the context menu on each row to toggle the disabled state of the respective row.
 
 </DemoDescription>
 
-```tsx file="using-api-to-disable-rows-example.demo.tsx"
+```tsx file="using-api-to-disable-rows-example.demo.tsx" title="Using the API to enable/disable rows"
 ```

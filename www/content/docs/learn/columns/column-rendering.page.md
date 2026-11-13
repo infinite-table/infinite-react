@@ -94,24 +94,22 @@ This is especially useful when inside those functions you render a custom compon
 
 Changing the group icon using `render`. The icon can also be changed using <PropLink name="columns.renderGroupIcon" />.
 
-<DemoTitle>Column with render - custom expand/collapse icon</DemoTitle>
 <DemoDescription>
 
 This snippet shows overriding the group collapse/expand tool via the <PropLink name="columns.render" /> function.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/column-render-example.demo.tsx"
+```tsx file="/docs/reference/column-render-example.demo.tsx" title="Column with render - custom expand/collapse icon"
 ```
 
-<DemoTitle>Column with custom expand/collapse tool via renderGroupIcon</DemoTitle>
 <DemoDescription>
 
 This snippet shows how you can override the group collapse/expand tool via the <PropLink name="columns.renderGroupIcon" /> function.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/column-renderGroupIcon-example.demo.tsx"
+```tsx file="/docs/reference/column-renderGroupIcon-example.demo.tsx" title="Column with custom expand/collapse tool via renderGroupIcon"
 ```
 
 ## Using hooks for custom rendering

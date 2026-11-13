@@ -121,14 +121,13 @@ For hiding the menu, see <PropLink name="hideContextMenu"/>. To toggle the menu,
 
 For showing the menu, see <PropLink name="showContextMenu"/>. For hiding the menu, see <PropLink name="hideContextMenu"/>.
 
-<DemoTitle>Custom header with button to trigger the column context menu using the Column API</DemoTitle>
 <DemoDescription>
 
 The `preferredLanguage` column has a custom header that shows a button for triggering the column context menu using the Column API.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/getColumnMenuItems-example.demo.tsx"
+```tsx file="/docs/reference/getColumnMenuItems-example.demo.tsx" title="Custom header with button to trigger the column context menu using the Column API"
 ```
 
 </Prop>

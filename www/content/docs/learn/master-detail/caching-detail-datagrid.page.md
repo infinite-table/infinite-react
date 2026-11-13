@@ -25,7 +25,6 @@ It can be one of the following:
 - `true` - enables caching for all detail DataGrids
 - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
-<DemoTitle>Master detail DataGrid with caching for 5 detail DataGrids</DemoTitle>
 <DemoDescription>
 
 This example will cache the last 5 detail DataGrids - meaning they won't reload when you expand them again.
@@ -34,5 +33,5 @@ But when you open up a row that hasn't been opened before, it will load the data
 
 </DemoDescription>
 
-```tsx file="master-detail-caching-with-default-expanded-example.demo.tsx" height="large"
+```tsx file="master-detail-caching-with-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with caching for 5 detail DataGrids"
 ```

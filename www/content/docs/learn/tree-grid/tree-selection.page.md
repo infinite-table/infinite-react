@@ -46,14 +46,13 @@ Clicking the expand/collapse icon of a parent node doesn't change the selection,
 
 With single-row selection, clicking a node - a parent node too - selects it, while `cmd`/`ctrl` + click and the spacebar toggle it.
 
-<DemoTitle>Selecting nodes with the mouse and keyboard</DemoTitle>
 <DemoDescription>
 
 Click `Report.docx`, then `shift` + click `unknown.txt` - the collapsed `Private` folder is selected with all its files. Use the buttons to show the selection checkboxes and to choose how users select nodes.
 
 </DemoDescription>
 
-```tsx file="tree-click-selection-example.demo.tsx" height="large"
+```tsx file="tree-click-selection-example.demo.tsx" height="large" title="Selecting nodes with the mouse and keyboard"
 ```
 
 ## Selecting nodes when the tree is filtered
@@ -65,14 +64,13 @@ When some nodes are filtered out (see <DPropLink name="treeFilterFunction" />), 
 
 When no nodes are filtered out, both values behave the same.
 
-<DemoTitle>Choosing which nodes the selection acts on when the tree is filtered</DemoTitle>
 <DemoDescription>
 
 The tree is filtered to only show `.docx` files. Select a folder or click "Select all", then clear the filter to see which files were selected with each <DPropLink name="multiRowSelectionTarget" /> value.
 
 </DemoDescription>
 
-```tsx file="tree-selection-target-example.demo.tsx" height="large"
+```tsx file="tree-selection-target-example.demo.tsx" height="large" title="Choosing which nodes the selection acts on when the tree is filtered"
 ```
 
 ## Reacting to user actions

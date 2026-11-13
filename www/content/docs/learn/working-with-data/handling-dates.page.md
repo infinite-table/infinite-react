@@ -15,7 +15,6 @@ This will ensure that the column is sorted correctly (as per the available <DPro
 
 </Note>
 
-<DemoTitle>Using date objects</DemoTitle>
 <DemoDescription>
 
 In this example, the `birthDate` column contains dates and we customized the way they are displayed.
@@ -27,7 +26,7 @@ If no custom `renderValue` was specified, the dates would have been formatted us
 
 </DemoDescription>
 
-```tsx file="dates-with-local-data-example.demo.tsx"
+```tsx file="dates-with-local-data-example.demo.tsx" title="Using date objects"
 ```
 
 ## Using date strings
@@ -44,12 +43,11 @@ For the case when your dates are not actually dates, but date strings (the same 
 
 When then pass the <DPropLink name="sortTypes"/> to the `<DataSource />` component and configure our date column to be of type `"mydatestring"` (it should match the key you specified in your `sortTypes` definition).
 
-<DemoTitle>Using date strings</DemoTitle>
 <DemoDescription>
 
 In this example, the `birthDate` column contains dates as strings, so we have to define a custom column.type and sort type.
 
 </DemoDescription>
 
-```tsx file="date-strings-with-local-data-example.demo.tsx"
+```tsx file="date-strings-with-local-data-example.demo.tsx" title="Using date strings"
 ```

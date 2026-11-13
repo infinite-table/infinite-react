@@ -40,14 +40,13 @@ For narrower control — only one aggregation, or only columns in a specific piv
 
 Passing `defaultSortInfo` as an array enables multiple sorting. Combined with <PropLink name="multiSortBehavior">multiSortBehavior="append"</PropLink>, clicking a pivot column adds that sort instead of replacing the group-column sort.
 
-<DemoTitle>Pivoting with initial group-column sort and sortable leaf pivot columns</DemoTitle>
 <DemoDescription>
 
 This table starts sorted by the group column (`preferredLanguage`, then `stack`). Click a pivot column header — for example a `yes` or `no` column under a country — to add a sort by that aggregated value.
 
 </DemoDescription>
 
-```tsx file="pivoting-sorting-example.demo.tsx"
+```tsx file="pivoting-sorting-example.demo.tsx" title="Pivoting with initial group-column sort and sortable leaf pivot columns"
 ```
 
 ## Customizing Pivot Columns

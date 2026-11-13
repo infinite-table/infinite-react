@@ -46,7 +46,6 @@ Find out about server-side pivoting
 
 When lazy loading is enabled, and the <DPropLink name="sortInfo" />  changes (eg: user clicks on a column header), the DataGrid will discard current data and call the <DPropLink name="data" /> function prop again, to fetch the new data. The same happens when the <DPropLink name="filterValue" /> or <DPropLink name="groupBy" /> changes. This is done automatically by the component, and you don't need to do anything.
 
-<DemoTitle>Lazy loading grouped data</DemoTitle>
 <DemoDescription>
 
 This demo lazily loads grouped data as the user scrolls down. Expand some groups to see the lazy loading in action.
@@ -55,7 +54,7 @@ When the user stops scrolling, after <PropLink name="scrollStopDelay" /> millise
 
 </DemoDescription>
 
-```tsx file="grouped-lazy-load-example.demo.tsx"
+```tsx file="grouped-lazy-load-example.demo.tsx" title="Lazy loading grouped data"
 ```
 
 

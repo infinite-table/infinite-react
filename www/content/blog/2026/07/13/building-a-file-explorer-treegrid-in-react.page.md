@@ -52,14 +52,13 @@ const columns = {
 
 With this setup, you're already good to go and have an interactive tree grid.
 
-<DemoTitle>Basic TreeGrid example</DemoTitle>
 <DemoDescription>
 
 This example is reused from the TreeGrid docs. Expand and collapse folders to inspect the nested file-system data.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/tree-grid/basic-tree-grid-example.demo.tsx"
+```tsx file="/docs/learn/tree-grid/basic-tree-grid-example.demo.tsx" title="Basic TreeGrid example"
 ```
 
 ## Treat nodes by path, not only by id
@@ -124,14 +123,13 @@ const defaultTreeExpandState = {
 
 For fully controlled state, use <DPropLink name="treeExpandState" /> together with <DPropLink name="onTreeExpandStateChange" />. The same docs page also shows the imperative Tree API methods such as <TreeApiLink name="expandAll" /> and <TreeApiLink name="collapseAll" />.
 
-<DemoTitle>Tree expand and collapse state</DemoTitle>
 <DemoDescription>
 
 This demo starts with a custom expand state and exposes buttons that call the Tree API to expand or collapse all nodes.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/tree-grid/tree-default-expand-collapse-example.demo.tsx" height="large"
+```tsx file="/docs/learn/tree-grid/tree-default-expand-collapse-example.demo.tsx" height="large" title="Tree expand and collapse state"
 ```
 
 ## Add tree-aware selection
@@ -159,14 +157,13 @@ const columns = {
 
 This include/exclude shape scales well for large trees because you can describe "everything is selected except these branches" or "nothing is selected except these branches" without enumerating every leaf node.
 
-<DemoTitle>Tree selection with checkboxes</DemoTitle>
 <DemoDescription>
 
 Select and deselect branches, then use the buttons above the grid to call the Tree API for all nodes.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/tree-grid/tree-default-selection-example.demo.tsx" height="large"
+```tsx file="/docs/learn/tree-grid/tree-default-selection-example.demo.tsx" height="large" title="Tree selection with checkboxes"
 ```
 
 ## Customize the tree icon

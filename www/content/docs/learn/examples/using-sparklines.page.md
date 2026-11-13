@@ -11,12 +11,11 @@ The most important part is the <PropLink name="columns.renderValue" /> property,
 ```
 
 
-<DemoTitle>Using a sparkline component</DemoTitle>
 <DemoDescription>
 
 This demo renders a sparkline and changes the color of the sparkline based on the `department` field in the row (red for IT or Management, blue for everything else).
 
 </DemoDescription>
 
-```tsx file="using-sparklines-example.demo.tsx"
+```tsx file="using-sparklines-example.demo.tsx" title="Using a sparkline component"
 ```

@@ -38,7 +38,6 @@ To update multiple rows, you need to pass the array of data items to the <DApiLi
 ```tsx file="updating-data-in-realtime.snippet.tsx" region="updating-multiple-rows" title="Updating_multiple_rows"
 ```
 
-<DemoTitle>Live data updates with DataSourceApi.updateData</DemoTitle>
 <DemoDescription>
 
 The DataSource has 10k items - use the **Start/Stop** button to see updates in real-time.
@@ -49,7 +48,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </DemoDescription>
 
-```tsx file="realtime-updates-example.demo.tsx"
+```tsx file="realtime-updates-example.demo.tsx" title="Live data updates with DataSourceApi.updateData"
 ```
 
 <Note>
@@ -90,14 +89,13 @@ Valid values for the insert `position` are:
 ```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows-before-after"
 ```
 
-<DemoTitle>Using dataSourceApi.insertData</DemoTitle>
 <DemoDescription>
 
 Click any row in the table to make it the current active row, and then use the second button to add a new row after the active row.
 
 </DemoDescription>
 
-```tsx file="insert-example.demo.tsx"
+```tsx file="insert-example.demo.tsx" title="Using dataSourceApi.insertData"
 ```
 
 ### Adding rows

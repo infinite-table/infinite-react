@@ -18,14 +18,13 @@ The DataGrid you're rendering inside the row detail doesn't need to be the retur
 
 </Note>
 
-<DemoTitle>Master detail with custom content & DataGrid</DemoTitle>
 <DemoDescription>
 
 In this example, the row detail contains custom content, along with another Infinite Table DataGrid. You can nest a child DataGrid inside the row details at any level of nesting.
 
 </DemoDescription>
 
-```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large"
+```tsx file="master-detail-custom-datagrid-example.demo.tsx" height="large" title="Master detail with custom content & DataGrid"
 ```
 
 <Note>
@@ -53,7 +52,6 @@ The master-detail configuration for the DataGrid can contain any level of nestin
 
 The example below shows 3 levels of nesting - so a master DataGrid, a detail DataGrid and another third-level detail with custom content.
 
-<DemoTitle>Master detail with 3 levels of nesting</DemoTitle>
 <DemoDescription>
 
 In this example, we have 3 levels of nesting:
@@ -64,7 +62,7 @@ In this example, we have 3 levels of nesting:
 
 </DemoDescription>
 
-```tsx file="master-detail-3-levels-example.demo.tsx" height="large"
+```tsx file="master-detail-3-levels-example.demo.tsx" height="large" title="Master detail with 3 levels of nesting"
 ```
 
 ## Understanding the lifecycle of the row detail component

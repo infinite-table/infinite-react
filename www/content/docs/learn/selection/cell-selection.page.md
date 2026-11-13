@@ -8,7 +8,6 @@ To use multi-cell selection, you need to configure the `<DataSource />` componen
 ```tsx file="cell-selection.snippet.tsx" region="configuring-the-selection-mode" title="Configuring the selection mode"
 ```
 
-<DemoTitle>Multiple cell selection example</DemoTitle>
 <DemoDescription>
 
 Click cells in the grid to add to the selection.
@@ -17,7 +16,7 @@ Use `Shift+Click` to select a range of cells and `Cmd/Ctrl+Click` to add single 
 
 </DemoDescription>
 
-```tsx file="cell-selection-default-example.demo.tsx"
+```tsx file="cell-selection-default-example.demo.tsx" title="Multiple cell selection example"
 ```
 
 ## Using default selection
@@ -33,14 +32,13 @@ Cell selection uses `[rowId, colId]` cell descriptors to identify cells to be ma
 
 </Note>
 
-<DemoTitle>Multiple cell selection with a default selection value</DemoTitle>
 <DemoDescription>
 
 By default some cells are already selected in the grid below, by using the <DPropLink name="defaultCellSelection" /> prop on the `<DataSource />` component.
 
 </DemoDescription>
 
-```tsx file="cell-selection-default-selection-example.demo.tsx"
+```tsx file="cell-selection-default-selection-example.demo.tsx" title="Multiple cell selection with a default selection value"
 ```
 
 Whe you're using cell selection with or without any default value (via the <DPropLink name="defaultCellSelection" />), you're using an uncontrolled prop. This means that the selection state is managed by the `<DataSource />` component and not by you. If you want to control the selection state yourself, you can use the controlled <DPropLink name="cellSelection" /> prop instead - see [Using controlled selection](#using-controlled-selection) for details.
@@ -96,14 +94,13 @@ It's also possible to use wildcards for selecting cells. This is useful if you w
 
 When using the controlled <DPropLink name="cellSelection" /> you have to update the value of the property yourself, by listening to the <DPropLink name="onCellSelectionChange" /> event.
 
-<DemoTitle>Using controlled cell selection</DemoTitle>
 <DemoDescription>
 
 This example shows how to use the <DPropLink name="onCellSelectionChange" /> callback prop to listen to changes to the controlled <DPropLink name="cellSelection" /> prop on the `<DataSource />` component.
 
 </DemoDescription>
 
-```tsx file="controlled-cell-selection-example.demo.tsx" height="large"
+```tsx file="controlled-cell-selection-example.demo.tsx" height="large" title="Using controlled cell selection"
 ```
 
 ## Using the Cell Selection API

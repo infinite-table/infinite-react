@@ -20,7 +20,6 @@ If you want to dynamically decide whether a column should show a menu or not, yo
 
 </Note>
 
-<DemoTitle>Custom column menu items and custom menu icon</DemoTitle>
 <DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
@@ -29,7 +28,7 @@ In addition, the `preferredLanguage` column has a custom header that shows a but
 
 </DemoDescription>
 
-```tsx file="/docs/reference/getColumnMenuItems-example.demo.tsx"
+```tsx file="/docs/reference/getColumnMenuItems-example.demo.tsx" title="Custom column menu items and custom menu icon"
 ```
 
 As you can see in the demo above, you can use <PropLink name="getColumnMenuItems" /> to return the default items (received as the first parameter to the function), or another totally different array. We chose to pass the default items to the function, so you can use them as a starting point and adjust them to your needs.

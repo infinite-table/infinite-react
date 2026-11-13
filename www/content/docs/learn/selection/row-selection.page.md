@@ -35,14 +35,13 @@ This is the most basic row selection - in this case the <DPropLink name="rowSele
 ```ts file="row-selection.snippet.tsx" region="single-row-selection"
 ```
 
-<DemoTitle>Uncontrolled single row selection</DemoTitle>
 <DemoDescription>
 
 Single row selection example - click a row to see selection change. You can also use your keyboard - press the spacebar to select/deselect a row.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/default-single-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/default-single-row-selection-example.demo.tsx" title="Uncontrolled single row selection"
 ```
 
 Row selection is changed when the user clicks a row. Clicking a row selects it and clicking it again keeps the row selected. For deselecting the row with the mouse use `cmd`/`ctrl` + click.
@@ -63,14 +62,13 @@ Both `cell` and `row` <PropLink name="keyboardNavigation" /> are available and y
 
 Row selection can be used as a <DPropLink name="rowSelection" code={false}>controlled</DPropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. For the controlled version, make sure you also define your <DPropLink name="onRowSelectionChange" /> callback prop to update the selection.
 
-<DemoTitle>Controlled single row selection</DemoTitle>
 <DemoDescription>
 
 This example uses <DPropLink name="onRowSelectionChange" /> callback prop to update the controlled <DPropLink name="rowSelection" />
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx" title="Controlled single row selection"
 ```
 
 # Multi Row Selection
@@ -103,14 +101,13 @@ For selecting with the mouse, the following gestures are supported (we tried to 
 
 When the data is grouped, a group row is selected as a whole: clicking it selects all the rows in the group (and in its nested groups), and `cmd`/`ctrl` + click toggles the whole group. Clicking the expand/collapse icon of a group row doesn't change the selection.
 
-<DemoTitle>Multi row selection</DemoTitle>
 <DemoDescription>
 
 Use your mouse to select multiple rows. Expect click and click + `cmd`/`ctrl`/`shift` modifier keys to behave just like they are in the MacOS Finder app.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/default-selection-mode-multi-row-example.demo.tsx"
+```tsx file="/docs/reference/default-selection-mode-multi-row-example.demo.tsx" title="Multi row selection"
 ```
 
 ### Selecting a range of rows with groups
@@ -147,7 +144,6 @@ If you then `shift` + click the `Rust` group row instead, the range ends just ab
 
 The same rules apply to `shift` + spacebar and to `shift` + clicking a selection checkbox.
 
-<DemoTitle>Selecting a range of rows with groups</DemoTitle>
 <DemoDescription>
 
 Click `TS 2`, then `shift` + click `Rust 2` - `Go` is collapsed, so all its rows are selected. Then `shift` + click the `Rust` group row - the range now ends above the rows of `Rust`.
@@ -156,21 +152,20 @@ Switch <PropLink name="multiRowSelectionWith" /> to `'checkbox'` to select with 
 
 </DemoDescription>
 
-```tsx file="row-selection-ranges-with-groups-example.demo.tsx"
+```tsx file="row-selection-ranges-with-groups-example.demo.tsx" title="Selecting a range of rows with groups"
 ```
 
 ### Keyboard interactions
 
 By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys. This also works for group rows.
 
-<DemoTitle>Multi row selection with keyboard support</DemoTitle>
 <DemoDescription>
 
 Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example.demo.tsx"
+```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example.demo.tsx" title="Multi row selection with keyboard support"
 ```
 
 <Note>
@@ -198,14 +193,13 @@ There is nothing prevening you from providing multiple checkbox columns.
 
 </Note>
 
-<DemoTitle>Multi row selection with checkbox support</DemoTitle>
 <DemoDescription>
 
 Use the selection checkboxes to select rows. You can also use the spacebar key (+ optional shift modifier) to modify the selection
 
 </DemoDescription>
 
-```tsx file="/docs/reference/default-checkbox-selection-multi-row-example.demo.tsx"
+```tsx file="/docs/reference/default-checkbox-selection-multi-row-example.demo.tsx" title="Multi row selection with checkbox support"
 ```
 
 ### Mouse interactions
@@ -242,7 +236,6 @@ When some rows are filtered out, use the <DPropLink name="multiRowSelectionTarge
 
 When no rows are filtered out, both values behave the same.
 
-<DemoTitle>Choosing which rows the selection acts on when the data is filtered</DemoTitle>
 <DemoDescription>
 
 The data is grouped by `stack` and filtered to only show TypeScript developers.
@@ -251,7 +244,7 @@ Click the header checkbox, a group checkbox or the "Select all" button, then rem
 
 </DemoDescription>
 
-```tsx file="row-selection-target-example.demo.tsx"
+```tsx file="row-selection-target-example.demo.tsx" title="Choosing which rows the selection acts on when the data is filtered"
 ```
 
 ## Specify a `rowSelection` value
@@ -292,7 +285,6 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordingly as a result of user interaction.
 
-<DemoTitle>Multi row checkbox selection with grouping</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
@@ -303,7 +295,7 @@ The example also shows how you can use the `InfiniteTableApi` to retrieve the ac
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with grouping"
 ```
 
 ## Multi Selection with Lazy Load and Grouping
@@ -327,7 +319,6 @@ Without them, or with `'visible'`, the checkboxes only count the rows that pass 
 
 A group whose count is not known yet (it was never loaded) counts as one row.
 
-<DemoTitle>Multi row checkbox selection with lazy data and grouping</DemoTitle>
 <DemoDescription>
 
 The `DataSet` has lazy loading and grouping.
@@ -338,5 +329,5 @@ Note in the example below that some of the group rows are partly selected, even 
 
 </DemoDescription>
 
-```tsx file="/docs/reference/lazy-multi-row-selection-example.demo.tsx"
+```tsx file="/docs/reference/lazy-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with lazy data and grouping"
 ```

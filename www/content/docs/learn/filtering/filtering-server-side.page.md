@@ -20,7 +20,6 @@ The returned JSON can include both
 
 </Note>
 
-<DemoTitle>Server-side filtering example</DemoTitle>
 <DemoDescription>
 
 All the filtering in this example happens server-side.
@@ -29,7 +28,7 @@ This example also does server-side (multiple) sorting.
 
 </DemoDescription>
 
-```tsx file="server-side-example.demo.tsx"
+```tsx file="server-side-example.demo.tsx" title="Server-side filtering example"
 ```
 
 <Note>

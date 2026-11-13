@@ -85,14 +85,13 @@ When <DPropLink name="rowSelection" /> is enabled (read more about it in the [ro
 
 By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows, when <DPropLink name="selectionMode">selectionMode="multi-row"</DPropLink>. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
 
-<DemoTitle>Multi row selection with keyboard support</DemoTitle>
 <DemoDescription>
 
 Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.demo.tsx"
+```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.demo.tsx" title="Multi row selection with keyboard support"
 ```
 
 <Note>
@@ -147,12 +146,11 @@ There are other CSS variables as well, that give you fined-tuned control over bo
 
 For more details on the CSS variables, see the [CSS Variables documentation](../theming/css-variables##active-row-background).
 
-<DemoTitle>Theming active row highlight</DemoTitle>
 <DemoDescription>
 
 Use the color picker to configured the desired color for the active row highlight
 
 </DemoDescription>
 
-```tsx file="navigating-rows-theming-example.demo.tsx"
+```tsx file="navigating-rows-theming-example.demo.tsx" title="Theming active row highlight"
 ```

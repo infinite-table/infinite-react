@@ -9,14 +9,13 @@ To enable editing globally, you can use the <PropLink name="columnDefaultEditabl
 
 Or you can be more specific and choose to make individual columns editable via the <PropLink name="columns.defaultEditable">column.defaultEditable</PropLink> prop. This overrides the global <PropLink name="columnDefaultEditable" />.
 
-<DemoTitle>Inline Editing in action</DemoTitle>
 <DemoDescription>
 
 All columns (except id) are editable.
 
 </DemoDescription>
 
-```tsx file="inline-editing-example.demo.tsx"
+```tsx file="inline-editing-example.demo.tsx" title="Inline Editing in action"
 ```
 
 <HeroCards>
@@ -80,14 +79,13 @@ When editing starts, the column editor is displayed with the value that was in t
 ```tsx file="overview.snippet.tsx" region="customize-edit-value-when-editing-starts"
 ```
 
-<DemoTitle>Inline Editing with custom getter for edit value</DemoTitle>
 <DemoDescription>
 
 Try editing the salary column - it has a custom getter for the edit value, which removes the curency string.
 
 </DemoDescription>
 
-```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx" title="Inline Editing with custom getter for edit value"
 ```
 
 ## Finishing an Edit
@@ -114,14 +112,13 @@ The accept/reject status of an edit is decided by using the `shouldAcceptEdit` p
 
 </Note>
 
-<DemoTitle>Using shouldAcceptEdit to decide whether a value is acceptable or not</DemoTitle>
 <DemoDescription>
 
 In this example, the `salary` column is configured with a <PropLink name="columns.shouldAcceptEdit">shouldAcceptEdit</PropLink> function property that rejects non-numeric values.
 
 </DemoDescription>
 
-```tsx file="inline-editing-custom-edit-value-example.demo.tsx"
+```tsx file="inline-editing-custom-edit-value-example.demo.tsx" title="Using shouldAcceptEdit to decide whether a value is acceptable or not"
 ```
 
 ## Persisting an Edit

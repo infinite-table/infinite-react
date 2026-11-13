@@ -54,14 +54,13 @@ However when you specify a function, it will be called for both parent and leaf 
 
 This gives you maximum flexibility to icons. A common example is a file explorer, where you might want to render icons not only for folders, but also for files.
 
-<DemoTitle>Rendering a custom tree icon for both parent and leaf nodes</DemoTitle>
 <DemoDescription>
 
 This example renders a custom tree icon and uses the `toggleCurrentTreeNode` function to toggle the node state when Clicked. `toggleCurrentTreeNode` is a property of the argument passed to the `renderTreeIcon` function.
 
 </DemoDescription>
 
-```tsx file="tree-icon-custom-example.demo.tsx"
+```tsx file="tree-icon-custom-example.demo.tsx" title="Rendering a custom tree icon for both parent and leaf nodes"
 ```
 
 
