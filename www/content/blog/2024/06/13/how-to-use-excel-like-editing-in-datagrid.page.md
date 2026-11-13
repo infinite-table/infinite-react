@@ -14,23 +14,7 @@ This behavior is achieved by using the [Instant Edit keyboard shorcut](/docs/lea
 
 ## Configuring keyboard shortcuts
 
-```ts {4,12}
-import {
-  DataSource,
-  InfiniteTable,
-  keyboardShortcuts
-} from '@infinite-table/infinite-react';
-
- function App() {
-  return <DataSource<Developer> primaryKey="id" data={dataSource}>
-    <InfiniteTable<Developer>
-      columns={columns}
-      keyboardShortcuts={[
-        keyboardShortcuts.instantEdit
-      ]}
-    />
-  </DataSource>
-}
+```ts file="how-to-use-excel-like-editing-in-datagrid.snippet.tsx" region="configuring-keyboard-shortcuts"
 ```
 
 The `instantEdit` [keyboard shorcut](/docs/learn/keyboard-navigation/keyboard-shortcuts) is configured (by default) to respond to any key (via the special `*` identifier which matches anything) and will start editing the cell as soon as a key is pressed. This behavior is the same as in Excel, Google Sheets, Numbers or other spreadsheet software.

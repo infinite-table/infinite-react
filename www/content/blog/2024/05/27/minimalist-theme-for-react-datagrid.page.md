@@ -34,12 +34,7 @@ A theme is applied by using the `"infinite-theme-name--THEME_NAME"` CSS classNam
 
 You will want to apply the theme name and theme mode classNames to the same element, so you'll end up with a className like `"infinite-theme-name--minimalist infinite-theme-mode--dark"`.
 
-```tsx title="Applying the minimalist theme with dark mode explicitly"
-<body className="infinite-theme-mode--dark infinite-theme-name--minimalist">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</body>
+```tsx file="minimalist-theme-for-react-datagrid.snippet.tsx" region="applying-the-minimalist-theme-with-dark-mode" title="Applying the minimalist theme with dark mode explicitly"
 ```
 
 
@@ -50,20 +45,8 @@ There are two theme modes available in Infinite: `light` and `dark`. Unless othe
 
 However, the theme mode can be enforced, by having a parent element with a CSS className of `"infinite-theme-mode--light"` or `"infinite-theme-mode--dark"`
 
-```tsx title="Applying light mode via container className"
-<div className="infinite-theme-mode--light">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</div>
+```tsx file="minimalist-theme-for-react-datagrid.snippet.tsx" region="applying-light-mode-via-container-classname" title="Applying light mode via container className"
 ```
 
-```tsx title="Explicitly applying dark theme via container className"
-<body className="infinite-theme-mode--dark">
-  <div>
-    <DataSource {...dataSouceProps}>
-      <InfiniteTable {...props} />
-    </DataSource>
-  </div>
-</body>
+```tsx file="minimalist-theme-for-react-datagrid.snippet.tsx" region="explicitly-applying-dark-theme-via-container" title="Explicitly applying dark theme via container className"
 ```

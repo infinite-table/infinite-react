@@ -58,24 +58,7 @@ Infinite Table is also built with TypeScript, giving you all the benefits of a g
 
 In addition, the exposed components are exported as generic components, so you can specify the type of the data you're working with, for improved type safety.
 
-```tsx
-import { InfiniteTable, DataSource } from '@infinite-table/infinite-react'
-
-type Person = { id: number, name: string, age: number}
-
-const data: Person[] = [
-  { id: 1, name: 'John', age: 25 },
-  //...
-];
-const columns = {
-  id: { field: 'id' },
-  name: { field: 'name' },
-}
-
-// ready to render
-<DataSource<Person> data={data} primaryKey="id">
-  <InfiniteTable<Person> columns={columns} />
-</DataSource>
+```tsx file="infinite-table-is-here.snippet.tsx" region="typescript-generic-components"
 ```
 
 ### Why Use Infinite Table, cont.
@@ -155,26 +138,12 @@ It can be either a column object or a function:
 - when it's a column object, it makes the table render a single column for grouping (as if <PropLink name="groupRenderStrategy" /> was set to `"single-column"`)
 - when it's a function, it behaves like <PropLink name="groupRenderStrategy" /> is set to `"multi-column"` and it's being called for each of the generated columns.
 
-```tsx title="Group_column_as_an_object"
-<InfiniteTable
-  //...
-  groupColumn={{
-    header: 'Groups',
-  }}
-/>
+```tsx file="infinite-table-is-here.snippet.tsx" region="group-column-as-an-object" title="Group_column_as_an_object"
 ```
 
 vs
 
-```tsx title="Group_column_as_a_function"
-<InfiniteTable
-  //...
-  groupColumn={() => {
-    // this allows you to affect all generated group columns in a single place
-    // especially useful when the generated columns are dynamic or generated via a pivot
-    return {...}
-  }}
-/>
+```tsx file="infinite-table-is-here.snippet.tsx" region="group-column-as-a-function" title="Group_column_as_a_function"
 ```
 
 Our experience with other DataGrid components taught us that the more features you add, the more complex your API becomes.

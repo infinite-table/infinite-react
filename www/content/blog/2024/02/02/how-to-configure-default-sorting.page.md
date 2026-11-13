@@ -11,14 +11,7 @@ In this article, we'll show you how easy it is to configure the default sorting 
 
 Sorting is configured on the DataGrid `<DataSource />` component. For this, you use the <PropLink name="defaultSortInfo" /> prop, as either an object, for sorting by a single column, or an array of objects, for sorting by multiple columns.
 
-```tsx title="Specifying a default sort order"
-// sort by country DESC and salary ASC
-const defaultSortInfo={[
-  { field: "country", dir: -1 },
-  { field: "salary", dir: 1 },
-]}
-
-<DataSource defaultSortInfo={defaultSortInfo} />
+```tsx file="how-to-configure-default-sorting.snippet.tsx" region="specifying-a-default-sort-order" title="Specifying a default sort order"
 ```
 
 That's it! Now, when the DataGrid is first rendered, it will be sorted by the `country` column in descending order, and then by the `salary` column in ascending order.
@@ -49,29 +42,7 @@ However, you can also have remote sorting - for this scenario, make sure you use
 
 In this case, it's your responsability to send the `sortInfo` to your backend using the <DPropLink name="data" /> prop of the DataSource - your `data` function will be called by the DataGrid whenever sorting changes. The arguments the function is called with will include the sort information (along with other details like filtering, grouping, aggregations, etc).
 
-```tsx
-const dataSource: DataSourceData<Developer> = ({ sortInfo }) => {
-  if (sortInfo && !Array.isArray(sortInfo)) {
-    sortInfo = [sortInfo];
-  }
-  const args = [
-    sortInfo
-      ? 'sortInfo=' +
-        JSON.stringify(
-          sortInfo.map((s) => ({
-            field: s.field,
-            dir: s.dir,
-          })),
-        )
-      : null,
-  ]
-    .filter(Boolean)
-    .join('&');
-
-  return fetch('https://your-backend.com/fetch-data?' + args)
-    .then((r) => r.json())
-    .then((data: Developer[]) => data);
-};
+```tsx file="how-to-configure-default-sorting.snippet.tsx" region="local-vs-remote-sorting"
 ```
 
 </Note>

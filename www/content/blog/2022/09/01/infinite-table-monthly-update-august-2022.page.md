@@ -85,20 +85,7 @@ When the rendering process starts for a column cell, all the above end up in the
 
 For example:
 
-```tsx {3,12}
-const column: InfiniteTableColumn<T> = {
-  valueGetter: () => 'world',
-  renderValue: ({ value, renderBag, rowInfo }) => {
-    // at this stage, `value` is 'world' and `renderBag.value` has the same value, 'world'
-    return <b>{value}</b>;
-  },
-
-  render: ({ value, renderBag, rowInfo }) => {
-    // at this stage `value` is 'world'
-    // but `renderBag.value` is <b>world</b>, as this was the value returned by `renderValue`
-    return <div>Hello {renderBag.value}!</div>;
-  },
-};
+```tsx file="infinite-table-monthly-update-august-2022.snippet.tsx" region="column-rendering-pipeline"
 ```
 
 <YouWillLearnCard  title="Find out more on column rendering" path="/docs/learn/columns/column-rendering#rendering-pipeline">
@@ -119,8 +106,7 @@ When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</P
 
 Sorting the group column makes the `sortInfo` have a value that looks like this:
 
-```ts
-const sortInfo = [{ field: ['stack', 'age'], dir: 1, id: 'group-by' }];
+```ts file="infinite-table-monthly-update-august-2022.snippet.tsx" region="sortable-group-columns"
 ```
 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="multi-column"</PropLink>, each group column is sortable by default if the column with the corresponding field is sortable.

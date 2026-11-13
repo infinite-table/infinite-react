@@ -23,38 +23,19 @@ The `<InfiniteTable />` component doesn't need to be a direct child of the `<Dat
 
 You can get access to the [DataSource API](/docs/reference/datasource-api) from `DataSource.onReady`:
 
-```tsx
-const onReady = (dataSourceApi) => {
-  // store the dataSourceApi and use it when updates arrive
-};
-
-<DataSource onReady={onReady} />;
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="the-datasource-api-owns-row-updates"
 ```
 
 Or from `InfiniteTable.onReady`, where you receive both the grid API and the DataSource API:
 
-```tsx
-const onReady = ({ api, dataSourceApi }) => {
-  // api controls grid behavior
-  // dataSourceApi controls data updates
-};
-
-<DataSource primaryKey="id" data={data}>
-  <InfiniteTable onReady={onReady} />
-</DataSource>;
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="infinite-table-on-ready"
 ```
 
 ## Update one row by primary key
 
 To update a row, call `dataSourceApi.updateData` with an object that includes the configured <DataSourcePropLink name="primaryKey" /> field. Any other fields you include are merged into the existing row data.
 
-```tsx {1,3}
-dataSourceApi.updateData({
-  id: 42,
-  salary: 124000,
-  currency: 'USD',
-  reposCount: 37,
-});
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="update-one-row-by-primary-key"
 ```
 
 This keeps the update local to the row data that changed. You do not need to rebuild the whole array just because one value moved.
@@ -63,35 +44,12 @@ This keeps the update local to the row data that changed. You do not need to reb
 
 When several rows change together, use `dataSourceApi.updateDataArray`.
 
-```tsx {1,3,9}
-dataSourceApi.updateDataArray([
-  {
-    id: 42,
-    salary: 124000,
-    currency: 'USD',
-  },
-  {
-    id: 73,
-    salary: 118500,
-    currency: 'EUR',
-  },
-]);
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="update-many-rows-without-creating-render-noise"
 ```
 
 The docs call out an important implementation detail: DataSource row mutations are batched by default. Multiple insert, update, or delete calls made in the same `requestAnimationFrame` resolve through the same promise and trigger one render pass.
 
-```tsx
-const firstUpdate = dataSourceApi.updateData({
-  id: 1,
-  salary: 115000,
-});
-
-const secondUpdate = dataSourceApi.updateData({
-  id: 2,
-  salary: 99000,
-});
-
-firstUpdate === secondUpdate; // true
+```tsx file="real-time-data-updates-with-the-datasource-api.snippet.tsx" region="batched-updates"
 ```
 
 That batching matters when updates are frequent. It lets your app react to a stream of changes while Infinite Table keeps the rendering work grouped.

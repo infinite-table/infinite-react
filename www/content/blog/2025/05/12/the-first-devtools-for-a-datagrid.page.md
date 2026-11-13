@@ -18,27 +18,7 @@ Then visit [our live demo page](/demo) and open your browser devtools - you shou
 </Note>
 
 
-```tsx {16}
-const columns = {
-  name: {
-    field: 'firstName',
-  },
-  lastName: {
-    field: 'lastName',
-  },
-  age: {
-    field: 'age',
-  },
-}
-
-const App = () => {
-  return <DataSource primaryKey={'id'} data={[...]}>
-    <InfiniteTable
-      debugId="simple"
-      columns={columns}
-    />
-  </DataSource>
-}
+```tsx file="the-first-devtools-for-a-datagrid.snippet.tsx" region="intro"
 ```
 
 <Note>

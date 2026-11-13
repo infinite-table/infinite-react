@@ -30,17 +30,7 @@ Before version `2.0.0`, group columns were sortable, but only if the configured 
 
 This release enables you to make group columns sortable even when other columns are not defined. For this to work, you have to specify a <PropLink name="columns.sortType">sortType</PropLink> as an array, so the column knows how to sort the group values.
 
-```tsx title="Configuring sortType for group columns"
-<InfiniteTable<Developer>
-  groupColumn={{
-    sortType: ['string', 'number'],
-    field: 'firstName',
-    defaultWidth: 150,
-  }}
-  groupRenderStrategy="single-column"
-  columns={columns}
-  columnDefaultWidth={120}
-/>
+```tsx file="version-2-0-0.snippet.tsx" region="configuring-sorttype-for-group-columns" title="Configuring sortType for group columns"
 ```
 
 <CSEmbed title="Sorting group columns is now possible" id="sorting-group-columns-forked-gv5n3z" />
