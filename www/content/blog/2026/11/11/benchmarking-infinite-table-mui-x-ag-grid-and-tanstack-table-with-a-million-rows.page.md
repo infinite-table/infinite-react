@@ -265,7 +265,7 @@ A benchmark is a model of reality, not reality. Please keep these in mind:
 
 ## Run it yourself
 
-The benchmark has its own repository: [infinite-table/datagrid-performance-comparison](https://github.com/infinite-table/datagrid-performance-comparison). All four grids are installed from npm, so there is nothing to build but the benchmark pages. Its README also has the results for the latest versions: the benchmark runs again on GitHub Actions whenever Infinite Table or AG Grid publishes a new version. You need git and Node.js 20 or newer (we used 22); it runs on macOS and Linux. Playwright downloads its own Chromium, so it doesn't matter which browser you have installed.
+The benchmark has its own repository: [infinite-table/datagrid-performance-comparison](https://github.com/infinite-table/datagrid-performance-comparison). All four grids are installed from npm, so there is nothing to build but the benchmark pages. Its README also has the results for the latest versions: the benchmark runs again on GitHub Actions whenever a new version of Infinite Table or one of the grids it is compared with is published. You need git and Node.js 20 or newer (we used 22); it runs on macOS and Linux. Playwright downloads its own Chromium, so it doesn't matter which browser you have installed.
 
 ### 1. Get the code and install
 
@@ -317,7 +317,7 @@ npm install @tanstack/react-table@<version> @tanstack/react-virtual@<version>
 BENCH_HEADLESS=1 npm run benchmark
 ```
 
-Infinite Table reaches the last of a million rows starting with version 10.1.4. To measure only some of the grids, name them: `BENCH_GRIDS=ag-grid,infinite`.
+Infinite Table reaches the last of a million rows starting with version 10.1.4. To measure only some of the grids, name them: `BENCH_GRIDS=mui,infinite`.
 
 ### Options
 
