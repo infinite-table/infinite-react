@@ -4,13 +4,14 @@ import { CARS_DATA, CARS_TYPE, INFINITE_CARS } from './shared';
 export const muiXDataGridCopy: CompareCopy = {
   id: 'mui-x-data-grid',
   metaDescription:
-    'Infinite Table vs MUI X Data Grid: features across Community, Pro and Premium, pricing, bundle size, dependencies and migration, with sources for every claim.',
+    'Infinite Table vs MUI X Data Grid: features across Community, Pro and Premium, pricing, bundle size, dependencies, benchmark results and migration, with sources for every claim.',
   tagline:
     'Both are declarative React grids. MUI X fits a Material UI app; Infinite Table has grouping, pivoting and tree data without a paid tier and without a design-system dependency.',
   verdict: [
     'MUI X Data Grid and Infinite Table are close in spirit: declarative React components with controlled and uncontrolled state. The difference is packaging. MUI X spreads its features over Community (MIT), Pro ($299 per developer per year), Premium ($599) and Enterprise ($1,399). Tree data, master-detail and column pinning need Pro; row grouping, aggregation, pivoting and cell selection need Premium.',
     'Infinite Table has all of those in one package, free to use with a footer, or $395 per developer per year without it. It has **zero runtime dependencies**, while MUI X needs Material UI and Emotion: free if your app already uses MUI, a lot of extra code if it doesn\'t.',
     'MUI X is ahead on export (CSV in Community, Excel in Premium), clipboard paste, its charts integration, documented accessibility and right-to-left support.',
+    'In our [open benchmark](/benchmark) against the free MUI X Data Grid with 300,000 and 1,000,000 rows on one page, Infinite Table mounted 11 to 24% faster, used 32 to 40% less memory and sorted 1.6 to 2.6 times faster. MUI X jumped to far-away rows faster and did less work when scrolling vertically. With 1,000,000 rows it could not scroll past row 838,860.',
   ],
   chooseThem: [
     'Your app is built on Material UI: the grid picks up your theme with no extra work.',
@@ -23,7 +24,7 @@ export const muiXDataGridCopy: CompareCopy = {
     'You need row grouping, aggregations or pivoting without a Premium license.',
     "Your app doesn't use Material UI, and you'd rather not add Material UI and Emotion.",
     'You want multi-column sorting, column pinning, tree data and master-detail without Pro.',
-    'You show large datasets without pagination.',
+    'You show large datasets without pagination, or sort them often: see the [benchmark](/benchmark).',
     'You want a context menu, which MUI X leaves to you to build.',
     'You use Vue as well as React.',
   ],
@@ -109,8 +110,12 @@ export function Cars() {
       a: "No. Infinite Table has no Excel or CSV export, clipboard, charts integration, AI assistant, row drag and drop, pager, right-to-left layouts or documented screen reader support. It does have grouping, aggregations, pivoting, tree data, master-detail, cell selection, column pinning and reordering, plus a built-in context menu, which MUI X doesn't have.",
     },
     {
+      q: 'Is Infinite Table faster than MUI X Data Grid?',
+      a: 'In most of what we measured, not all. In our open benchmark against the free MUI X Data Grid 9.17, with 300,000 and 1,000,000 rows on one page, Infinite Table mounted 11 to 24% faster, kept 32 to 40% less memory and sorted 1.6 to 2.6 times faster. MUI X showed the rows sooner after a far jump (22 to 24 ms against 35 to 40 ms) and did 7 to 19% less work when scrolling vertically, with a steadier frame rate. With 1,000,000 rows MUI X could not scroll past row 838,860; Infinite Table reaches the last row. The [benchmark page](/benchmark) has the method and every metric.',
+    },
+    {
       q: 'Is MUI X Data Grid Community limited to 100 rows?',
-      a: "Its pages are. MUI's docs say the MIT Data Grid is limited to pages of up to 100 rows, and pagination can't be turned off in Community. Pro and Premium remove the limit. Infinite Table has no page limit.",
+      a: "Its pages are, by default. MUI's docs say the MIT Data Grid is limited to pages of up to 100 rows, and pagination can't be turned off in Community; Pro and Premium remove the limit. The same docs give a page size of `-1` for \"all results\", which puts every row on one page - that is what our [benchmark](/benchmark) uses for the free grid. Infinite Table has no pages and no page limit.",
     },
     {
       q: 'Can Infinite Table match my Material UI theme?',

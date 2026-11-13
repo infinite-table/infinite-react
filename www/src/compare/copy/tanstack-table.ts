@@ -4,13 +4,14 @@ import { CARS_DATA, CARS_TYPE, INFINITE_CARS } from './shared';
 export const tanstackTableCopy: CompareCopy = {
   id: 'tanstack-table',
   metaDescription:
-    'Infinite Table vs TanStack Table: a complete data grid vs a headless table library. Features, what you build yourself, bundle size, licensing and migration.',
+    'Infinite Table vs TanStack Table: a complete data grid vs a headless table library. Features, what you build yourself, bundle size, benchmark results, licensing and migration.',
   tagline:
     'TanStack Table gives you table logic and leaves the UI to you. Infinite Table is a finished grid: virtualized, keyboard-navigable and themed, configured with props.',
   verdict: [
     'TanStack Table is a headless library. It computes sorting, filtering, grouping, selection and pagination, and you write every element, style, event handler and ARIA attribute. That is ideal for a table in your own design system, or a small table that must match your markup exactly. It is MIT-licensed, tiny, and has adapters for most frameworks.',
     'Infinite Table ships the whole grid. Row and column virtualization, column resizing, reordering, pinning and menus, grouping, pivoting, editing, keyboard navigation and context menus work as soon as you render it. Building the same on top of TanStack Table and TanStack Virtual is a substantial project, and that code is then yours to maintain.',
     'The trade-off: TanStack Table is free with no footer and gives total control. Infinite Table is free with a footer, or $395 per developer per year without it, and gives you the finished grid.',
+    'In our [open benchmark](/benchmark) with 300,000 and 1,000,000 rows, TanStack Table rendered with TanStack Virtual (its official virtualization example) scrolled vertically with less main-thread work than Infinite Table and jumped to far-away rows faster. That page does much less than a grid. Infinite Table sorted 2.4 to 3.3 times faster, used a third to less than half of the memory, and reached the last of 1,000,000 rows, where the TanStack page stops at row 838,860.',
   ],
   chooseThem: [
     'You need full control over the markup, for example for a table component in your design system.',
@@ -131,6 +132,10 @@ export function Cars() {
     ],
   },
   faq: [
+    {
+      q: 'Is Infinite Table faster than TanStack Table?',
+      a: 'In some things, and slower in others. In our open benchmark we rendered TanStack Table 9.3 with TanStack Virtual, following its official virtualized-columns example, at 300,000 and 1,000,000 rows. That page scrolled vertically with about 45% less main-thread work than Infinite Table, showed the rows 12 ms after a far jump against 35 to 40 ms, and mounted 6% faster at 300,000 rows. Infinite Table sorted 2.4 to 3.3 times faster, used a third to less than half of the memory, mounted 14% faster at 1,000,000 rows, and reached the last of those rows, while the TanStack page stops at row 838,860. Keep in mind the example has no keyboard navigation, selection, menus or pinning. The [benchmark page](/benchmark) has the method and every metric.',
+    },
     {
       q: 'Is TanStack Table a data grid?',
       a: 'Not by itself. TanStack Table is a headless table library: it provides state and logic, not markup or styles. You build the grid UI on top of it, often with TanStack Virtual for virtualization.',

@@ -16,7 +16,7 @@ type BenchmarkPageProps = {
 };
 
 /**
- * Identical shell for both grids: generates the data (outside of any
+ * Identical shell for every grid: generates the data (outside of any
  * measurement), installs `window.__bench` and renders the grid in a fixed
  * size box only when asked to.
  *
@@ -25,9 +25,10 @@ type BenchmarkPageProps = {
  * grid mounts right away, for looking at the demo in the browser.
  *
  * `?extraHeight=N` - makes the box N px taller. The spec uses it to give
- * both grids a body of the same height (so they render the same number of
- * rows) when one of them shows something the other doesn't - e.g. the footer
- * Infinite Table renders when it has no license key.
+ * all the grids a body of the same height (so they render the same number of
+ * rows) when one of them shows something the others don't - e.g. MUI's
+ * pagination footer, or the footer Infinite Table renders when it has no
+ * license key.
  */
 export function BenchmarkPage(props: BenchmarkPageProps) {
   const { adapter, renderGrid, title, rowCount } = props;

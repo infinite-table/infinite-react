@@ -226,9 +226,12 @@ export default function CompareIndex() {
       <Section id="performance" title="Performance">
         <div className={styles.card}>
           <p style={{ marginTop: 0 }}>
-            We benchmarked Infinite Table and AG Grid Community with 300,000 and
-            1,000,000 rows: mount time, memory, sorting and scrolling, in a
-            reproducible setup you can run on your own machine.
+            We benchmarked Infinite Table against MUI X Data Grid, AG Grid
+            Community and TanStack Table with 300,000 and 1,000,000 rows: mount
+            time, memory, sorting and scrolling, in a reproducible setup you
+            can run on your own machine. Infinite Table sorts the fastest of
+            the four and keeps the least memory; it is not the fastest at
+            everything, and the page says where.
           </p>
           <div className={styles.actions} style={{ justifyContent: 'flex-start' }}>
             <Link className={`${styles.button} ${styles.buttonPrimary}`} href="/benchmark">
