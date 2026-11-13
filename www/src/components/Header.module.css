@@ -69,9 +69,8 @@ export const NavBarCls = style([
 
   z-index: 1;
   line-height: 58px;
-  /* // see newvars */
-  color: rgb(238, 239, 252, 0.8);
-  border-bottom: 1px solid hsla(0, 0%, 100%, 0.2);
+  color: var(--fg);
+  border-bottom: 1px solid var(--line);
 }
 
 .UnderlineCls {

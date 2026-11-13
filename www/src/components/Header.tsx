@@ -20,6 +20,7 @@ import {
   DocsFrameworkSwitcher,
   useDocsFramework,
 } from '@www/components/DocsFrameworks';
+import { ThemeToggle } from './ThemeToggle';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -174,6 +175,9 @@ export const NavBarContent = ({
       <div className={headerStyles.IceCls} />
       <li className={`${itemCls} whitespace-nowrap`}>
         <GithubLink />
+      </li>
+      <li className={`${itemCls} flex items-center`}>
+        <ThemeToggle />
       </li>
     </ul>
   );

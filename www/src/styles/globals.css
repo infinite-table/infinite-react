@@ -2,11 +2,6 @@
 
 @import '../../../source/dist/index.css';
 
-@font-face {
-  font-family: 'RobotoMono';
-  src: url('/Roboto_Mono/static/RobotoMono-Regular.ttf');
-}
-
 @layer theme {
   body {
     line-height: inherit;
