@@ -1,0 +1,183 @@
+/*
+ * Site design tokens. Light is :root, dark is [data-theme='dark'] on <html>
+ * (set before first paint by the init script in app/layout.tsx).
+ *
+ * Components use the semantic names (bg-bg, text-fg, border-line,
+ * text-accent-text, …). The legacy names further down point at them while
+ * the components move over, and go away after that.
+ */
+:root {
+  color-scheme: light;
+  --bg: #fcfcfd;
+  --surface: #f3f5f8;
+  --raised: #e9edf2;
+  --line: #e2e6ec;
+  --line-strong: #cbd2dc;
+  --fg: #1b2027;
+  --heading: #0a0e13;
+  --muted: #586272;
+  --accent: #1d5cff;
+  --accent-text: #1a50e0;
+  --accent-fg: #ffffff;
+  --accent-soft: rgb(29 92 255 / 0.08);
+  --accent-line: rgb(29 92 255 / 0.4);
+  --glow: transparent;
+  --up: #0f8a4a;
+  --down: #d1243a;
+  --header-bg: rgb(252 252 253 / 0.88);
+  --rule-grid: rgb(27 32 39 / 0.055);
+  --backdrop: rgb(27 32 39 / 0.35);
+
+  --syn-keyword: #1a50e0;
+  --syn-string: #0f7a43;
+  --syn-number: #b3361f;
+  --syn-tag: #b4470c;
+  --syn-prop: #6941b8;
+  --syn-punct: #6b7484;
+  --syn-comment: #7f8896;
+  --syn-plain: #1b2027;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0e13;
+  --surface: #10151c;
+  --raised: #151b24;
+  --line: #1a212b;
+  --line-strong: #273140;
+  --fg: #c9d1db;
+  --heading: #e8edf3;
+  --muted: #7c8796;
+  --accent: #5c9dff;
+  --accent-text: #74abff;
+  --accent-fg: #0b0e13;
+  --accent-soft: rgb(92 157 255 / 0.13);
+  --accent-line: rgb(92 157 255 / 0.45);
+  --glow: rgb(92 157 255 / 0.4);
+  --up: #1fd17b;
+  --down: #ff4d5e;
+  --header-bg: rgb(11 14 19 / 0.88);
+  --rule-grid: rgb(255 255 255 / 0.035);
+  --backdrop: rgb(3 5 8 / 0.7);
+
+  --syn-keyword: #74abff;
+  --syn-string: #7fd49b;
+  --syn-number: #ff9e64;
+  --syn-tag: #f5a524;
+  --syn-prop: #b8a6f0;
+  --syn-punct: #7c8796;
+  --syn-comment: #5d6876;
+  --syn-plain: #c9d1db;
+}
+
+@theme inline {
+  /* next/font sets --font-plex-sans and --font-jetbrains-mono on <html> */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-heading: var(--heading);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-up: var(--up);
+  --color-down: var(--down);
+
+  /*
+   * Legacy names (the dark-only site's), mapped onto the tokens so both modes
+   * read: "white" is the strongest ink, "black" and the dark surfaces are
+   * backgrounds. Remove each one once nothing uses it.
+   */
+  --color-black: var(--bg);
+  --color-white: var(--heading);
+  --color-primary: var(--raised);
+  --color-primary-dark: var(--heading);
+  --color-secondary: var(--line-strong);
+  --color-secondary-dark: var(--fg);
+  --color-content-color: var(--fg);
+  --color-textcolorpale: var(--muted);
+  --color-link: var(--accent-text);
+  --color-syntax: var(--fg);
+  --color-wash: var(--heading);
+  --color-wash-dark: var(--raised);
+  --color-card: var(--surface);
+  --color-card-dark: var(--raised);
+  --color-glow: var(--accent-text);
+  --color-paleglow: var(--accent);
+  --color-glow-dark: var(--accent-soft);
+  --color-accent2: var(--accent);
+  --color-brand: var(--accent);
+  --color-brand-blue: var(--accent);
+  --color-brand-dark: var(--accent-soft);
+  --color-highlight: var(--accent);
+  --color-highlight-dark: var(--accent-soft);
+  --color-border: var(--line);
+  --color-border-dark: var(--line);
+  --color-special-border-color: var(--line);
+  --color-secondary-button: var(--raised);
+  --color-secondary-button-dark: var(--raised);
+  --color-darkcustom: var(--surface);
+  --color-deep-dark: var(--surface);
+  --color-codesandboxdark: var(--surface);
+  --color-codebg: var(--surface);
+  --color-bgcolor: var(--surface);
+  --color-code-block: var(--surface);
+  --color-error: var(--down);
+
+  --color-gray-95: var(--surface);
+  --color-gray-90: var(--surface);
+  --color-gray-80: var(--raised);
+  --color-gray-70: var(--fg);
+  --color-gray-60: var(--line-strong);
+  --color-gray-50: var(--muted);
+  --color-gray-40: var(--muted);
+  --color-gray-30: var(--muted);
+  --color-gray-20: var(--fg);
+  --color-gray-10: var(--fg);
+  --color-gray-5: var(--heading);
+  --color-blue-50: var(--accent-text);
+  --color-blue-40: var(--accent-text);
+}
+
+/* the light / dark toggle (components/ThemeToggle.tsx) */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--muted);
+}
+.theme-toggle:hover {
+  color: var(--heading);
+  border-color: var(--muted);
+}
+.theme-toggle__icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-toggle__icon--sun,
+[data-theme='dark'] .theme-toggle__icon--moon {
+  display: none;
+}
+[data-theme='dark'] .theme-toggle__icon--sun {
+  display: block;
+}

@@ -41,7 +41,7 @@
 }
 
 .page code {
-  font-family: 'Source Code Pro', ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-size: 0.9em;
   padding: 0.1em 0.35em;
   border-radius: 4px;
