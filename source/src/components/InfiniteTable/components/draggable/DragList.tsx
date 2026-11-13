@@ -283,15 +283,22 @@ function useInteractionTarget(
   const [interactionTarget, doSetInteractionTarget] =
     React.useState<DragInteractionTarget | null>(null);
 
+  // The registered target is kept in a ref, not read back from the state:
+  // a pointer up can come before the render that follows the pointer down,
+  // and the target registered on pointer down still has to be unregistered.
+  const registeredTargetRef = React.useRef<DragInteractionTarget | null>(null);
+
   const setInteractionTarget = useCallback(
     (interactionTarget: DragInteractionTarget | null) => {
+      const registeredTarget = registeredTargetRef.current;
+
+      if (registeredTarget && registeredTarget !== interactionTarget) {
+        DragManager.unregisterDragInteractionTarget(registeredTarget);
+      }
+      registeredTargetRef.current = interactionTarget;
+
       if (interactionTarget) {
         DragManager.registerDragInteractionTarget(interactionTarget);
-      } else {
-        const currentInteractionTarget = getInteractionTarget();
-        if (currentInteractionTarget) {
-          DragManager.unregisterDragInteractionTarget(currentInteractionTarget);
-        }
       }
 
       doSetInteractionTarget(interactionTarget);
@@ -299,6 +306,14 @@ function useInteractionTarget(
     [],
   );
   const getInteractionTarget = useLatest(interactionTarget);
+
+  useEffect(() => {
+    return () => {
+      // don't leave a target behind when the list is unmounted
+      DragManager.unregisterDragInteractionTarget(registeredTargetRef.current);
+      registeredTargetRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     return DragManager.on('register', (interactionTarget) => {

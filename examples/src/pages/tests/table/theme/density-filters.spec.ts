@@ -8,7 +8,7 @@ async function getSpacing(page: Page) {
     const operator = header.querySelector('[data-name="filter-operator"]')!;
     const editor = header.querySelector('input')!;
     const toolbarItem = document.querySelector(
-      '[data-drag-item-list-id="grouping-toolbar"]',
+      '[data-drag-item-list-id^="grouping-toolbar"]',
     );
     const px = (value: string) => parseFloat(value);
     const op = getComputedStyle(operator);

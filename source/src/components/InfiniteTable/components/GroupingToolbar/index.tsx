@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { GroupingToolbarRecipe, GroupingToolbarItemRecipe } from './index.css';
 
 import { DataSourceApi, DataSourcePropGroupBy } from '../../../DataSource';
@@ -10,7 +10,14 @@ import {
   InfiniteTableComputedColumn,
   InfiniteTableComputedValues,
 } from '../../types';
-import { useDragDropProvider } from '../draggable/DragDropProvider';
+import {
+  useDragDropProvider,
+  useDragListId,
+} from '../draggable/DragDropProvider';
+import {
+  GROUPING_TOOLBAR_DRAG_LIST_NAME,
+  HEADER_DRAG_LIST_NAME,
+} from '../draggable/dragListNames';
 import { DragListProps, useDragListContext } from '../draggable/DragList';
 import { getColumnLabel } from '../InfiniteTableHeader/getColumnLabel';
 
@@ -95,9 +102,9 @@ export function GroupingToolbarItem<T = any>(props: {
 }) {
   const { column, onClear, components, field, id, toggleSorting } = props;
 
-  const { dragSourceListId, dragItemId } = useDragListContext();
+  const { dragSourceListId, dragItemId, dragListId } = useDragListContext();
 
-  const draggingInProgress = dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+  const draggingInProgress = dragSourceListId === dragListId;
 
   const context = useInfiniteTableStableContext<T>();
 
@@ -122,8 +129,7 @@ export function GroupingToolbarItem<T = any>(props: {
     </>
   );
 
-  const active =
-    dragItemId === id && dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+  const active = dragItemId === id && dragSourceListId === dragListId;
 
   const className = join(
     GroupingToolbarItemRecipe({
@@ -157,8 +163,6 @@ export function GroupingToolbarItem<T = any>(props: {
   );
 }
 
-const GROUPING_TOOLBAR_DRAG_LIST_ID = 'grouping-toolbar';
-
 export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
   const { groupBy } = useDataSourceSelector((ctx) => {
     return {
@@ -177,8 +181,17 @@ export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
   const { dropTargetListId, dragSourceListId } = useDragDropProvider();
   const { fieldsToColumn, computedColumnsMap } = getComputed();
 
-  const active = dropTargetListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
-  const draggingInProgress = dragSourceListId === GROUPING_TOOLBAR_DRAG_LIST_ID;
+  // the ids are unique for this grid, so the toolbar
+  // only takes the columns of its own grid
+  const dragListId = useDragListId(GROUPING_TOOLBAR_DRAG_LIST_NAME);
+  const headerDragListId = useDragListId(HEADER_DRAG_LIST_NAME);
+  const acceptDropsFrom = useMemo(
+    () => [headerDragListId, dragListId],
+    [headerDragListId, dragListId],
+  );
+
+  const active = dropTargetListId === dragListId;
+  const draggingInProgress = dragSourceListId === dragListId;
 
   const PlaceholderComponent = (props.components?.Placeholder ??
     PlaceholderDefault) as typeof PlaceholderDefault;
@@ -280,8 +293,8 @@ export function GroupingToolbar<T = any>(props: GroupingToolbarProps) {
   return (
     <DragList
       orientation={orientation}
-      dragListId={GROUPING_TOOLBAR_DRAG_LIST_ID}
-      acceptDropsFrom={['header', GROUPING_TOOLBAR_DRAG_LIST_ID]}
+      dragListId={dragListId}
+      acceptDropsFrom={acceptDropsFrom}
       onDrop={onDrop}
       dragStrategy="inline"
       onAcceptDrop={onAcceptDrop}

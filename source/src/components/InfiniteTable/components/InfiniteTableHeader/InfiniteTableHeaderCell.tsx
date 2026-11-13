@@ -177,7 +177,7 @@ function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
   const { allRowsSelected, someRowsSelected, selectionMode } =
     dataSourceStatePartialForHeaderCell;
 
-  const { onDragItemPointerDown } = useDragListContext();
+  const { onDragItemPointerDown, dragListId } = useDragListContext();
 
   // Use selector hooks instead of useInfiniteTable() to avoid
   // re-rendering on every context change. Each selector only
@@ -617,7 +617,7 @@ function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
     'data-field': `${column.field || ''}`,
     'data-column-id': column.id,
     [DRAG_ITEM_ATTRIBUTE]: column.id,
-    [DRAG_ITEM_LIST_ATTRIBUTE]: 'header',
+    [DRAG_ITEM_LIST_ATTRIBUTE]: dragListId,
     'data-header-align': align,
     'data-name': 'HeaderCell',
     'data-sort': column.computedSortedAsc
