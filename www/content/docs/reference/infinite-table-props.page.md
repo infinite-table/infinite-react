@@ -187,21 +187,16 @@ To configure the height of the row details section, use the <PropLink name="rowD
 
 For rendering some row details as already expanded, see <PropLink name="defaultRowDetailState" />.
 
-<Sandpack title="Basic master detail DataGrid example" size="lg">
-
-<Description>
+<DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
 
 The details for each city shows a DataGrid with developers in that city.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -228,19 +223,14 @@ For the controlled version, see <PropLink name="rowDetailState" />.
 
 If <PropLink name="isRowDetailExpanded" /> is specified, it has the last word in deciding if a row detail is expanded or not, so it overrides the `defaultRowDetailState`.
 
-<Sandpack title="Master detail DataGrid with some row details expanded by default" size="lg">
-
-<Description>
+<DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-default-expanded-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with some row details expanded by default"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -263,19 +253,14 @@ This function is called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</
 
 It's useful when you don't want to show the row detail for some rows.
 
-<Sandpack title="Master detail DataGrid with some row not having details" size="lg">
-
-<Description>
+<DemoDescription>
 
 All the odd rows don't have details.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-per-row-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-per-row-example.demo.tsx" height="large" title="Master detail DataGrid with some row not having details"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -356,21 +341,16 @@ It can be one of the following:
 - `true` - enables caching for all detail DataGrids
 - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
-<Sandpack title="Master detail DataGrid with caching for 5 detail DataGrids" size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 This example will cache the last 5 detail DataGrids - meaning they won't reload when you expand them again.
 You can try collapsing a row and then expanding it again to see the caching in action - it won't reload the data.
 But when you open up a row that hasn't been opened before, it will load the data from the remote location.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-caching-with-default-expanded-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-caching-with-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with caching for 5 detail DataGrids"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -382,19 +362,14 @@ The default value is `300` pixels.
 
 This can be a number, a string (the name of a CSS variable - eg `--detail-height`), or a function. When a function is defined, it's called with the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object for the corresponding row.
 
-<Sandpack title="Master detail DataGrid with custom detail height" size="lg">
-
-<Description>
+<DemoDescription>
 
 In this example we configure the height of row details to be 200px.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-custom-detail-height-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-custom-detail-height-example.demo.tsx" height="large" title="Master detail DataGrid with custom detail height"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -408,19 +383,14 @@ Use the <PropLink name="onActiveCellIndexChange" /> callback to be notified when
 
 `null` is a valid value, and it means no cell is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
-<Sandpack title="Controlled keyboard navigation for cells">
-
-<Description>
+<DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx" title="Controlled keyboard navigation for cells"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -434,19 +404,14 @@ Use the <PropLink name="onActiveRowIndexChange" /> callback to be notified when 
 
 `null` is a valid value, and it means no row is currently rendered as active. Especially useful for controlled scenarios, when you need ultimate control over the behavior of keyboard navigation.
 
-<Sandpack title="Controlled keyboard navigation for rows">
-
-<Description>
+<DemoDescription>
 
 This example starts with row at index `2` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx" title="Controlled keyboard navigation for rows"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -467,13 +432,8 @@ When an object is used, the following properties are available:
 - `columnsToSkip` - a list of column ids to skip from auto-sizing. If this is used, all columns except those in the list will be auto-sized.
 - `columnsToResize` - the list of column ids to include in auto-sizing. If this is used, only columns in the list will be auto-sized.
 
-<Sandpack title="Auto-sizing columns">
-
-```tsx file="autoSizeColumnsKey-example.page.tsx"
-
+```tsx file="autoSizeColumnsKey-example.demo.tsx" title="Auto-sizing columns"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -659,23 +619,13 @@ Displaying the same column twice is a perfectly valid use case.
 
 </Note>
 
-<Sandpack title="Column order">
-
-```ts file="columnOrder-example.page.tsx"
-
+```tsx file="columnOrder-example.demo.tsx" title="Column order"
 ```
-
-</Sandpack>
 
 This prop can either be an array of strings (column ids) or the boolean `true`. When `true`, all columns present in the <PropLink name="columns" /> object will be displayed, in the iteration order of the object keys.
 
-<Sandpack title="Column order advanced example">
-
-```ts file="columnOrder-advanced-example.page.tsx"
-
+```tsx file="columnOrder-advanced-example.demo.tsx" title="Column order advanced example"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -808,13 +758,8 @@ With the default value of `true`, an icon will be rendered only for parent nodes
 
 You can also use <PropLink name="columns.renderTreeIconForParentNode" /> to specify to customize the tree icon rendering for parent nodes or <PropLink name="columns.renderTreeIconForLeafNode" /> to customize the tree icon rendering for leaf nodes.
 
-<Sandpack title="Specifying a column to used as the tree icon">
-
-```ts file="treegrid-rendericon-default-example.page.tsx"
-
+```tsx file="treegrid-rendericon-default-example.demo.tsx" title="Specifying a column to used as the tree icon"
 ```
-
-</Sandpack>
 
 
 <Sandpack title="Rendering a custom tree icon for both parent and leaf nodes" >
@@ -841,19 +786,14 @@ If this function is a prop, it can be used to customize the icon rendered for ex
 
 See related <PropLink name="rowDetailRenderer" /> for configuring master-detail.
 
-<Sandpack title="Basic master detail DataGrid example" size="lg">
-
-<Description>
+<DemoDescription>
 
 This example shows a master DataGrid with the ID column configured to show the row detail expand icon.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/master-detail/master-detail-example.page.tsx"
-
+```tsx file="/docs/learn/master-detail/master-detail-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
-
-</Sandpack>
 
 </Prop>
 <Prop name="columns.components">
@@ -934,13 +874,8 @@ const ExampleCellComponent: React.FunctionComponent<
 
 </Note>
 
-<Sandpack title="Custom components">
-
-```tsx file="column-components-example.page.tsx"
-
+```tsx file="column-components-example.demo.tsx" title="Custom components"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1073,13 +1008,8 @@ const ExampleHeaderComponent: React.FunctionComponent<
 
 </Note>
 
-<Sandpack title="Custom components">
-
-```tsx file="column-components-example.page.tsx"
-
+```tsx file="column-components-example.demo.tsx" title="Custom components"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1447,29 +1377,19 @@ In the `column.header` function you can use hooks or <PropLink name="columns.com
 
 </Note>
 
-<Sandpack title="Column with custom header that uses useInfiniteHeaderCell">
-
-```ts file="column-header-hooks-example.page.tsx"
-
+```tsx file="column-header-hooks-example.demo.tsx" title="Column with custom header that uses useInfiniteHeaderCell"
 ```
 
-</Sandpack>
-
-<Sandpack title="Custom header with button to trigger the column context menu">
-
-<Description>
+<DemoDescription>
 
 The `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
 
 In addition, the currency and preferredLanguage columns have a custom context menu icon.
 
-</Description>
+</DemoDescription>
 
-```ts file="getColumnMenuItems-example.page.tsx"
-
+```tsx file="getColumnMenuItems-example.demo.tsx" title="Custom header with button to trigger the column context menu"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1581,13 +1501,8 @@ The <PropLink name="columns.render">render</PropLink> and <PropLink name="column
 - rowInfo - very useful information about the current row. See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 - renderBag - read more about this in the docs for [Column rendering pipeline](/docs/learn/columns/column-rendering#rendering-pipeline)
 
-<Sandpack title="Column with custom render">
-
-```ts file="column-render-example.page.tsx"
-
+```tsx file="column-render-example.demo.tsx" title="Column with custom render"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -1595,13 +1510,8 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 </Note>
 
-<Sandpack title="Column with custom render that uses useInfiniteColumnCell">
-
-```ts file="column-render-hooks-example.page.tsx"
-
+```tsx file="column-render-hooks-example.demo.tsx" title="Column with custom render that uses useInfiniteColumnCell"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1609,21 +1519,16 @@ In the `column.render` function you can use hooks or <PropLink name="columns.com
 
 > Customizes the rendering of the filter icon for the column.
 
-<Sandpack title="Custom filter icons for salary and name columns">
-
-<Description>
+<DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
 
 The `firstName` column will show a custom filter icon when filtered.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/columns/column-filter-icon-example.page.tsx"
-
+```tsx file="/docs/learn/columns/column-filter-icon-example.demo.tsx" title="Custom filter icons for salary and name columns"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1660,21 +1565,16 @@ Use a function to render a custom icon. The function is called with an object th
 - `column`
 - `columnApi` - an API object for controlling the column programatically (toggle sort, toggle column context menu, etc)
 
-<Sandpack title="Custom menu icons and custom menu items">
-
-<Description>
+<DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
 
 In addition, the `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
 
-</Description>
+</DemoDescription>
 
-```ts file="getColumnMenuItems-example.page.tsx"
-
+```tsx file="getColumnMenuItems-example.demo.tsx" title="Custom menu icons and custom menu items"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1777,13 +1677,8 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 - rowInfo - very useful information about the current row. See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 - renderBag - read more about this in the docs for [Column rendering pipeline](/docs/learn/columns/column-rendering#rendering-pipeline)
 
-<Sandpack title="Column with custom renderValue">
-
-```tsx file="column-renderValue-example.page.tsx"
-
+```tsx file="column-renderValue-example.demo.tsx" title="Column with custom renderValue"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -1791,12 +1686,8 @@ In the `column.renderValue` function you can use hooks or <PropLink name="column
 
 </Note>
 
-<Sandpack title="Using a sparkline component" size="md" viewMode="preview" deps="react-sparklines">
-
-```tsx file="$DOCS/learn/examples/using-sparklines-example.page.tsx" 
+```tsx file="/docs/learn/examples/using-sparklines-example.demo.tsx" title="Using a sparkline component"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2037,13 +1928,8 @@ Note that the `data` property is of type `DATA_TYPE | Partial<DATA_TYPE> | null`
 
 If you want to further customize what's being rendered, see related <PropLink name="columns.valueFormatter" />, <PropLink name="columns.renderValue" />, <PropLink name="columns.render" />, <PropLink name="columns.renderGroupValue" />, <PropLink name="columns.renderLeafValue" /> and <PropLink name="columns.renderGroupIcon" />.
 
-<Sandpack title="Column with custom valueGetter">
-
-```tsx file="column-valueGetter-example.page.tsx"
-
+```tsx file="column-valueGetter-example.demo.tsx" title="Column with custom valueGetter"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2060,13 +1946,8 @@ It is an object that maps column ids to column sizing options. The values in the
 - <PropLink name="columnSizing.minWidth">minWidth</PropLink> - specifies the minimum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 - <PropLink name="columnSizing.maxWidth">maxWidth</PropLink> - specifies the maximum width of the column. Useful for flexible columns or for restricting users resizing both fixed and flexible columns.
 
-<Sandpack title="Controlled column sizing">
-
-```tsx file="columnSizing-example.page.tsx"
-
+```tsx file="columnSizing-example.demo.tsx" title="Controlled column sizing"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -2084,13 +1965,8 @@ See [using flexible column sizing section](/docs/learn/columns/fixed-and-flexibl
 
 A column can either be flexible or fixed-width. For fixed columns, use <PropLink name="columnSizing.width" /> if you're using <PropLink name="columnSizing" /> or <PropLink name="columns.defaultWidth">column.defaultWidth</PropLink> for default-uncontrolled sizing.
 
-<Sandpack title="Controlled column sizing with flex columns">
-
-```tsx file="columnSizing-example.page.tsx"
-
+```tsx file="columnSizing-example.demo.tsx" title="Controlled column sizing with flex columns"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2102,13 +1978,8 @@ See [Using flexible column sizing](/docs/learn/columns/fixed-and-flexible-size#u
 
 This can also be specified for all columns by specifying <PropLink name="columnMinWidth" />.
 
-<Sandpack title="Controlled column sizing with minWidth for column">
-
-```tsx file="columnSizing-example.page.tsx"
-
+```tsx file="columnSizing-example.demo.tsx" title="Controlled column sizing with minWidth for column"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columnSizing.maxWidth" type="number">
@@ -2119,13 +1990,8 @@ See [Using flexible column sizing](/docs/learn/columns/fixed-and-flexible-size#u
 
 This can also be specified for all columns by specifying <PropLink name="columnMaxWidth" />.
 
-<Sandpack title="Controlled column sizing with maxWidth for column">
-
-```tsx file="columnSizing-example.page.tsx"
-
+```tsx file="columnSizing-example.demo.tsx" title="Controlled column sizing with maxWidth for column"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="columnSizing.width" type="number">
@@ -2136,13 +2002,8 @@ See [Using flexible column sizing](/docs/learn/columns/fixed-and-flexible-size#u
 
 A column can either be flexible or fixed. For flexible columns, use <PropLink name="columnSizing.flex" />.
 
-<Sandpack title="Controlled column sizing with fixed column">
-
-```tsx file="columnSizing-example.page.tsx"
-
+```tsx file="columnSizing-example.demo.tsx" title="Controlled column sizing with fixed column"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2152,18 +2013,16 @@ A column can either be flexible or fixed. For flexible columns, use <PropLink na
 
 See the [Keyboard Shortcuts](/docs/learn/keyboard-navigation/keyboard-shortcuts) page for more details.
 
-<Sandpack>
+<DemoDescription>
 
-<Description>
 Click on a cell and use the keyboard to navigate.
 
 Press `Shift+Enter` to show an alert with the current active cell position.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-initial-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-initial-example.demo.tsx"
 ```
-</Sandpack>
 
 
 Infinite Table DataGrid comes with some predefined keyboard shorcuts.
@@ -2200,17 +2059,14 @@ For now, the only predefined keyboard shorcut is `keyboardShortcuts.instantEdit`
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Click on a cell and then start typing to edit the cell.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-instant-edit-example.demo.tsx"
 ```
-</Sandpack>
 
 </Prop>
 
@@ -2256,21 +2112,16 @@ When any of the properties defined in a column type are also defined in a column
 The only exception to this rule is the <PropLink name="columns.components">components</PropLink> property, which is merged from column types into the column.
 </Note>
 
-<Sandpack size="lg" title="Using MUI X Date Picker with custom 'date' type columns" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
-
-<Description>
+<DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired** columns to show the date picker.
 
 This example uses the <PropLink name="columnTypes" code={false}>column types</PropLink> to give each date column the same editor and styling.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/editing/column-types-date-editor-example.page.tsx"
-
+```tsx file="/docs/learn/editing/column-types-date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker with custom 'date' type columns"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2395,19 +2246,14 @@ See related <PropLink name="columnTypes.maxWidth" /> and <PropLink name="columns
 See <PropLink name="activeCellIndex" /> for the controlled version of this prop and
 <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<Sandpack title="Uncontrolled keyboard navigation for cells">
-
-<Description>
+<DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Uncontrolled keyboard navigation for cells"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2426,19 +2272,14 @@ Overrides the global <PropLink name="sortable" /> prop, but is overriden by the 
 See <PropLink name="activeRowIndex" /> for the controlled version of this prop and
 <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<Sandpack title="Uncontrolled keyboard navigation for rows">
-
-<Description>
+<DemoDescription>
 
 This example starts with row at index `2` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-uncontrolled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-uncontrolled-example.demo.tsx" title="Uncontrolled keyboard navigation for rows"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2735,21 +2576,16 @@ Use this function to customize the context menu for columns. The function is cal
   - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
   - `context.api` - a reference to the [api](./reference/api)
 
-<Sandpack title="getColumnMenuItems example - custom menu item and icon">
-
-<Description>
+<DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
 
 In addition, the `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
 
-</Description>
+</DemoDescription>
 
-```ts file="getColumnMenuItems-example.page.tsx"
-
+```tsx file="getColumnMenuItems-example.demo.tsx" title="getColumnMenuItems example - custom menu item and icon"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2775,27 +2611,17 @@ You can still use <PropLink name="groupColumn" /> as a function with single colu
 
 </Note>
 
-<Sandpack title="groupColumn used as an object">
-
-```ts file="group-column-custom-renderers-example.page.tsx"
-
+```tsx file="group-column-custom-renderers-example.demo.tsx" title="groupColumn used as an object"
 ```
 
-</Sandpack>
-
-<Sandpack title="groupColumn used as a function">
-
-<Description>
+<DemoDescription>
 
 This example shows how to use <PropLink name="groupColumn" /> as a function that allows you to customize all generated group columns in a single place.
 
-</Description>
+</DemoDescription>
 
-```ts file="group-column-custom-renderers-example.page.tsx"
-
+```tsx file="group-column-custom-renderers-example.demo.tsx" title="groupColumn used as a function"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2835,13 +2661,8 @@ In this example, toggle the checkbox to see the `stack` and `preferredLanguage` 
 
 > Allows you to hide group columns which don't render any information (this happens when all previous groups are collapsed).
 
-<Sandpack>
-
-```ts files=["hideEmptyGroupColumns-example.page.tsx","employee-columns.ts"]
-
+```tsx file="hideEmptyGroupColumns-example.demo.tsx"
 ```
-
-</Sandpack>
 </Prop>
 
 <Prop name="keyboardNavigation" type="'cell'|'row'|false" defaultValue="'cell'">
@@ -2857,19 +2678,14 @@ Available values:
 For cell keyboard navigation, see <PropLink name="activeCellIndex" />.
 For row keyboard navigation, see <PropLink name="activeRowIndex" />.
 
-<Sandpack title="Keyboard navigation">
-
-<Description>
+<DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-uncontrolled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Keyboard navigation"
 ```
-
-</Sandpack>
 
 <Sandpack title="Disabled Keyboard navigation">
 
@@ -2895,13 +2711,8 @@ By default <PropLink name="keyboardSelection" /> is enabled, so you can use the 
 
 For specifying the selection mode, use <DPropLink name="selectionMode" />
 
-<Sandpack  title="Toggling keyboard navigation">
-
-```ts file="default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
-
+```tsx file="default-selection-mode-multi-row-keyboard-toggle-example.demo.tsx" title="Toggling keyboard navigation"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -2964,13 +2775,8 @@ Menus rendered inside the table can't extend past an ancestor that clips its con
 
 Both values work the same with or without grouping, and with tree data - clicking a group row or a parent node selects (or with `cmd`/`ctrl`, toggles) the whole group or node. See [selecting a range of rows with groups](/docs/learn/selection/row-selection#selecting-a-range-of-rows-with-groups) for how `shift` ranges handle group rows.
 
-<Sandpack title="Choosing how users select rows">
-
-```ts file="$DOCS/learn/selection/row-selection-ranges-with-groups-example.page.tsx"
-
+```tsx file="/docs/learn/selection/row-selection-ranges-with-groups-example.demo.tsx" title="Choosing how users select rows"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3005,19 +2811,14 @@ If the multi-sort behavior is `append`, clicking the second column will add it t
 
 See related <PropLink name="activeCellIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<Sandpack title="Controlled keyboard navigation (for cells) with callback">
-
-<Description>
+<DemoDescription>
 
 This example uses `onActiveCellIndexChange` to react to changes in the `activeCellIndex`.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-cells-controlled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-cells-controlled-example.demo.tsx" title="Controlled keyboard navigation (for cells) with callback"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3027,19 +2828,14 @@ This example uses `onActiveCellIndexChange` to react to changes in the `activeCe
 
 See related <PropLink name="activeRowIndex" /> and <PropLink name="keyboardNavigation" /> for the keyboard navigation behavior.
 
-<Sandpack title="Controlled keyboard navigation (for rows) with callback">
-
-<Description>
+<DemoDescription>
 
 This example uses `onActiveRowIndexChange` to react to changes in the `activeRowIndex`.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/learn/keyboard-navigation/navigating-rows-controlled-example.page.tsx"
-
+```tsx file="/docs/learn/keyboard-navigation/navigating-rows-controlled-example.demo.tsx" title="Controlled keyboard navigation (for rows) with callback"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3309,13 +3105,8 @@ If you want to scroll to the top of the table, you can use the <PropLink name="s
 
 </Note>
 
-<Sandpack title="Fetch new data on scroll to bottom">
-
-```ts file="$DOCS/learn/working-with-data/live-pagination-example.page.tsx"
-
+```tsx file="/docs/learn/working-with-data/live-pagination-example.demo.tsx" title="Fetch new data on scroll to bottom"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3327,17 +3118,14 @@ See <PropLink name="viewportReservedWidth" /> for details. See related <PropLink
 
 When he user is performing a column resize (via drag & drop), <PropLink name="onViewportReservedWidthChange" /> is called when the resize is finished (not the case for resizing with the **SHIFT** key pressed, when adjacent columns share the space between them since the reserved width is preserved).
 
-<Sandpack title="Using onViewportReservedWidth to respond to user column resizing">
+<DemoDescription>
 
-<Description>
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
-</Description>
 
-```ts file="viewportReservedWidth-example.page.tsx"
+</DemoDescription>
 
+```tsx file="viewportReservedWidth-example.demo.tsx" title="Using onViewportReservedWidth to respond to user column resizing"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3382,13 +3170,8 @@ Pivot total columns only display when <DataSourcePropLink name="pivotBy"/> has t
 
 </Note>
 
-<Sandpack title="Pivoting with pivotGrandTotalColumnPosition=start">
-
-```ts file="pivot-grand-total-column-position-example.page.tsx"
-
+```tsx file="pivot-grand-total-column-position-example.demo.tsx" title="Pivoting with pivotGrandTotalColumnPosition=start"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3583,13 +3366,8 @@ const rowStyle: InfiniteTablePropRowStyle<Employee> = ({
 };
 ```
 
-<Sandpack title="rowStyle example usage">
-
-```ts files=["rowStyle-example.page.tsx","rowStyle-example-columns.ts"]
-
+```tsx file="rowStyle-example.demo.tsx" title="rowStyle example usage"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -3603,17 +3381,14 @@ Or you can use a negative value, eg `-200` so the flexbox algorithm will use ano
 
 For reacting to column resizing, you need to listen to <PropLink name="onViewportReservedWidthChange" />
 
-<Sandpack title="Using viewportReservedWidth to reserve whitespace when you have flexible columns">
+<DemoDescription>
 
-<Description>
 Resize a column to see `viewportReservedWidth` updated and then click the button to reset it to `0px`
-</Description>
 
-```ts file="viewportReservedWidth-example.page.tsx"
+</DemoDescription>
 
+```tsx file="viewportReservedWidth-example.demo.tsx" title="Using viewportReservedWidth to reserve whitespace when you have flexible columns"
 ```
-
-</Sandpack>
 
 </Prop>
 

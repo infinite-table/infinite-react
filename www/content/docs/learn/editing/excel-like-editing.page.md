@@ -8,39 +8,19 @@ InfiniteTable offers support for Excel-like editing. This means users can simply
 This behavior is achieved by using the [Instant Edit keyboard shorcut](/docs/learn/keyboard-navigation/keyboard-shortcuts#instant-edit).
 
 
-```ts {4,12}
-import {
-  DataSource,
-  InfiniteTable,
-  keyboardShortcuts
-} from '@infinite-table/infinite-react';
-
- function App() {
-  return <DataSource<Developer> primaryKey="id" data={dataSource}>
-    <InfiniteTable<Developer>
-      columns={columns}
-      keyboardShortcuts={[
-        keyboardShortcuts.instantEdit
-      ]}
-    />
-  </DataSource>
-}
+```ts file="excel-like-editing.snippet.tsx" region="intro"
 ```
 
 The `instantEdit` keyboard shorcut is configured (by default) to respond to any key (via the special `*` identifier which matches anything) and will start editing the cell as soon as a key is pressed. This behavior is the same as in Excel, Google Sheets, Numbers or other spreadsheet software.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Click on a cell and then start typing to edit the cell.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-instant-edit-example.demo.tsx"
 ```
-
-</Sandpack>
 
 
 <Note>
@@ -55,27 +35,15 @@ You can use the <PropLink name="columns.valueGetter" /> property to simulate for
 
 For example, you might want to have a column that multiplies or divides a value by a constant.
 
-```ts {6}
-const columns = {
-  salary: {
-    field: 'salary'
-  },
-  salaryK: {
-    valueGetter: ({data}) => data.salary / 1000
-  }
-}
+```ts file="excel-like-editing.snippet.tsx" region="simulating-formulas-with-column-valuegetter"
 ```
 
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Edit the `salary` column and see the `Salary (thousands)` col update.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-with-valuegetter-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-instant-edit-with-valuegetter-example.demo.tsx"
 ```
-
-</Sandpack>

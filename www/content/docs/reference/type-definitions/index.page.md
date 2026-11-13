@@ -536,7 +536,7 @@ export type InfiniteTableRowInfo<T> =
 
 The common properties of the type (in all discriminated cases) are:
 
-- `id` - the primary key of the row, as retrieved using the <DPropLink name="idProperty" /> prop.
+- `id` - the primary key of the row, as retrieved using the <DPropLink name="primaryKey" /> prop.
 - `indexInAll` - the index in all currently visible rows.
 - `rowSelected` - whether the row is selected or not - `boolean | null`.
 - `rowDisabled` - whether the row is disabled or not - `boolean`.

@@ -52,19 +52,14 @@ const columns = {
 
 With this setup, you're already good to go and have an interactive tree grid.
 
-<Sandpack title="Basic TreeGrid example" >
-
-<Description>
+<DemoDescription>
 
 This example is reused from the TreeGrid docs. Expand and collapse folders to inspect the nested file-system data.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/tree-grid/basic-tree-grid-example.page.tsx"
-
+```tsx file="/docs/learn/tree-grid/basic-tree-grid-example.demo.tsx" title="Basic TreeGrid example"
 ```
-
-</Sandpack>
 
 ## Treat nodes by path, not only by id
 
@@ -128,19 +123,14 @@ const defaultTreeExpandState = {
 
 For fully controlled state, use <DPropLink name="treeExpandState" /> together with <DPropLink name="onTreeExpandStateChange" />. The same docs page also shows the imperative Tree API methods such as <TreeApiLink name="expandAll" /> and <TreeApiLink name="collapseAll" />.
 
-<Sandpack title="Tree expand and collapse state" size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 This demo starts with a custom expand state and exposes buttons that call the Tree API to expand or collapse all nodes.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/tree-grid/tree-default-expand-collapse-example.page.tsx"
-
+```tsx file="/docs/learn/tree-grid/tree-default-expand-collapse-example.demo.tsx" height="large" title="Tree expand and collapse state"
 ```
-
-</Sandpack>
 
 ## Add tree-aware selection
 
@@ -167,19 +157,14 @@ const columns = {
 
 This include/exclude shape scales well for large trees because you can describe "everything is selected except these branches" or "nothing is selected except these branches" without enumerating every leaf node.
 
-<Sandpack title="Tree selection with checkboxes" size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Select and deselect branches, then use the buttons above the grid to call the Tree API for all nodes.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/tree-grid/tree-default-selection-example.page.tsx"
-
+```tsx file="/docs/learn/tree-grid/tree-default-selection-example.demo.tsx" height="large" title="Tree selection with checkboxes"
 ```
-
-</Sandpack>
 
 ## Customize the tree icon
 

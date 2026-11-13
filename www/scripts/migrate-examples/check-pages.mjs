@@ -59,7 +59,10 @@ for (const route of routes) {
   });
   page.on('response', (response) => {
     const url = response.url();
-    if (response.status() >= 400 && url.startsWith(origin)) problems.push(`HTTP ${response.status()}: ${url}`);
+    // (the footer's /llms.txt link is prefetched as a page, which a static server can't answer)
+    if (response.status() >= 400 && url.startsWith(origin) && !url.includes('/llms.txt.txt')) {
+      problems.push(`HTTP ${response.status()}: ${url}`);
+    }
   });
 
   const response = await page.goto(`${origin}${route}`, { waitUntil: 'load', timeout: 180000 });

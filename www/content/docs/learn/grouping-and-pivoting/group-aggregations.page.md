@@ -44,10 +44,7 @@ For more complex scenarios, the aggregation should have a `getter` function. If 
 
 Use this `getter` function to compute the value the current item in the array brings to the aggregation.
 
-```tsx title="Aggregation_custom_getter_function"
-// useful for retrieving nested values
-
-getter: (dataItem: Developer) => data.salary.net;
+```tsx file="group-aggregations.snippet.tsx" region="aggregation-custom-getter-function" title="Aggregation_custom_getter_function"
 ```
 
 <Note>
@@ -64,41 +61,14 @@ The completion `done` function is optional - if specified, will be after iterati
 - `data` - the grouped data array.
   This is useful for computing averages, for example:
 
-```tsx title="Done function for avg reducer"
-done: (acc, data) => acc / data.length;
+```tsx file="group-aggregations.snippet.tsx" region="done-function-for-avg-reducer" title="Done function for avg reducer"
 ```
 
 ### Putting it all together
 
 Let's take a look at a simple example of aggregating two columns, one to display the avg and the other one should compute the sum of the salary column for grouped rows.
 
-```tsx title="Average Aggregation"
-import { DataSource, InfiniteTable } from '@infinite-table/infinite-react';
-
-const sum = (a: number, b: number) => a + b;
-
-const reducers = {
-  avg: {
-    initialValue: 0,
-    field: 'age',
-    reducer: sum,
-    done: (acc, data) => Math.round(acc / data.length),
-  },
-
-  sumAgg: {
-    initialValue: 0,
-    field: 'salary',
-    reducer: sum
-  }
-}
-
-function App() {
-  return <DataSource<Developer>
-    aggregationReducers={reducers}
-  >
-    <InfiniteTable<Developer> {...} />
-  </DataSource>
-}
+```tsx file="group-aggregations.snippet.tsx" region="average-aggregation" title="Average Aggregation"
 ```
 
 In the above example, note that aggregations are an object where the keys of the object are used to identify the aggregation and the values are the aggregation configuration objects, as described above.
@@ -107,30 +77,13 @@ In the above example, note that aggregations are an object where the keys of the
 
 At run-time, you have access to the aggregation reducer results inside group rows - you can use the `rowInfo.reducerResults` object to access those values. For the example above, you change how group rows are rendered for a certain column and display the aggregation results in a custom way:
 
-```tsx {9} title="Custom_group_row_rendering_for_the_country_column"
-
-country: {
-  field: 'country',
-
-  // define a custom renderGroupValue fn for the country column
-
-  renderGroupValue: ({ rowInfo }) => {
-    const { reducerResults = {} } = rowInfo;
-    // note the keys in the reducerResults objects match the keys in the aggregationReducers object
-    return `Avg age: ${reducerResults.avg}, total salary ${reducerResults.sumAgg}`;
-  },
-},
+```tsx file="group-aggregations.snippet.tsx" region="custom-group-row-rendering-for-the-country" title="Custom_group_row_rendering_for_the_country_column"
 ```
 
 </Note>
 
-<Sandpack title="Sum and average aggregation example">
-
-```ts file="aggregations-simple-example.page.tsx"
-
+```tsx file="aggregations-simple-example.demo.tsx" title="Sum and average aggregation example"
 ```
-
-</Sandpack>
 
 ## Server-Side Aggregations
 
@@ -153,69 +106,12 @@ Besides the above information, if filtering is used, a `fiterValue` is also made
 
 In order to showcase the server-side aggregations, let's build an example similar to the above one, but let's lazily load group data.
 
-```tsx {2} title="DataSourcewith lazyLoad enabled"
-<DataSource
-  lazyLoad
-  ...
-/>
+```tsx file="group-aggregations.snippet.tsx" region="datasourcewith-lazyload-enabled" title="DataSourcewith lazyLoad enabled"
 ```
 
 As soon a grouping and aggregations are no longer computed on the client, your `data` function needs to send those configurations on the backend, so it needs to get a bit more complicated:
 
-```tsx title="Data_function_sending_configurations_to_the_backend"
-const data = ({ groupBy, aggregationReducers, sortInfo, groupKeys }) => {
-   // it's important to send the current group keys - for top level, this will be []
-  const args: string[] = [`groupKeys=${JSON.stringify(groupKeys)}`];
-
-  // turn the sorting info into an array
-  if (sortInfo && !Array.isArray(sortInfo)) {
-    sortInfo = [sortInfo];
-  }
-
-  if (sortInfo) {
-    // the backend expects the sort info to be an array of field,dir pairs
-    args.push(
-      'sortInfo=' +
-        JSON.stringify(
-          sortInfo.map((s) => ({
-            field: s.field,
-            dir: s.dir,
-          })),
-        ),
-    );
-  }
-
-  if (groupBy) {
-    // for grouping, send an array of objects with the `field` property
-    args.push(
-      'groupBy=' + JSON.stringify(groupBy.map((p) => ({ field: p.field }))),
-    );
-  }
-
-  if (aggregationReducers) {
-    args.push(
-      'reducers=' +
-        JSON.stringify(
-          // by convention, we send an array of reducers, each with `field` `name`(= "avg") and `id`
-          // it's up to you to decide what the backend needs
-          Object.keys(aggregationReducers).map((key) => ({
-            field: aggregationReducers[key].field,
-            id: key,
-            name: aggregationReducers[key].reducer,
-          })),
-        ),
-    );
-  }
-
-  const url = BASE_URL + `/developers10k-sql?` + args.join('&');
-  return fetch(url).then(r=>r.json())
-}
-
-<DataSource
-  data={data}
-  lazyLoad
-  ...
-/>
+```tsx file="group-aggregations.snippet.tsx" region="data-function-sending-configurations-to-the" title="Data_function_sending_configurations_to_the_backend"
 ```
 
 When fetching without grouping (or with local grouping and aggregations), the `<DataSource />` component expects a flat array of data items coming from the server.
@@ -232,21 +128,16 @@ When the user is expanding the last level, in order to see the leaf rows, the sh
 
 Let's put all of this into a working example.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This showcases grouping and aggregations on the server - both the `age` and `salary` columns have an AVG aggregation defined.
 
 Grouping is done by the `country`, `city` and `stack` columns.
 
-</Description>
+</DemoDescription>
 
-```tsx file="grouping-and-aggregations-with-lazy-load-example.page.tsx"
-
+```tsx file="grouping-and-aggregations-with-lazy-load-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 

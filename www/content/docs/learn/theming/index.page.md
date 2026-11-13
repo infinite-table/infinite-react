@@ -5,8 +5,7 @@ description: Read our docs on the available themes and how you can customize the
 
 `<InfiniteTable />` ships with a CSS file that you need to import in your codebase to make the component look as intended.
 
-```ts
-import '@infinite-table/infinite-react/index.css';
+```ts file="index.snippet.tsx" region="intro"
 ```
 
 This root CSS file includes the `"default"` theme.
@@ -23,14 +22,7 @@ The other available themes are
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
-```ts
-import '@infinite-table/infinite-react/theme/shadcn.css'
-import '@infinite-table/infinite-react/theme/balsam.css'
-import '@infinite-table/infinite-react/theme/minimalist.css'
-import '@infinite-table/infinite-react/theme/ocean.css'
-import '@infinite-table/infinite-react/theme/terminal.css'
-import '@infinite-table/infinite-react/theme/sheet.css'
-import '@infinite-table/infinite-react/theme/paper.css'
+```ts file="index.snippet.tsx" region="theme-css-imports"
 ```
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
@@ -61,27 +53,19 @@ To apply a theme (except the default one), you have to set the className `"infin
 
 You will want to apply the theme name and theme mode classNames to the same element, so you'll end up with a className like `"infinite-theme-name--minimalist infinite-theme-mode--dark"`.
 
-```tsx title="Applying the minimalist theme with dark mode explicitly"
-<body className="infinite-theme-mode--dark infinite-theme-name--minimalist">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</body>
+```tsx file="index.snippet.tsx" region="applying-the-minimalist-theme-with-dark-mode" title="Applying the minimalist theme with dark mode explicitly"
 ```
 
 
 
-<Snippet>
-
-<Description>
+<DemoDescription>
 
 Example configured with `minimalist` theme and `dark` mode by default.
-</Description>
 
-```tsx live title="Theme switching demo - defaults to minimalist theme in dark mode" size="md" viewMode="preview" files="theme-switching-minimalist-theme-default-example.page.tsx,columns.ts"
+</DemoDescription>
+
+```tsx file="theme-switching-minimalist-theme-default-example.demo.tsx" title="Theme switching demo - defaults to minimalist theme in dark mode"
 ```
-
-</Snippet>
 
 
 ## Theme mode - light or dark
@@ -92,24 +76,12 @@ To explicitly apply the light mode, apply the className `"infinite-theme-mode--l
 
 To explicitly apply the dark mode, apply the className `"infinite-theme-mode--dark"` to any parent element of the `<InfiniteTable />` component.
 
-```tsx title="Explicitly applying light mode via container className"
-<div className="infinite-theme-mode--light">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</div>
+```tsx file="index.snippet.tsx" region="explicitly-applying-light-mode-via-container" title="Explicitly applying light mode via container className"
 ```
 
 If instead you specify a `infinite-theme-mode--dark` CSS className, the dark mode will be applied
 
-```tsx title="Explicitly applying dark theme via container className"
-<body className="infinite-theme-mode--dark">
-  <div>
-    <DataSource {...dataSouceProps}>
-      <InfiniteTable {...props} />
-    </DataSource>
-  </div>
-</body>
+```tsx file="index.snippet.tsx" region="explicitly-applying-dark-theme-via-container" title="Explicitly applying dark theme via container className"
 ```
 
 
@@ -117,8 +89,7 @@ If instead you specify a `infinite-theme-mode--dark` CSS className, the dark mod
 Example configured with `default` theme and `light` mode by default.
 </Description>
 
-```tsx live title="Theme switching demo - defaults to light theme" size="md" viewMode="preview"  files="theme-switching-example.page.tsx,columns.ts"
-
+```tsx file="theme-switching-example.demo.tsx" title="Theme switching demo - defaults to light theme"
 ```
 
 <Note>
@@ -135,12 +106,7 @@ Density is independent of the theme, and works with any of them. Apply one of th
 - `infinite-density--comfortable` - the default
 - `infinite-density--spacious`
 
-```tsx title="Using the compact density"
-<div className="infinite-theme-name--minimalist infinite-density--compact">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</div>
+```tsx file="index.snippet.tsx" region="using-the-compact-density" title="Using the compact density"
 ```
 
 The density scales the sizes defined by the theme: the row height, the column header height, the cell and header cell paddings, the spacing of the menu items (column menu, context menus, filter operator menu), of the column filter editors and of the grouping toolbar items, and (slightly) the font size. Since it's relative to the theme, a dense theme with the `compact` density is denser still.
@@ -163,15 +129,8 @@ Under the hood, the density classNames set the `--infinite-density-scale` CSS va
 }
 ```
 
-<Sandpack title="Changing the density">
-
-```tsx file="density-example.page.tsx"
+```tsx file="density-example.demo.tsx" title="Changing the density"
 ```
-
-```tsx file="columns.ts"
-```
-
-</Sandpack>
 
 ## Icons
 
@@ -202,15 +161,8 @@ The available icon variables are:
 
 When the variables are not specified, the default icons are rendered (as inline SVG). The variables work the same way in React and Vue.
 
-<Sandpack title="Replacing the icons via CSS variables">
-
-```tsx file="custom-icons-example.page.tsx"
+```tsx file="custom-icons-example.demo.tsx" title="Replacing the icons via CSS variables"
 ```
-
-```tsx file="columns.ts"
-```
-
-</Sandpack>
 
 <Note>
 
@@ -232,57 +184,37 @@ The `minimalist` theme is inspired from minimalistic designs and is a good choic
 
 The `terminal` theme is made for dense, data-heavy screens, like trading desks: a monospace font with tabular numbers (so numbers line up), compact rows, hairline dividers and green/red flashing for values going up/down. It's designed dark-first, but it has a light mode too.
 
-```ts
-import '@infinite-table/infinite-react/theme/terminal.css'
+```ts file="index.snippet.tsx" region="terminal-theme"
 ```
 
-```tsx
-<div className="infinite-theme-name--terminal infinite-theme-mode--dark">
-  <DataSource {...dataSouceProps}>
-    <InfiniteTable {...props} />
-  </DataSource>
-</div>
+```tsx file="index.snippet.tsx" region="terminal-theme-class-names"
 ```
 
 It works with the density classNames - since the theme is already dense, `infinite-density--compact` makes it even denser.
 
-<Sandpack title="Terminal theme, with flashing cells">
-
-```tsx file="terminal-theme-example.page.tsx"
+```tsx file="terminal-theme-example.demo.tsx" title="Terminal theme, with flashing cells"
 ```
-
-</Sandpack>
 
 ### Sheet theme
 
 The `sheet` theme looks like a spreadsheet: full gridlines, sharp corners, an active cell with a thick border and a fill handle, and a header that looks like the column headers of a spreadsheet. It has a light and a dark mode.
 
-```ts
-import '@infinite-table/infinite-react/theme/sheet.css'
+```ts file="index.snippet.tsx" region="sheet-theme"
 ```
 
 The first column pinned at the start (see <PropLink name="columnPinning" />) is styled like the row headers of a spreadsheet - so if you want row numbers, add a column that renders `rowInfo.indexInAll + 1` and pin it at the start.
 
-<Sandpack title="Sheet theme, with a row number column">
-
-```tsx file="sheet-theme-example.page.tsx"
+```tsx file="sheet-theme-example.demo.tsx" title="Sheet theme, with a row number column"
 ```
-
-</Sandpack>
 
 ### Paper theme
 
 The `paper` theme is borderless and airy: hairline row separators, a subtle hover, selected rows painted as rounded pills, and its own icon set (rounded strokes) - a good fit for document-like and productivity apps. It has a light and a dark mode.
 
-```ts
-import '@infinite-table/infinite-react/theme/paper.css'
+```ts file="index.snippet.tsx" region="paper-theme"
 ```
 
 Its icons are set via the `--infinite-icon-*` CSS variables (see [Icons](#icons)), so you can replace any of them, or reuse them with another theme.
 
-<Sandpack title="Paper theme, with selected rows">
-
-```tsx file="paper-theme-example.page.tsx"
+```tsx file="paper-theme-example.demo.tsx" title="Paper theme, with selected rows"
 ```
-
-</Sandpack>

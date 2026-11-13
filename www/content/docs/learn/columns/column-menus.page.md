@@ -9,29 +9,7 @@ All columns in the Infinite Table have a default menu, which can be customized o
 
 To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumnMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
 
-```tsx title="Customizing-column-menu"
-function getColumnMenuItems(items, { column }) {
-  if (column.id === 'firstName') {
-    // you can adjust the default items for a specific column
-    items.splice(0, 0, {
-      key: 'firstName',
-      label: 'First name menu item',
-      onClick: () => {
-        console.log('Hey there!');
-      },
-    });
-  }
-
-  // or for all columns
-  items.push({
-    key: 'hello',
-    label: 'Hello World',
-    onClick: () => {
-      alert('Hello World from column ' + column.id);
-    },
-  });
-  return items;
-}
+```tsx file="column-menus.snippet.tsx" region="customizing-column-menu" title="Customizing-column-menu"
 ```
 
 <Note>
@@ -42,21 +20,16 @@ If you want to dynamically decide whether a column should show a menu or not, yo
 
 </Note>
 
-<Sandpack title="Custom column menu items and custom menu icon">
-
-<Description>
+<DemoDescription>
 
 In this example, the currency and preferredLanguage columns have a custom icon for triggering the column context menu.
 
 In addition, the `preferredLanguage` column has a custom header that shows a button for triggering the column context menu.
 
-</Description>
+</DemoDescription>
 
-```tsx file="$DOCS/reference/getColumnMenuItems-example.page.tsx"
-
+```tsx file="/docs/reference/getColumnMenuItems-example.demo.tsx" title="Custom column menu items and custom menu icon"
 ```
-
-</Sandpack>
 
 As you can see in the demo above, you can use <PropLink name="getColumnMenuItems" /> to return the default items (received as the first parameter to the function), or another totally different array. We chose to pass the default items to the function, so you can use them as a starting point and adjust them to your needs.
 
@@ -64,52 +37,14 @@ Each item in the array you return from <PropLink name="getColumnMenuItems" /> sh
 
 It's also possible to create items with submenus. For this, specify a `menu` property in the item, with an `items` array. Each item in the `items` array should have a `key` and a `label` property, as you would expect.
 
-```tsx {8} title="Menu_items_with_submenus"
-function getColumnMenuItems(items, { column }) {
-  const items = [
-    {
-      key: 'translate',
-      label: 'Translate',
-      menu: {
-        items: [
-          {
-            key: 'translateToEnglish',
-            label: 'English',
-            onAction: () => {
-              console.log('Translate to English');
-            },
-          },
-          {
-            key: 'translateToFrench',
-            label: 'French',
-            onAction: () => {
-              console.log('Translate to French');
-            },
-          },
-        ],
-      },
-    },
-  ];
-
-  return items;
-}
+```tsx file="column-menus.snippet.tsx" region="menu-items-with-submenus" title="Menu_items_with_submenus"
 ```
 
 ## Custom menu icon
 
 To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> prop. This prop can be a boolean or a function that returns a `ReactNode`.
 
-```tsx title="custom-menu-icon"
-const columns = {
-  name: {
-    field: 'firstName',
-    renderMenuIcon: () => <div>🌎</div>,
-  },
-  salary: {
-    field: 'salary',
-    renderMenuIcon: false,
-  },
-};
+```tsx file="column-menus.snippet.tsx" region="custom-menu-icon" title="custom-menu-icon"
 ```
 
 <Note>

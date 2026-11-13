@@ -100,19 +100,14 @@ That batching matters when updates are frequent. It lets your app react to a str
 
 The live demo below uses the same example from the [Live Updates docs page](/docs/learn/examples/live-updates-example). It loads 10k rows and, when started, updates five rows from the visible viewport every 30ms.
 
-<Sandpack title="Real-time DataSource updates with 10k rows" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Click **Start updates** to update visible rows in real time. The example uses the DataSource API to change individual rows without replacing the whole dataset.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/working-with-data/realtime-updates-example.page.tsx"
-
+```tsx file="/docs/learn/working-with-data/realtime-updates-example.demo.tsx" title="Real-time DataSource updates with 10k rows"
 ```
-
-</Sandpack>
 
 ## When to use this pattern
 

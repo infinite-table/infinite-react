@@ -165,13 +165,26 @@ export function scanWrappers(text, fences) {
     // a wrapper tag shown inside a code fence is not a wrapper
     if (fences.some((fence) => fence.start <= start && fence.end >= end)) continue;
     const description = /<Description>([\s\S]*?)<\/Description>/.exec(match[3]);
+    // offsets of the description's content in the page
+    const bodyStart = start + match[0].indexOf('>') + 1;
+    const descriptionRange = description
+      ? {
+          start: bodyStart + description.index + '<Description>'.length,
+          end: bodyStart + description.index + description[0].length - '</Description>'.length,
+        }
+      : null;
+    const inside = fences.filter((fence) => fence.start >= start && fence.end <= end);
+    const inDescription = (fence) =>
+      descriptionRange != null && fence.start >= descriptionRange.start && fence.end <= descriptionRange.end;
     wrappers.push({
       start,
       end,
       name: match[1],
       attrs: parseAttributes(match[2]),
-      description: description ? description[1].trim() : null,
-      fences: fences.filter((fence) => fence.start >= start && fence.end <= end),
+      descriptionRange,
+      // the example's own fences; a fence in the description is ordinary inline code
+      fences: inside.filter((fence) => !inDescription(fence)),
+      descriptionFences: inside.filter(inDescription),
     });
   }
   return wrappers;

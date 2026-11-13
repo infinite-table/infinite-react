@@ -59,19 +59,14 @@ That is the classic “compare compensation across geography while keeping role 
 
 The demo below groups developers, pivots the salary aggregation into generated columns, and starts with groups collapsed so the cross-tab is easy to scan.
 
-<Sandpack title="Pivoting with generated columns" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Expand a group to see aggregated salary values distributed across generated pivot columns. Full walkthrough: [pivoting overview](/docs/learn/grouping-and-pivoting/pivoting/overview).
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-example.demo.tsx" title="Pivoting with generated columns"
 ```
-
-</Sandpack>
 
 In product terms, the same shape answers questions like:
 
@@ -138,19 +133,14 @@ const pivotBy = [{ field: 'stack' }, { field: 'canDesign' }];
 />
 ```
 
-<Sandpack title="Pivot totals and grand-total columns" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Pivot total columns sit at the end of each stack group. Grand-total columns are placed at the start of the grid.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/reference/pivot-grand-total-column-position-example.page.tsx"
-
+```tsx file="/docs/reference/pivot-grand-total-column-position-example.demo.tsx" title="Pivot totals and grand-total columns"
 ```
-
-</Sandpack>
 
 For a commerce grid, that reads as: revenue for each region/channel cell, a subtotal per region, and a grand total for the selected filters — spreadsheet expectations, without building spreadsheet UI yourself.
 
@@ -179,19 +169,14 @@ const aggregationReducers = {
 };
 ```
 
-<Sandpack title="Generated pivot columns inherit column config" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Aggregations bound to `salary` / `age` pick up the original column styling. See also [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns).
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Generated pivot columns inherit column config"
 ```
-
-</Sandpack>
 
 ### Rename raw values into business labels
 
@@ -215,19 +200,14 @@ const pivotBy: DataSourcePivotBy<Developer>[] = [
 
 That callback turns raw pivot keys into labels operators recognize, while column generation stays automatic.
 
-<Sandpack title="Custom headers on generated pivot columns" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 The `canDesign` pivot values are rewritten to Designer / Non-designer headers. Try collapsing and expanding groups to see the column groups stay aligned.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivoting-customize-column-example.demo.tsx" title="Custom headers on generated pivot columns"
 ```
-
-</Sandpack>
 
 A warehouse dashboard might look like:
 
@@ -298,19 +278,14 @@ Typical SaaS mappings:
 - **Activation by acquisition channel** — `groupBy`: `week` → `cohort`; `pivotBy`: `channel`; aggregation: `avg(activationRate)`
 - **Churn by region and product** — `groupBy`: `region`; `pivotBy`: `product` → `plan`; aggregation: `sum(churnedMrr)`
 
-<Sandpack title="Server-side pivoting" size="md" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 Grouping and pivot aggregations are loaded remotely. Expand countries to fetch nested groups with pivot values already computed on the server.
 
-</Description>
+</DemoDescription>
 
-```tsx live file="$DOCS/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.page.tsx"
-
+```tsx file="/docs/learn/grouping-and-pivoting/pivoting/remote-pivoting-example.demo.tsx" title="Server-side pivoting"
 ```
-
-</Sandpack>
 
 For very large trees, the same guide covers [lazy-load batching](/docs/learn/grouping-and-pivoting/pivoting/overview#another-pivoting-example-with-batching) so groups stream in pages while the pivot column model stays consistent.
 

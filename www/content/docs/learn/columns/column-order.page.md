@@ -15,13 +15,9 @@ You don't have to specify an initial column order or any other callback props to
 
 If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> prop, which gives you full control over the order of the columns - in this case, you have to update the column order as a result of user interaction, by specifying <PropLink name="onColumnOrderChange" />.
 
-<Sandpack title="Column reordering via drag & drop with controlled `columnOrder`">
-
-```tsx file="$DOCS/reference/columnOrder-example.page.tsx"
-
+<DemoTitle>Column reordering via drag & drop with controlled `columnOrder`</DemoTitle>
+```tsx file="/docs/reference/columnOrder-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -33,17 +29,14 @@ For more advanced control on visibility, see <PropLink name="columnVisibility" /
 
 The <PropLink name="columnOrder" /> array can contain any number of columns, even duplicate columns or random strings - the behavior is that any column ids which are not found in the <PropLink name="columns" /> object are ignored, while columns mentioned multiple times will be included multiple times, as indicated in the column order. Displaying the same column twice is a perfectly valid use case.
 
-<Sandpack title="Advanced column order example">
+<DemoDescription>
 
-<Description>
 In this example, <PropLink name="columnOrder" /> is used as a controlled property, also as a way of limiting the visible columns.
-</Description>
 
-```tsx file="$DOCS/reference/columnOrder-advanced-example.page.tsx"
+</DemoDescription>
 
+```tsx file="/docs/reference/columnOrder-advanced-example.demo.tsx" title="Advanced column order example"
 ```
-
-</Sandpack>
 
 <Note>
 

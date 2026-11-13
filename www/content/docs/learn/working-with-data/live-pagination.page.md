@@ -22,13 +22,8 @@ Basically <DataSourcePropLink name="onDataParamsChange" /> is triggered whenever
 
 Below you can see a live pagination demo implemented in combination with [react-query](https://react-query.tanstack.com/).
 
-<Sandpack title="Live pagination - with react-query" deps="react-query">
-
-```ts file="live-pagination-example.page.tsx"
-
+```tsx file="live-pagination-example.demo.tsx" title="Live pagination - with react-query"
 ```
-
-</Sandpack>
 
 In the example above, play around and scroll the table and also make sure to try sorting (eg: sort by country or city).
 

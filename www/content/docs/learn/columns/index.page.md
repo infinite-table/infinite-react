@@ -21,46 +21,7 @@ The column ids are used in many places - like defining the <PropLink name="colum
 
 </Note>
 
-```ts
-export type Employee = {
-  id: number;
-  companyName: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  city: string;
-  department: string;
-  team: string;
-  salary: number;
-
-};
-
-// InfiniteTableColumn is a generic type, you have to bind it to a specific data-type
-import { InfiniteTableColumn } from '@infinite-table/infinite-react';
-
-// we're binding it here to the `Employee` type
-// which means the `column.field` has to be `keyof Employee`
-export const columns: Record<string, InfiniteTableColumn<Employee>> = {
-  'firstName':
-  {
-    field: 'firstName',
-    header: 'First Name',
-  },
-  'country':
-  {
-    field: 'country',
-  },
-  'city':
-  {
-    field: 'city'
-  },
-  'salary':
-  {
-    field: 'salary',
-    type: 'number'
-  },
-}
-<InfiniteTable columns={columns} />
+```ts file="index.snippet.tsx" region="intro"
 ```
 
 <Note>
@@ -71,13 +32,8 @@ You should use `React.useCallback` / `React.useMemo` / `React.useState` to make 
 
 </Note>
 
-<Sandpack title="Basic Column Configuration">
-
-```ts file="basic-columns-example.page.tsx"
-
+```tsx file="basic-columns-example.demo.tsx" title="Basic Column Configuration"
 ```
-
-</Sandpack>
 
 <YouWillLearnCard inline title="Learn more about customizing Column Rendering" path="./columns/column-rendering">
 Find out how to render custom content inside columns or even take full control of column cells and header.
@@ -100,18 +56,7 @@ Find out how to use column types to customize the appearance and behaviour of yo
 
 The implicit column order is the order in which columns have been defined in the <PropLink name="columns" /> object. You can however control that explicitly by using the `columnOrder: string[]` prop.
 
-```tsx
-
-const columnOrder = ['firstName','id','curency']
-
-const App = () => {
-  return <DataSource<DATA_TYPE> primaryKey={"id"} dataSource={...}>
-    <InfiniteTable<DATA_TYPE>
-      columnOrder={columnOrder}
-      onColumnOrderChange={(columnOrder: string[]) => {}}
-    />
-  </DataSource>
-}
+```tsx file="index.snippet.tsx" region="column-order"
 ```
 
 The <PropLink name="columnOrder" /> prop is an array of strings, representing the column ids. A column id is the key of the column in the <PropLink name="columns" /> object.
@@ -128,13 +73,8 @@ The <PropLink name="columnOrder" /> array can contain identifiers that are not y
 When using controlled <PropLink name="columnOrder" />, make sure you also update the order by using the <PropLink name="onColumnOrderChange" /> callback prop.
 </Note>
 
-<Sandpack title="Column Order demo, with firstName col displayed twice">
-
-```tsx file="$DOCS/reference/columnOrder-example.page.tsx"
-
+```tsx file="/docs/reference/columnOrder-example.demo.tsx" title="Column Order demo, with firstName col displayed twice"
 ```
-
-</Sandpack>
 
 <Note>
 

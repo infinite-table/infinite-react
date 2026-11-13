@@ -22,12 +22,8 @@ To specify which column will have the expand/collapse icon, set the <PropLink na
 </Note>
 
 
-<Sandpack title="Basic TreeGrid example" size="lg">
-
-```tsx file="basic-tree-grid-example.page.tsx"
+```tsx file="basic-tree-grid-example.demo.tsx" title="Basic TreeGrid example" height="large"
 ```
-
-</Sandpack>
 
 Throughout the docs for the TreeGrid, we will use an example data source that illustrates file system data, as that will be familiar to most people.
 
@@ -38,29 +34,7 @@ When referring to rows in the TreeGrid, we'll prefer to use the term `"node"` in
 
 Also in the context of the TreeGrid, we'll use the term `"node path"` instead of row id. The `"node path"` is the array with the ids of all the parent nodes leading down to the current node. The node path includes the id of the current node.
 
-```tsx {2} title="Node path vs row id"
-const data = [
-  { id: '1', name: 'Documents',                // path: ['1']
-    children: [
-      { id: '10', name: 'Private',             // path: ['1', '10']
-        children: [
-          { id: '100', name: 'Report.docx' },  // path: ['1', '10', '100'] 
-          { id: '101', name: 'Vacation.docx' },// path: ['1', '10', '101']
-        ],
-      },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Downloads',                        // path: ['2']
-    children: [
-      {
-        id: '20',
-        name: 'cat.jpg',                      // path: ['2', '20']
-      },
-    ],
-  },
-];
+```tsx file="overview.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id"
 ```
 It's important to understand node paths, as that will be the primary way you'll interact with the TreeGrid/TreeDataSource.
 
@@ -80,44 +54,12 @@ When using the <TypeLink name="InfiniteTableRowInfo" /> type, you can check for 
 
 When using the `<TreeDataSource />` component, the data you specify in your `<DPropLink name="dataSource" />` should resolve to a nested array - with the `nodesKey` containing the child items for each tree node.
 
-```tsx {2} title="Using the nodesKey prop to specify where the node children are"
-<TreeDataSource
-  nodesKey="children"
-  primaryKey="id"
-  data={dataSource}
-/>
+```tsx file="overview.snippet.tsx" region="using-the-nodeskey-prop-to-specify-where-the" title="Using the nodesKey prop to specify where the node children are"
 ```
 
 With the `nodesKey` set to `"children"`, the `<TreeDataSource />` will look for the `children` property on each item in the data array, and use that to determine the child nodes for each tree node. Nodes without a `"children"` property are assumed to be leaf nodes.
 
-```tsx {2} title="Nested data structure for the TreeDataSource component"
-const dataSource = [
-  {
-    id: '1',
-    name: 'Documents',
-    children: [
-      {
-        id: '10',
-        name: 'Private',
-        children: [
-          {
-            id: '100',
-            name: 'Report.docx',
-          },
-          {
-            id: '101',
-            name: 'Vacation.docx',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Downloads',
-    children: [] // will be a parent node, with no children
-  },
-];
+```tsx file="overview.snippet.tsx" region="nested-data-structure-for-the-treedatasource" title="Nested data structure for the TreeDataSource component"
 ```
 
 
@@ -129,12 +71,8 @@ By default, if no expand state is specified, the tree will be rendered as fully 
 
 However, you can choose to specify the expand state with a default value and then with specific values for node paths (or node ids)
 
-<Sandpack title="Using controlled tree expand state" size="large">
-
-```ts file="$DOCS/reference/datasource-props/tree-controlled-expandstate-example.page.tsx"
+```tsx file="/docs/reference/datasource-props/tree-controlled-expandstate-example.demo.tsx" title="Using controlled tree expand state" height="large"
 ```
-
-</Sandpack>
 
 
 When using node paths for <DPropLink name="treeExpandState" />, the object should have the following properties:
@@ -143,19 +81,7 @@ When using node paths for <DPropLink name="treeExpandState" />, the object shoul
 - `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
 - `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
-```tsx title="Example of treeExpandState with node paths"
-const treeExpandState = {
-  defaultExpanded: true,
-  collapsedPaths: [
-    ['1', '10'],
-    ['2', '20'],
-    ['5']
-  ],
-  expandedPaths: [
-    ['1', '4'],
-    ['5','nested node in 5'],
-  ],
-};
+```tsx file="overview.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths"
 ```
 
 <Note>
@@ -169,9 +95,5 @@ So you can combine the expanded/collapsed paths to achieve very complex tree lay
 
 The <PropLink name="wrapRowsHorizontally" /> prop can be used to enable horizontal layout, just like non-tree DataGrids.
 
-<Sandpack title="TreeGrid with horizontal layout" >
-
-```tsx file="tree-grid-horizontal-layout-example.page.tsx"
+```tsx file="tree-grid-horizontal-layout-example.demo.tsx" title="TreeGrid with horizontal layout"
 ```
-
-</Sandpack>

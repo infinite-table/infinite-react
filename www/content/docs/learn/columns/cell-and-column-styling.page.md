@@ -7,46 +7,21 @@ description: Styling columns in the InfiniteTable React DataGrid via both style 
 
 The most straightforward way to style the cells in a column is to use the <PropLink name="columns.style">column.style</PropLink> property as an object.
 
-```ts title="Styling a column in the DataGrid"
-const column = {
-  firstName: {
-    style: {
-      color: 'red',
-      fontWeight: 'bold',
-    },
-  },
-};
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-in-the-datagrid" title="Styling a column in the DataGrid"
 ```
 
-```tsx live title="Using column.style as an object" file="column-style-object-example.page.tsx"
-
+```tsx file="column-style-object-example.demo.tsx" title="Using column.style as an object"
 ```
 
 The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `React.CSSProperties`) or a function that returns an object (of the same type).
 
 Using functions for the <PropLink name="columns.style">column.style</PropLink> property allows you to style the cells based on the cell's value or other properties.
 
-```ts {6} title="Styling a column using a style function"
-const columns = {
-  salary: {
-    field: 'salary',
-    type: 'number',
-    style: ({ value, data, column, rowInfo }) => {
-      return {
-        color: value && value > 100_000 ? 'red' : 'tomato',
-      };
-    },
-  },
-};
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-style-function" title="Styling a column using a style function"
 ```
 
-<Sandpack title="Using column.style as a function">
-
-```tsx file="column-style-fn-example.page.tsx"
-
+```tsx file="column-style-fn-example.demo.tsx" title="Using column.style as a function"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -65,40 +40,16 @@ Mirroring the behavior already described for the <PropLink name="columns.style">
 
 It can be used as a string or a function that returns a string.
 
-```ts title="Styling a column using column.className"
-const columns = {
-  firstName: {
-    className: 'first-name-column',
-  },
-};
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-column-classname" title="Styling a column using column.className"
 ```
 
-<Sandpack title="Using column.className as an string">
-
-```tsx files=["column-className-string-example.page.tsx","coloring.module.css"]
-
+```tsx file="column-className-string-example.demo.tsx" title="Using column.className as an string"
 ```
-
-</Sandpack>
 
 Using functions for the <PropLink name="columns.className">column.className</PropLink> property allows you to style the cells based on the cell's data/value/rowInfo etc.
 
-```ts {6} title="Styling a column using a className function"
-const columns = {
-  salary: {
-    field: 'salary',
-    type: 'number',
-    className: ({ value, data, column, rowInfo }) => {
-      return value && value > 100_000 ? 'red-color' : 'tomato-color',
-    },
-  },
-}
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-classname-function" title="Styling a column using a className function"
 ```
 
-<Sandpack title="Using column.className as a function">
-
-```tsx files=["column-className-fn-example.page.tsx","coloring.module.css"]
-
+```tsx file="column-className-fn-example.demo.tsx" title="Using column.className as a function"
 ```
-
-</Sandpack>

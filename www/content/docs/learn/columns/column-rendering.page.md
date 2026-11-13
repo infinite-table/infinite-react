@@ -27,11 +27,7 @@ This is important because `InfiniteTable` uses virtualization heavily, in both _
 
 The simplest way to change what's being rendered in a column is to use the `valueGetter` prop and return a new value for the column.
 
-```tsx
-const nameColumn: InfiniteTableColumn<Employee> = {
-  header: 'Employee Name',
-  valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
-};
+```tsx file="column-rendering.snippet.tsx" region="change-the-value-using-valuegetter"
 ```
 
 <Note>
@@ -42,13 +38,8 @@ Note that the <PropLink name="columns.valueGetter"/> is only called for non-grou
 
 </Note>
 
-<Sandpack title="Column with custom valueGetter">
-
-```tsx file="$DOCS/reference/column-valueGetter-example.page.tsx"
-
+```tsx file="/docs/reference/column-valueGetter-example.demo.tsx" title="Column with custom valueGetter"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -93,62 +84,33 @@ Inside the <PropLink name="columns.renderValue"/> and <PropLink name="columns.re
 
 This is especially useful when inside those functions you render a custom component that needs access to the same information.
 
-```tsx
-type Developer = { country: string; name: string; id: string };
-
-const CountryInfo = () => {
-  const { data, rowInfo, value } = useInfiniteColumnCell<Developer>();
-
-  return <div>Country: {value}</div>;
-};
-
-const columns = {
-  country: {
-    field: 'country',
-    renderValue: () => <CountryInfo />,
-  },
-};
+```tsx file="column-rendering.snippet.tsx" region="use-rendervalue-and-render-to-display-custom"
 ```
 
 </Note>
 
-<Sandpack title="Column with custom renderValue">
-
-```tsx file="$DOCS/reference/column-renderValue-example.page.tsx"
-
+```tsx file="/docs/reference/column-renderValue-example.demo.tsx" title="Column with custom renderValue"
 ```
-
-</Sandpack>
 
 Changing the group icon using `render`. The icon can also be changed using <PropLink name="columns.renderGroupIcon" />.
 
-<Sandpack title="Column with render - custom expand/collapse icon">
-
-<Description>
+<DemoDescription>
 
 This snippet shows overriding the group collapse/expand tool via the <PropLink name="columns.render" /> function.
 
-</Description>
+</DemoDescription>
 
-```tsx file="$DOCS/reference/column-render-example.page.tsx"
-
+```tsx file="/docs/reference/column-render-example.demo.tsx" title="Column with render - custom expand/collapse icon"
 ```
 
-</Sandpack>
-
-<Sandpack title="Column with custom expand/collapse tool via renderGroupIcon">
-
-<Description>
+<DemoDescription>
 
 This snippet shows how you can override the group collapse/expand tool via the <PropLink name="columns.renderGroupIcon" /> function.
 
-</Description>
+</DemoDescription>
 
-```tsx file="$DOCS/reference/column-renderGroupIcon-example.page.tsx"
-
+```tsx file="/docs/reference/column-renderGroupIcon-example.demo.tsx" title="Column with custom expand/collapse tool via renderGroupIcon"
 ```
-
-</Sandpack>
 
 ## Using hooks for custom rendering
 
@@ -158,66 +120,21 @@ Inside the <PropLink name="columns.render" /> and <PropLink name="columns.render
 
 When you're inside a rendering function for a column cell, you can use <HookLink name="useInfiniteColumnCell">useInfiniteColumnCell hook</HookLink> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions.
 
-```tsx
-import {
-  useInfiniteColumnCell,
-  InfiniteTableColumn,
-} from '@infinite-table/infintie-react';
-
-function CustomName() {
-  const { data, rowInfo } = useInfiniteColumnCell<Employee>();
-
-  return (
-    <>
-      <b>{data.firstName}</b>, {data.lastName}
-    </>
-  );
-}
-
-const nameColumn: InfiniteTableColumn<Employee> = {
-  header: 'Employee Name',
-  renderValue: () => <CustomName />,
-};
+```tsx file="column-rendering.snippet.tsx" region="use-infinite-column-cell"
 ```
 
-<Sandpack title="Column with render & useInfiniteColumnCell">
-
-```tsx file="$DOCS/reference/column-render-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/column-render-hooks-example.demo.tsx" title="Column with render & useInfiniteColumnCell"
 ```
-
-</Sandpack>
 
 ### Hook: <HookLink name="useInfiniteHeaderCell" />
 
 For column headers, you can use <HookLink name="useInfiniteHeaderCell" /> hook to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function.
 
-```tsx
-import {
-  useInfiniteHeaderCell,
-  InfiniteTableColumn,
-} from '@infinite-table/infintie-react';
-
-function CustomHeader() {
-  const { column } = useInfiniteHeaderCell<Employee>();
-
-  return <b>{column.field}</b>;
-}
-
-const nameColumn: InfiniteTableColumn<Employee> = {
-  header: 'Employee Name',
-  field: 'firstName',
-  header: () => <CustomHeader />,
-};
+```tsx file="column-rendering.use-infinite-header-cell.snippet.tsx" region="use-infinite-header-cell"
 ```
 
-<Sandpack title="Column Header with render & useInfiniteHeaderCell">
-
-```tsx file="$DOCS/reference/column-header-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/column-header-hooks-example.demo.tsx" title="Column Header with render & useInfiniteHeaderCell"
 ```
-
-</Sandpack>
 
 ## Use <PropLink name="columns.components">column.components</PropLink> to customize the column
 
@@ -225,49 +142,14 @@ There are cases when custom rendering via the <PropLink name="columns.render" />
 
 For such scenarios, you can specify `column.components.HeaderCell` and `column.components.ColumnCell`, which will use those components to render the DOM nodes of the column header and column cells respectively.
 
-```tsx
-import { InfiniteTableColumn } from '@infinite-table/infintie-react';
-
-const ColumnCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, rowInfo } = useInfiniteColumnCell<Developer>();
-
-  return (
-    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {props.children}
-    </div>
-  );
-};
-
-const HeaderCell = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, sortTool } = useInfiniteHeaderCell<Developer>();
-
-  return (
-    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {sortTool}
-      First name
-    </div>
-  );
-};
-
-const nameColumn: InfiniteTableColumn<Developer> = {
-  header: 'Name',
-  field: 'firstName',
-  components: {
-    ColumnCell,
-    HeaderCell,
-  },
-};
+```tsx file="column-rendering.use-column-components-to-customize-the-column.snippet.tsx" region="use-column-components-to-customize-the-column"
 ```
 
 <Note>
 
 When using custom components, make sure you get `domRef` from the corresponding hook (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
 
-```tsx
-// inside a component specified in column.components.ColumnCell
-const { domRef } = useInfiniteColumnCell<DATA_TYPE>();
-
-return <div ref={domRef}>...</div>;
+```tsx file="column-rendering.snippet.tsx" region="use-column-components-to-customize-the-column"
 ```
 
 Also you have to make sure you spread all other `props` you receive in the component, as they are `HTMLProps` that need to end-up in the DOM (eg: `className` for theming and default styles, etc).
@@ -276,13 +158,8 @@ Both <PropLink name="columns.components.ColumnCell">components.ColumnCell</PropL
 
 </Note>
 
-<Sandpack title="Custom components">
-
-```tsx file="$DOCS/reference/column-components-example.page.tsx"
-
+```tsx file="/docs/reference/column-components-example.demo.tsx" title="Custom components"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -320,46 +197,14 @@ After the <PropLink name="columns.valueGetter">valueGetter</PropLink> is called,
 
 This is called with more details about the current cell
 
-```tsx
-const column: InfiniteTableColumn<T> = {
-  // the valueGetter can be useful when rows are nested objects
-  // or you want to compose multiple values from the row
-  valueGetter: ({ data }) => {
-    return data.person.salary * 10;
-  },
-  valueFormatter: ({
-    value,
-    isGroupRow,
-    data,
-    field,
-    rowInfo,
-    rowSelected,
-    rowActive,
-  }) => {
-    // the value here is what the `valueFormatter` returned
-    return `USD ${value}`;
-  },
-};
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value"
 ```
 
 After <PropLink name="columns.valueGetter">valueGetter</PropLink> and <PropLink name="columns.valueFormatter">valueFormatter</PropLink> are called, the resulting value is the actual value used for the cell. This value will also be assigned to `renderBag.value`
 
 When <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> are called by `InfiniteTable`, both `value` and `renderBag` will be available as properties to the arguments object.
 
-```tsx {3,12}
-const column: InfiniteTableColumn<T> = {
-  valueGetter: () => 'world',
-  renderValue: ({ value, renderBag, rowInfo }) => {
-    // at this stage, `value` is 'world' and `renderBag.value` has the same value, 'world'
-    return <b>{value}</b>;
-  },
-
-  render: ({ value, renderBag, rowInfo }) => {
-    // at this stage `value` is 'world'
-    // but `renderBag.value` is <b>world</b>, as this was the value returned by `renderValue`
-    return <div>Hello {renderBag.value}!</div>;
-  },
-};
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value-in-render"
 ```
 
 <Note>
@@ -379,21 +224,7 @@ Inside those functions, the `renderBag.value` refers to the value returned by th
 
 In a similar way to `renderBag.value`, the `renderBag.groupIcon` is also piped through to the <PropLink name="columns.render">render</PropLink> function.
 
-```tsx {2,9}
-const column: InfiniteTableColumn<T> = {
-  renderGroupIcon: ({ renderBag, toggleGroupRow }) => {
-    return <> [ {renderBag.groupIcon} ] </>;
-  },
-  render: ({ renderBag }) => {
-    return (
-      <>
-        {/* use the groupIcon from the renderBag */}
-        {renderBag.groupIcon}
-        {renderBag.value}
-      </>
-    );
-  },
-};
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-groupicon"
 ```
 
 <Note>
@@ -408,41 +239,7 @@ Also inside <PropLink name="columns.renderGroupIcon" />, you have access to `tog
 
 Like with the previous properties of `renderBag`, you can customize the `selectionCheckBox` (used when multiple selection is configured) to be piped-through - for columns that specify <PropLink name="columns.renderSelectionCheckBox" />.
 
-```tsx {2,25}
-const column: InfiniteTableColumn<T> = {
-  renderSelectionCheckBox: ({
-    renderBag,
-    rowSelected,
-    isGroupRow,
-    toggleCurrentRowSelection,
-    toggleCurrentGroupRowSelection,
-  }) => {
-    const toggle = isGroupRow
-      ? toggleCurrentGroupRowSelection
-      : toggleCurrentRowSelection;
-
-    // you could return renderBag.groupIcon to have the default icon
-
-    const selection =
-      rowSelected === null
-        ? '-' // we're in a group row with indeterminate state if rowSelected === null
-        : rowSelected
-        ? 'x'
-        : 'o';
-
-    return <div onClick={toggle}> [ {selection} ] </div>;
-  },
-  render: ({ renderBag }) => {
-    return (
-      <>
-        {/* use the selectionCheckBox from the renderBag */}
-        {renderBag.selectionCheckBox}
-        {renderBag.groupIcon}
-        {renderBag.value}
-      </>
-    );
-  },
-};
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-selectioncheckbox"
 ```
 
 To recap, here is the full list of the functions in the rendering pipeline, in order of invocation:

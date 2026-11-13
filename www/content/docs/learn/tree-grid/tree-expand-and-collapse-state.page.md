@@ -7,12 +7,8 @@ By default, the tree will be rendered with all nodes expanded. This is fine for 
 
 This is easy to achieve via the <DPropLink name="defaultTreeExpandState" /> prop. This is an uncontrolled prop and allows you to initially specify the expand/collapse state of the tree - all subsequent user updates will result in the tree state being updated to match the UI actions.
 
-<Sandpack title="Specifying an initial tree expand state" size="lg">
-
-```tsx file="tree-default-expand-collapse-example.page.tsx"
+```tsx file="tree-default-expand-collapse-example.demo.tsx" title="Specifying an initial tree expand state" height="large"
 ```
-
-</Sandpack>
 
 ## Understanding the tree expand state
 
@@ -27,19 +23,7 @@ When using node paths, the object should have the following properties:
 - `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
 - `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
-```tsx title="Example of treeExpandState with node paths"
-const treeExpandState = {
-  defaultExpanded: true,
-  collapsedPaths: [
-    ['1', '10'],
-    ['2', '20'],
-    ['5']
-  ],
-  expandedPaths: [
-    ['1', '4'],
-    ['5','nested node in 5'],
-  ],
-};
+```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths"
 ```
 
 2. With node ids
@@ -51,12 +35,7 @@ When using node ids, the object should have the following properties:
 - `expandedIds`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
 
-```tsx title="Example of treeExpandState with node ids"
-const treeExpandState = {
-  defaultExpanded: true,
-  collapsedIds: ['1', '2', '5'],
-  expandedIds: ['10', '20', 'nested node in 5'],
-};
+```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-ids" title="Example of treeExpandState with node ids"
 ```
 
 ## Reacting to user actions
@@ -81,11 +60,8 @@ If you want maximum control over the collapse/expand state, you should use the c
 
 This will allow you to own the collapse/expand state entirely - but make sure you use the <DPropLink name="onTreeExpandStateChange" /> callback to react to user actions or API calls being made to update the tree state.
 
-<Sandpack title="Using controlled expand/collapse state" size="lg">
-
-```tsx file="$DOCS/reference/datasource-props/tree-controlled-expandstate-example.page.tsx"
+```tsx file="/docs/reference/datasource-props/tree-controlled-expandstate-example.demo.tsx" title="Using controlled expand/collapse state" height="large"
 ```
-</Sandpack>
 
 <Note>
 

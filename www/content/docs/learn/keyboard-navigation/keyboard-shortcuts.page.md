@@ -8,12 +8,7 @@ The React DataGrid supports defining <PropLink name="keyboardShortcuts" code={fa
 
 A keyboard shortcut is defined as an object of the following shape:
   
-```ts
-{
-  key: string;
-  when?: (context) => boolean | Promise<boolean>;
-  handler: (context, event) => void | Promise<void>;
-}
+```ts file="keyboard-shortcuts.snippet.tsx" region="intro"
 ```
 
 The `key` definition is what you're used to from VS Code and other applications - it can be
@@ -38,18 +33,16 @@ Example combinations: `Cmd|Ctrl+Shift+Enter`, `Cmd|Ctrl+e`, `Cmd|Ctrl+Shift+i`.
 
 </Note>
 
-<Sandpack>
+<DemoDescription>
 
-<Description>
 Click on a cell and use the keyboard to navigate.
 
 Press `Shift+Enter` to show an alert with the current active cell position.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-initial-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-initial-example.demo.tsx"
 ```
-</Sandpack>
 
 <Note>
 
@@ -71,29 +64,12 @@ The second parameter of the `handler` function is the `event` object that trigge
 
 Infinite Table DataGrid comes with some predefined keyboard shorcuts.
 you can import from the `keyboardShortcuts` named export.
-```ts
-import { keyboardShortcuts } from '@infinite-table/infinite-react'
+```ts file="keyboard-shortcuts.snippet.tsx" region="predefined-keyboard-shortcuts"
 ```
 
 ### Instant Edit
 
-```ts {4,12}
-import {
-  DataSource,
-  InfiniteTable,
-  keyboardShortcuts
-} from '@infinite-table/infinite-react';
-
- function App() {
-  return <DataSource<Developer> primaryKey="id" data={dataSource}>
-    <InfiniteTable<Developer>
-      columns={columns}
-      keyboardShortcuts={[
-        keyboardShortcuts.instantEdit
-      ]}
-    />
-  </DataSource>
-}
+```ts file="keyboard-shortcuts.instant-edit.snippet.tsx" region="instant-edit"
 ```
 
 
@@ -103,14 +79,11 @@ For now, the only predefined keyboard shorcut is `keyboardShortcuts.instantEdit`
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Click on a cell and then start typing to edit the cell.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-shortcuts-instant-edit-example.page.tsx"
+```tsx file="/docs/reference/keyboard-shortcuts-instant-edit-example.demo.tsx"
 ```
-</Sandpack>

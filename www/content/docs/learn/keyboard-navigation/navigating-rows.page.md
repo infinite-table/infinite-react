@@ -6,19 +6,14 @@ To enable keyboard navigation for table rows, specify <PropLink name="keyboardNa
 
 When row navigation is enabled, clicking a row highlights it and the user can use the arrow keys to navigate the table rows.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Click on the table and use the arrow keys to navigate the rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-rows-initial-example.page.tsx"
-
+```tsx file="navigating-rows-initial-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -34,19 +29,14 @@ Other possible values for the <PropLink name="keyboardNavigation" /> prop, besid
 
 You can also specify an initial active row, by using <PropLink name="defaultActiveRowIndex">defaultActiveRowIndex=2</PropLink>. This tells the table that there should be a default active row, namely the one at index 2 (so the third row).
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This example starts with row at index `2` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-rows-uncontrolled-example.page.tsx"
-
+```tsx file="navigating-rows-uncontrolled-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Listening to active row changes
 
@@ -58,19 +48,14 @@ When you use controlled <PropLink name="activeRowIndex" />, make sure to use <Pr
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This example starts with row at index `2` already active and uses <PropLink name="onActiveRowIndexChange">onActiveRowIndexChange</PropLink> to update <PropLink name="activeRowIndex" />.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-rows-controlled-example.page.tsx"
-
+```tsx file="navigating-rows-controlled-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Toggling group rows
 
@@ -85,19 +70,14 @@ Since you're in row navigation mode, you can also use
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Press the `Enter` key on the active group row to toggle it. `ArrowLeft` will collapse a group row and `ArrowRight` will expand a group row.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-toggle-group-rows.page.tsx"
-
+```tsx file="/docs/reference/keyboard-toggle-group-rows.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Selecting Rows with the Keyboard
 
@@ -105,19 +85,14 @@ When <DPropLink name="rowSelection" /> is enabled (read more about it in the [ro
 
 By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows, when <DPropLink name="selectionMode">selectionMode="multi-row"</DPropLink>. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
 
-<Sandpack title="Multi row selection with keyboard support">
-
-<Description>
+<DemoDescription>
 
 Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.page.tsx"
-
+```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example-row-navigation.demo.tsx" title="Multi row selection with keyboard support"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -171,16 +146,11 @@ There are other CSS variables as well, that give you fined-tuned control over bo
 
 For more details on the CSS variables, see the [CSS Variables documentation](../theming/css-variables##active-row-background).
 
-<Sandpack title="Theming active row highlight">
-
-<Description>
+<DemoDescription>
 
 Use the color picker to configured the desired color for the active row highlight
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-rows-theming-example.page.tsx"
-
+```tsx file="navigating-rows-theming-example.demo.tsx" title="Theming active row highlight"
 ```
-
-</Sandpack>
