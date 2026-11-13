@@ -83,7 +83,6 @@ But we to put it before `'base'` so the Tailwind resets don't unexpectedly affec
 ```
 </Note>
 
-<DemoTitle>Using Tailwind to customize all cells</DemoTitle>
 <DemoDescription>
 
 In this demo, hover over a cell to see a Tailwind color applied. This affects all cells, as the Tailwind CSS className was applied by overriding the `className` of all <PropLink name="columnTypes" />.
@@ -92,7 +91,7 @@ Also we applied `px-6` to change the horizontal padding.
 
 </DemoDescription>
 
-```tsx file="customizing-cells-tailwind.demo.tsx"
+```tsx file="customizing-cells-tailwind.demo.tsx" title="Using Tailwind to customize all cells"
 ```
 
 ## Advanced Tailwind configuration
