@@ -19,7 +19,6 @@ import {
 } from './columns';
 import type { HeroFeed } from './data/feed';
 import type { Instrument } from './data/instruments';
-import type { HeroDensity } from './themes';
 
 export type HeroGridApis = {
   api: InfiniteTableApi<Instrument>;
@@ -73,7 +72,6 @@ export type HeroGridProps = {
   groupBy: DataSourceGroupBy<Instrument>[];
   onGroupByChange: (groupBy: DataSourceGroupBy<Instrument>[]) => void;
   pivot: boolean;
-  density: HeroDensity;
   flashDuration: number;
   selectedId: number;
   onSelect: (id: number) => void;
@@ -93,7 +91,6 @@ export function HeroGrid({
   groupBy,
   onGroupByChange,
   pivot,
-  density,
   flashDuration,
   selectedId,
   onSelect,
@@ -174,8 +171,6 @@ export function HeroGrid({
           defaultColumnPinning={COLUMN_PINNING}
           defaultColumnVisibility={initialVisibility}
           columnDefaultWidth={110}
-          rowHeight={density.rowHeight}
-          columnHeaderHeight={density.headerHeight}
           keyboardNavigation="row"
           licenseKey={process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY}
           onReady={(apis) => {

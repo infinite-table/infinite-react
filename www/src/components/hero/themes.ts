@@ -1,10 +1,10 @@
 /**
- * Theme + density seam for the hero.
+ * Theme + density registries for the hero.
  *
- * The hero only ever talks to these registries: the control bar renders them,
- * the scripted show cycles `SHOW_THEME_SEQUENCE`, and the grid wrapper applies
- * `themeClassName()` / `density.className`. New themes and density classes
- * from the library drop in here without touching the rest of the hero.
+ * The hero only ever talks to these: the control bar renders them, the
+ * scripted show cycles `SHOW_THEME_SEQUENCE`, and the wrapper of the grid
+ * gets `themeClassName()` and `density.className`. Both are the library's own
+ * classNames, with nothing hero-specific behind them.
  * (The theme CSS files themselves are imported in hero.css.)
  */
 
@@ -25,28 +25,23 @@ export const HERO_THEMES: readonly HeroTheme[] = [
     swatch: '#3b82f6',
     modes: ['light', 'dark'],
   },
-  { id: 'ocean', label: 'Ocean', swatch: '#0ea5b7', modes: ['light', 'dark'] },
   {
-    id: 'balsam',
-    label: 'Balsam',
-    swatch: '#22a06b',
+    id: 'terminal',
+    label: 'Terminal',
+    swatch: '#f5a524',
     modes: ['light', 'dark'],
   },
-  {
-    id: 'minimalist',
-    label: 'Minimalist',
-    swatch: '#a1a1aa',
-    modes: ['light', 'dark'],
-  },
+  { id: 'sheet', label: 'Sheet', swatch: '#3dbb7a', modes: ['light', 'dark'] },
+  { id: 'paper', label: 'Paper', swatch: '#8b8e99', modes: ['light', 'dark'] },
 ];
 
 export const DEFAULT_THEME_ID = 'default';
 
 /** The order the scripted show walks through (ends back on the default). */
 export const SHOW_THEME_SEQUENCE: readonly string[] = [
-  'ocean',
-  'balsam',
-  'minimalist',
+  'terminal',
+  'sheet',
+  'paper',
   'default',
 ];
 
@@ -61,13 +56,11 @@ export function themeClassName(id: string, mode: HeroColorMode) {
 }
 
 export type HeroDensity = {
-  id: 'compact' | 'normal' | 'comfortable';
+  id: 'compact' | 'comfortable' | 'spacious';
   label: string;
-  rowHeight: number;
-  headerHeight: number;
   /**
-   * Today: a hero-scoped class (hero.css) setting padding + font size.
-   * Later: the library's `infinite-density--*` class.
+   * The library's density className. It scales the sizes of the current
+   * theme: row and header height, paddings, menu spacing and the font size.
    */
   className: string;
 };
@@ -76,27 +69,21 @@ export const HERO_DENSITIES: readonly HeroDensity[] = [
   {
     id: 'compact',
     label: 'Compact',
-    rowHeight: 28,
-    headerHeight: 30,
-    className: 'hero-density--compact',
-  },
-  {
-    id: 'normal',
-    label: 'Normal',
-    rowHeight: 34,
-    headerHeight: 36,
-    className: 'hero-density--normal',
+    className: 'infinite-density--compact',
   },
   {
     id: 'comfortable',
-    label: 'Comfy',
-    rowHeight: 42,
-    headerHeight: 42,
-    className: 'hero-density--comfortable',
+    label: 'Comfortable',
+    className: 'infinite-density--comfortable',
+  },
+  {
+    id: 'spacious',
+    label: 'Spacious',
+    className: 'infinite-density--spacious',
   },
 ];
 
-export const DEFAULT_DENSITY_ID: HeroDensity['id'] = 'normal';
+export const DEFAULT_DENSITY_ID: HeroDensity['id'] = 'comfortable';
 
 export function getHeroDensity(id: string) {
   return (
