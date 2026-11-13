@@ -85,9 +85,11 @@ If instead you specify a `infinite-theme-mode--dark` CSS className, the dark mod
 ```
 
 
-<Description>
+<DemoDescription>
+
 Example configured with `default` theme and `light` mode by default.
-</Description>
+
+</DemoDescription>
 
 ```tsx file="theme-switching-example.demo.tsx" title="Theme switching demo - defaults to light theme"
 ```

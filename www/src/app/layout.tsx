@@ -3,7 +3,6 @@ import { CSSProperties } from 'react';
 import '@docsearch/css';
 import '../styles/index.css';
 import '../styles/fonts.css';
-import '../styles/sandpack.css';
 import '../styles/globals.css';
 import '@thedatagrid/docs-kit/react/styles.css';
 import '@thedatagrid/docs-kit/frameworks/styles.css';
@@ -12,7 +11,6 @@ import colors from '../../colors';
 
 import ClientLayout from './clientLayout';
 
-import { SandpackCSSText } from './SandpackCSSText';
 import { MetaProperties } from './MetaProperties';
 import { asMeta } from '@www/utils/asMeta';
 import { DocsFrameworksProvider } from '@www/components/DocsFrameworks';
@@ -41,7 +39,6 @@ export default function RootLayout({
   return (
     <html lang="en" style={vars} data-theme="dark">
       <head>
-        <SandpackCSSText />
         <MetaProperties />
       </head>
       <body className="font-sans antialiased text-lg bg-black text-secondary-dark leading-base">

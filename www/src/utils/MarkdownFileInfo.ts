@@ -13,12 +13,3 @@ export type MarkdownFileInfo = {
 export type MarkdownFileEnv = {
   NEXT_PUBLIC_BASE_URL?: string;
 };
-
-export type SnippetMetaProps = {
-  highlightLines: number[];
-  importedPackages?: string[];
-  files: { name: string; code: string }[];
-  code: string;
-  live: boolean;
-  inline: boolean;
-} & Record<string, string | boolean | number[]>;

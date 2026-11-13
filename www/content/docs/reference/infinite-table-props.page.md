@@ -2195,7 +2195,7 @@ Use this function to customize the context menu for columns. The function is cal
 - `items` - the default menu items for the column - you can return this array as is to use the default menu items (same as not providing this function prop) or you can customize the array or return a new one altogether.
 - `context` - an object that gives you access to the column and the grid state
   - `context.column: InfiniteTableComputedColumn<T>` - the current column for which the context menu is being shown
-  - `context.api` - a reference to the [api](./reference/api)
+  - `context.api` - a reference to the [api](/docs/reference/api)
 
 <DemoDescription>
 

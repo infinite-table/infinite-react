@@ -3,15 +3,15 @@
 // build) in headless Chromium and checks the docs-kit cards on them: every
 // live demo iframe has to render a grid, and no page may log an error.
 //
-//   node scripts/migrate-examples/check-pages.mjs <origin> <route | content folder>… [--shots <dir>]
-//   node scripts/migrate-examples/check-pages.mjs http://localhost:3001 /docs/learn/sorting/overview content/docs/learn/columns
+//   npm run check:pages -- <origin> <route | content folder>… [--shots <dir>]
+//   npm run check:pages -- http://localhost:3001 /docs/learn/sorting/overview content/docs/learn/columns
 //
 // Playwright comes from the examples app (`npm ci --prefix examples`).
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-const WWW_DIR = path.resolve(import.meta.dirname, '../..');
+const WWW_DIR = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(WWW_DIR, 'content');
 
 const args = process.argv.slice(2);
