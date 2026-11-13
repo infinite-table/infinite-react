@@ -93,7 +93,8 @@ async function checkDemo(id) {
     if (!state.children) problems.push('nothing rendered');
     else if (!state.grid) problems.push(`no grid rendered (${state.text} chars of text)`);
     else if (!state.cells) problems.push('grid without cells');
-    if (state.license) problems.push('license footer shown');
+    // the invalid-license demo is there to show the footer
+    if (state.license && !id.endsWith('invalid-license')) problems.push('license footer shown');
     if (shotsDir) {
       const file = path.join(shotsDir, `${id.replace(/\//g, '__')}.png`);
       fs.mkdirSync(shotsDir, { recursive: true });

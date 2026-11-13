@@ -428,7 +428,7 @@ async function convert() {
     for (const block of page.blocks) if (block.tailwind) tailwind.add(block.entryFile);
   }
   const addRename = (entryFile) => {
-    const suffix = tailwind.has(entryFile) ? '.tailwind.demo.tsx' : '.demo.tsx';
+    const suffix = tailwind.has(entryFile) ? '-tailwind.demo.tsx' : '.demo.tsx';
     renames.set(entryFile, { suffix, target: entryFile.slice(0, -EXAMPLE_SUFFIX.length) + suffix });
   };
   for (const page of selectedPages) {

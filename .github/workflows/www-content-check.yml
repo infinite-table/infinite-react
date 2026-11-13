@@ -10,6 +10,7 @@ on:
       - 'www/tsconfig.json'
       - 'www/docs-kit.config.mjs'
       - 'www/docs-kit.bootstrap.ts'
+      - 'www/docs-kit.tailwind.css'
       - 'www/package.json'
       - '.github/workflows/www-content-check.yml'
 
