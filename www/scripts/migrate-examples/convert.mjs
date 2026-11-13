@@ -7,8 +7,8 @@
 //
 // convert
 //   - live examples: `X.page.tsx` → `X.demo.tsx` (git mv), and the
-//     `<Sandpack>` / `<Description>` wrapper → `<DemoTitle>` /
-//     `<DemoDescription>` + a `file="X.demo.tsx"` fence. A renamed example is
+//     `<Sandpack>` / `<Description>` wrapper → a `<DemoDescription>` +
+//     a `file="X.demo.tsx" title="…"` fence. A renamed example is
 //     updated in every page that shows it, not only in the given ones.
 //   - inline ts/tsx/js fences of the given pages → regions of a co-located
 //     `<page>.snippet.tsx` (a fence with imports gets a file of its own), and
@@ -188,8 +188,9 @@ function demoReference(reference, suffix) {
 
 function renderDemoBlock(block, suffix) {
   const { title, description } = block;
-  // a fence info string can't hold a backtick, and `title="…"` can't hold a quote
-  const titleInFence = title && !description && !/[`"{}<>]/.test(title);
+  // A title with markup (`code`, JSX) stays a <DemoTitle>: a fence info string
+  // can't hold a backtick, and `title="…"` is plain text.
+  const titleInFence = title && !/[`"{}<>]/.test(title);
   const lines = [];
   if (title && !titleInFence) lines.push(`<DemoTitle>${title}</DemoTitle>`);
   if (description) {

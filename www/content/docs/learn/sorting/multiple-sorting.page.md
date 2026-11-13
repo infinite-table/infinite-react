@@ -14,7 +14,6 @@ An empty array means no sorting. However, it does specify that sorting is config
 
 </Note>
 
-<DemoTitle>Configuring multiple sorting with uncontrolled behavior</DemoTitle>
 <DemoDescription>
 
 Try clicking the `age` column and then the `firstName` column.
@@ -26,7 +25,7 @@ If the multi-sort behavior is `append`, clicking the second column will add it t
 
 </DemoDescription>
 
-```tsx file="local-multi-sorting-example-defaults-with-local-data.demo.tsx"
+```tsx file="local-multi-sorting-example-defaults-with-local-data.demo.tsx" title="Configuring multiple sorting with uncontrolled behavior"
 ```
 
 ## User interaction and multi sort behavior
@@ -89,14 +88,13 @@ In this case, make sure you update the <DPropLink name="sortInfo" /> prop as a r
 
 </Note>
 
-<DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
 <DemoDescription>
 
 This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. `Ctrl`/`Cmd` + click the `salary` column to toggle the column sort to descending. `Ctrl`/`Cmd` clicking it a second time will remove it from the sort altogether.
 
 </DemoDescription>
 
-```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx" title="Local + uncontrolled multi-sorting example"
 ```
 
 ```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
