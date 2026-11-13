@@ -34,7 +34,7 @@ export const metadata = asMeta({
 const REPO =
   'https://github.com/infinite-table/datagrid-performance-comparison';
 const BLOG_POST =
-  '/blog/2026/11/11/benchmarking-infinite-table-and-ag-grid-with-a-million-rows';
+  '/blog/2026/11/11/benchmarking-infinite-table-mui-x-ag-grid-and-tanstack-table-with-a-million-rows';
 
 const SIZES = [
   { id: '300k', label: '300k rows' },
