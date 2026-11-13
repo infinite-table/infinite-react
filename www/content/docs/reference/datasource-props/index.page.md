@@ -24,13 +24,8 @@ The primary key is used internally by the component and is not displayed in the 
 
 If the primary key is not unique, Infinite Table DataGrid won't work properly.
 
-<Sandpack title="Simple demo of using primaryKey">
-
-```ts file="data-example.page.tsx"
-
+```tsx file="data-example.demo.tsx" title="Simple demo of using primaryKey"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -132,13 +127,8 @@ For full control over the expand/collapse state of read-only nodes, you can use 
 
 </Note>
 
-<Sandpack title="Using a custom isNodeReadOnly function">
-
-```ts file="tree-isNodeReadOnly-example.page.tsx"
-
+```tsx file="tree-isNodeReadOnly-example.demo.tsx" title="Using a custom isNodeReadOnly function"
 ```
-
-</Sandpack>
 
 </Prop>
 <Prop name="onNodeCollapse" type="(nodePath: NodePath, {dataSourceApi}) => void">
@@ -169,38 +159,11 @@ Each node gets a `nodePath` property, which is the array with the ids of all the
 </Note>
 
 
-```tsx {2} title="Node path vs row id"
-const data = [
-  { id: '1', name: 'Documents',                // path: ['1']
-    children: [
-      { id: '10', name: 'Private',             // path: ['1', '10']
-        children: [
-          { id: '100', name: 'Report.docx' },  // path: ['1', '10', '100'] 
-          { id: '101', name: 'Vacation.docx' },// path: ['1', '10', '101']
-        ],
-      },
-    ]
-  },
-  {
-    id: '2',
-    name: 'Downloads',                        // path: ['2']
-    children: [
-      {
-        id: '20',
-        name: 'cat.jpg',                      // path: ['2', '20']
-      },
-    ],
-  },
-];
+```tsx file="index.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id"
 ```
 
-<Sandpack title="Using a custom nodesKey prop">
-
-```ts file="tree-nodesKey-example.page.tsx"
-
+```tsx file="tree-nodesKey-example.demo.tsx" title="Using a custom nodesKey prop"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -210,13 +173,8 @@ const data = [
 
 
 
-<Sandpack title="Using uncontrolled tree expand state" size="large">
-
-```ts file="tree-uncontrolled-expandstate-example.page.tsx"
-
+```tsx file="tree-uncontrolled-expandstate-example.demo.tsx" title="Using uncontrolled tree expand state" height="large"
 ```
-
-</Sandpack>
 </Prop>
 
 
@@ -262,19 +220,14 @@ This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
 
 Here's an example of how to use the `defaultRowDisabledState` prop:
 
-<Sandpack title="Using uncontrolled row disabled state">
-
-<Description>
+<DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled.
 
-</Description>
+</DemoDescription>
 
-```ts file="defaultRowDisabledState-example.page.tsx"
-
+```tsx file="defaultRowDisabledState-example.demo.tsx" title="Using uncontrolled row disabled state"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -297,21 +250,16 @@ This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
 
 </Note>
 
-<Sandpack title="Using controlled row disabled state">
-
-<Description>
+<DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled initially.
 
 Right click rows and use the context menu to enable/disable rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="rowDisabledState-example.page.tsx"
-
+```tsx file="rowDisabledState-example.demo.tsx" title="Using controlled row disabled state"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -324,13 +272,8 @@ The value of this prop determines if a node is selected or not.
 See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
 
 
-<Sandpack title="Using controlled tree selection" size="lg">
-
-```ts file="tree-controlled-selectedstate-example.page.tsx"
-
+```tsx file="tree-controlled-selectedstate-example.demo.tsx" title="Using controlled tree selection" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -338,13 +281,8 @@ See <TypeLink name="TreeSelectionValue" /> for details on the shape of this obje
 
 > Called when the tree selection changes. See <DPropLink name="treeSelection" />.
 
-<Sandpack title="Reacting to tree selection changes" size="lg">
-
-```ts file="tree-controlled-selectedstate-example.page.tsx"
-
+```tsx file="tree-controlled-selectedstate-example.demo.tsx" title="Reacting to tree selection changes" height="large"
 ```
-
-</Sandpack>
 
 When using `multi-row` <DPropLink name="selectionMode" />, the signature of this callback is:
 
@@ -365,13 +303,8 @@ The value of this prop determines if a node is selected or not.
 See <TypeLink name="TreeSelectionValue" /> for details on the shape of this object.
 
 
-<Sandpack title="Using uncontrolled tree selection" size="lg">
-
-```ts file="tree-uncontrolled-selectedstate-example.page.tsx"
-
+```tsx file="tree-uncontrolled-selectedstate-example.demo.tsx" title="Using uncontrolled tree selection" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -381,52 +314,23 @@ See <TypeLink name="TreeSelectionValue" /> for details on the shape of this obje
 
 It's called with just 1 argument (`rowDisabledState`), which is an instance of the `RowDisabledState` class. To get a literal object that represents the row disabled state, call the `rowDisabledState.getState()` method.
 
-```tsx {3,19}
-import {
-  DataSource,
-  RowDisabledStateObject,
-} from '@infinite-table/infinite-react';
-function App() {
-  const [rowDisabledState, setRowDisabledState] = React.useState<
-    RowDisabledStateObject<number>
-  >({
-    enabledRows: true,
-    disabledRows: [1, 3, 4, 5],
-  });
-  return (
-    <>
-      <DataSource<Developer>
-        data={data}
-        primaryKey="id"
-        rowDisabledState={rowDisabledState}
-        onRowDisabledStateChange={(rowState) => {
-          setRowDisabledState(rowState.getState());
-        }}
-      />
-    </>
-  );
-}
+```tsx file="index.snippet.tsx" region="onrowdisabledstatechange"
 ```
 
 <Note>
 When using the controlled <DPropLink name="rowDisabledState" /> prop, you will need to update the `rowDisabledState` by using this callback.
 </Note>
 
-<Sandpack title="Using the onRowDisabledStateChange callback to update row disabled state">
-
-<Description>
+<DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled initially.
 
 Right click rows and use the context menu to enable/disable rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="rowDisabledState-example.page.tsx"
-
+```tsx file="rowDisabledState-example.demo.tsx" title="Using the onRowDisabledStateChange callback to update row disabled state"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -446,13 +350,9 @@ The `DataSourceAggregationReducer` type can have the following properties
 - `name` - useful especially in combination with <DataSourcePropLink name="pivotBy" />, as it will be used as the pivot column header.
 - `pivotColumn` - if specified, will configure the pivot column generated for this aggregation. This object has the same shape as a normal <PropLink name="columns">column</PropLink>, but supports some extra props like `inheritFromColumn` See <DPropLink name="aggregationReducers.pivotColumn" />.
 
-<Sandpack title="Aggregation demo - see `salary` column">
-
-```ts files=["groupBy-example.page.tsx","columns.ts"]
-
+<DemoTitle>Aggregation demo - see `salary` column</DemoTitle>
+```tsx file="groupBy-example.demo.tsx"
 ```
-
-</Sandpack>
 
 Aggregation reducers can be used in combination with grouping and pivoting. The example below shows aggregations used with server-side pivoting
 
@@ -474,22 +374,7 @@ Has the same shape as a normal <PropLink name="columns">column</PropLink> (or a 
 
 Also supports <DPropLink name="aggregationReducers.pivotColumn.inheritFromColumn" /> to control which original column (if any) the generated columns inherit from.
 
-```ts
-const aggregationReducers = {
-  salary: {
-    field: 'salary',
-    initialValue: 0,
-    reducer: (acc, sum) => acc + sum,
-    pivotColumn: {
-      defaultSortable: true,
-    },
-  },
-  license: {
-    field: 'license',
-    initialValue: 0,
-    reducer: (acc) => acc + 1,
-  },
-};
+```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn"
 ```
 
 In the example above, only the `salary` pivot columns are sortable. See [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns) for the other override points (<PropLink name="pivotColumn" /> and <DataSourcePropLink name="pivotBy.column" />).
@@ -506,18 +391,7 @@ By default, pivot columns inherit the configuration of the initial column bound 
 - `false` — do not inherit from any column
 - `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
 
-```ts
-const aggregationReducers = {
-  avgSalary: { field: 'salary', ...avgReducer },
-  avgAge: {
-    field: 'age',
-    ...avgReducer,
-    pivotColumn: {
-      inheritFromColumn: 'preferredLanguage',
-      defaultWidth: 500,
-    },
-  },
-};
+```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn-inheritfromcolumn"
 ```
 
 ```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
@@ -541,13 +415,8 @@ If the `data` prop is a function, it will be called with an object of type <Type
 
 </Note>
 
-<Sandpack title="Data loading example with promise">
-
-```ts file="data-example.page.tsx"
-
+```tsx file="data-example.demo.tsx" title="Data loading example with promise"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -568,13 +437,8 @@ If you want to show the column filter editors, you have to either specify this p
 
 For the controlled version, and more details on the shape of the objects in the array, see <DPropLink name="filterValue" />.
 
-<Sandpack  title="Initial filtering applied via defaultFilterValue">
-
-```ts file="defaultFilterValue-example.page.tsx"
-
+```tsx file="defaultFilterValue-example.demo.tsx" title="Initial filtering applied via defaultFilterValue"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -594,41 +458,13 @@ For single selection, the prop will be of type: `number | string | null`. Use `n
 
 For multiple selection, the prop will have the following shape:
 
-```ts
-const rowSelection = {
-  selectedRows: [3, 6, 100, 23], // those specific rows are selected
-  defaultSelection: false, // all rows deselected by default
-};
-
-// or
-const rowSelection = {
-  deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
-  defaultSelection: true, // all other rows are selected
-};
-
-// or, for grouped data - this example assumes groupBy=continent,country,city
-const rowSelection = {
-  selectedRows: [
-    45, // row with id 45 is selected, no matter the group
-    ['Europe', 'France'], // all rows in Europe/France are selected
-    ['Asia'], // all rows in Asia are selected
-  ],
-  deselectedRows: [
-    ['Europe', 'France', 'Paris'], // all rows in Paris are deselected
-  ],
-  defaultSelection: false, // all other rows are selected
-};
+```ts file="index.snippet.tsx" region="rowselection"
 ```
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
 
-<Sandpack  title="Uncontrolled, multiple row selection with checkbox column">
-
-```ts file="$DOCS/reference/uncontrolled-multiple-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/uncontrolled-multiple-row-selection-example.demo.tsx" title="Uncontrolled, multiple row selection with checkbox column"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -642,21 +478,12 @@ For detailed explanations, see <DataSourcePropLink name="sortInfo" /> (controlle
 
 When you provide a `defaultSortInfo` prop and the sorting information uses a custom <DataSourcePropLink name="sortTypes">sortType</DataSourcePropLink>, make sure you specify that as the `type` property of the sorting info object.
 
-```tsx
-defaultSortInfo={{
-  field: 'color',
-  dir: 1,
-  // note this custom sort type
-  type: 'color',
-}}
+```tsx file="index.snippet.tsx" region="defaultsortinfo"
 ```
 
 You will need to have a property for that type in your <DataSourcePropLink name="sortTypes"/> object as well.
 
-```tsx
-sortTypes={{
-  color: (a, b) => //...
-}}
+```tsx file="index.snippet.tsx" region="defaultsortinfo-sorttypes"
 ```
 
 </Note>
@@ -664,13 +491,8 @@ sortTypes={{
 ```tsx file="/docs/learn/sorting/local-uncontrolled-single-sorting-example-with-remote-data.demo.tsx" title="Local uncontrolled single sorting"
 ```
 
-<Sandpack  title="Custom sort by color - magenta will come first">
-
-```ts file="./customSortType-with-uncontrolled-sortInfo-example.page.tsx"
-
+```tsx file="customSortType-with-uncontrolled-sortInfo-example.demo.tsx" title="Custom sort by color - magenta will come first"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -740,35 +562,15 @@ You can opt to not use this helper function, and instead implement your own filt
 
 When there is no `treeFilterFunction`, the column filters are applied with `defaultTreeFilterFunction`, which you can also import and call from your own function:
 
-```ts
-import {
-  defaultFilterFunction,
-  defaultTreeFilterFunction,
-} from '@infinite-table/infinite-react';
-
-// the built-in tree filtering: leaf nodes are matched against the column filters,
-// a parent node is kept when at least one of its descendants is kept
-treeFilterFunction={defaultTreeFilterFunction}
-
-// also keep the parent nodes that match the column filters themselves
-treeFilterFunction={(param) =>
-  param.isLeafNode
-    ? defaultFilterFunction(param)
-    : defaultFilterFunction(param) || param.filterTreeNode(param.data)
-}
+```ts file="index.treefilterfunction.snippet.tsx" region="treefilterfunction"
 ```
 
 `defaultTreeFilterFunction` matches only the leaf nodes against the column filters - the fields of a parent node are not matched.
 
 A `treeFilterFunction` has no effect with <DPropLink name="lazyLoad" />.
 
-<Sandpack title="Tree filtering via treeFilterFunction">
-
-```ts file=tree-filter-function-example.page.tsx
-
+```tsx file="tree-filter-function-example.demo.tsx" title="Tree filtering via treeFilterFunction"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -782,17 +584,7 @@ The function is called for every row, and returns whether the row is kept. Its p
 - use your own logic;
 - or combine the two.
 
-```ts
-import { defaultFilterFunction } from '@infinite-table/infinite-react';
-
-// the built-in column filtering
-filterFunction={defaultFilterFunction}
-
-// your own logic only
-filterFunction={(param) => param.data.age > 30}
-
-// the column filters, and your own condition
-filterFunction={(param) => defaultFilterFunction(param) && param.data.age > 30}
+```ts file="index.filterfunction.snippet.tsx" region="filterfunction"
 ```
 
 A `filterFunction` makes the filtering happen in the browser. Combine it with <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> when the <DPropLink name="data" /> function should also be called again on every filter change - the returned rows are then filtered in the browser.
@@ -805,19 +597,14 @@ For filtering when using a `TreeGrid`, see <DPropLink name="treeFilterFunction" 
 
 </Note>
 
-<Sandpack title="Custom filterFunction example">
-
-<Description>
+<DemoDescription>
 
 Loads data from remote location but will only show rows that have `id > 100`.
 
-</Description>
+</DemoDescription>
 
-```ts file="custom-filter-function-example.page.tsx"
-
+```tsx file="custom-filter-function-example.demo.tsx" title="Custom filterFunction example"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -851,35 +638,7 @@ Let's imagine you have a `DataSource` with developers, each with a `salary` colu
 
 For this, you would define the following filter type:
 
-```tsx
-const filterTypes = {
-  income: {
-    label: 'Income',
-    emptyValues: ['', null, undefined],
-    defaultOperator: 'gt',
-    operators: [
-      {
-        name: 'gt',
-        label: 'Greater than',
-        fn: ({ currentValue, filterValue }) => {
-          return currentValue > filterValue;
-        },
-      },
-      {
-        name: 'gte',
-        //...
-      },
-      {
-        name: 'lt',
-        //...
-      },
-      {
-        name: 'lte',
-        //...
-      },
-    ],
-  },
-};
+```tsx file="index.snippet.tsx" region="filtertypes"
 ```
 
 <Note>
@@ -896,43 +655,32 @@ Each operator for a certain filter type needs to at least have a `name` and `fn`
 
 </Note>
 
-<Sandpack title="Custom filter type used for the salary column">
-
-<Description>
+<DemoDescription>
 
 The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
 
-</Description>
+</DemoDescription>
 
-```ts file="filter-types-example.page.tsx"
-
+```tsx file="filter-types-example.demo.tsx" title="Custom filter type used for the salary column"
 ```
-
-</Sandpack>
 
 <Note>
 
 By default, the `string` and `number` filter types are available. You can import the default filter types like this:
 
-```ts
-import { defaultFilterTypes } from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="filtertypes-import"
 ```
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
 
-<Sandpack title="Enhanced string filter type - new 'Not includes' operator">
-
-<Description>
+<DemoDescription>
 
 The `string` columns have a new `Not includes` operator.
 
-</Description>
+</DemoDescription>
 
-```ts file="default-filter-types-example.page.tsx"
-
+```tsx file="default-filter-types-example.demo.tsx" title="Enhanced string filter type - new 'Not includes' operator"
 ```
-
-</Sandpack>
 
 </Note>
 
@@ -944,145 +692,7 @@ When you specify new <DPropLink name="filterTypes"/>, the default filter types o
 
 The current implementation of the default filter types is the following:
 
-```tsx
-export const defaultFilterTypes: Record<string, DataSourceFilterType<T>> = {
-    string: {
-      label: 'Text',
-      emptyValues: [''],
-      defaultOperator: 'includes',
-      components: {
-        FilterEditor: StringFilterEditor,
-      },
-      operators: [
-        {
-          name: 'includes',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'includes',
-          fn: ({ currentValue, filterValue }) => {
-            return (
-              typeof currentValue === 'string' &&
-              typeof filterValue == 'string' &&
-              currentValue.toLowerCase().includes(filterValue.toLowerCase())
-            );
-          },
-        },
-        {
-          label: 'Equals',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          name: 'eq',
-          fn: ({ currentValue: value, filterValue }) => {
-            return typeof value === 'string' && value === filterValue;
-          },
-        },
-        {
-          name: 'startsWith',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'Starts With',
-          fn: ({ currentValue: value, filterValue }) => {
-            return value.startsWith(filterValue);
-          },
-        },
-        {
-          name: 'endsWith',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'Ends With',
-          fn: ({ currentValue: value, filterValue }) => {
-            return value.endsWith(filterValue);
-          },
-        },
-      ],
-    },
-    number: {
-      label: 'Number',
-      emptyValues: ['', null, undefined],
-      defaultOperator: 'eq',
-      components: {
-        FilterEditor: NumberFilterEditor,
-      },
-      operators: [
-        {
-          label: 'Equals',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          name: 'eq',
-          fn: ({ currentValue, filterValue }) => {
-            return currentValue == filterValue;
-          },
-        },
-        {
-          label: 'Not Equals',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          name: 'neq',
-          fn: ({ currentValue, filterValue }) => {
-            return currentValue != filterValue;
-          },
-        },
-        {
-          name: 'gt',
-          label: 'Greater Than',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.includes(currentValue)) {
-              return true;
-            }
-            return currentValue > filterValue;
-          },
-        },
-        {
-          name: 'gte',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'Greater Than or Equal',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.includes(currentValue)) {
-              return true;
-            }
-            return currentValue >= filterValue;
-          },
-        },
-        {
-          name: 'lt',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'Less Than',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.includes(currentValue)) {
-              return true;
-            }
-            return currentValue < filterValue;
-          },
-        },
-        {
-          name: 'lte',
-          components: {
-            Icon: // custom icon as a React component ...
-          },
-          label: 'Less Than or Equal',
-          fn: ({ currentValue, filterValue, emptyValues }) => {
-            if (emptyValues.includes(currentValue)) {
-              return true;
-            }
-            return currentValue <= filterValue;
-          },
-        }
-      ],
-    },
-  };
+```tsx file="index.filtertypes.snippet.tsx" region="filtertypes"
 ```
 
 </Prop>
@@ -1105,21 +715,16 @@ Filter type operators can override the `FilterEditor` component - they can speci
 
 </Note>
 
-<Sandpack title="Demo of a custom filter editor">
-
-<Description>
+<DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
 
 The checkbox has indeterminate state, which will match all values in the data source.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/hooks/custom-filter-editor-hooks-example.page.tsx"
-
+```tsx file="/docs/reference/hooks/custom-filter-editor-hooks-example.demo.tsx" title="Demo of a custom filter editor"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1141,13 +746,8 @@ The objects in this array have the following shape:
 - `id` - the id of the column being filtered. This is optional - for columns bound to a field, the `field` should be used instead of the `id`.
 - `disabled` - whether this filter is applied or not
 
-<Sandpack  title="Controlled filters with onFilterValueChange">
-
-```ts file="onFilterValueChange-example.page.tsx"
-
+```tsx file="onFilterValueChange-example.demo.tsx" title="Controlled filters with onFilterValueChange"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -1174,11 +774,7 @@ You can control the visibility of the column filters by using the <PropLink name
 See related <DPropLink name="defaultGroupRowsState" />, <DPropLink name="onGroupRowsStateChange" /> and <DPropLink name="groupBy" />
 
 
-```tsx title="Specifying the state for group rows"
-const groupRowsState: DataSourcePropGroupRowsStateObject = {
-  collapsedRows: true,
-  expandedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
-};
+```tsx file="index.snippet.tsx" region="specifying-the-state-for-group-rows" title="Specifying the state for group rows"
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -1188,12 +784,8 @@ The two properties in this object are `collapsedRows` and `expandedRows`, and ea
 
 So if you have `collapsedRows` set to `true` and then `expandedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are collapsed by default, except the rows specified in the `expandedRows`.
 
-<Sandpack title="Using controlled expanded/collapsed state for group rows">
-
-```ts file="./group-rows-state-controlled-example.page.tsx"
+```tsx file="group-rows-state-controlled-example.demo.tsx" title="Using controlled expanded/collapsed state for group rows"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1219,11 +811,7 @@ See <TypeLink name="GroupRowsState" /> reference to find out all the utility met
 For the controlled version, see related <DPropLink name="groupRowsState" />.
 
 
-```tsx title="Specifying the initial state for group rows"
-const defaultGroupRowsState: DataSourcePropGroupRowsStateObject = {
-  expandedRows: true,
-  collapsedRows: [['Mexico'], ['Mexico', 'backend'], ['India']],
-};
+```tsx file="index.snippet.tsx" region="specifying-the-initial-state-for-group-rows" title="Specifying the initial state for group rows"
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -1233,10 +821,8 @@ The two properties in this object are `collapsedRows` and `expandedRows`, and ea
 
 So if you have `expandedRows` set to `true` and then `collapsedRows` set to `[['Mexico'], ['Mexico', 'backend'], ['India']]` then all rows are expanded by default, except the rows specified in the `collapsedRows`.
 
-<Sandpack title="Specifying initial expanded/collapsed state for group rows">
-```ts file="./group-rows-initial-state-example.page.tsx"
+```tsx file="group-rows-initial-state-example.demo.tsx" title="Specifying initial expanded/collapsed state for group rows"
 ```
-</Sandpack>
 
 </Prop>
 
@@ -1256,13 +842,8 @@ When using <PropLink name="groupRenderStrategy" code={false}>groupRenderStrategy
 
 See <TypeLink name="DataSourcePropGroupBy" /> for the type definition.
 
-<Sandpack>
-
-```ts files=["groupBy-example.page.tsx","columns.ts"]
-
+```tsx file="groupBy-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1300,19 +881,14 @@ In this case, use the <PropLink name="groupColumn"/> prop.
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This example uses `groupBy.column` to configure the generated columns corresponding to each group.
 
-</Description>
+</DemoDescription>
 
-```ts files=["groupBy-multi-with-column-example.page.tsx","columns.ts"]
-
+```tsx file="groupBy-multi-with-column-example.demo.tsx"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1424,13 +1000,8 @@ The function is called with an object that has the following properties:
 
 This might not be called immediately, as there might be a <DPropLink name="filterDelay"/> set.
 
-<Sandpack  title="Controlled filters with onFilterValueChange">
-
-```ts file="onFilterValueChange-example.page.tsx"
-
+```tsx file="onFilterValueChange-example.demo.tsx" title="Controlled filters with onFilterValueChange"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1506,19 +1077,14 @@ See related <DataSourcePropLink name="sortInfo" /> for controlled sorting and <D
 
 By updating the value of this prop (eg: you can use it as a counter, and increment it) the `<DataSource />` component reloads it's <DPropLink name="data" /> if it's defined as a function. More specifically, the `data` function is called again and the result will replace the current data.
 
-<Sandpack title="Re-fetching data via refetchKey updates" >
-
-<Description>
+<DemoDescription>
 
 This example shows how you can use the `refetchKey` to trigger reloading the data
 
-</Description>
+</DemoDescription>
 
-```ts file="refetchKey-example.page.tsx"
-
+```tsx file="refetchKey-example.demo.tsx" title="Re-fetching data via refetchKey updates"
 ```
-
-</Sandpack>
  
 </Prop>
 
@@ -1530,30 +1096,7 @@ For single selection, the prop will be of type: `number | string | null`. Use `n
 
 For multiple selection, the prop will have the following shape:
 
-```ts
-const rowSelection = {
-  selectedRows: [3, 6, 100, 23], // those specific rows are selected
-  defaultSelection: false, // all rows deselected by default
-};
-
-// or
-const rowSelection = {
-  deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
-  defaultSelection: true, // all other rows are selected
-};
-
-// or, for grouped data - this example assumes groupBy=continent,country,city
-const rowSelection = {
-  selectedRows: [
-    45, // row with id 45 is selected, no matter the group
-    ['Europe', 'France'], // all rows in Europe/France are selected
-    ['Asia'], // all rows in Asia are selected
-  ],
-  deselectedRows: [
-    ['Europe', 'France', 'Paris'], // all rows in Paris are deselected
-  ],
-  defaultSelection: false, // all other rows are selected
-};
+```ts file="index.snippet.tsx" region="rowselection"
 ```
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
@@ -1571,22 +1114,7 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
-```ts {6}
-// this example assumes groupBy=continent,country,city
-const rowSelection = {
-  selectedRows: [
-    // row with id 45 is selected - we need this because in the lazyLoad scenario,
-    // not all parents might have been made available yet
-    ['Europe','Italy', 'Rome', 45],
-    ['Europe','France'], // all rows in Europe/France are selected
-    ['Asia'] // all rows in Asia are selected
-  ]
-  deselectedRows: [
-    ['Europe','Italy','Rome'] // all rows in Rome are deselected
-    // but note that row with id 45 is selected, so Rome will be rendered with an indeterminate selection state
-  ],
-  defaultSelection: false // all other rows are selected
-}
+```ts file="index.snippet.tsx" region="rowselection-lazyload"
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.
@@ -1633,13 +1161,8 @@ Read more on cell selection (`multi-cell` and `single-cell`).
 
 </HeroCards>
 
-<Sandpack title="Choose your selection mode between multi cell or multi row">
-
-```ts file="selectionMode-example.page.tsx"
-
+```tsx file="selectionMode-example.demo.tsx" title="Choose your selection mode between multi cell or multi row"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1661,23 +1184,7 @@ A `sortFunction` has no effect with <DPropLink name="lazyLoad" /> or <DPropLink 
 
 The `@infinite-table/infinite-react` package exports a `multisort` function - this is the default function used for local sorting of flat data.
 
-```ts
-import { multisort } from '@infinite-table/infinite-react';
-
-const arr: Developer[] = [
-  /*...*/
-];
-const sortInfo = [
-  {
-    field: 'age',
-    dir: -1,
-  },
-  {
-    field: 'name',
-    dir: 1,
-  },
-];
-multisort(sortInfo, arr);
+```ts file="index.snippet.tsx" region="sortfunction"
 ```
 
 If you want to implement your own custom sort function, the `multisort` fn is a good starting point you can use.
@@ -1694,13 +1201,8 @@ If you want to implement your own custom sort function, the `multisort` fn is a 
 
 A `sortFunction` is called with the top-level array only, and with no information about the tree. So for tree data, a custom `sortFunction` has to sort the children too - your code knows the `nodesKey` and the primary key, so it can call `multisortNested`:
 
-<Sandpack  title="A custom sortFunction for tree data, using multisortNested">
-
-```ts file="$DOCS/reference/datasource-props/tree-sortFunction-multisortNested-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/tree-sortFunction-multisortNested-example.demo.tsx" title="A custom sortFunction for tree data, using multisortNested"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -1804,13 +1306,7 @@ Currently there are two `sortTypes` available:
 
 Those values can be used for the <PropLink name="columns.sortType">column.sortType</PropLink> and <PropLink name="columns.sortType">column.dataType</PropLink> properties.
 
-```ts
-// default implementation
-const sortTypes = {
-  string: (a, b) => a.localeCompare(b),
-  number: (a, b) => a - b,
-  date: (a, b) => a - b,
-};
+```ts file="index.snippet.tsx" region="sorttypes"
 ```
 
 When a column does not explicitly specify the <PropLink name="columns.sortType">column.sortType</PropLink>, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used instead. And if no <PropLink name="columns.dataType">column.dataType</PropLink> is defined, it will default to `string`.
@@ -1836,19 +1332,14 @@ When this is `true`, you might want to use the [getSelectedPrimaryKeys](./select
 
 When some rows are filtered out, see <DPropLink name="multiRowSelectionTarget" /> for which rows a selected group covers.
 
-<Sandpack title="Multi row checkbox selection using group keys" >
-
-<Description>
+<DemoDescription>
 
 This example shows how you can use have row selection with group keys instead of just the primary keys of rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-multi-row-selection-example-with-group-keys.page.tsx"
-
+```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx" title="Multi row checkbox selection using group keys"
 ```
-
-</Sandpack>
 
 </Prop>
 

@@ -15,26 +15,23 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 > Gives you access to the master row info in the current <PropLink name="components.RowDetail" code={false} >RowDetail</PropLink> component.
 
 
-<Sandpack>
+<DemoDescription>
 
-<Description>
 This example shows a master DataGrid with cities & countries.
 
 The details for each city shows a DataGrid with developers in that city.
-</Description>
 
-```ts file="$DOCS/learn/master-detail/master-detail-component-example.page.tsx" title="Basic master detail DataGrid example" size="lg"
+</DemoDescription>
 
+```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
-</Sandpack>
 </Prop>
 
 <Prop name="useDataSourceState"  type="(selector: (DataSourceState) => any)">
 
 > You can use it in your app components that are nested inside the `<DataSource />`
 
-```ts
-import { useDataSourceState } from '@infinite-table/infinite-react'
+```ts file="index.snippet.tsx" region="usedatasourcestate"
 ```
 
 Using it gives you access to the underlying data that InfiniteTable is using.
@@ -43,10 +40,7 @@ Using it gives you access to the underlying data that InfiniteTable is using.
 
 Call this hook with a `selector` function, which accepts the current `DataSourceState` as the first parameter.
 
-```ts title="Example usage - selecting the length of the data array"
-
-const length = useDataSourceState(state => state.dataArray.length)
-
+```ts file="index.snippet.tsx" region="example-usage-selecting-the-length-of-the-data" title="Example usage - selecting the length of the data array"
 ```
 
 </Note>
@@ -58,19 +52,12 @@ Please make sure you know what you're doing. This is intended only for advanced 
 </Note>
 
 
-```tsx title="InfiniteTable can be nested anywhere inside the <DataSource /> component"
-<DataSource>
-  <h1>Your DataGrid>
-  <App>
-    <InfiniteTable />
-  </App>
-</DataSource>
+```tsx file="index.snippet.tsx" region="infinitetable-can-be-nested-anywhere-inside-the" title="InfiniteTable can be nested anywhere inside the <DataSource /> component"
 ```
 
 Any component nested inside the `<DataSource />` can access the underlying data.
 
-```tsx live file="using-datasource-context.page.tsx"
-
+```tsx file="using-datasource-context.demo.tsx"
 ```
 </Prop>
 
@@ -78,24 +65,14 @@ Any component nested inside the `<DataSource />` can access the underlying data.
 
 > Use it inside the <PropLink name="columns.render" /> or <PropLink name="column.components.ColumnCell" /> (or <PropLink name="columns.renderValue" code={false}>other</PropLink> rendering functions) to retrieve information about the cell that is being rendered.
 
-```ts
-import { useInfiniteColumnCell } from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="useinfinitecolumncell"
 ```
 
 For custom column header components, see related <HookLink name="useInfiniteHeaderCell" />.
 
 When using this hook inside a <PropLink name="columns.components.ColumnCell" code={false}>custom column cell component</PropLink>, make sure you get `domRef` from the hook result and pass it on to the final `JSX.Element` that is the DOM root of the component.
 
-```tsx
-const CustomCellComponent = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, ...other } = useInfiniteColumnCell<Developer>();
-
-  return (
-    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {props.children}
-    </div>
-  );
-};
+```tsx file="index.snippet.tsx" region="useinfinitecolumncell-custom-cell"
 ```
 
 You should not pass the `domRef` along when using the hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> function.
@@ -119,19 +96,14 @@ When writing a custom editor, it's probably good to stop the propagation of the 
 
 </Note>
 
-<Sandpack title="Column with custom editor">
-
-<Description>
+<DemoDescription>
 
 Try editing the `salary` column - it has a custom editor
 
-</Description>
+</DemoDescription>
 
-```tsx file="custom-editor-hooks-example.page.tsx"
-
+```tsx file="custom-editor-hooks-example.demo.tsx" title="Column with custom editor"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -152,21 +124,16 @@ The return value of this hook is an object with the following properties:
 - `filterType` - the filter type object for the current column
 - `filterTypes` - a reference to the <DPropLink name="filterTypes" /> object as configured in the `DataSource`
 
-<Sandpack title="Demo of a custom filter editor">
-
-<Description>
+<DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
 
 The checkbox has indeterminate state, which will match all values in the data source.
 
-</Description>
+</DemoDescription>
 
-```ts file="custom-filter-editor-hooks-example.page.tsx"
-
+```tsx file="custom-filter-editor-hooks-example.demo.tsx" title="Demo of a custom filter editor"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -174,24 +141,14 @@ The checkbox has indeterminate state, which will match all values in the data so
 
 > Used inside <PropLink name="columns.header" /> or <PropLink name="column.components.HeaderCell" />
 
-```ts
-import { useInfiniteHeaderCell } from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="useinfiniteheadercell"
 ```
 
 For custom column cell components, see related <HookLink name="useInfiniteColumnCell" />.
 
 When using this hook inside a <PropLink name="columns.components.HeaderCell" code={false}>custom column header component</PropLink>, make sure you get `domRef` from the hook result and pass it on to the final `JSX.Element` that is the DOM root of the component.
 
-```tsx
-const CustomHeaderComponent = (props: React.HTMLProps<HTMLDivElement>) => {
-  const { domRef, ...other } = useInfiniteHeaderCell<Developer>();
-
-  return (
-    <div ref={domRef} {...props} style={{ ...props.style, color: 'red' }}>
-      {props.children}
-    </div>
-  );
-};
+```tsx file="index.snippet.tsx" region="useinfiniteheadercell-custom-header"
 ```
 
 You should not pass the `domRef` along when using the hook inside the
