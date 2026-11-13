@@ -21,7 +21,6 @@ See the [Infinite Table Column API page](/docs/reference/column-api) for the col
 
 > Collapses all row details.
 
-<DemoTitle>Master detail DataGrid with collapse all button</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
@@ -30,7 +29,7 @@ You can collapse them via the Row Detail API.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large" title="Master detail DataGrid with collapse all button"
 ```
 
 </Prop>
@@ -39,14 +38,13 @@ You can collapse them via the Row Detail API.
 
 > Expands all row details.
 
-<DemoTitle>Master detail DataGrid with expand all button</DemoTitle>
 <DemoDescription>
 
 Click the `Expand All` button to expand all row details.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-api-example.demo.tsx" height="large" title="Master detail DataGrid with expand all button"
 ```
 
 </Prop>

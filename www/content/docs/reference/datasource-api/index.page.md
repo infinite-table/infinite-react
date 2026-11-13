@@ -262,14 +262,13 @@ For inserting an array of data, see the <DApiLink name="insertDataArray" /> meth
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
-<DemoTitle>Inserting data at various locations</DemoTitle>
 <DemoDescription>
 
 Click any row in the table to make it the current active row, and then use the second button to add a new row after the active row.
 
 </DemoDescription>
 
-```tsx file="insert-example.demo.tsx"
+```tsx file="insert-example.demo.tsx" title="Inserting data at various locations"
 ```
 
 </Prop>
@@ -421,7 +420,6 @@ When `waitForNode` is used, if the node does not exist yet, it will wait for the
 
 <DPropLink name="onDataMutations" /> allows you to listen to data mutations.
 
-<DemoTitle>Live data updates with DataSourceApi.updateData</DemoTitle>
 <DemoDescription>
 
 The DataSource has 10k items.
@@ -432,7 +430,7 @@ The update rate could be much higher, but we're keeping it at current levels to 
 
 </DemoDescription>
 
-```tsx file="live-updates-example.demo.tsx"
+```tsx file="live-updates-example.demo.tsx" title="Live data updates with DataSourceApi.updateData"
 ```
 
 </Prop>

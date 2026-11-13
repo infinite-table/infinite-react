@@ -220,14 +220,13 @@ This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
 
 Here's an example of how to use the `defaultRowDisabledState` prop:
 
-<DemoTitle>Using uncontrolled row disabled state</DemoTitle>
 <DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled.
 
 </DemoDescription>
 
-```tsx file="defaultRowDisabledState-example.demo.tsx"
+```tsx file="defaultRowDisabledState-example.demo.tsx" title="Using uncontrolled row disabled state"
 ```
 
 </Prop>
@@ -251,7 +250,6 @@ This prop can be overriden by using the <DPropLink name="isRowDisabled" /> prop.
 
 </Note>
 
-<DemoTitle>Using controlled row disabled state</DemoTitle>
 <DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled initially.
@@ -260,7 +258,7 @@ Right click rows and use the context menu to enable/disable rows.
 
 </DemoDescription>
 
-```tsx file="rowDisabledState-example.demo.tsx"
+```tsx file="rowDisabledState-example.demo.tsx" title="Using controlled row disabled state"
 ```
 
 </Prop>
@@ -323,7 +321,6 @@ It's called with just 1 argument (`rowDisabledState`), which is an instance of t
 When using the controlled <DPropLink name="rowDisabledState" /> prop, you will need to update the `rowDisabledState` by using this callback.
 </Note>
 
-<DemoTitle>Using the onRowDisabledStateChange callback to update row disabled state</DemoTitle>
 <DemoDescription>
 
 Rows with ids `1`, `3`, `4` and `5` are disabled initially.
@@ -332,7 +329,7 @@ Right click rows and use the context menu to enable/disable rows.
 
 </DemoDescription>
 
-```tsx file="rowDisabledState-example.demo.tsx"
+```tsx file="rowDisabledState-example.demo.tsx" title="Using the onRowDisabledStateChange callback to update row disabled state"
 ```
 
 </Prop>
@@ -354,7 +351,6 @@ The `DataSourceAggregationReducer` type can have the following properties
 - `pivotColumn` - if specified, will configure the pivot column generated for this aggregation. This object has the same shape as a normal <PropLink name="columns">column</PropLink>, but supports some extra props like `inheritFromColumn` See <DPropLink name="aggregationReducers.pivotColumn" />.
 
 <DemoTitle>Aggregation demo - see `salary` column</DemoTitle>
-
 ```tsx file="groupBy-example.demo.tsx"
 ```
 
@@ -601,14 +597,13 @@ For filtering when using a `TreeGrid`, see <DPropLink name="treeFilterFunction" 
 
 </Note>
 
-<DemoTitle>Custom filterFunction example</DemoTitle>
 <DemoDescription>
 
 Loads data from remote location but will only show rows that have `id > 100`.
 
 </DemoDescription>
 
-```tsx file="custom-filter-function-example.demo.tsx"
+```tsx file="custom-filter-function-example.demo.tsx" title="Custom filterFunction example"
 ```
 
 </Prop>
@@ -660,14 +655,13 @@ Each operator for a certain filter type needs to at least have a `name` and `fn`
 
 </Note>
 
-<DemoTitle>Custom filter type used for the salary column</DemoTitle>
 <DemoDescription>
 
 The `salary` column has a custom filter type, with the following operators: `gt`, `gte`, `lt` and `lte`.
 
 </DemoDescription>
 
-```tsx file="filter-types-example.demo.tsx"
+```tsx file="filter-types-example.demo.tsx" title="Custom filter type used for the salary column"
 ```
 
 <Note>
@@ -679,14 +673,13 @@ By default, the `string` and `number` filter types are available. You can import
 
 If you want to make all your instances of `InfiniteTable` have new operators for those filter types, you can simply mutate the exported `defaultFilterTypes` object.
 
-<DemoTitle>Enhanced string filter type - new 'Not includes' operator</DemoTitle>
 <DemoDescription>
 
 The `string` columns have a new `Not includes` operator.
 
 </DemoDescription>
 
-```tsx file="default-filter-types-example.demo.tsx"
+```tsx file="default-filter-types-example.demo.tsx" title="Enhanced string filter type - new 'Not includes' operator"
 ```
 
 </Note>
@@ -722,7 +715,6 @@ Filter type operators can override the `FilterEditor` component - they can speci
 
 </Note>
 
-<DemoTitle>Demo of a custom filter editor</DemoTitle>
 <DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
@@ -731,7 +723,7 @@ The checkbox has indeterminate state, which will match all values in the data so
 
 </DemoDescription>
 
-```tsx file="/docs/reference/hooks/custom-filter-editor-hooks-example.demo.tsx"
+```tsx file="/docs/reference/hooks/custom-filter-editor-hooks-example.demo.tsx" title="Demo of a custom filter editor"
 ```
 
 </Prop>
@@ -1085,14 +1077,13 @@ See related <DataSourcePropLink name="sortInfo" /> for controlled sorting and <D
 
 By updating the value of this prop (eg: you can use it as a counter, and increment it) the `<DataSource />` component reloads it's <DPropLink name="data" /> if it's defined as a function. More specifically, the `data` function is called again and the result will replace the current data.
 
-<DemoTitle>Re-fetching data via refetchKey updates</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use the `refetchKey` to trigger reloading the data
 
 </DemoDescription>
 
-```tsx file="refetchKey-example.demo.tsx"
+```tsx file="refetchKey-example.demo.tsx" title="Re-fetching data via refetchKey updates"
 ```
  
 </Prop>
@@ -1341,14 +1332,13 @@ When this is `true`, you might want to use the [getSelectedPrimaryKeys](./select
 
 When some rows are filtered out, see <DPropLink name="multiRowSelectionTarget" /> for which rows a selected group covers.
 
-<DemoTitle>Multi row checkbox selection using group keys</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use have row selection with group keys instead of just the primary keys of rows.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx"
+```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx" title="Multi row checkbox selection using group keys"
 ```
 
 </Prop>

@@ -113,14 +113,13 @@ If you don't provide a value for the `rowSelection` and are calling this method 
 
 </Note>
 
-<DemoTitle>Using getSelectedPrimaryKeys in multi row checkbox selection with grouping</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use getSelectedPrimaryKeys with multiple row selection to retrieve the actual ids of the selected rows.
 
 </DemoDescription>
 
-```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx"
+```tsx file="/docs/reference/controlled-multi-row-selection-example-with-group-keys.demo.tsx" title="Using getSelectedPrimaryKeys in multi row checkbox selection with grouping"
 ```
 
 </Prop>

@@ -15,7 +15,6 @@ See below for the full list of hooks exposed by `InfiniteTable`, each with examp
 > Gives you access to the master row info in the current <PropLink name="components.RowDetail" code={false} >RowDetail</PropLink> component.
 
 
-<DemoTitle>Basic master detail DataGrid example</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
@@ -24,7 +23,7 @@ The details for each city shows a DataGrid with developers in that city.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
 </Prop>
 
@@ -97,14 +96,13 @@ When writing a custom editor, it's probably good to stop the propagation of the 
 
 </Note>
 
-<DemoTitle>Column with custom editor</DemoTitle>
 <DemoDescription>
 
 Try editing the `salary` column - it has a custom editor
 
 </DemoDescription>
 
-```tsx file="custom-editor-hooks-example.demo.tsx"
+```tsx file="custom-editor-hooks-example.demo.tsx" title="Column with custom editor"
 ```
 
 </Prop>
@@ -126,7 +124,6 @@ The return value of this hook is an object with the following properties:
 - `filterType` - the filter type object for the current column
 - `filterTypes` - a reference to the <DPropLink name="filterTypes" /> object as configured in the `DataSource`
 
-<DemoTitle>Demo of a custom filter editor</DemoTitle>
 <DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
@@ -135,7 +132,7 @@ The checkbox has indeterminate state, which will match all values in the data so
 
 </DemoDescription>
 
-```tsx file="custom-filter-editor-hooks-example.demo.tsx"
+```tsx file="custom-filter-editor-hooks-example.demo.tsx" title="Demo of a custom filter editor"
 ```
 
 </Prop>

@@ -28,14 +28,13 @@ See related <PropLink name="wrapRowsHorizontally" />.
 ```tsx file="horizontal-layout-repeat-wrapped-groups-example.demo.tsx" title="Horizontal Layout with repeated wrapped group rows"
 ```
 
-<DemoTitle>Tree with horizontal Layout and repeated wrapped tree rows</DemoTitle>
 <DemoDescription>
 
 In this example, parent nodes are repeated conditionally: only top-level parent nodes are repeated when wrapping happens.
 
 </DemoDescription>
 
-```tsx file="horizontal-layout-repeat-wrapped-tree-rows-example.demo.tsx"
+```tsx file="horizontal-layout-repeat-wrapped-tree-rows-example.demo.tsx" title="Tree with horizontal Layout and repeated wrapped tree rows"
 ```
 
 </Prop>
@@ -83,7 +82,6 @@ When using horizontal layout, columns can't be configured to have a flexible wid
 
 See related <PropLink name="rowDetailRenderer" />.
 
-<DemoTitle>Basic master detail DataGrid example</DemoTitle>
 <DemoDescription>
 
 This example shows a master DataGrid with cities & countries.
@@ -92,7 +90,7 @@ The details for each city shows a DataGrid with developers in that city.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-component-example.demo.tsx" height="large" title="Basic master detail DataGrid example"
 ```
 
 
@@ -240,14 +238,13 @@ When you use this controlled property, make sure you pair it with the <PropLink 
 
 If <PropLink name="isRowDetailExpanded" /> is specified, it has the final say in deciding if a row detail is expanded or not, so it overrides the `rowDetailState` and <PropLink name="defaultRowDetailState" />.
 
-<DemoTitle>Master detail DataGrid with some row details expanded by default</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with some row details expanded by default"
 ```
 
 </Prop>
@@ -279,14 +276,13 @@ This makes it easy for you to know which action was taken and on which row.
 
 See related <PropLink name="rowDetailState" /> and <PropLink name="defaultRowDetailState" />.
 
-<DemoTitle>Master detail DataGrid with listener to the row expand/collapse state change</DemoTitle>
 <DemoDescription>
 
 Some of the rows in the master DataGrid are expanded by default.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large"
+```tsx file="/docs/learn/master-detail/master-detail-controlled-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with listener to the row expand/collapse state change"
 ```
 </Prop>
 
@@ -680,14 +676,13 @@ You can also use <PropLink name="columns.renderTreeIconForParentNode" /> to spec
 ```
 
 
-<DemoTitle>Rendering a custom tree icon for both parent and leaf nodes</DemoTitle>
 <DemoDescription>
 
 This example renders a custom tree icon and uses the `toggleCurrentTreeNode` function to toggle the node state when Clicked. `toggleCurrentTreeNode` is a property of the `cellContext` argument passed to the `renderTreeIcon` function.
 
 </DemoDescription>
 
-```tsx file="tree-icon-custom-example-with-toggle.demo.tsx"
+```tsx file="tree-icon-custom-example-with-toggle.demo.tsx" title="Rendering a custom tree icon for both parent and leaf nodes"
 ```
 
 
@@ -784,14 +779,13 @@ Here's the implementation for our default editor
 ```tsx file="infinite-table-props.snippet.tsx" region="columns-components-editor"
 ```
 
-<DemoTitle>Column with custom editor</DemoTitle>
 <DemoDescription>
 
 Try editing the `salary` column - it has a custom editor
 
 </DemoDescription>
 
-```tsx file="/docs/reference/hooks/custom-editor-hooks-example.demo.tsx"
+```tsx file="/docs/reference/hooks/custom-editor-hooks-example.demo.tsx" title="Column with custom editor"
 ```
 
 </Prop>
@@ -1019,7 +1013,6 @@ If the type of filter you want to show does not match the column <PropLink name=
 
 </Note>
 
-<DemoTitle>Custom column filterType for the salary column</DemoTitle>
 <DemoDescription>
 
 In this example, the `salary` column has `type="number"` and `filterType="salary"`.
@@ -1028,7 +1021,7 @@ This means the sort order defined for `type="number"` will be used while display
 
 </DemoDescription>
 
-```tsx file="column-filterType-example.demo.tsx"
+```tsx file="column-filterType-example.demo.tsx" title="Custom column filterType for the salary column"
 ```
 
 </Prop>
@@ -1361,14 +1354,13 @@ To understand how the rendering pipeline works, head over to the page on [Column
 
 </Note>
 
-<DemoTitle>Column with custom renderSelectionCheckBox</DemoTitle>
 <DemoDescription>
 
 This example shows how you can use the default selection checkbox and decorate it.
 
 </DemoDescription>
 
-```tsx file="column-renderSelectionCheckBox-example.demo.tsx"
+```tsx file="column-renderSelectionCheckBox-example.demo.tsx" title="Column with custom renderSelectionCheckBox"
 ```
 
 </Prop>
@@ -2160,14 +2152,13 @@ In addition, if you need to configure the context menu to have other columns rat
 ```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems"
 ```
 
-<DemoTitle>Customising columns in the context menu</DemoTitle>
 <DemoDescription>
 
 Right-click any cell in the table to see a context menu with multiple columns (`icon`, `label` and `description`).
 
 </DemoDescription>
 
-```tsx file="cells-with-custom-columns-context-menu-example.demo.tsx"
+```tsx file="cells-with-custom-columns-context-menu-example.demo.tsx" title="Customising columns in the context menu"
 ```
 
 </Prop>
@@ -2307,14 +2298,13 @@ This example starts with cell `[2,0]` already active.
 ```tsx file="/docs/learn/keyboard-navigation/navigating-cells-uncontrolled-example.demo.tsx" title="Keyboard navigation"
 ```
 
-<DemoTitle>Disabled Keyboard navigation</DemoTitle>
 <DemoDescription>
 
 In this example the keyboard navigation is disabled.
 
 </DemoDescription>
 
-```tsx file="/docs/learn/keyboard-navigation/navigation-disabled-example.demo.tsx"
+```tsx file="/docs/learn/keyboard-navigation/navigation-disabled-example.demo.tsx" title="Disabled Keyboard navigation"
 ```
 
 </Prop>
@@ -2775,7 +2765,6 @@ The function form of `repaintCellsKey` runs for every rendered cell of every aff
 
 </Note>
 
-<DemoTitle>Repainting cells that depend on other rows</DemoTitle>
 <DemoDescription>
 
 Both "Country avg" columns render the average salary of the row's country. Edit a salary cell (or click "Update salary of first row"): the column without `repaintCellsKey` shows the stale average on the other rows of that country, while the column with `repaintCellsKey` is updated.
@@ -2786,7 +2775,7 @@ Note: the example re-scans all the rows to compute the average for each cell - t
 
 </DemoDescription>
 
-```tsx file="repaintCellsKey-example.demo.tsx"
+```tsx file="repaintCellsKey-example.demo.tsx" title="Repainting cells that depend on other rows"
 ```
 
 </Prop>
@@ -2797,7 +2786,6 @@ Note: the example re-scans all the rows to compute the average for each cell - t
 
 This property controls the behavior for all columns that don't have <PropLink name="columns.resizable" /> explicitly specified.
 
-<DemoTitle>Resizable columns example</DemoTitle>
 <DemoDescription>
 
 For resizable columns, hover the mouse between column headers to grab & drag the resize handle.
@@ -2806,7 +2794,7 @@ Hold SHIFT when grabbing in order to **share space on resize**.
 
 </DemoDescription>
 
-```tsx file="resizableColumns-example.demo.tsx"
+```tsx file="resizableColumns-example.demo.tsx" title="Resizable columns example"
 ```
 
 </Prop>

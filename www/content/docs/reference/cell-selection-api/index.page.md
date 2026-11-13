@@ -60,7 +60,8 @@ This allows you to retrieve the values from the selected cells, by using a mappi
 
 > Selects all cells in the specified column.
 
-```tsx file="/docs/reference/datasource-props/controlled-cell-selection-with-api-example.demo.tsx" height="large" title="Using selectColumn with controlled selection"
+<DemoTitle>Using `selectColumn` with controlled selection</DemoTitle>
+```tsx file="/docs/reference/datasource-props/controlled-cell-selection-with-api-example.demo.tsx" height="large"
 ```
 
 </Prop>
