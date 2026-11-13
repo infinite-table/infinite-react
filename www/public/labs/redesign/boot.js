@@ -4,6 +4,7 @@
  *   ?theme=light|dark   ?page=home|docs   ?bar=0 (hide the prototype bar)
  *   ?accent=ember|ion   (direction D only: its two accent palettes)
  *   ?type=fraunces|newsreader|sans|instrument   (direction C only: its display face)
+ *   ?palette=amber|signal|cobalt|violet|magenta|original   (A2 only: its accent)
  */
 (function () {
   var el = document.documentElement;
@@ -36,5 +37,11 @@
     if (TYPES.indexOf(type) < 0) type = localStorage.getItem('it-redesign-type');
   } catch (e) {}
   el.setAttribute('data-type', TYPES.indexOf(type) < 0 ? 'fraunces' : type);
+  var PALETTES = ['amber', 'signal', 'cobalt', 'violet', 'magenta', 'original'];
+  var palette = params.get('palette');
+  try {
+    if (PALETTES.indexOf(palette) < 0) palette = localStorage.getItem('it-redesign-palette');
+  } catch (e) {}
+  el.setAttribute('data-palette', PALETTES.indexOf(palette) < 0 ? 'amber' : palette);
   if (params.get('bar') === '0') el.setAttribute('data-no-bar', '');
 })();

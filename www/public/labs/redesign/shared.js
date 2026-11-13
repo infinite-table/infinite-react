@@ -4,6 +4,7 @@
  *   [data-toggle-theme]            flips light/dark
  *   [data-set-accent="ember|ion"]  direction D's accent palette (<html data-accent>)
  *   [data-set-type]                direction C's display face (<html data-type>)
+ *   [data-set-palette]             A2's accent palette (<html data-palette>)
  *   [data-goto-page="home|docs"]   switches the page shown
  *   [data-set-framework="react|vue"]  the React | Vue switcher seam
  *     ([data-fw="react|vue"] content follows it)
@@ -20,6 +21,7 @@ const root = document.documentElement;
 const params = new URLSearchParams(location.search);
 
 const DIRECTIONS = [
+  { id: 'a2', label: 'A2 · Picked' },
   { id: 'a', label: 'A · Terminal' },
   { id: 'b', label: 'B · Aurora' },
   { id: 'c', label: 'C · Paper' },
@@ -38,12 +40,23 @@ const TYPES = [
   { id: 'instrument', label: 'Instrument Serif' },
 ];
 
+// A2's accent palette
+const PALETTES = [
+  { id: 'amber', label: 'Amber, bright' },
+  { id: 'signal', label: 'Signal orange' },
+  { id: 'cobalt', label: 'Cobalt blue' },
+  { id: 'violet', label: 'Violet' },
+  { id: 'magenta', label: 'Magenta' },
+  { id: 'original', label: 'Original (A)' },
+];
+
 function syncUrl() {
   const next = new URLSearchParams(location.search);
   next.set('page', root.dataset.page);
   next.set('theme', root.dataset.theme);
   if (root.dataset.direction === 'd') next.set('accent', root.dataset.accent);
   if (root.dataset.direction === 'c') next.set('type', root.dataset.type);
+  if (root.dataset.direction === 'a2') next.set('palette', root.dataset.palette);
   history.replaceState(null, '', `${location.pathname}?${next}${location.hash}`);
 }
 
@@ -69,6 +82,14 @@ function setType(type) {
   root.dataset.type = type;
   try {
     localStorage.setItem('it-redesign-type', type);
+  } catch {}
+  syncUrl();
+}
+
+function setPalette(palette) {
+  root.dataset.palette = palette;
+  try {
+    localStorage.setItem('it-redesign-palette', palette);
   } catch {}
   syncUrl();
 }
@@ -132,6 +153,16 @@ function renderBar() {
       <select data-set-type>${TYPES.map(
         (t) =>
           `<option value="${t.id}"${t.id === root.dataset.type ? ' selected' : ''}>${t.label}</option>`,
+      ).join('')}</select>
+    </label>`
+        : ''
+    }
+    ${
+      current === 'a2'
+        ? `<label class="proto-bar__select">Palette
+      <select data-set-palette>${PALETTES.map(
+        (t) =>
+          `<option value="${t.id}"${t.id === root.dataset.palette ? ' selected' : ''}>${t.label}</option>`,
       ).join('')}</select>
     </label>`
         : ''
@@ -225,6 +256,8 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('change', (event) => {
   const select = event.target.closest?.('[data-set-type]');
   if (select) setType(select.value);
+  const palette = event.target.closest?.('[data-set-palette]');
+  if (palette) setPalette(palette.value);
 });
 document.addEventListener('input', (event) => {
   const dialog = event.target.closest?.('dialog[data-search]');
