@@ -1,8 +1,69 @@
 import { CommonThemeVars } from './vars-common.css';
+import { LightVars } from './vars-default-light.css';
 import { ThemeVars } from './vars.css';
 
 const borderColor = `var(--border)`;
+
+/**
+ * The value a variable has in the light mode of the default theme, with the
+ * variables it references replaced by their own values.
+ */
+function getDefaultLightValue(cssVar: string): string {
+  const value = `${LightVars[cssVar as keyof typeof LightVars]}`;
+
+  return value.replace(/var\(--[\w-]+\)/g, (reference) =>
+    reference in LightVars ? getDefaultLightValue(reference) : reference,
+  );
+}
+
+/**
+ * The default theme gives these variables one value for the light mode and
+ * another one for the dark mode, and chooses between them by the color scheme
+ * of the OS. This theme does not set them to shadcn/ui colors, so it has
+ * to set them itself: its mode is the mode of the page (the `dark` className
+ * of shadcn/ui), whatever the OS says.
+ */
+const MODE_DEPENDENT_VARS = [
+  ThemeVars.components.Cell.border,
+  ThemeVars.components.Cell.pinnedBorder,
+  ThemeVars.components.HeaderCell.filterEditorBorder,
+  ThemeVars.components.GroupingToolbar.color,
+  ThemeVars.components.GroupingToolbar.activeBackground,
+  ThemeVars.components.GroupingToolbar.rejectBackground,
+  ThemeVars.components.GroupingToolbarItem.background,
+  ThemeVars.components.GroupingToolbarItem.border,
+  ThemeVars.components.GroupingToolbarItem.activeBackground,
+  ThemeVars.components.Menu.shadowColor,
+  ThemeVars.components.Row.disabledBackground,
+  ThemeVars.components.Row.oddDisabledBackground,
+  ThemeVars.components.Row.selectedDisabledBackground,
+  ThemeVars.components.RowDetail.background,
+];
+
+// in light mode they keep the values they always had
+const DefaultLightModeVars = Object.fromEntries(
+  MODE_DEPENDENT_VARS.map((cssVar) => [cssVar, getDefaultLightValue(cssVar)]),
+) as Record<string, string>;
+
+/**
+ * The default theme makes these from its accent color. They are declared
+ * again here, as they are in the default theme, so they are made from the
+ * accent of this theme (the `--primary` color of shadcn/ui)
+ * and not from the blue of the default theme.
+ */
+const AccentVars = Object.fromEntries(
+  [
+    ThemeVars.focusOutline,
+    ThemeVars.components.ExpandCollapseIcon.color,
+    ThemeVars.components.HeaderCell.filterEditorFocusBorderColor,
+    ThemeVars.components.GroupingToolbarItem.activeBorder,
+    ThemeVars.components.Cell.selectedBackgroundDefault,
+  ].map((cssVar) => [cssVar, LightVars[cssVar as keyof typeof LightVars]]),
+) as Record<string, string>;
+
 export const ShadcnLightVars = {
+  ...DefaultLightModeVars,
+  ...AccentVars,
   ...CommonThemeVars,
   [ThemeVars.themeName]: 'shadcn',
   [ThemeVars.themeMode]: 'light',
