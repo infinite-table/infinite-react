@@ -1,5 +1,5 @@
 ---
-title: Benchmarking Infinite Table, MUI X Data Grid, AG Grid and TanStack Table with a million rows
+title: Benchmarking Infinite Table and AG Grid with a million rows
 description: An open, reproducible benchmark of Infinite Table, MUI X Data Grid, AG Grid Community and TanStack Table at 300,000 and 1,000,000 rows - mount time, memory, sorting and scrolling smoothness - with the exact steps to run it yourself.
 date: 2026-11-11
 author: radu
