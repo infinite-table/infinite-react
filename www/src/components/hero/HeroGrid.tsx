@@ -30,38 +30,11 @@ const PIVOT_BY: DataSourcePivotBy<Instrument>[] = [{ field: 'assetClass' }];
 // the generated group column ('group-by') goes first, then the ticker
 const COLUMN_PINNING = { 'group-by': 'start', symbol: 'start' } as const;
 
-/** The id the Infinite Table DevTools extension lists this grid under. */
-const DEVTOOLS_DEBUG_ID = 'live-demo';
-
 /**
- * `true` once the Infinite Table DevTools extension has connected to the page.
- *
- * The library sets `window.__INFINITE_TABLE_DEVTOOLS_HOOK__` from its own
- * `message` listener when the extension's content script first talks to the
- * page, so checking after each window message is enough. The grid only gets a
- * `debugId` then: with one, every commit records `performance.measure`
- * entries, and at this tick rate those would pile up on a page left open.
+ * The id the Infinite Table DevTools extension lists this grid under. It also
+ * names the grid's tracks in the Chrome DevTools profiler.
  */
-function useDevToolsConnected() {
-  const [connected, setConnected] = React.useState(false);
-  React.useEffect(() => {
-    const isConnected = () =>
-      !!(window as { __INFINITE_TABLE_DEVTOOLS_HOOK__?: unknown })
-        .__INFINITE_TABLE_DEVTOOLS_HOOK__;
-    if (isConnected()) {
-      setConnected(true);
-      return;
-    }
-    const onMessage = () => {
-      if (!isConnected()) return;
-      setConnected(true);
-      window.removeEventListener('message', onMessage);
-    };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, []);
-  return connected;
-}
+const DEVTOOLS_DEBUG_ID = 'live-demo';
 
 export type HeroGridProps = {
   feed: HeroFeed;
@@ -96,7 +69,6 @@ export function HeroGrid({
   onReady,
 }: HeroGridProps) {
   const columns = useColumns(feed, flashDuration);
-  const devToolsConnected = useDevToolsConnected();
   const [initialVisibility] = React.useState(() =>
     typeof window !== 'undefined' && window.innerWidth < 640
       ? NARROW_COLUMN_VISIBILITY
@@ -159,7 +131,7 @@ export function HeroGrid({
     >
       {({ pivotColumns, pivotColumnGroups }) => (
         <InfiniteTable<Instrument>
-          debugId={devToolsConnected ? DEVTOOLS_DEBUG_ID : undefined}
+          debugId={DEVTOOLS_DEBUG_ID}
           columns={columns}
           pivotColumns={pivotColumns}
           pivotColumnGroups={pivotColumnGroups}
