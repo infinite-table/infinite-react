@@ -3,7 +3,6 @@ import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 import { DocsPageFooter, DocsPageRoute } from '@www/components/DocsFooter';
 
-import cmpStyles from '@www/components/components.module.css';
 
 import { useTwitter } from '@www/components/Layout/useTwitter';
 
@@ -51,7 +50,7 @@ export function BlogPost({
             /> TODO add this back */}
             <div className="leading-loose">
               <h1
-                className={`mb-6 pt-8 inline-block text-4xl font-black md:text-5xl leading-snug tracking-tight ${cmpStyles.HighlightBrandToLightBackground}`}
+                className="blog-title"
               >
                 {post.title}
               </h1>

@@ -1,20 +1,20 @@
 /*
  * BenchmarkChart - grouped horizontal bars, Infinite Table and other grids.
- * The site is dark only, so there is one set of values. The series colors
- * were checked for colorblind separation (in the order MUI X, AG Grid,
- * TanStack, Infinite Table) and for contrast on this surface.
+ * On the site tokens (styles/tokens.css). The series colors were checked for
+ * colorblind separation (in the order MUI X, AG Grid, TanStack, Infinite
+ * Table), and each mode has its own set for contrast on its surface.
  */
 .root {
-  --bc-surface: #16181d;
-  --bc-border: #262a31;
-  --bc-grid: #343a46;
-  --bc-text: #f0efec;
-  --bc-text-secondary: #c3c2b7;
-  --bc-text-muted: #99a1b3;
-  --bc-mui: #d95926;
-  --bc-ag: #199e70;
-  --bc-tanstack: #c98500;
-  --bc-infinite: #3987e5;
+  --bc-surface: var(--surface);
+  --bc-border: var(--line-strong);
+  --bc-grid: var(--line);
+  --bc-text: var(--heading);
+  --bc-text-secondary: var(--fg);
+  --bc-text-muted: var(--muted);
+  --bc-mui: #c2410c;
+  --bc-ag: #0f7a55;
+  --bc-tanstack: #a16207;
+  --bc-infinite: var(--accent);
   --bc-value-space: 6.5rem;
   --bc-name-space: 8.25rem;
 
@@ -23,10 +23,16 @@
   max-width: 46rem;
   background: var(--bc-surface);
   border: 1px solid var(--bc-border);
-  border-radius: 10px;
+  border-radius: 3px;
   color: var(--bc-text);
   font-size: 0.875rem;
   line-height: 1.4;
+}
+
+:global([data-theme='dark']) .root {
+  --bc-mui: #d95926;
+  --bc-ag: #199e70;
+  --bc-tanstack: #c98500;
 }
 
 .header {
@@ -180,10 +186,10 @@
   gap: 0.1rem;
   min-width: 11rem;
   padding: 0.5rem 0.7rem;
-  background: #0b0d10;
-  border: 1px solid var(--bc-grid);
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  background: var(--raised);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.25);
   color: var(--bc-text-secondary);
   font-size: 0.8125rem;
   white-space: nowrap;
