@@ -1,5 +1,6 @@
 ---
 title: Live Updates Example
+vue: true
 ---
 
 This example shows how you can update the grid data in real-time.
