@@ -1,6 +1,7 @@
 ---
 title: Working with Data
 description: Learn how to visualise and manage your data in new ways with Infinite Table
+vue: true
 ---
 
 When working with data, you will mostly interact with the `<DataSource />` component, which is responsible for handling and managing the data and passing it down to the `<InfiniteTable />` component, which is the rendering engine for the DataGrid.
@@ -21,6 +22,8 @@ Probably the most important prop for the `<DataSource />` component is the <DPro
 
 </Note>
 
+<FrameworkContent framework="react">
+
 The `<DataSource />` is a generic React TypeScript component that can be bound to an array of items of the generic type.
 
 <Note>
@@ -34,14 +37,45 @@ Most of our examples in these docs have a `Developer` or `Employee` TypeScript d
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+The `<DataSource />` component is bound to an array of items. In a Vue template the component takes no type parameter - when using TypeScript, the types of the props are generic, so you type the values you bind with them: `DataSourceData<DATA_TYPE>` for the `data` prop, `InfiniteTablePropColumns<DATA_TYPE>` for the columns.
+
+<Note>
+
+In this documentation, we'll use `DATA_TYPE` when referring to the generic type. Rarely, we'll use `T`.
+
+```tsx file="index.snippet.tsx" region="generic-type"
+```
+
+Most of our examples in these docs have a `Developer` or `Employee` TypeScript data type used as the generic type.
+
+</Note>
+
+</FrameworkContent>
+
 ```tsx file="index.snippet.tsx" region="local-data"
 ```
 
 In the snippet above, we see 3 important details:
 
+<FrameworkContent framework="react">
+
 1. the component is bound to the `Employee` type
 2. we use a `primaryKey` property - here it is `id`, but since the bound type is `Employee`, `primaryKey` is `keyof Employee`
 3. we pass the `employees` array as the `data` property.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+1. the `employees` array is typed as `Employee[]`
+2. we use a `primaryKey` property - here it is `id`, which is a property of the `Employee` type
+3. we pass the `employees` array as the `data` property, bound with `:data`.
+
+</FrameworkContent>
 
 <Note>
 
