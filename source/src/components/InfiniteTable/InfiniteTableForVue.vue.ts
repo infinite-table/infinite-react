@@ -1845,6 +1845,15 @@ export const InfiniteTable = defineComponent({
             return null;
           }
 
+          // like React's useCellRendering: when rows have details, the brain
+          // sizes the row as row + detail, so the cell takes its own height
+          // from the row size cache - otherwise it would cover the detail
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+          const rowHeight = computedRowSizeCacheForDetails
+            ? computedRowSizeCacheForDetails.getRowHeight(rowIndex)
+            : heightWithRowspan;
+
           let rowDetailState: false | 'collapsed' | 'expanded' = false;
           const isRowDetailsEnabled = s.isRowDetailEnabled;
           const isRowDetailsExpanded = s.isRowDetailExpanded;
@@ -1870,7 +1879,7 @@ export const InfiniteTable = defineComponent({
           return h(InfiniteTableColumnCell, {
             key: `${rowIndex}:${column.id}`,
             rowIndex,
-            rowHeight: heightWithRowspan,
+            rowHeight,
             width,
             hidden,
             domRef: domRef as any,
