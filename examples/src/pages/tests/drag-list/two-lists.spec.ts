@@ -59,15 +59,45 @@ export default test.describe('DragList - two lists under one provider', () => {
         dragItemId: 'a',
       },
     ]);
+  });
 
-    // and it can go back, to the end of its first list
-    await dragBy(page, getItem(page, 'right', 'a'), {
+  // A test of its own, on a fresh page, and not a second drag in the test
+  // above: a drag leaves the text between its two ends selected, and the
+  // item that was dropped is inside that selection. In Chrome on Linux, a
+  // press on it starts the native drag of the selected text, the pointer is
+  // cancelled, and the drag list does not handle that.
+  test('an item can be dragged the other way, between two items of the other list', async ({
+    page,
+  }) => {
+    // "x" is dropped between "b" and "c"
+    await dragBy(page, getItem(page, 'right', 'x'), {
       x: -TO_THE_OTHER_LIST,
-      y: 60,
+      y: 70,
     });
 
-    await expect.poll(() => getOrder(page, 'left')).toEqual(['b', 'c', 'a']);
-    expect(await getOrder(page, 'right')).toEqual(['x', 'y', 'z']);
+    await expect
+      .poll(() => getOrder(page, 'left'))
+      .toEqual(['a', 'b', 'x', 'c']);
+    expect(await getOrder(page, 'right')).toEqual(['y', 'z']);
+
+    expect(await getLog(page)).toEqual([
+      {
+        name: 'left.onAcceptDrop',
+        dragItemId: 'x',
+        dragSourceListId: 'right',
+        dropTargetListId: 'left',
+        dragIndex: 0,
+        dropIndex: 2,
+        dropItemId: 'c',
+      },
+      {
+        name: 'right.onRemove',
+        sortedIndexes: [1, 2],
+        dragIndex: 0,
+        dropIndex: -1,
+        dragItemId: 'x',
+      },
+    ]);
   });
 
   test('the provider and the lists know the source and the target while dragging', async ({
