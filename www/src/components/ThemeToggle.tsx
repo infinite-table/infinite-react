@@ -3,8 +3,9 @@
 /*
  * Light / dark for the whole site: <html data-theme="light|dark">.
  *
- * The choice is stored in localStorage; with nothing stored the site follows
- * the OS (prefers-color-scheme), and keeps following it while it changes.
+ * Same order as the init script: ?theme= in the URL (demo iframes,
+ * screenshots), then the choice stored in localStorage, then the OS
+ * (prefers-color-scheme), which the site keeps following while it changes.
  * ThemeInitScript (themeInit.tsx) runs in <head> before first paint, so there is no flash.
  * The toggle renders both icons and CSS shows the one for the current mode,
  * so the server HTML is correct whatever the theme.
@@ -13,6 +14,11 @@
 import { useEffect } from 'react';
 
 import { THEME_STORAGE_KEY, type SiteTheme } from './themeInit';
+
+function urlTheme(): SiteTheme | null {
+  const value = new URLSearchParams(window.location.search).get('theme');
+  return value === 'light' || value === 'dark' ? value : null;
+}
 
 function storedTheme(): SiteTheme | null {
   try {
@@ -31,11 +37,11 @@ export function setSiteTheme(theme: SiteTheme) {
 }
 
 if (typeof window !== 'undefined' && window.matchMedia) {
-  // with no stored choice, follow the OS when it switches
+  // with no URL override and no stored choice, follow the OS when it switches
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener?.('change', (event) => {
-      if (storedTheme()) return;
+      if (urlTheme() || storedTheme()) return;
       document.documentElement.setAttribute(
         'data-theme',
         event.matches ? 'dark' : 'light',
@@ -45,6 +51,7 @@ if (typeof window !== 'undefined' && window.matchMedia) {
 
 function preferredTheme(): SiteTheme {
   return (
+    urlTheme() ??
     storedTheme() ??
     (window.matchMedia?.('(prefers-color-scheme: dark)').matches
       ? 'dark'
