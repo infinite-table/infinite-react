@@ -127,7 +127,9 @@ function dampenByTime(
 
   const pct = (runTime - accelerateAt) / (stopDampeningAt - accelerateAt);
 
-  return Math.ceil(proposedScroll * config.ease(pct));
+  // never 0: a frame that lands exactly at accelerateAt (pct 0) would
+  // scroll by nothing, and the loop stops when a frame does not scroll
+  return Math.max(MIN_SCROLL, Math.ceil(proposedScroll * config.ease(pct)));
 }
 
 function getScrollForAxis(

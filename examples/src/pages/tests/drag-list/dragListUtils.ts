@@ -68,3 +68,18 @@ export async function dragBy(
 
   await page.mouse.up();
 }
+
+/**
+ * What the browser does when it takes the pointer over (a native drag, a
+ * touch scroll): a `pointercancel`, and no `pointerup` after it.
+ */
+export const cancelPointer = (page: Page) =>
+  page.evaluate(() => {
+    window.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true }));
+  });
+
+/** Selects all the text of a list, as a previous drag can leave it. */
+export const selectTextOf = (page: Page, listName: string) =>
+  getList(page, listName).evaluate((node) => {
+    window.getSelection()!.selectAllChildren(node);
+  });

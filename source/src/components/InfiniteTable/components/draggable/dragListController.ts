@@ -707,7 +707,8 @@ type DragItemPointerDownEvent = {
  *
  * Registers the list as the source of a possible drag and listens to the
  * pointer: the drag only starts on the first pointer move, so a click is
- * not a drag. It ends on pointer up.
+ * not a drag. It ends on pointer up, with a drop, or on pointer cancel,
+ * without one.
  *
  * `props` are the props of the list as they are on pointer down - they are
  * all read here, before the first pointer move.
@@ -963,10 +964,21 @@ export function startDragOnPointerDown(
     fireDragMove();
   };
 
-  const onPointerUp = () => {
+  // While the pointer is down, the browser must not start a drag of its own:
+  // a press on selected text (or on an image or a link) would start one,
+  // and the browser then cancels the pointer.
+  const preventNativeDrag = (e: Event) => {
+    e.preventDefault();
+  };
+
+  const endDrag = (cancelled: boolean) => {
     autoScroller.stop();
     scrollContainer?.removeEventListener('scroll', onContainerScroll);
-    getGlobal().removeEventListener('pointermove', onPointerMove);
+
+    win.removeEventListener('pointermove', onPointerMove);
+    win.removeEventListener('pointerup', onPointerUp);
+    win.removeEventListener('pointercancel', onPointerCancel);
+    win.removeEventListener('dragstart', preventNativeDrag, true);
 
     if (useRenderProxy) {
       updateDragProxyRenderState((prev) =>
@@ -983,10 +995,20 @@ export function startDragOnPointerDown(
       return;
     }
 
-    dragOperation!.drop();
+    if (cancelled) {
+      dragOperation.cancel();
+    } else {
+      dragOperation.drop();
+    }
     dragOperation = null;
   };
 
-  getGlobal().addEventListener('pointermove', onPointerMove);
-  getGlobal().addEventListener('pointerup', onPointerUp, { once: true });
+  const onPointerUp = () => endDrag(false);
+  const onPointerCancel = () => endDrag(true);
+
+  const win = getGlobal();
+  win.addEventListener('pointermove', onPointerMove);
+  win.addEventListener('pointerup', onPointerUp);
+  win.addEventListener('pointercancel', onPointerCancel);
+  win.addEventListener('dragstart', preventNativeDrag, true);
 }
