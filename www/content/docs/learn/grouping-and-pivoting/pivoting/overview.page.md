@@ -1,5 +1,6 @@
 ---
 title: Pivoting with Infinite
+vue: true
 ---
 
 An enteprise-level feature `InfiniteTable` provides is the pivoting functionality. Combined with grouping and advanced aggregation, it unlocks new ways to visualize data.
@@ -10,7 +11,17 @@ Pivoting is first defined at the `DataSource` level, via the <PropLink name="piv
 
 Pivoting generates columns based on the pivoting values, so you have to pass those generated columns into the `<InfiniteTable />` component.
 
+<FrameworkContent framework="react">
+
 You do that by using a `function` as a direct child of the `DataSource`, and in that function you have access to the generated `pivotColumns` array. Likewise for `pivotColumnGroups`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+You do that with the default slot of the `DataSource`: its slot props include the generated `pivotColumns`, which you bind to the `<InfiniteTable />` rendered in that slot. Likewise for `pivotColumnGroups`.
+
+</FrameworkContent>
 
 </Note>
 
@@ -26,7 +37,7 @@ For more pivoting examples, see [our pivoting demos](/docs/learn/examples/dynami
 
 Sorting the group column in a pivot table uses the same <DPropLink name="sortInfo" /> as in [row grouping](/docs/learn/grouping-and-pivoting/grouping-rows#sorting-the-group-column). For a single group column it is enough to pass `{ id: 'group-by', dir: 1 }`. Based on the current <DPropLink name="groupBy" />and your columns, it will detect the fields and the sorting it needs to apply.
 
-```ts file="overview.snippet.tsx" region="sorting-the-group-column-and-pivot-columns"
+```ts file="overview.snippet.tsx" region="sorting-the-group-column-and-pivot-columns" neutral
 ```
 
 Generated pivot columns inherit sortability from the original <PropLink name="columns" /> bound to the aggregation field — including <PropLink name="columnDefaultSortable" />. You can override that with `defaultSortable` on the <PropLink name="pivotColumn" /> prop on `<InfiniteTable />`:
@@ -55,7 +66,7 @@ There are a number of ways to customize the pivot columns and <DataSourcePropLin
 
 The default behavior for pivot columns generated for aggregations is that they inherit the properties of the original columns bound to the same field as the aggregation.
 
-```ts file="overview.snippet.tsx" region="customizing-pivot-columns"
+```ts file="overview.snippet.tsx" region="customizing-pivot-columns" neutral
 ```
 
 ```tsx file="pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
@@ -69,7 +80,7 @@ If you pass an object, it will be applied to all pivot columns in the column gro
 
 In the above example, the `column.defaultWidth=400` will be applied to columns generated for all `canDesign` values corresponding to each country. This is good but not good enough as you might want to customize the pivot column for every value in the pivot. You can do that by passing a function to the `pivotBy.column` property.
 
-```tsx file="overview.snippet.tsx" region="pivot-by-column-function"
+```tsx file="overview.snippet.tsx" region="pivot-by-column-function" neutral
 ```
 
 ```tsx file="pivoting-customize-column-example.demo.tsx" title="Pivoting with customized pivot column"
@@ -114,13 +125,13 @@ The <DataSourcePropLink name="data" code>DataSource.data</DataSourcePropLink> fu
 
 In the example below, let's assume the following practical scenario, with the data-type being a `Developer{country, stack, preferredLanguage, canDesign, age, salary}`.
 
-```tsx file="overview.snippet.tsx" region="server-side-pivoting"
+```tsx file="overview.snippet.tsx" region="server-side-pivoting" neutral
 ```
 
 ```tsx file="overview.snippet.tsx" region="server-side-pivoting-data-function"
 ```
 
-```js file="overview.snippet.tsx" region="server-side-pivoting-response"
+```js file="overview.snippet.tsx" region="server-side-pivoting-response" neutral
 ```
 
 ```tsx file="remote-pivoting-example.demo.tsx" title="Server-side pivoting example"
@@ -145,14 +156,14 @@ The example below also shows you how to customize the table rows while records a
 
 Here's another example, that assumes grouping by `country` and `city`, aggregations by `age` and `salary` (average values) and pivot by `preferredLanguage` and `canDesign` (a boolean property):
 
-```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching"
+```tsx file="overview.snippet.tsx" region="another-pivoting-example-with-batching" neutral
 ```
 
 If we were to scroll down, the next batch of data would have the same structure as the previous one, but with `lazyLoadStartIndex` set to 10 (if `lazyLoad.batchSize = 10`).
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx file="overview.snippet.tsx" region="batching-expanded-group"
+```tsx file="overview.snippet.tsx" region="batching-expanded-group" neutral
 ```
 
 <Note>
@@ -161,12 +172,12 @@ The response can contain a `mappings` key with values for `totals` and `values` 
 
 If `mappings` would be `{totals: "t", values: "v"}`, the response would look like this:
 
-```tsx file="overview.snippet.tsx" region="response-with-mappings"
+```tsx file="overview.snippet.tsx" region="response-with-mappings" neutral
 ```
 
 More-over, you can also give aggregationReducers shorter keys to make the server response even more compact
 
-```tsx file="overview.snippet.tsx" region="short-aggregation-keys"
+```tsx file="overview.snippet.tsx" region="short-aggregation-keys" neutral
 ```
 
 </Note>
