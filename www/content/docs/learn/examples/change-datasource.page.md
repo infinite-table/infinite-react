@@ -1,5 +1,6 @@
 ---
 title: Changing the Data Source
+vue: true
 ---
 
 This example show how you can change the data source and the columns of the DataGrid.
