@@ -1,6 +1,8 @@
 ---
 title: Theming
 description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for React.
+vue:
+  description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for Vue.
 ---
 
 `<InfiniteTable />` ships with a CSS file that you need to import in your codebase to make the component look as intended.
@@ -29,7 +31,11 @@ Each theme CSS file includes both the **`light`** and the **`dark`** modes.
 
 <Note>
 
+<FrameworkContent framework="react">
+
 Version `6.2.0` is the first version where the root CSS file (`@infinite-table/infinite-react/index.css`) doesn't include all the themes. Previous to this version, simply importing the root CSS file gave you access to all available themes.
+
+</FrameworkContent>
 
 Splitting each theme into a dedicated CSS file helps reduce the bundle size for our users, as most people will only use one theme for `<InfiniteTable />` in their apps.
 
