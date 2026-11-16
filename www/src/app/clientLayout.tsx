@@ -31,9 +31,14 @@ export default function ClientLayout({
     demo: /^\/demo\/?$/.test(pathname),
     // the homepage's sections span the window (they have their own width)
     home: pathname === '/',
+    themes: pathname.startsWith('/themes'),
   };
   const skipMaxWidth =
-    activePage.blog || activePage.docs || activePage.demo || activePage.home;
+    activePage.blog ||
+    activePage.docs ||
+    activePage.demo ||
+    activePage.home ||
+    activePage.themes;
 
   if (!skipMaxWidth) {
     style.maxWidth = newvars.maxSiteWidth;

@@ -12,6 +12,7 @@ const COLUMNS: { title: string; items: FooterItem[] }[] = [
     items: [
       { label: 'Get started', href: '/docs/learn/getting-started' },
       { label: 'Demo', href: '/demo' },
+      { label: 'Themes', href: '/themes' },
       { label: 'Compare', href: '/compare' },
       { label: 'Benchmark', href: '/benchmark' },
       { label: 'Buy a license', href: '/pricing' },
