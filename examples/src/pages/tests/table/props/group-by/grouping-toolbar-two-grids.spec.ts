@@ -5,6 +5,10 @@ type GridName = 'first' | 'second';
 const grid = (page: Page, name: GridName) =>
   page.locator(`[data-name="${name}"]`);
 
+/** The last column order the grid reported, or 'unchanged'. */
+const getColumnOrder = (page: Page, name: GridName) =>
+  grid(page, name).locator('[data-name="column-order"]').innerText();
+
 async function getGroupBy(page: Page) {
   const groupByOf = (name: GridName) =>
     grid(page, name).locator('[data-name="group-by"]').innerText();
@@ -82,6 +86,28 @@ export default test.describe('Two grids with grouping toolbars on a page', () =>
     expect(
       warnings.filter((text) => text.includes('DragInteractionTarget')),
     ).toEqual([]);
+  });
+
+  test('dropping a column header on the toolbar does not reorder the columns', async ({
+    page,
+  }) => {
+    await page.waitForInfinite();
+
+    // `country` is the last column; the toolbar drop point is above the
+    // first one, so a reorder would move it to the front. The first grid
+    // keeps columns dragged out of the header, so only the toolbar drop
+    // stops that reorder
+    await dragColumnToGroupingToolbar(page, {
+      from: 'first',
+      columnId: 'country',
+      to: 'first',
+    });
+
+    await expect
+      .poll(() => getGroupBy(page))
+      .toEqual({ first: 'country', second: 'none' });
+
+    expect(await getColumnOrder(page, 'first')).toEqual('unchanged');
   });
 
   test('a column header cannot be dropped on the toolbar of the other grid', async ({

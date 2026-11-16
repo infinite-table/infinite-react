@@ -46,15 +46,21 @@ const domProps = {
 function Grid(props: {
   name: string;
   columns: InfiniteTablePropColumns<Developer>;
+  allowColumnHideWhileDragging?: boolean;
 }) {
   const [groupBy, setGroupBy] = React.useState<
     DataSourcePropGroupBy<Developer>
   >([]);
+  // the last column order the grid reported (a drag can reorder the columns)
+  const [columnOrder, setColumnOrder] = React.useState<string[] | null>(null);
 
   return (
     <div data-name={props.name}>
       <div data-name="group-by">
         {groupBy.map((group) => group.field).join(',') || 'none'}
+      </div>
+      <div data-name="column-order">
+        {columnOrder ? columnOrder.join(',') : 'unchanged'}
       </div>
       <DataSource<Developer>
         data={data}
@@ -67,10 +73,13 @@ function Grid(props: {
           columns={props.columns}
           columnDefaultWidth={150}
           columnDefaultGroupable
+          onColumnOrderChange={setColumnOrder}
           groupRenderStrategy="single-column"
         >
           <InfiniteTable.GroupingToolbar />
-          <InfiniteTable.Header />
+          <InfiniteTable.Header
+            allowColumnHideWhileDragging={props.allowColumnHideWhileDragging}
+          />
           <InfiniteTable.Body />
         </InfiniteTable>
       </DataSource>
@@ -81,7 +90,13 @@ function Grid(props: {
 export default function App() {
   return (
     <>
-      <Grid name="first" columns={firstColumns} />
+      {/* dragging a header out of the first grid does not hide it, so
+          only the toolbar stops a reorder there */}
+      <Grid
+        name="first"
+        columns={firstColumns}
+        allowColumnHideWhileDragging={false}
+      />
       <Grid name="second" columns={secondColumns} />
     </>
   );
