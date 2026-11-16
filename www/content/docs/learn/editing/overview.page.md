@@ -1,6 +1,8 @@
 ---
 title: Editing
 description: Learn how to use inline editing to update your data with Infinite Table for React
+vue:
+  description: Learn how to use inline editing to update your data with Infinite Table for Vue
 ---
 
 By default, editing is not enabled.
@@ -76,7 +78,7 @@ Either way, be it user interaction or API call, those actions will trigger check
 
 When editing starts, the column editor is displayed with the value that was in the cell. This (initial) edit value can be customized via the <PropLink name="columns.getValueToEdit">column.getValueToEdit</PropLink> prop. This allows you to start editing with a different value than the one that is displayed in the cell - and even with a value fetched asynchronously.
 
-```tsx file="overview.snippet.tsx" region="customize-edit-value-when-editing-starts"
+```tsx file="overview.snippet.tsx" region="customize-edit-value-when-editing-starts" neutral
 ```
 
 <DemoDescription>
