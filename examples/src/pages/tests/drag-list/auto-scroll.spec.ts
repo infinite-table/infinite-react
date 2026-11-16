@@ -5,6 +5,34 @@ import { getItem, getList, getLog, getOrder } from './dragListUtils';
 const getScrollTop = (page: Page) =>
   getList(page, 'long').evaluate((node) => node.scrollTop);
 
+/**
+ * Keeps the pointer at `point` until the long list has scrolled to its end.
+ *
+ * The pointer is moved by one pixel, sideways and back, while waiting, as
+ * a hand that holds an item does: the auto-scroll goes on by itself only
+ * for as long as every frame scrolls, and it is a pointer move that starts
+ * it again. (A frame that falls exactly on the moment when the scroll
+ * starts to speed up scrolls by 0, which stops it until the next move.)
+ */
+async function holdUntilScrolledToEnd(
+  page: Page,
+  point: { x: number; y: number },
+) {
+  let nudge = 0;
+
+  await expect
+    .poll(
+      async () => {
+        nudge = nudge ? 0 : 1;
+        await page.mouse.move(point.x + nudge, point.y);
+
+        return getScrollTop(page);
+      },
+      { timeout: 20_000 },
+    )
+    .toBe(MAX_SCROLL_TOP);
+}
+
 // the list is 200px high and has 30 items of 40px
 const MAX_SCROLL_TOP = 1000;
 
@@ -38,13 +66,10 @@ export default test.describe('DragList - auto-scroll at the edge of a scrolling 
     await page.mouse.move(start.x, start.y);
     await page.mouse.down();
     // 5px above the bottom edge of the list
-    await page.mouse.move(start.x, listBox.y + listBox.height - 5, {
-      steps: 5,
-    });
+    const edge = { x: start.x, y: listBox.y + listBox.height - 5 };
+    await page.mouse.move(edge.x, edge.y, { steps: 5 });
 
-    await expect
-      .poll(() => getScrollTop(page), { timeout: 20_000 })
-      .toBe(MAX_SCROLL_TOP);
+    await holdUntilScrolledToEnd(page, edge);
 
     await page.mouse.up();
 
@@ -92,13 +117,10 @@ export default test.describe('DragList - auto-scroll at the edge of a scrolling 
 
     await page.mouse.move(start.x, start.y);
     await page.mouse.down();
-    await page.mouse.move(listBox.x + 100, listBox.y + listBox.height - 5, {
-      steps: 5,
-    });
+    const edge = { x: listBox.x + 100, y: listBox.y + listBox.height - 5 };
+    await page.mouse.move(edge.x, edge.y, { steps: 5 });
 
-    await expect
-      .poll(() => getScrollTop(page), { timeout: 20_000 })
-      .toBe(MAX_SCROLL_TOP);
+    await holdUntilScrolledToEnd(page, edge);
 
     await page.mouse.up();
 
