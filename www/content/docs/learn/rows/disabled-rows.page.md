@@ -1,5 +1,6 @@
 ---
 title: Disabled Rows
+vue: true
 ---
 
 Disabling rows allows you to have some rows that are not selectable, not clickable, not reacheable via keyboard navigation and other interactions.
@@ -37,12 +38,12 @@ You can use the `DataSourceApi` to enable or disable rows programmatically.
 
 <DApiLink name="setRowEnabled" />
 
-```tsx file="disabled-rows.snippet.tsx" region="using-the-api-to-enable-disable-rows"
+```tsx file="disabled-rows.snippet.tsx" region="using-the-api-to-enable-disable-rows" neutral
 ```
 
 <DApiLink name="setRowEnabledAt" />
 
-```tsx file="disabled-rows.snippet.tsx" region="set-row-enabled-at"
+```tsx file="disabled-rows.snippet.tsx" region="set-row-enabled-at" neutral
 ```
 
 <DemoDescription>
