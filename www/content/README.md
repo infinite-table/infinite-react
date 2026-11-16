@@ -129,5 +129,6 @@ Run these from the `www` folder:
 | `npm run check:demos` | opens every built demo in headless Chromium and reports the ones that don't render (`-- --framework vue` for only the Vue ones) |
 | `npm run check:pages -- http://localhost:3001 content/docs/learn/sorting` | opens those pages on a running site and checks their demos |
 | `npm run check:pages -- http://localhost:3001 content/docs/learn/sorting --framework vue` | the same for the Vue version of the pages, and lists the cards that still show React code |
+| `npm run check:pages -- http://localhost:3001 content/docs/learn/sorting --color-scheme light` | the same with the browser preferring light (or `dark`) mode, which the site follows |
 
 The `check:` ones use the Playwright install of the examples app (`npm ci --prefix examples`). CI runs the type checks and the demo build on every change under `www/content`.
