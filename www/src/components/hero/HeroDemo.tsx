@@ -283,7 +283,6 @@ export default function HeroDemo({
                   groupBy={groupBy}
                   onGroupByChange={onGroupByChange}
                   pivot={pivot}
-                  density={density}
                   flashDuration={reducedMotion ? 1600 : 700}
                   selectedId={selectedId}
                   onSelect={setSelectedId}
