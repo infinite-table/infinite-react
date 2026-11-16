@@ -8,6 +8,8 @@
  */
 :root {
   color-scheme: light;
+  /* code reads literally: no => or != ligatures (JetBrains Mono has them) */
+  font-variant-ligatures: none;
   --bg: #fcfcfd;
   --surface: #f3f5f8;
   --raised: #e9edf2;

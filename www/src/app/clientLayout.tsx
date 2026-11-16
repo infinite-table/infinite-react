@@ -29,8 +29,11 @@ export default function ClientLayout({
     docs: docsFrameworks.frameworkOf(pathname) != null,
     blog: pathname.startsWith('/blog'),
     demo: /^\/demo\/?$/.test(pathname),
+    // the homepage's sections span the window (they have their own width)
+    home: pathname === '/',
   };
-  const skipMaxWidth = activePage.blog || activePage.docs || activePage.demo;
+  const skipMaxWidth =
+    activePage.blog || activePage.docs || activePage.demo || activePage.home;
 
   if (!skipMaxWidth) {
     style.maxWidth = newvars.maxSiteWidth;

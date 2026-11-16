@@ -1,6 +1,4 @@
-// import Image from 'next/image';
-// import { Inter } from 'next/font/google';
-import { IndexPage } from '@www/components/IndexPage';
+import { HomePage } from '@www/components/home/HomePage';
 import { asMeta } from '@www/utils/asMeta';
 import { sortedPosts } from './blog/sortedPosts';
 
@@ -13,16 +11,9 @@ export const metadata = asMeta({
   description: seoDescription,
 });
 
-// or Dynamic metadata
-// export async function generateMetadata({ params }) {
-//   return {
-//     title: '...',
-//   };
-// }
-
 export default function Home() {
   return (
-    <IndexPage
+    <HomePage
       posts={sortedPosts.filter((post) => !post.hide_in_homepage).slice(0, 4)}
     />
   );

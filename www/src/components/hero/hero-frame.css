@@ -25,6 +25,8 @@
   --showcase-pill-border: rgb(255 255 255 / 0.14);
 }
 
+/* the frame (and its poster) before the demo loads: light with the site */
+[data-theme='light'] .hero-frame,
 .hero[data-hero-mode='light'] {
   --hero-surface: #ffffff;
   --hero-card: #f7f7f9;
@@ -93,4 +95,18 @@
   height: 100%;
   object-fit: cover;
   object-position: left top;
+}
+
+/* the poster that follows the site's mode (HeroPoster without a `mode`) */
+.hero-poster--site {
+  background: var(--hero-surface) url('/hero/hero-poster-light.webp') left top /
+    cover no-repeat;
+}
+[data-theme='dark'] .hero-poster--site {
+  background-image: url('/hero/hero-poster-dark.webp');
+}
+@media (max-width: 639px) {
+  [data-theme='dark'] .hero-poster--site {
+    background-image: url('/hero/hero-poster-dark-mobile.webp');
+  }
 }
