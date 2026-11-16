@@ -62,11 +62,6 @@ export default test.describe('DragList - two lists under one provider', () => {
     ]);
   });
 
-  // A test of its own, on a fresh page, and not a second drag in the test
-  // above: a drag leaves the text between its two ends selected, and the
-  // item that was dropped is inside that selection. In Chrome on Linux, a
-  // press on it starts the native drag of the selected text, the pointer is
-  // cancelled, and the drag list does not handle that.
   test('an item can be dragged the other way, between two items of the other list', async ({
     page,
   }) => {

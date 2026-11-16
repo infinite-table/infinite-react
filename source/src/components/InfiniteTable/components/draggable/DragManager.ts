@@ -302,6 +302,17 @@ export class DragManager {
     const events: DragInteractionTargetMoveEvent[] = [];
 
     DragManager.withDragMove(dragOperation, (interactionTarget, { event }) => {
+      if (dragOperation.cancelled) {
+        // a cancelled drag is dropped nowhere: every list puts its items
+        // back, and none of the drop callbacks is called
+        event = {
+          ...event,
+          dropTargetListId: null,
+          dropIndex: -1,
+          outside: false,
+        };
+      }
+
       interactionTarget.drop(event);
 
       events.push(event);
@@ -414,6 +425,12 @@ export class DragOperation extends EventEmitter<DragOperationEvents> {
 
   public phase: 'start' | 'move' | 'drop' = 'start';
 
+  /**
+   * Whether the drag was cancelled - the browser took the pointer away -
+   * rather than dropped.
+   */
+  public cancelled = false;
+
   private initialDragSource: ActiveDragSource;
   public activeDragSource: ActiveDragSource;
   private currentOffset: PointCoords = {
@@ -453,6 +470,14 @@ export class DragOperation extends EventEmitter<DragOperationEvents> {
   drop() {
     this.phase = 'drop';
     this.emit('drop', this);
+  }
+
+  /**
+   * Ends the drag without a drop.
+   */
+  cancel() {
+    this.cancelled = true;
+    this.drop();
   }
 
   move(point: PointCoords) {
