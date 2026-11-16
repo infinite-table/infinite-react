@@ -1,12 +1,13 @@
 ---
 title: Using & rendering tree icons
 description: Learn how to customize the tree icons
+vue: true
 ---
 
 
 To make a column render the tree icon, you have to set <PropLink name="columns.renderTreeIcon" /> to `true`. This will cause the default tree icon to be rendered for non-leaf nodes.
 
-```tsx file="tree-icon-rendering.snippet.tsx" region="specifying-the-tree-icon-for-a-column" title="Specifying the tree icon for a column"
+```tsx file="tree-icon-rendering.snippet.tsx" region="specifying-the-tree-icon-for-a-column" title="Specifying the tree icon for a column" neutral
 ```
 
 <Note>
@@ -68,6 +69,16 @@ This example renders a custom tree icon and uses the `toggleCurrentTreeNode` fun
 
 If you implement a custom <PropLink name="columns.renderTreeIcon" /> function for your column, you can still use the default tree icon.
 
+<FrameworkContent framework="react">
+
 Use `renderBag.treeIcon` property in the JSX you return (the `renderBag` is available as a property of the `cellContext` argument of the `renderTreeIcon` function).
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+Use the `renderBag.treeIcon` property in the VNodes you return, for example as a child in an `h()` call (the `renderBag` is available as a property of the `cellContext` argument of the `renderTreeIcon` function).
+
+</FrameworkContent>
 
 </Note>
