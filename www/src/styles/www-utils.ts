@@ -431,8 +431,8 @@ export const shadow = {
 };
 export const newvars = {
   header: {
-    height: '60px',
-    lineHeight: '58px',
+    height: 'var(--header-h)',
+    lineHeight: 'var(--header-h)',
     color: 'var(--fg)',
   },
   color: colorVariables,

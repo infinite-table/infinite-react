@@ -42,14 +42,13 @@ export default function ClientLayout({
     <MenuProvider>
       <ThemeSync />
       <DocsFrameworkLinks />
-      <div style={style}>
-        <div
-          className={`w-full flex flex-col ${componentsStyle.minHeightFull} `}
-        >
-          <MainNavBar />
+      <div className={`w-full flex flex-col ${componentsStyle.minHeightFull}`}>
+        <MainNavBar />
+        {/* the page's own width; the header and footer span the window */}
+        <div style={style} className="w-full flex flex-col flex-1">
           {children}
-          <Footer />
         </div>
+        <Footer />
       </div>
     </MenuProvider>
   );

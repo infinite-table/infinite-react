@@ -1,120 +1,93 @@
 import * as React from 'react';
-import cn from 'classnames';
-
-import cmpStyles from './components.module.css';
-import { ExternalLink } from './ExternalLink';
 import Link from 'next/link';
-import { GithubLink, TwitterLink } from './Header';
-import { shadow } from '@www/styles/www-utils';
 import { usePathname } from 'next/navigation';
 
-function FooterLink({
-  href,
-  children,
-  isHeader = false,
-}: {
-  href?: string;
-  children: React.ReactNode;
-  isHeader?: boolean;
-}) {
-  const classes = cn(
-    'border-b inline-block border-transparent text-content-color',
-    {
-      'text-base/large ': !isHeader,
-      'text-md/large my-2 font-bold': isHeader,
-      'hover:border-content-color': href,
-    },
-  );
+import { ExternalLink } from './ExternalLink';
 
-  if (!href) {
-    return <div className={classes}>{children}</div>;
+type FooterItem = { label: string; href: string };
+
+const COLUMNS: { title: string; items: FooterItem[] }[] = [
+  {
+    title: 'Product',
+    items: [
+      { label: 'Get started', href: '/docs/learn/getting-started' },
+      { label: 'Demo', href: '/demo' },
+      { label: 'Compare', href: '/compare' },
+      { label: 'Benchmark', href: '/benchmark' },
+      { label: 'Buy a license', href: '/pricing' },
+      { label: 'Blog', href: '/blog' },
+    ],
+  },
+  {
+    title: 'Reference',
+    items: [
+      { label: 'Props', href: '/docs/reference' },
+      { label: 'API', href: '/docs/reference/api' },
+      { label: 'Releases', href: '/docs/releases' },
+      { label: 'llms.txt', href: '/llms.txt' },
+    ],
+  },
+  {
+    title: 'Community',
+    items: [
+      {
+        label: 'GitHub',
+        href: 'https://github.com/infinite-table/infinite-react',
+      },
+      { label: 'X / Twitter', href: 'https://twitter.com/get_infinite' },
+      { label: 'Community', href: '/community' },
+    ],
+  },
+  {
+    title: 'Company',
+    items: [
+      { label: 'Privacy policy', href: '/privacy' },
+      { label: 'License & terms', href: '/eula' },
+      { label: 'Email us', href: 'mailto:admin@infinite-table.com' },
+    ],
+  },
+];
+
+function FooterLink({ label, href }: FooterItem) {
+  if (/^(https:|mailto:)/.test(href)) {
+    return <ExternalLink href={href}>{label}</ExternalLink>;
   }
-
-  if (href.startsWith('https://') || href.startsWith('mailto')) {
-    return (
-      <div>
-        <ExternalLink href={href} className={classes}>
-          {children}
-        </ExternalLink>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <Link href={href} className={classes}>
-        {children}
-      </Link>
-    </div>
-  );
+  return <Link href={href}>{label}</Link>;
 }
-export const Footer = (props: React.HTMLProps<HTMLDivElement>) => {
+
+export const Footer = () => {
   const pathname = usePathname() || '';
-  const addLeftPadding =
-    pathname.startsWith('/docs') || pathname.startsWith('/blog');
-  const extraCls = addLeftPadding ? 'lg:pl-80 2xl:px-80 ' : '';
+  // the docs and the blog have a fixed sidebar on the left
+  const besideSidebar =
+    /^\/(vue\/)?docs(\/|$)/.test(pathname) || pathname.startsWith('/blog');
+
   return (
-    <>
-      <footer
-        style={{
-          boxShadow: shadow.lg,
-        }}
-        className={`${
-          props.className || ''
-        } ${extraCls} justify-center items-center self-end w-full flex flex-col bg-black text-content-color ${
-          cmpStyles.OverlineCls
-        } relative py-10 ${cmpStyles.footer}`}
-      >
-        {/* Copyright © {new Date().getFullYear()} Infinite Table */}
-        <div className="flex flex-col sm:grid grid-cols-4 gap-8 leading-large">
-          <div className="flex flex-col items-start">
-            <FooterLink isHeader={true}>Infinite Table</FooterLink>
-
-            <FooterLink href="/docs/learn/getting-started">
-              Get Started
-            </FooterLink>
-            {/* <FooterLink href="/docs/learn/styling-rows">
-              Styling Rows
-            </FooterLink> */}
-
-            <FooterLink href="/pricing">Buy a License</FooterLink>
-            <FooterLink href="/compare">Compare</FooterLink>
-            <FooterLink href="/benchmark">Benchmark</FooterLink>
+    <footer
+      className={`site-footer ${besideSidebar ? 'site-footer--beside-sidebar' : ''}`}
+    >
+      <div className="site-footer__wrap">
+        <div className="site-footer__grid">
+          <div className="site-footer__brand">
+            <Link href="/" className="site-brand" aria-label="Infinite Table home">
+              <i className="site-brand__mark" aria-hidden="true" />
+              <span>Infinite Table</span>
+            </Link>
+            <p>One Table — Infinite Applications.</p>
           </div>
-          <div className="flex flex-col items-start">
-            <FooterLink isHeader>API Reference</FooterLink>
-            <FooterLink href="/docs/reference">Props</FooterLink>
-            <FooterLink href="/docs/reference/api">API</FooterLink>
-            <FooterLink href="/llms.txt">llms.txt</FooterLink>
-          </div>
-
-          <div className="flex flex-col items-start ">
-            <FooterLink isHeader={true}>Social</FooterLink>
-
-            <GithubLink className="items-center border-b border-transparent hover:border-b hover:border-content-color text-base/large">
-              GitHub{' '}
-            </GithubLink>
-            <TwitterLink className="items-center border-b border-transparent  hover:border-content-color text-base/large">
-              Twitter
-            </TwitterLink>
-            <FooterLink href="/community">Community</FooterLink>
-          </div>
-          <div className="flex flex-col items-start">
-            <FooterLink isHeader={true}>Company</FooterLink>
-            <FooterLink href="/privacy">Privacy Policy</FooterLink>
-            {/* <FooterLink href="/privacy">EULA</FooterLink> */}
-            <FooterLink href="/eula">License & Terms</FooterLink>
-
-            <FooterLink href="mailto:admin@infinite-table.com">
-              Email Us
-            </FooterLink>
-            <div className="text-base/large">
-              Copyright © {new Date().getFullYear()}
-              <div className=" block text-right">Infinite Table</div>
+          {COLUMNS.map((column) => (
+            <div key={column.title} className="site-footer__col">
+              <h3>{column.title}</h3>
+              {column.items.map((item) => (
+                <FooterLink key={item.href} {...item} />
+              ))}
             </div>
-          </div>
+          ))}
         </div>
-      </footer>
-    </>
+        <div className="site-footer__base">
+          <span>© {new Date().getFullYear()} Infinite Table</span>
+          <span>React and Vue DataGrid</span>
+        </div>
+      </div>
+    </footer>
   );
 };

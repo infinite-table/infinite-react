@@ -1,16 +1,15 @@
 'use client';
-import cn from 'classnames';
 import { ReactNode } from 'react';
 import Link from 'next/link';
 
 import * as React from 'react';
 
-import { newvars } from '../styles/www-utils';
+import { DocSearch } from '@docsearch/react';
+
 import { BannerText } from './BannerText';
 
 import cmpStyles from './components.module.css';
 import { ExternalLink } from './ExternalLink';
-import headerStyles from './Header.module.css';
 import { InfiniteLogo, InfiniteLogoColors } from './InfiniteLogo';
 import { usePathname } from 'next/navigation';
 import { MenuContext } from './useMenu';
@@ -97,105 +96,196 @@ export const LogoAndTitle = (props: {
   </Link>
 );
 
-export const NavBarContent = ({
-  childrenBefore,
-}: {
-  childrenBefore?: React.ReactNode;
-}) => {
-  const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
+/** The main sections; Themes joins them with the theme gallery page. */
+const SITE_NAV: { label: string; href: string; key: SiteSection }[] = [
+  { label: 'Docs', href: '/docs', key: 'docs' },
+  { label: 'Demo', href: '/demo', key: 'demo' },
+  { label: 'Compare', href: '/compare', key: 'compare' },
+  { label: 'Pricing', href: '/pricing', key: 'pricing' },
+  { label: 'Blog', href: '/blog', key: 'blog' },
+];
 
+type SiteSection = 'docs' | 'demo' | 'compare' | 'pricing' | 'blog';
+
+/** At this width and up the nav links show and the menu button goes (site-shell.css). */
+const NAV_BREAKPOINT = 1024;
+
+function useSiteSection(): {
+  section: SiteSection | null;
+  hasSidebar: boolean;
+  hrefFor: (href: string) => string;
+} {
   const pathname = usePathname() || '';
   const docs = useDocsFramework();
-
-  const activePage = {
-    pricing: pathname.startsWith('/pricing'),
-    docs: docs.framework != null,
-    blog: pathname.startsWith('/blog'),
+  let section: SiteSection | null = null;
+  if (docs.framework != null) section = 'docs';
+  else if (/^\/demo\/?$/.test(pathname)) section = 'demo';
+  else if (pathname.startsWith('/compare')) section = 'compare';
+  else if (pathname.startsWith('/pricing')) section = 'pricing';
+  else if (pathname.startsWith('/blog')) section = 'blog';
+  return {
+    section,
+    // the docs and the blog have their own sidebar, which is the menu on phones
+    hasSidebar: section === 'docs' || section === 'blog',
+    // Docs goes to the docs of the framework you are on
+    hrefFor: (href) => (href === '/docs' ? docs.hrefFor('/docs') : href),
   };
+}
 
-  const activeCls = `text-glow`;
-
-  const { toggleOpen, isOpen } = React.useContext(MenuContext);
-
-  const mobileNavButton =
-    activePage.pricing || activePage.docs || activePage.blog ? (
-      <button
-        type="button"
-        aria-label="Menu"
-        onClick={toggleOpen}
-        className={cn(
-          'flex lg:hidden items-center h-full pl-2 sm:pl-6 pr-0 sm:pr-2',
-          {
-            'text-link mr-0': isOpen,
-          },
-        )}
-      >
-        {!isOpen ? <IconHamburger /> : <IconClose />}
-      </button>
-    ) : null;
+/** The site links as a list, for the phone menus (header panel, docs drawer). */
+export function SiteNavLinks({ className = '' }: { className?: string }) {
+  const { section, hrefFor } = useSiteSection();
   return (
-    <ul
-      className={`${headerStyles.NavBarCls} ${cmpStyles.SpotlightHorizontalBackgroundCls} flex flex-row items-center `}
-      style={{
-        flexWrap: 'wrap',
-        maxWidth: 'var(--max-site-width,auto)',
-      }}
-    >
-      {childrenBefore}
-      {mobileNavButton}
-      <li
-        className={`${itemCls} font-black text-xl sm:text-4xl md:text-4xl tracking-tight`}
-      >
-        <LogoAndTitle color="light" />
-      </li>
-      <li
-        className={`${itemCls} `}
-        style={{ flex: 1, margin: 0, marginLeft: 0 }}
-      ></li>
-      {/*
-        No room for it in a phone's header: there, the docs menu has the
-        switcher and the home pages link to each other under the hero text.
-      */}
-      <li className={`${itemCls} hover:opacity-100 max-sm:hidden`}>
-        <DocsFrameworkSwitcher />
-      </li>
-      <li className={`${itemCls} ${activePage.pricing ? activeCls : ''} `}>
-        <Link href="/pricing">Pricing</Link>
-      </li>
-      <li className={`${itemCls} ${activePage.docs ? activeCls : ''} `}>
-        <Link href={docs.hrefFor('/docs')}>Docs</Link>
-      </li>
-      <li className={`${itemCls} ${activePage.blog ? activeCls : ''} `}>
-        <Link href="/blog">Blog</Link>
-      </li>
-
-      <li className={`${itemCls} `}>
-        <TwitterLink />
-      </li>
-      <div className={headerStyles.IceCls} />
-      <li className={`${itemCls} whitespace-nowrap`}>
-        <GithubLink />
-      </li>
-      <li className={`${itemCls} flex items-center`}>
-        <ThemeToggle />
-      </li>
-    </ul>
-  );
-};
-
-export const MainNavBar = ({ children }: { children?: React.ReactNode }) => {
-  return (
-    <nav
-      style={{
-        height: newvars.header.height,
-        zIndex: 10000,
-      }}
-      className={`w-full  relative bg-black`}
-    >
-      <NavBarContent childrenBefore={children} />
+    <nav className={`site-menu-links ${className}`} aria-label="Main">
+      {SITE_NAV.map((item) => (
+        <Link
+          key={item.key}
+          href={hrefFor(item.href)}
+          aria-current={section === item.key ? 'page' : undefined}
+        >
+          {item.label}
+        </Link>
+      ))}
     </nav>
   );
+}
+
+function SiteSearch() {
+  return (
+    <div className="site-search">
+      <DocSearch
+        appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
+        indexName="infinite-table"
+        apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!}
+        placeholder="Search the docs"
+        // the index has absolute production URLs; stay on this site
+        // (local dev, preview deploys)
+        transformItems={(items) =>
+          items.map((item) => ({
+            ...item,
+            url: item.url.replace(/^https:\/\/infinite-table\.com/, ''),
+          }))
+        }
+      />
+    </div>
+  );
+}
+
+export const MainNavBar = () => {
+  const { section, hasSidebar, hrefFor } = useSiteSection();
+  const { toggleOpen, hideSidebar, isOpen } = React.useContext(MenuContext);
+
+  // the header's own menu panel (pages without a sidebar); Escape closes it
+  const panelOpen = isOpen && !hasSidebar;
+
+  // the menu (panel or docs drawer) only exists below the nav breakpoint:
+  // close it when the window grows past it (resize, tablet rotation), which
+  // also releases the drawer's body scroll lock
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const wide = window.matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`);
+    if (wide.matches) {
+      hideSidebar();
+      return;
+    }
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) hideSidebar();
+    };
+    wide.addEventListener('change', onChange);
+    return () => wide.removeEventListener('change', onChange);
+  }, [isOpen, hideSidebar]);
+  React.useEffect(() => {
+    if (!panelOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hideSidebar();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [panelOpen, hideSidebar]);
+
+  return (
+    <div className="site-header-space">
+      <header
+        className={`site-header ${
+          hasSidebar || section === 'demo' ? 'site-header--full' : ''
+        }`}
+      >
+        <div className="site-header__wrap">
+          <button
+            type="button"
+            className="site-icon-btn site-menu-btn"
+            aria-label={isOpen ? 'Close the menu' : 'Open the menu'}
+            aria-expanded={isOpen}
+            onClick={toggleOpen}
+          >
+            {isOpen ? <IconClose /> : <IconHamburger />}
+          </button>
+
+          <Link href="/" className="site-brand" aria-label="Infinite Table home">
+            <i className="site-brand__mark" aria-hidden="true" />
+            <span>Infinite Table</span>
+          </Link>
+
+          <nav className="site-nav" aria-label="Main">
+            {SITE_NAV.map((item) => (
+              <Link
+                key={item.key}
+                href={hrefFor(item.href)}
+                aria-current={section === item.key ? 'page' : undefined}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="site-header__tools">
+            <SiteSearch />
+            {/*
+              No room for it in a phone's header: there, the docs menu has
+              the switcher and the home pages link to each other under the
+              hero text.
+            */}
+            <DocsFrameworkSwitcher className="site-header__switcher" />
+            <ThemeToggle />
+            <ExternalLink
+              href="https://github.com/infinite-table/infinite-react"
+              aria-label="Infinite Table on GitHub"
+              className="site-icon-btn site-header__github"
+            >
+              <IconGitHub />
+            </ExternalLink>
+          </div>
+        </div>
+
+        {panelOpen ? (
+          <div className="site-menu-panel">
+            <SiteNavLinks />
+            <div className="site-menu-panel__row">
+              <DocsFrameworkSwitcher />
+              <ExternalLink
+                href="https://github.com/infinite-table/infinite-react"
+                className="site-menu-panel__link"
+              >
+                GitHub
+              </ExternalLink>
+            </div>
+          </div>
+        ) : null}
+      </header>
+    </div>
+  );
 };
+
+function IconGitHub() {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+      />
+    </svg>
+  );
+}
 
 export const getHeroHeaderTextStyling = () => {
   return {

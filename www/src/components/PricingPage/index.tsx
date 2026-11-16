@@ -11,7 +11,6 @@ import { AccentButton } from '../AccentButton';
 import cmpStyles from '@www/components/components.module.css';
 import { ExternalLink } from '../ExternalLink';
 import { getHeroHeaderTextStyling } from '../Header';
-import headerStyles from '../Header.module.css';
 import { analytics, AnalyticsEvents } from './analytics';
 import {
   BASE_PRICE,
@@ -523,7 +522,7 @@ export function PricingPage() {
                 />
 
                 <div
-                  className={`justify-center items-center flex flex-col font-black pt-10 mt-10 ${headerStyles.OverlineCls} relative`}
+                  className={`justify-center items-center flex flex-col font-black pt-10 mt-10 relative`}
                 >
                   <TeamSize
                     onCountChange={(count) => {
