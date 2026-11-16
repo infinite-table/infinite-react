@@ -10,6 +10,7 @@ import { DocSearch } from '@docsearch/react';
 import { ExternalLink } from './ExternalLink';
 import { InfiniteLogo, InfiniteLogoColors } from './InfiniteLogo';
 import { usePathname } from 'next/navigation';
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 import { MenuContext } from './useMenu';
 import { IconHamburger } from './Icon/IconHamburger';
 import { IconClose } from './Icon/IconClose';
@@ -194,6 +195,15 @@ export const MainNavBar = () => {
     wide.addEventListener('change', onChange);
     return () => wide.removeEventListener('change', onChange);
   }, [isOpen, hideSidebar]);
+  // the page behind the open panel doesn't scroll (the docs drawer locks
+  // the scroll itself, in useMenu; these pages have no drawer)
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const panel = panelRef.current;
+    if (!panelOpen || !panel) return;
+    disableBodyScroll(panel);
+    return () => enableBodyScroll(panel);
+  }, [panelOpen]);
   React.useEffect(() => {
     if (!panelOpen) return;
     const onKey = (event: KeyboardEvent) => {
@@ -258,7 +268,7 @@ export const MainNavBar = () => {
         </div>
 
         {panelOpen ? (
-          <div className="site-menu-panel">
+          <div className="site-menu-panel" ref={panelRef}>
             <SiteNavLinks />
             <div className="site-menu-panel__row">
               <DocsFrameworkSwitcher />
