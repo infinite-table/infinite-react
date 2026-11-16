@@ -1,20 +1,9 @@
 import { CommonThemeVars } from './vars-common.css';
 import { LightVars } from './vars-default-light.css';
+import { getDefaultThemeValue } from './vars-default-resolved.css';
 import { ThemeVars } from './vars.css';
 
 const borderColor = `var(--border)`;
-
-/**
- * The value a variable has in the light mode of the default theme, with the
- * variables it references replaced by their own values.
- */
-function getDefaultLightValue(cssVar: string): string {
-  const value = `${LightVars[cssVar as keyof typeof LightVars]}`;
-
-  return value.replace(/var\(--[\w-]+\)/g, (reference) =>
-    reference in LightVars ? getDefaultLightValue(reference) : reference,
-  );
-}
 
 /**
  * The default theme gives these variables one value for the light mode and
@@ -42,7 +31,10 @@ const MODE_DEPENDENT_VARS = [
 
 // in light mode they keep the values they always had
 const DefaultLightModeVars = Object.fromEntries(
-  MODE_DEPENDENT_VARS.map((cssVar) => [cssVar, getDefaultLightValue(cssVar)]),
+  MODE_DEPENDENT_VARS.map((cssVar) => [
+    cssVar,
+    getDefaultThemeValue(cssVar, 'light'),
+  ]),
 ) as Record<string, string>;
 
 /**
