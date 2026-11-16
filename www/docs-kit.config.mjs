@@ -154,8 +154,15 @@ export default {
           plugins: () => [frameworkResolvePlugin('vue'), vanillaConfig],
           watch: [SOURCE_DIR],
         },
+        // the themes, as for React: the Vue package ships the same theme/<name>.css
+        ...Object.fromEntries(
+          THEMES.map((theme) => [
+            `@infinite-table/infinite-vue/theme/${theme}.css`,
+            { entry: `../source/src/generate-theme-${theme}.ts` },
+          ]),
+        ),
       },
-      stubImports: [/^@infinite-table\/infinite-vue\/.+\.css$/],
+      stubImports: [/^@infinite-table\/infinite-vue\/index\.css$/],
       // a Vue demo opened on its own links back to the Vue page, when there is one
       routeForPage: (pagePath) => {
         const pageFile = path.join(
