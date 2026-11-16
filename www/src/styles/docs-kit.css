@@ -4,7 +4,7 @@
  * Every variable is listed in the kit's README (Theming).
  */
 :root {
-  --dk-font-mono: var(--font-mono, 'Source Code Pro', Menlo, monospace);
+  --dk-font-mono: var(--font-mono);
   --dk-font-sans: var(--font-sans, system-ui, sans-serif);
   --dk-radius: 1rem;
 }

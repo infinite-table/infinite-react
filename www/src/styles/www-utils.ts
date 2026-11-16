@@ -1,4 +1,3 @@
-const colors = require('../../colors');
 
 export const BRAND_COLOR_DEFAULT = '#0b6fcb';
 export const BRAND_COLOR_DARK = '#133048';
@@ -14,16 +13,16 @@ export const screenSizes = {
 const colorVariables = {
   brand: BRAND_COLOR_DEFAULT,
   brandDark: BRAND_COLOR_DARK,
-  black: colors.black,
-  darkCustom: colors['darkcustom'],
-  codesandboxdark: colors['codesandboxdark'],
+  black: 'var(--color-black)',
+  darkCustom: 'var(--color-darkcustom)',
+  codesandboxdark: 'var(--color-codesandboxdark)',
   blue: 'blue',
   blue700: '#1c4fd8',
-  glow: colors.glow,
-  accent2: colors.accent2,
-  contentColor: colors['content-color'] as string,
-  specialBorderBolor: colors['special-border-color'] as string,
-  highlight: colors.highlight,
+  glow: 'var(--color-glow)',
+  accent2: 'var(--color-accent2)',
+  contentColor: 'var(--color-content-color)',
+  specialBorderBolor: 'var(--color-special-border-color)',
+  highlight: 'var(--color-highlight)',
   white: 'white',
   gray: '#eaeaea',
   errBackground: '#ffdcd5',
@@ -203,7 +202,7 @@ export const spaceScale = {
 //     header: {
 //       height: '60px',
 //       lineHeight: '58px',
-//       color: 'rgb(238, 239, 252, 0.8)',
+//       color: 'var(--fg)',
 //     },
 //   },
 //   'light',
@@ -434,11 +433,11 @@ export const newvars = {
   header: {
     height: '60px',
     lineHeight: '58px',
-    color: 'rgb(238, 239, 252, 0.8)',
+    color: 'var(--fg)',
   },
   color: colorVariables,
   font: {
-    body: `RobotoMono, sans-serif`,
+    body: 'var(--font-mono)',
     sizes: {
       small: '10px',
       medium: '16px',

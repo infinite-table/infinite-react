@@ -11,6 +11,7 @@ import { Footer } from '@www/components/Footer';
 import { MenuProvider } from '@www/components/useMenu';
 import { DocsFrameworkLinks } from '@www/components/DocsFrameworks';
 import { docsFrameworks } from '@www/utils/docsFrameworks';
+import { ThemeSync } from '@www/components/ThemeToggle';
 
 export default function ClientLayout({
   children,
@@ -39,6 +40,7 @@ export default function ClientLayout({
 
   return (
     <MenuProvider>
+      <ThemeSync />
       <DocsFrameworkLinks />
       <div style={style}>
         <div

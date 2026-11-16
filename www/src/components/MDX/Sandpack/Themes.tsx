@@ -1,5 +1,3 @@
-import tailwindConfig from '../../../../tailwind.config';
-
 export const CustomTheme = {
   syntax: {
     plain: 'var(--theme-plain)',
@@ -13,9 +11,9 @@ export const CustomTheme = {
     string: 'var(--theme-string)',
   },
   typography: {
-    bodyFont: tailwindConfig.theme.extend.fontFamily.sans.join(', '),
-    monoFont: tailwindConfig.theme.extend.fontFamily.mono.join(', '),
-    fontSize: tailwindConfig.theme.extend.fontSize.code,
+    bodyFont: 'var(--font-sans)',
+    monoFont: 'var(--font-mono)',
+    fontSize: 'var(--text-code)',
     lineHeight: '24px',
   },
 };
