@@ -1,13 +1,14 @@
 ---
 title: Column Editors
 description: Learn how to use configure editors for columns in Infinite Table
+vue: true
 ---
 
 For now, Infinite Table comes with a default built-in editor that's rendered when editing starts on any editable cell.
 
 It's very easy to configure columns with your own custom editors via the <PropLink name="columns.components.Editor" /> property.
 
-```tsx file="column-editors.snippet.tsx" region="intro"
+```tsx file="column-editors.snippet.tsx" region="intro" neutral
 ```
 
 <Note title="No built-in custom editors!">
@@ -25,7 +26,17 @@ So in this page and other parts of the docs, we'll use some popular alternatives
 
 ## Using Date Editors
 
+<FrameworkContent framework="react">
+
 A common use-case is integrating date editors, so in the following example we'll use the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) component.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+A common use-case is integrating date editors. The following example uses the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/), which is a React component, so it's shown in its React version. In Vue, a date editor is a [custom editor](/docs/learn/editing/custom-editor) like any other: a component that calls the <HookLink name="useInfiniteColumnEditor" /> composable and renders the date picker you already use in your project.
+
+</FrameworkContent>
 
 <DemoDescription>
 
