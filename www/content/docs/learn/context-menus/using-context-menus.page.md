@@ -1,6 +1,7 @@
 ---
 title: Using Context Menus
 description: InfiniteTable DataGrid allows you to easily configure context menus for any row and cell in the table and for the whole table body.
+vue: true
 ---
 
 The easiest way to configure a context menu is to provide the <PropLink name="getCellContextMenuItems" /> callback function and use it to return the menu items you want to show in the context menu.
@@ -30,7 +31,7 @@ The <PropLink name="getCellContextMenuItems" /> function can return one of the f
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx file="using-context-menus.snippet.tsx" region="columns-and-items"
+```tsx file="using-context-menus.snippet.tsx" region="columns-and-items" neutral
 ```
 
 <DemoDescription>
@@ -69,7 +70,7 @@ To hide the context menu when you click a menu item, you can use the `hideMenuOn
 
 Alternatively, you can use the object passed in as a parameter to the `item.onAction` callback function to hide the menu:
 
-```tsx file="using-context-menus.snippet.tsx" region="hiding-the-context-menu"
+```tsx file="using-context-menus.snippet.tsx" region="hiding-the-context-menu" neutral
 ```
 
 The third option is to use the <ApiLink name="hideContextMenu" /> function in the [API](/docs/reference/api).
