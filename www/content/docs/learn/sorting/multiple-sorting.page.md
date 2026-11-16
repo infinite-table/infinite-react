@@ -1,6 +1,7 @@
 ---
 title: Multiple Sorting
 description: Docs and examples on applying multiple sorting to the DataSource for Infinite Table DataGrid
+vue: true
 ---
 
 By default, if you don't specify otherwise, the DataGrid is configured with single sorting. For multiple sorting, you need to specify the sorting information as an array:

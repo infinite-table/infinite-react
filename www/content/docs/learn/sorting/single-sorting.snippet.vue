@@ -55,6 +55,7 @@ sortInfo = [];
 const sortTypes: DataSourcePropSortTypes = {
   string: (a, b) => a.localeCompare(b),
   number: (a, b) => a - b,
+  date: (a, b) => a - b,
 };
 //#endregion
 
@@ -105,6 +106,13 @@ const sortFunction: DataSourcePropSortFn<Developer> = (sortInfo, dataArray) => {
     :data="data"
     :defaultSortInfo="[{ field: 'firstName', dir: 1 }]"
   >
+    <InfiniteTable :columns="columns" />
+  </DataSource>
+  <!-- #endregion -->
+
+  <!-- #region multiple-sorting-default -->
+  <!-- we want an array here -->
+  <DataSource primaryKey="id" :data="data" :defaultSortInfo="[]">
     <InfiniteTable :columns="columns" />
   </DataSource>
   <!-- #endregion -->
