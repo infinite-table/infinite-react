@@ -20,13 +20,13 @@ function TerminalBlock({ children }: TerminalBlockProps) {
   }
 
   return (
-    <div className="rounded-lg bg-darkcustom h-full mt-4" translate="no">
-      <div className=" w-full bg-brand-dark rounded-t-lg">
-        <div className="text-primary-dark flex text-base px-4 py-0.5 relative">
+    <div className="docs-terminal mt-4" translate="no">
+      <div className="docs-terminal__bar">
+        <div className="flex items-center">
           <IconTerminal className="inline-flex mr-2 self-center" /> Terminal
         </div>
       </div>
-      <div className="px-3 sm:px-8 pt-4 pb-6 text-primary-dark font-mono text-code whitespace-pre">
+      <div className="docs-terminal__body">
         {message}
       </div>
     </div>

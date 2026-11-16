@@ -1,6 +1,4 @@
-import { AccentButton } from '@www/components/AccentButton';
-
-import { GithubLink, TwitterLink } from '@www/components/Header';
+import Link from 'next/link';
 
 import { SidebarContext } from '@www/components/Layout/useRouteMeta';
 
@@ -31,7 +29,7 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
   return (
     <aside
       className={cn(
-        `lg:flex-grow lg:flex flex-col w-full pb-8 lg:pb-0 lg:max-w-xs fixed lg:sticky z-10`,
+        `docs-side-drawer lg:flex-grow lg:flex flex-col w-full pb-8 lg:pb-0 lg:max-w-xs fixed lg:sticky z-10`,
         isOpen ? 'block z-40' : 'hidden lg:block',
       )}
       aria-hidden={isHidden ? 'true' : 'false'}
@@ -56,21 +54,10 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
         )}
       </nav>
 
-      <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-black">
-        <div className="flex flex-row mb-5">
-          <TwitterLink />
-          <div className="ml-5"></div>
-          <GithubLink />
-        </div>
-        <AccentButton
-          className="w-full text-center mb-2"
-          style={{
-            display: 'block',
-          }}
-          href="/pricing"
-        >
-          Buy a License
-        </AccentButton>
+      <div className="docs-side-foot hidden lg:flex">
+        <Link className="site-key site-key--primary" href="/pricing">
+          Buy a license
+        </Link>
       </div>
     </aside>
   );

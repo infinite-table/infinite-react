@@ -1,5 +1,4 @@
 import { ExternalLink } from '@www/components/ExternalLink';
-import cn from 'classnames';
 import NextLink from 'next/link';
 import * as React from 'react';
 
@@ -10,30 +9,22 @@ interface NavLinkProps {
 }
 
 export default function NavLink({ href, children, isActive }: NavLinkProps) {
-  const classes = cn(
-    {
-      'text-link border-link font-bold': isActive,
-      // 'border-glow text-glow  font-bold': isActive,
-    },
-    { 'border-transparent': !isActive },
-    'inline-flex w-full items-center border-b-2 justify-center text-base leading-9 hover:text-link whitespace-nowrap group',
-  );
+  const props = {
+    className: 'docs-tab',
+    'aria-current': isActive ? ('page' as const) : undefined,
+  };
 
   if (href.startsWith('https://')) {
     return (
-      <ExternalLink href={href} className={classes}>
+      <ExternalLink href={href} {...props}>
         {children}
       </ExternalLink>
     );
   }
 
   return (
-    <NextLink href={href} className={classes}>
-      <div
-        className={cn({}, 'm-1 px-3 rounded-lg group-hover:bg-highlight-dark ')}
-      >
-        {children}
-      </div>
+    <NextLink href={href} {...props}>
+      {children}
     </NextLink>
   );
 }

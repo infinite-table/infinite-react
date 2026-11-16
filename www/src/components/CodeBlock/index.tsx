@@ -39,7 +39,7 @@ function CodeBlockCmp(props: Omit<BasicCodeBlockProps, 'file'>) {
   }
 
   return (
-    <div className={`relative rounded-2xl overflow-hidden my-8 max-w-full`}>
+    <div className="docs-code-block relative overflow-hidden my-8 max-w-full">
       {props.title && <TitleBlock>{props.title}</TitleBlock>}
       <div className={`${props.className || ''} text-base group`} style={style}>
         <>

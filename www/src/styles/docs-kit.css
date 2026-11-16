@@ -1,43 +1,46 @@
 /*
  * docs-kit demo cards (@thedatagrid/docs-kit/react/styles.css) in the site's
- * colors. The site is dark-only for now; the light values stay the kit's.
- * Every variable is listed in the kit's README (Theming).
+ * tokens (tokens.css), so they follow light and dark. Every variable is
+ * listed in the kit's README (Theming). The syntax colors stay the code
+ * themes' (DOCS_CODE_THEMES): github-light, and the Sandpack palette in dark.
  */
-:root {
+:root,
+[data-theme='dark'] {
   --dk-font-mono: var(--font-mono);
   --dk-font-sans: var(--font-sans, system-ui, sans-serif);
-  --dk-radius: 1rem;
+  --dk-radius: 3px;
+  --dk-border: var(--line-strong);
+  --dk-surface: var(--surface);
+  --dk-code-bg: var(--surface);
+  --dk-preview-bg: var(--bg);
+  --dk-fg: var(--fg);
+  --dk-heading: var(--heading);
+  --dk-muted: var(--muted);
+  --dk-faint: var(--muted);
+  --dk-accent: var(--accent-text);
+  --dk-accent-soft: var(--accent-soft);
+  --dk-highlight-bg: var(--accent-soft);
+  --dk-highlight-border: var(--accent);
+  --dk-label-bg: var(--accent);
+  --dk-label-fg: var(--accent-fg);
+  --dk-line-number: var(--muted);
+  --dk-error: var(--down);
+  --dk-ok: var(--up);
+  --dk-code-font-size: 13.5px;
+
+  --dk-editor-bg: var(--surface);
+  --dk-editor-fg: var(--fg);
+  --dk-editor-cursor: var(--accent);
+  --dk-editor-selection-bg: var(--accent-soft);
+  --dk-editor-active-line-bg: var(--accent-soft);
+  --dk-editor-gutter-bg: var(--surface);
+  --dk-editor-gutter-fg: var(--muted);
+  --dk-editor-active-line-gutter-fg: var(--heading);
 }
 
 [data-theme='dark'] {
-  --dk-border: rgba(255, 255, 255, 0.09);
-  --dk-surface: #16181d;
-  --dk-code-bg: #101419;
-  --dk-preview-bg: rgb(35, 39, 47);
-  --dk-fg: var(--color-primary-dark);
-  --dk-heading: var(--color-primary-dark);
-  --dk-muted: var(--color-primary-dark);
-  --dk-faint: var(--color-primary-dark);
-  --dk-accent: var(--color-link);
-  --dk-accent-soft: var(--color-highlight-dark);
-  --dk-highlight-bg: var(--color-highlight-dark);
-  --dk-highlight-border: var(--color-link);
-  --dk-label-bg: var(--color-link);
-  --dk-label-fg: #ffffff;
-  --dk-line-number: #78839b;
-
-  /*
-   * The code editor (the card's Edit button). Unset ones follow the card
-   * values above; the syntax colors are the Sandpack palette, like the
-   * highlighted code (DOCS_CODE_THEMES).
-   */
-  --dk-editor-bg: #101419;
-  --dk-editor-fg: var(--color-primary-dark);
-  --dk-editor-cursor: #497aff;
-  --dk-editor-selection-bg: rgba(73, 122, 255, 0.3);
-  --dk-editor-active-line-bg: rgba(73, 122, 255, 0.1);
-  --dk-editor-gutter-fg: #78839b;
-  --dk-editor-active-line-gutter-fg: var(--color-primary-dark);
+  /* the code editor's syntax colors: the Sandpack palette, like the
+     highlighted code */
   --dk-editor-keyword: #ff6188;
   --dk-editor-constant: #ab9df2;
   --dk-editor-string: #ffd866;
@@ -56,14 +59,14 @@
 .dk-demo-tab,
 .dk-demo-file,
 .dk-demo-filename {
-  font-family: inherit;
-  font-size: var(--text-lg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
 }
 
-/* selected like the sidebar and TOC: highlight background, link-colored text */
+/* the selected file: accent text, like the sidebar and the TOC */
 .dk-demo-tab--active,
 .dk-demo-file--active {
-  color: var(--color-link);
+  color: var(--accent-text);
 }
 
 /* the kit's grid layout drops blank lines from copied text; inline lines keep the newlines between them */

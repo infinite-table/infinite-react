@@ -24,7 +24,7 @@ export function Page({ routeTree, children, blog }: PageProps) {
           {/*lg:min-h-screen*/}
           <div
             style={{ zIndex: 2000 }}
-            className="no-bg-scrollbar bg-black h-auto lg:h-full lg:overflow-y-scroll fixed flex flex-row lg:flex-col py-0 top-0 left-0 right-0 lg:max-w-xs w-full shadow-default lg:shadow-none "
+            className="docs-side-pane no-bg-scrollbar h-auto lg:h-full lg:overflow-y-scroll fixed flex flex-row lg:flex-col py-0 top-0 left-0 right-0 lg:max-w-xs w-full"
           >
             {blog ? (
               <div style={{ marginTop: newvars.header.lineHeight }} />

@@ -1,4 +1,3 @@
-import cn from 'classnames';
 import { RouteItem } from 'components/Layout/useRouteMeta';
 import { usePathname } from 'next/navigation';
 
@@ -50,7 +49,7 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
       {/* the site sections, which the header has no room for on a phone */}
       <SiteNavLinks className="site-menu-links--drawer" />
       <div
-        className="sticky pt-3 top-0 px-5  bg-black flex justify-end border-b border-border-dark items-center self-center w-full z-100"
+        className="docs-tabs docs-tabs--drawer sticky top-0 z-100"
         style={{
           zIndex: 100,
         }}
@@ -87,7 +86,7 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
 
       {/* on a phone the header has no room for the switcher on docs pages */}
       {isBlog ? null : (
-        <div className="sm:hidden py-3 px-5 bg-black flex flex-row">
+        <div className="docs-drawer-switcher sm:hidden">
           <DocsFrameworkSwitcher />
         </div>
       )}
@@ -105,15 +104,13 @@ function TabButton({
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   isActive: boolean;
 }) {
-  const classes = cn(
-    'inline-flex items-center w-full border-b-2 justify-center text-base leading-9 px-3 py-0.5 hover:text-link hover:gray-5',
-    {
-      'text-link border-link font-bold': isActive,
-      'border-transparent': !isActive,
-    },
-  );
   return (
-    <button className={classes} onClick={onClick}>
+    <button
+      type="button"
+      className="docs-tab"
+      aria-current={isActive ? 'page' : undefined}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
