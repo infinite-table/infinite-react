@@ -1,6 +1,7 @@
 ---
 title: Managing the tree expand/collapse state
 description: Learn how to control which tree nodes are expanded or collapsed
+vue: true
 ---
 
 By default, the tree will be rendered with all nodes expanded. This is fine for basic use cases, but as soon as you go into more complex scenarios, you will want to control which nodes are expanded or collapsed.
@@ -23,7 +24,7 @@ When using node paths, the object should have the following properties:
 - `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
 - `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
-```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths"
+```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths" neutral
 ```
 
 2. With node ids
@@ -35,7 +36,7 @@ When using node ids, the object should have the following properties:
 - `expandedIds`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
 
-```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-ids" title="Example of treeExpandState with node ids"
+```tsx file="tree-expand-and-collapse-state.snippet.tsx" region="example-of-treeexpandstate-with-node-ids" title="Example of treeExpandState with node ids" neutral
 ```
 
 ## Reacting to user actions

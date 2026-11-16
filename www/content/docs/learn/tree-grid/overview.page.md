@@ -1,6 +1,9 @@
 ---
 title: Using Tree Data in your React DataGrid
 description: Learn how to use the React Tree DataGrid to display tree data
+vue:
+  title: Using Tree Data in your Vue DataGrid
+  description: Learn how to use the Vue Tree DataGrid to display tree data
 ---
 
 
@@ -34,7 +37,7 @@ When referring to rows in the TreeGrid, we'll prefer to use the term `"node"` in
 
 Also in the context of the TreeGrid, we'll use the term `"node path"` instead of row id. The `"node path"` is the array with the ids of all the parent nodes leading down to the current node. The node path includes the id of the current node.
 
-```tsx file="overview.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id"
+```tsx file="overview.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id" neutral
 ```
 It's important to understand node paths, as that will be the primary way you'll interact with the TreeGrid/TreeDataSource.
 
@@ -59,7 +62,7 @@ When using the `<TreeDataSource />` component, the data you specify in your `<DP
 
 With the `nodesKey` set to `"children"`, the `<TreeDataSource />` will look for the `children` property on each item in the data array, and use that to determine the child nodes for each tree node. Nodes without a `"children"` property are assumed to be leaf nodes.
 
-```tsx file="overview.snippet.tsx" region="nested-data-structure-for-the-treedatasource" title="Nested data structure for the TreeDataSource component"
+```tsx file="overview.snippet.tsx" region="nested-data-structure-for-the-treedatasource" title="Nested data structure for the TreeDataSource component" neutral
 ```
 
 
@@ -81,7 +84,7 @@ When using node paths for <DPropLink name="treeExpandState" />, the object shoul
 - `collapsedPaths`: `string[]` - when `defaultExpanded` is `true`, this is a mandatory prop.
 - `expandedPaths`: `string[]` - when `defaultExpanded` is `false`, this is a mandatory prop.
 
-```tsx file="overview.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths"
+```tsx file="overview.snippet.tsx" region="example-of-treeexpandstate-with-node-paths" title="Example of treeExpandState with node paths" neutral
 ```
 
 <Note>
