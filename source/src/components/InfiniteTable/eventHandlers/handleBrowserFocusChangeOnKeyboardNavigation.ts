@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent } from '../../types/FrameworkTypes';
 import { selectParent } from '../../../utils/selectParent';
 import { InfiniteTableColumnCellClassName } from '../components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 

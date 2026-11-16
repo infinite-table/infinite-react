@@ -5,7 +5,7 @@
  * and the Vue sibling compute the exact same classnames and inline styles.
  * No framework imports allowed in this file.
  */
-import type { CSSProperties } from 'react';
+import type { CSSProperties } from '../../../types/FrameworkTypes';
 
 import { InfiniteTable_Tree_RowInfoBase } from '../../../../utils/groupAndPivot';
 import { join } from '../../../../utils/join';

@@ -24,12 +24,7 @@ We knew we needed to implement it, but we wanted to do it right while keeping it
 
 In fact, we prepared some things in advance - namely <DPropLink name="selectionMode" /> was there, it just needed to accept a new value: `"multi-cell"`.
 
-```tsx title="Configuring multi-cell selection"
-<DataSource<Developer>
-  selectionMode="multi-cell" // <--- THIS
-  primaryKey="id"
-  data={[...]}
-/>
+```tsx file="version-3-0-0.snippet.tsx" region="configuring-multi-cell-selection" title="Configuring multi-cell selection"
 ```
 
 The line above is all you need to do to enable cell selection. This allows the user to `Click` or `Cmd/Ctrl+Click` to select a specific cell and `Shift+Click` to select a range of cells. It's exactly the behavior you'd expect from a spreadsheet application.
@@ -42,17 +37,7 @@ Try `Cmd/Ctrl+Click`ing in the DataGrid cells below to see multiple cell selecti
 
 If you want to render the DataGrid with a default selection, you can use the <DPropLink name="defaultCellSelection" /> prop.
 
-```tsx
-const defaultCellSelection = {
-  defaultSelection: false,
-  selectedCells: [
-    [3, 'hobby'],
-    [4, 'firstName'],
-    [4, 'hobby'],
-    [4, 'preferredLanguage'],
-    [4, 'salary'],
-  ],
-};
+```tsx file="version-3-0-0.snippet.tsx" region="using-a-default-selection"
 ```
 
 The format for the uncontrolled <DPropLink name="defaultCellSelection" /> (and also for the controlled <DPropLink name="cellSelection" />) is an object with two properties:
@@ -77,15 +62,7 @@ The above examples show how to select specific cells, but what if you want to se
 
 Well, that turns out to be straightforward as well. You can use the `*` wildcard to select all cells in a column or all cells in a row.
 
-```tsx title="All cells in row with id rowId3 and all cells in hobby column are selected"
-const defaultCellSelection = {
-  defaultSelection: false,
-  selectedCells: [
-    ['*', 'hobby'],
-    ['rowId3', '*'],
-  ],
-}
-<DataSource selectionMode="multi-cell" defaultCellSelection={defaultCellSelection} />
+```tsx file="version-3-0-0.snippet.tsx" region="all-cells-in-row-with-id-rowid3-and-all-cells" title="All cells in row with id rowId3 and all cells in hobby column are selected"
 ```
 
 <CSEmbed title="Cell selection using wildcards" id="cell-selection-with-wildcards-in-infinite-table-48rs75" />

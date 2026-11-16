@@ -1,3 +1,4 @@
+import type { MouseEvent } from '../../types/FrameworkTypes';
 import { isTargetInput } from '../../../utils/isTargetInput';
 import { CellSelectionState } from '../../DataSource/CellSelectionState';
 import { RowSelectionState } from '../../DataSource/RowSelectionState';
@@ -30,7 +31,7 @@ export type SimpleClickEvent = {
 
 export function onCellClick<T>(
   context: OnCellClickContext<T>,
-  event: React.MouseEvent<Element> & { key: string },
+  event: MouseEvent<Element> & { key: string },
 ) {
   updateRowSelectionOnCellClick(context, event);
   updateCellSelectionOnCellClick(context, event);
@@ -45,7 +46,7 @@ export function onCellClick<T>(
 
 function onCellDoubleClick<T>(
   context: OnCellClickContext<T>,
-  event: React.MouseEvent<Element> & { key: string },
+  event: MouseEvent<Element> & { key: string },
 ) {
   if (isTargetInput(event.target)) {
     return;

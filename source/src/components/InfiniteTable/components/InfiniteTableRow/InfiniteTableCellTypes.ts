@@ -1,4 +1,8 @@
-import { CSSProperties } from 'react';
+import type {
+  CSSProperties,
+  RefCallback,
+  MouseEvent,
+} from '../../../types/FrameworkTypes';
 
 import { InfiniteTableComputedColumn } from '../..';
 import { RowInfoStore } from '../../../DataSource/RowInfoStore';
@@ -40,7 +44,7 @@ export type InfiniteTableBaseCellProps<T> = {
 
   rowId?: any;
 
-  renderChildren: React.ReactNode | (() => Renderable);
+  renderChildren: Renderable | (() => Renderable);
   width: number;
   cssEllipsis?: boolean;
   // children: Renderable;
@@ -53,7 +57,7 @@ export type InfiniteTableBaseCellProps<T> = {
   afterChildren?: Renderable;
 
   cssPosition?: CSSProperties['position'];
-  domRef?: React.RefCallback<HTMLElement>;
+  domRef?: RefCallback<HTMLElement>;
 
   repaintId?: number | string;
 };
@@ -78,8 +82,8 @@ export interface InfiniteTableColumnCellProps<T>
   rowDetailState: false | 'collapsed' | 'expanded';
   columnsMap: Map<string, InfiniteTableComputedColumn<T>>;
   fieldsToColumn: Map<keyof T, InfiniteTableComputedColumn<T>>;
-  onMouseEnter?: (event: React.MouseEvent<HTMLElement>) => void;
-  onMouseLeave?: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseEnter?: (event: MouseEvent<HTMLElement>) => void;
+  onMouseLeave?: (event: MouseEvent<HTMLElement>) => void;
   onRowMouseEnter?: InfiniteTableProps<T>['onRowMouseEnter'];
   onRowMouseLeave?: InfiniteTableProps<T>['onRowMouseLeave'];
   showZebraRows: boolean;

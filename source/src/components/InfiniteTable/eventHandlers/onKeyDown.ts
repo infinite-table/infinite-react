@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent } from '../../types/FrameworkTypes';
 import { handleKeyboardNavigation } from './keyboardNavigation';
 import { InfiniteTableKeyboardEventHandlerContext } from './eventHandlerTypes';
 import { handleKeyboardSelection } from './keyboardSelection';

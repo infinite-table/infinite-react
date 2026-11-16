@@ -28,6 +28,11 @@ export interface RouteItem {
   /** Whether the entry is a heading */
   heading?: boolean;
   transient?: boolean;
+  /**
+   * In the sidebar of another framework's docs: the page only exists for this
+   * framework (e.g. "React"), and the entry links there.
+   */
+  frameworkFallback?: string;
   /** List of sub-routes */
   routes?: RouteItem[];
 }

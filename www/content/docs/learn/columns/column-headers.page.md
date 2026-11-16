@@ -15,32 +15,11 @@ Column headers have the same level of customization as column cells - you can fu
 
 By default, the label displayed for the column header is the <PropLink name="columns.field">field</PropLink> the column is bound to. If you want to customize this, use the <PropLink name="columns.header">header</PropLink> property.
 
-```tsx
-type Developer = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-};
-const columns: InfiniteTablePropColumns<Developer> = {
-  id: {
-    field: 'id', // will be used as default label in column header
-    defaultWidth: 100,
-  },
-  name: {
-    header: 'First and Last Name', // custom column header label
-    valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
-  },
-};
+```tsx file="column-headers.snippet.tsx" region="column-header-label"
 ```
 
-<Sandpack title="Simple table with both default and custom column headers">
-
-```ts file="column-header-example.page.tsx"
-
+```tsx file="column-header-example.demo.tsx" title="Simple table with both default and custom column headers"
 ```
-
-</Sandpack>
 
 Having the <PropLink name="columns.header">header</PropLink> property be a strin value is useful but when you want more flexibility, you can use a function instead.
 
@@ -104,40 +83,16 @@ For customizing the sort icon, use the <PropLink name="columns.renderSortIcon">c
 
 Inside that function you can either use the object passed as a parameter to get information about the sort state of the column
 
-```tsx {1} title="Customizing_the_column_sort_icon"
-renderSortIcon({ columnSortInfo }) {
-  if (!columnSortInfo) {
-    return ' 🤷‍♂️';
-  }
-  return columnSortInfo.dir === 1 ? '▲' : '▼';
-}
+```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon" title="Customizing_the_column_sort_icon"
 ```
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title="Customizing_the_column_sort_icon"
-import {
-  useInfiniteHeaderCell,
-} from '@infinite-table/infinite-react';
-
-/// ...
-
-renderSortIcon(){
-  const { columnSortInfo } = useInfiniteHeaderCell();
-  if (!columnSortInfo) {
-    return ' 🤷‍♂️';
-  }
-  return columnSortInfo.dir === 1 ? '▲' : '▼';
-},
+```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon-hook" title="Customizing_the_column_sort_icon"
 ```
 
-<Sandpack title="Custom sort icon for the name column">
-
-```ts file="column-sort-icon-example.page.tsx"
-
+```tsx file="column-sort-icon-example.demo.tsx" title="Custom sort icon for the name column"
 ```
-
-</Sandpack>
 
 ### Customizing the Menu Icon
 
@@ -145,42 +100,24 @@ For customizing the menu icon, use the <PropLink name="columns.renderMenuIcon">c
 
 Inside that function you can either use the object passed as a parameter to get information about the column
 
-```tsx {1} title="Customizing_the_menu_icon"
-renderMenuIcon({ column }) {
-  return `🔧 ${column.id}`;
-}
+```tsx file="column-headers.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon"
 ```
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title="Customizing_the_menu_icon"
-import {
-  useInfiniteHeaderCell,
-} from '@infinite-table/infinite-react';
-
-/// ...
-
-renderMenuIcon(){
-  const { column } = useInfiniteHeaderCell();
-  return `🔧 ${column.id}`;
-},
+```tsx file="column-headers.customizing-the-menu-icon.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon"
 ```
 
-<Sandpack title="Custom menu icon for the name and age columns">
-
-<Description>
+<DemoDescription>
 
 Hover over the header for the `Name` and `Age` columns to see the custom menu icon.
 
 Also, the id column has `renderMenuIcon: false` set, so it doesn't show a column menu at all.
 
-</Description>
+</DemoDescription>
 
-```ts file="column-menu-icon-example.page.tsx"
-
+```tsx file="column-menu-icon-example.demo.tsx" title="Custom menu icon for the name and age columns"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -196,25 +133,12 @@ For customizing the filter icon, use the <PropLink name="columns.renderFilterIco
 
 Inside that function you can either use the object passed as a parameter to get information about the `filtered` state of the column
 
-```tsx {1} title="Customizing_the_filter_icon"
-renderFilterIcon({ filtered }) {
-  return filtered ? '🔍' : '';
-}
+```tsx file="column-headers.snippet.tsx" region="customizing-the-filter-icon" title="Customizing_the_filter_icon"
 ```
 
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
 
-```tsx {8} title="Customizing_the_menu_icon"
-import {
-  useInfiniteHeaderCell,
-} from '@infinite-table/infinite-react';
-
-/// ...
-
-renderMenuIcon(){
-  const { filtered } = useInfiniteHeaderCell();
-  return filtered ? '🔥' : '';
-},
+```tsx file="column-headers.customizing-the-filter-icon-hook.snippet.tsx" region="customizing-the-filter-icon-hook" title="Customizing_the_menu_icon"
 ```
 
 In addition, you can use the `filtered` property in the <PropLink name="columns.header">column.header</PropLink> function to determine if the column is filtered or not and render a different header label.
@@ -225,21 +149,16 @@ If specified, the <PropLink name="columns.renderFilterIcon">column.renderFilterI
 
 </Note>
 
-<Sandpack title="Custom filter icons for salary and name columns">
-
-<Description>
+<DemoDescription>
 
 The `salary` column will show a bolded label when filtered.
 
 The `firstName` column will show a custom filter icon when filtered.
 
-</Description>
+</DemoDescription>
 
-```ts file="column-filter-icon-example.page.tsx"
-
+```tsx file="column-filter-icon-example.demo.tsx" title="Custom filter icons for salary and name columns"
 ```
-
-</Sandpack>
 
 #### Changing the display of filters
 
@@ -253,13 +172,8 @@ Next, you can use the <PropLink name="columns.renderHeader">column.renderHeader<
 
 You don't need to re-implement the filter editor, you have acces to it via the `renderBag.filterEditor` property. The code below shows how to do this.
 
-<Sandpack title="Custom display of column filters">
-
-```ts file="custom-column-filter-display-example.page.tsx"
-
+```tsx file="custom-column-filter-display-example.demo.tsx" title="Custom display of column filters"
 ```
-
-</Sandpack>
 
 ### Customizing the Selection Checkbox
 
@@ -271,16 +185,11 @@ If you want another column, other than the group column, to show a selection che
 
 </Note>
 
-<Sandpack title="Custom header checkbox selection for columns">
-
-<Description>
+<DemoDescription>
 
 The group column, as well as the `stack` column display a custom selection checkbox in the column header.
 
-</Description>
+</DemoDescription>
 
-```ts file="column-header-selection-checkbox-example.page.tsx"
-
+```tsx file="column-header-selection-checkbox-example.demo.tsx" title="Custom header checkbox selection for columns"
 ```
-
-</Sandpack>

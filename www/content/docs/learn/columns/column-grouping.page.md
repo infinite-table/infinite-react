@@ -7,45 +7,15 @@ Specify column groups via the controlled <PropLink name="columnGroups" /> (or un
 
 The value is an object, with keys being the group id and value being the group description.
 
-```tsx title="defining-column-groups"
-const columnGroups: Record<string, InfiniteTableColumnGroup> = {
-  'contact info': { header: 'Contact info' },
-  // `street` column group belongs to the `address` columnGroup
-  street: { header: 'street', columnGroup: 'address' },
-  location: { header: 'location', columnGroup: 'address' },
-
-  // this is a top-level group
-  address, { header: 'Address' }
-}
+```tsx file="column-grouping.snippet.tsx" region="defining-column-groups" title="defining-column-groups"
 ```
 
 A column group can have a parent column group, specified by the <PropLink name="columnGroups.columnGroup" /> property. The same goes for a column - columns can have <PropLink name="columns.columnGroup">columnGroup</PropLink> as well.
 
-```tsx title="defining-columns-with-groups"
-const columns: Record<string, InfiniteTableColumn<Person>> = {
-  id: { field: 'id' },
-
-  // `streetNo` column belongs to the `street` columnGroup
-  streetNo: { field: 'streetNo', columnGroup: 'street' },
-  city: { field: 'city', columnGroup: 'location' },
-
-  streetName: { field: 'streetName', columnGroup: 'street' },
-  firstName: { field: 'firstName' },
-
-  country: { field: 'country', columnGroup: 'location' },
-  region: { field: 'region', columnGroup: 'location' },
-
-  email: { field: 'email', columnGroup: 'contact info' },
-  phone: { field: 'phone', columnGroup: 'contact info' },
-};
+```tsx file="column-grouping.snippet.tsx" region="defining-columns-with-groups" title="defining-columns-with-groups"
 ```
 
 ## Column groups in action
 
-<Sandpack>
-
-```tsx files=["column-groups-example.page.tsx","column-groups-data.ts"]
-
+```tsx file="column-groups-example.demo.tsx"
 ```
-
-</Sandpack>

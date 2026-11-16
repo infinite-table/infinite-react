@@ -13,15 +13,10 @@ When using Infinite Table for free, you have access to **all the features** of I
 
 </Note>
 
-You can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io) - which are used throughout this demo site. Check the demo below to see the license footer in action.
+You can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io). Check the demo below to see the license footer in action.
 
-<Sandpack title="Invalid License Demo">
-
-```ts files=["invalid-license.page.tsx","data.tsx"]
-
+```tsx file="invalid-license.demo.tsx" title="Invalid License Demo"
 ```
-
-</Sandpack>
 
 ## Licensed Usage
 

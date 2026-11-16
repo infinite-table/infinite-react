@@ -9,6 +9,8 @@ import { CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
 import { Footer } from '@www/components/Footer';
 import { MenuProvider } from '@www/components/useMenu';
+import { DocsFrameworkLinks } from '@www/components/DocsFrameworks';
+import { docsFrameworks } from '@www/utils/docsFrameworks';
 
 export default function ClientLayout({
   children,
@@ -22,7 +24,8 @@ export default function ClientLayout({
 
   const activePage = {
     pricing: pathname.startsWith('/pricing'),
-    docs: pathname.startsWith('/docs'),
+    // /docs/... and /vue/docs/...
+    docs: docsFrameworks.frameworkOf(pathname) != null,
     blog: pathname.startsWith('/blog'),
     demo: /^\/demo\/?$/.test(pathname),
   };
@@ -36,6 +39,7 @@ export default function ClientLayout({
 
   return (
     <MenuProvider>
+      <DocsFrameworkLinks />
       <div style={style}>
         <div
           className={`w-full flex flex-col ${componentsStyle.minHeightFull} `}

@@ -4,8 +4,9 @@ import { defineComponent, h } from 'vue';
 import {
   DataSource,
   InfiniteTable,
-  useDataSourceContext,
+  useDataSourceState,
 } from '@infinite-table/infinite-vue';
+import type { DataSourceState } from '@infinite-table/infinite-vue';
 import type { CarSale } from '@examples/datasets/CarSale';
 
 import { carsales, carSaleBasicColumns as columns } from './common';
@@ -22,16 +23,16 @@ const domProps = {
 const AppGrid = defineComponent({
   name: 'AppGrid',
   setup() {
-    const context = useDataSourceContext<CarSale>();
+    const dataArrayLength = useDataSourceState(
+      (state: DataSourceState<CarSale>) => state.dataArray.length,
+    );
 
     return () => {
-      const dataArrayLength = context.state.value.dataArray.length;
-
       return h('div', [
         h(
           'p',
           { 'data-name': 'test' },
-          `Showing ${dataArrayLength} rows.`,
+          `Showing ${dataArrayLength.value} rows.`,
         ),
         h(InfiniteTable, {
           debugId: 'test',

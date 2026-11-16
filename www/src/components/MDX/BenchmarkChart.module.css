@@ -1,7 +1,8 @@
 /*
- * BenchmarkChart - paired horizontal bars, AG Grid vs Infinite Table.
- * The site is dark only, so there is one set of values. The two series
- * colors were checked for colorblind separation and contrast on this surface.
+ * BenchmarkChart - grouped horizontal bars, Infinite Table and other grids.
+ * The site is dark only, so there is one set of values. The series colors
+ * were checked for colorblind separation (in the order MUI X, AG Grid,
+ * TanStack, Infinite Table) and for contrast on this surface.
  */
 .root {
   --bc-surface: #16181d;
@@ -10,9 +11,12 @@
   --bc-text: #f0efec;
   --bc-text-secondary: #c3c2b7;
   --bc-text-muted: #99a1b3;
-  --bc-ag: #d95926;
+  --bc-mui: #d95926;
+  --bc-ag: #199e70;
+  --bc-tanstack: #c98500;
   --bc-infinite: #3987e5;
   --bc-value-space: 6.5rem;
+  --bc-name-space: 8.25rem;
 
   margin: 1.75rem 0 2rem;
   padding: 1.25rem 1.25rem 0.75rem;
@@ -65,6 +69,14 @@
   background: var(--bc-ag);
 }
 
+.mui {
+  background: var(--bc-mui);
+}
+
+.tanstack {
+  background: var(--bc-tanstack);
+}
+
 .infinite {
   background: var(--bc-infinite);
 }
@@ -89,12 +101,36 @@
   font-size: 0.8125rem;
 }
 
-/* the baseline both bars grow from */
+/* the baseline the bars grow from */
 .bars {
   display: flex;
   flex-direction: column;
   gap: 2px;
   border-left: 1px solid var(--bc-grid);
+}
+
+/* with more than two grids, the name of the grid is at the left of its bar,
+   and the baseline moves to the right of the names */
+.bars:has(.named) {
+  border-left: 0;
+}
+
+.name {
+  flex: 0 0 var(--bc-name-space);
+  width: var(--bc-name-space);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--bc-text-secondary);
+  font-size: 0.8125rem;
+}
+
+.named .fill {
+  width: calc(
+    (100% - var(--bc-value-space) - var(--bc-name-space)) *
+      var(--bc-fraction, 0)
+  );
+  box-shadow: -1px 0 0 var(--bc-grid);
 }
 
 .bar {

@@ -25,18 +25,13 @@ It can be one of the following:
 - `true` - enables caching for all detail DataGrids
 - `number` - the maximum number of detail DataGrids to keep in the cache. When the limit is reached, the oldest detail DataGrid will be removed from the cache.
 
-<Sandpack title="Master detail DataGrid with caching for 5 detail DataGrids" size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 This example will cache the last 5 detail DataGrids - meaning they won't reload when you expand them again.
 You can try collapsing a row and then expanding it again to see the caching in action - it won't reload the data.
 But when you open up a row that hasn't been opened before, it will load the data from the remote location.
 
-</Description>
+</DemoDescription>
 
-```ts file=master-detail-caching-with-default-expanded-example.page.tsx
-
+```tsx file="master-detail-caching-with-default-expanded-example.demo.tsx" height="large" title="Master detail DataGrid with caching for 5 detail DataGrids"
 ```
-
-</Sandpack>

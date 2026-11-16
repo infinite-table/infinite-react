@@ -1092,6 +1092,7 @@ export function concludeReducer<T>(params: {
   } else {
     state.groupDeepMap = undefined;
     state.pivotColumns = undefined;
+    state.pivotColumnGroups = undefined;
     state.groupRowsIndexesInDataArray = undefined;
     const arrayDifferentAfterSortStep =
       previousState.postSortDataArray != state.postSortDataArray;
