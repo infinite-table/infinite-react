@@ -96,16 +96,17 @@ export const LogoAndTitle = (props: {
   </Link>
 );
 
-/** The main sections; Themes joins them with the theme gallery page. */
+/** The main sections of the site. */
 const SITE_NAV: { label: string; href: string; key: SiteSection }[] = [
   { label: 'Docs', href: '/docs', key: 'docs' },
   { label: 'Demo', href: '/demo', key: 'demo' },
+  { label: 'Themes', href: '/themes', key: 'themes' },
   { label: 'Compare', href: '/compare', key: 'compare' },
   { label: 'Pricing', href: '/pricing', key: 'pricing' },
   { label: 'Blog', href: '/blog', key: 'blog' },
 ];
 
-type SiteSection = 'docs' | 'demo' | 'compare' | 'pricing' | 'blog';
+type SiteSection = 'docs' | 'demo' | 'themes' | 'compare' | 'pricing' | 'blog';
 
 /** At this width and up the nav links show and the menu button goes (site-shell.css). */
 const NAV_BREAKPOINT = 1024;
@@ -120,6 +121,7 @@ function useSiteSection(): {
   let section: SiteSection | null = null;
   if (docs.framework != null) section = 'docs';
   else if (/^\/demo\/?$/.test(pathname)) section = 'demo';
+  else if (pathname.startsWith('/themes')) section = 'themes';
   else if (pathname.startsWith('/compare')) section = 'compare';
   else if (pathname.startsWith('/pricing')) section = 'pricing';
   else if (pathname.startsWith('/blog')) section = 'blog';

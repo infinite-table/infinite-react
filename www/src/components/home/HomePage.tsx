@@ -325,7 +325,7 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
         <SectionBar
           no="03"
           name="Themes"
-          aside={<Link href="/docs/learn/theming">Theming docs →</Link>}
+          aside={<Link href="/themes">The theme gallery →</Link>}
         />
         <div className="home-wrap">
           <div className="home-sec__head">
