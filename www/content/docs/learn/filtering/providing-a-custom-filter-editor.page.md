@@ -1,6 +1,7 @@
 ---
 title: Providing a Custom Filter Editor
 description: Writing a custom filter editor for a column in Infinite Table is straightforward.
+vue: true
 ---
 
 Almost certainly, our current `string` and `number` filters are not enough for you. You will definitely need to write your custom filter editor.
