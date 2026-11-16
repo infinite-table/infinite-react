@@ -595,8 +595,10 @@ td > strong + .sourceLink {
   font-weight: 600;
 }
 
+/* keeps its fill on hover (.button:hover would paint the soft accent) */
 .buttonPrimary:hover,
 .buttonPrimary:focus-visible {
+  background: var(--cmp-accent);
   filter: brightness(1.08);
 }
 

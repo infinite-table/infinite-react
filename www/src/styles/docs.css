@@ -252,6 +252,11 @@
   border-color: var(--accent);
   filter: brightness(1.08);
 }
+.site-key--lg {
+  height: 42px;
+  padding: 0 18px;
+  font-size: 12.5px;
+}
 .site-key--sm {
   height: 28px;
   padding: 0 10px;
