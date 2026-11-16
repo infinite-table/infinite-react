@@ -30,7 +30,7 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
     let dataSourceCalls = await getCalls({ page });
     let arg = dataSourceCalls[CALL_COUNT - 1].args[0];
 
-    expect(await page.getGlobalValue('dataArrayLength')).toBe(20);
+    await expect.poll(() => page.getGlobalValue('dataArrayLength')).toBe(20);
     expect(await getCallCount({ page })).toEqual(CALL_COUNT);
 
     expect({
@@ -65,6 +65,12 @@ export default test.describe.parallel('Lazy Load Grouped Data', () => {
       groupKeys: ['Argentina'],
       groupBy: [{ field: 'country' }],
     });
+
+    // sort once the expanded group has its rows: a sort while the group is
+    // still loading sends the requests in another order
+    await expect
+      .poll(() => page.getGlobalValue('dataArrayLength'))
+      .toBeGreaterThan(20);
 
     const col = cell.withColumn();
 
