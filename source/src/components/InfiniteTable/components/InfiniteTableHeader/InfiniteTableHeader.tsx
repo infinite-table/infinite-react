@@ -19,6 +19,8 @@ import { InfiniteTableHeaderGroup } from './InfiniteTableHeaderGroup';
 import type { InfiniteTableInternalHeaderProps } from './InfiniteTableHeaderTypes';
 import type { ScrollPosition } from '../../../types/ScrollPosition';
 import { DragList } from '../draggable';
+import { useDragListId } from '../draggable/DragDropProvider';
+import { HEADER_DRAG_LIST_NAME } from '../draggable/dragListNames';
 import { useInfiniteTableSelector } from '../../hooks/useInfiniteTableSelector';
 import { InfiniteTableComputedColumn } from '../../types';
 import {
@@ -230,10 +232,12 @@ function InfiniteTableInternalHeaderFn<T>(
     ],
   );
 
+  const headerDragListId = useDragListId(HEADER_DRAG_LIST_NAME);
+
   return (
     <DragList
       orientation="horizontal"
-      dragListId="header"
+      dragListId={headerDragListId}
       dragStrategy="inline"
       onDrop={emptyFn}
       updatePosition={emptyFn}

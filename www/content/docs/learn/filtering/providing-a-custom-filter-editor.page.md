@@ -9,27 +9,7 @@ Fortunately, doing this is straightforward - it involves using the <HookLink nam
 
 The next snippet shows our implementation of the `number` filter editor:
 
-```tsx
-export function NumberFilterEditor<T>() {
-  const { ariaLabel, value, setValue, className, disabled } =
-    useInfiniteColumnFilterEditor<T>();
-
-  return (
-    <input
-      aria-label={ariaLabel}
-      type="number"
-      disabled={disabled}
-      value={value as any as number}
-      onChange={(event) => {
-        let value = isNaN(event.target.valueAsNumber)
-          ? event.target.value
-          : event.target.valueAsNumber;
-        setValue(value as any as T);
-      }}
-      className={className}
-    />
-  );
-}
+```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="intro"
 ```
 
 <Note>
@@ -38,10 +18,7 @@ This `NumberFilterEditor` is configured in the `components.FilterEditor` propert
 
 If you want to import the `NumberFilterEditor`, you can do so with the following code:
 
-```tsx
-import { components } from '@infinite-table/infinite-react';
-
-const { NumberFilterEditor, StringFilterEditor } = components;
+```tsx file="providing-a-custom-filter-editor.built-in-editors.snippet.tsx" region="built-in-editors"
 ```
 
 </Note>
@@ -50,95 +27,24 @@ As an exercise, let's write a custom filter editor that shows a checkbox and use
 
 First step is to define the `bool` filter type:
 
-```tsx {6} title="Defining the bool filter type with one emptyValue"
-filterTypes={{
-  bool: {
-    label: 'Boolean',
-    defaultOperator: 'eq',
-    // when the filter checkbox is indeterminate state, that's mapped to `null`
-    emptyValues: [null],
-    operators: [
-      // operators will come here
-    ],
-  }
-}}
+```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="defining-the-bool-filter-type-with-one" title="Defining the bool filter type with one emptyValue"
 ```
 
 Note in the code above, we have `emptyValues: [null]` - so when the filter checkbox is in indeterminate state, it should show all the rows.
 
 Now it's time to define the operators - more exactly, just one operator, `eq`:
 
-```tsx {7} title="Defining the eq operator"
-filterTypes={{
-  bool: {
-    defaultOperator: 'eq',
-    emptyValues: [null],
-    operators: [
-      {
-        name: 'eq',
-        label: 'Equals',
-        fn: ({ currentValue, filterValue }) => currentValue === filterValue,
-      },
-    ],
-  },
-}}
+```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="defining-the-eq-operator" title="Defining the eq operator"
 ```
 
 The last part of the `bool` filter type will be to specify the `FilterEditor` component - this can be either specified as part of the filter type or as part of the operator definition (each operator can override the `components.FilterEditor`).
 
-```tsx {6} title="Specifying the FilterEditor component"
-filterTypes={{
-  bool: {
-    defaultOperator: 'eq',
-    emptyValues: [null],
-    components: {
-      FilterEditor: BoolFilterEditor,
-      FilterOperatorSwitch: () => null,
-    },
-    operators: [
-      {
-        name: 'eq',
-        label: 'Equals',
-        fn: ({ currentValue, filterValue }) =>
-          currentValue === filterValue,
-      },
-    ],
-  },
-}}
+```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="specifying-the-filtereditor-component" title="Specifying the FilterEditor component"
 ```
 
 Now it's time to write the actual `BoolFilterEditor` that the `bool` filter type is using:
 
-```tsx {9} title="BoolFilterEditor"
-import {
-  components,
-  useInfiniteColumnFilterEditor,
-} from '@infinite-table/infinite-react';
-
-const { CheckBox } = components;
-
-function BoolFilterEditor() {
-  const { value, setValue, className } =
-    useInfiniteColumnFilterEditor<Developer>();
-  return (
-    <div className={className} style={{ textAlign: 'center' }}>
-      <CheckBox
-        checked={value}
-        onChange={(newValue) => {
-          if (value === true) {
-            // after the value was true, make it go to indeterminate state
-            newValue = null;
-          }
-          if (value === null) {
-            // from indeterminate, goto false
-            newValue = false;
-          }
-          setValue(newValue);
-        }}
-      />
-    </div>
-  );
-}
+```tsx file="providing-a-custom-filter-editor.boolfiltereditor.snippet.tsx" region="boolfiltereditor" title="BoolFilterEditor"
 ```
 
 <Note>
@@ -147,16 +53,12 @@ In the snippet above, note how we're using the <HookLink name="useInfiniteColumn
 
 </Note>
 
-<Sandpack title="Writing a `bool` filter type with a custom filter editor">
-
-<Description>
+<DemoTitle>Writing a `bool` filter type with a custom filter editor</DemoTitle>
+<DemoDescription>
 
 The `canDesign` column is using a custom `bool` filter type with a custom filter editor.
 
-</Description>
+</DemoDescription>
 
-```ts file="checkbox-filter-editor-example.page.tsx"
-
+```tsx file="checkbox-filter-editor-example.demo.tsx"
 ```
-
-</Sandpack>

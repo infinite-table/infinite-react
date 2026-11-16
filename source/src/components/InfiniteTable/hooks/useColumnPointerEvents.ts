@@ -22,7 +22,11 @@ import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
 import { InfiniteTablePropColumnPinning } from '../types';
 import adjustColumnOrderForAllColumns from './adjustColumnOrderForAllColumns';
 import { HorizontalLayoutMatrixBrain } from '../../VirtualBrain/HorizontalLayoutMatrixBrain';
-import { useDragDropProvider } from '../components/draggable/DragDropProvider';
+import {
+  useDragDropProvider,
+  useDragListId,
+} from '../components/draggable/DragDropProvider';
+import { GROUPING_TOOLBAR_DRAG_LIST_NAME } from '../components/draggable/dragListNames';
 
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
 import { getBodyNode } from '../components/InfiniteTableBody/bodyClassName';
@@ -69,6 +73,9 @@ export const useColumnPointerEvents = ({
   const [dragColumnOutside, setDragColumnOutside] = useState(false);
 
   const { getCurrentDragSourceAndTarget } = useDragDropProvider();
+  const groupingToolbarDragListId = useDragListId(
+    GROUPING_TOOLBAR_DRAG_LIST_NAME,
+  );
 
   const { getComputed, getState, api, computedDraggable, rootRef, actions } =
     useInfiniteTableSelector((ctx) => {
@@ -171,6 +178,7 @@ export const useColumnPointerEvents = ({
         dragColumnHeaderTargetRect: targetRect,
         dragColumnId: columnId,
         getCurrentDragSourceAndTarget,
+        groupingToolbarDragListId,
         api,
         infiniteDOMNode: rootRef.current!,
         setProxyPosition,
@@ -356,7 +364,7 @@ export const useColumnPointerEvents = ({
 
       target.setPointerCapture(e.pointerId);
     },
-    [columnId, horizontalLayoutPageIndex],
+    [columnId, horizontalLayoutPageIndex, groupingToolbarDragListId],
   );
 
   return {

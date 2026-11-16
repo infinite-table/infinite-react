@@ -14,10 +14,7 @@ import { TextGlow } from '@www/components/TextGlow';
 import { Paragraph } from '@www/components/Paragraph';
 
 // import { DocsLink } from '@www/components/DocsLink';
-import {
-  CodeSnippet as CodeSnippetCmp,
-  CodeSnippetProps,
-} from '@www/components/CodeSnippet';
+import { CodeSnippet } from '@www/components/CodeSnippet';
 
 import { MarkdownFileInfo } from '@www/utils/MarkdownFileInfo';
 import { LI, UnorderedList } from '@www/components/UnorderedList';
@@ -98,19 +95,6 @@ export function useMDXComponents(
 ): MDXComponents {
   const otherFramework = framework !== docsFrameworks.default;
 
-  const CodeSnippet = (props: CodeSnippetProps) => {
-    const snippet = <CodeSnippetCmp {...props} cwd={fileInfo.folderPath} />;
-    // the Sandpack examples only exist for React
-    return otherFramework && props.live ? (
-      <div className="docs-framework-fallback">
-        <ReactOnlyNotice />
-        {snippet}
-      </div>
-    ) : (
-      snippet
-    );
-  };
-
   /** A docs link built by a component, for the page's framework. */
   const linkFor = (href: string) => {
     const link = resolveFrameworkLink(
@@ -161,7 +145,6 @@ export function useMDXComponents(
     Intro,
     Note,
 
-    // Sandpack: CodeSnippet,
     // ...CurrentMDXComponents,
     //@ts-ignore
     h1: Heading1,
@@ -213,34 +196,8 @@ export function useMDXComponents(
     // @ts-ignore
     // pre: Pre,
 
+    // inline code fences in languages that are not type-checked (css, sh…)
     CodeSnippet,
-    Snippet: (props: { children: React.ReactNode }) => {
-      const children = React.Children.toArray(props.children);
-
-      let code: React.ReactElement<CodeSnippetProps> | undefined;
-      let description: React.ReactNode | undefined;
-
-      for (const child of children) {
-        //@ts-ignore
-        if (child.type === CodeSnippet) {
-          //@ts-ignore
-          code = child;
-          //@ts-ignore
-        } else if (child.type === Description) {
-          //@ts-ignore
-          description = child;
-        }
-      }
-
-      if (!code) {
-        return children;
-      }
-
-      return React.cloneElement(code!, {
-        live: true,
-        description,
-      });
-    },
 
     DPropLink: DataSourcePropLink,
     DataSourcePropLink,
@@ -276,6 +233,5 @@ export function useMDXComponents(
       );
     },
   };
-  components.Sandpack = components.Snippet;
   return components;
 }

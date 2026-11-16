@@ -24,38 +24,7 @@ _With version 1.1.0, our DataGrid now includes support for context menus, which 
 
 In Infinite Table you can configure a context menu to be displayed when you right-click a cell by using the <PropLink name="getCellContextMenuItems" /> prop. Simply specify a function that returns an array of objects, each with `label` and `key` properties. Each object in the array is a row in the context menu - with the `label` being the displayed content and the `key` being a unique identifier for the menu row.
 
-```tsx title="Configuring_a_context_menu"
-const getCellContextMenuItems = ({ column, data, value }) => {
-  if (column.id === 'currency') {
-    return [
-      {
-        label: `Convert ${value}`,
-        key: 'currency-convert',
-        onAction: (key, item) => {
-          alert('clicked ' + item.key);
-        },
-      },
-    ];
-  }
-
-  if (column.id === 'age') {
-    return null;
-  }
-
-  return [
-    {
-      label: `Welcome ${value}`,
-      key: 'hi',
-    },
-  ];
-};
-
-<DataSource<Developer> data={data} primaryKey="id">
-  <InfiniteTable<Developer>
-    getCellContextMenuItems={getCellContextMenuItems}
-    columns={columns}
-  />
-</DataSource>;
+```tsx file="using-menus-in-infinite-table.snippet.tsx" region="configuring-a-context-menu" title="Configuring_a_context_menu"
 ```
 
 In the <PropLink name="getCellContextMenuItems" /> function prop, you have access to all the information you need, in the first argument of the function:
@@ -92,24 +61,7 @@ However, Infinite Table for React allows you to create more complex menus, with 
 
 In order to do this, use the same <PropLink name="getCellContextMenuItems"/> prop, but return an object, with `columns` and `items`
 
-```tsx
-const getCellContextMenuItems = () => {
-  return {
-    columns: [{ name: 'label' }, { name: 'lcon' }],
-    items: [
-      {
-        label: 'Welcome',
-        icon: '👋',
-        key: 'hi',
-      },
-      {
-        label: 'Convert',
-        icon: '🔁',
-        key: 'convert',
-      },
-    ],
-  };
-};
+```tsx file="using-menus-in-infinite-table.snippet.tsx" region="configuring-the-context-menu-to-have-multiple"
 ```
 
 <Note>
@@ -145,29 +97,7 @@ Besides context menus, the DataGrid also supports menus for columns, that allow 
 
 Just like context menus, the column menus can also be fully customised, by using the <PropLink name="getColumnMenuItems" /> prop.
 
-```tsx title="Customizing-column-menu"
-function getColumnMenuItems(items, { column }) {
-  if (column.id === 'firstName') {
-    // you can adjust the default items for a specific column
-    items.splice(0, 0, {
-      key: 'firstName',
-      label: 'First name menu item',
-      onClick: () => {
-        console.log('Hey there!');
-      },
-    });
-  }
-
-  // or for all columns
-  items.push({
-    key: 'hello',
-    label: 'Hello World',
-    onClick: () => {
-      alert('Hello World from column ' + column.id);
-    },
-  });
-  return items;
-}
+```tsx file="using-menus-in-infinite-table.snippet.tsx" region="customizing-column-menu" title="Customizing-column-menu"
 ```
 
 <Note>

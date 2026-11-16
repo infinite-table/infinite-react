@@ -7,18 +7,23 @@ export default test.describe.parallel('Master-detail', () => {
   }) => {
     await page.waitForInfinite();
 
-    await page.waitForTimeout(100);
-
+    // the master and the detail rows come from the data server: wait for
+    // them to arrive, rather than for a fixed time
     const firstChildColumn = tableModel.withColumn('firstNameChildColumn');
-    expect(await firstChildColumn.getHeader()).toBe('firstNameChildColumn 13');
+    await expect
+      .poll(() => firstChildColumn.getHeader())
+      .toBe('firstNameChildColumn 13');
 
     const idCol = tableModel.withColumn('id');
-    expect(await idCol.getHeader()).toBe('id 100');
+    await expect.poll(() => idCol.getHeader()).toBe('id 100');
 
     const firstNameInputs = page.locator('input[name="first name"]');
-    const values = await firstNameInputs.evaluateAll((nodes) => {
-      return (nodes as HTMLInputElement[]).map((node) => node.value);
-    });
-    expect(values).toEqual(['Axel', 'Gonzalo']);
+    await expect
+      .poll(() =>
+        firstNameInputs.evaluateAll((nodes) => {
+          return (nodes as HTMLInputElement[]).map((node) => node.value);
+        }),
+      )
+      .toEqual(['Axel', 'Gonzalo']);
   });
 });

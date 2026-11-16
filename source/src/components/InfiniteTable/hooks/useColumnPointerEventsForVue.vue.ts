@@ -22,6 +22,7 @@ import { InternalVars } from '../internalVars.css';
 import { getBodyNode } from '../components/InfiniteTableBody/bodyClassName';
 import { getHeaderWrapperNodes } from '../components/InfiniteTableHeader/headerClassName';
 import type { DragDropSourceAndTarget } from '../components/draggable/DragDropProvider';
+import { GROUPING_TOOLBAR_DRAG_LIST_NAME } from '../components/draggable/dragListNames';
 import {
   clearInfiniteColumnReorderDuration,
   setInfiniteColumnOffsetWhileReordering,
@@ -184,6 +185,8 @@ export function createColumnPointerDownHandler<T>(options: {
       dragColumnHeaderTargetRect: targetRect,
       dragColumnId: columnId,
       getCurrentDragSourceAndTarget,
+      // no grouping toolbar in the Vue port yet (see above)
+      groupingToolbarDragListId: GROUPING_TOOLBAR_DRAG_LIST_NAME,
       api,
       infiniteDOMNode: rootRef.current!,
       setProxyPosition: (position) => {

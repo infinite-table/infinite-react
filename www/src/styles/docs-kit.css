@@ -2,7 +2,7 @@
  * docs-kit demo cards (@thedatagrid/docs-kit/react/styles.css) in the site's
  * tokens (tokens.css), so they follow light and dark. Every variable is
  * listed in the kit's README (Theming). The syntax colors stay the code
- * themes' (DOCS_CODE_THEMES): github-light, and the Sandpack palette in dark.
+ * themes' (DOCS_CODE_THEMES): github-light in light, the site's dark palette.
  */
 :root,
 [data-theme='dark'] {
@@ -39,8 +39,8 @@
 }
 
 [data-theme='dark'] {
-  /* the code editor's syntax colors: the Sandpack palette, like the
-     highlighted code */
+  /* the code editor's syntax colors: the same palette as the highlighted
+     code in dark (DOCS_CODE_THEMES) */
   --dk-editor-keyword: #ff6188;
   --dk-editor-constant: #ab9df2;
   --dk-editor-string: #ffd866;
@@ -55,7 +55,7 @@
   --dk-editor-punctuation: #939293;
 }
 
-/* the size and font of the Sandpack examples' file tabs */
+/* the size and font of the file tabs */
 .dk-demo-tab,
 .dk-demo-file,
 .dk-demo-filename {

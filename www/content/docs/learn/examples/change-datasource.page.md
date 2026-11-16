@@ -14,19 +14,14 @@ See our page on using and configuring columns. It shows you how to use and custo
 </YouWillLearnCard>
 </HeroCards>
 
-<Sandpack  size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 In this demo you can toggle between 2 data sources and 2 sets of columns.
 
-</Description>
+</DemoDescription>
 
-```tsx file="change-datasource-example.page.tsx"
-
+```tsx file="change-datasource-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 

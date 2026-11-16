@@ -106,10 +106,7 @@ Check out our end-to-end tests in GitHub
 
 It ships with both a **light** and a **dark** theme - all you have to do is import the CSS file from the package.
 
-```ts
-import '@infinite-table/infinite-react/index.css';
-
-// This file includes both the light and the dark themes.
+```ts file="index.snippet.tsx" region="themable"
 ```
 
 <HeroCards>

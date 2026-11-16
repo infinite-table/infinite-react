@@ -16,14 +16,13 @@ Technically, it's the `<DataSource />` that's being sorted, not the `<InfiniteTa
 
 </Note>
 
-<DemoTitle>Default behavior is single sorting</DemoTitle>
 <DemoDescription>
 
 By default, clicking a column header sorts the column.
 
 </DemoDescription>
 
-```tsx file="local-single-sorting-example-defaults-with-local-data.demo.tsx"
+```tsx file="local-single-sorting-example-defaults-with-local-data.demo.tsx" title="Default behavior is single sorting"
 ```
 
 ## Apply a default sort order
@@ -43,14 +42,13 @@ For controlled sorting, make sure you use the <DataSourcePropLink name="sortInfo
 
 </Note>
 
-<DemoTitle>Local + uncontrolled single-sorting example</DemoTitle>
 <DemoDescription>
 
 The `age` column is sorted in ascending order.
 
 </DemoDescription>
 
-```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx"
+```tsx file="local-uncontrolled-single-sorting-example-with-local-data.demo.tsx" title="Local + uncontrolled single-sorting example"
 ```
 
 ## Controlled sorting
@@ -89,14 +87,13 @@ If you want to use multiple sorting, specify an array of objects like
 
 This allows sorting by multiple fields (to which columns are bound) - you can specify however many you want - so when sorting two objects in the `DataSource`, the first `sortInfo` is used to compare the two, and then, on equal values, the next `sortInfo` is used and so on.
 
-<DemoTitle>Local + uncontrolled multi-sorting example</DemoTitle>
 <DemoDescription>
 
 This table allows sorting multiple columns - initially the `country` column is sorted in descending order and the `salary` column is sorted in ascending order. Click the `salary` column to toggle the column sort to descending. Clicking it a second time will remove it from the sort altogether.
 
 </DemoDescription>
 
-```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx"
+```tsx file="local-uncontrolled-multi-sorting-example-with-remote-data.demo.tsx" title="Local + uncontrolled multi-sorting example"
 ```
 
 ```tsx file="remote-uncontrolled-multi-sorting-example.demo.tsx" title="Remote + uncontrolled multi-sorting example"
@@ -196,7 +193,7 @@ Sorting works in combination with the <PropLink name="sortTypes" /> property, wh
 ```ts file="single-sorting.snippet.tsx" region="default-sort-types"
 ```
 
-Those are the two sort types supported by default.
+Those are the three sort types supported by default.
 
 <Note>
 
@@ -211,13 +208,8 @@ To conclude, the <PropLink name="columns.dataType">dataType</PropLink> of a colu
 
 </Note>
 
-<Sandpack  title="Custom sort by color - magenta will come first">
-
-```ts file="$DOCS/reference/datasource-props/sortTypes-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/sortTypes-example.demo.tsx" title="Custom sort by color - magenta will come first"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -257,10 +249,5 @@ A <DPropLink name="sortFunction" /> makes the sorting happen in the browser. It 
 For tree data, see [`multisort` and `multisortNested`](/docs/reference/datasource-props#sortFunction).
 </Note>
 
-<Sandpack  title="Using a custom sortFunction">
-
-```ts file="$DOCS/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.page.tsx"
-
+```tsx file="/docs/reference/datasource-props/local-sortFunction-single-sorting-example-with-local-data-example.demo.tsx" title="Using a custom sortFunction"
 ```
-
-</Sandpack>

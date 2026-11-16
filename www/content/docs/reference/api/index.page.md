@@ -5,20 +5,7 @@ layout: API
 
 When rendering the `InfiniteTable` component, you can get access to the API by getting it from the <PropLink name="onReady" /> callback prop.
 
-```tsx {2}
-const onReady = (
-  {api, dataSourceApi}: {
-    api: InfiniteTableApi<DATA_TYPE>,
-    dataSourceApi: DataSourceApi<DATA_TYPE>
-  }) => {
-  // api is accessible here
-  // you may want to store a reference to it in a ref or somewhere in your app state
-}
-
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={onReady}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 For API on row/group selection, see the [Selection API page](/docs/reference/selection-api).
@@ -126,8 +113,7 @@ See related <ApiLink name="toggleSortingForColumn" /> and <ApiLink name="setSort
 
 > Collapses the specified group row. Returns true if the group was expanded and is now being collapsed.
 
-```tsx
-api.collapseGroupRow(['USA', 'New York']); // collapses the group with these keys
+```tsx file="index.snippet.tsx" region="collapsegrouprow"
 ```
 
 </Prop>
@@ -136,8 +122,7 @@ api.collapseGroupRow(['USA', 'New York']); // collapses the group with these key
 
 > Expands the specified group row. Returns true if the group was collapsed and is now being expanded.
 
-```tsx
-api.expandGroupRow(['USA', 'New York']); // expands the group with these keys
+```tsx file="index.snippet.tsx" region="expandgrouprow"
 ```
 
 </Prop>
@@ -212,13 +197,8 @@ Returns a promise that resolves to `true` if editing was started, or `false` if 
 
 See <PropLink name="columns.defaultEditable" /> for more details on how to configure a cell as editable.
 
-<Sandpack title="Starting an Edit via the API">
-
-```ts file="api-start-edit-example.page.tsx"
-
+```tsx file="api-start-edit-example.demo.tsx" title="Starting an Edit via the API"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -245,12 +225,7 @@ The only parameter of this method is the column id.
 
 Can be used as either a setter, to set the scroll left position or a getter to read the scroll left position.
 
-```ts
-// use as setter - will scroll the table viewport
-api.scrollLeft = 200;
-
-// use as getter to read the current scroll left value
-const scrollLeft = api.scrollLeft;
+```ts file="index.snippet.tsx" region="scrollleft"
 ```
 
 </Prop>
@@ -269,12 +244,7 @@ If scrolling was successful and the row was found, it returns `true`, otherwise 
 
 Can be used as either a setter, to set the scroll top position or a getter to read the scroll top position.
 
-```ts
-// use as setter - will scroll the table viewport
-api.scrollTop = 1200;
-
-// use as getter to read the current scroll top value
-const scrollTop = api.scrollTop;
+```ts file="index.snippet.tsx" region="scrolltop"
 ```
 
 </Prop>
@@ -308,10 +278,7 @@ const scrollTop = api.scrollTop;
 
 If `true` is specified, it resets the column order to the order the columns are specified in the <PropLink name="columns" /> prop (the iteration order of that object).
 
-```ts
-api.setColumnOrder(['id', 'firstName', 'age']);
-// restore default order
-api.setColumnOrder(true);
+```ts file="index.snippet.tsx" region="setcolumnorder"
 ```
 
 </Prop>
@@ -320,8 +287,7 @@ api.setColumnOrder(true);
 
 > Toggles the collapse/expand state of the specified group row
 
-```tsx
-api.toggleGroupRow(['USA', 'New York']); // toggle the group with these keys
+```tsx file="index.snippet.tsx" region="togglegrouprow"
 ```
 
 </Prop>

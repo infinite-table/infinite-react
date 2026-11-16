@@ -40,12 +40,12 @@ export const DOCS_FENCE_DEFAULTS: FenceDefaults = {
   demos: { live: true, height: 'default' },
 };
 
-/** Same sizes as the Sandpack examples (`size="md"` by default, `"lg"`). */
+/** Preview heights of `height="small" | "default" | "large"`. */
 export const DOCS_DEMO_HEIGHTS = { small: 500, default: 650, large: 850 };
 
-/** The dark Sandpack theme of the examples (src/styles/sandpack.css), as a shiki theme. */
-const SANDPACK_DARK_THEME = {
-  name: 'infinite-sandpack-dark',
+/** The dark syntax theme of the docs (the palette is also in src/styles/docs-kit.css), as a shiki theme. */
+const DOCS_DARK_THEME = {
+  name: 'infinite-docs-dark',
   type: 'dark',
   colors: {
     'editor.background': '#101419',
@@ -102,16 +102,28 @@ const SANDPACK_DARK_THEME = {
 export const DOCS_CODE_THEMES = {
   light: 'github-light',
   // shiki takes theme objects too; the kit's type only names bundled themes
-  dark: SANDPACK_DARK_THEME as unknown as string,
+  dark: DOCS_DARK_THEME as unknown as string,
 };
 
-const DOCS_KIT_FILE = /\.(demo|snippet)\.[cm]?[jt]sx?$/;
+/** The languages whose code has to be type-checked, so it can't be inline. */
+const TYPECHECKED_LANGS = new Set([
+  'ts',
+  'tsx',
+  'js',
+  'jsx',
+  'typescript',
+  'javascript',
+]);
 
 /**
- * Fences for the docs-kit pipeline: `file="x.demo.tsx"` (live demos) and
- * `file="x.snippet.tsx"` (regions/highlights of type-checked files). Other
- * fences keep going to the Sandpack pipeline (markdownSnippetTransformer).
+ * Fences for the docs-kit pipeline: every `file="…"` fence (`x.demo.tsx`
+ * live demos, regions of `x.snippet.tsx` files) and every fence in a
+ * type-checked language - an inline one fails the build. Inline fences in
+ * other languages (css, sh, json…) go to markdownSnippetTransformer.
  */
 export function isDocsKitFence(fence: FenceInfo): boolean {
-  return typeof fence.props.file === 'string' && DOCS_KIT_FILE.test(fence.props.file);
+  return (
+    typeof fence.props.file === 'string' ||
+    TYPECHECKED_LANGS.has(fence.lang ?? '')
+  );
 }

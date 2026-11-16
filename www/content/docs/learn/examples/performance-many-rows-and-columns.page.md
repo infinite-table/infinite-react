@@ -16,21 +16,16 @@ See our page on using and configuring columns. It shows you how to use and custo
 </YouWillLearnCard>
 </HeroCards>
 
-<Sandpack  size="lg" viewMode="preview">
-
-<Description>
+<DemoDescription>
 
 DataGrid with 10k rows and 12 columns.
 
 Adding more columns will not affect performance, as the DataGrid uses virtualization for both rows and **columns**.
 
-</Description>
+</DemoDescription>
 
-```tsx file="many-rows-and-columns-example.page.tsx"
-
+```tsx file="many-rows-and-columns-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 

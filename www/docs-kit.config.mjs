@@ -26,13 +26,42 @@ const sourcePackage = JSON.parse(
   fs.readFileSync(new URL('../source/package.json', import.meta.url), 'utf8'),
 );
 
+// the themes the package ships as theme/<name>.css (source/src/generate-theme-<name>.ts)
+const THEMES = fs
+  .readdirSync(new URL('../source/src', import.meta.url))
+  .map((file) => /^generate-theme-(.+)\.ts$/.exec(file)?.[1])
+  .filter(Boolean);
+
+/**
+ * vanilla-extract, for the library source only. The builder names its
+ * import-map entry modules after the specifier, so `…/theme/ocean.css` gets
+ * an `….ocean.css.mjs` module - which vanilla-extract would take for one of
+ * its `.css.ts` files.
+ */
+const vanillaExtract = {
+  name: vanillaConfig.name,
+  setup(build) {
+    const sourceOnly = (callback) => (args) =>
+      args.path.includes('/node_modules/.cache/docs-kit/')
+        ? undefined
+        : callback(args);
+    return vanillaConfig.setup({
+      ...build,
+      onResolve: (options, callback) =>
+        build.onResolve(options, sourceOnly(callback)),
+      onLoad: (options, callback) =>
+        build.onLoad(options, sourceOnly(callback)),
+    });
+  },
+};
+
 // keep in sync with src/utils/docsKit.ts
 const DEMO_ANCHOR_PREFIX = 'demo-';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || 'https://data.infinite-table.com';
 
-// Same fallback as Sandpack's examples: the published version the docs build
+// Forked demos use the published version the docs build
 // is pinned to (next.config.js), else the version in source/package.json.
 const INFINITE_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || sourcePackage.version;
@@ -64,12 +93,22 @@ export default {
   libraries: {
     '@infinite-table/infinite-react': {
       entry: '../source/src/index.tsx',
-      plugins: () => [frameworkResolvePlugin('react'), vanillaConfig],
+      plugins: () => [frameworkResolvePlugin('react'), vanillaExtract],
       watch: [SOURCE_DIR],
     },
+    // `import '@infinite-table/infinite-react/theme/<name>.css'` in a demo:
+    // the themes are built from source as well. Their CSS is linked in every
+    // demo, which is fine: a theme only applies under its
+    // `infinite-theme-name--<name>` class.
+    ...Object.fromEntries(
+      THEMES.map((theme) => [
+        `@infinite-table/infinite-react/theme/${theme}.css`,
+        { entry: `../source/src/generate-theme-${theme}.ts` },
+      ]),
+    ),
   },
   // the library CSS comes from the vanilla-extract build above
-  stubImports: [/^@infinite-table\/infinite-react\/.+\.css$/],
+  stubImports: [/^@infinite-table\/infinite-react\/index\.css$/],
   define: {
     'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify(BASE_URL),
     __DEV__: 'false',
@@ -77,11 +116,18 @@ export default {
     __VERSION_TIMESTAMP__: JSON.stringify(sourcePackage.publishedAt || 0),
   },
   bootstrapDefine: {
+    // the Tailwind setup of `*-tailwind.demo.tsx` demos
+    'process.env.DOCS_TAILWIND_STYLE': JSON.stringify(
+      fs.readFileSync(
+        new URL('./docs-kit.tailwind.css', import.meta.url),
+        'utf8',
+      ),
+    ),
     'process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY': JSON.stringify(
       process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY || '',
     ),
   },
-  // shown, edited and forked code gets the URL inlined (as the Sandpack examples do)
+  // shown, edited and forked code gets the URL inlined
   sourceReplacements: {
     'process.env.NEXT_PUBLIC_BASE_URL': `'${BASE_URL}'`,
   },

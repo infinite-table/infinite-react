@@ -13,24 +13,7 @@ It's also a very useful addition for DataGrids users that work in the financial 
 
 In order to configure a column to flash its cells when the data changes, you need to specify a custom `ColumnCell` component.
 
-```tsx {14}
-
-import { FlashingColumnCell } from '@infinite-table/infinite-react';
-
-const columns: InfiniteTablePropColumns<Developer> = {
-  id: {
-    field: 'id',
-  },
-  firstName: {
-    field: 'firstName',
-  },
-  salary: {
-    field: 'salary',
-    components: {
-      ColumnCell: FlashingColumnCell,
-    }
-  },
-};
+```tsx file="how-do-i-flash-cells.snippet.tsx" region="configuring-a-flashing-column"
 ```
 
 `@infinite-table/infinite-react` exports a `FlashingColumnCell` React component that you can pass to the `components.ColumnCell` prop of any column you want to flash.
@@ -48,23 +31,7 @@ The default flashing duration is `1000` milliseconds.
 
 If you want to customize the flashing duration, you need to pass a different `components.ColumnCell` to the column. You can very easily do this by calling `createFlashingColumnCellComponent` and passing the `flashDuration` option.
 
-```tsx
-
-import { createFlashingColumnCellComponent } from '@infinite-table/infinite-react';
-
-const FlashingColumnCell = createFlashingColumnCellComponent({
-  flashDuration: 500,
-  flashClassName: 'my-flash-class',
-});
-
-const columns: InfiniteTablePropColumns<Developer> = {
-  salary: {
-    field: 'salary',
-    components: {
-      ColumnCell: FlashingColumnCell,
-    }
-  }
-}
+```tsx file="how-do-i-flash-cells.customizing-the-flashing-duration.snippet.tsx" region="customizing-the-flashing-duration"
 ```
 
 <Note>

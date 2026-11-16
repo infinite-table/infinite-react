@@ -2,7 +2,6 @@ import { IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google';
 
 import '@docsearch/css';
 import '../styles/index.css';
-import '../styles/sandpack.css';
 import '../styles/globals.css';
 import '@thedatagrid/docs-kit/react/styles.css';
 import '@thedatagrid/docs-kit/frameworks/styles.css';
@@ -12,7 +11,6 @@ import '../styles/docs.css';
 
 import ClientLayout from './clientLayout';
 
-import { SandpackCSSText } from './SandpackCSSText';
 import { ThemeInitScript } from '@www/components/themeInit';
 import { MetaProperties } from './MetaProperties';
 import { asMeta } from '@www/utils/asMeta';
@@ -54,7 +52,6 @@ export default function RootLayout({
     >
       <head>
         <ThemeInitScript />
-        <SandpackCSSText />
         <MetaProperties />
       </head>
       <body className="font-sans antialiased text-lg bg-bg text-fg leading-base">

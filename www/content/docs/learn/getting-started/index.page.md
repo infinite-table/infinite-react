@@ -42,8 +42,7 @@ This is an example to get you started with Infinite Table with minimal setup. Cl
 
 Don't forget to import the CSS to see the component in action!
 
-```tsx 
-import '@infinite-table/infinite-react/index.css';
+```tsx file="index.snippet.tsx" region="css-import"
 ```
 </Note>
 
@@ -67,13 +66,7 @@ There are 2 components that you can use and import:
 
 Each of those has types provided for all the props it exposes, with the pattern of `<COMPONENT_NAME>Prop<PROP_NAME>`, so here are a few examples to clarify the rule:
 
-```ts
-import {
-  InfiniteTablePropColumns, // or accessible as InfiniteTableProps['columns']
-  // corresponding to the `columns` prop
-  DataSourcePropGroupBy, // or accessible as DataSourceProps['groupBy']
-  // corresponding to the `groupBy` prop
-} from '@infinite-table/infinite-react';
+```ts file="index.snippet.tsx" region="typescript-types"
 ```
 
 <HeroCards>
@@ -102,9 +95,7 @@ Read more about how to use our TypeScript types.
 
 `Infinite Table` is built specifically for React and is fully declarative and fully typed. When you use `Infinite Table`, it feels at-home in your React application - every prop has both a controlled and uncontrolled version so you get full control over every area of the component.
 
-<Snippet>
-
-<Description>
+<DemoDescription>
 
 This is an example of how you might configure `InfiniteTable` in a real-world application and puts together several functionalities:
 
@@ -115,13 +106,10 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 - multiple selection
 - custom cell rendering
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/../../src/demo.tsx"
-
+```tsx file="full-demo.demo.tsx"
 ```
-
-</Snippet>
 
 </FrameworkContent>
 
@@ -138,9 +126,9 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 You can use `@infinite-table/infinite-react` in 2 ways:
 
 - with a license - requests for license quotations and additional quotations must be made by email to admin@infinite-table.com. After purchasing, you will receive a `licenseKey` which you will provide as a prop when you instantiate Infinite Table. This will make the [Powered by Infinite Table](https://infinite-table.com) footer go away.
-- without a license, but it will include a [Powered by Infinite Table](https://infinite-table.com) link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io) - which are used throughout this demo site. Check the demo below to see the license footer in action.
+- without a license, but it will include a [Powered by Infinite Table](https://infinite-table.com) link in the table footer. This way you can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io). Check the demo below to see the license footer in action.
 
-```ts live title="Invalid License Demo" files="invalid-license.page.tsx,data.tsx"
+```tsx file="invalid-license.demo.tsx" title="Invalid License Demo"
 ```
 
 </FrameworkContent>

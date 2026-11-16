@@ -89,6 +89,12 @@ export type ReorderParams<T> = {
   setProxyPosition: (position: TopLeftOrNull) => void;
   setDragColumnOutside: (outside: boolean) => void;
   getCurrentDragSourceAndTarget: () => DragDropSourceAndTarget;
+  /**
+   * The drag list id of this grid's grouping toolbar (`useDragListId`
+   * makes it unique per grid): while the column is over it, there is no
+   * reorder, the drop groups by the column instead.
+   */
+  groupingToolbarDragListId: string;
 };
 
 const PROXY_OFFSET = 10;
@@ -113,6 +119,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
     setProxyPosition,
     setDragColumnOutside,
     getCurrentDragSourceAndTarget,
+    groupingToolbarDragListId,
     api: imperativeApi,
     horizontalLayoutPageIndex,
     pageWidth,
@@ -558,7 +565,7 @@ export function reorderColumnsOnDrag<T>(params: ReorderParams<T>) {
 
       if (
         getCurrentDragSourceAndTarget().dropTargetListId ===
-          'grouping-toolbar' ||
+          groupingToolbarDragListId ||
         (allowColumnHideOnDrag &&
           !acceptDropToReorderRect.containsPoint(
             currentColHeaderRect.getCenter(),
