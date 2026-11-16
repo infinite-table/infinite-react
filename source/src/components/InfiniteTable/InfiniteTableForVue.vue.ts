@@ -1702,6 +1702,17 @@ export const InfiniteTable = defineComponent({
       }
     };
 
+    // mirrors the React scrollTopKey effect: a new key scrolls the grid
+    // back to the top
+    watch(
+      () => state.value.scrollTopKey,
+      () => {
+        if (scrollerElement) {
+          scrollerElement.scrollTop = 0;
+        }
+      },
+    );
+
     onMounted(() => {
       if (scrollerElement) {
         actions.bodySize = {
