@@ -946,6 +946,18 @@
   .home-frame__hint {
     display: none;
   }
+  /* the million rows: the readout gets its own two lines from the start,
+     so it doesn't push the grid down when the data arrives */
+  .home-demo--million .home-demo__bar {
+    flex-wrap: wrap;
+  }
+  .home-demo--million .home-demo__readout {
+    flex-basis: 100%;
+    min-height: 2.8em;
+  }
+  .home-demo--million .home-demo__spacer {
+    display: none;
+  }
   /* the demo controls: each group scrolls sideways rather than overflow */
   .home-demo__group {
     max-width: 100%;
