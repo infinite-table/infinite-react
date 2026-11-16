@@ -1,4 +1,5 @@
 import { OceanLightVars } from './vars-ocean-light.css';
+import { getDefaultThemeValue } from './vars-default-resolved.css';
 import { ThemeVars } from './vars.css';
 
 const borderColor = `color-mix(in srgb, transparent, ${ThemeVars.components.Cell.color} 10%)`; // chakra gray 700
@@ -6,6 +7,17 @@ const borderColor = `color-mix(in srgb, transparent, ${ThemeVars.components.Cell
 export const OceanDarkVars = {
   ...OceanLightVars,
   [ThemeVars.themeMode]: 'dark',
+  // this theme has no cell borders (the border width is 0), but it keeps
+  // the borders the default theme makes from the cell border:
+  // the header cell border, the pinned columns border and the filter editors
+  [ThemeVars.components.Cell.border]: getDefaultThemeValue(
+    ThemeVars.components.Cell.border,
+    'dark',
+  ),
+  [ThemeVars.components.HeaderCell.filterEditorBorder]: getDefaultThemeValue(
+    ThemeVars.components.HeaderCell.filterEditorBorder,
+    'dark',
+  ),
   [ThemeVars.background]: '#032c4f',
   [ThemeVars.components.Menu.separatorColor]: borderColor,
   [ThemeVars.color.color]: '#96a0aa',

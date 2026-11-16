@@ -14,10 +14,7 @@ import { TextGlow } from '@www/components/TextGlow';
 import { Paragraph } from '@www/components/Paragraph';
 
 // import { DocsLink } from '@www/components/DocsLink';
-import {
-  CodeSnippet as CodeSnippetCmp,
-  CodeSnippetProps,
-} from '@www/components/CodeSnippet';
+import { CodeSnippet } from '@www/components/CodeSnippet';
 
 import { MarkdownFileInfo } from '@www/utils/MarkdownFileInfo';
 import { LI, UnorderedList } from '@www/components/UnorderedList';
@@ -54,13 +51,22 @@ import {
 } from '../src/components/MDX/Prop';
 import { DocsLink } from '../src/components/DocsLink';
 import { createDemoComponents } from '@thedatagrid/docs-kit/react';
+import { createFrameworkContent } from '@thedatagrid/docs-kit/frameworks/react';
+import { resolveFrameworkLink } from '@thedatagrid/docs-kit/frameworks';
 import {
   DOCS_CODE_THEMES,
   DOCS_CONTENT_DIR,
   DOCS_DEMO_ANCHOR_PREFIX,
   DOCS_DEMO_HEIGHTS,
   DOCS_DEMO_MANIFEST,
+  DOCS_DEMO_MANIFEST_VUE,
 } from '../src/utils/docsKit';
+import { docsHasPage } from '../src/utils/docsFrameworkContent';
+import {
+  docsFrameworks,
+  REACT_ONLY_NOTICE,
+  type DocsFrameworkId,
+} from '../src/utils/docsFrameworks';
 // import { Note } from '@www/components/Note';
 
 type IgnoreChildrenCmpProps = { className?: string; children: React.ReactNode };
@@ -78,9 +84,26 @@ const Description = (props: { children: React.ReactNode }) => (
   <>{props.children}</>
 );
 
-export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
-  const CodeSnippet = (props: CodeSnippetProps) => {
-    return <CodeSnippetCmp {...props} cwd={fileInfo.folderPath} />;
+/** On a page of another framework: this demo, snippet or link has no version for it yet. */
+const ReactOnlyNotice = () => (
+  <span className="docs-framework-notice">{REACT_ONLY_NOTICE}</span>
+);
+
+export function useMDXComponents(
+  fileInfo: MarkdownFileInfo,
+  framework: DocsFrameworkId = docsFrameworks.default,
+): MDXComponents {
+  const otherFramework = framework !== docsFrameworks.default;
+
+  /** A docs link built by a component, for the page's framework. */
+  const linkFor = (href: string) => {
+    const link = resolveFrameworkLink(
+      docsFrameworks,
+      href,
+      framework,
+      docsHasPage,
+    );
+    return link.kind === 'missing' ? href : link.href;
   };
 
   const components: MDXComponents = {
@@ -88,23 +111,40 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
     ...createDemoComponents({
       contentDir: DOCS_CONTENT_DIR,
       folder: fileInfo.folderPath,
-      manifest: DOCS_DEMO_MANIFEST,
+      manifest:
+        framework === 'vue' ? DOCS_DEMO_MANIFEST_VUE : DOCS_DEMO_MANIFEST,
       heights: DOCS_DEMO_HEIGHTS,
       themes: DOCS_CODE_THEMES,
       anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
+      // a demo or snippet without a Vue sibling: the React one, with a notice
+      fallback: otherFramework
+        ? { manifest: DOCS_DEMO_MANIFEST, notice: REACT_ONLY_NOTICE }
+        : undefined,
     }),
-    HomepageHero,
+    // <FrameworkContent framework="vue"> … </FrameworkContent>
+    FrameworkContent: createFrameworkContent(framework),
+    HomepageHero: () => <HomepageHero linkFor={linkFor} />,
     TerminalBlock,
     BenchmarkChart,
     HeroCards,
     Illustration,
     IllustrationBlock,
-    YouWillLearnCard,
+    // `frameworkFallback` is set by the link plugin when `path` has no page for this framework
+    YouWillLearnCard: ({
+      frameworkFallback,
+      ...props
+    }: React.ComponentProps<typeof YouWillLearnCard> & {
+      frameworkFallback?: string;
+    }) => (
+      <YouWillLearnCard
+        {...props}
+        notice={frameworkFallback ? <ReactOnlyNotice /> : undefined}
+      />
+    ),
     Description,
     Intro,
     Note,
 
-    // Sandpack: CodeSnippet,
     // ...CurrentMDXComponents,
     //@ts-ignore
     h1: Heading1,
@@ -156,34 +196,8 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
     // @ts-ignore
     // pre: Pre,
 
+    // inline code fences in languages that are not type-checked (css, sh…)
     CodeSnippet,
-    Snippet: (props: { children: React.ReactNode }) => {
-      const children = React.Children.toArray(props.children);
-
-      let code: React.ReactElement<CodeSnippetProps> | undefined;
-      let description: React.ReactNode | undefined;
-
-      for (const child of children) {
-        //@ts-ignore
-        if (child.type === CodeSnippet) {
-          //@ts-ignore
-          code = child;
-          //@ts-ignore
-        } else if (child.type === Description) {
-          //@ts-ignore
-          description = child;
-        }
-      }
-
-      if (!code) {
-        return children;
-      }
-
-      return React.cloneElement(code!, {
-        live: true,
-        description,
-      });
-    },
 
     DPropLink: DataSourcePropLink,
     DataSourcePropLink,
@@ -219,6 +233,5 @@ export function useMDXComponents(fileInfo: MarkdownFileInfo): MDXComponents {
       );
     },
   };
-  components.Sandpack = components.Snippet;
   return components;
 }

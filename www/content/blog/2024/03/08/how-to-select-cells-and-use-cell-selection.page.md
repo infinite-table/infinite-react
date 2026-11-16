@@ -18,8 +18,7 @@ In addition, if you want to specify a default value for cell selection, you can 
 
 </Note>
 
-```tsx
-<DataSource selectionMode="multi-cell" />
+```tsx file="how-to-select-cells-and-use-cell-selection.snippet.tsx" region="multiple-cell-selection"
 ```
 
 <CSEmbed code={20} id="little-wood-55dysw" />
@@ -66,35 +65,13 @@ As already demonstrated in the previous snippet, you can pass a <DPropLink name=
 
 In addition to listing or excluding specific cells from selection, you can use wildcards:
 
-```tsx title="Include-list: selecting all cells in a column"
-const defaultCellSelection = {
-  defaultSelection: false, // all cells are deselected by default
-  selectedCells: [
-    // all cells in the stack column
-    ['*', 'stack'],
-    // also this specific cell
-    ['row2', 'firstName'],
-  ],
-};
+```tsx file="how-to-select-cells-and-use-cell-selection.snippet.tsx" region="include-list-selecting-all-cells-in-a-column" title="Include-list: selecting all cells in a column"
 ```
 
-```tsx title="Include-list: selecting all cells in a row"
-const defaultCellSelection = {
-  defaultSelection: false, // all cells are deselected by default
-  selectedCells: [
-    // all cells in the row
-    ['row1', '*'],
-    // also this specific cell
-    ['row2', 'firstName'],
-  ],
-};
+```tsx file="how-to-select-cells-and-use-cell-selection.snippet.tsx" region="include-list-selecting-all-cells-in-a-row" title="Include-list: selecting all cells in a row"
 ```
 
-```tsx title="Exclude-list: selecting everything except a column"
-const defaultCellSelection = {
-  defaultSelection: true, // all cells are selected by default
-  deselectedCells: [['*', 'stack']],
-};
+```tsx file="how-to-select-cells-and-use-cell-selection.snippet.tsx" region="exclude-list-selecting-everything-except-a" title="Exclude-list: selecting everything except a column"
 ```
 
 <CSEmbed code={20} id="throbbing-platform-s9jtd4" title="Using wildcard selection to select whole cell or row"/>

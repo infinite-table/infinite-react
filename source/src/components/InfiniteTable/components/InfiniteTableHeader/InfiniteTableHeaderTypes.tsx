@@ -1,3 +1,4 @@
+import type { RefCallback } from '../../../types/FrameworkTypes';
 import { InfiniteTableComputedColumn } from '../..';
 import { MatrixBrain } from '../../../VirtualBrain/MatrixBrain';
 import { InfiniteTableComputedColumnGroup } from '../../types/InfiniteTableProps';
@@ -22,5 +23,5 @@ export type InfiniteTableHeaderGroupProps<T> = {
   columnGroupsMaxDepth: number;
   height: number;
   width: number;
-  domRef?: React.RefCallback<HTMLElement>;
+  domRef?: RefCallback<HTMLElement>;
 };

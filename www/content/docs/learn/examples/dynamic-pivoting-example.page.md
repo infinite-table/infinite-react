@@ -11,22 +11,12 @@ It also showcases different way of customizing columns based on dynamic conditio
 - has a custom border for rows that have `canDesign=yes`
 - the custom column type `number` has a background color based on the color input
 
-<Sandpack deps="react-select" viewMode="preview" size="lg">
-
-```tsx files=["dynamic-advanced-pivoting-example.page.tsx","Settings.tsx","types.ts"]
-
+```tsx file="dynamic-advanced-pivoting-example.demo.tsx" height="large"
 ```
-
-</Sandpack>
 
 ## Server-side Dynamic Pivoting Example
 
 This example is very similar with the above one, but pivoting, grouping and aggregation is done on the server-side.
 
-<Sandpack viewMode="preview" size="lg">
-
-```tsx files=["dynamic-pivoting-serverside-example.page.tsx","Settings.tsx","types.ts"]
-
+```tsx file="dynamic-pivoting-serverside-example.demo.tsx" height="large"
 ```
-
-</Sandpack>

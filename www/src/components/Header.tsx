@@ -16,6 +16,10 @@ import { usePathname } from 'next/navigation';
 import { MenuContext } from './useMenu';
 import { IconHamburger } from './Icon/IconHamburger';
 import { IconClose } from './Icon/IconClose';
+import {
+  DocsFrameworkSwitcher,
+  useDocsFramework,
+} from '@www/components/DocsFrameworks';
 
 export function TwitterLink(props: {
   children?: ReactNode;
@@ -100,10 +104,11 @@ export const NavBarContent = ({
   const itemCls = ` inline-flex ml-1 md:ml-3 first:ml-1 first:md:mr-3 last:mr-1 last:md:mr-3 pointer hover:opacity-75 text-base md:text-lg`;
 
   const pathname = usePathname() || '';
+  const docs = useDocsFramework();
 
   const activePage = {
     pricing: pathname.startsWith('/pricing'),
-    docs: pathname.startsWith('/docs'),
+    docs: docs.framework != null,
     blog: pathname.startsWith('/blog'),
   };
 
@@ -146,11 +151,18 @@ export const NavBarContent = ({
         className={`${itemCls} `}
         style={{ flex: 1, margin: 0, marginLeft: 0 }}
       ></li>
+      {/*
+        No room for it in a phone's header: there, the docs menu has the
+        switcher and the home pages link to each other under the hero text.
+      */}
+      <li className={`${itemCls} hover:opacity-100 max-sm:hidden`}>
+        <DocsFrameworkSwitcher />
+      </li>
       <li className={`${itemCls} ${activePage.pricing ? activeCls : ''} `}>
         <Link href="/pricing">Pricing</Link>
       </li>
       <li className={`${itemCls} ${activePage.docs ? activeCls : ''} `}>
-        <Link href="/docs">Docs</Link>
+        <Link href={docs.hrefFor('/docs')}>Docs</Link>
       </li>
       <li className={`${itemCls} ${activePage.blog ? activeCls : ''} `}>
         <Link href="/blog">Blog</Link>

@@ -1,5 +1,9 @@
-import * as React from 'react';
-import { CSSProperties, HTMLProps } from 'react';
+import type {
+  CSSProperties,
+  HTMLProps,
+  ComponentType,
+  MutableRefObject,
+} from '../../types/FrameworkTypes';
 
 import {
   AggregationReducer,
@@ -38,7 +42,7 @@ import type {
 } from './Utility';
 
 import type { InfiniteTableApi, InfiniteTableColumnGroup } from '.';
-import { MenuIconProps } from '../components/icons/MenuIcon';
+import type { MenuIconProps } from '../components/icons/MenuIconTypes';
 import { NonUndefined } from '../../types/NonUndefined';
 import { GroupBy, ValueGetterParams } from '../../../utils/groupAndPivot/types';
 
@@ -81,7 +85,7 @@ export type InfiniteTableColumnHeaderParam<
 } & (
   | {
       domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
-      htmlElementRef: React.MutableRefObject<HTMLElement | null>;
+      htmlElementRef: MutableRefObject<HTMLElement | null>;
       renderLocation: 'column-header';
     }
   | {
@@ -102,7 +106,7 @@ export type InfiniteTableColumnRenderParamBase<
   COL_TYPE = InfiniteTableComputedColumn<DATA_TYPE>,
 > = {
   domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
-  htmlElementRef: React.MutableRefObject<HTMLElement | null>;
+  htmlElementRef: MutableRefObject<HTMLElement | null>;
 
   rowIndexInHorizontalLayoutPage: null | number;
   horizontalLayoutPageIndex: null | number;
@@ -182,7 +186,7 @@ export type InfiniteTableColumnCellContextType<
 export type InfiniteTableHeaderCellContextType<DATA_TYPE> =
   InfiniteTableColumnHeaderParam<DATA_TYPE> & {
     domRef: InfiniteTableCellProps<DATA_TYPE>['domRef'];
-    htmlElementRef: React.MutableRefObject<HTMLElement | null>;
+    htmlElementRef: MutableRefObject<HTMLElement | null>;
     renderLocation: 'column-header';
   };
 
@@ -385,7 +389,7 @@ export type InfiniteTableColumnStylingFnParams<T> = {
 
 export type InfiniteTableColumnStyleFn<T> = (
   params: InfiniteTableColumnStylingFnParams<T>,
-) => undefined | React.CSSProperties;
+) => undefined | CSSProperties;
 
 export type InfiniteTableColumnHeaderClassNameFn<T> = (
   params: InfiniteTableColumnHeaderParam<T>,
@@ -393,7 +397,7 @@ export type InfiniteTableColumnHeaderClassNameFn<T> = (
 
 export type InfiniteTableColumnHeaderStyleFn<T> = (
   params: InfiniteTableColumnHeaderParam<T>,
-) => undefined | React.CSSProperties;
+) => undefined | CSSProperties;
 
 export type InfiniteTableColumnClassNameFn<T> = (
   params: InfiniteTableColumnStylingFnParams<T>,
@@ -599,14 +603,14 @@ export type InfiniteTableColumn<DATA_TYPE> = {
     | InfiniteTableColumnHeaderRenderFunction<DATA_TYPE>;
 
   components?: {
-    ColumnCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
-    HeaderCell?: React.ComponentType<HTMLProps<HTMLDivElement>>;
+    ColumnCell?: ComponentType<HTMLProps<HTMLDivElement>>;
+    HeaderCell?: ComponentType<HTMLProps<HTMLDivElement>>;
 
-    Editor?: React.ComponentType<HTMLProps<HTMLDivElement>>;
-    FilterEditor?: React.ComponentType<HTMLProps<HTMLDivElement>>;
-    FilterOperatorSwitch?: React.ComponentType<HTMLProps<HTMLDivElement>>;
+    Editor?: ComponentType<HTMLProps<HTMLDivElement>>;
+    FilterEditor?: ComponentType<HTMLProps<HTMLDivElement>>;
+    FilterOperatorSwitch?: ComponentType<HTMLProps<HTMLDivElement>>;
 
-    MenuIcon?: React.ComponentType<MenuIconProps>;
+    MenuIcon?: ComponentType<MenuIconProps>;
   };
 };
 

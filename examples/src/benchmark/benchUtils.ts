@@ -344,10 +344,33 @@ export function bootstrapDiffCI(a: number[], b: number[], iterations = 2000) {
 // results & report
 // ---------------------------------------------------------------------------
 
-export type GridName = 'ag-grid' | 'infinite';
+export type GridName = 'mui' | 'ag-grid' | 'tanstack' | 'infinite';
+/** every grid other than Infinite Table - what Infinite is compared against */
+export type OtherGridName = Exclude<GridName, 'infinite'>;
+
+/** the order the grids are listed in, everywhere */
+export const GRID_NAMES: GridName[] = [
+  'mui',
+  'ag-grid',
+  'tanstack',
+  'infinite',
+];
+export const OTHER_GRID_NAMES = GRID_NAMES.filter(
+  (grid): grid is OtherGridName => grid !== 'infinite',
+);
+
+/** short names, for table headers and logs */
 export const GRID_LABELS: Record<GridName, string> = {
+  mui: 'MUI X',
   'ag-grid': 'AG Grid',
+  tanstack: 'TanStack',
   infinite: 'Infinite',
+};
+export const GRID_FULL_NAMES: Record<GridName, string> = {
+  mui: 'MUI X Data Grid',
+  'ag-grid': 'AG Grid',
+  tanstack: 'TanStack Table',
+  infinite: 'Infinite Table',
 };
 
 export type MetricDef = {
@@ -361,7 +384,8 @@ export type ScenarioResult = {
   scenario: string;
   description: string;
   metrics: MetricDef[];
-  samples: Record<GridName, Record<string, number>[]>;
+  /** a grid that was not measured (BENCH_GRIDS) has no samples */
+  samples: Partial<Record<GridName, Record<string, number>[]>>;
 };
 
 export type BenchEnvironment = {
@@ -375,16 +399,20 @@ export type BenchEnvironment = {
   os: string;
   cpu: string;
   viewport: string;
-  versions: Record<GridName, string>;
+  versions: Partial<Record<GridName, string>>;
   baseURL: string;
-  /** height (px) of the scrolling body - the same for both grids */
+  /**
+   * height (px) of the scrolling body - the same for all the grids, to
+   * within a pixel: `bodyHeightMax` is the tallest one
+   */
   bodyHeight?: number;
+  bodyHeightMax?: number;
   /**
    * px added to the box of each grid so the bodies have the same height -
    * e.g. to make up for the footer Infinite Table renders when it has no
-   * license key
+   * license key, or for MUI's pagination footer
    */
-  boxExtraHeight?: Record<GridName, number>;
+  boxExtraHeight?: Partial<Record<GridName, number>>;
 };
 
 /** from Bench.calibrateScroll() - see harness.ts */
@@ -405,7 +433,8 @@ export type SizeResults = {
   size: string;
   rowCount: number;
   checksum: string | null;
-  scroll: Record<GridName, SizeScrollInfo> | null;
+  /** of the grids that were measured */
+  scroll: Partial<Record<GridName, SizeScrollInfo>> | null;
   results: Record<string, ScenarioResult>;
 };
 
@@ -424,102 +453,165 @@ function fmtDiff(value: number, unit: string) {
   return `${value > 0 ? '+' : ''}${fmt(value, unit)}`;
 }
 
+export type GridStats = {
+  median: number;
+  p95: number;
+  sd: number;
+  min: number;
+  max: number;
+};
+
+/** Infinite Table against one other grid, for one metric */
+export type Comparison = {
+  /** Infinite / other - NaN when `useRatio` is false */
+  ratio: number;
+  /** Infinite − other */
+  diff: number;
+  /**
+   * false when the other grid has zeros among its values (e.g. 0% blank
+   * samples): a ratio means nothing then, and the difference is compared
+   */
+  useRatio: boolean;
+  /** 95% bootstrap CI of the ratio (or of the difference) of the medians */
+  ci: readonly [number, number];
+  /** null: the CI doesn't exclude "no difference" */
+  winner: GridName | null;
+};
+
+function compare(
+  metric: MetricDef,
+  other: OtherGridName,
+  otherValues: number[],
+  infiniteValues: number[],
+): Comparison {
+  const otherMedian = median(otherValues);
+  const infiniteMedian = median(infiniteValues);
+  // the ratio of medians needs the other grid's values > 0 (a resampled
+  // median of 0 can't be divided by) - otherwise compare the difference of
+  // medians instead
+  const useRatio = otherValues.filter(Number.isFinite).every((v) => v > 0);
+  const ci = useRatio
+    ? bootstrapRatioCI(otherValues, infiniteValues)
+    : bootstrapDiffCI(otherValues, infiniteValues);
+  // "no difference" is a ratio of 1, or a difference of 0
+  const same = useRatio ? 1 : 0;
+  let winner: GridName | null = null;
+  // only call a winner when the CI excludes "no difference"
+  if (Number.isFinite(ci[0]) && (ci[1] < same || ci[0] > same)) {
+    const infiniteLower = ci[1] < same;
+    winner = infiniteLower === (metric.better === 'lower') ? 'infinite' : other;
+  }
+  return {
+    ratio: useRatio ? infiniteMedian / otherMedian : NaN,
+    diff: infiniteMedian - otherMedian,
+    useRatio,
+    ci,
+    winner,
+  };
+}
+
+/**
+ * For every metric of a scenario: the stats of each grid that has samples,
+ * and Infinite Table compared with each of the other grids.
+ */
 export function summarize(result: ScenarioResult) {
   return result.metrics.map((metric) => {
     const values = (grid: GridName) =>
-      result.samples[grid].map((s) => s[metric.key]);
-    const ag = values('ag-grid');
-    const inf = values('infinite');
-    const agMedian = median(ag);
-    const infMedian = median(inf);
-    // the ratio of medians needs AG Grid values > 0 (a resampled median of
-    // 0 can't be divided by) - otherwise (e.g. 0% blank samples) compare the
-    // difference of medians instead
-    const useRatio = ag.filter(Number.isFinite).every((v) => v > 0);
-    const ratio = useRatio ? infMedian / agMedian : NaN;
-    const [ciLow, ciHigh] = useRatio
-      ? bootstrapRatioCI(ag, inf)
-      : bootstrapDiffCI(ag, inf);
-    // "no difference" is a ratio of 1, or a difference of 0
-    const same = useRatio ? 1 : 0;
-    let winner = '≈';
-    // only call a winner when the CI excludes "no difference"
-    if (Number.isFinite(ciLow) && (ciHigh < same || ciLow > same)) {
-      const infLower = ciHigh < same;
-      winner =
-        infLower === (metric.better === 'lower') ? 'Infinite' : 'AG Grid';
+      (result.samples[grid] ?? []).map((s) => s[metric.key]);
+    const grids: Partial<Record<GridName, GridStats>> = {};
+    for (const grid of GRID_NAMES) {
+      const v = values(grid);
+      if (v.length) {
+        grids[grid] = {
+          median: median(v),
+          p95: percentile(v, 95),
+          sd: stddev(v),
+          min: Math.min(...v),
+          max: Math.max(...v),
+        };
+      }
     }
-    return {
-      metric,
-      ag: {
-        median: agMedian,
-        p95: percentile(ag, 95),
-        sd: stddev(ag),
-        min: Math.min(...ag),
-        max: Math.max(...ag),
-      },
-      infinite: {
-        median: infMedian,
-        p95: percentile(inf, 95),
-        sd: stddev(inf),
-        min: Math.min(...inf),
-        max: Math.max(...inf),
-      },
-      ratio,
-      useRatio,
-      ci: [ciLow, ciHigh] as const,
-      winner,
-    };
+    const vs: Partial<Record<OtherGridName, Comparison>> = {};
+    if (grids.infinite) {
+      for (const other of OTHER_GRID_NAMES) {
+        if (grids[other]) {
+          vs[other] = compare(metric, other, values(other), values('infinite'));
+        }
+      }
+    }
+    return { metric, grids, vs };
   });
+}
+
+/** the grids that have samples in a scenario, in the usual order */
+function gridsOf(result: ScenarioResult) {
+  return GRID_NAMES.filter((grid) => result.samples[grid]?.length);
+}
+
+function comparisonCell(c: Comparison | undefined) {
+  if (!c) {
+    return '–';
+  }
+  const value = c.useRatio ? fmt(c.ratio, '×') : fmtDiff(c.diff, '');
+  const ci = c.useRatio
+    ? `${fmt(c.ci[0], '')}–${fmt(c.ci[1], '')}`
+    : `${fmtDiff(c.ci[0], '')} to ${fmtDiff(c.ci[1], '')}`;
+  return `${value} (${ci}) ${c.winner ? `**${GRID_LABELS[c.winner]}**` : '≈'}`;
 }
 
 export function scenarioTable(result: ScenarioResult) {
   const rows = summarize(result);
+  const grids = gridsOf(result);
+  const others = grids.filter(
+    (grid): grid is OtherGridName => grid !== 'infinite',
+  );
+  const compared = grids.includes('infinite') ? others : [];
   const lines = [
-    `| Metric | AG Grid median (sd) | Infinite median (sd) | Infinite / AG (or Infinite − AG) | 95% CI | Better |`,
-    `|---|---:|---:|---:|---:|:---:|`,
+    `| Metric | ${grids
+      .map((grid) => `${GRID_LABELS[grid]} median (sd)`)
+      .join(' | ')} |${compared
+      .map((grid) => ` Infinite vs ${GRID_LABELS[grid]} |`)
+      .join('')}`,
+    `|---|${grids.map(() => '---:').join('|')}|${compared
+      .map(() => '---:|')
+      .join('')}`,
   ];
   for (const r of rows) {
     const { unit } = r.metric;
     lines.push(
-      `| ${r.metric.label} (${r.metric.better} is better) | ${fmt(
-        r.ag.median,
-        unit,
-      )} (±${fmt(r.ag.sd, '')}) | ${fmt(r.infinite.median, unit)} (±${fmt(
-        r.infinite.sd,
-        '',
-      )}) | ${
-        r.useRatio
-          ? fmt(r.ratio, '×')
-          : `${fmtDiff(r.infinite.median - r.ag.median, unit)}`
-      } | ${
-        r.useRatio
-          ? `${fmt(r.ci[0], '')}–${fmt(r.ci[1], '')}`
-          : `${fmtDiff(r.ci[0], '')} to ${fmtDiff(r.ci[1], '')}`
-      } | ${r.winner} |`,
+      `| ${r.metric.label} (${r.metric.better} is better) | ${grids
+        .map((grid) => {
+          const stats = r.grids[grid];
+          return stats
+            ? `${fmt(stats.median, unit)} (±${fmt(stats.sd, '')})`
+            : '–';
+        })
+        .join(' | ')} |${compared
+        .map((grid) => ` ${comparisonCell(r.vs[grid])} |`)
+        .join('')}`,
     );
   }
   return lines.join('\n');
 }
 
-function scrollTable(scroll: Record<GridName, SizeScrollInfo>) {
-  const grids = Object.keys(GRID_LABELS) as GridName[];
+function scrollTable(scroll: Partial<Record<GridName, SizeScrollInfo>>) {
+  const grids = GRID_NAMES.filter((grid) => scroll[grid]);
   const lines = [
     `| | ${grids.map((g) => GRID_LABELS[g]).join(' | ')} |`,
     `|---|${grids.map(() => '---:').join('|')}|`,
     `| Last row reachable with the scrollbar | ${grids
       .map((g) => {
-        const s = scroll[g];
+        const s = scroll[g]!;
         return s.lastVisibleRow >= s.rowCount
           ? `yes (${s.lastVisibleRow.toLocaleString('en-US')})`
           : `**no** - stops at row ${s.lastVisibleRow.toLocaleString('en-US')}`;
       })
       .join(' | ')} |`,
     `| Native scroll range | ${grids
-      .map((g) => `${scroll[g].scrollMax.toLocaleString('en-US')} px`)
+      .map((g) => `${scroll[g]!.scrollMax.toLocaleString('en-US')} px`)
       .join(' | ')} |`,
     `| Content px per scrollbar px | ${grids
-      .map((g) => scroll[g].ratio.toFixed(3))
+      .map((g) => scroll[g]!.ratio.toFixed(3))
       .join(' | ')} |`,
   ];
   return lines.join('\n');
@@ -529,15 +621,26 @@ function bodyHeightLine(env: BenchEnvironment) {
   if (env.bodyHeight == null) {
     return '';
   }
-  const extra = (Object.keys(GRID_LABELS) as GridName[])
-    .filter((grid) => env.boxExtraHeight?.[grid])
-    .map((grid) => `${GRID_LABELS[grid]} +${env.boxExtraHeight![grid]} px`);
+  const extra = GRID_NAMES.filter((grid) => env.boxExtraHeight?.[grid]).map(
+    (grid) => `${GRID_LABELS[grid]} +${env.boxExtraHeight![grid]} px`,
+  );
   return (
-    `\n- Grid body: ${env.bodyHeight} px high in both grids` +
+    `\n- Grid body: ${
+      env.bodyHeightMax != null && env.bodyHeightMax !== env.bodyHeight
+        ? `${env.bodyHeight}-${env.bodyHeightMax} px high, with the same number of rows in view in every grid`
+        : `${env.bodyHeight} px high in every grid`
+    }` +
     (extra.length
       ? ` (to get there, the setup made the boxes taller: ${extra.join(', ')})`
       : '')
   );
+}
+
+/** e.g. "AG Grid 36.3.0 · Infinite Table 10.1.5" - the grids that were measured */
+export function versionsLine(versions: BenchEnvironment['versions']) {
+  return GRID_NAMES.filter((grid) => versions[grid])
+    .map((grid) => `${GRID_FULL_NAMES[grid]} ${versions[grid]}`)
+    .join(' · ');
 }
 
 export function buildReport(
@@ -546,37 +649,44 @@ export function buildReport(
   scenarioOrder: string[],
 ) {
   const out: string[] = [];
-  out.push(`# AG Grid vs Infinite Table — benchmark report`);
+  const grids = GRID_NAMES.filter((grid) => env.versions[grid]);
+
+  out.push(
+    `# ${grids
+      .map((grid) => GRID_FULL_NAMES[grid])
+      .join(' vs ')} — benchmark report`,
+  );
   out.push('');
   out.push(
     `- Run: \`${env.runId}\` · ${env.date}\n` +
-      `- AG Grid ${env.versions['ag-grid']} · Infinite Table ${env.versions.infinite}\n` +
+      `- ${versionsLine(env.versions)}\n` +
       `- ${sizes
         .map(
           (s) =>
             `${s.rowCount.toLocaleString('en-US')} rows` +
             (s.checksum ? ` (data checksum \`${s.checksum}\`)` : ''),
         )
-        .join(' · ')} × 20 columns, identical data for both grids\n` +
+        .join(' · ')} × 20 columns, identical data for every grid\n` +
       `- Chrome ${env.chrome} · ${
         env.headless ? 'headless' : 'headed'
       } · CPU throttling ${env.cpuThrottle}× · viewport ${env.viewport}\n` +
-      `- ${env.runs} measured runs per grid per scenario (+${env.warmup} warmup, discarded), A/B interleaved, fresh browser context per run\n` +
+      `- ${env.runs} measured runs per grid per scenario (+${env.warmup} warmup, discarded), interleaved, fresh browser context per run\n` +
       `- ${env.os} · ${env.cpu}\n` +
       `- Served from ${env.baseURL}` +
       bodyHeightLine(env),
   );
   out.push('');
   out.push(
-    `"Infinite / AG" < 1 means Infinite has the lower value. "Better" is only set when the 95% bootstrap CI of the ratio of medians excludes 1. When AG Grid has zeros among its values (e.g. 0% blank samples) a ratio means nothing, so the difference of medians (Infinite − AG) and its CI are shown instead, and "Better" needs that CI to exclude 0.`,
+    `The "Infinite vs ..." columns compare Infinite Table with one other grid: the ratio of the medians (Infinite / other, so < 1 means Infinite has the lower value), its 95% bootstrap confidence interval, and the grid that does better. A grid is only named when the interval excludes 1; "≈" means no significant difference. When the other grid has zeros among its values (e.g. 0% blank samples) a ratio means nothing, so the difference of the medians (Infinite − other) and its interval are shown instead, and a grid is only named when that interval excludes 0.`,
   );
+
   for (const size of sizes) {
     out.push('');
     out.push(`# ${size.rowCount.toLocaleString('en-US')} rows`);
     if (size.scroll) {
       out.push('');
       out.push(
-        `Scroll range - browsers cap element sizes (Chrome ~16.7M-33.5M px, depending on the version), so grids map the scrollbar onto the rows when the content is taller than that.`,
+        `Scroll range - browsers cap element sizes (Chrome ~16.7M-33.5M px, depending on the version), so a grid has to map the scrollbar onto the rows when the content is taller than that. One that doesn't can't reach its last rows: its scrolling results are for the rows it can reach, and the same wheel gesture goes over fewer rows in it.`,
       );
       out.push('');
       out.push(scrollTable(size.scroll));

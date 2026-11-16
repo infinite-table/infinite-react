@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent } from '../types/FrameworkTypes';
 
 type KeyModifier = 'cmd' | 'alt' | 'ctrl' | 'shift';
 

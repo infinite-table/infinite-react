@@ -7,16 +7,7 @@ By default, the `<DataSource />` sorts and filters the data in the browser - for
 
 When you sort or filter the data yourself - on a server, in a data-fetching library like TanStack Query, or in your own code - tell the `<DataSource />` not to do it again, with <DPropLink name="shouldReloadData" />:
 
-```tsx
-<DataSource<Developer>
-  primaryKey="id"
-  data={rows}
-  sortInfo={sortInfo}
-  onSortInfoChange={setSortInfo}
-  filterValue={filterValue}
-  onFilterValueChange={setFilterValue}
-  shouldReloadData={{ sortInfo: true, filterValue: true }}
-/>
+```tsx file="sorting-and-filtering-the-data-yourself.snippet.tsx" region="intro"
 ```
 
 - with a <DPropLink name="data" /> function, it's called again on every sort or filter change, with the `sortInfo` and `filterValue` in its params;
@@ -37,26 +28,7 @@ To sort and filter the data the same way the `<DataSource />` does, use the func
 - `multisort(sortInfo, array)` - the built-in sorting for flat data (it sorts the array in place, so pass a copy);
 - `defaultFilterFunction(param)` - the built-in column filtering for one row. It needs the row, its index, the array, the primary key, and the column filters with their filter types - the default `filterTypes` are exported too.
 
-```ts
-import {
-  defaultFilterFunction,
-  filterTypes,
-  multisort,
-} from '@infinite-table/infinite-react';
-
-function sortAndFilter(rows, sortInfo, filterValue) {
-  const filtered = rows.filter((data, index, dataArray) =>
-    defaultFilterFunction({
-      data,
-      index,
-      dataArray,
-      primaryKey: data.id,
-      filterValue,
-      filterTypes,
-    }),
-  );
-  return multisort(sortInfo, filtered);
-}
+```ts file="sorting-and-filtering-the-data-yourself.snippet.tsx" region="reusing-the-built-in-sorting-and-filtering"
 ```
 
 If you configure custom <DPropLink name="filterTypes" /> on the `<DataSource />`, pass the same ones to `defaultFilterFunction`.
@@ -65,10 +37,5 @@ If you configure custom <DPropLink name="filterTypes" /> on the `<DataSource />`
 
 The query key includes the sorting and the filtering, so every change runs a new query. Thanks to `placeholderData: keepPreviousData`, the previous rows stay on screen until the new ones arrive - and because the `<DataSource />` doesn't sort or filter them itself, they don't change until the query resolves.
 
-<Sandpack title="Sorting and filtering with TanStack Query" deps="@tanstack/react-query">
-
-```ts file="owner-processed-with-react-query-example.page.tsx"
-
+```tsx file="owner-processed-with-react-query-example.demo.tsx" title="Sorting and filtering with TanStack Query"
 ```
-
-</Sandpack>

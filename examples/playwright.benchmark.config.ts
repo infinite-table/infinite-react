@@ -1,4 +1,4 @@
-// Playwright config for the AG Grid vs Infinite Table benchmark
+// Playwright config for the grid benchmark
 // (src/benchmark/grid-comparison.bench.ts). Kept separate from
 // playwright.config.ts: it needs a production build of the benchmark pages,
 // a single worker, no retries and long timeouts. See src/benchmark/README.md
@@ -11,6 +11,11 @@ const baseURL = process.env.BENCH_BASE_URL || `http://localhost:${port}/`;
 // all scenarios of one invocation write into the same results folder
 process.env.BENCH_RUN_ID =
   process.env.BENCH_RUN_ID || new Date().toISOString().replace(/[:.]/g, '-');
+
+// This app has the pages of AG Grid and Infinite Table (built from source).
+// The MUI X Data Grid and TanStack Table pages are only in the benchmark
+// repository - see src/benchmark/README.md
+process.env.BENCH_GRIDS = process.env.BENCH_GRIDS || 'ag-grid,infinite';
 
 // headed by default - closest to what users see (real GPU, real vsync).
 // BENCH_HEADLESS=1 uses Chromium's new headless mode (same rendering code)

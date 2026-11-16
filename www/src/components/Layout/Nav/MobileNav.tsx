@@ -12,13 +12,20 @@ import { SidebarRouteTree } from '../Sidebar';
 
 import { inferSection } from './inferSection';
 import { DocSearch } from '@docsearch/react';
+import {
+  DocsFrameworkSwitcher,
+  useDocsFramework,
+} from '@www/components/DocsFrameworks';
 
 export function MobileNav(props: { routeTree: RouteItem[] }) {
   const pathname = usePathname() || '';
   const isBlog = pathname.startsWith('/blog');
-  const [section, setSection] = React.useState(() => inferSection(pathname));
+  const docs = useDocsFramework();
+  const [section, setSection] = React.useState(() =>
+    inferSection(docs.neutralPath),
+  );
 
-  let tree = null; //props.routeTree;
+  let tree: RouteItem[] | null = null; //props.routeTree;
   switch (section) {
     case 'learn':
       tree = sidebarLearn;
@@ -33,6 +40,9 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
 
   if (isBlog) {
     tree = props.routeTree;
+  } else if (tree) {
+    // on /vue/docs/...: the Vue pages (and the React ones it doesn't have yet)
+    tree = docs.routesFor(tree);
   }
 
   return (
@@ -73,6 +83,12 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
         )}
       </div>
 
+      {/* on a phone the header has no room for the switcher on docs pages */}
+      {isBlog ? null : (
+        <div className="sm:hidden py-3 px-5 bg-black flex flex-row">
+          <DocsFrameworkSwitcher />
+        </div>
+      )}
       <div className="MobileNavDocSearchWrapper py-2 px-2 bg-black flex flex-row">
         <DocSearch
           appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
@@ -80,7 +96,7 @@ export function MobileNav(props: { routeTree: RouteItem[] }) {
           apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!}
         />
       </div>
-      <SidebarRouteTree routeTree={tree} isMobile={true} />
+      <SidebarRouteTree routeTree={tree ?? []} isMobile={true} />
     </>
   );
 }

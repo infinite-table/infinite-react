@@ -1,3 +1,4 @@
+import type { Renderable } from '../../types/FrameworkTypes';
 import { InfiniteTableActions, InfiniteTableState } from './InfiniteTableState';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
 import { InfiniteTableApi, InfiniteTableColumnApi } from './InfiniteTableProps';
@@ -15,7 +16,7 @@ export interface InfiniteTableContextValue<T>
   extends InfiniteTableStableContextValue<T> {
   state: InfiniteTableState<T>;
   computed: InfiniteTableComputedValues<T>;
-  children?: React.ReactNode;
+  children?: Renderable;
 }
 
 export interface InfiniteTableStableContextValue<T> {

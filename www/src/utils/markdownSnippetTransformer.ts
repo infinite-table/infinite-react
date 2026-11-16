@@ -1,67 +1,52 @@
-import { Parser, Program } from 'acorn';
-import jsx from 'acorn-jsx';
-// import { Code, Parent, Root } from 'mdast';
-import { MdxFlowExpression } from 'mdast-util-mdx';
 import { visit } from 'unist-util-visit';
 
-const parser = Parser.extend(jsx());
-
-import {
-  MarkdownFileEnv,
-  MarkdownFileInfo,
-  SnippetMetaProps,
-} from './MarkdownFileInfo';
-import { getCodeSnippetInfo } from './markdownFileUtils';
-
-export default (params: {
-  fileInfo: MarkdownFileInfo;
-  env: MarkdownFileEnv;
-}) => {
-  const { fileInfo, env } = params;
-  const transformer = (ast: any) => {
-    visit(ast, 'code', (node, index, parent) => {
-      if (!node.lang) {
+/**
+ * Code fences that the docs-kit plugin leaves alone - inline code in
+ * languages that are not type-checked (css, sh, json…) and mermaid charts -
+ * become `<CodeSnippet lang code title highlight />` (see CodeSnippet).
+ *
+ *     ```css {2} title="Changing the row height"
+ *     .infinite-theme-name--default {
+ *       --infinite-row-height: 50px;
+ *     }
+ *     ```
+ *
+ * `{2,5-7}` highlights lines of the block; `title="…"` names it.
+ */
+export default () => {
+  const transformer = (tree: any) => {
+    visit(tree, 'code', (node: any, index, parent: any) => {
+      if (!node.lang || index == null || !parent) {
         return;
       }
-      if (index == null) {
-        return;
+      let meta: string = node.meta || '';
+      const attributes: Record<string, string> = {
+        lang: node.lang,
+        code: node.value || '',
+      };
+
+      const highlight = /\{([\d,\s-]+)\}/.exec(meta);
+      if (highlight) {
+        attributes.highlight = highlight[1].replace(/\s+/g, '');
+        meta = meta.replace(highlight[0], '');
+      }
+      const title = /\btitle="([^"]*)"/.exec(meta);
+      if (title) {
+        attributes.title = title[1];
       }
 
-      let meta = node.meta || '';
-
-      const snippetMetaProps: SnippetMetaProps = getCodeSnippetInfo(
-        {
-          meta,
-          body: node.value,
-          lang: node.lang,
-        },
-        fileInfo,
-        env,
-      );
-
-      const propsAsStr = Object.keys(snippetMetaProps)
-        .reduce((acc, key) => {
-          acc.push(`${key}={${JSON.stringify(snippetMetaProps[key])}}`);
-          return acc;
-        }, [] as string[])
-        .join(' ');
-
-      const value = `<CodeSnippet ${propsAsStr} />`;
-
-      const estree = parser.parse(value, {
-        ecmaVersion: 'latest',
-      }) as Program;
-      parent!.children[index!] = {
-        type: 'mdxFlowExpression',
-        value,
-        data: { estree },
-      } as MdxFlowExpression;
+      parent.children[index] = {
+        type: 'mdxJsxFlowElement',
+        name: 'CodeSnippet',
+        attributes: Object.entries(attributes).map(([name, value]) => ({
+          type: 'mdxJsxAttribute',
+          name,
+          value,
+        })),
+        children: [],
+      };
     });
   };
-  /**
-   * A markdown plugin for transforming code metadata.
-   *
-   * @returns A unified transformer.
-   */
+
   return () => transformer;
 };

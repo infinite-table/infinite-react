@@ -11,19 +11,12 @@ While we're trying to refine our API to be easier to use and understand, develop
 
 Passing new props on every render to the `<InfiniteTable />` component or to the `<DataSource />` component can be a performance bottleneck:
 
-```ts
-<DataSource
-  // dont do this
-  groupBy={[{ field: 'country' }]}
-/>
+```ts file="index.snippet.tsx" region="issue-performance-degradation-because-props-are"
 ```
 
 Instead pass the **same** reference when things do change - stored in state or any other place:
 
-```ts
-const [groupBy, setGroupBy] = useState([{ field: 'country' }]);
-
-<DataSource groupBy={groupBy} onGroupByChange={setGroupBy} />;
+```ts file="index.snippet.tsx" region="issue-performance-degradation-stable-props"
 ```
 
 <Note>

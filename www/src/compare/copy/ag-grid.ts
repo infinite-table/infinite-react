@@ -10,7 +10,7 @@ export const agGridCopy: CompareCopy = {
   verdict: [
     'AG Grid is the most complete grid in this comparison. Integrated charts, Excel and PDF export, clipboard paste, formulas, tool panels and a server-side row model, for React, Angular, Vue and plain JavaScript. If you need those, it is hard to beat, and its MIT Community edition is generous.',
     'Infinite Table covers most of what teams usually buy AG Grid Enterprise for: row grouping, aggregations, pivoting, tree data, master-detail, cell selection and context menus. They come in one package with **zero runtime dependencies**, free to use with a "Powered by Infinite Table" footer. A license that removes the footer is $395 per developer per year; AG Grid Enterprise is $999 per developer, perpetual, with a year of updates.',
-    'In our [open benchmark](/benchmark) against AG Grid Community with 300,000 and 1,000,000 rows, Infinite Table mounted faster, used about half the memory and sorted 2.3 to 2.7 times faster, with equally smooth scrolling.',
+    'In our [open benchmark](/benchmark) against AG Grid Community with 300,000 and 1,000,000 rows, Infinite Table mounted 24 to 30% faster, used about half the memory and sorted 1.7 to 2.4 times faster. AG Grid had the steadier frame rate when scrolling vertically.',
   ],
   chooseThem: [
     'You need integrated charts, Excel or PDF export, clipboard paste, formulas or tool panels. Infinite Table has none of these.',
@@ -105,7 +105,7 @@ export function Cars() {
     },
     {
       q: 'Is Infinite Table faster than AG Grid?',
-      a: 'In our open benchmark against AG Grid Community 36.3 at 300,000 and 1,000,000 rows, Infinite Table mounted faster, used about half the memory and sorted 2.3 to 2.7 times faster. Scrolling was equally smooth, with no significant difference in frame rate. The [benchmark page](/benchmark) has the method, every metric and how to run it yourself.',
+      a: 'In most of what we measured, not all. In our open benchmark against AG Grid Community 36.3 at 300,000 and 1,000,000 rows, Infinite Table mounted 24 to 30% faster, used about half the memory and sorted 1.7 to 2.4 times faster, and it did less work when scrolling horizontally. Scrolling vertically, AG Grid held a steadier frame rate: Infinite Table had one long frame per gesture on the machine we used. The [benchmark page](/benchmark) has the method, every metric and how to run it yourself.',
     },
     {
       q: 'Can I migrate from AG Grid to Infinite Table one grid at a time?',

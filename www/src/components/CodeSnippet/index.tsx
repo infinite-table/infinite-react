@@ -1,74 +1,32 @@
-import Sandpack from '@www/components/Sandpack';
 import { CodeBlock } from '@www/components/CodeBlock';
 import React from 'react';
-import { SandpackInputFile } from '../Sandpack/SandpackTypes';
-import { Mermaid } from './Mermaid';
+import { MermaidChart } from './Mermaid';
 
 export type CodeSnippetProps = {
-  live?: boolean;
-  size?: 'default' | 'md' | 'lg';
-  title?: string;
-  description?: React.ReactNode | string;
-  tailwind?: boolean;
-  code?: string;
-  file?: string;
   lang?: string;
-  files: SandpackInputFile[];
-  highlightLines?: number[];
-  importedPackages?: string[];
-  viewMode?: 'code' | 'preview' | 'both';
-  cwd?: string;
-} & (
-  | {
-      code: string;
-    }
-  | {
-      file: string;
-    }
-);
-
-const isDescription = (el: React.ReactElement) => {
-  //@ts-ignore
-  return el.type?.name === 'Description';
+  code: string;
+  title?: string;
+  /** Lines to highlight, as written in the fence: `2,5-7`. */
+  highlight?: string;
 };
-export function CodeSnippet(props: CodeSnippetProps) {
-  const files = props.files || [];
 
-  const children = React.Children.toArray(
-    //@ts-ignore
-    props.children,
-  ) as React.ReactElement[];
-  const descriptions = children.filter((el) => isDescription(el));
+/**
+ * An inline code fence of a docs page (see markdownSnippetTransformer).
+ * Fences in type-checked languages never get here: they reference a
+ * `*.snippet.tsx` / `*.demo.tsx` file and are rendered by docs-kit.
+ */
+export function CodeSnippet(props: CodeSnippetProps) {
   if (props.lang === 'mmd') {
-    return (
-      <Mermaid
-        title={props.title}
-        description={props.description || descriptions}
-        files={files}
-      />
-    );
-  }
-  if (props.live) {
-    return (
-      <Sandpack
-        size={props.size || 'md'}
-        viewMode={props.viewMode || 'both'}
-        title={props.title}
-        description={props.description || descriptions}
-        files={files}
-        tailwind={props.tailwind}
-        deps={props.importedPackages}
-      ></Sandpack>
-    );
+    return props.code ? (
+      <div className="w-full">
+        <MermaidChart text={props.code} />
+      </div>
+    ) : null;
   }
 
   return (
-    <CodeBlock
-      title={props.title}
-      highlightLines={props.highlightLines}
-      lang={props.lang}
-    >
-      {files[0]?.code}
+    <CodeBlock title={props.title} highlight={props.highlight} lang={props.lang}>
+      {props.code}
     </CodeBlock>
   );
 }

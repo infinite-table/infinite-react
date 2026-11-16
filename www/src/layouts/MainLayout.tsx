@@ -8,11 +8,14 @@ export function MainLayout({
   title,
 
   subtitle,
+  heroFooter,
   skipIndex,
 }: {
   children: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
+  /** Shown under the hero text. */
+  heroFooter?: ReactNode;
   skipIndex?: boolean;
 
   seoTitle?: string;
@@ -26,7 +29,9 @@ export function MainLayout({
   }
   return (
     <div>
-      <HeroHeader title={title} subtitle={subtitle} />
+      <HeroHeader title={title} subtitle={subtitle}>
+        {heroFooter}
+      </HeroHeader>
       {children}
     </div>
   );

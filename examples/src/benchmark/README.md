@@ -15,10 +15,16 @@ copied to `benchmark-results/latest.md`); the raw samples are in
 `results.json` next to it. `benchmark-results/` is git-ignored.
 
 Here the benchmark runs against the grid's source. The same files are in
-[infinite-ag-grid-performance-comparison](https://github.com/infinite-table/infinite-ag-grid-performance-comparison),
-where both grids are installed from npm, any two versions can be compared,
-and CI publishes the results for every new version. Keep the files of this
-folder identical in the two repositories (all but this README).
+[datagrid-performance-comparison](https://github.com/infinite-table/datagrid-performance-comparison),
+where the grids are installed from npm, any versions can be compared, and CI
+publishes the results for every new version. Keep the files of this folder
+identical in the two repositories (all but this README).
+
+That repository also measures MUI X Data Grid and TanStack Table. Their pages
+(`MuiBenchmark.tsx`, `TanStackBenchmark.tsx`) and their dependencies are only
+there: this app measures AG Grid and Infinite Table, which is what
+`playwright.benchmark.config.ts` sets `BENCH_GRIDS` to. The spec and the
+report handle any of the four grids.
 
 ## Files
 

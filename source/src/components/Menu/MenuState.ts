@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import type { MutableRefObject } from '../types/FrameworkTypes';
 import { ComponentStateActions } from '../hooks/useComponentState/types';
 import {
   MenuColumn,

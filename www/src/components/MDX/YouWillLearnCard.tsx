@@ -8,6 +8,8 @@ interface YouWillLearnCardProps {
   inline?: boolean;
   buttonLabel?: string;
   newTab?: boolean;
+  /** Shown next to the button, e.g. "React only for now". */
+  notice?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -18,6 +20,7 @@ function YouWillLearnCard({
   inline,
   newTab,
   buttonLabel,
+  notice,
 }: YouWillLearnCardProps) {
   return (
     <div
@@ -41,6 +44,7 @@ function YouWillLearnCard({
           {buttonLabel ?? 'Read More'}
           <IconNavArrow displayDirection="right" className="inline ml-1" />
         </ButtonLink>
+        {notice ? <span className="ml-3">{notice}</span> : null}
       </div>
     </div>
   );

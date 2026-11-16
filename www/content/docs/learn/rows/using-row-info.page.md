@@ -19,14 +19,13 @@ When there is no <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink
 - `data` - type: `DATA_TYPE`
 - `dataSourceHasGrouping` - type: `false`
 - `isGroupRow` - type: `false`
-- `id` - type: `any`. The id of the row, as defined by the <DataSourcePropLink name="idProperty" /> prop.
+- `id` - type: `any`. The id of the row, as defined by the <DataSourcePropLink name="primaryKey" /> prop.
 - `selfLoaded` - type: `boolean`. Useful in lazy-loading scenarios, when there is batching present. If you're not in such a scenario, the value will be `false`. You can use this to show a loading indicator for the row.
 - `indexInAll` - type `number`. The index of the row in the full dataset. Called like this because for grouping scenarios, there's also an `indexInGroup`
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === false;
+```ts file="using-row-info.snippet.tsx" region="discriminator"
 ```
 
 ## Grouped scenario - normal `rowInfo`
@@ -73,8 +72,7 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === true && rowInfo.isGroupRow === false;
+```ts file="using-row-info.snippet.tsx" region="discriminator-normal-row-when-grouping"
 ```
 
 ## Grouped scenario - group `rowInfo`
@@ -132,6 +130,5 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts
-rowInfo.dataSourceHasGrouping === true && rowInfo.isGroupRow === true;
+```ts file="using-row-info.snippet.tsx" region="discriminator-group-row"
 ```

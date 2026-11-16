@@ -16,25 +16,12 @@ To specify the tree column, you have to to set the <PropLink name="columns.rende
 
 </Note>
 
-```tsx {3} title="Specifying the tree column"
-const columns: Record<string, InfiniteTableColumn<FileSystemNode>> = {
-  name: { 
-    renderTreeIcon: true,
-    field: 'name',
-    header: 'Name' 
-  },
-  type: { field: 'type', header: 'Type' },
-  size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
-};
+```tsx file="tree-column.snippet.tsx" region="specifying-the-tree-column" title="Specifying the tree column"
 ```
 This is very similar to how you specify the [selection column for multi-select configurations](/docs/learn/selection/row-selection#using-a-selection-checkbox).
 
-<Sandpack title="Specifying the tree column">
-
-```tsx file="$DOCS/reference/treegrid-rendericon-default-example.page.tsx"
-
+```tsx file="/docs/reference/treegrid-rendericon-default-example.demo.tsx" title="Specifying the tree column"
 ```
-</Sandpack>
 
 ## Customizing the expand/collapse icon
 
@@ -50,13 +37,8 @@ If you want to render an icon for all nodes, specify a function (and differentia
 
 </Note>
 
-<Sandpack title="Customizing the expand/collapse icon">
-
-```tsx file="tree-custom-renderTreeIcon-example.page.tsx"
-
+```tsx file="tree-custom-renderTreeIcon-example.demo.tsx" title="Customizing the expand/collapse icon"
 ```
-
-</Sandpack>
 
 
 
