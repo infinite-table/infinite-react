@@ -9,13 +9,7 @@ function InlineCode({
 }: React.JSX.IntrinsicElements['code'] & InlineCodeProps) {
   return (
     <code
-      className={cn(
-        'inline text-code text-content-color px-1 rounded-md no-underline',
-        {
-          'bg-card-dark py-px': !isLink,
-          'bg-card-dark py-0': isLink,
-        },
-      )}
+      className={cn('docs-code-inline', { 'docs-code-inline--link': isLink })}
       {...props}
     />
   );

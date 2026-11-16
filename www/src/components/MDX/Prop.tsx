@@ -412,7 +412,7 @@ const PropInlineCode = ({
       title={typeof children === 'string' ? children : undefined}
       style={style}
       className={cn(
-        'rounded-lg inline-block bg-gray-90 px-2 text-content-color font-mono text-code whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
+        'docs-prop-code inline-block whitespace-pre max-w-full overflow-hidden overflow-ellipsis',
         className,
       )}
     >
@@ -458,34 +458,28 @@ export function Prop({
   const theId = (name || '').replaceAll('.', '-');
   return (
     <div
-      className={cn(
-        'my-6 rounded-lg shadow-inner relative',
-
-        `bg-secondary/40`,
-      )}
+      className="docs-prop"
+      data-highlight={highlight ? '' : undefined}
+      data-expanded={expanded ? '' : undefined}
     >
-      <div
-        className={`p-8 flex flex-row ${
-          expanded ? 'rounded-b-none rounded-lg' : 'rounded-lg'
-        } ${highlight ? 'bg-brand-dark' : ''}`}
-      >
+      <div className="docs-prop__head flex flex-row">
         <div className="flex-1 flex flex-col w-full">
           <div className="flex flex-row w-full items-center flex-wrap ">
             {/* The pt and mt hack is for when there's anchor navigation, in order to accomodate for the fixed navbar and search field */}
             <H4
               as="h2"
               id={theId}
-              className={`mt-[0px] mb-0 relative ${
+              className={`docs-prop__name relative ${
                 deprecated ? 'line-through' : ''
               }`}
             >
-              <IconCodeBlock className="inline mr-2 text-brand" />
+              <IconCodeBlock className="docs-prop__icon" />
               {name}
               {generic ? (
                 <span className="italic opacity-40">{` <T>`}</span>
               ) : null}
               {deprecated ? (
-                <span className="text-xs ml-3 absolute -top-6 -left-4 bg-error text-darkcustom p-1 leading-none rounded">
+                <span className="docs-prop__deprecated">
                   deprecated
                 </span>
               ) : null}
@@ -543,7 +537,7 @@ export function Prop({
           {hasDetails ? (
             <Button
               active
-              className={cn('inline-block self-start')}
+              className="docs-prop__toggle inline-block self-start"
               onClick={() =>
                 setIsExpanded((current) => {
                   const expanded = !current;
@@ -570,7 +564,7 @@ export function Prop({
         </div>
       </div>
       {expanded ? (
-        <div className={cn('p-8 pt-0 border-t border-deep-dark')}>
+        <div className="docs-prop__details">
           {content}
         </div>
       ) : null}
@@ -786,7 +780,7 @@ export function PropTable({
   return (
     <div className="my-4">
       <MaxWidth
-        className={`sticky`}
+        className="docs-prop-filter sticky"
         style={{
           top: newvars.header.lineHeight,
           zIndex: 1000,

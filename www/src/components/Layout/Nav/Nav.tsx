@@ -62,7 +62,7 @@ export default function Nav() {
 
   return (
     <nav
-      className={`sticky top-0 bg-black items-center w-full flex lg:block justify-between pt-0 lg:pt-2 pr-2 lg:px-5 z-50 `}
+      className={`docs-side-nav sticky top-0 items-center w-full flex lg:block justify-between z-50`}
     >
       <div className="xl:w-full xl:max-w-xs flex items-center">
         {/* <div
@@ -98,7 +98,7 @@ export default function Nav() {
         </div> */}
       </div>
       <div
-        className="px-0 pt-2 w-full 2xl:max-w-xs hidden lg:flex items-center self-center border-b-0 lg:border-b border-border-dark"
+        className="docs-tabs hidden lg:grid"
         style={{ marginTop: newvars.header.lineHeight }}
       >
         <NavLink

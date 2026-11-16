@@ -2,7 +2,7 @@ export function CenterContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="w-full lg:pt-0  pl-0 lg:pl-80 2xl:px-80 article">
-        <div className="max-w-7xl px-4 sm:px-12 mx-auto w-full container pt-4 ">
+        <div className="docs-article max-w-7xl px-4 sm:px-12 mx-auto w-full container">
           {children}
         </div>
       </div>
