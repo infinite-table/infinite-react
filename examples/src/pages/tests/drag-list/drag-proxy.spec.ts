@@ -95,9 +95,9 @@ export default test.describe('DragList - the drag proxy', () => {
       expect(Math.round(box.x - initialBox.x)).toBe(10);
       expect(Math.round(box.y - initialBox.y)).toBe(50);
 
-      expect(await getLog(page)).toEqual([
-        { name: 'onDragProxySetup', dragItemId: 'x' },
-      ]);
+      await expect
+        .poll(() => getLog(page))
+        .toEqual([{ name: 'onDragProxySetup', dragItemId: 'x' }]);
     });
 
     await expect(proxy).toHaveCount(0);
@@ -133,10 +133,9 @@ export default test.describe('DragList - the drag proxy', () => {
 
     // the list has no onRemove, so nothing changes
     expect(await getOrder(page, 'customized')).toEqual(['x', 'y', 'z']);
-    expect((await getLog(page)).map((call) => call.name)).toEqual([
-      'onDragProxySetup',
-      'cleanup',
-    ]);
+    await expect
+      .poll(async () => (await getLog(page)).map((call) => call.name))
+      .toEqual(['onDragProxySetup', 'cleanup']);
   });
 
   test('without preserveDragSpace, the items after it take its place', async ({

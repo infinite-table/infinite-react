@@ -114,18 +114,22 @@ export default test.describe('DragList - two lists under one provider', () => {
         status: 'accepted',
       });
 
-    expect(await getJSON(page, 'list-state-left')).toEqual({
-      dragListId: 'left',
-      draggingInProgress: true,
-      dragSourceListId: 'left',
-      dropTargetListId: 'right',
-    });
-    expect(await getJSON(page, 'list-state-right')).toEqual({
-      dragListId: 'right',
-      draggingInProgress: true,
-      dragSourceListId: 'left',
-      dropTargetListId: 'right',
-    });
+    await expect
+      .poll(() => getJSON(page, 'list-state-left'))
+      .toEqual({
+        dragListId: 'left',
+        draggingInProgress: true,
+        dragSourceListId: 'left',
+        dropTargetListId: 'right',
+      });
+    await expect
+      .poll(() => getJSON(page, 'list-state-right'))
+      .toEqual({
+        dragListId: 'right',
+        draggingInProgress: true,
+        dragSourceListId: 'left',
+        dropTargetListId: 'right',
+      });
 
     await expect(a).toHaveClass(/DraggableItem--active/);
     await expect(getList(page, 'left')).toHaveClass(/DragList--dragging/);
@@ -150,12 +154,14 @@ export default test.describe('DragList - two lists under one provider', () => {
     await page.mouse.up();
 
     await expect.poll(() => getJSON(page, 'provider-state')).toEqual(IDLE);
-    expect(await getJSON(page, 'list-state-right')).toEqual({
-      dragListId: 'right',
-      draggingInProgress: false,
-      dragSourceListId: null,
-      dropTargetListId: null,
-    });
+    await expect
+      .poll(() => getJSON(page, 'list-state-right'))
+      .toEqual({
+        dragListId: 'right',
+        draggingInProgress: false,
+        dragSourceListId: null,
+        dropTargetListId: null,
+      });
 
     for (const id of ['x', 'y', 'z']) {
       expect(await getInlineTransform(getItem(page, 'right', id))).toBe('none');

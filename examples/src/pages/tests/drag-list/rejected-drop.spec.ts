@@ -161,10 +161,12 @@ export default test.describe('DragList - a list that rejects a drop', () => {
       getItem(page, 'target', 't1'),
       { x: -TO_THE_TARGET, y: 0 },
       async () => {
-        expect(await getProviderState(page)).toMatchObject({
-          dragSourceListId: 'target',
-          dragItemId: 't1',
-        });
+        await expect
+          .poll(() => getProviderState(page))
+          .toMatchObject({
+            dragSourceListId: 'target',
+            dragItemId: 't1',
+          });
         expect(await getInlineTransform(getItem(page, 'source', 'free'))).toBe(
           '',
         );
