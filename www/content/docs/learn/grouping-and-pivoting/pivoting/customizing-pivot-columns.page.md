@@ -1,5 +1,6 @@
 ---
 title: Customizing Pivot Columns
+vue: true
 ---
 
 There are a number of ways to customize the generated pivot columns and we'll cover each of them in this page. For a longer walkthrough with live demos, see [customizing generated pivot columns](/blog/2026/09/03/customizing-generated-pivot-columns).
@@ -28,19 +29,19 @@ You can also pass a function when the config should depend on the generated colu
 
 <DataSourcePropLink name="pivotBy.column" /> applies to all pivot columns in the column group generated for that `field`. Use it when only one pivot level should be customized — for example, make every `canDesign` column sortable, without touching the `country` group.
 
-```tsx file="customizing-pivot-columns.snippet.tsx" region="per-pivot-field-pivotby-column"
+```tsx file="customizing-pivot-columns.snippet.tsx" region="per-pivot-field-pivotby-column" neutral
 ```
 
 A function receives the generated column, so you can vary the header (or any other property) per pivot value:
 
-```tsx file="customizing-pivot-columns.snippet.tsx" region="pivot-by-column-function"
+```tsx file="customizing-pivot-columns.snippet.tsx" region="pivot-by-column-function" neutral
 ```
 
 ## Per aggregation: `aggregationReducers.pivotColumn`
 
 Each <DataSourcePropLink name="aggregationReducers">reducer</DataSourcePropLink> can define a `pivotColumn`. That config is applied only to columns generated for **that** aggregation — so you can make `salary` columns sortable and leave a `count` aggregation as it is.
 
-```ts file="customizing-pivot-columns.snippet.tsx" region="per-aggregation-aggregationreducers-pivotcolumn"
+```ts file="customizing-pivot-columns.snippet.tsx" region="per-aggregation-aggregationreducers-pivotcolumn" neutral
 ```
 
 <DPropLink name="aggregationReducers.pivotColumn" /> on a reducer can also choose which original column to inherit from, or opt out of inheritance entirely — see below.
@@ -51,7 +52,7 @@ Pivoting is all about aggregations, so you need to specify the <DataSourcePropLi
 
 If the table <PropLink name="columns"/> collection already has a column bound to the `field` used in the aggregation, the column configuration will be inherited by the generated pivot column. Override that with <DPropLink name="aggregationReducers.pivotColumn.inheritFromColumn" /> — pass another column id to inherit from that column instead, or `false` to inherit from none. See the <DPropLink name="aggregationReducers.pivotColumn" /> reference for the full column config you can set on the reducer.
 
-```ts file="customizing-pivot-columns.snippet.tsx" region="inheriting-from-initial-columns"
+```ts file="customizing-pivot-columns.snippet.tsx" region="inheriting-from-initial-columns" neutral
 ```
 
 ```tsx file="pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
