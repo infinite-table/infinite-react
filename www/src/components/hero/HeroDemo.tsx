@@ -8,8 +8,8 @@ import {
   usePageVisible,
   usePrefersReducedMotion,
   useInView,
-} from '../showcase';
-import type { LazyShowcaseLoadedProps } from '../showcase';
+} from '@thedatagrid/docs-kit/showcase';
+import type { LazyShowcaseLoadedProps } from '@thedatagrid/docs-kit/showcase';
 import { Heatmap } from './charts/Heatmap';
 import { PriceChart } from './charts/PriceChart';
 import { SectorBars } from './charts/SectorBars';
@@ -39,7 +39,7 @@ import {
 
 import './hero-frame.css';
 import './hero.css';
-import '../showcase/showcase.css';
+import '@thedatagrid/docs-kit/showcase/styles.css';
 
 export const DEFAULT_ROW_COUNT = 10_000;
 export const DEFAULT_TICK_RATE = 2_500;

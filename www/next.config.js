@@ -117,6 +117,8 @@ function resolveDocsKitLocal() {
     react: 'react/index.ts',
     'react/styles.css': 'react/styles.css',
     fork: 'fork/index.ts',
+    showcase: 'showcase/index.ts',
+    'showcase/styles.css': 'showcase/styles.css',
     frameworks: 'frameworks/index.ts',
     'frameworks/react': 'frameworks/react/index.ts',
     'frameworks/styles.css': 'frameworks/styles.css',
