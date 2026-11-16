@@ -1,4 +1,3 @@
-import { DocSearch } from '@docsearch/react';
 import { AccentButton } from '@www/components/AccentButton';
 
 import { GithubLink, TwitterLink } from '@www/components/Header';
@@ -41,7 +40,8 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
         visibility: isHidden ? 'hidden' : undefined,
       }}
     >
-      <div className="px-5 mt-12 lg:hidden"></div>
+      {/* under the fixed site header on phones */}
+      <div className="lg:hidden bg-bg" style={{ height: 'var(--header-h)' }} />
 
       <nav
         role="navigation"
@@ -57,13 +57,6 @@ export function Sidebar({ isMobileOnly }: { isMobileOnly?: boolean }) {
       </nav>
 
       <div className="px-5 py-3 sticky bottom-0 lg:px-5 w-full hidden lg:flex flex-col items-center bg-black">
-        <div className="hidden lg:block py-3 px-5 w-full">
-          <DocSearch
-            appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!}
-            indexName="infinite-table"
-            apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY!}
-          />
-        </div>
         <div className="flex flex-row mb-5">
           <TwitterLink />
           <div className="ml-5"></div>

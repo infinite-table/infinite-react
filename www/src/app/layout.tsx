@@ -7,6 +7,7 @@ import '../styles/globals.css';
 import '@thedatagrid/docs-kit/react/styles.css';
 import '@thedatagrid/docs-kit/frameworks/styles.css';
 import '../styles/docs-kit.css';
+import '../styles/site-shell.css';
 
 import ClientLayout from './clientLayout';
 
