@@ -507,10 +507,14 @@ export const InfiniteTable = defineComponent({
       (brain) => {
         removeAutoSizeRangeListener?.();
         removeAutoSizeRangeListener = brain.onRenderRangeChange(() => {
-          if (getAutoSizeKey() == null) {
+          const key = getAutoSizeKey();
+          if (key == null) {
             return;
           }
-          if (state.value.autoSizeColumnsKey !== lastExecutedAutoSizeKey) {
+          // compare the key, not the prop: for an object prop
+          // ({ key, columnsToResize, ... }) the prop never equals the last
+          // executed key, which re-sized the columns on every range change
+          if (key !== lastExecutedAutoSizeKey) {
             autoSizeRefreshId.value += 1;
           }
         });
