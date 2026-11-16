@@ -59,6 +59,21 @@ export const components = {
   MenuIcon,
 };
 
+// drag and drop: the same names as in the React entry
+export {
+  DragDropProvider,
+  useDragDropProvider,
+  type DragDropSourceAndTarget,
+} from './components/InfiniteTable/components/draggable/DragDropProvider.vue';
+export {
+  DragList,
+  useDragListContext,
+  DRAG_ITEM_ATTRIBUTE,
+  type DragListProps,
+  type DragProxySetupParams,
+  type DragProxyMoveParams,
+} from './components/InfiniteTable/components/draggable/DragList.vue';
+
 export { group, flatten } from './utils/groupAndPivot';
 export { DeepMap } from './utils/DeepMap';
 export { debug, type DebugLogger } from './utils/debugPackage';
