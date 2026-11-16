@@ -18,6 +18,7 @@ import sidebarLearn from '@www/sidebarLearn.json';
 import sidebarReference from '@www/sidebarReference.json';
 import sidebarReleases from '@www/sidebarReleases.json';
 import { asMeta } from '@www/utils/asMeta';
+import { docsOgSlug } from '@www/utils/ogCards';
 import {
   docsHasPage,
   getDocsPage,
@@ -73,7 +74,7 @@ export function docsPageMetadata(
     alternates: {
       canonical: `${SITE_URL}${docsFrameworks.pathFor(neutralPath, framework)}`,
     },
-  });
+  }, docsOgSlug(neutralPath));
 }
 
 export async function DocsRoutePage(props: {

@@ -11,7 +11,7 @@ import '@www/components/themes/themes.css';
 export const metadata = asMeta({
   title: 'Themes | Infinite Table DataGrid for React and Vue',
   description: `The ${SITE_THEMES.length} themes of Infinite Table, live: each in light and dark mode, at three densities, with the CSS to use it.`,
-});
+}, 'themes');
 
 const OVERRIDE_CODE = `.my-grid {
   --infinite-accent-color: #1d5cff;
