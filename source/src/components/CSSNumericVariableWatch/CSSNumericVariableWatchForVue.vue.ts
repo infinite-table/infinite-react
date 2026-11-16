@@ -23,6 +23,7 @@ export const CSSNumericVariableWatch = defineComponent({
     const domRef: { current: HTMLElement | null } = { current: null };
     let lastValue = 0;
     let teardown: VoidFunction | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     onMounted(() => {
       const node = domRef.current;
@@ -42,16 +43,33 @@ export const CSSNumericVariableWatch = defineComponent({
       }
 
       teardown = setupResizeObserver(node, ({ height }) => {
-        if (height != null && height !== lastValue) {
-          lastValue = height;
-          props.onChange(height);
+        if (height == null || timeoutId != null) {
+          return;
         }
+        // not from inside the observer callback: onChange changes the
+        // grid's state, Vue re-renders in a microtask - still inside the
+        // browser's resize observation loop - and the new row heights then
+        // resize observed elements again ("ResizeObserver loop completed
+        // with undelivered notifications"). React re-renders in a later task,
+        // and so does this.
+        timeoutId = setTimeout(() => {
+          timeoutId = null;
+          const value = node.getBoundingClientRect().height;
+          if (value !== lastValue) {
+            lastValue = value;
+            props.onChange(value);
+          }
+        }, 0);
       });
     });
 
     onBeforeUnmount(() => {
       teardown?.();
       teardown = null;
+      if (timeoutId != null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
     });
 
     return () => {
