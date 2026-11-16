@@ -1,6 +1,7 @@
 ---
 title: Column Headers
 description: Configure column headers with custom column header, custom sort icon, menu icon and more.
+vue: true
 ---
 
 Column headers have the same level of customization as column cells - you can fully control what is being rendered and when. Here's a summary of the things you can do in the column header:
@@ -15,7 +16,7 @@ Column headers have the same level of customization as column cells - you can fu
 
 By default, the label displayed for the column header is the <PropLink name="columns.field">field</PropLink> the column is bound to. If you want to customize this, use the <PropLink name="columns.header">header</PropLink> property.
 
-```tsx file="column-headers.snippet.tsx" region="column-header-label"
+```tsx file="column-headers.snippet.tsx" region="column-header-label" neutral
 ```
 
 ```tsx file="column-header-example.demo.tsx" title="Simple table with both default and custom column headers"
@@ -69,6 +70,8 @@ So if you specify a custom <PropLink name="columns.renderHeader">renderHeader</P
 
 The `renderBag` object contains the following properties available to the render functions of the column header:
 
+<FrameworkContent framework="react">
+
 - `header` - the label of the column header.
 - `sortIcon` - the default sort icon
 - `filterIcon` - the filter icon - displayed when the current column is used in filtering
@@ -77,16 +80,40 @@ The `renderBag` object contains the following properties available to the render
 - `selectionCheckBox` - the selection check box - displays the current selection status and controls the selection for all rows.
 - `all` - all of the above combined together in a `React.Fragment`.
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+- `header` - the label of the column header.
+- `sortIcon` - the default sort icon
+- `filterIcon` - the filter icon - displayed when the current column is used in filtering
+- `filterEditor` - the current filter editor
+- `menuIcon` - the menu icon that can be clicked to open the column menu
+- `selectionCheckBox` - the selection check box - displays the current selection status and controls the selection for all rows.
+- `all` - all of the above combined together, as an array.
+
+</FrameworkContent>
+
 ### Customizing the Sort Icon
 
 For customizing the sort icon, use the <PropLink name="columns.renderSortIcon">column.renderSortIcon</PropLink> function.
 
 Inside that function you can either use the object passed as a parameter to get information about the sort state of the column
 
-```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon" title="Customizing_the_column_sort_icon"
+```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon" title="Customizing_the_column_sort_icon" neutral
 ```
 
+<FrameworkContent framework="react">
+
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information. The composable returns a ref and has to be called in the `setup` of a component rendered inside the column header - calling it directly in the `renderSortIcon` function doesn't work.
+
+</FrameworkContent>
 
 ```tsx file="column-headers.snippet.tsx" region="customizing-the-column-sort-icon-hook" title="Customizing_the_column_sort_icon"
 ```
@@ -100,10 +127,20 @@ For customizing the menu icon, use the <PropLink name="columns.renderMenuIcon">c
 
 Inside that function you can either use the object passed as a parameter to get information about the column
 
-```tsx file="column-headers.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon"
+```tsx file="column-headers.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon" neutral
 ```
 
+<FrameworkContent framework="react">
+
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information.
+
+</FrameworkContent>
 
 ```tsx file="column-headers.customizing-the-menu-icon.snippet.tsx" region="customizing-the-menu-icon" title="Customizing_the_menu_icon"
 ```
@@ -133,10 +170,20 @@ For customizing the filter icon, use the <PropLink name="columns.renderFilterIco
 
 Inside that function you can either use the object passed as a parameter to get information about the `filtered` state of the column
 
-```tsx file="column-headers.snippet.tsx" region="customizing-the-filter-icon" title="Customizing_the_filter_icon"
+```tsx file="column-headers.snippet.tsx" region="customizing-the-filter-icon" title="Customizing_the_filter_icon" neutral
 ```
 
+<FrameworkContent framework="react">
+
 or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same information.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information.
+
+</FrameworkContent>
 
 ```tsx file="column-headers.customizing-the-filter-icon-hook.snippet.tsx" region="customizing-the-filter-icon-hook" title="Customizing_the_menu_icon"
 ```
