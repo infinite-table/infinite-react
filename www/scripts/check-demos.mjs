@@ -57,6 +57,9 @@ const failures = [];
 let done = 0;
 
 async function checkDemo(id) {
+  // the invalid-license demo is there to show the license footer (and the
+  // license message the grid logs)
+  const licenseExpected = id.endsWith('invalid-license');
   const page = await context.newPage();
   const problems = [];
   page.on('pageerror', (error) => problems.push(`uncaught: ${error.message.split('\n')[0]}`));
@@ -65,6 +68,8 @@ async function checkDemo(id) {
     const text = message.text();
     // a failed request is reported below, with its URL
     if (/Failed to load resource/.test(text)) return;
+    // the license message is a box of lines that start with `*`
+    if (licenseExpected && text.trim().startsWith('*')) return;
     problems.push(`console.error: ${text.split('\n')[0].slice(0, 300)}`);
   });
   page.on('requestfailed', (request) => {
@@ -93,8 +98,7 @@ async function checkDemo(id) {
     if (!state.children) problems.push('nothing rendered');
     else if (!state.grid) problems.push(`no grid rendered (${state.text} chars of text)`);
     else if (!state.cells) problems.push('grid without cells');
-    // the invalid-license demo is there to show the footer
-    if (state.license && !id.endsWith('invalid-license')) problems.push('license footer shown');
+    if (state.license && !licenseExpected) problems.push('license footer shown');
     if (shotsDir) {
       const file = path.join(shotsDir, `${id.replace(/\//g, '__')}.png`);
       fs.mkdirSync(shotsDir, { recursive: true });

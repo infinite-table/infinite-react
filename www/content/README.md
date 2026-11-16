@@ -37,7 +37,7 @@ A demo is a `*.demo.tsx` file with a default-exported component:
   ````
 
 - `height="large"` (or `"small"`, a pixel number) changes the preview height.
-- A demo named `*-tailwind.demo.tsx` gets Tailwind, with the setup in `docs-kit.tailwind.css`.
+- A demo named `*-tailwind.demo.tsx` gets Tailwind, on the docs page and in a fork, with the setup in `docs-kit.tailwind.css`.
 - Keep a demo's file name once it is published: other pages, and its `*.demo.vue` sibling, refer to it.
 
 ## Code snippets
