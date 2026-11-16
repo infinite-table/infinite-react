@@ -1,6 +1,7 @@
 ---
 title: Column Types
 description: Column types are blueprints for generalizing column configuration and code reuse.
+vue: true
 ---
 
 Column types allow you to specify common properties for multiple columns easily. Things like <PropLink name="columnTypes.minWidth">minWidth</PropLink>, <PropLink name="columnTypes.maxWidth">maxWidth</PropLink>, <PropLink name="columnTypes.defaultFlex">defaultFlex</PropLink> and <PropLink name="columnTypes.header">header</PropLink> are all available. For a full list, see <PropLink>columnTypes</PropLink> reference.
@@ -26,7 +27,7 @@ When a column has multiple column types, they are applied in order, from left to
 
 Assume a column has the following types:
 
-```tsx file="column-types.snippet.tsx" region="column-type-properties-order-and-precedence"
+```tsx file="column-types.snippet.tsx" region="column-type-properties-order-and-precedence" neutral
 ```
 
 <Note>

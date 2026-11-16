@@ -1,6 +1,7 @@
 ---
 title: Column Menus
 description: Columns have menus that allow quick actions - the menus can be customized or hidden altogether.
+vue: true
 ---
 
 All columns in the Infinite Table have a default menu, which can be customized or hidden altogether.
@@ -9,7 +10,7 @@ All columns in the Infinite Table have a default menu, which can be customized o
 
 To customize the column menu (for all columns, or for a specific column), use the <PropLink name="getColumnMenuItems" /> prop. This function is called with an array of menu items (which are the default items) and it should the final array of menu items - so you can return the default items as is, or you can adjust the default items to fit your needs.
 
-```tsx file="column-menus.snippet.tsx" region="customizing-column-menu" title="Customizing-column-menu"
+```tsx file="column-menus.snippet.tsx" region="customizing-column-menu" title="Customizing-column-menu" neutral
 ```
 
 <Note>
@@ -37,18 +38,42 @@ Each item in the array you return from <PropLink name="getColumnMenuItems" /> sh
 
 It's also possible to create items with submenus. For this, specify a `menu` property in the item, with an `items` array. Each item in the `items` array should have a `key` and a `label` property, as you would expect.
 
-```tsx file="column-menus.snippet.tsx" region="menu-items-with-submenus" title="Menu_items_with_submenus"
+```tsx file="column-menus.snippet.tsx" region="menu-items-with-submenus" title="Menu_items_with_submenus" neutral
 ```
 
 ## Custom menu icon
 
+<FrameworkContent framework="react">
+
 To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> prop. This prop can be a boolean or a function that returns a `ReactNode`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> prop. This prop can be a boolean or a function that returns a VNode, created with `h()`.
+
+</FrameworkContent>
 
 ```tsx file="column-menus.snippet.tsx" region="custom-menu-icon" title="custom-menu-icon"
 ```
+
+<FrameworkContent framework="react">
 
 <Note>
 
 For a custom menu icon 🌠 you don't have to hook up the `mousedown`/`click` in order to show or hide the menu - all this is done for you - just render your custom `ReactNode` and you're good to go.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+For a custom menu icon 🌠 you don't have to hook up the `mousedown`/`click` in order to show or hide the menu - all this is done for you - just return your custom VNode and you're good to go.
+
+</Note>
+
+</FrameworkContent>

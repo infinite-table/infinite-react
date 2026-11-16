@@ -1,5 +1,6 @@
 ---
 title: Column Sizing
+vue: true
 ---
 
 Columns are a core concept for `Infinite Table` and sizing columns is an important topic to master. Here is a summary of how columns can be sized:
@@ -50,7 +51,7 @@ The <PropLink name="columnSizing" /> entry for a column is the actual sizing and
 
 </Note>
 
-```tsx file="fixed-and-flexible-size.snippet.tsx" region="controlled-column-sizing"
+```tsx file="fixed-and-flexible-size.snippet.tsx" region="controlled-column-sizing" neutral
 ```
 
 <Note>
@@ -157,12 +158,12 @@ When flexible columns are resized, they are kept flexible even after the resize.
 
 More exactly, the new flex values will be the actual pixel widths. As an example, say there are 2 flex columns, first one with flex `1` and second one with flex `3` and they have an available space of `800px`.
 
-```ts file="fixed-and-flexible-size.snippet.tsx" region="resizing-columns-via-drag-drop"
+```ts file="fixed-and-flexible-size.snippet.tsx" region="resizing-columns-via-drag-drop" neutral
 ```
 
 Initially they will occupy `200px` and `600px` respectively. If the user resizes them to be of equal size, <PropLink name="onColumnSizingChange" /> will be called with an object like
 
-```ts file="fixed-and-flexible-size.snippet.tsx" region="column-sizing-after-resize"
+```ts file="fixed-and-flexible-size.snippet.tsx" region="column-sizing-after-resize" neutral
 ```
 
 since those are the actual widths measured from the DOM. This works out well, even if the available space of the table grows, as the proportions will be the same.

@@ -1,23 +1,35 @@
 ---
 title: Column Styling
 description: Styling columns in the InfiniteTable React DataGrid via both style and className properties.
+vue:
+  description: Styling columns in the InfiniteTable Vue DataGrid via both style and className properties.
 ---
 
 ## Using the column `style`
 
 The most straightforward way to style the cells in a column is to use the <PropLink name="columns.style">column.style</PropLink> property as an object.
 
-```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-in-the-datagrid" title="Styling a column in the DataGrid"
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-in-the-datagrid" title="Styling a column in the DataGrid" neutral
 ```
 
 ```tsx file="column-style-object-example.demo.tsx" title="Using column.style as an object"
 ```
 
+<FrameworkContent framework="react">
+
 The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `React.CSSProperties`) or a function that returns an object (of the same type).
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `CSSProperties`, the type exported by `vue`) or a function that returns an object (of the same type).
+
+</FrameworkContent>
 
 Using functions for the <PropLink name="columns.style">column.style</PropLink> property allows you to style the cells based on the cell's value or other properties.
 
-```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-style-function" title="Styling a column using a style function"
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-style-function" title="Styling a column using a style function" neutral
 ```
 
 ```tsx file="column-style-fn-example.demo.tsx" title="Using column.style as a function"
@@ -40,7 +52,7 @@ Mirroring the behavior already described for the <PropLink name="columns.style">
 
 It can be used as a string or a function that returns a string.
 
-```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-column-classname" title="Styling a column using column.className"
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-column-classname" title="Styling a column using column.className" neutral
 ```
 
 ```tsx file="column-className-string-example.demo.tsx" title="Using column.className as an string"
@@ -48,7 +60,7 @@ It can be used as a string or a function that returns a string.
 
 Using functions for the <PropLink name="columns.className">column.className</PropLink> property allows you to style the cells based on the cell's data/value/rowInfo etc.
 
-```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-classname-function" title="Styling a column using a className function"
+```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-a-classname-function" title="Styling a column using a className function" neutral
 ```
 
 ```tsx file="column-className-fn-example.demo.tsx" title="Using column.className as a function"

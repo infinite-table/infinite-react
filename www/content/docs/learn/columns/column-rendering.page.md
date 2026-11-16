@@ -1,6 +1,7 @@
 ---
 title: Column Rendering
 description: Customize column rendering for Infinite Table DataGrid to match your app and use custom components. Column styling and formatting, conditional rendering...
+vue: true
 ---
 
 Columns render the <PropLink name="columns.field">field</PropLink> value of the data they are bound to. This is the default behavior, which can be customized in a number of ways that we're exploring below.
@@ -16,6 +17,8 @@ import { InfiniteTableColumn } from '@infinite-table/infinite-react'
 Note that it's a generic type, so when you use it, you have to bind it to your `DATA_TYPE` (the type of your data object).
 </Note>
 
+<FrameworkContent framework="react">
+
 <Note>
 
 When using custom rendering or custom components for columns, make sure all your rendering logic is [controlled](https://reactjs.org/docs/forms.html#controlled-components) and that it doesn't have local/transient state.
@@ -23,11 +26,24 @@ When using custom rendering or custom components for columns, make sure all your
 This is important because `InfiniteTable` uses virtualization heavily, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+When using custom rendering or custom components for columns, make sure your rendering logic doesn't have local/transient state (a `ref` created in the `setup` of a custom component, for example) - what a cell renders should come from the cell information, or from state that lives outside the cell.
+
+This is important because `InfiniteTable` uses virtualization heavily, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+</Note>
+
+</FrameworkContent>
+
 ## Change the value using `valueGetter`
 
 The simplest way to change what's being rendered in a column is to use the `valueGetter` prop and return a new value for the column.
 
-```tsx file="column-rendering.snippet.tsx" region="change-the-value-using-valuegetter"
+```tsx file="column-rendering.snippet.tsx" region="change-the-value-using-valuegetter" neutral
 ```
 
 <Note>
@@ -41,17 +57,41 @@ Note that the <PropLink name="columns.valueGetter"/> is only called for non-grou
 ```tsx file="/docs/reference/column-valueGetter-example.demo.tsx" title="Column with custom valueGetter"
 ```
 
+<FrameworkContent framework="react">
+
 <Note>
 
 The column value getter should not return JSX or other markup, because the value return by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth information on sorting see [the column sorting page](./column-sorting).
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+The column value getter should not return VNodes or other markup, because the value returned by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth information on sorting see [the column sorting page](./column-sorting).
+
+</Note>
+
+</FrameworkContent>
+
 ## Use <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> to display custom content
 
 The next step in customizing the rendering for a column is to use the <PropLink name="columns.renderValue" /> or the <PropLink name="columns.render"/> props. In those functions, you have access to more information than in the <PropLink name="columns.valueGetter"/> function. For example, you have access to the current value of `groupBy` and `pivotBy` props.
 
+<FrameworkContent framework="react">
+
 <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.renderValue">render</PropLink> can return any value that React can render.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> can return any value that Vue can render: a string, a number, a VNode created with `h()`, or an array of those.
+
+</FrameworkContent>
 
 The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> functions are called with an object that has the following properties:
 
@@ -78,6 +118,8 @@ However, there are easier ways to override the collapse/expand group icon, like 
 
 </Note>
 
+<FrameworkContent framework="react">
+
 <Note>
 
 Inside the <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> functions (and other rendering functions), you can use the <HookLink name="useInfiniteColumnCell"/> hook to retrieve the same params that are passed to the render functions.
@@ -88,6 +130,23 @@ This is especially useful when inside those functions you render a custom compon
 ```
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+A component you render from the <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> functions (and from the other rendering functions) can use the <HookLink name="useInfiniteColumnCell"/> composable to retrieve the same params that are passed to the render functions.
+
+The composable returns a ref: read its `.value` in the render function of your component (or in a `computed`), not once in `setup`.
+
+```tsx file="column-rendering.snippet.tsx" region="use-rendervalue-and-render-to-display-custom"
+```
+
+</Note>
+
+</FrameworkContent>
 
 ```tsx file="/docs/reference/column-renderValue-example.demo.tsx" title="Column with custom renderValue"
 ```
@@ -112,6 +171,8 @@ This snippet shows how you can override the group collapse/expand tool via the <
 ```tsx file="/docs/reference/column-renderGroupIcon-example.demo.tsx" title="Column with custom expand/collapse tool via renderGroupIcon"
 ```
 
+<FrameworkContent framework="react">
+
 ## Using hooks for custom rendering
 
 Inside the <PropLink name="columns.render" /> and <PropLink name="columns.renderValue" /> functions, you can use hooks - both provided by `InfiniteTable` and any other `React` hooks.
@@ -120,15 +181,41 @@ Inside the <PropLink name="columns.render" /> and <PropLink name="columns.render
 
 When you're inside a rendering function for a column cell, you can use <HookLink name="useInfiniteColumnCell">useInfiniteColumnCell hook</HookLink> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions.
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+## Using composables for custom rendering
+
+The components you render from the <PropLink name="columns.render" /> and <PropLink name="columns.renderValue" /> functions can use composables - both the ones provided by `InfiniteTable` and any other Vue composables. Call them in the `setup` of the component: calling them directly in the `render` or `renderValue` function doesn't work.
+
+### Composable: <HookLink name="useInfiniteColumnCell"/>
+
+In a component rendered inside a column cell, you can use the <HookLink name="useInfiniteColumnCell">useInfiniteColumnCell composable</HookLink> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions - as a ref.
+
+</FrameworkContent>
+
 ```tsx file="column-rendering.snippet.tsx" region="use-infinite-column-cell"
 ```
 
 ```tsx file="/docs/reference/column-render-hooks-example.demo.tsx" title="Column with render & useInfiniteColumnCell"
 ```
 
+<FrameworkContent framework="react">
+
 ### Hook: <HookLink name="useInfiniteHeaderCell" />
 
 For column headers, you can use <HookLink name="useInfiniteHeaderCell" /> hook to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+### Composable: <HookLink name="useInfiniteHeaderCell" />
+
+For column headers, a component rendered inside the header can use the <HookLink name="useInfiniteHeaderCell" /> composable to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function - as a ref.
+
+</FrameworkContent>
 
 ```tsx file="column-rendering.use-infinite-header-cell.snippet.tsx" region="use-infinite-header-cell"
 ```
@@ -145,6 +232,8 @@ For such scenarios, you can specify `column.components.HeaderCell` and `column.c
 ```tsx file="column-rendering.use-column-components-to-customize-the-column.snippet.tsx" region="use-column-components-to-customize-the-column"
 ```
 
+<FrameworkContent framework="react">
+
 <Note>
 
 When using custom components, make sure you get `domRef` from the corresponding hook (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) and pass it on to the final `JSX.Element` that is the DOM root of the component.
@@ -158,14 +247,37 @@ Both <PropLink name="columns.components.ColumnCell">components.ColumnCell</PropL
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+A custom component needs a single root element, and the attributes the grid passes to the component have to end-up on that element (eg: `class` for theming and default styles, `style`, the event listeners, etc). Vue does this by default. If you declare the component with `inheritAttrs: false` - to merge the `style` yourself, for example - spread `attrs` on the root element.
+
+```tsx file="column-rendering.snippet.tsx" region="use-column-components-to-customize-the-column"
+```
+
+The default content of the cell is passed as the default slot: render `slots.default?.()` where you want it.
+
+You don't have to pass the `domRef` returned by the composables (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) to the root element - the grid uses the root element of your component.
+
+</Note>
+
+</FrameworkContent>
+
 ```tsx file="/docs/reference/column-components-example.demo.tsx" title="Custom components"
 ```
+
+<FrameworkContent framework="react">
 
 <Note>
 
 If you're using the <HookLink name="useInfiniteColumnCell" /> hook inside the <PropLink name="columns.render" /> or <PropLink name="columns.renderValue" /> functions (and not as part of a custom component in <PropLink name="columns.components.ColumnCell" />), you don't need to pass on the `domRef` to the root of the DOM you're rendering (same is true if you're using <HookLink name="useInfiniteHeaderCell" /> inside the <PropLink name="columns.header" /> function).
 
 </Note>
+
+</FrameworkContent>
 
 If the above <PropLink name="columns.components" /> is still not enough, read about the rendering pipeline below.
 
@@ -197,7 +309,7 @@ After the <PropLink name="columns.valueGetter">valueGetter</PropLink> is called,
 
 This is called with more details about the current cell
 
-```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value"
+```tsx file="column-rendering.snippet.tsx" region="rendering-pipeline-renderbag-value" neutral
 ```
 
 After <PropLink name="columns.valueGetter">valueGetter</PropLink> and <PropLink name="columns.valueFormatter">valueFormatter</PropLink> are called, the resulting value is the actual value used for the cell. This value will also be assigned to `renderBag.value`
