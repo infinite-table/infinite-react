@@ -14,11 +14,11 @@ export default async function RootLayout({
   const pageTitle = page.frontmatter.title;
 
   return (
-    <MainLayout skipIndex subtitle={pageTitle}>
+    <MainLayout skipIndex title={pageTitle} subtitle={null}>
       <MainContent>
         <article className="h-full mx-auto relative w-full min-w-0">
           <div className="px-4 sm:px-12">
-            <div className="max-w-7xl mx-auto">{children}</div>
+            <div className="docs-article max-w-7xl mx-auto">{children}</div>
           </div>
         </article>
       </MainContent>

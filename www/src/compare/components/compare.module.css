@@ -1,25 +1,23 @@
 /*
- * Styles for /compare and /benchmark.
- * The site is dark only for now, so there's one set of tokens; they're all
- * here so a light theme only has to redefine them.
+ * Styles for /compare and /benchmark, on the site tokens (styles/tokens.css),
+ * so both follow light and dark mode.
  */
 .page {
-  --cmp-surface: #16181d;
-  --cmp-surface-2: #1d2027;
-  --cmp-border: #2a2f38;
-  --cmp-grid: #343a46;
-  --cmp-text: #f0efec;
-  --cmp-text-secondary: #c3c2b7;
-  --cmp-text-muted: #99a1b3;
-  --cmp-accent: #3987e5;
-  --cmp-accent-soft: rgba(57, 135, 229, 0.14);
-  --cmp-yes: #4cc38a;
-  --cmp-partial: #e3b341;
-  --cmp-no: #8b93a5;
-  --cmp-paid: #c9a3ff;
-  --cmp-link: #6cb4ff;
-  --cmp-radius: 12px;
-
+  --cmp-surface: var(--surface);
+  --cmp-surface-2: var(--raised);
+  --cmp-border: var(--line-strong);
+  --cmp-grid: var(--line);
+  --cmp-text: var(--heading);
+  --cmp-text-secondary: var(--fg);
+  --cmp-text-muted: var(--muted);
+  --cmp-accent: var(--accent);
+  --cmp-accent-soft: var(--accent-soft);
+  --cmp-yes: var(--up);
+  --cmp-partial: #a16207;
+  --cmp-no: var(--muted);
+  --cmp-paid: #7c3aed;
+  --cmp-link: var(--accent-text);
+  --cmp-radius: 3px;
   width: 100%;
   max-width: 72rem;
   margin: 0 auto;
@@ -29,10 +27,15 @@
   line-height: 1.6;
 }
 
+:global([data-theme='dark']) .page {
+  --cmp-partial: #e3b341;
+  --cmp-paid: #c9a3ff;
+}
+
 .page a:not(.button) {
   color: var(--cmp-link);
   text-decoration: underline;
-  text-decoration-color: rgba(108, 180, 255, 0.35);
+  text-decoration-color: var(--accent-line);
   text-underline-offset: 2px;
 }
 
@@ -69,8 +72,8 @@
   margin: 0;
   color: var(--cmp-text);
   font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 900;
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  letter-spacing: -0.035em;
   line-height: 1.1;
 }
 
@@ -102,8 +105,8 @@
   margin: 0 0 1rem;
   color: var(--cmp-text);
   font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.025em;
   line-height: 1.25;
 }
 
@@ -175,7 +178,7 @@
 /* --- verdict -------------------------------------------------------------- */
 
 .verdict {
-  border-color: rgba(57, 135, 229, 0.5);
+  border-color: var(--accent-line);
   background: linear-gradient(
     180deg,
     var(--cmp-accent-soft),
@@ -188,7 +191,7 @@
   margin-bottom: 0.5rem;
   color: var(--cmp-accent);
   font-size: 0.8125rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -283,7 +286,7 @@
 }
 
 .infiniteCol {
-  background: rgba(57, 135, 229, 0.06);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 
 .featureDescription {
@@ -328,18 +331,18 @@
 }
 
 .full .markIcon {
-  background: rgba(76, 195, 138, 0.16);
+  background: color-mix(in srgb, var(--cmp-yes) 16%, transparent);
   color: var(--cmp-yes);
 }
 
 .partial .markIcon,
 .headless .markIcon {
-  background: rgba(227, 179, 65, 0.16);
+  background: color-mix(in srgb, var(--cmp-partial) 16%, transparent);
   color: var(--cmp-partial);
 }
 
 .none .markIcon {
-  background: rgba(139, 147, 165, 0.14);
+  background: color-mix(in srgb, var(--cmp-no) 14%, transparent);
   color: var(--cmp-no);
 }
 
@@ -361,7 +364,7 @@
   display: inline-block;
   align-self: flex-start;
   padding: 0 0.4rem;
-  border: 1px solid rgba(201, 163, 255, 0.45);
+  border: 1px solid color-mix(in srgb, var(--cmp-paid) 45%, transparent);
   border-radius: 999px;
   color: var(--cmp-paid);
   font-size: 0.75rem;
@@ -419,7 +422,7 @@ td > strong + .sourceLink {
 }
 
 .chipInfinite {
-  border-color: rgba(57, 135, 229, 0.6);
+  border-color: var(--accent-line);
   background: var(--cmp-accent-soft);
 }
 
@@ -497,7 +500,7 @@ td > strong + .sourceLink {
   flex: none;
   width: 1rem;
   color: var(--cmp-accent);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .faq details[open] summary::before {
@@ -539,7 +542,7 @@ td > strong + .sourceLink {
   margin: 0;
   color: var(--cmp-text);
   font-size: 1.125rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .productCardMeta {
@@ -567,11 +570,15 @@ td > strong + .sourceLink {
 .button {
   display: inline-flex;
   align-items: center;
-  padding: 0.6rem 1.2rem;
-  border: 1px solid var(--cmp-accent);
-  border-radius: 999px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--cmp-border);
+  border-radius: 2px;
+  background: var(--cmp-surface);
   color: var(--cmp-text) !important;
-  font-weight: 700;
+  font: 500 12.5px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: none !important;
   transition: background 0.15s;
 }
@@ -582,12 +589,17 @@ td > strong + .sourceLink {
 }
 
 .buttonPrimary {
+  border-color: var(--cmp-accent);
   background: var(--cmp-accent);
+  color: var(--accent-fg) !important;
+  font-weight: 600;
 }
 
+/* keeps its fill on hover (.button:hover would paint the soft accent) */
 .buttonPrimary:hover,
 .buttonPrimary:focus-visible {
-  background: #2f74c6;
+  background: var(--cmp-accent);
+  filter: brightness(1.08);
 }
 
 /* --- stat tiles (benchmark) ----------------------------------------------- */
@@ -606,9 +618,10 @@ td > strong + .sourceLink {
 
 .statValue {
   color: var(--cmp-text);
+  font-family: var(--font-mono);
   font-size: 2rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }

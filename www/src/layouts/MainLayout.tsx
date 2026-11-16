@@ -1,5 +1,4 @@
 import { CSSProperties, ReactNode } from 'react';
-import componentsStyle from '@www/components/components.module.css';
 import { HeroHeader } from '@www/components/Header';
 
 export function MainLayout({
@@ -53,11 +52,9 @@ export function MainContent({
   return (
     <main
       style={style}
-      className={`${
-        className || ''
-      } flex flex-col flex-1 justify-center w-full items-center px-5 py-10 mb-10 relative ${
-        dottedBg ? componentsStyle.DotsBackgroundCls : ''
-      }  ${overline ? componentsStyle.OverlineCls : ''}`}
+      className={`page-main ${className || ''}`}
+      data-overline={overline ? '' : undefined}
+      data-dotted={dottedBg ? '' : undefined}
     >
       {children}
     </main>

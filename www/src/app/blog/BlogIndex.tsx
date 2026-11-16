@@ -1,6 +1,5 @@
 'use client';
 
-import cmpStyles from '@www/components/components.module.css';
 import { BlogPost } from '@www/utils/blogUtils';
 import cn from 'classnames';
 import format from 'date-fns/format';
@@ -250,7 +249,7 @@ export default function BlogIndex({
     <>
       <header className="pb-8">
         <h1
-          className={`text-5xl py-4 font-black tracking-tighter ${cmpStyles.HighlightBrandToLightBackground}`}
+          className="blog-title"
         >
           Infinite Blog
         </h1>
