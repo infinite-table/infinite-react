@@ -37,7 +37,7 @@ A demo is a `*.demo.tsx` file with a default-exported component:
   ````
 
 - `height="large"` (or `"small"`, a pixel number) changes the preview height.
-- A demo named `*-tailwind.demo.tsx` gets Tailwind, with the setup in `docs-kit.tailwind.css`.
+- A demo named `*-tailwind.demo.tsx` gets Tailwind, on the docs page and in a fork, with the setup in `docs-kit.tailwind.css`.
 - Keep a demo's file name once it is published: other pages, and its `*.demo.vue` sibling, refer to it.
 
 ## Code snippets
@@ -70,15 +70,64 @@ const sortInfo: DataSourcePropSortInfo<Developer> = [
 
 Code in other languages (`css`, `sh`, `json`, …) stays inline, and there `{2,5-7}` highlights lines and `title="…"` names the block.
 
+## The Vue version of a page
+
+A page is written once and shown for both frameworks: `/docs/...` for React, `/vue/docs/...` for Vue. The fences keep naming the React files; the Vue page shows their Vue siblings.
+
+- **Frontmatter:** `vue: true` makes the page a Vue page. When the title or description says "React", give the Vue page its own:
+
+  ```yaml
+  vue:
+    description: Learn how to configure filtering in Infinite Table for Vue
+  ```
+
+- **Demo:** `x.demo.vue` next to `x.demo.tsx`, showing the same grid. Without it, the Vue page shows the React demo with a "React only for now" notice.
+- **Snippet:** `x.snippet.vue` (regions in `<script setup>` and in `<template>`) or `x.snippet.vue.ts` next to `x.snippet.tsx`, with every region the pages use from that file, under the same names. A missing region fails the build.
+  - In a template the markers are HTML comments: `<!-- #region name -->` … `<!-- #endregion -->`, `<!-- #highlight -->`. A comment can't sit inside a start tag, so a region that slices the props of a JSX element becomes a whole element, or a `const` in the script with a comment showing how it is bound.
+  - A region that is the same code in both frameworks (types, column objects without JSX, data) needs no sibling: add `neutral` to its fence, and the Vue page shows it from the `.tsx` file.
+
+    ````md
+    ```ts file="sorting.snippet.tsx" region="sort-info" neutral
+    ```
+    ````
+
+- **Prose:** `@infinite-table/infinite-react` becomes `@infinite-table/infinite-vue` on the Vue page by itself. Anything else that is only true for one framework goes in a block (tags on their own lines, a blank line inside):
+
+  ```md
+  <FrameworkContent framework="react">
+
+  Wrap the columns in `React.useMemo`, so the same object is passed on every render.
+
+  </FrameworkContent>
+
+  <FrameworkContent framework="vue">
+
+  Define the columns in `<script setup>`, as a `const` or a `ref`.
+
+  </FrameworkContent>
+  ```
+
+In a Vue demo:
+
+- bind every prop, booleans included: `:lazyLoad="true"`. A bare attribute (`<DataSource lazyLoad>`) reaches the grid as `''` and counts as false;
+- the `on*` props are props, not events: `:onSortInfoChange="onSortInfoChange"`;
+- a function child of `<DataSource>` is its default slot: `<template #default="{ pivotColumns }">`;
+- column functions (`render`, `renderValue`, `header`, …) return a string or VNodes from `h()`;
+- composables (`useInfiniteColumnCell`, …) are called in the `setup` of a component, not directly in a column function: return `h(MyCell)` from the function;
+- keep an instance of a state class (`GroupRowsState`, `RowSelectionState`, `TreeExpandState`, …) in a `shallowRef`;
+- inline styles need their unit: `height: '500px'`.
+
 ## Checking your changes
 
 Run these from the `www` folder:
 
 | Command | What it does |
 |---|---|
-| `npm run tsc:content` | type-checks every demo and snippet against `source/src` |
-| `npm run build-demos` | builds every demo |
-| `npm run check:demos` | opens every built demo in headless Chromium and reports the ones that don't render |
+| `npm run tsc:content` | type-checks every React demo and snippet against `source/src` |
+| `npm run tsc:vue` | the same for the Vue ones, with `vue-tsc` |
+| `npm run build-demos` | builds every demo, React and Vue |
+| `npm run check:demos` | opens every built demo in headless Chromium and reports the ones that don't render (`-- --framework vue` for only the Vue ones) |
 | `npm run check:pages -- http://localhost:3001 content/docs/learn/sorting` | opens those pages on a running site and checks their demos |
+| `npm run check:pages -- http://localhost:3001 content/docs/learn/sorting --framework vue` | the same for the Vue version of the pages, and lists the cards that still show React code |
 
-The last two use the Playwright install of the examples app (`npm ci --prefix examples`). CI runs the first two on every change under `www/content`.
+The `check:` ones use the Playwright install of the examples app (`npm ci --prefix examples`). CI runs the type checks and the demo build on every change under `www/content`.

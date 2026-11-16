@@ -249,6 +249,9 @@ export function useInfiniteColumnFilterEditor<
         }
       }
     },
+    // like the React effect, also on mount: a column without a filter value
+    // starts with the filter type's empty value, not with ''
+    { immediate: true },
   );
 
   const setValue = (filterValue: any) => {

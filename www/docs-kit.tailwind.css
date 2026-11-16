@@ -1,6 +1,6 @@
 /*
- * The Tailwind setup of the `*-tailwind.demo.tsx` docs demos
- * (docs-kit.bootstrap.ts hands it to @tailwindcss/browser).
+ * The Tailwind setup for Infinite Table, compiled in the browser by
+ * @tailwindcss/browser.
  */
 
 /* Infinite Table's colors as Tailwind theme colors: `bg-background`, `text-accent`, … */

@@ -32,28 +32,21 @@ const THEMES = fs
   .map((file) => /^generate-theme-(.+)\.ts$/.exec(file)?.[1])
   .filter(Boolean);
 
-/**
- * vanilla-extract, for the library source only. The builder names its
- * import-map entry modules after the specifier, so `…/theme/ocean.css` gets
- * an `….ocean.css.mjs` module - which vanilla-extract would take for one of
- * its `.css.ts` files.
- */
-const vanillaExtract = {
-  name: vanillaConfig.name,
-  setup(build) {
-    const sourceOnly = (callback) => (args) =>
-      args.path.includes('/node_modules/.cache/docs-kit/')
-        ? undefined
-        : callback(args);
-    return vanillaConfig.setup({
-      ...build,
-      onResolve: (options, callback) =>
-        build.onResolve(options, sourceOnly(callback)),
-      onLoad: (options, callback) =>
-        build.onLoad(options, sourceOnly(callback)),
-    });
-  },
-};
+// The Tailwind setup of `*-tailwind.demo.tsx` demos: docs-kit.bootstrap.ts in
+// the docs, and the fork variant below in a forked sandbox.
+const TAILWIND_STYLE = fs.readFileSync(
+  new URL('./docs-kit.tailwind.css', import.meta.url),
+  'utf8',
+);
+// keep in sync with docs-kit.bootstrap.ts
+const TAILWIND_LAYER_ORDER =
+  '@layer theme, base, infinite-table, components, utilities;';
+const TAILWIND_BROWSER_VERSION = JSON.parse(
+  fs.readFileSync(
+    new URL('./node_modules/@tailwindcss/browser/package.json', import.meta.url),
+    'utf8',
+  ),
+).version;
 
 // keep in sync with src/utils/docsKit.ts
 const DEMO_ANCHOR_PREFIX = 'demo-';
@@ -93,7 +86,7 @@ export default {
   libraries: {
     '@infinite-table/infinite-react': {
       entry: '../source/src/index.tsx',
-      plugins: () => [frameworkResolvePlugin('react'), vanillaExtract],
+      plugins: () => [frameworkResolvePlugin('react'), vanillaConfig],
       watch: [SOURCE_DIR],
     },
     // `import '@infinite-table/infinite-react/theme/<name>.css'` in a demo:
@@ -117,12 +110,7 @@ export default {
   },
   bootstrapDefine: {
     // the Tailwind setup of `*-tailwind.demo.tsx` demos
-    'process.env.DOCS_TAILWIND_STYLE': JSON.stringify(
-      fs.readFileSync(
-        new URL('./docs-kit.tailwind.css', import.meta.url),
-        'utf8',
-      ),
-    ),
+    'process.env.DOCS_TAILWIND_STYLE': JSON.stringify(TAILWIND_STYLE),
     'process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY': JSON.stringify(
       process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY || '',
     ),
@@ -145,6 +133,18 @@ export default {
     dependencies: { '@infinite-table/infinite-react': INFINITE_VERSION },
     entryPrelude: forkPrelude('@infinite-table/infinite-react'),
     styles: FORK_STYLES,
+    variants: [
+      {
+        // `*-tailwind.demo.tsx`: the same Tailwind setup as in the docs
+        // (docs-kit.bootstrap.ts), in the forked sandbox's page
+        match: '-tailwind\\.demo\\.tsx$',
+        indexHtmlHead: [
+          `<style>${TAILWIND_LAYER_ORDER}</style>`,
+          `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@${TAILWIND_BROWSER_VERSION}"></script>`,
+          `<style type="text/tailwindcss">\n${TAILWIND_STYLE}</style>`,
+        ].join('\n'),
+      },
+    ],
   },
   frameworks: {
     vue: {
@@ -154,8 +154,15 @@ export default {
           plugins: () => [frameworkResolvePlugin('vue'), vanillaConfig],
           watch: [SOURCE_DIR],
         },
+        // the themes, as for React: the Vue package ships the same theme/<name>.css
+        ...Object.fromEntries(
+          THEMES.map((theme) => [
+            `@infinite-table/infinite-vue/theme/${theme}.css`,
+            { entry: `../source/src/generate-theme-${theme}.ts` },
+          ]),
+        ),
       },
-      stubImports: [/^@infinite-table\/infinite-vue\/.+\.css$/],
+      stubImports: [/^@infinite-table\/infinite-vue\/index\.css$/],
       // a Vue demo opened on its own links back to the Vue page, when there is one
       routeForPage: (pagePath) => {
         const pageFile = path.join(

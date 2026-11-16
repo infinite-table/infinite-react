@@ -1,4 +1,5 @@
-import { defineComponent, h } from 'vue';
+import { Comment, defineComponent, h } from 'vue';
+import type { VNode } from 'vue';
 
 import {
   LoadMaskCls,
@@ -20,8 +21,16 @@ export const LoadMask = defineComponent({
     visible: { type: Boolean, required: true },
   },
   setup(props, { slots }) {
-    return () =>
-      h(
+    return () => {
+      // the grid always passes `loadingText` as the slot: a slot that renders
+      // nothing (loadingText not set) gets the default text, like React's
+      // `children = 'Loading'`
+      const content = slots.default?.() as VNode[] | undefined;
+      const empty =
+        !content ||
+        content.every((vnode) => vnode == null || vnode.type === Comment);
+
+      return h(
         'div',
         {
           class: `${
@@ -33,9 +42,10 @@ export const LoadMask = defineComponent({
           h(
             'div',
             { class: `${LoadMaskTextCls} ${baseCls}-Text` },
-            slots.default ? slots.default() : 'Loading',
+            empty ? 'Loading' : content,
           ),
         ],
       );
+    };
   },
 });

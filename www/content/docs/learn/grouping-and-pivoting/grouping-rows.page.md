@@ -1,14 +1,29 @@
 ---
 title: Grouping rows
+vue: true
 ---
 
 You can use any `field` available in the `DataSource` to do the grouping - it can even be a `field` that is not a column.
+
+<FrameworkContent framework="react">
 
 <Note>
 
 When using TypeScript, both `DataSource` and `InfiniteTable` components are generic and need to be rendered/instantiated with a `DATA_TYPE` parameter. The fields in that `DATA_TYPE` can then be used for grouping.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+When using TypeScript, the types of the props are generic and take a `DATA_TYPE` parameter - for example `DataSourcePropGroupBy<DATA_TYPE>` for the `groupBy` prop. The fields in that `DATA_TYPE` can then be used for grouping.
+
+</Note>
+
+</FrameworkContent>
 
 ```tsx file="grouping-rows.snippet.tsx" region="intro"
 ```
@@ -17,7 +32,7 @@ In the example above, we're grouping by `country`, which is a field available in
 
 Additionally, a `column` object can be used together with the `field` to define how the group column should be rendered.
 
-```tsx file="grouping-rows.snippet.tsx" region="group-by-column"
+```tsx file="grouping-rows.snippet.tsx" region="group-by-column" neutral
 ```
 
 The example below puts it all together.
@@ -51,7 +66,7 @@ When you do grouping, by default, all row groups are expanded. Of course you hav
 
 If you simply want to specify the initial expanded/collapsed state, you should use the <DPropLink name="defaultGroupRowsState" /> prop.
 
-```tsx file="grouping-rows.snippet.tsx" region="specifying-the-default-state-for-group-rows" title="Specifying the default state for group rows"
+```tsx file="grouping-rows.snippet.tsx" region="specifying-the-default-state-for-group-rows" title="Specifying the default state for group rows" neutral
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -72,7 +87,7 @@ You can specify expand/collapse state at any level of nesting.
 Let's suppose by default all rows are collapsed - if you want a node to be visible then you have to specify all its parents as expanded.
 
 So having this
-```tsx file="grouping-rows.snippet.tsx" region="controlling-the-collapse-expand-state"
+```tsx file="grouping-rows.snippet.tsx" region="controlling-the-collapse-expand-state" neutral
 ```
 will show all rows as collapsed, and just as soon as you expand `Mexico` you will see the `backend` group row for Mexico to be expanded.
 </Note>
@@ -95,6 +110,16 @@ The <DPropLink name="onGroupRowsStateChange" /> callback gives you an instance o
 
 <TypeLink name="GroupRowsState" /> give you some additional helper methods, which you can read about <TypeLink name="GroupRowsState">here</TypeLink>
 </Note>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+Keep a `GroupRowsState` instance in a `shallowRef`, as the example above does. A `ref` unwraps the type of the class instance, so its value no longer type-checks as a `GroupRowsState`.
+
+</Note>
+
+</FrameworkContent>
 
 ## Grouping strategies
 
@@ -165,7 +190,7 @@ There are many ways to customize the group column(s) and we're going to show a f
 
 By default, group columns only show values in the group rows - but they are normal columns, so why not bind them to a <PropLink name="columns.field" code={false}>field</PropLink> of the `DATA_TYPE`?
 
-```tsx file="grouping-rows.snippet.tsx" region="binding-the-group-column-to-a-field"
+```tsx file="grouping-rows.snippet.tsx" region="binding-the-group-column-to-a-field" neutral
 ```
 
 This makes the column display the value of the `field` in non-group/normal rows, and in nested group rows when using multi-column grouping. Pivoted grids only render group rows, so that nested-row path is how a bound field still shows — indented one extra nesting level, like a leaf. With <PropLink name="groupRenderStrategy" /> set to `single-column`, the deepest (leaf) group rows in a pivot get that same extra indent. The field does not have to be a grouping key: nested rows show it when every item in the group has the same value (aggregators still win when the field is aggregated). Also, if you have another column bound to that `field`, the renderers/styling of that column will be used for the value of the group column, in those rows.
@@ -177,7 +202,7 @@ This makes the column display the value of the `field` in non-group/normal rows,
 
 The <PropLink name="groupColumn" /> will inherit its own rendering and styling from the columns that are bound to the fields used in <DataSourcePropLink name="groupBy.field" />. However, you can override any of those properties so you have full control over the rendering process.
 
-```tsx file="grouping-rows.snippet.tsx" region="use-groupcolumn-to-customize-rendering"
+```tsx file="grouping-rows.snippet.tsx" region="use-groupcolumn-to-customize-rendering" neutral
 ```
 
 <DemoDescription>
@@ -225,7 +250,7 @@ In addition, <PropLink name="hideColumnWhenGrouped" /> is set to `true`, so the 
 
 When <PropLink name="groupRenderStrategy">groupRenderStrategy="single-column"</PropLink> is used, the group column is sortable by default if all the columns that are involved in grouping are sortable. Sorting the group column makes the `sortInfo` have a value that looks like this:
 
-```ts file="grouping-rows.snippet.tsx" region="sorting-the-group-column"
+```ts file="grouping-rows.snippet.tsx" region="sorting-the-group-column" neutral
 ```
 
 To start with that sort, `{ id: 'group-by', dir: 1 }` is enough — `field` is filled in from <DPropLink name="groupBy" />, and the sort type is taken from the <PropLink name="columns" /> bound to those fields.
@@ -306,17 +331,17 @@ Server side grouping needs two kinds of data responses in order to work properly
 
 Here's an example, that assumes grouping by `country` and `city` and aggregations by `age` and `salary` (average values):
 
-```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading"
+```tsx file="grouping-rows.snippet.tsx" region="server-side-grouping-with-lazy-loading" neutral
 ```
 
 Now let's expand the first group and see how the request/response would look like:
 
-```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-expanded-group"
+```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-expanded-group" neutral
 ```
 
 Finally, let's have a look at the leaf/normal rows and a request for them:
 
-```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-leaf-rows"
+```tsx file="grouping-rows.snippet.tsx" region="lazy-loading-leaf-rows" neutral
 ```
 
 <Note>
@@ -340,5 +365,5 @@ This can be useful in combination with using `dataParams.groupRowsState` from th
 
 </Note>
 
-```tsx file="grouping-rows.snippet.tsx" region="eager-loading-for-group-row-nodes"
+```tsx file="grouping-rows.snippet.tsx" region="eager-loading-for-group-row-nodes" neutral
 ```

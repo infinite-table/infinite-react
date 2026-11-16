@@ -1,6 +1,7 @@
 ---
 title: Sorting
 description: Docs and examples on sorting the DataSource for Infinite Table DataGrid
+vue: true
 ---
 
 `InfiniteTable` comes with multiple sorting behaviours, which are described below.

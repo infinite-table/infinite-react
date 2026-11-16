@@ -1,6 +1,7 @@
 ---
 title: Managing the tree column and expand/collapse icon
 description: Learn how to render the tree expand/collapse icon and manage the tree column
+vue: true
 ---
 
 When rendering a tree, you have to use the `<TreeGrid />` component instead of `<InfiniteTable />`.
@@ -16,7 +17,7 @@ To specify the tree column, you have to to set the <PropLink name="columns.rende
 
 </Note>
 
-```tsx file="tree-column.snippet.tsx" region="specifying-the-tree-column" title="Specifying the tree column"
+```tsx file="tree-column.snippet.tsx" region="specifying-the-tree-column" title="Specifying the tree column" neutral
 ```
 This is very similar to how you specify the [selection column for multi-select configurations](/docs/learn/selection/row-selection#using-a-selection-checkbox).
 
@@ -27,7 +28,17 @@ This is very similar to how you specify the [selection column for multi-select c
 
 Using the <PropLink name="columns.renderTreeIcon">column.renderTreeIcon=true</PropLink> is obviously not enough to customize the expand/collapse icon.
 
+<FrameworkContent framework="react">
+
 This prop can also be a function that returns a React node.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+This prop can also be a function that returns a VNode, created with `h()`.
+
+</FrameworkContent>
 
 <Note>
 

@@ -6,6 +6,7 @@ import { InfiniteTable } from '@infinite-table/infinite-react';
  * resets don't affect the component, and before `components` / `utilities`,
  * so Tailwind classes can override the component's styles.
  */
+// keep in sync with docs-kit.config.mjs
 const TAILWIND_LAYER_ORDER =
   '@layer theme, base, infinite-table, components, utilities;';
 

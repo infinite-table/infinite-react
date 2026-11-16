@@ -1,5 +1,6 @@
 ---
 title: Using Rows at Runtime
+vue: true
 ---
 
 At runtime, the <PropLink name="columns.render" /> function and a <PropLink name="rowStyle">lot</PropLink> <PropLink name="rowClassName">of</PropLink> <PropLink name="columns.style">other</PropLink> functions use the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object to access the current row and use it to decide how to render the current cell or row.
@@ -25,7 +26,7 @@ When there is no <DataSourcePropLink name="groupBy">grouping</DataSourcePropLink
 
 ### Discriminator
 
-```ts file="using-row-info.snippet.tsx" region="discriminator"
+```ts file="using-row-info.snippet.tsx" region="discriminator" neutral
 ```
 
 ## Grouped scenario - normal `rowInfo`
@@ -72,7 +73,7 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts file="using-row-info.snippet.tsx" region="discriminator-normal-row-when-grouping"
+```ts file="using-row-info.snippet.tsx" region="discriminator-normal-row-when-grouping" neutral
 ```
 
 ## Grouped scenario - group `rowInfo`
@@ -130,5 +131,5 @@ Example: People grouped by country and city
 
 ### Discriminator
 
-```ts file="using-row-info.snippet.tsx" region="discriminator-group-row"
+```ts file="using-row-info.snippet.tsx" region="discriminator-group-row" neutral
 ```

@@ -1,6 +1,7 @@
 ---
 title: Using tree selection
 description: Learn how to leverage the tree and specify the tree selection state
+vue: true
 ---
 
 When using a tree grid, a common use-case is to allow users to select nodes, both parent and child nodes.
@@ -22,7 +23,7 @@ If you enable selection, don't forget to specify which column should render a se
 ```tsx file="tree-selection.snippet.tsx" region="example-of-tree-selection-value-with-default" title="Example of tree selection value with default selection set to false"
 ```
 
-```tsx file="tree-selection.snippet.tsx" region="default-selection-true" title="Example of tree selection value with default selection set to true"
+```tsx file="tree-selection.snippet.tsx" region="default-selection-true" title="Example of tree selection value with default selection set to true" neutral
 ```
 
 ```tsx file="tree-default-selection-example.demo.tsx" title="Using default tree selection" height="large"
@@ -89,12 +90,12 @@ You no longer have to call [Tree API](/docs/reference/tree-api) methods to chang
 
 For example, if you want to select all nodes, set the <DPropLink name="treeSelection" /> prop to:
 
-```tsx file="tree-selection.snippet.tsx" region="tree-selection-value-to-show-all-nodes-as" title="Tree selection value to show all nodes as selected"
+```tsx file="tree-selection.snippet.tsx" region="tree-selection-value-to-show-all-nodes-as" title="Tree selection value to show all nodes as selected" neutral
 ```
 
 For deselecting all nodes, the value should be:
 
-```tsx file="tree-selection.snippet.tsx" region="all-nodes-as-deselected" title="All nodes as deselected"
+```tsx file="tree-selection.snippet.tsx" region="all-nodes-as-deselected" title="All nodes as deselected" neutral
 ```
 
 Using controlled tree selection also gives you an easy way to restore a previously saved tree selection at any point in time.

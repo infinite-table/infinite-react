@@ -507,10 +507,14 @@ export const InfiniteTable = defineComponent({
       (brain) => {
         removeAutoSizeRangeListener?.();
         removeAutoSizeRangeListener = brain.onRenderRangeChange(() => {
-          if (getAutoSizeKey() == null) {
+          const key = getAutoSizeKey();
+          if (key == null) {
             return;
           }
-          if (state.value.autoSizeColumnsKey !== lastExecutedAutoSizeKey) {
+          // compare the key, not the prop: for an object prop
+          // ({ key, columnsToResize, ... }) the prop never equals the last
+          // executed key, which re-sized the columns on every range change
+          if (key !== lastExecutedAutoSizeKey) {
             autoSizeRefreshId.value += 1;
           }
         });
@@ -1702,6 +1706,17 @@ export const InfiniteTable = defineComponent({
       }
     };
 
+    // mirrors the React scrollTopKey effect: a new key scrolls the grid
+    // back to the top
+    watch(
+      () => state.value.scrollTopKey,
+      () => {
+        if (scrollerElement) {
+          scrollerElement.scrollTop = 0;
+        }
+      },
+    );
+
     onMounted(() => {
       if (scrollerElement) {
         actions.bodySize = {
@@ -1845,6 +1860,15 @@ export const InfiniteTable = defineComponent({
             return null;
           }
 
+          // like React's useCellRendering: when rows have details, the brain
+          // sizes the row as row + detail, so the cell takes its own height
+          // from the row size cache - otherwise it would cover the detail
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+          const rowHeight = computedRowSizeCacheForDetails
+            ? computedRowSizeCacheForDetails.getRowHeight(rowIndex)
+            : heightWithRowspan;
+
           let rowDetailState: false | 'collapsed' | 'expanded' = false;
           const isRowDetailsEnabled = s.isRowDetailEnabled;
           const isRowDetailsExpanded = s.isRowDetailExpanded;
@@ -1870,7 +1894,7 @@ export const InfiniteTable = defineComponent({
           return h(InfiniteTableColumnCell, {
             key: `${rowIndex}:${column.id}`,
             rowIndex,
-            rowHeight: heightWithRowspan,
+            rowHeight,
             width,
             hidden,
             domRef: domRef as any,

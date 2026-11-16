@@ -27,6 +27,9 @@ export { Menu } from './components/Menu/MenuForVue.vue';
 export type * from './components/Menu/MenuProps';
 export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIconTypes';
 export { useOverlay } from './components/hooks/useOverlay/useOverlayForVue.vue';
+// framework-neutral: positions a node next to another one
+export { alignNode } from './components/hooks/useOverlay/overlayUtils';
+export { useInfinitePortalContainer } from './components/InfiniteTable/hooks/useInfinitePortalContainerForVue.vue';
 
 export { useInfiniteColumnEditor } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnEditorForVue.vue';
 export { useInfiniteColumnCell } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnCellForVue.vue';
@@ -58,6 +61,21 @@ export const components = {
   LoadMask,
   MenuIcon,
 };
+
+// drag and drop: the same names as in the React entry
+export {
+  DragDropProvider,
+  useDragDropProvider,
+  type DragDropSourceAndTarget,
+} from './components/InfiniteTable/components/draggable/DragDropProvider.vue';
+export {
+  DragList,
+  useDragListContext,
+  DRAG_ITEM_ATTRIBUTE,
+  type DragListProps,
+  type DragProxySetupParams,
+  type DragProxyMoveParams,
+} from './components/InfiniteTable/components/draggable/DragList.vue';
 
 export { group, flatten } from './utils/groupAndPivot';
 export { DeepMap } from './utils/DeepMap';

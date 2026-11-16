@@ -1,6 +1,8 @@
 ---
 title: Aggregations
 description: Learn how to define & use aggregations on grouped rows in Infinite Table for React.
+vue:
+  description: Learn how to define & use aggregations on grouped rows in Infinite Table for Vue.
 ---
 
 A natural next step when grouping data is **aggregating the grouped values**. We allow developers to define any number of aggregations and bind them to any column.
@@ -44,7 +46,7 @@ For more complex scenarios, the aggregation should have a `getter` function. If 
 
 Use this `getter` function to compute the value the current item in the array brings to the aggregation.
 
-```tsx file="group-aggregations.snippet.tsx" region="aggregation-custom-getter-function" title="Aggregation_custom_getter_function"
+```tsx file="group-aggregations.snippet.tsx" region="aggregation-custom-getter-function" title="Aggregation_custom_getter_function" neutral
 ```
 
 <Note>
@@ -61,7 +63,7 @@ The completion `done` function is optional - if specified, will be after iterati
 - `data` - the grouped data array.
   This is useful for computing averages, for example:
 
-```tsx file="group-aggregations.snippet.tsx" region="done-function-for-avg-reducer" title="Done function for avg reducer"
+```tsx file="group-aggregations.snippet.tsx" region="done-function-for-avg-reducer" title="Done function for avg reducer" neutral
 ```
 
 ### Putting it all together
@@ -77,7 +79,7 @@ In the above example, note that aggregations are an object where the keys of the
 
 At run-time, you have access to the aggregation reducer results inside group rows - you can use the `rowInfo.reducerResults` object to access those values. For the example above, you change how group rows are rendered for a certain column and display the aggregation results in a custom way:
 
-```tsx file="group-aggregations.snippet.tsx" region="custom-group-row-rendering-for-the-country" title="Custom_group_row_rendering_for_the_country_column"
+```tsx file="group-aggregations.snippet.tsx" region="custom-group-row-rendering-for-the-country" title="Custom_group_row_rendering_for_the_country_column" neutral
 ```
 
 </Note>

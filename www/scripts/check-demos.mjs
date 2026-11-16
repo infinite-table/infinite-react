@@ -3,7 +3,10 @@
 // in headless Chromium and reports the ones that don't render: an uncaught
 // error, the error overlay, an empty page, or the license footer.
 //
-//   npm run check:demos -- [id-prefix…] [--shots <dir>]
+//   npm run check:demos -- [id-prefix…] [--framework <id>] [--shots <dir>]
+//
+// Without `--framework`, the demos of every framework are checked: the React
+// ones and the `*.demo.vue` siblings (`--framework vue` for only those).
 //
 // Playwright comes from the examples app (`npm ci --prefix examples`).
 import fs from 'node:fs';
@@ -17,19 +20,41 @@ const CONCURRENCY = 6;
 
 const args = process.argv.slice(2);
 let shotsDir = null;
+let onlyFramework = null;
 const prefixes = [];
 for (let index = 0; index < args.length; index++) {
   if (args[index] === '--shots') shotsDir = path.resolve(args[++index]);
+  else if (args[index] === '--framework') onlyFramework = args[++index];
   else prefixes.push(args[index].replace(/^content\//, ''));
 }
 
 const require = createRequire(path.resolve(WWW_DIR, '../examples/package.json'));
 const { chromium } = require('@playwright/test');
 
-const manifest = JSON.parse(fs.readFileSync(path.join(PUBLIC_DIR, 'gen/demos/manifest.json'), 'utf8'));
-const ids = Object.keys(manifest.demos)
-  .filter((id) => !prefixes.length || prefixes.some((prefix) => id.startsWith(prefix)))
-  .sort();
+// the primary framework builds into gen/demos, every other one into gen/demos/_<id>
+const DEMOS_DIR = path.join(PUBLIC_DIR, 'gen/demos');
+const manifestFiles = [
+  path.join(DEMOS_DIR, 'manifest.json'),
+  ...fs
+    .readdirSync(DEMOS_DIR)
+    .filter((name) => name.startsWith('_'))
+    .map((name) => path.join(DEMOS_DIR, name, 'manifest.json'))
+    .filter((file) => fs.existsSync(file)),
+];
+/** `{ id, framework, html }` for every demo to check; the same id can exist in two frameworks */
+const demos = manifestFiles
+  .map((file) => JSON.parse(fs.readFileSync(file, 'utf8')))
+  .filter((manifest) => !onlyFramework || manifest.framework === onlyFramework)
+  .flatMap((manifest) =>
+    Object.keys(manifest.demos)
+      .filter((id) => !prefixes.length || prefixes.some((prefix) => id.startsWith(prefix)))
+      .sort()
+      .map((id) => ({ id, framework: manifest.framework, html: manifest.demos[id].html })),
+  );
+if (!demos.length) {
+  console.error(`no demos to check${onlyFramework ? ` for the framework "${onlyFramework}"` : ''}`);
+  process.exit(1);
+}
 
 const TYPES = {
   '.html': 'text/html',
@@ -56,7 +81,10 @@ const context = await browser.newContext({ viewport: { width: 1100, height: 650 
 const failures = [];
 let done = 0;
 
-async function checkDemo(id) {
+async function checkDemo({ id, framework, html }) {
+  // the invalid-license demo is there to show the license footer (and the
+  // license message the grid logs)
+  const licenseExpected = id.endsWith('invalid-license');
   const page = await context.newPage();
   const problems = [];
   page.on('pageerror', (error) => problems.push(`uncaught: ${error.message.split('\n')[0]}`));
@@ -65,6 +93,8 @@ async function checkDemo(id) {
     const text = message.text();
     // a failed request is reported below, with its URL
     if (/Failed to load resource/.test(text)) return;
+    // the license message is a box of lines that start with `*`
+    if (licenseExpected && text.trim().startsWith('*')) return;
     problems.push(`console.error: ${text.split('\n')[0].slice(0, 300)}`);
   });
   page.on('requestfailed', (request) => {
@@ -74,7 +104,7 @@ async function checkDemo(id) {
     if (response.status() >= 400) problems.push(`HTTP ${response.status()}: ${response.url()}`);
   });
   try {
-    await page.goto(`${origin}${manifest.demos[id].html}?theme=dark`, { waitUntil: 'load' });
+    await page.goto(`${origin}${html}?theme=dark`, { waitUntil: 'load' });
     // rendered: the grid has cells (remote data can take a while), or the
     // page has something else to show
     await page
@@ -93,11 +123,10 @@ async function checkDemo(id) {
     if (!state.children) problems.push('nothing rendered');
     else if (!state.grid) problems.push(`no grid rendered (${state.text} chars of text)`);
     else if (!state.cells) problems.push('grid without cells');
-    // the invalid-license demo is there to show the footer
-    if (state.license && !id.endsWith('invalid-license')) problems.push('license footer shown');
+    if (state.license && !licenseExpected) problems.push('license footer shown');
     if (shotsDir) {
-      const file = path.join(shotsDir, `${id.replace(/\//g, '__')}.png`);
-      fs.mkdirSync(shotsDir, { recursive: true });
+      const file = path.join(shotsDir, framework, `${id.replace(/\//g, '__')}.png`);
+      fs.mkdirSync(path.dirname(file), { recursive: true });
       await page.screenshot({ path: file });
     }
   } catch (error) {
@@ -105,11 +134,11 @@ async function checkDemo(id) {
   }
   await page.close();
   done++;
-  if (problems.length) failures.push({ id, problems: [...new Set(problems)] });
-  process.stdout.write(`\r${done}/${ids.length}`);
+  if (problems.length) failures.push({ id: `[${framework}] ${id}`, problems: [...new Set(problems)] });
+  process.stdout.write(`\r${done}/${demos.length}`);
 }
 
-const queue = [...ids];
+const queue = [...demos];
 await Promise.all(
   Array.from({ length: CONCURRENCY }, async () => {
     while (queue.length) await checkDemo(queue.shift());
@@ -122,5 +151,5 @@ process.stdout.write('\r');
 for (const { id, problems } of failures.sort((a, b) => a.id.localeCompare(b.id))) {
   console.log(`${id}\n${problems.map((problem) => `  - ${problem}`).join('\n')}`);
 }
-console.log(`${ids.length - failures.length}/${ids.length} demo(s) render cleanly`);
+console.log(`${demos.length - failures.length}/${demos.length} demo(s) render cleanly`);
 if (failures.length) process.exitCode = 1;

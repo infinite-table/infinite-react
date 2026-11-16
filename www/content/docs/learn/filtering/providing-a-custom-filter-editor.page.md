@@ -1,11 +1,22 @@
 ---
 title: Providing a Custom Filter Editor
 description: Writing a custom filter editor for a column in Infinite Table is straightforward.
+vue: true
 ---
 
 Almost certainly, our current `string` and `number` filters are not enough for you. You will definitely need to write your custom filter editor.
 
+<FrameworkContent framework="react">
+
 Fortunately, doing this is straightforward - it involves using the <HookLink name="useInfiniteColumnFilterEditor" /> hook.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+Fortunately, doing this is straightforward - it involves using the <HookLink name="useInfiniteColumnFilterEditor" /> composable.
+
+</FrameworkContent>
 
 The next snippet shows our implementation of the `number` filter editor:
 
@@ -47,11 +58,27 @@ Now it's time to write the actual `BoolFilterEditor` that the `bool` filter type
 ```tsx file="providing-a-custom-filter-editor.boolfiltereditor.snippet.tsx" region="boolfiltereditor" title="BoolFilterEditor"
 ```
 
+<FrameworkContent framework="react">
+
 <Note>
 
 In the snippet above, note how we're using the <HookLink name="useInfiniteColumnFilterEditor" /> hook to get the current `value` of the filter and also to retrieve the `setValue` function that we need to call when we want to update filtering.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+In the snippet above, note how we're using the <HookLink name="useInfiniteColumnFilterEditor" /> composable to get the current `value` of the filter and also to retrieve the `setValue` function that we need to call when we want to update filtering.
+
+`value` is a ref: read `value.value` inside the render function, so the editor is updated when the filter changes.
+
+</Note>
+
+</FrameworkContent>
 
 <DemoTitle>Writing a `bool` filter type with a custom filter editor</DemoTitle>
 <DemoDescription>

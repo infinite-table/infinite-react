@@ -1,6 +1,7 @@
 ---
 title: Live Pagination
 description: Live Pagination DataSource documentation and examples for Infinite Table DataGrid
+vue: true
 ---
 
 `InfiniteTable` supports live pagination in its `DataSource` via the <DataSourcePropLink name="livePagination" /> prop together with <DataSourcePropLink name="livePaginationCursor" />
@@ -20,7 +21,17 @@ When `dataParams` change (you will be notified via <DataSourcePropLink name="onD
 Basically <DataSourcePropLink name="onDataParamsChange" /> is triggered whenever props (and state) that affect the `DataSource` change - be it via sorting, filtering, live pagination, pivoting, etc.
 </Note>
 
+<FrameworkContent framework="react">
+
 Below you can see a live pagination demo implemented in combination with [react-query](https://react-query.tanstack.com/).
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+The demo below is implemented in React, in combination with [react-query](https://react-query.tanstack.com/). In Vue the same props are used: keep the rows loaded so far in a `ref` and bind it to <DataSourcePropLink name="data" />, and when <DataSourcePropLink name="onDataParamsChange" /> is called with a new `livePaginationCursor`, fetch the next page and add its rows to the `ref`.
+
+</FrameworkContent>
 
 ```tsx file="live-pagination-example.demo.tsx" title="Live pagination - with react-query"
 ```
