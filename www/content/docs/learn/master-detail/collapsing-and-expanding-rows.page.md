@@ -1,6 +1,7 @@
 ---
 title: Master Detail - Collapsing and Expanding Rows
 description: Learn how to use master-detail and configure the state of the row details as expanded or collapsed
+vue: true
 ---
 
 You can control the collapsed/expanded state of rows in the master-detail configuration.
@@ -29,12 +30,12 @@ The <TypeLink name="RowDetailState" code={false}>row detail state</TypeLink> can
 
 - either specify `collapsedRows: true` (which means all rows are collapsed by default) and specify an array of `expandedRows`, which will contain the ids of the rows that should be rendered as expanded.
 
-```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="understanding-and-defining-the-collapse-expand"
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="understanding-and-defining-the-collapse-expand" neutral
 ```
 
 - or specify `expandedRows: true` (which means all rows are expanded by default) and specify an array of `collapsedRows`, which will contain the ids of the rows that should be rendered as collapsed.
 
-```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="expanded-rows-true"
+```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="expanded-rows-true" neutral
 ```
 
 You can pass these objects into either the <PropLink name="defaultRowDetailState" /> (uncontrolled) or the <PropLink name="rowDetailState" /> (controlled).
