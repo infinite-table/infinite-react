@@ -9,7 +9,7 @@ import { useTwitter } from '@www/components/Layout/useTwitter';
 import type { TocHeading } from '@www/utils/getMarkdownHeadings';
 import { Toc } from '@www/components/Layout/Toc';
 import { CopyMarkdownButton } from '@www/components/CopyMarkdownButton';
-import { type BlogPost } from '../sortedPosts';
+import type { BlogPost } from '../sortedPosts';
 
 export function BlogPost({
   post,

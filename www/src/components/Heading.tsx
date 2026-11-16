@@ -1,6 +1,5 @@
 'use client';
 import { ReactNode } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getHashForText } from '../utils/getMarkdownHeadings';
@@ -20,8 +19,9 @@ function Heading(props: {
     6: 'lg:text-xl md:text-lg text-md mt-2',
   }[props.level];
 
-  const Cmp =
-    motion[`h${props.level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'];
+  // plain heading elements: framer-motion's (with no animation) added ~80 kB
+  // gzipped to every docs and blog page
+  const Cmp = `h${props.level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
   const isLink = typeof props.children === 'string' && props.level <= 3;
   const currentPath = usePathname();
