@@ -120,12 +120,15 @@ for (const route of routes) {
   const fallbacks = [];
   for (let index = 0; index < cardCount; index++) {
     const card = cards.nth(index);
-    const title =
-      (await card.locator('.dk-demo-title').first().textContent({ timeout: 1000 }).catch(() => null)) ?? `card ${index + 1}`;
+    const isCodeOnly = await card.evaluate((el) => el.classList.contains('dk-demo--code-only'));
     // the card shows the React file: its demo or snippet has no sibling for this framework
     const isFallback = prefix !== '' && (await card.locator('.dk-demo-notice').count()) > 0;
+    // (a code card without a title would wait out the timeout: only look when the title is needed)
+    if (isCodeOnly && !isFallback) continue;
+    const title =
+      (await card.locator('.dk-demo-title').first().textContent({ timeout: 1000 }).catch(() => null)) ?? `card ${index + 1}`;
     if (isFallback) fallbacks.push(title.trim());
-    if (await card.evaluate((el) => el.classList.contains('dk-demo--code-only'))) continue;
+    if (isCodeOnly) continue;
     live++;
     await card.scrollIntoViewIfNeeded();
     const frameElement = card.locator('iframe').first();
