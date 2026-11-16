@@ -1,9 +1,20 @@
 ---
 title: Master Detail with Custom Row Detail Contents
 description: Learn how to use master-detail to customise your row detail contents
+vue: true
 ---
 
+<FrameworkContent framework="react">
+
 The Infinite Table React DataGrid allows you to render any valid JSX nodes as row details.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+The Infinite Table Vue DataGrid allows you to render any VNodes as row details - the <PropLink name="rowDetailRenderer" /> function creates them with `h()`.
+
+</FrameworkContent>
 
 You can render a DataGrid directly or you can nest the DataGrid at any level of nesting inside the row details.
 Or you can simply choose to render anything else - no DataGrid required.
@@ -12,11 +23,25 @@ Or you can simply choose to render anything else - no DataGrid required.
 
 Your row detail content can include another Infinite Table DataGrid.
 
+<FrameworkContent framework="react">
+
 <Note>
 
 The DataGrid you're rendering inside the row detail doesn't need to be the return value of the <PropLink name="rowDetailRenderer" /> function - it can be nested inside other valid JSX nodes you return from the function.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+The DataGrid you're rendering inside the row detail doesn't need to be the return value of the <PropLink name="rowDetailRenderer" /> function - it can be nested inside other VNodes you return from the function.
+
+</Note>
+
+</FrameworkContent>
 
 <DemoDescription>
 
