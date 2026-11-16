@@ -1,5 +1,12 @@
-import * as React from 'react';
-import type { KeyboardEvent } from 'react';
+import type {
+  ComponentOverride,
+  CSSProperties,
+  HTMLProps,
+  HTMLAttributes,
+  KeyboardEvent,
+  MouseEvent,
+  FocusEvent,
+} from '../../types/FrameworkTypes';
 
 import {
   AggregationReducer,
@@ -41,7 +48,7 @@ import {
 
 import { InfiniteTableRowInfo, InfiniteTableState } from '.';
 import { InfiniteTableComputedValues } from './InfiniteTableComputedValues';
-import { InfiniteCheckBoxProps } from '../components/CheckBox';
+import type { InfiniteCheckBoxProps } from '../components/CheckBoxTypes';
 import { InfiniteTableRowSelectionApi } from '../api/getRowSelectionApi';
 import { MenuColumn, MenuProps } from '../../Menu/MenuProps';
 import { SortDir } from '../../../utils/multisort';
@@ -51,7 +58,7 @@ import {
   InfiniteTableEventHandlerContext,
   InfiniteTableKeyboardEventHandlerContext,
 } from '../eventHandlers/eventHandlerTypes';
-import { MenuIconProps } from '../components/icons/MenuIcon';
+import type { MenuIconProps } from '../components/icons/MenuIconTypes';
 import {
   InfiniteTableCellContext,
   InfiniteTablePublicContext,
@@ -95,14 +102,14 @@ export type InfiniteTableRowStylingFnParams<T> = {
 } & InfiniteTableRowInfoDataDiscriminator<T>;
 export type InfiniteTableRowStyleFn<T> = (
   params: InfiniteTableRowStylingFnParams<T>,
-) => undefined | React.CSSProperties;
+) => undefined | CSSProperties;
 export type InfiniteTableRowClassNameFn<T> = (
   params: InfiniteTableRowStylingFnParams<T>,
 ) => string | undefined;
 export type InfiniteTableCellClassNameFn<T> =
   InfiniteTableColumn<T>['className'];
 export type InfiniteTablePropRowStyle<T> =
-  | React.CSSProperties
+  | CSSProperties
   | InfiniteTableRowStyleFn<T>;
 export type InfiniteTablePropCellStyle<T> = InfiniteTableColumn<T>['style'];
 
@@ -499,12 +506,12 @@ export type InfiniteTableColumnGroupHeaderRenderFunction = (
 
 export type InfiniteTableColumnGroupStyleFunction = (
   params: InfiniteTableColumnGroupHeaderRenderParams,
-) => React.CSSProperties;
+) => CSSProperties;
 
 export type InfiniteTableColumnGroup = {
   columnGroup?: string;
   header?: Renderable | InfiniteTableColumnGroupHeaderRenderFunction;
-  style?: React.CSSProperties | InfiniteTableColumnGroupStyleFunction;
+  style?: CSSProperties | InfiniteTableColumnGroupStyleFunction;
 };
 export type InfiniteTableComputedColumnGroup = InfiniteTableColumnGroup & {
   id: string;
@@ -575,15 +582,13 @@ export type RowDetailComponentProps<T = any> = {
 };
 
 export interface InfiniteTablePropComponents<T = any> {
-  LoadMask?: (
-    props: LoadMaskProps & { children?: React.ReactNode | undefined },
-  ) => React.JSX.Element | null;
-  CheckBox?: (props: InfiniteCheckBoxProps) => React.JSX.Element | null;
-  Menu?: (
-    props: MenuProps & { children?: React.ReactNode | undefined },
-  ) => React.JSX.Element | null;
-  MenuIcon?: (props: MenuIconProps) => React.JSX.Element | null;
-  RowDetail?: (props: RowDetailComponentProps<T>) => React.JSX.Element | null;
+  LoadMask?: ComponentOverride<
+    LoadMaskProps & { children?: Renderable | undefined }
+  >;
+  CheckBox?: ComponentOverride<InfiniteCheckBoxProps>;
+  Menu?: ComponentOverride<MenuProps & { children?: Renderable | undefined }>;
+  MenuIcon?: ComponentOverride<MenuIconProps>;
+  RowDetail?: ComponentOverride<RowDetailComponentProps<T>>;
 }
 
 export type ScrollStopInfo = {
@@ -664,7 +669,7 @@ export interface InfiniteTableProps<T> {
   debugId?: string;
   columns: InfiniteTablePropColumns<T>;
   pivotColumns?: InfiniteTablePropColumns<T, InfiniteTablePivotColumn<T>>;
-  children?: React.JSX.Element | React.JSX.Element[] | React.ReactNode;
+  children?: Renderable;
 
   loadingText?: Renderable;
   components?: InfiniteTablePropComponents<T>;
@@ -820,32 +825,32 @@ export interface InfiniteTableProps<T> {
     context: InfiniteTablePublicContext<T> & {
       actions: InfiniteTableEventHandlerContext<T>['actions'];
     },
-    event: React.KeyboardEvent,
+    event: KeyboardEvent,
   ) => void | InfiniteTablePropOnKeyDownResult;
 
   onCellClick?: (
     context: InfiniteTablePublicContext<T> & InfiniteTableCellContext<T>,
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void;
 
   onCellDoubleClick?: (
     context: InfiniteTablePublicContext<T> & InfiniteTableCellContext<T>,
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void | InfiniteTablePropOnCellDoubleClickResult;
 
   onContextMenu?: (
     context: InfiniteTablePublicContext<T> & {
-      event: React.MouseEvent;
+      event: MouseEvent;
     } & Partial<InfiniteTableRowInfoDataDiscriminatorWithColumn<T>>,
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void;
 
   onCellContextMenu?: (
     context: InfiniteTablePublicContext<T> &
       InfiniteTableRowInfoDataDiscriminatorWithColumn<T> & {
-        event: React.MouseEvent;
+        event: MouseEvent;
       },
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void;
 
   /**
@@ -855,7 +860,7 @@ export interface InfiniteTableProps<T> {
    * on some event handlers (eg: onKeyDown), you might want to use dedicated props that give you access
    * to component state as well.
    */
-  domProps?: React.HTMLAttributes<HTMLDivElement>;
+  domProps?: HTMLAttributes<HTMLDivElement>;
   /**
    * A unique identifier for the table instance. Will not be passed to the DOM.
    */
@@ -891,8 +896,8 @@ export interface InfiniteTableProps<T> {
   headerOptions?: InfiniteTablePropHeaderOptions;
   focusedClassName?: string;
   focusedWithinClassName?: string;
-  focusedStyle?: React.CSSProperties;
-  focusedWithinStyle?: React.CSSProperties;
+  focusedStyle?: CSSProperties;
+  focusedWithinStyle?: CSSProperties;
   columnCssEllipsis?: boolean;
   columnHeaderCssEllipsis?: boolean;
   columnDefaultWidth?: number;
@@ -906,10 +911,10 @@ export interface InfiniteTableProps<T> {
   virtualizeColumns?: InfiniteTablePropVirtualizeColumns<T>;
   virtualizeRows?: boolean;
 
-  onSelfFocus?: (event: React.FocusEvent<HTMLDivElement>) => void;
-  onSelfBlur?: (event: React.FocusEvent<HTMLDivElement>) => void;
-  onFocusWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
-  onBlurWithin?: (event: React.FocusEvent<HTMLDivElement>) => void;
+  onSelfFocus?: (event: FocusEvent<HTMLDivElement>) => void;
+  onSelfBlur?: (event: FocusEvent<HTMLDivElement>) => void;
+  onFocusWithin?: (event: FocusEvent<HTMLDivElement>) => void;
+  onBlurWithin?: (event: FocusEvent<HTMLDivElement>) => void;
 
   /**
    * When a column is hidden by using the column menu, the column menu will stay open,
@@ -937,11 +942,11 @@ export interface InfiniteTableProps<T> {
 
   onRowMouseEnter?: (
     context: InfiniteTableRowContext<T>,
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void;
   onRowMouseLeave?: (
     context: InfiniteTableRowContext<T>,
-    event: React.MouseEvent,
+    event: MouseEvent,
   ) => void;
 
   onReady?: ({
@@ -953,10 +958,10 @@ export interface InfiniteTableProps<T> {
   }) => void;
 
   rowProps?:
-    | React.HTMLProps<HTMLDivElement>
+    | HTMLProps<HTMLDivElement>
     | ((
         rowArgs: InfiniteTableRowStylingFnParams<T>,
-      ) => React.HTMLProps<HTMLDivElement>);
+      ) => HTMLProps<HTMLDivElement>);
 
   licenseKey?: string;
 
@@ -1008,14 +1013,14 @@ export type GetContextMenuItemsReturnType =
     };
 export type InfiniteTablePropGetCellContextMenuItems<T> = (
   info: InfiniteTableRowInfoDataDiscriminatorWithColumn<T> & {
-    event: React.MouseEvent;
+    event: MouseEvent;
   },
   params: InfiniteTablePublicContext<T>,
 ) => Promise<GetContextMenuItemsReturnType> | GetContextMenuItemsReturnType;
 
 export type InfiniteTablePropGetContextMenuItems<T> = (
   param: {
-    event: React.MouseEvent;
+    event: MouseEvent;
   } & Partial<InfiniteTableRowInfoDataDiscriminatorWithColumn<T>>,
   params: InfiniteTablePublicContext<T>,
 ) => Promise<GetContextMenuItemsReturnType> | GetContextMenuItemsReturnType;

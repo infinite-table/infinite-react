@@ -2,28 +2,60 @@
  * Summary statistics for the /benchmark page, computed at build time from the
  * raw samples in public/benchmarks/<run>/results.json.
  *
- * Same algorithm as the benchmark's own report (examples/src/benchmark/
- * benchUtils.ts): medians, and a seeded 95% bootstrap confidence interval of
- * the ratio of medians (or of the difference, when AG Grid has zeros), so the
- * numbers here match report.md exactly.
+ * Same algorithm as the benchmark's own report (src/benchmark/benchUtils.ts
+ * in the benchmark repository): medians, and - for Infinite Table against
+ * each of the other grids - a seeded 95% bootstrap confidence interval of the
+ * ratio of medians (or of the difference, when the other grid has zeros), so
+ * the numbers here match report.md exactly.
  */
-import results from '../../public/benchmarks/2026-11-11-ag-grid-vs-infinite-table/results.json';
+import results from '../../public/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table/results.json';
 
 export const BENCHMARK_RUN_PATH =
-  '/benchmarks/2026-11-11-ag-grid-vs-infinite-table';
+  '/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table';
 
-type Grid = 'ag-grid' | 'infinite';
+export type Grid = 'mui' | 'ag-grid' | 'tanstack' | 'infinite';
+export type OtherGrid = Exclude<Grid, 'infinite'>;
+
+/** in the order they are shown; `key` is the prop of a BenchmarkChart row */
+export const GRIDS: {
+  id: Grid;
+  key: 'mui' | 'ag' | 'tanstack' | 'infinite';
+  name: string;
+  short: string;
+}[] = [
+  { id: 'mui', key: 'mui', name: 'MUI X Data Grid', short: 'MUI X' },
+  { id: 'ag-grid', key: 'ag', name: 'AG Grid', short: 'AG Grid' },
+  { id: 'tanstack', key: 'tanstack', name: 'TanStack Table', short: 'TanStack' },
+  { id: 'infinite', key: 'infinite', name: 'Infinite Table', short: 'Infinite' },
+];
+export const OTHER_GRIDS = GRIDS.filter((grid) => grid.id !== 'infinite') as {
+  id: OtherGrid;
+  key: 'mui' | 'ag' | 'tanstack';
+  name: string;
+  short: string;
+}[];
+
+export const gridName = (grid: Grid) => GRIDS.find((g) => g.id === grid)!.name;
+
 type Metric = { key: string; label: string; unit: string; better: 'lower' | 'higher' };
 type Scenario = {
   scenario: string;
   description: string;
   metrics: Metric[];
-  samples: Record<Grid, Record<string, number>[]>;
+  /** a grid a scenario doesn't run for has no samples */
+  samples: Partial<Record<Grid, Record<string, number>[]>>;
+};
+type ScrollInfo = {
+  ratio: number;
+  scrollMax: number;
+  lastVisibleRow: number;
+  rowCount: number;
 };
 type Size = {
   size: string;
   rowCount: number;
   checksum: string;
+  scroll: Partial<Record<Grid, ScrollInfo>> | null;
   results: Record<string, Scenario>;
 };
 type Results = {
@@ -38,7 +70,7 @@ type Results = {
     os: string;
     cpu: string;
     viewport: string;
-    versions: { 'ag-grid': string; infinite: string };
+    versions: Record<Grid, string>;
   };
   sizes: Record<string, Size>;
 };
@@ -82,45 +114,63 @@ function bootstrap(
   return [percentile(values, 2.5), percentile(values, 97.5)] as const;
 }
 
-export type MetricSummary = {
-  metric: Metric;
-  ag: number;
-  infinite: number;
-  /** Infinite / AG Grid, when it means something */
+/** Infinite Table against one other grid */
+export type Comparison = {
+  /** Infinite / other, when it means something */
   ratio?: number;
-  /** Infinite - AG Grid, when AG Grid has zeros */
+  /** Infinite - other, when the other grid has zeros */
   diff?: number;
   ci: readonly [number, number];
-  winner: 'Infinite Table' | 'AG Grid' | 'tie';
+  /** 'tie': the confidence interval includes "no difference" */
+  winner: Grid | 'tie';
+};
+
+export type MetricSummary = {
+  metric: Metric;
+  /** the median of each grid that was measured */
+  values: Partial<Record<Grid, number>>;
+  vs: Partial<Record<OtherGrid, Comparison>>;
 };
 
 export function summarize(size: string, scenario: string): MetricSummary[] {
   const result = benchmark.sizes[size].results[scenario];
   return result.metrics.map((metric) => {
-    const values = (grid: Grid) => result.samples[grid].map((s) => s[metric.key]);
-    const ag = values('ag-grid');
-    const inf = values('infinite');
-    const agMedian = median(ag);
-    const infMedian = median(inf);
-    const useRatio = ag.filter(Number.isFinite).every((v) => v > 0);
-    const ci = useRatio
-      ? bootstrap(ag, inf, 1234567, (ma, mb) => (ma !== 0 ? mb / ma : undefined))
-      : bootstrap(ag, inf, 7654321, (ma, mb) => mb - ma);
-    const same = useRatio ? 1 : 0;
-    let winner: MetricSummary['winner'] = 'tie';
-    if (Number.isFinite(ci[0]) && (ci[1] < same || ci[0] > same)) {
-      const infLower = ci[1] < same;
-      winner = infLower === (metric.better === 'lower') ? 'Infinite Table' : 'AG Grid';
+    const samples = (grid: Grid) =>
+      (result.samples[grid] ?? []).map((s) => s[metric.key]);
+    const values: MetricSummary['values'] = {};
+    for (const grid of GRIDS) {
+      const v = samples(grid.id);
+      if (v.length) {
+        values[grid.id] = median(v);
+      }
     }
-    return {
-      metric,
-      ag: agMedian,
-      infinite: infMedian,
-      ratio: useRatio ? infMedian / agMedian : undefined,
-      diff: useRatio ? undefined : infMedian - agMedian,
-      ci,
-      winner,
-    };
+    const vs: MetricSummary['vs'] = {};
+    const inf = samples('infinite');
+    for (const { id: other } of OTHER_GRIDS) {
+      const otherSamples = samples(other);
+      if (!inf.length || !otherSamples.length) {
+        continue;
+      }
+      const useRatio = otherSamples.filter(Number.isFinite).every((v) => v > 0);
+      const ci = useRatio
+        ? bootstrap(otherSamples, inf, 1234567, (ma, mb) =>
+            ma !== 0 ? mb / ma : undefined,
+          )
+        : bootstrap(otherSamples, inf, 7654321, (ma, mb) => mb - ma);
+      const same = useRatio ? 1 : 0;
+      let winner: Comparison['winner'] = 'tie';
+      if (Number.isFinite(ci[0]) && (ci[1] < same || ci[0] > same)) {
+        const infLower = ci[1] < same;
+        winner = infLower === (metric.better === 'lower') ? 'infinite' : other;
+      }
+      vs[other] = {
+        ratio: useRatio ? values.infinite! / values[other]! : undefined,
+        diff: useRatio ? undefined : values.infinite! - values[other]!,
+        ci,
+        winner,
+      };
+    }
+    return { metric, values, vs };
   });
 }
 
@@ -130,6 +180,12 @@ export function metric(size: string, scenario: string, key: string) {
     throw new Error(`No metric ${scenario}/${key} for ${size}`);
   }
   return found;
+}
+
+/** the grids that have samples in a scenario */
+export function gridsOf(size: string, scenario: string) {
+  const { samples } = benchmark.sizes[size].results[scenario];
+  return GRIDS.filter((grid) => samples[grid.id]?.length);
 }
 
 export function formatMetric(value: number, unit: string) {

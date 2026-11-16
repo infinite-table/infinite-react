@@ -5,19 +5,14 @@ description: Documentation for Cell Keyboard Navigation for your React Infinite 
 
 By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation</PropLink> for table cells is enabled in React Infinite Table. When a cell is clicked, it shows a highlight that indicates it is the currently active cell. From that point onwards, the user can use the keyboard to navigate the table cells.
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Click on a cell in the table and use the arrow keys to navigate around.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-cells-initial-example.page.tsx"
-
+```tsx file="navigating-cells-initial-example.demo.tsx"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -50,19 +45,14 @@ The active cell should be an array of length 2, where the first number is the in
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This example starts with cell `[2,0]` already active.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-cells-uncontrolled-example.page.tsx"
-
+```tsx file="navigating-cells-uncontrolled-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Listening to active cell changes
 
@@ -74,19 +64,14 @@ When you use controlled <PropLink name="activeCellIndex" />, make sure to use <P
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 This example starts with cell `[2,0]` already active and uses <PropLink name="onActiveCellIndexChange">onActiveCellIndexChange</PropLink> to update <PropLink name="activeCellIndex" />.
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-cells-controlled-example.page.tsx"
-
+```tsx file="navigating-cells-controlled-example.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Toggling group rows
 
@@ -98,19 +83,14 @@ Your active cell doesn't need to be in the group column in order for `Enter` key
 
 </Note>
 
-<Sandpack>
-
-<Description>
+<DemoDescription>
 
 Press the `Enter` key on the active group row to toggle it.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/keyboard-toggle-group-rows-cell-nav.page.tsx"
-
+```tsx file="/docs/reference/keyboard-toggle-group-rows-cell-nav.demo.tsx"
 ```
-
-</Sandpack>
 
 ## Selecting Rows with the Keyboard
 
@@ -118,19 +98,14 @@ When <DPropLink name="rowSelection" /> is enabled (read more about it in the [ro
 
 By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows, when <DPropLink name="selectionMode">selectionMode="multi-row"</DPropLink>. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys.
 
-<Sandpack title="Multi row selection with keyboard support">
-
-<Description>
+<DemoDescription>
 
 Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
-
+```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example.demo.tsx" title="Multi row selection with keyboard support"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -176,16 +151,11 @@ There are other CSS variables as well, that give you fined-tuned control over bo
 - `--infinite-active-cell-background` - the background color. If you use this, you need to set opacity yourself.
 - `--infinite-active-cell-border` - border configuration (eg:`2px solid magenta`). If you use this, it will not be propagated to the background color.
 
-<Sandpack title="Theming active cell highlight">
-
-<Description>
+<DemoDescription>
 
 Use the color picker to configured the desired color for the active cell highlight
 
-</Description>
+</DemoDescription>
 
-```ts file="navigating-cells-theming-example.page.tsx"
-
+```tsx file="navigating-cells-theming-example.demo.tsx" title="Theming active cell highlight"
 ```
-
-</Sandpack>

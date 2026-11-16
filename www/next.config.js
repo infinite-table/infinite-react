@@ -119,6 +119,9 @@ function resolveDocsKitLocal() {
     fork: 'fork/index.ts',
     showcase: 'showcase/index.ts',
     'showcase/styles.css': 'showcase/styles.css',
+    frameworks: 'frameworks/index.ts',
+    'frameworks/react': 'frameworks/react/index.ts',
+    'frameworks/styles.css': 'frameworks/styles.css',
   };
   const paths = { ...base.compilerOptions.paths };
   for (const [subpath, file] of Object.entries(subpaths)) {

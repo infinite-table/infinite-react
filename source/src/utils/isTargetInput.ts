@@ -1,4 +1,4 @@
-export function isTargetInput(target: EventTarget | HTMLElement) {
+export function isTargetInput(target: EventTarget | HTMLElement | null) {
   if (!target) {
     return false;
   }

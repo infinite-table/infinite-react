@@ -1,72 +1,51 @@
 import * as React from 'react';
 
-import SyntaxHighlight from '../SyntaxHighlight';
+import { Demo } from '@thedatagrid/docs-kit/react';
 
-import { TitleBlock } from '../Sandpack/TitleBlock';
-import { ClipboardCopy } from './ClipboardCopy';
+import {
+  DOCS_CODE_THEMES,
+  DOCS_CONTENT_DIR,
+  DOCS_DEMO_ANCHOR_PREFIX,
+  DOCS_DEMO_HEIGHTS,
+  DOCS_DEMO_MANIFEST,
+} from '@www/utils/docsKit';
 
-type BasicCodeBlockProps = {
-  className?: string;
-  inline?: boolean;
-  highlightLines?: number[];
-  title?: string;
-  children?: string;
+type CodeBlockProps = {
+  /** The language of the code: `css`, `sh`, `json`, `tsx`… */
   lang?: string;
+  /** Shown in the block's header. */
+  title?: string;
+  /** Lines to highlight: `2,5-7`. */
+  highlight?: string;
+  children?: string;
 };
 
-export function CodeBlock(props: BasicCodeBlockProps) {
-  return <CodeBlockCmp {...props} />;
-}
+/** Fence languages that shiki knows under another name. */
+const LANG_ALIASES: Record<string, string> = {
+  txt: 'text',
+};
 
-function CodeBlockCmp(props: Omit<BasicCodeBlockProps, 'file'>) {
-  const style = {
-    letterSpacing: '-.012em',
-    textDecoration: 'inherit',
-  };
-  if (props.inline) {
-    return (
-      <div
-        className={`${
-          props.className || ''
-        } underline-offset-10 relative text-base bg-gradient-to-r from-datagrid-blue to-datagrid-purple text-white group inline-block px-2 rounded-md`}
-        style={style}
-      >
-        <pre>
-          <code>{props.children}</code>
-        </pre>
-      </div>
-    );
-  }
-
+/**
+ * A highlighted code block with a copy button: the code-only card of the
+ * docs demos (docs-kit), so every code block of the site looks the same.
+ * A server component.
+ */
+export function CodeBlock(props: CodeBlockProps) {
+  const lang = (props.lang || 'text').toLowerCase();
   return (
-    <div className={`relative rounded-2xl overflow-hidden my-8 max-w-full`}>
-      {props.title && <TitleBlock>{props.title}</TitleBlock>}
-      <div className={`${props.className || ''} text-base group`} style={style}>
-        <>
-          {/* @ts-ignore */}
-          <SyntaxHighlight
-            className={`language-${props.lang || 'js'}`}
-            highlightLines={props.highlightLines}
-          >
-            {props.children}
-          </SyntaxHighlight>
-          <ClipboardCopy text={props.children ?? ''} />
-        </>
-      </div>
-    </div>
-  );
-}
-
-export function InlineCode(
-  props: BasicCodeBlockProps & { files: { name: string; code: string }[] },
-) {
-  const { files, inline, ...otherProps } = props;
-
-  const code = files?.[0]?.code ?? '';
-
-  return (
-    <CodeBlock {...otherProps} inline>
-      {code}
-    </CodeBlock>
+    <Demo
+      context={{
+        contentDir: DOCS_CONTENT_DIR,
+        folder: '',
+        manifest: DOCS_DEMO_MANIFEST,
+        heights: DOCS_DEMO_HEIGHTS,
+        themes: DOCS_CODE_THEMES,
+        anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
+      }}
+      code={props.children ?? ''}
+      lang={LANG_ALIASES[lang] ?? lang}
+      codeTitle={props.title}
+      highlight={props.highlight}
+    />
   );
 }

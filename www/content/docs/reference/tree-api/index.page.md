@@ -5,15 +5,7 @@ layout: API
 
 When rendering the `TreeDataSource` component, you can get access to the Tree API by reading it from the [DataSource API](/docs/reference/datasource-api) <DApiLink name="treeApi" /> property.
 
-```tsx {3}
-<DataSource<DATA_TYPE>
-  onReady={(api: DataSourceApi<DATA_TYPE>) => {
-    api.treeApi // <----
-    // treeApi is accessible here
-    // you may want to store a reference to it in a ref or somewhere in your app state
-    
-  }}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 For updating tree nodes, see the following methods:
@@ -27,13 +19,8 @@ For updating tree nodes, see the following methods:
 
 > Expands all the nodes in the tree. See related <TreeApiLink name="collapseAll" /> prop.
 
-<Sandpack title="Expanding all nodes" size="lg">
-
-```tsx file="tree-expandall-example.page.tsx"
-
+```tsx file="tree-expandall-example.demo.tsx" title="Expanding all nodes" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -45,12 +32,8 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 When some nodes are filtered out, <DPropLink name="multiRowSelectionTarget" /> decides which nodes are selected: all of them (`'all'`, the default), or only the nodes that pass the filter (`'visible'`).
 
-<Sandpack title="Selecting all nodes via Tree API" size="lg">
-
-```tsx file="tree-selectall-example.page.tsx"
+```tsx file="tree-selectall-example.demo.tsx" title="Selecting all nodes via Tree API" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -59,12 +42,8 @@ When some nodes are filtered out, <DPropLink name="multiRowSelectionTarget" /> d
 > Selects the node with the given node path. See related <TreeApiLink name="deselectNode" /> and <TreeApiLink name="toggleNodeSelection" /> methods.
 
 
-<Sandpack title="Selecting a node via Tree API" size="lg">
-
-```tsx file="tree-selectnode-example.page.tsx"
+```tsx file="tree-selectnode-example.demo.tsx" title="Selecting a node via Tree API" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -72,12 +51,8 @@ When some nodes are filtered out, <DPropLink name="multiRowSelectionTarget" /> d
 
 > Deselects the node with the given node path. See related <TreeApiLink name="selectNode" /> and <TreeApiLink name="toggleNodeSelection" /> methods.
 
-<Sandpack title="Deselecting a node via Tree API" size="lg">
-
-```tsx file="tree-selectnode-example.page.tsx"
+```tsx file="tree-selectnode-example.demo.tsx" title="Deselecting a node via Tree API" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -86,12 +61,8 @@ When some nodes are filtered out, <DPropLink name="multiRowSelectionTarget" /> d
 
 > Toggles the selection state of the node with the given node path. See related <TreeApiLink name="selectNode" /> and <TreeApiLink name="deselectNode" /> methods.
 
-<Sandpack title="Toggling a node's selection state via Tree API" size="lg">
-
-```tsx file="tree-selectnode-example.page.tsx"
+```tsx file="tree-selectnode-example.demo.tsx" title="Toggling a node's selection state via Tree API" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -103,12 +74,8 @@ When some nodes are filtered out and <DPropLink name="multiRowSelectionTarget" /
 
 This works if the tree has selection enabled. See [tree selection](/docs/learn/tree-grid/tree-selection) for more details.
 
-<Sandpack title="Deselecting all nodes via Tree API" size="lg">
-
-```tsx file="tree-selectall-example.page.tsx"
+```tsx file="tree-selectall-example.demo.tsx" title="Deselecting all nodes via Tree API" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -116,13 +83,8 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 > Collapses all the nodes in the tree. See related <TreeApiLink name="expandAll" /> prop.
 
-<Sandpack title="Collapsing all nodes" size="lg">
-
-```tsx file="tree-expandall-example.page.tsx"
-
+```tsx file="tree-expandall-example.demo.tsx" title="Collapsing all nodes" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -131,12 +93,8 @@ This works if the tree has selection enabled. See [tree selection](/docs/learn/t
 
 > Returns `true` if the node is expanded, `false` otherwise.
 
-<Sandpack title="Checking if a node is expanded" size="lg">
-
-```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```tsx file="tree-toggleNodeExpandState-example.demo.tsx" title="Checking if a node is expanded" height="large"
 ```
-
-</Sandpack>
 
 </Prop>
 
@@ -156,12 +114,8 @@ See related <TreeApiLink name="expandNode" /> and <TreeApiLink name="collapseNod
 
 Expands the node. Does not affect other child nodes.
 
-<Sandpack title="Expanding a node" size="lg">
-
-```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```tsx file="tree-toggleNodeExpandState-example.demo.tsx" title="Expanding a node" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -176,12 +130,8 @@ If `options.force` is `true`, the node will be expanded even if <DPropLink name=
 
 Collapses the node. Does not affect other child nodes.
 
-<Sandpack title="Collapsing a node" size="lg">
-
-```tsx file="tree-toggleNodeExpandState-example.page.tsx"
+```tsx file="tree-toggleNodeExpandState-example.demo.tsx" title="Collapsing a node" height="large"
 ```
-
-</Sandpack>
 
 <Note>
 

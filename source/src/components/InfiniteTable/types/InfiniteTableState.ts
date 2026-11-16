@@ -1,4 +1,8 @@
-import type { KeyboardEvent, MouseEvent, MutableRefObject } from 'react';
+import type {
+  KeyboardEvent,
+  MouseEvent,
+  MutableRefObject,
+} from '../../types/FrameworkTypes';
 import type { InfiniteTableRowInfo } from '.';
 import type { PointCoords } from '../../../utils/pageGeometry/Point';
 import type { RowDetailCache } from '../../DataSource/RowDetailCache';
@@ -52,12 +56,12 @@ export type CellContextMenuLocation = {
 };
 
 export type CellContextMenuLocationWithEvent = CellContextMenuLocation & {
-  event: React.MouseEvent;
+  event: MouseEvent;
   target: HTMLElement;
 };
 
 export type ContextMenuLocationWithEvent = Partial<CellContextMenuLocation> & {
-  event: React.MouseEvent;
+  event: MouseEvent;
   target: HTMLElement;
 };
 

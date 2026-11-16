@@ -19,35 +19,14 @@ If you enable selection, don't forget to specify which column should render a se
 
 </Note>
 
-```tsx title="Example of tree selection value with default selection set to false"
-import type { TreeSelectionValue } from '@infinite-table/infinite-react';
-
-// Default selection is false, with some selected node paths: ['1'] and ['2', '20']
-// however, node ['1', '10'] is deselected
-const treeSelectioDefaultDeselected: TreeSelectionValue = {
-  defaultSelection: false,
-  selectedPaths: [['1'], ['2', '20']],
-  deselectedPaths: [['1', '10']],
-};
-
+```tsx file="tree-selection.snippet.tsx" region="example-of-tree-selection-value-with-default" title="Example of tree selection value with default selection set to false"
 ```
 
-```tsx title="Example of tree selection value with default selection set to true"
-// Default selection is true, with some deselected node paths: ['2'] and ['3']
-// however, inside ['3'], we have a selected node ['3','30','301']
-const treeSelectionDefaultSelected: TreeSelectionValue = {
-  defaultSelection: true,
-  deselectedPaths: [['2'], ['3']],
-  selectedPaths: [['3','30','301']],
-};
+```tsx file="tree-selection.snippet.tsx" region="default-selection-true" title="Example of tree selection value with default selection set to true"
 ```
 
-<Sandpack title="Using default tree selection" size="lg">
-
-```tsx file="tree-default-selection-example.page.tsx"
+```tsx file="tree-default-selection-example.demo.tsx" title="Using default tree selection" height="large"
 ```
-
-</Sandpack>
 
 
 When using <DPropLink name="defaultTreeSelection" code={false}>uncontrolled tree selection</DPropLink>, the `<TreeDataSource />` will manage the selection state internally, and will update it as a result of user actions. If you want to change the selection, you can use [the Tree API](/docs/reference/tree-api) to do so: <TreeApiLink name="selectNode"  />, <TreeApiLink name="deselectNode" />, <TreeApiLink name="selectAll" />, <TreeApiLink name="deselectAll" />, etc.
@@ -67,18 +46,14 @@ Clicking the expand/collapse icon of a parent node doesn't change the selection,
 
 With single-row selection, clicking a node - a parent node too - selects it, while `cmd`/`ctrl` + click and the spacebar toggle it.
 
-<Sandpack title="Selecting nodes with the mouse and keyboard" size="lg">
-
-<Description>
+<DemoDescription>
 
 Click `Report.docx`, then `shift` + click `unknown.txt` - the collapsed `Private` folder is selected with all its files. Use the buttons to show the selection checkboxes and to choose how users select nodes.
 
-</Description>
+</DemoDescription>
 
-```tsx file="tree-click-selection-example.page.tsx"
+```tsx file="tree-click-selection-example.demo.tsx" height="large" title="Selecting nodes with the mouse and keyboard"
 ```
-
-</Sandpack>
 
 ## Selecting nodes when the tree is filtered
 
@@ -89,18 +64,14 @@ When some nodes are filtered out (see <DPropLink name="treeFilterFunction" />), 
 
 When no nodes are filtered out, both values behave the same.
 
-<Sandpack title="Choosing which nodes the selection acts on when the tree is filtered" size="lg">
-
-<Description>
+<DemoDescription>
 
 The tree is filtered to only show `.docx` files. Select a folder or click "Select all", then clear the filter to see which files were selected with each <DPropLink name="multiRowSelectionTarget" /> value.
 
-</Description>
+</DemoDescription>
 
-```tsx file="tree-selection-target-example.page.tsx"
+```tsx file="tree-selection-target-example.demo.tsx" height="large" title="Choosing which nodes the selection acts on when the tree is filtered"
 ```
-
-</Sandpack>
 
 ## Reacting to user actions
 
@@ -118,28 +89,16 @@ You no longer have to call [Tree API](/docs/reference/tree-api) methods to chang
 
 For example, if you want to select all nodes, set the <DPropLink name="treeSelection" /> prop to:
 
-```tsx title="Tree selection value to show all nodes as selected"
-{
-  defaultSelection: true,
-  deselectedPaths: [],
-}
+```tsx file="tree-selection.snippet.tsx" region="tree-selection-value-to-show-all-nodes-as" title="Tree selection value to show all nodes as selected"
 ```
 
 For deselecting all nodes, the value should be:
 
-```tsx title="All nodes as deselected"
-{
-  defaultSelection: false,
-  selectedPaths: [],
-}
+```tsx file="tree-selection.snippet.tsx" region="all-nodes-as-deselected" title="All nodes as deselected"
 ```
 
 Using controlled tree selection also gives you an easy way to restore a previously saved tree selection at any point in time.
 
-<Sandpack title="Using controlled tree selection" size="lg">
-
-```tsx file="tree-controlled-selection-example.page.tsx"
+```tsx file="tree-controlled-selection-example.demo.tsx" title="Using controlled tree selection" height="large"
 ```
-
-</Sandpack>
 

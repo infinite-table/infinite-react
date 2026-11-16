@@ -7,25 +7,12 @@ Available starting with version `6.1.1`.
 
 See the [Keyboard Navigation](/docs/learn/keyboard-navigation/navigating-cells) page for more details.
 
-```tsx title="Configuring the keyboard navigation to be 'cell'"
-<InfiniteTable keyboardNavigation="cell" />
-
-// can be "cell" (default), "row" or false
+```tsx file="index.snippet.tsx" region="configuring-the-keyboard-navigation-to-be-cell" title="Configuring the keyboard navigation to be 'cell'"
 ```
 
 You can retrieve the keyboard navigation api by reading it from the `api.keyboardNavigationApi` property.
 
-```tsx {4}
-
-const onReady = ({api}: {api:InfiniteTableApi<DATA_TYPE>}) => {
-  // do something with it
-  api.keyboardNavigationApi.gotoCell({direction: 'top'})
-}
-
-<InfiniteTable<DATA_TYPE>
-  columns={[...]}
-  onReady={onReady}
-/>
+```tsx file="index.snippet.tsx" region="intro"
 ```
 
 See the [Infinite Table API page](/docs/reference/api) for the main API.
@@ -105,13 +92,8 @@ This sets the value for <PropLink name="activeCellIndex" />
 > Changes the active cell index, by navigating to the specified direction (equivalent to pressing the arrow keys).
 See related <KeyNavApiLink name="setActiveCellIndex" />
 
-<Sandpack title="Using KeyboardNavigationApi.gotoCell">
-
-```tsx file="goto-cell-example.page.tsx"
-
+```tsx file="goto-cell-example.demo.tsx" title="Using KeyboardNavigationApi.gotoCell"
 ```
-
-</Sandpack>
 
 
 </Prop>

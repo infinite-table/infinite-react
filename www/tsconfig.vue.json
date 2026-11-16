@@ -1,0 +1,25 @@
+{
+  // Type checking of the Vue docs demos and snippets (`npm run tsc:vue`,
+  // vue-tsc): `content/**/*.vue` against the Vue entry of the library
+  // *source*, like tsconfig.json does for the React ones.
+  "extends": "../source/tsconfig.vue.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "baseUrl": "./",
+    "noEmit": true,
+    "incremental": false,
+    "paths": {
+      "@infinite-table/infinite-vue": ["../source/src/index.vue.tsx"],
+      // one copy of Vue's types for the demos and the library source
+      "vue": ["../source/node_modules/vue"],
+      "vue/*": ["../source/node_modules/vue/*"]
+    }
+  },
+  "include": [
+    "content/**/*.vue",
+    "content/**/*.snippet.vue.ts",
+    "content/vue-env.d.ts",
+    "../source/globals.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

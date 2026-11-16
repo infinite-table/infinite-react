@@ -11,14 +11,7 @@ After recently building [a few other themes](/blog/2024/10/10/new-themes-availab
 
 So we built one! It's simply called `shadcn`. For it to work, you'll need to make sure the shadcn/ui CSS variables are available, as the `<InfiniteTable />` theme variables will rely on the values of those CSS variables. Other than that, simply import the `<InfiniteTable />` CSS file and you're good to go.
 
-```tsx
-import '@infinite-table/infinite-react/index.css';
-
-<div className="infinite-theme-name--shadcn dark">
-  <DataSource  {...}>
-    <InfiniteTable {...} />
-  </DataSource>
-</div>
+```tsx file="shadcn-ui-theme-available.snippet.tsx" region="intro"
 ```
 
 You'll have to include the `infinite-theme-name--shadcn` class name on a parent element of `<InfiniteTable />` (or even on the `<InfiniteTable />` component itself). Additionally, for dark mode, you'll have to use the `dark` class name (on the body element for example) to put the shadcn/ui CSS variables in dark mode, and then `<InfiniteTable />` will pick that up. This means that for this theme, using the `infinite-theme-mode--dark` class name is optional.

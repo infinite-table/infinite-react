@@ -5,8 +5,11 @@ import styles from './BenchmarkChart.module.css';
 export type BenchmarkChartRow = {
   /** what is measured, e.g. "First rows painted, 300k rows" */
   label: string;
-  ag: number;
-  infinite: number;
+  /** a grid that was not measured for this row has no value */
+  mui?: number;
+  ag?: number;
+  tanstack?: number;
+  infinite?: number;
   /** short remark shown next to the label, e.g. "no significant difference" */
   note?: string;
 };
@@ -21,8 +24,11 @@ export type BenchmarkChartProps = {
   rows: BenchmarkChartRow[];
 };
 
+// in this order everywhere: the colors were checked next to each other
 const SERIES = [
+  { key: 'mui', name: 'MUI X Data Grid' },
   { key: 'ag', name: 'AG Grid' },
+  { key: 'tanstack', name: 'TanStack Table' },
   { key: 'infinite', name: 'Infinite Table' },
 ] as const;
 
@@ -46,16 +52,23 @@ function compare(value: number, other: number, otherName: string) {
 }
 
 /**
- * Paired horizontal bars comparing AG Grid and Infinite Table on a few
- * metrics that share a unit - for the benchmark blog posts.
+ * Grouped horizontal bars comparing Infinite Table with other grids on a few
+ * metrics that share a unit - for the benchmark page and blog posts. A chart
+ * shows the grids that have a value in at least one of its rows.
  *
  * Rendered on the server, no client JS: the values are printed at the bar
  * ends, the hover/focus tooltip is CSS-only and every chart has a table view.
  */
 export function BenchmarkChart(props: BenchmarkChartProps) {
   const { title, subtitle, unit, better = 'lower', rows } = props;
-  const max = Math.max(...rows.flatMap((row) => [row.ag, row.infinite]), 0);
+  const series = SERIES.filter((s) => rows.some((row) => row[s.key] != null));
+  const max = Math.max(
+    ...rows.flatMap((row) => series.map((s) => row[s.key] ?? 0)),
+    0,
+  );
   const caption = [subtitle, `${better} is better`].filter(Boolean).join(' · ');
+  // with more than two grids, every bar has the name of its grid next to it
+  const named = series.length > 2;
 
   return (
     <figure className={styles.root}>
@@ -65,10 +78,10 @@ export function BenchmarkChart(props: BenchmarkChartProps) {
       </figcaption>
 
       <div className={styles.legend} aria-hidden="true">
-        {SERIES.map((series) => (
-          <span key={series.key} className={styles.legendItem}>
-            <span className={`${styles.swatch} ${styles[series.key]}`} />
-            {series.name}
+        {series.map((s) => (
+          <span key={s.key} className={styles.legendItem}>
+            <span className={`${styles.swatch} ${styles[s.key]}`} />
+            {s.name}
           </span>
         ))}
       </div>
@@ -83,19 +96,24 @@ export function BenchmarkChart(props: BenchmarkChartProps) {
               ) : null}
             </div>
             <div className={styles.bars}>
-              {SERIES.map((series, index) => {
-                const value = row[series.key];
-                const other = SERIES[1 - index];
+              {series.map((current) => {
+                const value = row[current.key];
+                if (value == null) {
+                  return null;
+                }
                 const formatted = formatValue(value, unit);
                 return (
                   <div
-                    key={series.key}
-                    className={styles.bar}
+                    key={current.key}
+                    className={`${styles.bar} ${named ? styles.named : ''}`}
                     tabIndex={0}
-                    aria-label={`${row.label} - ${series.name}: ${formatted}`}
+                    aria-label={`${row.label} - ${current.name}: ${formatted}`}
                   >
+                    {named ? (
+                      <span className={styles.name}>{current.name}</span>
+                    ) : null}
                     <span
-                      className={`${styles.fill} ${styles[series.key]}`}
+                      className={`${styles.fill} ${styles[current.key]}`}
                       style={
                         {
                           '--bc-fraction': max ? value / max : 0,
@@ -107,14 +125,23 @@ export function BenchmarkChart(props: BenchmarkChartProps) {
                       <strong>{formatted}</strong>
                       <span className={styles.tooltipSeries}>
                         <span
-                          className={`${styles.lineKey} ${styles[series.key]}`}
+                          className={`${styles.lineKey} ${styles[current.key]}`}
                         />
-                        {series.name}
+                        {current.name}
                       </span>
                       <span className={styles.tooltipDetail}>{row.label}</span>
-                      <span className={styles.tooltipDetail}>
-                        {compare(value, row[other.key], other.name)}
-                      </span>
+                      {series.map((other) => {
+                        const otherValue = row[other.key];
+                        return other.key === current.key ||
+                          otherValue == null ? null : (
+                          <span
+                            key={other.key}
+                            className={styles.tooltipDetail}
+                          >
+                            {compare(value, otherValue, other.name)}
+                          </span>
+                        );
+                      })}
                     </span>
                   </div>
                 );
@@ -130,9 +157,9 @@ export function BenchmarkChart(props: BenchmarkChartProps) {
           <thead>
             <tr>
               <th scope="col">{title}</th>
-              {SERIES.map((series) => (
-                <th key={series.key} scope="col">
-                  {series.name}
+              {series.map((s) => (
+                <th key={s.key} scope="col">
+                  {s.name}
                 </th>
               ))}
             </tr>
@@ -144,8 +171,14 @@ export function BenchmarkChart(props: BenchmarkChartProps) {
                   {row.label}
                   {row.note ? ` (${row.note})` : ''}
                 </th>
-                <td>{formatValue(row.ag, unit)}</td>
-                <td>{formatValue(row.infinite, unit)}</td>
+                {series.map((s) => {
+                  const value = row[s.key];
+                  return (
+                    <td key={s.key}>
+                      {value == null ? '–' : formatValue(value, unit)}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

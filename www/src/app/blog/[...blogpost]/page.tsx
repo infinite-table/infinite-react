@@ -1,4 +1,7 @@
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+
+import { siteContent } from '@www/content';
 import { asMeta } from '@www/utils/asMeta';
 import { getMarkdownHeadingsForPage } from '@www/utils/getMarkdownHeadings';
 
@@ -90,6 +93,12 @@ export default async function BlogPostPage({
 }) {
   const p = await params;
   const path = `/blog/${p.blogpost.join('/')}`;
+
+  // a moved post keeps a stub at its old URL (draft: true + redirect_to)
+  const redirectTo = siteContent.paths[path]?.frontmatter?.redirect_to;
+  if (redirectTo) {
+    redirect(redirectTo);
+  }
 
   let arr = sortedPosts;
   let postIndex = arr.findIndex((post) => post.href === path);

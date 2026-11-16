@@ -1,4 +1,5 @@
 import {
+  computed,
   defineComponent,
   inject,
   onBeforeUnmount,
@@ -7,7 +8,7 @@ import {
   shallowRef,
   watch,
 } from 'vue';
-import type { InjectionKey, ShallowRef } from 'vue';
+import type { ComputedRef, InjectionKey, ShallowRef } from 'vue';
 
 import { buildManagedVueComponent } from '../hooks/useComponentState/useManagedComponent.vue';
 
@@ -145,6 +146,21 @@ export function useDataSourceContext<T = any>() {
   return inject(
     DataSourceInjectionKeyForVue,
   ) as DataSourceContextValueForVue<T>;
+}
+
+/**
+ * Vue sibling of the React `useDataSourceState` hook: selects a value from
+ * the state of the closest <DataSource>. Returns a computed ref, so whatever
+ * reads it re-renders only when the selected value changes.
+ *
+ * Call it in `setup()` of a component rendered inside <DataSource>.
+ */
+export function useDataSourceState<R, T = any>(
+  selector: (state: DataSourceState<T>) => R,
+): ComputedRef<R> {
+  const { state } = useDataSourceContext<T>();
+
+  return computed(() => selector(state.value));
 }
 
 const { useManagedComponent: useManagedDataSourceVue } =

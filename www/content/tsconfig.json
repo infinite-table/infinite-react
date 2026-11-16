@@ -1,0 +1,22 @@
+{
+  // Type checking of the docs demos and snippets (`npm run tsc:content`, and
+  // the editor for files under content/): against the library *source*, like
+  // ../tsconfig.json, but without the unused-code checks - a snippet declares
+  // things only to show them.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "../next-env.d.ts",
+    "../app.d.ts",
+    "../../source/globals.d.ts",
+    "docs/**/*.ts",
+    "docs/**/*.tsx",
+    "blog/**/*.ts",
+    "blog/**/*.tsx"
+  ],
+  // the Vue ones (`*.snippet.vue.ts`) are checked by ../tsconfig.vue.json
+  "exclude": ["**/*.vue.ts"]
+}

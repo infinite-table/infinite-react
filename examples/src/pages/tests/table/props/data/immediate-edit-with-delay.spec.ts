@@ -45,7 +45,13 @@ export default test.describe.parallel('Immediate edit works', () => {
     };
 
     await rowModel.clickCell(cell);
-    await page.keyboard.type('infinite table');
+
+    // The first key starts the edit on the next animation frame, so the
+    // editor has to be there before the rest is typed. Without waiting,
+    // Enter could arrive before the editor, and then nothing closed it.
+    await page.keyboard.type('i');
+    await editor.waitFor();
+    await page.keyboard.type('nfinite table');
     await page.keyboard.press('Enter');
 
     await editor.waitFor({

@@ -5,10 +5,7 @@ description: InfiniteTable DataGrid component supports single and multiple row s
 
 `InfiniteTable` offers support for both single and multiple row selection. For selecting cells, see the [Cell Selection](/docs/learn/selection/cell-selection) page.
 
-```tsx title="Configure the selection mode on the DataSource component"
-<DataSource selectionMode="single-row" />
-
-// can be "single-row", "multi-row", "multi-cell" or false
+```tsx file="row-selection.snippet.tsx" region="configure-the-selection-mode-on-the-datasource" title="Configure the selection mode on the DataSource component"
 ```
 
 Multiple row selection allows people to select rows just like they would in their MacOS Finder app, by clicking desired rows and using the cmd/shift keys as modifiers.
@@ -35,30 +32,17 @@ You can explicitly specify the <DPropLink name="selectionMode" /> as `"single-ro
 
 This is the most basic row selection - in this case the <DPropLink name="rowSelection" /> prop (or the uncontrolled variant <DPropLink name="defaultRowSelection" />) will be the primary key of the selected row (a string or a number or `null` for no selection).
 
-```ts {4}
-<DataSource<DATA_TYPE>
-  primaryKey="id"
-  data={[...]}
-  defaultRowSelection={4}
->
-  <InfiniteTable {...} />
-</DataTable>
-
+```ts file="row-selection.snippet.tsx" region="single-row-selection"
 ```
 
-<Sandpack title="Uncontrolled single row selection">
-
-<Description>
+<DemoDescription>
 
 Single row selection example - click a row to see selection change. You can also use your keyboard - press the spacebar to select/deselect a row.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-single-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/default-single-row-selection-example.demo.tsx" title="Uncontrolled single row selection"
 ```
-
-</Sandpack>
 
 Row selection is changed when the user clicks a row. Clicking a row selects it and clicking it again keeps the row selected. For deselecting the row with the mouse use `cmd`/`ctrl` + click.
 
@@ -78,19 +62,14 @@ Both `cell` and `row` <PropLink name="keyboardNavigation" /> are available and y
 
 Row selection can be used as a <DPropLink name="rowSelection" code={false}>controlled</DPropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. For the controlled version, make sure you also define your <DPropLink name="onRowSelectionChange" /> callback prop to update the selection.
 
-<Sandpack title="Controlled single row selection">
-
-<Description>
+<DemoDescription>
 
 This example uses <DPropLink name="onRowSelectionChange" /> callback prop to update the controlled <DPropLink name="rowSelection" />
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-single-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-single-row-selection-example.demo.tsx" title="Controlled single row selection"
 ```
-
-</Sandpack>
 
 # Multi Row Selection
 
@@ -103,13 +82,7 @@ The <PropLink name="multiRowSelectionWith" /> prop decides whether clicking a ro
 - `'checkbox'` (the default) - while a visible column shows a selection checkbox (see <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink>), users select rows with the checkboxes and the spacebar. Clicking a row only makes it the active row (or cell) - it doesn't change the selection. When no visible column shows a selection checkbox, it works like `'click'`.
 - `'click'` - clicking a row selects it, with `cmd`/`ctrl` and `shift` as modifier keys. The selection checkboxes, if any, work as well.
 
-```tsx {3}
-<DataSource selectionMode="multi-row" {...}>
-  <InfiniteTable
-    multiRowSelectionWith="click"
-    columns={columnsWithACheckboxColumn}
-  />
-</DataSource>
+```tsx file="row-selection.snippet.tsx" region="choosing-how-users-select-rows"
 ```
 
 Both values work the same with or without grouping, and with [tree data](/docs/learn/tree-grid/tree-selection#selecting-nodes-with-the-mouse-and-keyboard). In both cases, users can also select rows with the keyboard, and all the gestures (clicks, checkbox clicks and the spacebar) share the same starting point for `shift` ranges.
@@ -128,19 +101,14 @@ For selecting with the mouse, the following gestures are supported (we tried to 
 
 When the data is grouped, a group row is selected as a whole: clicking it selects all the rows in the group (and in its nested groups), and `cmd`/`ctrl` + click toggles the whole group. Clicking the expand/collapse icon of a group row doesn't change the selection.
 
-<Sandpack title="Multi row selection">
-
-<Description>
+<DemoDescription>
 
 Use your mouse to select multiple rows. Expect click and click + `cmd`/`ctrl`/`shift` modifier keys to behave just like they are in the MacOS Finder app.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-selection-mode-multi-row-example.page.tsx"
-
+```tsx file="/docs/reference/default-selection-mode-multi-row-example.demo.tsx" title="Multi row selection"
 ```
-
-</Sandpack>
 
 ### Selecting a range of rows with groups
 
@@ -176,39 +144,29 @@ If you then `shift` + click the `Rust` group row instead, the range ends just ab
 
 The same rules apply to `shift` + spacebar and to `shift` + clicking a selection checkbox.
 
-<Sandpack title="Selecting a range of rows with groups">
-
-<Description>
+<DemoDescription>
 
 Click `TS 2`, then `shift` + click `Rust 2` - `Go` is collapsed, so all its rows are selected. Then `shift` + click the `Rust` group row - the range now ends above the rows of `Rust`.
 
 Switch <PropLink name="multiRowSelectionWith" /> to `'checkbox'` to select with the checkboxes in the group column instead.
 
-</Description>
+</DemoDescription>
 
-```ts file="row-selection-ranges-with-groups-example.page.tsx"
-
+```tsx file="row-selection-ranges-with-groups-example.demo.tsx" title="Selecting a range of rows with groups"
 ```
-
-</Sandpack>
 
 ### Keyboard interactions
 
 By default <PropLink name="keyboardSelection" /> is enabled, so you can use the **spacebar** key to select multiple rows. Using the spacebar key is equivalent to doing a mouse click, so expect the combination of **spacebar** + `cmd`/`ctrl`/`shift` modifier keys to behave just like clicking + the same modifier keys. This also works for group rows.
 
-<Sandpack title="Multi row selection with keyboard support">
-
-<Description>
+<DemoDescription>
 
 Use spacebar + optional `cmd`/`ctrl`/`shift` modifier keys just like you would do clicking + the same modifier keys.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-selection-mode-multi-row-keyboard-toggle-example.page.tsx"
-
+```tsx file="/docs/reference/default-selection-mode-multi-row-keyboard-toggle-example.demo.tsx" title="Multi row selection with keyboard support"
 ```
-
-</Sandpack>
 
 <Note>
 
@@ -224,21 +182,7 @@ With the default <PropLink name="multiRowSelectionWith" /> (`'checkbox'`), once 
 
 Configuring checkbox selection is as easy as specifying <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> on any of the columns in the grid. <PropLink name="columns.renderSelectionCheckBox">renderSelectionCheckBox</PropLink> can either be the boolean `true` or a render function that allows the customization of the selection checkbox.
 
-```ts {8}
-const columns: InfiniteTablePropColumns<Developer> = {
-  id: {
-    field: 'id',
-    defaultWidth: 80,
-  },
-  country: {
-    // show the selection checkbox for this column
-    renderSelectionCheckBox: true,
-    field: 'country',
-  },
-  firstName: {
-    field: 'firstName',
-  },
-};
+```ts file="row-selection.snippet.tsx" region="using-a-selection-checkbox"
 ```
 
 <Note>
@@ -249,19 +193,14 @@ There is nothing prevening you from providing multiple checkbox columns.
 
 </Note>
 
-<Sandpack title="Multi row selection with checkbox support">
-
-<Description>
+<DemoDescription>
 
 Use the selection checkboxes to select rows. You can also use the spacebar key (+ optional shift modifier) to modify the selection
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/default-checkbox-selection-multi-row-example.page.tsx"
-
+```tsx file="/docs/reference/default-checkbox-selection-multi-row-example.demo.tsx" title="Multi row selection with checkbox support"
 ```
-
-</Sandpack>
 
 ### Mouse interactions
 
@@ -292,64 +231,27 @@ When some rows are filtered out, use the <DPropLink name="multiRowSelectionTarge
 - `'all'` (the default) - they act on all the rows in the data (or in the group), including the rows that are filtered out. The header and group checkboxes are only checked when all those rows are selected.
 - `'visible'` - they act only on the rows that pass the filter. Rows that are filtered out keep their current selection. The header and group checkboxes are checked when all the visible rows are selected.
 
-```tsx {4}
-<DataSource<Developer>
-  primaryKey="id"
-  selectionMode="multi-row"
-  multiRowSelectionTarget="visible"
-  filterFunction={({ data }) => data.preferredLanguage === 'TypeScript'}
-/>
+```tsx file="row-selection.snippet.tsx" region="selecting-all-rows-when-the-data-is-filtered"
 ```
 
 When no rows are filtered out, both values behave the same.
 
-<Sandpack title="Choosing which rows the selection acts on when the data is filtered">
-
-<Description>
+<DemoDescription>
 
 The data is grouped by `stack` and filtered to only show TypeScript developers.
 
 Click the header checkbox, a group checkbox or the "Select all" button, then remove the filter, to see which rows were selected with each <DPropLink name="multiRowSelectionTarget" /> value.
 
-</Description>
+</DemoDescription>
 
-```ts file="row-selection-target-example.page.tsx"
-
+```tsx file="row-selection-target-example.demo.tsx" title="Choosing which rows the selection acts on when the data is filtered"
 ```
-
-</Sandpack>
 
 ## Specify a `rowSelection` value
 
 When multiple row selection is used, the <DPropLink name="rowSelection" /> prop should be an object that can have the following shape:
 
-```ts
-const rowSelection = {
-  selectedRows: [3, 6, 100, 23], // those specific rows are selected
-  defaultSelection: false, // while all other rows are deselected by default
-};
-
-// or
-const rowSelection = {
-  deselectedRows: [3, 6, 100, 23], // those specific rows are deselected
-  defaultSelection: true, // all other rows are selected
-};
-
-// or, for grouped data - this example assumes groupBy=continent,country,city
-
-// for using this form of multi-row selection when you have grouping,
-// you have to specify DataSource.useGroupKeysForMultiRowSelection = true
-const rowSelection = {
-  selectedRows: [
-    45, // row with id 45 is selected, no matter the group it is nested in
-    ['Europe', 'France'], // all rows in Europe/France are selected
-    ['Asia'], // all rows in Asia are selected
-  ],
-  deselectedRows: [
-    ['Europe', 'France', 'Paris'], // all rows in Paris are deselected
-  ],
-  defaultSelection: false, // all other rows are selected
-};
+```ts file="row-selection.snippet.tsx" region="specify-a-rowselection-value"
 ```
 
 As shown above, the `rowSelection.selectedRows` and `rowSelection.deselectedRows` arrays can either contain:
@@ -372,23 +274,7 @@ When you have both grouping and <DPropLink name="lazyLoad">lazy loading</DPropLi
 
 When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
-```ts {6}
-// this example assumes groupBy=continent,country,city
-const rowSelection = {
-  selectedRows: [
-    // row with id 45 is selected - we need this because in the lazyLoad scenario,
-    // not all parents might have been made available yet
-    ['Europe','Italy', 'Rome', 45],
-    ['Europe','France'], // all rows in Europe/France are selected
-    ['Asia'] // all rows in Asia are selected
-  ]
-  deselectedRows: [
-    ['Europe','Italy','Rome'] // all rows in Rome are deselected
-    // but note that row with id 45 is selected, so Rome will be
-    // rendered with an indeterminate selection state
-  ],
-  defaultSelection: false // all other rows are selected
-}
+```ts file="row-selection.snippet.tsx" region="row-selection-with-lazy-load"
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.
@@ -399,9 +285,7 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordingly as a result of user interaction.
 
-<Sandpack title="Multi row checkbox selection with grouping" >
-
-<Description>
+<DemoDescription>
 
 This example shows how you can use multiple row selection with a predefined controlled value.
 
@@ -409,13 +293,10 @@ Go ahead and select some groups/rows and see the selection value adjust.
 
 The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/controlled-multi-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/controlled-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with grouping"
 ```
-
-</Sandpack>
 
 ## Multi Selection with Lazy Load and Grouping
 
@@ -438,9 +319,7 @@ Without them, or with `'visible'`, the checkboxes only count the rows that pass 
 
 A group whose count is not known yet (it was never loaded) counts as one row.
 
-<Sandpack title="Multi row checkbox selection with lazy data and grouping" >
-
-<Description>
+<DemoDescription>
 
 The `DataSet` has lazy loading and grouping.
 
@@ -448,10 +327,7 @@ The selection uses group keys (see <DPropLink name="useGroupKeysForMultiRowSelec
 
 Note in the example below that some of the group rows are partly selected, even if the leaf rows which are specified as selected in the <DPropLink name="rowSelection" /> are not yet loaded.
 
-</Description>
+</DemoDescription>
 
-```ts file="$DOCS/reference/lazy-multi-row-selection-example.page.tsx"
-
+```tsx file="/docs/reference/lazy-multi-row-selection-example.demo.tsx" title="Multi row checkbox selection with lazy data and grouping"
 ```
-
-</Sandpack>

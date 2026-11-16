@@ -1,0 +1,51 @@
+name: 'CI: docs content'
+
+# The docs demos and snippets (www/content) are type-checked against the
+# library source and every demo has to build. Changes under source/ are
+# covered by ci.yml, whose ts-check runs the same content check.
+on:
+  push:
+    paths:
+      - 'www/content/**'
+      - 'www/tsconfig.json'
+      - 'www/docs-kit.config.mjs'
+      - 'www/docs-kit.bootstrap.ts'
+      - 'www/docs-kit.tailwind.css'
+      - 'www/package.json'
+      - '.github/workflows/www-content-check.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  content-check:
+    name: Type-check and build the docs demos
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BASE_URL: https://data.infinite-table.com
+    strategy:
+      matrix:
+        node-version: [24.x]
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Execute 'npm ci' in monorepo
+        run: npm ci
+
+      - name: Install source
+        run: npm i --prefix source
+
+      - name: Install www
+        run: npm i --prefix www
+
+      - name: Type-check the docs demos and snippets against the source
+        run: npm run --prefix www tsc:content
+
+      - name: Build the docs demos
+        run: npm run --prefix www build-demos

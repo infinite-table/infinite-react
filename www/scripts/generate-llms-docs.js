@@ -21,6 +21,12 @@ const siteContent = require(path.join(WWW_DIR, 'src/.gen/index.json'));
 /** @thedatagrid/docs-kit/code - regions and highlight markers (loaded in `main`). */
 let docsKitCode = null;
 
+/**
+ * src/utils/docsFrameworkPages.ts (loaded in `main`). The .md pages are the
+ * React docs: `<FrameworkContent>` blocks for other frameworks are left out.
+ */
+let contentForFramework = (content) => content;
+
 // maps MDX link components to the reference page they link into
 const LINK_COMPONENTS = {
   PropLink: '/docs/reference/infinite-table-props',
@@ -44,7 +50,6 @@ const STRIP_WRAPPERS = [
   'PropTable',
   'YouWillLearnCard',
   'HeroCards',
-  'Snippet',
   'TerminalBlock',
   // docs-kit demo cards (<DemoTitle> becomes an "Example" heading below)
   'Demo',
@@ -80,12 +85,6 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (fileRef.startsWith('/')) {
     // docs-kit fences: `/docs/...` is relative to the content folder
     fileAbsolutePath = path.join(CONTENT_DIR, fileRef);
-  } else if (fileRef.startsWith('$DOCS/')) {
-    fileAbsolutePath = path.join(
-      CONTENT_DIR,
-      'docs',
-      fileRef.replace('$DOCS/', ''),
-    );
   } else {
     fileAbsolutePath = path.resolve(
       path.dirname(mdFileAbsolutePath),
@@ -110,7 +109,7 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (docsKitCode && /\.(demo|snippet)\.[cm]?[jt]sx?$/.test(fileRef)) {
     code = docsKitCode.extractCodeMarkers(code, context).source;
   }
-  // a titled docs-kit live demo: same "Example" heading as <Sandpack title>.
+  // a titled docs-kit live demo gets an "Example" heading.
   // Demo fences are live unless they say `live=false` (DOCS_FENCE_DEFAULTS
   // in src/utils/docsKit.ts).
   const live = /\.demo\.[cm]?[jt]sx?$/.test(fileRef)
@@ -160,16 +159,6 @@ function transformProse(text) {
     },
   );
   result = result.replace(/<\/Prop>/g, '');
-
-  // <Sandpack title="..."> -> "Example: ..." (code fences inside are kept)
-  result = result.replace(
-    new RegExp(`<Sandpack\\b${ATTRS}>`, 'g'),
-    (_all, attrs) => {
-      const title = getAttr(attrs, 'title');
-      return title ? `**Example: ${title}**` : '**Example**';
-    },
-  );
-  result = result.replace(/<\/Sandpack>/g, '');
 
   // CodeSandbox / YouTube embeds -> plain links
   result = result.replace(
@@ -270,7 +259,9 @@ function transformContent(route) {
   );
 
   // split into code fences and prose so transforms never touch code
-  const segments = route.content.split(/(```[\s\S]*?```)/);
+  const segments = contentForFramework(route.content, 'react').split(
+    /(```[\s\S]*?```)/,
+  );
 
   return segments
     .map((segment) =>
@@ -439,10 +430,15 @@ function run() {
   );
 }
 
-import('./docs-kit-import.mjs')
-  .then(({ importDocsKit }) => importDocsKit('code'))
-  .then((code) => {
+Promise.all([
+  import('./docs-kit-import.mjs').then(({ importDocsKit }) =>
+    importDocsKit('code'),
+  ),
+  import('../src/utils/docsFrameworkPages.ts'),
+])
+  .then(([code, frameworkPages]) => {
     docsKitCode = code;
+    contentForFramework = frameworkPages.contentForFramework;
     run();
   })
   .catch((error) => {

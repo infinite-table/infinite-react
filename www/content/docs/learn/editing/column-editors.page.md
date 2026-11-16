@@ -7,21 +7,7 @@ For now, Infinite Table comes with a default built-in editor that's rendered whe
 
 It's very easy to configure columns with your own custom editors via the <PropLink name="columns.components.Editor" /> property.
 
-```tsx
-const columns: InfiniteTablePropColumns<Developer> = {
-  canDesign: {
-    field: 'canDesign',
-    defaultEditable: true,
-    components: {
-      // don't forget to provide an implementation
-      // for the BoolEditor component
-      Editor: BoolEditor,
-    },
-  },
-  id: {
-    field: 'id',
-  },
-};
+```tsx file="column-editors.snippet.tsx" region="intro"
 ```
 
 <Note title="No built-in custom editors!">
@@ -41,19 +27,14 @@ So in this page and other parts of the docs, we'll use some popular alternatives
 
 A common use-case is integrating date editors, so in the following example we'll use the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) component.
 
-<Sandpack size="lg" title="Using MUI X Date Picker for editing dates in the DataGrid" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
-
-<Description>
+<DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** column to show the date picker.
 
-</Description>
+</DemoDescription>
 
-```ts file="date-editor-example.page.tsx"
-
+```tsx file="date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker for editing dates in the DataGrid"
 ```
-
-</Sandpack>
 
 ## Configure Editors for Column Types
 
@@ -61,18 +42,13 @@ When you have more than one column that needs to use the same editor, you can us
 
 After defining your generic column types, make sure you assign them to the columns that need that specific type
 
-<Sandpack size="lg" title="Using MUI X Date Picker with custom 'date' type columns" deps="@emotion/react,@emotion/styled,@mui/material,@mui/x-date-pickers,dayjs">
-
-<Description>
+<DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** or **Date Hired** columns to show the date picker.
 
 This example uses the <PropLink name="columnTypes" code={false}>column types</PropLink> to give each date column the same editor and styling.
 
-</Description>
+</DemoDescription>
 
-```ts file="column-types-date-editor-example.page.tsx"
-
+```tsx file="column-types-date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker with custom 'date' type columns"
 ```
-
-</Sandpack>
