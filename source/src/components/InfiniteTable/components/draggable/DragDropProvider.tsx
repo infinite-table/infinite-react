@@ -35,6 +35,22 @@ export const useDragDropProvider = () => {
   return React.useContext(DragDropProviderContext);
 };
 
+/**
+ * Unique for each provider. Empty when there is no provider.
+ */
+const DragDropProviderIdContext = React.createContext('');
+
+/**
+ * Drag lists are registered globally by their id, so two lists on a page
+ * can't have the same id. Every grid has its own provider, so this gives
+ * a list of a grid (eg: its header) an id no other grid uses.
+ */
+export const useDragListId = (name: string) => {
+  const providerId = React.useContext(DragDropProviderIdContext);
+
+  return providerId ? `${name}-${providerId}` : name;
+};
+
 export const DragDropProvider = (props: {
   children:
     | React.ReactNode
@@ -46,6 +62,8 @@ export const DragDropProvider = (props: {
     dragItemId: '',
     status: 'accepted',
   });
+
+  const providerId = React.useId();
 
   const stateRef = React.useRef(state);
   stateRef.current = state;
@@ -115,10 +133,12 @@ export const DragDropProvider = (props: {
   }, [DragManager, setState]);
 
   return (
-    <DragDropProviderContext.Provider value={contextValue}>
-      {typeof props.children === 'function'
-        ? props.children(contextValue)
-        : props.children}
-    </DragDropProviderContext.Provider>
+    <DragDropProviderIdContext.Provider value={providerId}>
+      <DragDropProviderContext.Provider value={contextValue}>
+        {typeof props.children === 'function'
+          ? props.children(contextValue)
+          : props.children}
+      </DragDropProviderContext.Provider>
+    </DragDropProviderIdContext.Provider>
   );
 };

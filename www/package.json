@@ -29,7 +29,6 @@
     "tsc": "npm run index-content && tsc --project tsconfig.json && npm run tsc:content && npm run tsc:vue",
     "tsc:content": "tsc --project content/tsconfig.json",
     "tsc:vue": "vue-tsc --noEmit --project tsconfig.vue.json",
-    "check:showcase": "node scripts/check-showcase-boundary.js",
     "check:demos": "node scripts/check-demos.mjs",
     "check:pages": "node scripts/check-pages.mjs",
     "//": "http://localhost:3002/api/employees?_start=0&_limit=10",
