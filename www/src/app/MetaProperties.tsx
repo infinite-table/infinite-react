@@ -1,12 +1,16 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { getBlogPostByPath } from '../utils/blogUtils';
 
-export function MetaProperties() {
+/**
+ * Takes the blog post paths from the (server) layout rather than reading
+ * the content index itself: as a client component, importing it would ship
+ * the whole site's content to every page.
+ */
+export function MetaProperties({ blogPostPaths }: { blogPostPaths: string[] }) {
   const pathname = usePathname();
 
-  const post = getBlogPostByPath(pathname);
+  const post = pathname.startsWith('/blog/') && blogPostPaths.includes(pathname);
 
   return (
     <>

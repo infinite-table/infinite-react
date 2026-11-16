@@ -1,6 +1,6 @@
 'use client';
 
-import { BlogPost } from '@www/utils/blogUtils';
+import type { BlogPost } from '@www/utils/blogUtils';
 import cn from 'classnames';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';

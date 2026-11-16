@@ -14,6 +14,9 @@ import ClientLayout from './clientLayout';
 
 import { ThemeInitScript } from '@www/components/themeInit';
 import { MetaProperties } from './MetaProperties';
+import { sortedPostsIncludingDrafts } from './blog/sortedPosts';
+
+const BLOG_POST_PATHS = sortedPostsIncludingDrafts.map((post) => post.href);
 import { asMeta } from '@www/utils/asMeta';
 import { DocsFrameworksProvider } from '@www/components/DocsFrameworks';
 import { getDocsFrameworkPages } from '@www/utils/docsFrameworkContent';
@@ -55,7 +58,7 @@ export default function RootLayout({
     >
       <head>
         <ThemeInitScript />
-        <MetaProperties />
+        <MetaProperties blogPostPaths={BLOG_POST_PATHS} />
       </head>
       <body className="font-sans antialiased text-lg bg-bg text-fg leading-base">
         <div>
