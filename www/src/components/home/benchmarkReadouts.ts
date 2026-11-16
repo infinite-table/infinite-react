@@ -31,12 +31,19 @@ export type Readout = {
   bars: ReadoutBar[];
 };
 
-function format(value: number, unit: string) {
-  if (unit === 'ms' && value >= 1000) {
-    return { text: (value / 1000).toFixed(2), unit: 's' };
+/**
+ * One unit for a whole readout: seconds when any grid takes a second or
+ * more, so the bars of one readout never mix ms and s.
+ */
+function unitFor(values: number[], unit: string) {
+  return unit === 'ms' && Math.max(...values) >= 1000 ? 's' : unit;
+}
+
+function format(value: number, unit: string, shownUnit: string) {
+  if (unit === 'ms' && shownUnit === 's') {
+    return (value / 1000).toFixed(2);
   }
-  const digits = value >= 100 ? 0 : 1;
-  return { text: value.toFixed(digits), unit };
+  return value.toFixed(value >= 100 ? 0 : 1);
 }
 
 function readout(
@@ -47,14 +54,18 @@ function readout(
 ): Readout {
   const summary = metric(SIZE, scenario, key);
   const { unit } = summary.metric;
-  const bars = GRIDS.filter((grid) => summary.values[grid.id] != null)
+  const measured = GRIDS.filter((grid) => summary.values[grid.id] != null);
+  const shownUnit = unitFor(
+    measured.map((grid) => summary.values[grid.id]!),
+    unit,
+  );
+  const bars = measured
     .map((grid) => {
       const value = summary.values[grid.id]!;
-      const f = format(value, unit);
       return {
         name: grid.short,
         value,
-        text: `${f.text} ${f.unit}`,
+        text: `${format(value, unit, shownUnit)} ${shownUnit}`,
         us: grid.id === 'infinite',
       };
     })
@@ -63,12 +74,11 @@ function readout(
   const winsAll = OTHER_GRIDS.every(
     (grid) => summary.vs[grid.id]?.winner === 'infinite',
   );
-  const ours = format(summary.values.infinite!, unit);
 
   return {
     label,
-    text: ours.text,
-    unit: ours.unit,
+    text: format(summary.values.infinite!, unit, shownUnit),
+    unit: shownUnit,
     badge: winsAll ? `${winsLabel} of ${bars.length}` : null,
     bars,
   };

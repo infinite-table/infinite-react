@@ -4,22 +4,30 @@ import * as React from 'react';
 
 export type ColorMode = 'light' | 'dark';
 
-/** The site's light / dark mode (<html data-theme>), kept up to date. */
+function readSiteMode(): ColorMode {
+  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+}
+
+function subscribeToSiteMode(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+  return () => observer.disconnect();
+}
+
+/**
+ * The site's light / dark mode (<html data-theme>), kept up to date. Read
+ * on the first render, so a grid never mounts in the other mode first; a
+ * server render (and its hydration) uses dark, then React switches.
+ */
 export function useSiteMode(): ColorMode {
-  const [mode, setMode] = React.useState<ColorMode>('dark');
-  React.useEffect(() => {
-    const html = document.documentElement;
-    const read = () =>
-      setMode(html.dataset.theme === 'light' ? 'light' : 'dark');
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(html, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    });
-    return () => observer.disconnect();
-  }, []);
-  return mode;
+  return React.useSyncExternalStore(
+    subscribeToSiteMode,
+    readSiteMode,
+    () => 'dark',
+  );
 }
 
 /** The library's classNames for a theme, a mode and a density. */
