@@ -1,6 +1,7 @@
 ---
 title: Excel-like Editing
 description: Configuring the DataGrid to use Excel-like editing via keyboard shortcuts
+vue: true
 ---
 
 InfiniteTable offers support for Excel-like editing. This means users can simply start typing in an editable cell and the editor is displayed and updated immediately (no `Enter` key is required to start typing).
@@ -35,7 +36,7 @@ You can use the <PropLink name="columns.valueGetter" /> property to simulate for
 
 For example, you might want to have a column that multiplies or divides a value by a constant.
 
-```ts file="excel-like-editing.snippet.tsx" region="simulating-formulas-with-column-valuegetter"
+```ts file="excel-like-editing.snippet.tsx" region="simulating-formulas-with-column-valuegetter" neutral
 ```
 
 

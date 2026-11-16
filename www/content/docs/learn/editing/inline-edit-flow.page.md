@@ -1,6 +1,8 @@
 ---
 title: Inline Editing Flow
 description: Flow chart of inline editing - understand the flow of operations when performing edits in Infinite Table for React
+vue:
+  description: Flow chart of inline editing - understand the flow of operations when performing edits in Infinite Table for Vue
 ---
 
 Editing is described in great detail in the [Inline Editing](/docs/learn/editing/inline-editing) page - so make sure you read that first.
