@@ -6,7 +6,7 @@ export const metadata = asMeta({
     'Infinite Table DataGrid for React — One License — Infinite Applications.',
   description:
     'One License - Infinite Applications. Infinite Table is the modern DataGrid for building React apps with a straightforward licensing model.',
-});
+}, 'pricing');
 export default function Pricing() {
   return <PricingPage />;
 }

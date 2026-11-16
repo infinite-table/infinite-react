@@ -23,7 +23,7 @@ export const metadata = asMeta({
     'Compare React data grids: Infinite Table vs AG Grid, MUI X, TanStack Table and more',
   description:
     'Side-by-side comparison of Infinite Table and popular data grids: features by edition, licensing and pricing, bundle size, dependencies and framework support, with a source for every claim.',
-});
+}, 'compare');
 
 const ANALYTICS: FeatureKey[] = ['rowGrouping', 'pivoting', 'treeData'];
 

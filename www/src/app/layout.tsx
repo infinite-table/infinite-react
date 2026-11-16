@@ -19,6 +19,8 @@ import { DocsFrameworksProvider } from '@www/components/DocsFrameworks';
 import { getDocsFrameworkPages } from '@www/utils/docsFrameworkContent';
 
 export const metadata = asMeta({
+  // og:image and twitter:image are absolute URLs
+  metadataBase: new URL('https://infinite-table.com'),
   title:
     'Infinite Table DataGrid for React — One Table — Infinite Applications.',
   description:

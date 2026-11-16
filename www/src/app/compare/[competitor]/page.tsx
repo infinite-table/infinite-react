@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Params) {
   return asMeta({
     title: `Infinite Table vs ${product.name}: features, pricing and bundle size compared`,
     description: copy.metaDescription,
-  });
+  }, `compare/${product.id}`);
 }
 
 /** FAQ entries every page gets, built from the data so they never go stale */

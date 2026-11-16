@@ -84,7 +84,8 @@ export const generateMetadata = async ({
     };
   }
 
-  return asMeta(metadata);
+  // without a thumbnail, the post's own card (utils/ogCards.ts)
+  return asMeta(metadata, post?.path.replace(/^\/+|\/+$/g, ''));
 };
 export default async function BlogPostPage({
   params,

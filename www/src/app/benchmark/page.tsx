@@ -29,7 +29,7 @@ export const metadata = asMeta({
     'Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table: benchmark with 300,000 and 1,000,000 rows',
   description:
     'An open, reproducible benchmark of Infinite Table, MUI X Data Grid, AG Grid Community and TanStack Table at 300,000 and 1,000,000 rows: mount time, memory, sorting and scrolling, with the method, the machine and the steps to run it yourself.',
-});
+}, 'benchmark');
 
 const REPO =
   'https://github.com/infinite-table/datagrid-performance-comparison';
