@@ -1,6 +1,7 @@
 ---
 title: Handling Date Objects
 description: Learn how to display, manipulate and render dates with Infinite Table
+vue: true
 ---
 
 InfiniteTable can handle dates just like any other data type - make sure you specify <PropLink name="columns.type" code={false}>type="date"</PropLink> for date columns.
@@ -38,7 +39,7 @@ If your dates are not `instanceof Date` but strings or numbers (timestamps) then
 
 For the case when your dates are not actually dates, but date strings (the same applies to timestamps), you have to define your sorting function.
 
-```tsx file="handling-dates.snippet.tsx" region="using-date-strings"
+```tsx file="handling-dates.snippet.tsx" region="using-date-strings" neutral
 ```
 
 When then pass the <DPropLink name="sortTypes"/> to the `<DataSource />` component and configure our date column to be of type `"mydatestring"` (it should match the key you specified in your `sortTypes` definition).

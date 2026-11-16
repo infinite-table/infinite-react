@@ -1,5 +1,6 @@
 ---
 title: Updating Data in Real-Time
+vue: true
 ---
 
 Real-Time updates of data are possible via the [DataSource API](/docs/reference/datasource-api).
@@ -30,12 +31,12 @@ You can get a reference to the [DataSource API](/docs/reference/datasource-api)
 
 To update the data of a row, you need to know the `primaryKey` for that row and use the <DApiLink name="updateData" /> method of the [DataSource API](/docs/reference/datasource-api).
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="updating-a-single-row-using-datasourceapi" title="Updating_a_single_row_using_dataSourceApi.updateData"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="updating-a-single-row-using-datasourceapi" title="Updating_a_single_row_using_dataSourceApi.updateData" neutral
 ```
 
 To update multiple rows, you need to pass the array of data items to the <DApiLink name="updateDataArray" /> method.
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="updating-multiple-rows" title="Updating_multiple_rows"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="updating-multiple-rows" title="Updating_multiple_rows" neutral
 ```
 
 <DemoDescription>
@@ -65,14 +66,14 @@ All the methods for updating/inserting/deleting rows exposed via the [DataSource
 
 All the function calls made in the same raf return the same promise, which is resolved when the data is persisted to the `DataSource`
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="updates-made-on-the-same-raf-are-batched" title="Updates_made_on_the_same_raf_are_batched_together"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="updates-made-on-the-same-raf-are-batched" title="Updates_made_on_the_same_raf_are_batched_together" neutral
 ```
 
 ## Inserting Rows
 
 To insert a new row into the `DataSource`, you need to use the <DApiLink name="insertData" /> method. For inserting multiple rows at once, use the <DApiLink name="insertDataArray" /> method.
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-a-single-row" title="Inserting_a_single_row"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-a-single-row" title="Inserting_a_single_row" neutral
 ```
 
 When you insert new data, as a second parameter, you have to provide an object that specifies the insert `position`.
@@ -81,12 +82,12 @@ Valid values for the insert `position` are:
 
 - `start` | `end` - inserts the data at the beginning or end of the data source. In this case, no `primaryKey` is needed.
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows" neutral
 ```
 
 - `before` | `after` - inserts the data before or after the data item that has the specified primary key. **In thise case, the `primaryKey` is required.**
 
-```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows-before-after"
+```tsx file="updating-data-in-realtime.snippet.tsx" region="inserting-rows-before-after" neutral
 ```
 
 <DemoDescription>
