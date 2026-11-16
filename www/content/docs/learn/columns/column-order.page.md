@@ -1,9 +1,20 @@
 ---
 title: Column Order
 description: Change column order by drag-and-drop - drag columns around and reorder them live
+vue: true
 ---
 
+<FrameworkContent framework="react">
+
 React `Infinite Table` allows columns to be reordered in the grid by drag-and-drop. Drag columns around (start dragging the colum header) to change their order and arrange them in the desired position.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+`Infinite Table` for Vue allows columns to be reordered in the grid by drag-and-drop. Drag columns around (start dragging the column header) to change their order and arrange them in the desired position.
+
+</FrameworkContent>
 
 <Note>
 

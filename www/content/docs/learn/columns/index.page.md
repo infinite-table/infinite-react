@@ -1,6 +1,8 @@
 ---
 title: Working with Columns
 description: Define columns to configure your Infinite Table React DataGrid - fixed and flexible columns, resize, column groups and more
+vue:
+  description: Define columns to configure your Infinite Table Vue DataGrid - fixed and flexible columns, resize, column groups and more
 ---
 
 Columns are a central feature in `InfiniteTable`.
@@ -24,6 +26,8 @@ The column ids are used in many places - like defining the <PropLink name="colum
 ```ts file="index.snippet.tsx" region="intro"
 ```
 
+<FrameworkContent framework="react">
+
 <Note>
 
 It's very important to remember you should not pass a different reference of a prop on each render. `<InfiniteTable />` is a optimized to only re-render when props change - so if you change the props on every re-render you will get a performance penalty.
@@ -31,6 +35,20 @@ It's very important to remember you should not pass a different reference of a p
 You should use `React.useCallback` / `React.useMemo` / `React.useState` to make sure you only update the props you pass down to `InfiniteTable` when you have to.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+It's very important to remember you should not pass a different reference of a prop on each render. Define the columns in `<script setup>`, as a `const` - or as a `ref`, when they change - and bind them with `:columns="columns"`, so the same object is passed to `<InfiniteTable />` on every render.
+
+The same goes for the other props that are objects, arrays or functions: don't write them inline in the template, where they are created again every time the template renders.
+
+</Note>
+
+</FrameworkContent>
 
 ```tsx file="basic-columns-example.demo.tsx" title="Basic Column Configuration"
 ```
