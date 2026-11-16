@@ -1,4 +1,4 @@
-import { defineComponent, h, onMounted, ref, watch } from 'vue';
+import { defineComponent, h, nextTick, onMounted, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { join } from '../../../utils/join';
@@ -46,20 +46,27 @@ export const InfiniteCheckBox = defineComponent({
     );
     const inputRef = ref<HTMLInputElement | null>(null);
 
-    const syncIndeterminate = () => {
-      if (inputRef.value) {
-        inputRef.value.indeterminate = checked.value == null;
+    // writes the state to the input. Vue patches `checked` only when the
+    // rendered value changes, but a click has already toggled the input:
+    // when the controlled value stays the same after a click (true -> true),
+    // or renders the same (null -> false), the input would keep what the
+    // browser toggled. React resets a controlled input after every change.
+    const syncInput = () => {
+      const input = inputRef.value;
+      if (input) {
+        input.checked = !!checked.value;
+        input.indeterminate = checked.value == null;
       }
     };
 
-    onMounted(syncIndeterminate);
+    onMounted(syncInput);
 
     watch(
       () => props.checked,
       (value) => {
         if (isControlled()) {
           checked.value = value === undefined ? false : value;
-          syncIndeterminate();
+          syncInput();
         }
       },
     );
@@ -71,9 +78,13 @@ export const InfiniteCheckBox = defineComponent({
       const newChecked = !checked.value;
       if (!isControlled()) {
         checked.value = newChecked;
-        syncIndeterminate();
+        syncInput();
       }
       props.onChange?.(newChecked);
+      if (isControlled()) {
+        // after the parent had the chance to update the controlled value
+        nextTick(syncInput);
+      }
     };
 
     return () => {
