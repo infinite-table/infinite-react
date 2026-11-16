@@ -47,6 +47,13 @@
 /* ---- frame + layout ----------------------------------------------------- */
 
 .hero-frame {
+  /*
+   * The demo's layers stay inside the frame: the grid's menus (its portal
+   * has z-index 10000000) and the scripted cursor don't paint over the site
+   * header, and the cursor goes above the menus it opens.
+   */
+  isolation: isolate;
+  --showcase-z: 2147483600;
   height: 720px;
   border-radius: 16px;
   border: 1px solid var(--hero-border);
