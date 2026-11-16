@@ -1,6 +1,7 @@
 ---
 title: TypeScript Types
 description: Infinite Table types for TypeScript are published as part of the package, as named exports from the root of the package.
+vue: true
 ---
 
 Our `TypeScript` types are published as part of the package, as named exports from the root of the package.
@@ -13,6 +14,8 @@ The 2 main components that you can need to use and import are:
 ```tsx file="typescript-types.snippet.tsx" region="importing-infinitetable-and-datasource" title="Importing InfiniteTable and DataSource components"
 ```
 
+<FrameworkContent framework="react">
+
 <Note>
 
 In our TypeScript typings, those components are exported as generic components, so they need to be bound to the type of the data they are rendering.
@@ -23,6 +26,23 @@ In our TypeScript typings, those components are exported as generic components, 
 Throughout the documentation, we will use the `DATA_TYPE` placeholder to refer to the type of the data that the `InfiniteTable` and `DataSource` components are bound to.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+<Note>
+
+The Vue components are not generic: the types of their props are. Bind those types to the type of the data you are rendering, in `<script setup>`, where you define the values you pass as props - that is where TypeScript checks them.
+
+```tsx file="typescript-types.snippet.tsx" region="generic-components"
+```
+
+Throughout the documentation, we will use the `DATA_TYPE` placeholder to refer to the type of the data that those types are bound to.
+
+</Note>
+
+</FrameworkContent>
 
 <Note>
 
