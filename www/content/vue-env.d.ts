@@ -8,3 +8,9 @@ declare namespace NodeJS {
     NEXT_PUBLIC_BASE_URL: string;
   }
 }
+
+// `import styles from './x.module.css'` in a demo (the React demos get this from Next's types)
+declare module '*.module.css' {
+  const classes: { readonly [key: string]: string };
+  export default classes;
+}
