@@ -1,6 +1,7 @@
 ---
 title: Cell Selection
 description: InfiniteTable DataGrid component supports single and multiple cell selection.
+vue: true
 ---
 
 To use multi-cell selection, you need to configure the `<DataSource />` component with `selectionMode="multi-cell"` - see <DPropLink name="selectionMode" /> for details. For selecting rows, see the [Row Selection](/docs/learn/selection/row-selection) page.
@@ -71,23 +72,23 @@ The `selectedCells`/`deselectedCells` are arrays of `[rowId, colId]` tuples. The
 
 The following scenarios are all possible:
 
-```tsx file="cell-selection.snippet.tsx" region="just-a-few-specified-cells-are-selected" title="Just a few specified cells are selected"
+```tsx file="cell-selection.snippet.tsx" region="just-a-few-specified-cells-are-selected" title="Just a few specified cells are selected" neutral
 ```
 
-```tsx file="cell-selection.snippet.tsx" region="everything-is-selected-except-a-few-cells" title="Everything is selected, except a few cells"
+```tsx file="cell-selection.snippet.tsx" region="everything-is-selected-except-a-few-cells" title="Everything is selected, except a few cells" neutral
 ```
 
 ### Using wildcards for selection
 
 It's also possible to use wildcards for selecting cells. This is useful if you want to select all cells in a column, or all cells in a row.
 
-```tsx file="cell-selection.snippet.tsx" region="selecting-all-cells-in-a-column" title="Selecting all cells in a column"
+```tsx file="cell-selection.snippet.tsx" region="selecting-all-cells-in-a-column" title="Selecting all cells in a column" neutral
 ```
 
-```tsx file="cell-selection.snippet.tsx" region="selecting-all-cells-in-a-row" title="Selecting all cells in a row"
+```tsx file="cell-selection.snippet.tsx" region="selecting-all-cells-in-a-row" title="Selecting all cells in a row" neutral
 ```
 
-```tsx file="cell-selection.snippet.tsx" region="selecting-everything-except-a-column" title="Selecting everything except a column"
+```tsx file="cell-selection.snippet.tsx" region="selecting-everything-except-a-column" title="Selecting everything except a column" neutral
 ```
 
 ## Using controlled selection

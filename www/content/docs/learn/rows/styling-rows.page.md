@@ -1,5 +1,6 @@
 ---
 title: Styling Rows
+vue: true
 ---
 
 Rows can be styled by using the `rowStyle` and the `rowClassName` props
@@ -7,7 +8,7 @@ Rows can be styled by using the `rowStyle` and the `rowClassName` props
 - the <PropLink name="rowStyle" /> prop can be a style `object` or a `function` that returns a style `object` or `undefined`
 - the <PropLink name="rowClassName"/> prop can be a `string` (the name of a CSS class) or a `function` that returns a `string` or `undefined`
 
-```tsx file="styling-rows.snippet.tsx" region="defining-a-rowstyle-function" title="Defining-a-rowStyle-function"
+```tsx file="styling-rows.snippet.tsx" region="defining-a-rowstyle-function" title="Defining-a-rowStyle-function" neutral
 ```
 
 <Note>
