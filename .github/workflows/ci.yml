@@ -11,10 +11,12 @@ on:
       - 'source/jest.config.js'
       - 'examples/src/**/*.spec.ts'
       - 'examples/src/**/*.page.tsx'
+      - 'examples/src/**/*.vue'
       - 'examples/src/**/*.ts'
 
+# one run per branch: a push cancels the previous run of the same branch only
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
