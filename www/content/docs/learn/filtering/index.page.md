@@ -1,6 +1,8 @@
 ---
 title: Filtering
 description: Learn how to configure client-side and server-side filtering in Infinite Table for React
+vue:
+  description: Learn how to configure client-side and server-side filtering in Infinite Table for Vue
 ---
 
 Filtering allows you to limit the rows available in the table.
@@ -68,7 +70,7 @@ Let's imagine you have a `DataSource` with developers, each with a `salary` colu
 
 For this, you would define the following filter type:
 
-```tsx file="index.snippet.tsx" region="understanding-filter-types"
+```tsx file="index.snippet.tsx" region="understanding-filter-types" neutral
 ```
 
 <Note>
@@ -100,7 +102,17 @@ As already mentioned, filtering can happen either client-side or server-side. By
 
 To filter server-side, set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> - the <DPropLink name="data"/> function is then called again on every filter change, with the <DPropLink name="filterValue" /> in its params.
 
+<FrameworkContent framework="react">
+
 To both reload the data and filter it client-side, also specify a <DPropLink name="filterFunction" /> - for example `filterFunction={defaultFilterFunction}`, which applies the column filters.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+To both reload the data and filter it client-side, also specify a <DPropLink name="filterFunction" /> - for example `:filterFunction="defaultFilterFunction"`, which applies the column filters.
+
+</FrameworkContent>
 
 ## Filtering Columns Not Bound to a Field
 
