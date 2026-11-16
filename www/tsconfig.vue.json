@@ -8,6 +8,9 @@
     "baseUrl": "./",
     "noEmit": true,
     "incremental": false,
+    // as in content/tsconfig.json: a snippet declares things only to show them
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "paths": {
       "@infinite-table/infinite-vue": ["../source/src/index.vue.tsx"],
       // one copy of Vue's types for the demos and the library source
