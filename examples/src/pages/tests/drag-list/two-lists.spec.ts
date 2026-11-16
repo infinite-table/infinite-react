@@ -1,6 +1,7 @@
 import { test, expect, Page } from '@testing';
 
 import {
+  cancelPointer,
   dragBy,
   getInlineTransform,
   getItem,
@@ -98,6 +99,32 @@ export default test.describe('DragList - two lists under one provider', () => {
         dragItemId: 'x',
       },
     ]);
+  });
+
+  test('a drag cancelled over the other list calls nothing in either list', async ({
+    page,
+  }) => {
+    await dragBy(
+      page,
+      getItem(page, 'left', 'a'),
+      { x: TO_THE_OTHER_LIST, y: 40 },
+      async () => {
+        await expect
+          .poll(() => getJSON(page, 'provider-state'))
+          .toMatchObject({
+            dragSourceListId: 'left',
+            dropTargetListId: 'right',
+          });
+
+        await cancelPointer(page);
+
+        await expect.poll(() => getJSON(page, 'provider-state')).toEqual(IDLE);
+      },
+    );
+
+    expect(await getLog(page)).toEqual([]);
+    expect(await getOrder(page, 'left')).toEqual(['a', 'b', 'c']);
+    expect(await getOrder(page, 'right')).toEqual(['x', 'y', 'z']);
   });
 
   test('the provider and the lists know the source and the target while dragging', async ({

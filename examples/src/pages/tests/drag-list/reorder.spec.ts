@@ -1,6 +1,7 @@
 import { test, expect } from '@testing';
 
 import {
+  cancelPointer,
   dragBy,
   getDefaultProxy,
   getInlineTransform,
@@ -9,6 +10,7 @@ import {
   getLog,
   getOrder,
   loadDragListPage,
+  selectTextOf,
 } from './dragListUtils';
 
 export default test.describe('DragList - reordering the items of a list', () => {
@@ -246,5 +248,75 @@ export default test.describe('DragList - reordering the items of a list', () => 
         dropItemId: '3',
       },
     ]);
+  });
+
+  // In Chrome on Linux, a press on selected text starts the browser's own
+  // drag of that text, which takes the pointer away from the page
+  test('a drag that starts on selected text moves the item', async ({
+    page,
+  }) => {
+    await selectTextOf(page, 'vertical');
+
+    expect(
+      await page.evaluate(() => window.getSelection()!.toString()),
+    ).toContain('one');
+
+    await dragBy(page, getItem(page, 'vertical', 'one'), { x: 0, y: 90 });
+
+    await expect
+      .poll(() => getOrder(page, 'vertical'))
+      .toEqual(['two', 'three', 'one', 'four', 'five']);
+
+    expect(await getLog(page)).toEqual([
+      {
+        name: 'vertical.onDrop',
+        sortedIndexes: [1, 2, 0, 3, 4],
+        dragIndex: 0,
+        dropIndex: 3,
+        dragItemId: 'one',
+        dropItemId: 'four',
+      },
+    ]);
+    await expect(getList(page, 'vertical')).not.toHaveClass(
+      /DragList--dragging/,
+    );
+  });
+
+  test('a drag whose pointer is cancelled puts the item back and calls nothing', async ({
+    page,
+  }) => {
+    const list = getList(page, 'vertical');
+    const one = getItem(page, 'vertical', 'one');
+    const ids = ['one', 'two', 'three', 'four', 'five'];
+
+    await dragBy(page, one, { x: 0, y: 90 }, async () => {
+      await expect(getDefaultProxy(page)).toHaveCount(1);
+      await expect(list).toHaveClass(/DragList--dragging/);
+
+      await cancelPointer(page);
+
+      // the drag is over, with the pointer still down
+      await expect(getDefaultProxy(page)).toHaveCount(0);
+      await expect(list).not.toHaveClass(/DragList--dragging/);
+      await expect(one).not.toHaveClass(/DraggableItem--active/);
+      await expect(one).toHaveCSS('visibility', 'visible');
+
+      for (const id of ids) {
+        await expect
+          .poll(() => getInlineTransform(getItem(page, 'vertical', id)))
+          .toBe('none');
+      }
+    });
+
+    // and the release after it is not a drop
+    expect(await getLog(page)).toEqual([]);
+    expect(await getOrder(page, 'vertical')).toEqual(ids);
+
+    // the list still works after it
+    await dragBy(page, getItem(page, 'vertical', 'five'), { x: 0, y: -90 });
+
+    await expect
+      .poll(() => getOrder(page, 'vertical'))
+      .toEqual(['one', 'two', 'five', 'three', 'four']);
   });
 });
