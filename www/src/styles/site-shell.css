@@ -269,7 +269,15 @@
   }
 }
 
-/* below this the nav goes into the menu (the docs sidebar does the same) */
+/* no menu panel where there is no menu button (Header.tsx also closes it) */
+@media (min-width: 1024px) {
+  .site-menu-panel {
+    display: none;
+  }
+}
+
+/* below this the nav goes into the menu (the docs sidebar does the same);
+   keep in sync with NAV_BREAKPOINT in Header.tsx */
 @media (max-width: 1023px) {
   .site-nav {
     display: none;

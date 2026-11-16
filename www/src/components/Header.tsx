@@ -107,6 +107,9 @@ const SITE_NAV: { label: string; href: string; key: SiteSection }[] = [
 
 type SiteSection = 'docs' | 'demo' | 'compare' | 'pricing' | 'blog';
 
+/** At this width and up the nav links show and the menu button goes (site-shell.css). */
+const NAV_BREAKPOINT = 1024;
+
 function useSiteSection(): {
   section: SiteSection | null;
   hasSidebar: boolean;
@@ -174,6 +177,23 @@ export const MainNavBar = () => {
 
   // the header's own menu panel (pages without a sidebar); Escape closes it
   const panelOpen = isOpen && !hasSidebar;
+
+  // the menu (panel or docs drawer) only exists below the nav breakpoint:
+  // close it when the window grows past it (resize, tablet rotation), which
+  // also releases the drawer's body scroll lock
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const wide = window.matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`);
+    if (wide.matches) {
+      hideSidebar();
+      return;
+    }
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) hideSidebar();
+    };
+    wide.addEventListener('change', onChange);
+    return () => wide.removeEventListener('change', onChange);
+  }, [isOpen, hideSidebar]);
   React.useEffect(() => {
     if (!panelOpen) return;
     const onKey = (event: KeyboardEvent) => {
