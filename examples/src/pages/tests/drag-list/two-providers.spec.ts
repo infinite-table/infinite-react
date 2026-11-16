@@ -4,9 +4,9 @@ import {
   dragBy,
   getInlineTransform,
   getItem,
-  getList,
   getLog,
   getOrder,
+  loadDragListPage,
 } from './dragListUtils';
 
 // the lists are 200px wide, with 50px between them
@@ -28,9 +28,7 @@ async function expectListUntouched(page: Page, listName: string) {
 
 export default test.describe('DragList - two providers on a page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.load();
-    await getList(page, 'first').waitFor();
-    await getList(page, 'second').waitFor();
+    await loadDragListPage(page);
   });
 
   test('a drag in the list of one provider does not touch the list of the other', async ({

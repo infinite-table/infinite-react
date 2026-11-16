@@ -1,6 +1,12 @@
 import { test, expect, Page } from '@testing';
 
-import { getItem, getList, getLog, getOrder } from './dragListUtils';
+import {
+  getItem,
+  getList,
+  getLog,
+  getOrder,
+  loadDragListPage,
+} from './dragListUtils';
 
 const getScrollTop = (page: Page) =>
   getList(page, 'long').evaluate((node) => node.scrollTop);
@@ -49,8 +55,7 @@ export default test.describe('DragList - auto-scroll at the edge of a scrolling 
   test.beforeEach(async ({ page }) => {
     test.setTimeout(30_000);
 
-    await page.load();
-    await getList(page, 'long').waitFor();
+    await loadDragListPage(page);
   });
 
   test('holding an item at the bottom edge scrolls the list, and the item is dropped where the list scrolled to', async ({

@@ -7,6 +7,7 @@ import {
   getList,
   getLog,
   getOrder,
+  loadDragListPage,
 } from './dragListUtils';
 
 const getJSON = async (page: Page, name: string) =>
@@ -24,8 +25,7 @@ const TO_THE_OTHER_LIST = 250;
 
 export default test.describe('DragList - two lists under one provider', () => {
   test.beforeEach(async ({ page }) => {
-    await page.load();
-    await getList(page, 'left').waitFor();
+    await loadDragListPage(page);
   });
 
   test('an item dragged to the other list is removed from its list and accepted by the other', async ({

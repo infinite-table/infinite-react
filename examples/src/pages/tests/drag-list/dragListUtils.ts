@@ -1,4 +1,4 @@
-import { Locator, Page } from '@testing';
+import { Locator, Page, TestPage } from '@testing';
 
 /**
  * Helpers for the specs of the standalone DragList.
@@ -6,6 +6,15 @@ import { Locator, Page } from '@testing';
  * The test pages give every list a `data-name` and write the calls of the
  * DragList callbacks, as JSON, in an element with `data-name="log"`.
  */
+
+/**
+ * Loads the test page and waits until it is mounted - only then
+ * do its drag lists react to the pointer.
+ */
+export async function loadDragListPage(page: TestPage) {
+  await page.load();
+  await page.locator('[data-ready="true"]').waitFor();
+}
 
 export const getList = (page: Page, name: string) =>
   page.locator(`[data-name="${name}"]`);

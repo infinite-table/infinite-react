@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { useReady } from './useReady';
+
 import {
   DragDropProvider,
   DragList,
@@ -118,6 +120,7 @@ function List(props: {
 }
 
 export default function App() {
+  const ready = useReady();
   const [left, setLeft] = React.useState(['a', 'b', 'c']);
   const [right, setRight] = React.useState(['x', 'y', 'z']);
   const [calls, setCalls] = React.useState<LoggedCall[]>([]);
@@ -127,7 +130,7 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20 }} data-ready={ready}>
       <DragDropProvider>
         <div style={{ display: 'flex', gap: 50 }}>
           <List name="left" items={left} setItems={setLeft} log={log} />

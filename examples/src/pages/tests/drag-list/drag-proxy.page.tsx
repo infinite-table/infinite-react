@@ -1,4 +1,6 @@
 import * as React from 'react';
+
+import { useReady } from './useReady';
 import { createPortal } from 'react-dom';
 
 import {
@@ -56,6 +58,7 @@ const renderDragProxy: DragListProps['renderDragProxy'] = ({
 };
 
 export default function App() {
+  const ready = useReady();
   const [rendered, setRendered] = React.useState(['a', 'b', 'c']);
   const [customized, setCustomized] = React.useState(['x', 'y', 'z']);
   const [calls, setCalls] = React.useState<LoggedCall[]>([]);
@@ -91,7 +94,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20 }} data-ready={ready}>
       <DragDropProvider>
         <div style={{ display: 'flex', gap: 50 }}>
           <DragList

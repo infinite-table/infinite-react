@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { useReady } from './useReady';
+
 import {
   DragDropProvider,
   DragList,
@@ -29,6 +31,7 @@ const ACCEPT_DROPS_FROM = ['long', 'short'];
 const LONG_ITEMS = Array.from({ length: 30 }, (_, index) => `item-${index}`);
 
 export default function App() {
+  const ready = useReady();
   const [long, setLong] = React.useState(LONG_ITEMS);
   const [short, setShort] = React.useState(['new-1', 'new-2']);
   const [calls, setCalls] = React.useState<LoggedCall[]>([]);
@@ -44,7 +47,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20 }} data-ready={ready}>
       <DragDropProvider>
         <div style={{ display: 'flex', gap: 50 }}>
           <DragList

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { useReady } from './useReady';
+
 import { DragDropProvider, DragList } from '@infinite-table/infinite-react';
 
 type LoggedCall = { name: string; [key: string]: any };
@@ -13,6 +15,7 @@ const itemStyle: React.CSSProperties = {
 };
 
 export default function App() {
+  const ready = useReady();
   const [vertical, setVertical] = React.useState([
     'one',
     'two',
@@ -25,7 +28,7 @@ export default function App() {
   const [log, setLog] = React.useState<LoggedCall[]>([]);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20 }} data-ready={ready}>
       <DragDropProvider>
         <DragList
           dragListId="vertical"

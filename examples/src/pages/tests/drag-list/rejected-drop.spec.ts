@@ -4,9 +4,9 @@ import {
   dragBy,
   getInlineTransform,
   getItem,
-  getList,
   getLog,
   getOrder,
+  loadDragListPage,
 } from './dragListUtils';
 
 const getProviderState = async (page: Page) =>
@@ -17,8 +17,7 @@ const TO_THE_TARGET = 250;
 
 export default test.describe('DragList - a list that rejects a drop', () => {
   test.beforeEach(async ({ page }) => {
-    await page.load();
-    await getList(page, 'source').waitFor();
+    await loadDragListPage(page);
   });
 
   test('an item rejected by shouldAcceptDrop is not accepted by the target', async ({

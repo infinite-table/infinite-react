@@ -5,15 +5,14 @@ import {
   getDefaultProxy,
   getInlineTransform,
   getItem,
-  getList,
   getLog,
   getOrder,
+  loadDragListPage,
 } from './dragListUtils';
 
 export default test.describe('DragList - the drag proxy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.load();
-    await getList(page, 'rendered').waitFor();
+    await loadDragListPage(page);
   });
 
   test('renderDragProxy renders the proxy, and gets where the pointer has moved it', async ({

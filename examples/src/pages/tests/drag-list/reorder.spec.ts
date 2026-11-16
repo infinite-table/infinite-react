@@ -8,12 +8,12 @@ import {
   getList,
   getLog,
   getOrder,
+  loadDragListPage,
 } from './dragListUtils';
 
 export default test.describe('DragList - reordering the items of a list', () => {
   test.beforeEach(async ({ page }) => {
-    await page.load();
-    await getList(page, 'vertical').waitFor();
+    await loadDragListPage(page);
   });
 
   test('the list and its items get the drag attributes and classNames', async ({

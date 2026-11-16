@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { useReady } from './useReady';
+
 import {
   DragDropProvider,
   DragList,
@@ -113,6 +115,7 @@ function Lists(props: { log: (call: LoggedCall) => void }) {
 }
 
 export default function App() {
+  const ready = useReady();
   const [calls, setCalls] = React.useState<LoggedCall[]>([]);
 
   const log = React.useCallback((call: LoggedCall) => {
@@ -120,7 +123,7 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20 }} data-ready={ready}>
       <DragDropProvider>
         {({ dragSourceListId, dropTargetListId, dragItemId, status }) => (
           <>
