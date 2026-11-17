@@ -1,6 +1,7 @@
 ---
 title: DataSource API
 layout: API
+vue: true
 ---
 
 When rendering the `DataSource` component, you can get access to the API by getting it from the <DPropLink name="onReady" /> callback prop.
@@ -118,7 +119,7 @@ This method batches data updates and waits for a request animation frame until i
 
 The return value is a `Promise` that resolves when the data has been added. When multiple `addData` (and friends) calls are executed in the same frame, the result of those calls is a reference to the same promise.
 
-```ts file="index.snippet.tsx" region="adddata"
+```ts file="index.snippet.tsx" region="adddata" neutral
 ```
 
 For adding an array of data, see the <DApiLink name="addDataArray" /> method.
@@ -301,7 +302,7 @@ When using this method for tree nodes, `waitForNode` defaults to `true` (you can
 The first parameter should be an array of objects, where each object has a `data` property (the data to update) and a `nodePath` property (the path of the node to update).
 
 
-```tsx file="index.snippet.tsx" region="updating-an-aray-of-tree-nodes" title="Updating an aray of tree nodes"
+```tsx file="index.snippet.tsx" region="updating-an-aray-of-tree-nodes" title="Updating an aray of tree nodes" neutral
 ```
 
 </Prop>
@@ -317,7 +318,7 @@ The second parameter is the node path.
 
 When a function is passed as the first parameter, it will be called with the children of the node. The return value will be used as the new children of the node. This gives you an opportunity to update the children based on the current children state.
 
-```tsx file="index.snippet.tsx" region="updating-the-children-of-a-tree-node" title="Updating the children of a tree node"
+```tsx file="index.snippet.tsx" region="updating-the-children-of-a-tree-node" title="Updating the children of a tree node" neutral
 ```
 
 <Note>
@@ -357,7 +358,7 @@ If the primary keys in your `<TreeDataSource />` are unique globally (not just w
 </Note>
 
 
-```tsx file="index.snippet.tsx" region="updating-a-tree-node-by-path" title="Updating a tree node by path"
+```tsx file="index.snippet.tsx" region="updating-a-tree-node-by-path" title="Updating a tree node by path" neutral
 ```
 
 ```tsx file="tree-updateDataByPath-example.demo.tsx" title="Updating a tree node by path" height="large"
@@ -384,7 +385,7 @@ If the primary keys in your `<TreeDataSource />` are unique globally (not just w
 </Note>
 
 
-```tsx file="index.snippet.tsx" region="removing-a-tree-node-by-path" title="Removing a tree node by path"
+```tsx file="index.snippet.tsx" region="removing-a-tree-node-by-path" title="Removing a tree node by path" neutral
 ```
 
 ```tsx file="tree-removeDataByNodePath-example.demo.tsx" title="Removing a tree node by path" height="large"
@@ -402,7 +403,7 @@ The data object must have a primary key that matches the primary key of the data
 
 </Note>
 
-```ts file="index.snippet.tsx" region="updatedata"
+```ts file="index.snippet.tsx" region="updatedata" neutral
 ```
 
 ```tsx file="simple-updateData-example.demo.tsx" title="Updating a row"
