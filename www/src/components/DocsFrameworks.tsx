@@ -113,6 +113,39 @@ export function useDocsFramework() {
   }, [pages, pathname]);
 }
 
+const DEMO_MAIN_FILE_EXTENSION: Record<DocsFrameworkId, string> = {
+  react: '.demo.tsx',
+  vue: '.demo.vue',
+};
+
+/**
+ * The current hash, for the same page in the `target` framework.
+ *
+ * Headings keep their ids across frameworks. A demo hash
+ * (`#<demo-slug>/<file>`) names a file of that framework's demo: the main
+ * file is mapped (`x.demo.tsx` ↔ `x.demo.vue`); for any other file only the
+ * demo slug is kept, as the other framework's demo may not have that file
+ * (and a demo only scrolls into view when the file is found).
+ */
+function hashFor(hash: string, target: DocsFrameworkId): string {
+  const raw = hash.replace(/^#/, '');
+  if (!raw) {
+    return '';
+  }
+  const slash = raw.indexOf('/');
+  if (slash < 0) {
+    return `#${raw}`;
+  }
+  const slug = raw.slice(0, slash);
+  const file = raw.slice(slash + 1);
+  for (const ext of Object.values(DEMO_MAIN_FILE_EXTENSION)) {
+    if (file.endsWith(ext)) {
+      return `#${slug}/${file.slice(0, -ext.length)}${DEMO_MAIN_FILE_EXTENSION[target]}`;
+    }
+  }
+  return `#${slug}`;
+}
+
 /**
  * React | Vue, in the site header.
  *
@@ -148,10 +181,18 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
     >
       {docsFrameworks.ids.map((id) => {
         let href: string | undefined;
+        // only when the same page exists in that framework: then the
+        // current hash (heading, demo) is kept on switching
+        let samePage = false;
         if (pageFramework) {
-          href =
-            resolveSwitchTarget(docsFrameworks, pathname, id, hasPage)?.href ??
-            docsFrameworks.pathFor('/docs', id);
+          const target = resolveSwitchTarget(
+            docsFrameworks,
+            pathname,
+            id,
+            hasPage,
+          );
+          samePage = !!target?.exact;
+          href = target?.href ?? docsFrameworks.pathFor('/docs', id);
         } else if (homeFramework) {
           href = DOCS_FRAMEWORK_HOME[id];
         }
@@ -161,6 +202,16 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
         }`;
         const onClick = (event: React.MouseEvent<HTMLElement>) => {
           setPreference(id);
+          // the hash is only known (and changes) on the client, so it's added
+          // at click time - this covers cmd/middle clicks too, as the browser
+          // reads the link's href after this handler
+          const fullHref =
+            href && samePage && id !== pageFramework
+              ? `${href}${hashFor(window.location.hash, id)}`
+              : href;
+          if (fullHref && fullHref !== href) {
+            event.currentTarget.setAttribute('href', fullHref);
+          }
           const plainClick =
             event.button === 0 &&
             !event.metaKey &&
@@ -171,8 +222,8 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
             return;
           }
           event.preventDefault();
-          if (href !== pathname) {
-            router.push(href);
+          if (href !== pathname && fullHref) {
+            router.push(fullHref);
           }
         };
         return href ? (
