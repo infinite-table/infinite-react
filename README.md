@@ -12,11 +12,7 @@
 </div>
 
 <a href="https://infinite-table.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://infinite-table.com/hero/hero-poster-dark.webp" />
-    <source media="(prefers-color-scheme: light)" srcset="https://infinite-table.com/hero/hero-poster-light.webp" />
-    <img alt="The React DataGrid built for speed" src="https://infinite-table.com/hero/hero-poster-dark.webp" />
-  </picture>
+  <img alt="The React DataGrid built for speed" src="https://infinite-table.com/hero/readme-banner-react.png" />
 </a>
 
 
@@ -92,7 +88,7 @@ Choosing a React DataGrid is a big decision. We've put together honest compariso
 - [vs MUI X Data Grid](https://infinite-table.com/compare/mui-x-data-grid)
 - [vs TanStack Table](https://infinite-table.com/compare/tanstack-table)
 - [vs Handsontable](https://infinite-table.com/compare/handsontable)
-- [Benchmark: Infinite Table vs AG Grid at 300k and 1M rows](https://infinite-table.com/benchmark)
+- [Benchmark: Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table at 300k and 1M rows](https://infinite-table.com/benchmark)
 
 ## ❤️ TypeScript
 

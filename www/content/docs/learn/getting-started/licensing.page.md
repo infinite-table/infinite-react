@@ -1,11 +1,22 @@
 ---
 title: Licensing Infinite Table
 description: Free Usage and Licensing with Infinite Table
+vue: true
 ---
 
 ## Free Usage
 
+<FrameworkContent framework="react">
+
 You can immediately download and use [Infinite Table from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-react) free of charge.
+
+</FrameworkContent>
+
+<FrameworkContent framework="vue">
+
+You can immediately download and use [Infinite Table for Vue from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-vue) free of charge. `@infinite-table/infinite-vue` is published under the same license as the React package - one license covers both.
+
+</FrameworkContent>
 
 <Note>
 
@@ -20,7 +31,7 @@ You can use it for free in any product, but make sure the footer is always visib
 
 ## Licensed Usage
 
-We invite you to try out Infinite Table and explore all the features it has to offer. We're confident it will be a useful addition to your React applications.
+We invite you to try out Infinite Table and explore all the features it has to offer. We're confident it will be a useful addition to your applications.
 
 We encourage companies 🙌 to purchase development licenses for their teams and help us improve the product and support the development of new features.
 
