@@ -668,3 +668,19 @@ a > .docs-code-inline {
 .docs-prop .docs-note {
   background: var(--bg);
 }
+/* a code card on a note or quote (surface background) takes the page's, to stand
+   out; in a prop box the note has the page's, so the card goes back to the surface */
+.docs-note .dk-demo,
+.docs-article :where(blockquote:not(.dk-demo *), .mdx-blockquote) .dk-demo {
+  --dk-surface: var(--bg);
+  --dk-code-bg: var(--bg);
+  --dk-editor-bg: var(--bg);
+  --dk-editor-gutter-bg: var(--bg);
+}
+.docs-prop .docs-note .dk-demo,
+.docs-article .docs-prop :where(blockquote:not(.dk-demo *), .mdx-blockquote) .dk-demo {
+  --dk-surface: var(--surface);
+  --dk-code-bg: var(--surface);
+  --dk-editor-bg: var(--surface);
+  --dk-editor-gutter-bg: var(--surface);
+}
