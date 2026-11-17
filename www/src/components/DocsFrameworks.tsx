@@ -25,6 +25,32 @@ import {
 
 const PagesContext = React.createContext<DocsFrameworkPages>({});
 
+/** The framework whose home page this is (`/` is the React one, `/vue` the Vue one), or `null`. */
+const homeFrameworkOf = (pathname: string): DocsFrameworkId | null =>
+  docsFrameworks.ids.find((id) => DOCS_FRAMEWORK_HOME[id] === pathname) ??
+  null;
+
+/**
+ * The framework the visitor is in: the page's (a docs page or a home page),
+ * else the one they chose, else React. The switcher shows it as active and
+ * the logo links to its home page.
+ */
+export function useCurrentDocsFramework(): DocsFrameworkId {
+  const pathname = usePathname() || '';
+  const [preference] = useFrameworkPreference(docsFrameworks);
+  return (
+    docsFrameworks.frameworkOf(pathname) ??
+    homeFrameworkOf(pathname) ??
+    preference ??
+    docsFrameworks.default
+  );
+}
+
+/** The home page of the framework the visitor is in. */
+export function useDocsFrameworkHome(): string {
+  return DOCS_FRAMEWORK_HOME[useCurrentDocsFramework()];
+}
+
 /** Hands the list of pages each framework has (from the content index) to the components below. */
 export function DocsFrameworksProvider(props: {
   pages: DocsFrameworkPages;
@@ -102,18 +128,15 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
   const pages = React.useContext(PagesContext);
   const pathname = usePathname() || '';
   const router = useRouter();
-  const [preference, setPreference] = useFrameworkPreference(docsFrameworks);
+  const [, setPreference] = useFrameworkPreference(docsFrameworks);
+  const current = useCurrentDocsFramework();
   const hasPage = React.useMemo(
     () => createHasPage<DocsFrameworkId>(pages),
     [pages],
   );
 
   const pageFramework = docsFrameworks.frameworkOf(pathname);
-  const homeFramework =
-    docsFrameworks.ids.find((id) => DOCS_FRAMEWORK_HOME[id] === pathname) ??
-    null;
-  const current =
-    pageFramework ?? homeFramework ?? preference ?? docsFrameworks.default;
+  const homeFramework = homeFrameworkOf(pathname);
 
   return (
     <div
@@ -198,10 +221,19 @@ export function DocsFrameworkBanner(props: { className?: string }) {
   );
 }
 
-/** Docs links follow the visitor's framework. Mounted once, in the layout. */
+/**
+ * Docs links follow the visitor's framework. Mounted once, in the layout.
+ *
+ * Not on a home page: `/` is the React one and `/vue` the Vue one, so their
+ * links go to that framework's docs whatever the visitor chose before.
+ */
 export function DocsFrameworkLinks() {
   const pages = React.useContext(PagesContext);
+  const pathname = usePathname() || '';
   const router = useRouter();
+  if (homeFrameworkOf(pathname)) {
+    return null;
+  }
   return (
     <FrameworkLinks
       config={DOCS_FRAMEWORKS_CONFIG}

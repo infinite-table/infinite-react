@@ -17,6 +17,7 @@ import { IconClose } from './Icon/IconClose';
 import {
   DocsFrameworkSwitcher,
   useDocsFramework,
+  useDocsFrameworkHome,
 } from '@www/components/DocsFrameworks';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -79,7 +80,7 @@ export const LogoAndTitle = (props: {
   title?: string;
 }) => (
   <Link
-    href="/"
+    href={useDocsFrameworkHome()}
     data-logo
     className={`inline-flex items-center font-black text-lg sm:text-4xl sm:mr-4`}
     style={{ width: 'max-content' }}
