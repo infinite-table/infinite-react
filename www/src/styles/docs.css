@@ -638,3 +638,8 @@ a > .docs-code-inline {
 .docs-prop__details {
   padding: 4px 20px 20px;
 }
+/* a prop's box has the surface background: what sits on it takes the page's, to stand out */
+.docs-article .docs-prop :where(blockquote:not(.dk-demo *), .mdx-blockquote),
+.docs-prop .docs-note {
+  background: var(--bg);
+}
