@@ -194,7 +194,7 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
             <div className="home-hero__copy">
               <p className="home-tagline">One Table — Infinite Applications</p>
               <h1>
-                The DataGrid for React and Vue, built for speed.
+                The React DataGrid built for speed
                 <span className="home-cursor" aria-hidden="true" />
               </h1>
               <p className="home-hero__sub">

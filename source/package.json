@@ -39,7 +39,7 @@
     "rm-out-folder": "rimraf $INFINITE_OUT_FOLDER",
     "api-extract": "npm run tsc-api-extract && npm run api-extractor",
     "api-extractor": "api-extractor run --local --verbose --diagnostics",
-    "copy-license-and-readme": "cp LICENSE.md ./$INFINITE_OUT_FOLDER && cp ../README.md ./$INFINITE_OUT_FOLDER",
+    "copy-license-and-readme": "cp LICENSE.md ./$INFINITE_OUT_FOLDER && node build/copyReadme.js",
     "watch": "npm run esbuild && npm run generate-dts-file && concurrently \"npm run esbuild-watch\" \"npm run generate-dts-file-watch\"",
     "update-md": "npm run --prefix .. doctoc",
     "esbuild": "tsup --config dev-bundle.tsup.config.ts && tsup",

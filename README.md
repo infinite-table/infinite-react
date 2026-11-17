@@ -15,7 +15,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://infinite-table.com/hero/hero-poster-dark.webp" />
     <source media="(prefers-color-scheme: light)" srcset="https://infinite-table.com/hero/hero-poster-light.webp" />
-    <img alt="Infinite Table live trading blotter: ticking prices, sparklines, sector P&amp;L and a market heatmap" src="https://infinite-table.com/hero/hero-poster-dark.webp" />
+    <img alt="The React DataGrid built for speed" src="https://infinite-table.com/hero/hero-poster-dark.webp" />
   </picture>
 </a>
 
