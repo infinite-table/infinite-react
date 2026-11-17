@@ -7,7 +7,7 @@ export const metadata = asMeta(
   {
     title: 'Infinite Table for Vue — the Vue DataGrid for huge datasets',
     description:
-      'Infinite Table for Vue 3: a virtualized Vue DataGrid with sorting, row grouping, pivoting, aggregations, filtering and lazy loading. Install @infinite-table/infinite-vue and get started.',
+      'Infinite Table is the modern Vue DataGrid for building Vue apps — faster. Virtualized, with sorting, row grouping, pivoting, aggregations, filtering and lazy loading.',
     alternates: { canonical: 'https://infinite-table.com/vue' },
   },
   'vue',
