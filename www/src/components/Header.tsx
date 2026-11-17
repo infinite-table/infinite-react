@@ -176,6 +176,7 @@ function SiteSearch() {
 export const MainNavBar = () => {
   const { section, hasSidebar, hrefFor } = useSiteSection();
   const { toggleOpen, hideSidebar, isOpen } = React.useContext(MenuContext);
+  const home = useDocsFrameworkHome();
 
   // the header's own menu panel (pages without a sidebar); Escape closes it
   const panelOpen = isOpen && !hasSidebar;
@@ -232,7 +233,7 @@ export const MainNavBar = () => {
             {isOpen ? <IconClose /> : <IconHamburger />}
           </button>
 
-          <Link href="/" className="site-brand" aria-label="Infinite Table home">
+          <Link href={home} className="site-brand" aria-label="Infinite Table home">
             <i className="site-brand__mark" aria-hidden="true" />
             <span>Infinite Table</span>
           </Link>
