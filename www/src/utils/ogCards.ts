@@ -4,7 +4,7 @@
  * /og/<slug>.png. Pages pass their slug to asMeta; everything else gets
  * the site card.
  */
-import { competitors } from '@www/compare/matrix';
+import { competitors, FEATURE_KEYS } from '@www/compare/matrix';
 import { SITE_THEMES } from '@www/components/themes/registry';
 import { sortedPosts } from '@www/app/blog/sortedPosts';
 import {
@@ -19,6 +19,18 @@ export type OgCard = {
   /** small caps line above the title */
   kicker: string;
   title: string;
+  /** one or two lines under the title */
+  description?: string;
+  /** docs pages: the frameworks the page is written for */
+  frameworks?: ('React' | 'Vue')[];
+  /**
+   * what the card shows next to the text: a data grid (the default), the
+   * two products of a comparison, or a list of names
+   */
+  visual?:
+    | { kind: 'grid' }
+    | { kind: 'versus'; other: string; features: number }
+    | { kind: 'list'; items: string[] };
 };
 
 export const SITE_OG_SLUG = 'site';
@@ -30,26 +42,35 @@ const STATIC_CARDS: OgCard[] = [
     slug: SITE_OG_SLUG,
     kicker: 'One Table — Infinite Applications',
     title: 'The DataGrid for React and Vue, built for speed.',
+    description:
+      'Sorting, grouping, pivoting, filtering, editing and lazy loading, with no dependencies.',
   },
   {
     slug: 'themes',
     kicker: 'Themes',
     title: `${SITE_THEMES.length} themes. Light and dark. Three densities.`,
+    description: 'Try every theme on a live grid and copy its CSS variables.',
   },
   {
     slug: 'pricing',
     kicker: 'Pricing',
     title: 'One license — infinite applications.',
+    description: 'Licensed per developer. Free to try, with every feature.',
   },
   {
     slug: 'compare',
     kicker: 'Compare',
     title: `How Infinite Table compares to ${competitors.length} data grids.`,
+    description: `${FEATURE_KEYS.length} features, licensing, bundle size and dependencies, each with its source.`,
+    visual: { kind: 'list', items: competitors.map((product) => product.name) },
   },
   {
     slug: 'benchmark',
     kicker: 'Benchmark',
-    title: 'Infinite Table, MUI X, AG Grid and TanStack Table, at a million rows.',
+    title:
+      'Infinite Table, MUI X, AG Grid and TanStack Table, at a million rows.',
+    description:
+      'Mount, scroll, sort and filter, measured in CI with open sources.',
   },
   {
     slug: 'blog',
@@ -60,6 +81,7 @@ const STATIC_CARDS: OgCard[] = [
     slug: 'demo',
     kicker: 'Live demo',
     title: 'A live trading blotter: 10,000 rows ticking, grouped and pivoted.',
+    description: 'Real-time updates, grouping and pivoting in one grid.',
   },
 ];
 
@@ -83,13 +105,22 @@ function docsCards(): OgCard[] {
     ...getDocsPagePaths('react'),
     ...getDocsPagePaths('vue'),
   ]);
+  const vuePaths = new Set(getDocsPagePaths('vue'));
   const cards: OgCard[] = [];
   for (const path of paths) {
     const page = getDocsPage(path);
     if (!page || page.frontmatter.redirect_to) continue;
-    const title = getDocsPageMeta(page, 'react').title ?? page.frontmatter.title;
+    const meta = getDocsPageMeta(page, 'react');
+    const title = meta.title ?? page.frontmatter.title;
     if (!title) continue;
-    cards.push({ slug: docsOgSlug(path), kicker: docsKicker(path), title });
+    cards.push({
+      slug: docsOgSlug(path),
+      kicker: docsKicker(path),
+      title,
+      // only a description the page wrote, not an excerpt of its first lines
+      description: page.frontmatter.description ? meta.description : undefined,
+      frameworks: vuePaths.has(path) ? ['React', 'Vue'] : ['React'],
+    });
   }
   return cards;
 }
@@ -99,6 +130,13 @@ function compareCards(): OgCard[] {
     slug: `compare/${product.id}`,
     kicker: 'Compare',
     title: `Infinite Table vs ${product.name}`,
+    description:
+      'Features, licensing, bundle size and dependencies, side by side.',
+    visual: {
+      kind: 'versus',
+      other: product.name,
+      features: FEATURE_KEYS.length,
+    },
   }));
 }
 
@@ -110,6 +148,7 @@ function blogCards(): OgCard[] {
       slug: post.path.replace(/^\/+|\/+$/g, ''),
       kicker: 'Blog',
       title: post.title,
+      description: post.description || undefined,
     }));
 }
 
