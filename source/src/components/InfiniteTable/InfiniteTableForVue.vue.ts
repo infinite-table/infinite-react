@@ -1891,8 +1891,12 @@ export const InfiniteTable = defineComponent({
             columnId: column.id,
           });
 
+          // no `key`: the pooled cell (a RenderSlot) keeps its
+          // InfiniteTableColumnCell instance and its DOM element while
+          // scrolling, and only gets new props - as in React. A key made of
+          // the row index would unmount and mount a cell (component and
+          // DOM) for every cell that scrolls into view
           return h(InfiniteTableColumnCell, {
-            key: `${rowIndex}:${column.id}`,
             rowIndex,
             rowHeight,
             width,
