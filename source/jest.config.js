@@ -5,6 +5,9 @@ const shared = {
   testEnvironment: 'node',
   globals: {
     __DEV__: true,
+    // build-time constants, read by the license check
+    __VERSION__: require('./package.json').version,
+    __VERSION_TIMESTAMP__: Date.now(),
   },
   transform: {
     '\\.css\\.ts$': '@vanilla-extract/jest-transform',
