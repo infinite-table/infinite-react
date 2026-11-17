@@ -4,7 +4,7 @@ import { sortedPosts } from './blog/sortedPosts';
 
 const seoTitle =
   'Infinite Table DataGrid for React — One Table — Infinite Applications.';
-const seoDescription = `Infinite Table is the modern DataGrid for building React apps — faster. Virtualized, with sorting, row grouping, pivoting, aggregations, filtering and lazy loading.`;
+const seoDescription = `Infinite Table is the modern React DataGrid for building React apps — faster. Virtualized, with sorting, row grouping, pivoting, aggregations, filtering and lazy loading.`;
 
 export const metadata = asMeta({
   title: seoTitle,
