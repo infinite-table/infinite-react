@@ -188,8 +188,13 @@ body > .dk-demo-overlay {
 }
 
 /* a live demo's framework (data-framework, set by docs-kit), as an icon
-   before its title: the React icon on a React-only demo of a Vue page */
-.dk-demo[data-framework] .dk-demo-title::before {
+   before its title: the React icon on a React-only demo of a Vue page.
+   A demo with no title shows its description instead, so the icon goes
+   before the description's first line */
+.dk-demo[data-framework] .dk-demo-title::before,
+.dk-demo[data-framework]:not(:has(.dk-demo-title))
+  .dk-demo-description
+  > :first-child::before {
   content: '';
   display: inline-block;
   width: 1.1em;
