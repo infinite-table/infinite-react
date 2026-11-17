@@ -197,7 +197,7 @@ export function VueHomePage({ posts = [] }: { posts?: BlogPost[] }) {
           </div>
           <div className="home-footnote">
             <span>
-              {bench.footnote} {bench.note} Scrolling and the other scenarios
+              {bench.footnote} Scrolling and the other scenarios
               are in the benchmark's repository.
             </span>
             <a href={bench.href} target="_blank" rel="noreferrer">
