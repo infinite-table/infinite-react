@@ -119,7 +119,8 @@ body > .dk-demo-overlay {
   height: 32px;
   padding: 0;
   gap: 0;
-  border: 1px solid var(--line-strong);
+  /* in the accent, like the "Buy a license" key */
+  border: 1px solid var(--accent);
   border-radius: 2px;
   overflow: hidden;
   font: 500 12px/1 var(--font-mono);
@@ -136,22 +137,22 @@ body > .dk-demo-overlay {
 }
 
 .docs-framework-switcher .dk-framework-option + .dk-framework-option {
-  border-left: 1px solid var(--line-strong);
+  border-left: 1px solid var(--accent);
 }
 
 .docs-framework-switcher .dk-framework-option:hover {
-  background: transparent;
-  color: var(--heading);
-}
-
-.docs-framework-switcher .dk-framework-option--active,
-.docs-framework-switcher .dk-framework-option--active:hover {
   background: var(--accent-soft);
   color: var(--accent-text);
 }
 
+.docs-framework-switcher .dk-framework-option--active,
+.docs-framework-switcher .dk-framework-option--active:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
 .docs-framework-switcher .dk-framework-option:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--heading);
   outline-offset: -2px;
 }
 
