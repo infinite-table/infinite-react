@@ -2279,8 +2279,8 @@ const wijmo: Product = {
 
 
 export const competitors: Product[] = [
-  agGrid,
   muiXDataGrid,
+  agGrid,
   tanstackTable,
   handsontable,
   devexpress,

@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './tokens.css';
 
 @theme {
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
@@ -6,11 +7,6 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
-
-  --color-paleglow: #319c75;
-  --color-textcolorpale: hsla(0, 0%, 100%, 0.7);
-  --color-codebg: #313131;
-  --color-bgcolor: hsl(0, 0%, 10%);
 
   --color-datagrid-blue: #3b82f6;
 
@@ -30,65 +26,16 @@
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
 
-  --color-black: #000000;
-  --color-primary: #23272f; /* gray-90 */
-  --color-primary-dark: #f6f7f9; /* gray-5 */
-  --color-secondary: #404756; /* gray-70 */
-  --color-secondary-dark: #ebecf0; /* gray-10 */
-  --color-content-color: rgba(235, 236, 240, 0.93);
-  --color-link: #149eca;
-  --color-syntax: #ebecf0; /* gray-10 */
-  --color-wash: #ffffff;
-  --color-wash-dark: #23272f; /* gray-90 */
-  --color-card: #f6f7f9; /* gray-05 */
-  --color-card-dark: #343a46; /* gray-80 */
-  --color-glow: #3bff7f;
-
-  /* this is the color used in the logo */
-  --color-accent2: #497aff; /* blue-10 */
-  --color-highlight: #e6f7ff; /* blue-10 */
-  --color-highlight-dark: rgba(88, 175, 223, 0.15);
-  --color-glow-dark: rgba(59, 255, 127, 0.1);
-  /* 'highlight-dark': 'rgba(88,175,223,.1)', */
-  --color-border: #ebecf0; /* gray-10 */
-  --color-border-dark: #343a46; /* gray-80 */
-  --color-brand: #0b6fcb; /* gray-80 */
-  --color-codesandboxdark: #191919;
-  --color-brand-dark: #133048; /* gray-80 */
-  --color-brand-blue: #497aff;
-  --color-secondary-button: #ebecf0; /* gray-10 */
-  --color-secondary-button-dark: #404756; /* gray-70 */
-  --color-darkcustom: #0d1114;
-  --color-special-border-color: rgba(255, 255, 255, 0.09);
-  --color-deep-dark: #07131c;
   --color-mint-500: oklch(0.72 0.11 178);
-  --color-error: var(--color-red-400);
 
-  --color-gray-95: #16181d;
-  --color-gray-90: #23272f;
-  --color-gray-80: #343a46;
-  --color-gray-70: #404756;
-  --color-gray-60: #4e5769;
-  --color-gray-50: #5e687e;
-  --color-gray-40: #78839b;
-  --color-gray-30: #99a1b3;
-  --color-gray-20: #bcc1cd;
-  --color-gray-10: #ebecf0;
-  --color-gray-5: #f6f7f9;
   --color-blue-60: #045975;
-  --color-blue-50: #087ea4;
-  --color-blue-40: #149eca;
   --color-blue-30: #58c4dc;
   --color-blue-20: #abe2ed;
   --color-blue-10: #e6f7ff;
   --color-blue-5: #e6f6fa;
 
   /* // MISC */
-  --color-code-block: #99a1b30f;
   --color-gradient-blue: #58c4dc;
-
-  --font-mono: 'Source Code Pro', Menlo, monospace;
-  --font-sans: 'Optimistic Display', -apple-system, sans-serif;
 
   --leading-base: 30px;
   --leading-large: 38px;
@@ -121,14 +68,6 @@
 }
 
 @layer base {
-  @font-face {
-    font-family: 'Source Code Pro';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('/fonts/SourceCodePro-Regular.ttf') format('truetype');
-  }
-
   :root {
     --sp-font-mono: var(--font-mono);
     --default-mono-font-family: var(--font-mono);
@@ -176,12 +115,8 @@
   }
 
   a > code {
-    color: #149eca !important; /* blue-50 */
+    color: var(--accent-text) !important;
     text-decoration: none !important;
-  }
-
-  html.dark a > code {
-    color: #149eca !important; /* blue-40 */
   }
 
   .text-code {
@@ -260,7 +195,7 @@
   html .no-bg-scrollbar {
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
   }
-  html.dark .no-bg-scrollbar {
+  html[data-theme='dark'] .no-bg-scrollbar {
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   }
   /*
@@ -291,14 +226,14 @@
   html .no-bg-scrollbar::-webkit-scrollbar-thumb:active {
     background-color: rgba(0, 0, 0, 0.35) !important;
   }
-  html.dark .no-bg-scrollbar:hover::-webkit-scrollbar-thumb,
-  html.dark .no-bg-scrollbar:focus::-webkit-scrollbar-thumb,
-  html.dark .no-bg-scrollbar:focus-within::-webkit-scrollbar-thumb,
-  html.dark .no-bg-scrollbar:active::-webkit-scrollbar-thumb {
+  html[data-theme='dark'] .no-bg-scrollbar:hover::-webkit-scrollbar-thumb,
+  html[data-theme='dark'] .no-bg-scrollbar:focus::-webkit-scrollbar-thumb,
+  html[data-theme='dark'] .no-bg-scrollbar:focus-within::-webkit-scrollbar-thumb,
+  html[data-theme='dark'] .no-bg-scrollbar:active::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
   }
-  html.dark .no-bg-scrollbar::-webkit-scrollbar-thumb:hover,
-  html.dark .no-bg-scrollbar::-webkit-scrollbar-thumb:active {
+  html[data-theme='dark'] .no-bg-scrollbar::-webkit-scrollbar-thumb:hover,
+  html[data-theme='dark'] .no-bg-scrollbar::-webkit-scrollbar-thumb:active {
     background-color: rgba(255, 255, 255, 0.35) !important;
   }
 }
@@ -326,12 +261,23 @@
   display: flex;
 }
 :root:root {
-  --docsearch-searchbox-background: rgb(52 58 70 / 1);
-  --docsearch-container-background: rgb(52 58 70 / 0.6);
-  --docsearch-primary-color: #149eca;
-  --docsearch-modal-background: #171a21; /*bg-secondary opacity 40%*/
-  --docsearch-footer-background: #23272f; /*bg-secondary opacity 40%*/
-  --docsearch-key-gradient: linear-gradient(-26.5deg, #404756, #23272f);
+  --docsearch-searchbox-background: var(--raised);
+  --docsearch-searchbox-focus-background: var(--bg);
+  --docsearch-container-background: var(--backdrop);
+  --docsearch-primary-color: var(--accent);
+  --docsearch-text-color: var(--fg);
+  --docsearch-muted-color: var(--muted);
+  --docsearch-highlight-color: var(--accent);
+  --docsearch-hit-color: var(--fg);
+  --docsearch-hit-background: var(--surface);
+  --docsearch-hit-active-color: var(--accent-fg);
+  --docsearch-modal-background: var(--bg);
+  --docsearch-modal-shadow: 0 0 0 1px var(--line-strong);
+  --docsearch-footer-background: var(--surface);
+  --docsearch-footer-shadow: inset 0 1px 0 var(--line);
+  --docsearch-key-gradient: linear-gradient(var(--raised), var(--raised));
+  --docsearch-key-shadow: inset 0 0 0 1px var(--line-strong);
+  --docsearch-searchbox-shadow: inset 0 0 0 1px var(--accent);
 }
 
 :root {

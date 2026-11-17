@@ -7,7 +7,7 @@ export const metadata = asMeta({
   title: 'Live demo — Infinite Table React DataGrid',
   description:
     'A live trading blotter built with Infinite Table: ticking prices from a Web Worker, sorting, grouping and pivoting while the data updates, up to a million rows, and charts fed by the same stream.',
-});
+}, 'demo');
 
 export default function LiveDemoPage() {
   return (

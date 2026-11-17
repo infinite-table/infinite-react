@@ -32,11 +32,10 @@ export function CopyMarkdownButton(props: { mdPath: string }) {
     }, 2000) as any as number;
   }
 
-  const cls =
-    'inline-flex items-center gap-1.5 text-xs text-gray-300 bg-gray-800 hover:bg-gray-700 py-1 px-2 rounded-md cursor-pointer';
+  const cls = 'site-key site-key--sm';
 
   return (
-    <div className="flex items-center gap-2 mt-2 mb-4">
+    <div className="docs-actions">
       <button
         type="button"
         className={cls}

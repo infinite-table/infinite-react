@@ -1,5 +1,4 @@
 'use client';
-import cx from 'classnames';
 import * as React from 'react';
 
 import { useTocHighlight } from './useTocHighlight';
@@ -33,67 +32,30 @@ export function Toc({
     ? -1
     : Math.min(currentIndex, headings.length - 1);
   return (
-    <nav
-      role="navigation"
-      className="pt-6 fixed top-0 right-0"
-      style={{
-        // This keeps the layout fixed width instead of adjusting for content.
-        width: 'inherit',
-        maxWidth: 'inherit',
-      }}
-    >
-      <h2 className="mt-14 mb-3 lg:mb-3 uppercase tracking-wide font-bold text-sm text-content-color px-4 w-full">
-        On this page
-      </h2>
-      <div className="toc h-full overflow-y-auto pl-4">
-        <ul className="space-y-2 pb-16">
-          {headings &&
-            headings.length > 0 &&
-            headings.map((h, i) => {
-              if (h.url == null) {
-                // TODO: only log in DEV
-                console.error('Heading does not have URL');
-              }
-              return (
-                <li
-                  key={`heading-${h.url}-${i}`}
-                  className={cx(
-                    'text-sm px-2 py-1 rounded-l-lg',
-                    selectedIndex === i ? 'bg-highlight-dark' : null,
-                    {
-                      'pl-4': h?.depth === 3,
-                      hidden: h.depth && h.depth > 3,
-                    },
-                  )}
-                >
-                  <a
-                    className={cx(
-                      selectedIndex === i
-                        ? 'text-link font-bold'
-                        : 'text-content-color',
-                      'block hover:text-link',
-                    )}
-                    href={h.url}
-                  >
-                    {h.text}
-                  </a>
-                </li>
-              );
-            })}
-        </ul>
-      </div>
-      {/* @ts-ignore */}
-      <style jsx global>{`
-        .toc {
-          /** Screen - nav - toc offset */
-          max-height: calc(100vh - 7.5rem);
-        }
-        .toc-link > code {
-          overflow-wrap: break-word;
-          white-space: pre-wrap;
-          font-size: 90%;
-        }
-      `}</style>
+    <nav role="navigation" aria-label="On this page" className="docs-toc">
+      <h2 className="docs-toc__label">On this page</h2>
+      <ul className="docs-toc__list">
+        {headings.map((h, i) => {
+          if (h.url == null) {
+            // TODO: only log in DEV
+            console.error('Heading does not have URL');
+          }
+          if (h.depth && h.depth > 3) {
+            return null;
+          }
+          return (
+            <li key={`heading-${h.url}-${i}`}>
+              <a
+                href={h.url}
+                data-depth={h.depth === 3 ? 3 : 2}
+                aria-current={selectedIndex === i ? 'location' : undefined}
+              >
+                {h.text}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }

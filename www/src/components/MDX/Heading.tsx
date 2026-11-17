@@ -40,7 +40,7 @@ const Heading = forwardRefWithAs<HeadingProps, 'div'>(function HeadingCmp(
               height="1em"
               viewBox="0 0 13 13"
               xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-70 ml-2 h-5 w-5"
+              className="ml-2 h-5 w-5"
             >
               <g fill="currentColor" fillRule="evenodd">
                 <path d="M7.778 7.975a2.5 2.5 0 0 0 .347-3.837L6.017 2.03a2.498 2.498 0 0 0-3.542-.007 2.5 2.5 0 0 0 .006 3.543l1.153 1.15c.07-.29.154-.563.25-.773.036-.077.084-.16.14-.25L3.18 4.85a1.496 1.496 0 0 1 .002-2.12 1.496 1.496 0 0 1 2.12 0l2.124 2.123a1.496 1.496 0 0 1-.333 2.37c.16.246.42.504.685.752z" />

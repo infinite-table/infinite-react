@@ -3,7 +3,7 @@
 // build) in headless Chromium and checks the docs-kit cards on them: every
 // live demo iframe has to render a grid, and no page may log an error.
 //
-//   npm run check:pages -- <origin> <route | content folder>… [--framework vue] [--shots <dir>]
+//   npm run check:pages -- <origin> <route | content folder>… [--framework vue] [--color-scheme light|dark] [--shots <dir>]
 //   npm run check:pages -- http://localhost:3001 /docs/learn/sorting/overview content/docs/learn/columns
 //
 // `--framework vue` checks the Vue version of the pages (`/vue/docs/…`): of a
@@ -11,6 +11,9 @@
 // demo has to be the Vue one; a card that still shows the React demo (the
 // "React only for now" notice) is listed, and fails the check with
 // `--no-fallbacks`.
+//
+// `--color-scheme light|dark` sets the browser's preferred colour scheme, which
+// the site follows when the visitor hasn't picked a mode.
 //
 // Playwright comes from the examples app (`npm ci --prefix examples`).
 import fs from 'node:fs';
@@ -25,11 +28,13 @@ const origin = args.shift()?.replace(/\/$/, '');
 let shotsDir = null;
 let framework = null;
 let noFallbacks = false;
+let colorScheme = null;
 const targets = [];
 for (let index = 0; index < args.length; index++) {
   if (args[index] === '--shots') shotsDir = path.resolve(args[++index]);
   else if (args[index] === '--framework') framework = args[++index];
   else if (args[index] === '--no-fallbacks') noFallbacks = true;
+  else if (args[index] === '--color-scheme') colorScheme = args[++index];
   else targets.push(args[index]);
 }
 // React pages have no prefix
@@ -61,7 +66,7 @@ for (const target of targets) {
 if (!origin || !routes.length) {
   console.error(
     routes.length || !targets.length
-      ? 'usage: check-pages.mjs <origin> <route | content folder>… [--framework vue] [--no-fallbacks] [--shots <dir>]'
+      ? 'usage: check-pages.mjs <origin> <route | content folder>… [--framework vue] [--no-fallbacks] [--color-scheme light|dark] [--shots <dir>]'
       : `no ${framework ?? ''} pages in ${targets.join(', ')}`,
   );
   process.exit(1);
@@ -71,7 +76,10 @@ const require = createRequire(path.resolve(WWW_DIR, '../examples/package.json'))
 const { chromium } = require('@playwright/test');
 
 const browser = await chromium.launch();
-const context = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+const context = await browser.newContext({
+  viewport: { width: 1400, height: 900 },
+  ...(colorScheme ? { colorScheme } : null),
+});
 let failed = 0;
 let fallbackCards = 0;
 

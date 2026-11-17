@@ -113,11 +113,7 @@ export function SidebarRouteTree({
   const currentRoutes = routeTree ?? [];
 
   return (
-    <ul
-      className={`bg-darkcustom  border-border-dark lg:bg-transparent ${
-        level === 0 ? 'lg:pt-6' : ''
-      }`}
-    >
+    <ul className="docs-side-tree" data-level={level}>
       {currentRoutes
         .filter((route) => !route.draft)
         .map((route) => {

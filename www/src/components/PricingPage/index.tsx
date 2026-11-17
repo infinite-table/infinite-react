@@ -8,10 +8,7 @@ import Link from 'next/link';
 import * as React from 'react';
 
 import { AccentButton } from '../AccentButton';
-import cmpStyles from '@www/components/components.module.css';
 import { ExternalLink } from '../ExternalLink';
-import { getHeroHeaderTextStyling } from '../Header';
-import headerStyles from '../Header.module.css';
 import { analytics, AnalyticsEvents } from './analytics';
 import {
   BASE_PRICE,
@@ -45,15 +42,10 @@ function PriceSummary({ count }: { count: number }) {
   const price = getPriceForCount(count);
   const priceText = formatCurrency(price);
   return (
-    <div
-      className={'text-xl mt-10 font-black text-center'}
-      style={{
-        textShadow: `10px 10px 100px var(--color-highlight)`,
-      }}
-    >
+    <div className="pricing-summary">
       {count > LICENSE_MAX ? (
         <p className="font-normal">
-          For teams of <span className="font-black">{LICENSE_MAX + 1}+</span>{' '}
+          For teams of <b>{LICENSE_MAX + 1}+</b>{' '}
           developers, email{' '}
           <a href="mailto:admin@infinite-table.com" className=" text-glow ">
             admin@infinite-table.com
@@ -62,8 +54,9 @@ function PriceSummary({ count }: { count: number }) {
         </p>
       ) : (
         <>
-          Total: <span className="text-glow text-3xl ml-2">{priceText}</span>
-          <p className="text-base font-normal">
+          <span className="pricing-summary__label">Total</span>
+          <span className="pricing-summary__total">{priceText}</span>
+          <p className="pricing-summary__per">
             {getFormattedPricePerDeveloper(count)} per developer / year
           </p>
         </>
@@ -75,12 +68,12 @@ function PriceSummary({ count }: { count: number }) {
 function DiscountsTable(props: { discounts: [string, string, string][] }) {
   return (
     <>
-      <table className="text-base sm:text-lg">
-        <thead className="border-b border-special-border-color">
+      <table className="pricing-discounts">
+        <thead>
           <tr>
-            <th className="md:pl-10 w-full"># Licenses</th>
-            <th>$</th>
-            <th className="text-right pl-5 pr-1 md:pr-3">Discount</th>
+            <th># Licenses</th>
+            <th>$ / developer</th>
+            <th>Discount</th>
           </tr>
         </thead>
         <tbody>
@@ -88,13 +81,9 @@ function DiscountsTable(props: { discounts: [string, string, string][] }) {
             const [label, price, percentage] = discount;
             return (
               <tr key={i}>
-                <td className={`pt-3 md:pl-10 whitespace-nowrap`}>{label}</td>
-                <td className={`pt-3  whitespace-nowrap`}>{price}</td>
-                <td
-                  className={`pt-3 pr-1 md:pr-3 whitespace-nowrap text-right font-bold`}
-                >
-                  {percentage}
-                </td>
+                <td>{label}</td>
+                <td>{price}</td>
+                <td>{percentage}</td>
               </tr>
             );
           })}
@@ -108,29 +97,20 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
   const [value, setValue] = React.useState(1);
 
   const clamp = (v: number) => Math.max(1, Math.min(100, v));
-  const boxClassName =
-    ' rounded-md flex active:bg-highlight-dark cursor-pointer user-select-none flex-col pointer items-center justify-center px-5 py-2 text-2xl font-bold';
+  const boxClassName = 'pricing-team__step';
 
   React.useEffect(() => {
     props.onCountChange(value);
   }, [value]);
   return (
-    <div className="w-2/3 text-center">
-      <div
-        className="mb-3 text-xl font-black"
-        style={{
-          textShadow: `10px 10px 50px var(--color-highlight)`,
-        }}
-      >
-        Team Size
-      </div>
-      <div
-        className="flex flex-row w-full border border-special-border-color "
-        style={{
-          boxShadow: `1px 1px 10px 1px var(--color-highlight)`,
-        }}
-      >
+    <div className="pricing-team">
+      <label className="pricing-label" htmlFor="pricing-team-size">
+        Team size
+      </label>
+      <div className="pricing-team__control">
         <button
+          type="button"
+          aria-label="One developer less"
           onClick={() => {
             setValue((v) => clamp(v - 1));
           }}
@@ -139,16 +119,18 @@ function TeamSize(props: { onCountChange: (count: number) => void }) {
           -
         </button>
         <input
+          id="pricing-team-size"
           type="number"
           size={3}
           value={value}
           onChange={(e) => {
             setValue(clamp(e.target.valueAsNumber));
           }}
-          className="bg-white p-2 flex-1 text-3xl text-darkcustom font-extrabold text-center"
-          style={{ minWidth: 20, width: 70 }}
+          className="pricing-team__input"
         />
         <button
+          type="button"
+          aria-label="One developer more"
           onClick={() => {
             setValue((v) => clamp(v + 1));
           }}
@@ -278,24 +260,19 @@ function FormField(props: {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <label className="flex flex-col justify-start text-left whitespace-nowrap mt-5 mx-6 text-xl">
-      {props.label}
+    <label className="pricing-field">
+      <span className="pricing-label">{props.label}</span>
       <input
         id={props.id}
         type={props.type || 'text'}
         required={props.required}
         pattern={props.pattern}
-        style={{
-          boxShadow: `1px 1px 10px 1px var(--color-highlight)`,
-        }}
-        className=" mt-2 bg-white w-full p-2 ml-1 border-1 rounded-sm border-special-border-color  text-xl text-darkcustom font-black text-center"
+        className="pricing-input"
         value={props.value}
         onChange={props.onChange}
       />
 
-      <span className="whitespace-normal mt-2 text-sm">
-        {props.description}
-      </span>
+      <span className="pricing-field__help">{props.description}</span>
     </label>
   );
 }
@@ -419,9 +396,7 @@ export function PricingPage() {
         <>
           <p>
             Easy to understand pricing —{' '}
-            <span className={cmpStyles.HighlightBrandToLightBackground}>
-              development licenses only
-            </span>
+            <span className="text-accent-text">development licenses only</span>
           </p>
           <p>No deployment or application licenses required</p>
         </>
@@ -439,12 +414,11 @@ export function PricingPage() {
           />
         ) : null} */}
 
-        <div className="w-full flex flex-col sm:flex-row items-stretch  mx-auto justify-center">
-          <div className="relative z-20 my-20 ">
+        <div className="pricing-top">
+          <div className="pricing-points">
             <Card
               href="#buy-once-use-always"
               title="Buy Once, Use Always"
-              className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-xl rounded-b-none"
             >
               Your license is valid for all the apps your company is developing
             </Card>
@@ -452,7 +426,6 @@ export function PricingPage() {
             <Card
               href="#no-hidden-costs"
               title="No Hidden Costs"
-              className="border-b sm:pr-20 md:pr-20 border-special-border-color rounded-none"
             >
               One license is all that's required. There's no deployment or
               distribution license for your apps. It's that simple!
@@ -461,7 +434,6 @@ export function PricingPage() {
             <Card
               href="#per-developer-pricing"
               title="Per-developer Pricing"
-              className="sm:pr-20 md:pr-20 rounded-t-none rounded-xl"
             >
               Use the calculator on the right to see the price for your whole
               team. Buy one license seat for each front-end developer working on
@@ -471,27 +443,11 @@ export function PricingPage() {
           <Card
             title=""
             noBackground
-            style={{
-              // boxShadow: `2px 2px 10px 1px ${wwwVars.color.highlight}`,
-              boxShadow: ` 0 2px 6px -2px var(--color-highlight), 0 2px 4px -2px var(--color-highlight)`,
-            }}
-            className={`shadow-lg bg-deep-dark/95 relative sm:-left-10  z-20 sm:w-1/2 rounded-xl text-content-color`}
+            className="pricing-box"
           >
-            <div className="text-right">
-              <div
-                style={getHeroHeaderTextStyling().style}
-                className={getHeroHeaderTextStyling().className}
-              >
-                <p
-                  className={'text-glow'}
-                  style={{
-                    textShadow: `10px 10px 100px var(--color-highlight)`,
-                  }}
-                >
-                  $ {BASE_PRICE}
-                </p>
-              </div>
-              <p className={''}>per developer / year</p>
+            <div className="pricing-price">
+              <span className="pricing-price__value">$ {BASE_PRICE}</span>
+              <span className="pricing-price__per">per developer / year</span>
             </div>
 
             <div>
@@ -522,9 +478,7 @@ export function PricingPage() {
                   ]}
                 />
 
-                <div
-                  className={`justify-center items-center flex flex-col font-black pt-10 mt-10 ${headerStyles.OverlineCls} relative`}
-                >
+                <div className="pricing-calc">
                   <TeamSize
                     onCountChange={(count) => {
                       setLicenseDetails({
@@ -538,7 +492,7 @@ export function PricingPage() {
                 </div>
 
                 <form
-                  className="text-center mt-5"
+                  className="pricing-form"
                   onSubmit={(e) => e.preventDefault()}
                 >
                   {!HAS_PADDLE ? null : (
@@ -576,7 +530,7 @@ export function PricingPage() {
                       <AccentButton
                         glow={validDetails() === true && !error && !buyDisabled}
                         disabled={buyDisabled}
-                        className="mt-10"
+                        className="pricing-buy"
                         onClick={onBuyClick}
                       >
                         <>Buy Infinite Table for React</>
@@ -586,10 +540,10 @@ export function PricingPage() {
                   )}
 
                   {error ? (
-                    <div className="text-glow text-lg mt-2">{error}</div>
+                    <div className="pricing-error">{error}</div>
                   ) : null}
 
-                  <span className="text-sm leading-relaxed text-left inline-block mt-6">
+                  <span className="pricing-note">
                     {HAS_PADDLE ? (
                       <>
                         We're using{' '}
@@ -630,7 +584,7 @@ export function PricingPage() {
             </div>
           </Card>
         </div>
-        <MainContent className="mt-40">
+        <MainContent>
           <Cards title="How It works">
             <Card
               title="Getting the License Key"

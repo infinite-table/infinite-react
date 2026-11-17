@@ -5,11 +5,6 @@ import { ReactNode } from 'react';
 
 import { BannerText } from './BannerText';
 
-import cmpStyles from './components.module.css';
-
-const titleOpacity = 'opacity-80';
-const subtitleOpacity = 'opacity-70';
-
 export const Card = ({
   href,
   title,
@@ -17,12 +12,12 @@ export const Card = ({
   className,
   style,
   noBackground,
-  noBackgroundOnHover,
   flexContent,
   tag,
 }: {
   flexContent?: boolean;
   href?: string;
+  /** `div` for a card with links inside: only its title is a link then */
   tag?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -31,52 +26,58 @@ export const Card = ({
   noBackground?: boolean;
   noBackgroundOnHover?: boolean;
 }) => {
-  const Tag: string = tag || 'a';
-  let cls = `${className || ''} ${
-    cmpStyles.card
-  } p-4 sm:p-4 md:p-8 py-10 rounded-sm flex flex-col`;
-
-  if (!noBackgroundOnHover) {
-    cls += `  hover:bg-deep-dark/90 `;
-  }
-
-  if (!noBackground) {
-    cls += ` bg-deep-dark/60 `;
-  }
-
-  let header = (
-    <>
-      {title} {href && !href.startsWith('#') ? <>&rarr;</> : null}
-    </>
-  );
+  const Tag = (tag || 'a') as 'a' | 'div';
+  const cls = `site-card ${noBackground ? 'site-card--plain' : ''} ${
+    className || ''
+  }`;
 
   const pageSection = !!href && href.startsWith('#');
-  if (href && Tag != 'a') {
-    header = <Link href={href}>{header}</Link>;
-  }
+  const arrow = href && !pageSection ? <> →</> : null;
+  // the whole card is a link, unless it has links of its own (tag="div"):
+  // a link can't hold another link
+  const wholeCardIsLink = !!href && Tag === 'a';
+
+  const header =
+    href && !wholeCardIsLink ? (
+      pageSection ? (
+        <a href={href}>
+          {title}
+          {arrow}
+        </a>
+      ) : (
+        <Link href={href}>
+          {title}
+          {arrow}
+        </Link>
+      )
+    ) : (
+      <>
+        {title}
+        {arrow}
+      </>
+    );
+
   const content = (
     <>
-      <h3
-        className={`${titleOpacity} text-2xl font-light mb-4`}
-        id={pageSection ? href.substring(1) : undefined}
-        style={{
-          marginTop: -30,
-          paddingTop: 30,
-        }}
-      >
-        {header}
-      </h3>
+      {title ? (
+        <h3
+          className="site-card__title"
+          id={pageSection ? href!.substring(1) : undefined}
+        >
+          {header}
+        </h3>
+      ) : null}
       <div
-        className={`${subtitleOpacity} text-md flex-1 ${
+        className={`site-card__body ${
           flexContent ? 'inline-flex flex-col' : ''
-        } leading-relaxed`}
+        }`}
       >
         {children}
       </div>
     </>
   );
 
-  if (!href) {
+  if (!wholeCardIsLink) {
     return (
       <div className={cls} style={style}>
         {content}
@@ -86,18 +87,14 @@ export const Card = ({
 
   if (pageSection) {
     return (
-      <a href={href} className={cls} style={style}>
-        {/* @ts-ignore */}
+      <a href={href} className={`${cls} site-card--link`} style={style}>
         {content}
       </a>
     );
   }
   return (
-    <Link href={href} legacyBehavior>
-      {/* @ts-ignore */}
-      <Tag className={cls} style={style}>
-        {content}
-      </Tag>
+    <Link href={href!} className={`${cls} site-card--link`} style={style}>
+      {content}
     </Link>
   );
 };
@@ -134,8 +131,6 @@ const defaultChildren = (
   </>
 );
 
-const commonCls = `leading-relaxed text-center`;
-
 export const CardsTitle = ({
   children,
   className,
@@ -150,9 +145,7 @@ export const CardsTitle = ({
   return (
     <h3
       id={id}
-      className={`${
-        className || ''
-      } ${commonCls} text-3xl font-bold ${titleOpacity}`}
+      className={`site-cards__title ${className || ''}`}
       style={style}
     >
       {children}
@@ -173,10 +166,7 @@ export const CardsSubtitle = (props: {
   const Cmp = props.as || 'h4';
   const { children, className, style } = props;
   return (
-    <Cmp
-      className={`${commonCls} text-xl ${subtitleOpacity} ${className || ''}`}
-      style={style}
-    >
+    <Cmp className={`site-cards__subtitle ${className || ''}`} style={style}>
       {children}
     </Cmp>
   );
@@ -185,7 +175,8 @@ export const Cards = ({
   title,
   subtitle,
   children,
-  spotlight = true,
+  // no longer drawn; kept so callers still type-check
+  spotlight: _spotlight,
   style,
 }: {
   title?: ReactNode;
@@ -196,13 +187,6 @@ export const Cards = ({
 }) => {
   const before = (
     <>
-      {spotlight ? (
-        <div
-          style={{ position: 'absolute', inset: 0 }}
-          className={`${cmpStyles.SpotlightRadialBackgroundCls}`}
-        ></div>
-      ) : null}
-
       <CardsTitle>{title ?? defaultTitle}</CardsTitle>
 
       {subtitle ? <CardsSubtitle as="h4">{subtitle}</CardsSubtitle> : null}
@@ -226,13 +210,9 @@ export const CardsLayout = ({
   style?: React.CSSProperties;
 }) => {
   return (
-    <div className={`mt-24 relative w-full`} style={style}>
+    <div className="site-cards" style={style}>
       {before}
-      <div style={{ margin: '0 auto' }} className="justify-center flex w-full">
-        <div className={`grid grid-cols-1 md:grid-cols-2 gap-5 my-16 w-full`}>
-          {children}
-        </div>
-      </div>
+      <div className="site-cards__grid">{children}</div>
     </div>
   );
 };

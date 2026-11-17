@@ -4,50 +4,25 @@ import { MainNavBar } from '@www/components/Header';
 
 import componentsStyle from '@www/components/components.module.css';
 
-import { newvars } from '@www/styles/www-utils';
-import { CSSProperties } from 'react';
-import { usePathname } from 'next/navigation';
 import { Footer } from '@www/components/Footer';
 import { MenuProvider } from '@www/components/useMenu';
 import { DocsFrameworkLinks } from '@www/components/DocsFrameworks';
-import { docsFrameworks } from '@www/utils/docsFrameworks';
+import { ThemeSync } from '@www/components/ThemeToggle';
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const style: CSSProperties = {
-    margin: '0 auto',
-  };
-  const pathname = usePathname() || '';
-
-  const activePage = {
-    pricing: pathname.startsWith('/pricing'),
-    // /docs/... and /vue/docs/...
-    docs: docsFrameworks.frameworkOf(pathname) != null,
-    blog: pathname.startsWith('/blog'),
-    demo: /^\/demo\/?$/.test(pathname),
-  };
-  const skipMaxWidth = activePage.blog || activePage.docs || activePage.demo;
-
-  if (!skipMaxWidth) {
-    style.maxWidth = newvars.maxSiteWidth;
-    //@ts-ignore
-    style['--max-site-width'] = newvars.maxSiteWidth;
-  }
-
   return (
     <MenuProvider>
+      <ThemeSync />
       <DocsFrameworkLinks />
-      <div style={style}>
-        <div
-          className={`w-full flex flex-col ${componentsStyle.minHeightFull} `}
-        >
-          <MainNavBar />
-          {children}
-          <Footer />
-        </div>
+      <div className={`w-full flex flex-col ${componentsStyle.minHeightFull}`}>
+        <MainNavBar />
+        {/* each page sets its own width; the header and footer span the window */}
+        <div className="w-full flex flex-col flex-1">{children}</div>
+        <Footer />
       </div>
     </MenuProvider>
   );

@@ -1,31 +1,20 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { getBlogPostByPath } from '../utils/blogUtils';
 
-export function MetaProperties() {
+/**
+ * Takes the blog post paths from the (server) layout rather than reading
+ * the content index itself: as a client component, importing it would ship
+ * the whole site's content to every page.
+ */
+export function MetaProperties({ blogPostPaths }: { blogPostPaths: string[] }) {
   const pathname = usePathname();
 
-  const post = getBlogPostByPath(pathname);
-
-  const ogImage =
-    !post || !post.thumbnail ? (
-      <>
-        <meta
-          property="og:image"
-          content="https://infinite-table.com/og-image.png"
-        />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="680" />
-      </>
-    ) : (
-      <></>
-    );
+  const post = pathname.startsWith('/blog/') && blogPostPaths.includes(pathname);
 
   return (
     <>
       <link rel="icon shortcut" type="image/x-icon" href="/favicon.ico"></link>
-      {ogImage}
       {!post ? (
         <>
           <meta
