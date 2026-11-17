@@ -35,7 +35,7 @@ const PIVOT_CODE = `<DataSource
   )}
 </DataSource>`;
 
-const FEATURES = [
+export const FEATURES = [
   {
     title: 'Sorting',
     text: 'Single and multi-column, local or remote.',
@@ -91,7 +91,7 @@ const PRINCIPLES = [
   { title: 'React and Vue', text: 'The same grid, the same docs.' },
 ];
 
-function SectionBar({
+export function SectionBar({
   no,
   name,
   aside,

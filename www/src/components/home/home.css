@@ -158,6 +158,7 @@
   display: inline-flex;
   align-items: stretch;
   height: 42px;
+  min-width: 0;
   max-width: 100%;
   border: 1px solid var(--line-strong);
   border-radius: 2px;
@@ -168,6 +169,8 @@
 .home-install__cmd {
   display: inline-flex;
   align-items: center;
+  /* shrinks, so a long package name is cut on a phone, not the page widened */
+  min-width: 0;
   padding: 0 12px;
   overflow: hidden;
   white-space: nowrap;
@@ -670,6 +673,21 @@
 }
 .home-split__code > * {
   margin: 0;
+}
+
+/* the Vue home page: a docs demo card (the Vue grid, its code, the editor) */
+.home-vue-demo {
+  min-width: 0;
+}
+.home-vue-demo > * {
+  margin: 0;
+}
+/* on a phone the card's toolbar is wider than the page: it scrolls */
+.home-vue-demo .dk-demo-toolbar {
+  overflow-x: auto;
+}
+.home-vue-demo + .home-principles {
+  margin-top: 24px;
 }
 
 /* ---- features ------------------------------------------------------------------ */

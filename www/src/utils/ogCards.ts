@@ -46,6 +46,13 @@ const STATIC_CARDS: OgCard[] = [
       'Sorting, grouping, pivoting, filtering, editing and lazy loading, with no dependencies.',
   },
   {
+    slug: 'vue',
+    kicker: 'Infinite Table for Vue',
+    title: 'The DataGrid for Vue 3, built for speed.',
+    description:
+      'Sorting, grouping, pivoting, filtering, editing and lazy loading, in one Vue component.',
+  },
+  {
     slug: 'themes',
     kicker: 'Themes',
     title: `${SITE_THEMES.length} themes. Light and dark. Three densities.`,
