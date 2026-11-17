@@ -1,5 +1,6 @@
 // Generates LLM-friendly markdown versions of all docs pages and blog posts:
 //   - public/docs/**/<page>.md    one markdown file per docs page
+//   - public/vue/docs/**/<page>.md the Vue version of each page that has one
 //   - public/blog/**/<post>.md    one markdown file per blog post
 //   - public/blog/index.md        blog index (all posts, recent first)
 //   - public/llms.txt             index file (llmstxt.org convention)
@@ -22,10 +23,43 @@ const siteContent = require(path.join(WWW_DIR, 'src/.gen/index.json'));
 let docsKitCode = null;
 
 /**
- * src/utils/docsFrameworkPages.ts (loaded in `main`). The .md pages are the
- * React docs: `<FrameworkContent>` blocks for other frameworks are left out.
+ * src/utils/docsFrameworkPages.ts (loaded in `main`): each framework's .md
+ * page leaves out the `<FrameworkContent>` blocks of the other frameworks.
  */
 let contentForFramework = (content) => content;
+let frontmatterHasFramework = () => true;
+
+const PACKAGE = {
+  react: '@infinite-table/infinite-react',
+  vue: '@infinite-table/infinite-vue',
+};
+
+/** Where each framework's .md pages go: Vue pages live under /vue/docs (see src/utils/docsFrameworks.ts). */
+const FRAMEWORK_PREFIX = { react: '', vue: '/vue' };
+
+/** A Vue page shows the `x.demo.vue` / `x.snippet.vue(.ts)` sibling of a React file (DOCS_VUE_SIBLINGS in src/utils/docsKit.ts). */
+const VUE_SIBLINGS = {
+  '.demo.tsx': ['.demo.vue'],
+  '.snippet.tsx': ['.snippet.vue', '.snippet.vue.ts'],
+  '.snippet.ts': ['.snippet.vue', '.snippet.vue.ts'],
+};
+
+function frameworkSibling(fileAbsolutePath, framework) {
+  if (framework !== 'vue') {
+    return fileAbsolutePath;
+  }
+  const ext = Object.keys(VUE_SIBLINGS).find((e) =>
+    fileAbsolutePath.endsWith(e),
+  );
+  if (!ext) {
+    return fileAbsolutePath;
+  }
+  const base = fileAbsolutePath.slice(0, -ext.length);
+  const sibling = VUE_SIBLINGS[ext]
+    .map((e) => base + e)
+    .find((file) => fs.existsSync(file));
+  return sibling || null;
+}
 
 // maps MDX link components to the reference page they link into
 const LINK_COMPONENTS = {
@@ -70,7 +104,7 @@ function getAttr(attrsString, attrName) {
 }
 
 // inline `file="..."` code fences by reading the referenced sibling file
-function inlineCodeFence(fence, mdFileAbsolutePath) {
+function inlineCodeFence(fence, mdFileAbsolutePath, framework) {
   const headerMatch = fence.match(/^```([^\n]*)\n?/);
   if (!headerMatch) {
     return fence;
@@ -97,7 +131,18 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
     return fence;
   }
 
-  const lang = header.trim().split(/\s/)[0] || 'ts';
+  let lang = header.trim().split(/\s/)[0] || 'ts';
+  let notice = '';
+  // `neutral` fences show the same file in every framework
+  const siblingPath = /\bneutral\b/.test(header)
+    ? fileAbsolutePath
+    : frameworkSibling(fileAbsolutePath, framework);
+  if (siblingPath === null) {
+    notice = '_React only for now:_\n\n';
+  } else if (siblingPath !== fileAbsolutePath) {
+    fileAbsolutePath = siblingPath;
+    lang = siblingPath.endsWith('.vue') ? 'vue' : 'ts';
+  }
   let code = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
   // docs-kit snippets/demos: show the `region`, without `#region` /
   // `#highlight` marker comments - the same code the docs page shows
@@ -106,7 +151,10 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
   if (region && docsKitCode) {
     code = docsKitCode.sliceRegion(code, region, context).source;
   }
-  if (docsKitCode && /\.(demo|snippet)\.[cm]?[jt]sx?$/.test(fileRef)) {
+  if (
+    docsKitCode &&
+    /\.(demo|snippet)\.(?:[cm]?[jt]sx?|vue|vue\.ts)$/.test(fileAbsolutePath)
+  ) {
     code = docsKitCode.extractCodeMarkers(code, context).source;
   }
   // a titled docs-kit live demo gets an "Example" heading.
@@ -117,11 +165,15 @@ function inlineCodeFence(fence, mdFileAbsolutePath) {
     : /\blive\b/.test(header);
   const title = live ? getAttr(header, 'title') : null;
   const heading = title ? `**Example: ${title}**\n\n` : '';
-  return heading + '```' + lang + '\n' + code + '\n```';
+  return heading + notice + '```' + lang + '\n' + code + '\n```';
 }
 
-function transformProse(text) {
+function transformProse(text, framework) {
   let result = text;
+
+  if (framework !== 'react') {
+    result = result.split(PACKAGE.react).join(PACKAGE[framework]);
+  }
 
   // <PropLink name="x" /> | <PropLink name="x">label</PropLink> | <PropLink>x</PropLink>
   //   -> [`x`](https://infinite-table.com/docs/reference/...#x)
@@ -219,7 +271,7 @@ function transformProse(text) {
       'g',
     ),
     (all, pagePath, suffix) => {
-      const mdPath = pagePathToMd(pagePath);
+      const mdPath = pagePathToMd(pagePath, framework);
       return mdPath
         ? `](${BASE_URL}/${mdPath}${suffix || ''})`
         : all;
@@ -232,26 +284,34 @@ function transformProse(text) {
   return result;
 }
 
-// set of valid docs/blog route paths (filled in run()), used to rewrite links
-const mdRoutePathSet = new Set();
+// valid docs/blog route paths per framework (filled in run()), used to rewrite links
+const mdRoutePathSets = { react: new Set(), vue: new Set() };
 
-function pagePathToMd(pagePath) {
+/**
+ * The .md file a link to `/docs/...` points at on a page of `framework`: its
+ * page in that framework, or the React page where it has none yet.
+ */
+function pagePathToMd(pagePath, framework = 'react') {
   const withoutSlash = pagePath.endsWith('/')
     ? pagePath.slice(0, -1)
     : pagePath;
   if (pagePath === '/blog' || pagePath === '/blog/') {
     return 'blog/index.md';
   }
-  if (mdRoutePathSet.has(withoutSlash)) {
-    return routeToMdPath(withoutSlash);
-  }
-  if (mdRoutePathSet.has(`${withoutSlash}/`)) {
-    return routeToMdPath(`${withoutSlash}/`);
+  const frameworks = framework === 'react' ? ['react'] : [framework, 'react'];
+  for (const fw of frameworks) {
+    const set = mdRoutePathSets[fw];
+    if (set.has(withoutSlash)) {
+      return routeToMdPath(withoutSlash, fw);
+    }
+    if (set.has(`${withoutSlash}/`)) {
+      return routeToMdPath(`${withoutSlash}/`, fw);
+    }
   }
   return null;
 }
 
-function transformContent(route) {
+function transformContent(route, framework) {
   const mdFileAbsolutePath = path.join(
     CONTENT_DIR,
     route.folderPath,
@@ -259,32 +319,52 @@ function transformContent(route) {
   );
 
   // split into code fences and prose so transforms never touch code
-  const segments = contentForFramework(route.content, 'react').split(
+  const segments = contentForFramework(route.content, framework).split(
     /(```[\s\S]*?```)/,
   );
 
   return segments
     .map((segment) =>
       segment.startsWith('```')
-        ? inlineCodeFence(segment, mdFileAbsolutePath)
-        : transformProse(segment),
+        ? inlineCodeFence(segment, mdFileAbsolutePath, framework)
+        : transformProse(segment, framework),
     )
     .join('')
     .trim();
 }
 
-function routeToMdPath(routePath) {
+function routeToMdPath(routePath, framework = 'react') {
   // '/docs/learn/filtering/' (index page) -> 'docs/learn/filtering/index.md'
   // '/docs/learn/sorting/overview'        -> 'docs/learn/sorting/overview.md'
+  // Vue: 'vue/docs/learn/sorting/overview.md'
   const normalized = routePath.endsWith('/')
     ? `${routePath}index`
     : routePath;
-  return `${normalized.slice(1)}.md`;
+  return `${FRAMEWORK_PREFIX[framework]}${normalized}.md`.slice(1);
 }
 
-function pageToMarkdown(route) {
-  const { title, description, date, author, tags } = route.frontmatter || {};
-  const body = transformContent(route);
+/** Title and description of a page for a framework (getDocsPageMeta in src/utils/docsFrameworkContent.ts). */
+function pageMeta(route, framework) {
+  const frontmatter = route.frontmatter || {};
+  if (framework === 'react') {
+    return { title: frontmatter.title, description: frontmatter.description };
+  }
+  const own =
+    typeof frontmatter[framework] === 'object' ? frontmatter[framework] : {};
+  let description = own.description ?? frontmatter.description;
+  if (description && !own.description) {
+    description = description
+      .split(PACKAGE.react)
+      .join(PACKAGE[framework])
+      .replace(/\bReact\b/g, 'Vue');
+  }
+  return { title: own.title ?? frontmatter.title, description };
+}
+
+function pageToMarkdown(route, framework) {
+  const { date, author, tags } = route.frontmatter || {};
+  const { title, description } = pageMeta(route, framework);
+  const body = transformContent(route, framework);
 
   const header = [`# ${title || route.routePath}`];
   if (description) {
@@ -304,20 +384,23 @@ function pageToMarkdown(route) {
   if (metaLines.length) {
     header.push('', metaLines.join('  \n'));
   }
-  header.push('', `Canonical page: ${BASE_URL}${route.routePath}`);
+  header.push(
+    '',
+    `Canonical page: ${BASE_URL}${FRAMEWORK_PREFIX[framework]}${route.routePath}`,
+  );
 
   return `${header.join('\n')}\n\n${body}\n`;
 }
 
-function writePage(route) {
-  const mdRelativePath = routeToMdPath(route.routePath);
+function writePage(route, framework = 'react') {
+  const mdRelativePath = routeToMdPath(route.routePath, framework);
   const outFile = path.join(PUBLIC_DIR, mdRelativePath);
-  const markdown = pageToMarkdown(route);
+  const markdown = pageToMarkdown(route, framework);
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, markdown);
 
-  const { title, description } = route.frontmatter || {};
+  const { title, description } = pageMeta(route, framework);
   return {
     title: title || route.routePath,
     description: description || '',
@@ -360,12 +443,27 @@ function run() {
       ),
     );
 
-  [...docsRoutes, ...blogRoutes].forEach((route) =>
-    mdRoutePathSet.add(route.routePath),
+  const vueDocsRoutes = docsRoutes.filter((route) =>
+    frontmatterHasFramework(route.frontmatter, 'vue'),
+  );
+  const reactDocsRoutes = docsRoutes.filter((route) =>
+    frontmatterHasFramework(route.frontmatter, 'react'),
   );
 
-  const docsEntries = docsRoutes.map(writePage);
-  const blogEntries = blogRoutes.map(writePage);
+  [...reactDocsRoutes, ...blogRoutes].forEach((route) =>
+    mdRoutePathSets.react.add(route.routePath),
+  );
+  vueDocsRoutes.forEach((route) => mdRoutePathSets.vue.add(route.routePath));
+
+  // no stale Vue pages from an earlier run
+  fs.rmSync(path.join(PUBLIC_DIR, 'vue', 'docs'), {
+    recursive: true,
+    force: true,
+  });
+
+  const docsEntries = reactDocsRoutes.map((route) => writePage(route));
+  const vueDocsEntries = vueDocsRoutes.map((route) => writePage(route, 'vue'));
+  const blogEntries = blogRoutes.map((route) => writePage(route));
 
   const learnEntries = docsEntries.filter(
     (e) => !e.routePath.startsWith('/docs/reference'),
@@ -410,6 +508,12 @@ function run() {
     '',
     ...referenceEntries.map(entryLine),
     '',
+    '## Vue Docs',
+    '',
+    `The same docs for the Vue DataGrid (${PACKAGE.vue}), for the pages that have a Vue version:`,
+    '',
+    ...vueDocsEntries.map(entryLine),
+    '',
     '## Blog',
     '',
     `- [Blog index](${BASE_URL}/blog/index.md): all blog posts, most recent first`,
@@ -426,7 +530,7 @@ function run() {
   );
 
   console.log(
-    `generate-llms-docs: wrote ${docsEntries.length} docs + ${blogEntries.length} blog .md pages, blog/index.md, llms.txt and llms-full.txt`,
+    `generate-llms-docs: wrote ${docsEntries.length} docs + ${vueDocsEntries.length} Vue docs + ${blogEntries.length} blog .md pages, blog/index.md, llms.txt and llms-full.txt`,
   );
 }
 
@@ -439,6 +543,7 @@ Promise.all([
   .then(([code, frameworkPages]) => {
     docsKitCode = code;
     contentForFramework = frameworkPages.contentForFramework;
+    frontmatterHasFramework = frameworkPages.frontmatterHasFramework;
     run();
   })
   .catch((error) => {
