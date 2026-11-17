@@ -590,6 +590,31 @@ a > .docs-code-inline {
   vertical-align: -2px;
   color: var(--accent-text);
 }
+/*
+ * The heading's # link (MDX/Heading.tsx) sits on the left, over the </> icon:
+ * after the name it spilled over the type signature, which covered it.
+ */
+.docs-article .docs-prop h2.docs-prop__name.heading > a[href] {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 1;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 22px;
+  transform: translateY(-50%);
+  color: var(--accent-text);
+}
+.docs-article .docs-prop h2.docs-prop__name.heading > a[href] svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.docs-prop__name:is(:hover, :focus-within) .docs-prop__icon {
+  visibility: hidden;
+}
 .docs-prop__deprecated {
   position: absolute;
   top: -18px;
