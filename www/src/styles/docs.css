@@ -284,6 +284,13 @@
   line-height: 1.25;
   font-weight: 600;
 }
+/* a page that starts with a heading: the actions bar above already draws a
+   line, so the heading doesn't draw a second one */
+.docs-article :where(.docs-actions + .not-prose > :is(h1, h2):first-child) {
+  margin-top: 32px;
+  padding-top: 0;
+  border-top: 0;
+}
 .docs-article :where(.not-prose > h3) {
   margin: 36px 0 12px;
   font-size: 20px;

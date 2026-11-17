@@ -4,49 +4,28 @@ import { Ref, useEffect } from 'react';
 import { useInternalProps } from '../../hooks/useInternalProps';
 import { join } from '../../../../utils/join';
 
-import { decamelize } from '../../../utils/decamelize';
-import { ThemeVars } from '../../vars.css';
 import { FooterCls } from '../../InfiniteCls.css';
+import {
+  enforceLicenseFooterStyle,
+  getLicenseFooterStyles,
+  LICENSE_FOOTER_INVALID_MESSAGE,
+  LICENSE_FOOTER_LINK,
+} from './licenseFooterShared';
 
-const defaultStyle: React.CSSProperties = {
-  padding: ThemeVars.spacing[2],
-  textAlign: 'end',
-  opacity: '1',
-  visibility: 'visible',
-  display: 'block',
-  fontSize: '0.85rem',
-  background: 'white',
-  color: 'black',
-};
-
-const anchorStyle: React.CSSProperties = {
-  opacity: 1,
-  visibility: 'visible',
-  display: 'inline-block',
-  pointerEvents: 'all',
-  color: 'black',
-  textDecoration: 'underline',
-};
-
-const enforceStyle = (node: HTMLElement | null, style: React.CSSProperties) => {
-  if (!node) {
-    // TODO protect against Footer node removal
-    return;
-  }
-  for (const [propertyName, propertyValue] of Object.entries(style)) {
-    node.style.setProperty(
-      decamelize(propertyName),
-      propertyValue,
-      'important',
-    );
-  }
-};
+export type InfiniteTableLicenseFooterProps =
+  React.HTMLAttributes<HTMLDivElement> & {
+    /**
+     * true when a license key was given, but it is not valid
+     */
+    invalid?: boolean;
+  };
 
 export const InfiniteTableLicenseFooter = React.forwardRef(
   function InfiniteTableLicenseFooter(
-    props: React.HTMLAttributes<HTMLDivElement>,
+    props: InfiniteTableLicenseFooterProps,
     ref: Ref<HTMLDivElement>,
   ) {
+    const { invalid = false, ...domProps } = props;
     const { rootClassName } = useInternalProps();
 
     const domRef = React.useRef<HTMLDivElement | null>(null);
@@ -63,43 +42,32 @@ export const InfiniteTableLicenseFooter = React.forwardRef(
     }, []);
 
     useEffect(() => {
-      const forceStyle = () => {
-        setTimeout(() => {
-          enforceStyle(domRef.current, defaultStyle);
-          enforceStyle(
-            domRef.current?.firstElementChild as HTMLElement | null,
-            anchorStyle,
-          );
-        });
-      };
+      return enforceLicenseFooterStyle(() => domRef.current, invalid);
+    }, [invalid]);
 
-      forceStyle();
-
-      const intervalId = setInterval(forceStyle, 1000);
-
-      return () => {
-        clearInterval(intervalId);
-      };
-    }, []);
+    const styles = getLicenseFooterStyles(invalid);
 
     return (
       <div
         ref={domCallback}
-        {...props}
+        {...domProps}
         className={join(
           `${rootClassName}-Footer`,
+          invalid ? `${rootClassName}-Footer--invalid` : null,
           FooterCls,
 
-          props.className,
+          domProps.className,
         )}
-        style={defaultStyle}
+        style={styles.footer as React.CSSProperties}
       >
+        {invalid ? `${LICENSE_FOOTER_INVALID_MESSAGE} ` : null}
         Powered by{' '}
         <a
-          href="https://infinite-table.com"
+          href={LICENSE_FOOTER_LINK}
           rel="noopener noreferrer"
           role="link"
           target="_blank"
+          style={styles.anchor as React.CSSProperties}
         >
           Infinite Table
         </a>

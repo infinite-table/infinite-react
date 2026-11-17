@@ -1,0 +1,7 @@
+/**
+ * A genuine license key, which expired on 2026-11-04.
+ *
+ * Shared by the React and Vue expired-license test pages.
+ */
+export const EXPIRED_LICENSE_KEY =
+  'AppName=ExpiredTest-Universal|Owner=ExpiredTest|StartDate=2026-01-01|EndDate=2026-11-04|Ref=AdaptableLicense-InfiniteTable:T3duZXI9RXhwaXJlZFRlc3R8U3RhcnREYXRlPTIwMjYtMDEtMDF8RW5kRGF0ZT0yMDI2LTExLTA0fERldkNvdW50PTF8VHlwZT11bml2ZXJzYWx8UmVmPUFkYXB0YWJsZUluZmluaXRlfFRTPTE3OTQ5MjQ5NzYyNDl8Qz0zMDU1Njc2NDAzLDMwOTkwMzUxOTksMzE5MzQ4ODQ4MiwyNzYzNTg1MjQ5LDIyMTIyOTQ1ODMsMjA3OTU4MzEwLDEwOTc4NTM5NzcsNzYxNjgwMA==|TS=1794924973187|C=3060863176,3324160607,2998443810,207958310,1097853977,7616800,2092722889';

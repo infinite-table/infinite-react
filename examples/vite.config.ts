@@ -22,9 +22,9 @@ export default defineConfig(({ mode }) => {
     define: {
       __DEV__: JSON.stringify(true),
       __VERSION__: JSON.stringify(require('../package.json').version),
-      __VERSION_TIMESTAMP__: JSON.stringify(
-        require('../package.json').publishedAt || 0,
-      ),
+      // as if the source was published now (like the source build does) -
+      // so licenses that ended before today are expired
+      __VERSION_TIMESTAMP__: JSON.stringify(Date.now()),
       'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify(
         env.NEXT_PUBLIC_BASE_URL,
       ),

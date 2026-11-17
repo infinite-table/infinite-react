@@ -15,6 +15,11 @@ import { vanillaConfig } from './tsup-vanilla-extract-config';
 import { frameworkResolvePlugin } from './framework-resolve-plugin';
 
 // CHANGE HERE TO ADD ESM AS WELL
+// the build time - used both as the publishedAt of the generated package.json
+// and as __VERSION_TIMESTAMP__ in the bundle, which the license check
+// compares with the end date of the license (expired licenses)
+const PUBLISHED_AT = Date.now();
+
 const FORMATS: Format[] = ['cjs', 'esm'];
 
 const MINIFY = true;
@@ -66,7 +71,7 @@ export const tsupConfig: Options = {
       json[key] = value.join('/');
     });
 
-    json.publishedAt = Date.now();
+    json.publishedAt = PUBLISHED_AT;
     const content = JSON.stringify(json, null, 2);
 
     const path = resolve(__dirname, config.outdir, 'package.json');
@@ -84,9 +89,7 @@ export const tsupConfig: Options = {
     options.define = {
       __DEV__: JSON.stringify(false),
       __VERSION__: JSON.stringify(require('./package.json').version),
-      __VERSION_TIMESTAMP__: JSON.stringify(
-        require('./package.json').publishedAt,
-      ),
+      __VERSION_TIMESTAMP__: JSON.stringify(PUBLISHED_AT),
     };
   },
   esbuildPlugins: [frameworkResolvePlugin('react'), vanillaConfig],

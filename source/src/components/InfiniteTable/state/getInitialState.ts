@@ -365,7 +365,9 @@ export const forwardProps = <T>(
     // groupRenderStrategy: (groupRenderStrategy) =>
     //   groupRenderStrategy ?? 'multi-column',
 
-    licenseKey: (licenseKey) => licenseKey || '',
+    // keep undefined - it means "use InfiniteTable.licenseKey", while an
+    // empty string means "no license key"
+    licenseKey: (licenseKey) => licenseKey,
 
     keyboardSelection: (keyboardSelection) => keyboardSelection ?? true,
     multiRowSelectionWith: (multiRowSelectionWith) =>

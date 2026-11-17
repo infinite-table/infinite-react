@@ -106,7 +106,9 @@ export default {
     'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify(BASE_URL),
     __DEV__: 'false',
     __VERSION__: JSON.stringify(sourcePackage.version),
-    __VERSION_TIMESTAMP__: JSON.stringify(sourcePackage.publishedAt || 0),
+    // as if the source was published now (like the source build does) -
+    // so licenses that ended before today are expired
+    __VERSION_TIMESTAMP__: JSON.stringify(Date.now()),
   },
   bootstrapDefine: {
     // the Tailwind setup of `*-tailwind.demo.tsx` demos
@@ -163,6 +165,8 @@ export default {
         ),
       },
       stubImports: [/^@infinite-table\/infinite-vue\/index\.css$/],
+      // sets the global license key - the Vue build starts without the React bootstrap
+      bootstrap: 'docs-kit.bootstrap.vue.ts',
       // a Vue demo opened on its own links back to the Vue page, when there is one
       routeForPage: (pagePath) => {
         const pageFile = path.join(

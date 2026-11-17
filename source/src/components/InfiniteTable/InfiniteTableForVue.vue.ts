@@ -48,6 +48,9 @@ import { MultiCellSelector } from './utils/MultiCellSelector';
 import { internalProps, rootClassName } from './internalProps';
 import { ThemeVars } from './vars.css';
 import { CSSNumericVariableWatch } from '../CSSNumericVariableWatch/CSSNumericVariableWatchForVue.vue';
+import { useGetMasterDetailContextForVue } from '../DataSource/DataSourceMasterDetailContextForVue.vue';
+import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter/InfiniteTableLicenseFooterForVue.vue';
+import { getLicenseStatus } from './hooks/useLicense/getLicenseStatus';
 
 import { rafFn } from './utils/rafFn';
 import {
@@ -331,11 +334,28 @@ function getRowspanFn<T>(
     : undefined;
 }
 
-export const InfiniteTable = defineComponent({
+// explicitly typed, so reading InfiniteTable.licenseKey from inside the
+// component definition does not create a circular type reference
+function getGlobalLicenseKey(): string | undefined {
+  return InfiniteTable.licenseKey;
+}
+
+const InfiniteTableComponent = defineComponent({
   name: 'InfiniteTable',
   props: [...DATA_GRID_PROP_NAMES],
   setup(props, { attrs }) {
     const dataSourceContext = useDataSourceContext();
+
+    // detail grids are covered by the license of the master grid
+    const isDetail = !!useGetMasterDetailContextForVue()();
+    // the license key can also be set globally - InfiniteTable.licenseKey = '...'
+    // (same as in React)
+    const licenseStatus = computed(() =>
+      getLicenseStatus(
+        (props as Record<string, any>).licenseKey ?? getGlobalLicenseKey(),
+        { isDetail },
+      ),
+    );
 
     if (!dataSourceContext) {
       throw new Error(
@@ -2243,8 +2263,21 @@ export const InfiniteTable = defineComponent({
                 onChange: s.onColumnHeaderHeightCSSVarChange,
               })
             : null,
+          licenseStatus.value === 'valid'
+            ? null
+            : h(InfiniteTableLicenseFooter, {
+                invalid: licenseStatus.value === 'invalid',
+              }),
         ],
       );
     };
   },
+});
+
+export const InfiniteTable = Object.assign(InfiniteTableComponent, {
+  /**
+   * Set this once, before rendering any grid, to use the same
+   * license key for all grids - same as `InfiniteTable.licenseKey` in React.
+   */
+  licenseKey: undefined as string | undefined,
 });

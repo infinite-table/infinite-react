@@ -301,7 +301,7 @@ export interface InfiniteTableMappedState<T> {
   rowHeight: number | ((rowInfo: InfiniteTableRowInfo<T>) => number);
   rowDetailHeight: number | ((rowInfo: InfiniteTableRowInfo<T>) => number);
   columnHeaderHeight: number;
-  licenseKey: NonUndefined<InfiniteTableProps<T>['licenseKey']>;
+  licenseKey: InfiniteTableProps<T>['licenseKey'];
   columnVisibility: InfiniteTablePropColumnVisibility;
 
   columnGroupVisibility: NonUndefined<

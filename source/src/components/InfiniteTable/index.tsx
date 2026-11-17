@@ -169,7 +169,7 @@ export const InfiniteTableComponent = React.memo(
       activeCellIndex,
     } = componentState;
     let { licenseKey } = componentState;
-    if (!licenseKey && InfiniteTable.licenseKey) {
+    if (licenseKey === undefined && InfiniteTable.licenseKey) {
       licenseKey = InfiniteTable.licenseKey;
     }
 
@@ -194,7 +194,7 @@ export const InfiniteTableComponent = React.memo(
       return brain.onVerticalRenderRangeChange(onChange);
     }, [brain, scrollStopDelay]);
 
-    const licenseValid = useLicense(licenseKey);
+    const licenseStatus = useLicense(licenseKey);
 
     const {
       // remove autoFocus and tabIndex from the domProps
@@ -318,7 +318,9 @@ export const InfiniteTableComponent = React.memo(
             onChange={onColumnHeaderHeightCSSVarChange}
           />
         ) : null}
-        {licenseValid ? null : <InfiniteTableLicenseFooter />}
+        {licenseStatus === 'valid' ? null : (
+          <InfiniteTableLicenseFooter invalid={licenseStatus === 'invalid'} />
+        )}
         <FocusDetect<T> />
       </div>
     );

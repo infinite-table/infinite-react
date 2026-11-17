@@ -39,5 +39,14 @@
   ],
   // the docs demos and snippets have their own project: content/tsconfig.json
   // (and `out` is the static export, which holds a copied .ts worker file)
-  "exclude": ["node_modules", "out", "content/docs", "content/blog"]
+  // docs-kit.bootstrap.vue.ts imports @infinite-table/infinite-vue, which is
+  // resolved by the docs-kit Vue build (docs-kit.config.mjs) - this tsconfig
+  // resolves the source as React (moduleSuffixes)
+  "exclude": [
+    "node_modules",
+    "out",
+    "content/docs",
+    "content/blog",
+    "docs-kit.bootstrap.vue.ts"
+  ]
 }

@@ -963,6 +963,16 @@ export interface InfiniteTableProps<T> {
         rowArgs: InfiniteTableRowStylingFnParams<T>,
       ) => HTMLProps<HTMLDivElement>);
 
+  /**
+   * The license key for Infinite Table.
+   *
+   * When not specified (`undefined`), the global `InfiniteTable.licenseKey` is used.
+   * If specified, this key will be used.
+   * If the license key is invalid it will show a "Invalid Infinite Table license. See console for details. Powered by Infinite Table" footer
+   * If the license key is empty (either undefined or empty string) the grid shows the "Powered by Infinite Table" footer.
+   *
+   * So you will be better of with an empty license rather than an invalid one.
+   */
   licenseKey?: string;
 
   scrollTopKey?: string | number;

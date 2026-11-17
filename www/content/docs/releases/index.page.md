@@ -3,6 +3,16 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.2.0
+
+- An invalid `licenseKey` shows a pale red footer saying the license is invalid (see the console for details). A missing or expired license shows the "Powered by Infinite Table" footer, as before. See [licensing](/docs/learn/getting-started/licensing).
+- `licenseKey=""` means no license key - only an unspecified `licenseKey` falls back to `InfiniteTable.licenseKey`.
+- Fix expired licenses not being detected, and keys with a `=` in a value being reported as invalid. The license footer is no longer hidden on codesandbox.io.
+- Vue: the license footer and `InfiniteTable.licenseKey` work as in React. Add `DragList` and `DragDropProvider`, more exports (`alignNode`, `useInfinitePortalContainer`, `debug`, `useDataSourceState`), and cells are updated in place while scrolling.
+- Vue fixes: <PropLink name="scrollTopKey" />, <PropLink name="autoSizeColumnsKey" />, the load mask text, controlled checkboxes, filter editors, density changes and master-detail rows.
+- Themes: `shadcn` has a dark mode that follows the page's `dark` className, and `ocean`, `balsam` and `minimalist` no longer use colors from the default theme.
+- Fix the header depth after leaving pivot mode, drag lists shared by two grids on a page, and drags getting stuck.
+
 ## 10.1.5
 
 - Add three themes: `terminal`, `sheet` and `paper` - see [available themes](/docs/learn/theming#available-themes).

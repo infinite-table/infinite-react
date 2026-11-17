@@ -25,6 +25,11 @@ import { frameworkResolvePlugin } from './framework-resolve-plugin';
 const resolve = path.resolve;
 const { dependencies } = packageJSON;
 
+// the build time - used both as the publishedAt of the generated package.json
+// and as __VERSION_TIMESTAMP__ in the bundle, which the license check
+// compares with the end date of the license (expired licenses)
+const PUBLISHED_AT = Date.now();
+
 const OUT_DIR = 'dist-vue';
 const FORMATS: Format[] = ['cjs', 'esm'];
 
@@ -69,7 +74,7 @@ export const tsupVueConfig: Options = {
     json.module = 'index.mjs';
     json.typings = 'index.d.ts';
     json.peerDependencies = { vue: '>=3.4' };
-    json.publishedAt = Date.now();
+    json.publishedAt = PUBLISHED_AT;
 
     const content = JSON.stringify(json, null, 2);
 
@@ -86,9 +91,7 @@ export const tsupVueConfig: Options = {
       // the source with __DEV__ true
       __DEV__: JSON.stringify(process.env.INFINITE_DEV === 'true'),
       __VERSION__: JSON.stringify(require('./package.json').version),
-      __VERSION_TIMESTAMP__: JSON.stringify(
-        require('./package.json').publishedAt,
-      ),
+      __VERSION_TIMESTAMP__: JSON.stringify(PUBLISHED_AT),
     };
     // Vue siblings are written with Vue JSX; the shared React files never
     // enter this build (the entry graph only pulls shared TS + .vue siblings)

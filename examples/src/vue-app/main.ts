@@ -2,6 +2,8 @@ import { createApp, defineAsyncComponent, defineComponent, h } from 'vue';
 import { createRouter, createWebHistory, RouterView } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
+import { InfiniteTable } from '@infinite-table/infinite-vue';
+
 import '../index.global.css';
 
 import '@infinite-table/infinite-vue/index.css';
@@ -16,6 +18,9 @@ import '../../../source/dist/theme/paper.css';
 import PageDevChrome from '../test-index/PageDevChrome.vue';
 import TestPagesIndexRoute from '../test-index/TestPagesIndexRoute.vue';
 import { testIndexRoutes } from 'virtual:test-index-routes';
+
+// same as the React app (_app.page.tsx) - all grids use this license key
+InfiniteTable.licenseKey = process.env.NEXT_PUBLIC_INFINITE_LICENSE_KEY;
 
 // every .page.vue file is a route with the same URL the Next.js app gives
 // its .page.tsx sibling - one Playwright spec runs against both apps

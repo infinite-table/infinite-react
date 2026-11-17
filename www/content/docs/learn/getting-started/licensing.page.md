@@ -24,7 +24,10 @@ When using Infinite Table for free, you have access to **all the features** of I
 
 </Note>
 
-You can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. For demo purposes, we don't show any license error for embeds in [codesandbox.io](https://codesandbox.io). Check the demo below to see the license footer in action.
+You can use it for free in any product, but make sure the footer is always visible when Infinite Table is visible. Check the demos below to see the license footer in action: the first one has no license key (`licenseKey=""`), so it shows the "Powered by Infinite Table" footer. The second one uses an invalid license key, so the footer is red and says the license is invalid (the details are logged to the console).
+
+```tsx file="missing-license.demo.tsx" title="Missing License Demo"
+```
 
 ```tsx file="invalid-license.demo.tsx" title="Invalid License Demo"
 ```

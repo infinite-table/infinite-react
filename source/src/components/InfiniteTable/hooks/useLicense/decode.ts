@@ -48,11 +48,18 @@ export const logLicenseError = (
   fn('*'.repeat(max));
 };
 
-export const isValidLicense = (
+/**
+ * - `valid` - the license key is valid
+ * - `invalid` - the license key cannot be decoded (missing, wrong or tampered with)
+ * - `expired` - the license key is genuine, but it expired before this version was published
+ *
+ * Logs the details to the console when the license is not valid.
+ */
+export const checkLicense = (
   licenseKey: string = '',
   packageInfo: { publishedAt: number; version: string },
   fn?: (...args: string[]) => void,
-) => {
+): 'valid' | 'invalid' | 'expired' => {
   let details: LicenseDetails;
 
   try {
@@ -66,7 +73,7 @@ export const isValidLicense = (
       ],
       fn,
     );
-    return false;
+    return 'invalid';
   }
 
   const currentVersionReleaseDate = new Date(packageInfo.publishedAt);
@@ -87,16 +94,26 @@ Your Infinite Table license has expired on ${licenseEndDate.toDateString()}.
       fn,
     );
 
-    return false;
+    return 'expired';
   }
 
-  return true;
+  return 'valid';
 };
+
+export const isValidLicense = (
+  licenseKey: string = '',
+  packageInfo: { publishedAt: number; version: string },
+  fn?: (...args: string[]) => void,
+) => checkLicense(licenseKey, packageInfo, fn) === 'valid';
 
 export const decode = (licenseKey: string): LicenseDetails => {
   let crc: string = '';
   let fields = licenseKey.split('|').map((part) => {
-    let [name, value] = part.split('=');
+    // split at the first `=` only - values can contain `=`
+    // (eg: base64 padding in the Ref field)
+    const separatorIndex = part.indexOf('=');
+    const name = separatorIndex === -1 ? part : part.slice(0, separatorIndex);
+    const value = separatorIndex === -1 ? '' : part.slice(separatorIndex + 1);
 
     if (name === 'C') {
       crc = value;
