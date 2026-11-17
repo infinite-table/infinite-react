@@ -21,6 +21,17 @@ export const SortIconCls = style([
     paddingBlockEnd: '2px',
     minWidth: ThemeVars.components.HeaderCell.iconSize,
     height: ThemeVars.components.HeaderCell.iconSize,
+    // space-around gives a fractional gap for most icon sizes (14px: 2.33px),
+    // so the lines snap to uneven pixel rows (3px, then 4px apart). A gap
+    // rounded to whole pixels keeps them evenly spaced: the space-around gap
+    // of three 1px lines in the box (minus its 4px of padding), rounded -
+    // 3px for the 16px default, the same as before
+    '@supports': {
+      '(width: round(1.5px, 1px))': {
+        justifyContent: 'center',
+        gap: `round(calc((${ThemeVars.components.HeaderCell.iconSize} - 7px) / 3), 1px)`,
+      },
+    },
   },
 ]);
 
