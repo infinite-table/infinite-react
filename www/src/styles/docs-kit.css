@@ -186,3 +186,27 @@ body > .dk-demo-overlay {
   opacity: 0.7;
   vertical-align: middle;
 }
+
+/* a live demo's framework (data-framework, set by docs-kit), as an icon
+   before its title: the React icon on a React-only demo of a Vue page */
+.dk-demo[data-framework] .dk-demo-title::before {
+  content: '';
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 8px;
+  vertical-align: -0.2em;
+  background: var(--docs-demo-framework-icon) center / contain no-repeat;
+}
+.dk-demo[data-framework='react'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/react-light.svg');
+}
+.dk-demo[data-framework='vue'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/vue-light.svg');
+}
+[data-theme='dark'] .dk-demo[data-framework='react'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/react-dark.svg');
+}
+[data-theme='dark'] .dk-demo[data-framework='vue'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/vue-dark.svg');
+}
