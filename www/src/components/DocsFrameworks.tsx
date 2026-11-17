@@ -7,9 +7,7 @@ import {
   resolveSwitchTarget,
 } from '@thedatagrid/docs-kit/frameworks';
 import {
-  EXPLICIT_LINK_ATTRIBUTE,
   FrameworkBanner,
-  FrameworkLinks,
   useFrameworkPreference,
 } from '@thedatagrid/docs-kit/frameworks/react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -70,17 +68,15 @@ export function DocsFrameworksProvider(props: {
 export function useDocsFramework() {
   const pages = React.useContext(PagesContext);
   const pathname = usePathname() || '';
+  const [preference] = useFrameworkPreference(docsFrameworks);
   return React.useMemo(() => {
     const framework = docsFrameworks.frameworkOf(pathname);
     const hasPage = createHasPage<DocsFrameworkId>(pages);
-    // a framework's landing page (/vue) links into that framework's docs
+    // outside the docs: a home page links into its framework's docs (`/` is
+    // the React one, `/vue` the Vue one), any other page (blog, pricing) into
+    // the docs of the framework the visitor chose
     const linkFramework =
-      framework ??
-      docsFrameworks.ids.find(
-        (id) =>
-          id !== docsFrameworks.default && DOCS_FRAMEWORK_HOME[id] === pathname,
-      ) ??
-      null;
+      framework ?? homeFrameworkOf(pathname) ?? preference ?? null;
     return {
       framework,
       /** The page's path in the React form: `/vue/docs/x` → `/docs/x`. */
@@ -110,7 +106,7 @@ export function useDocsFramework() {
           : routes;
       },
     };
-  }, [pages, pathname]);
+  }, [pages, pathname, preference]);
 }
 
 const DEMO_MAIN_FILE_EXTENSION: Record<DocsFrameworkId, string> = {
@@ -155,7 +151,9 @@ function hashFor(hash: string, target: DocsFrameworkId): string {
  *   framework's home page.
  * - Anywhere else (blog, pricing) it only remembers the choice.
  *
- * The choice is stored, and docs links then follow it (`DocsFrameworkLinks`).
+ * The choice is stored: the banner on a docs page of another framework offers
+ * the page in theirs, and links into the docs from the rest of the site
+ * (`useDocsFramework().hrefFor`) go to their framework.
  */
 export function DocsFrameworkSwitcher(props: { className?: string }) {
   const pages = React.useContext(PagesContext);
@@ -234,8 +232,6 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
             data-framework={id}
             aria-current={active ? 'true' : undefined}
             onClick={onClick}
-            // the visitor's stored framework must not rewrite the switcher's own links
-            {...{ [EXPLICIT_LINK_ATTRIBUTE]: '' }}
           >
             {docsFrameworks.label(id)}
           </a>
@@ -268,28 +264,6 @@ export function DocsFrameworkBanner(props: { className?: string }) {
       pathname={pathname}
       navigate={router.push}
       className={props.className}
-    />
-  );
-}
-
-/**
- * Docs links follow the visitor's framework. Mounted once, in the layout.
- *
- * Not on a home page: `/` is the React one and `/vue` the Vue one, so their
- * links go to that framework's docs whatever the visitor chose before.
- */
-export function DocsFrameworkLinks() {
-  const pages = React.useContext(PagesContext);
-  const pathname = usePathname() || '';
-  const router = useRouter();
-  if (homeFrameworkOf(pathname)) {
-    return null;
-  }
-  return (
-    <FrameworkLinks
-      config={DOCS_FRAMEWORKS_CONFIG}
-      pages={pages}
-      navigate={router.push}
     />
   );
 }

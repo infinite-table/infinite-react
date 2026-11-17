@@ -7,6 +7,7 @@ import '@thedatagrid/docs-kit/react/styles.css';
 import '@thedatagrid/docs-kit/frameworks/styles.css';
 import '../styles/docs-kit.css';
 import '../styles/site-shell.css';
+import '../styles/keys.css';
 import '../styles/docs.css';
 import '../styles/pages.css';
 

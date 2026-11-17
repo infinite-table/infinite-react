@@ -78,7 +78,7 @@ export const FEATURES = [
   },
 ];
 
-const PRINCIPLES = [
+export const PRINCIPLES = [
   {
     title: 'Declarative',
     text: 'Every prop has a controlled and an uncontrolled form.',
@@ -112,7 +112,7 @@ export function SectionBar({
   );
 }
 
-function ReadoutCard({ readout }: { readout: Readout }) {
+export function ReadoutCard({ readout }: { readout: Readout }) {
   const max = Math.max(...readout.bars.map((bar) => bar.value));
   return (
     <div className="home-readout">
@@ -144,7 +144,7 @@ function ReadoutCard({ readout }: { readout: Readout }) {
   );
 }
 
-function BlogList({ posts }: { posts: BlogPost[] }) {
+export function BlogList({ posts }: { posts: BlogPost[] }) {
   return (
     <ul className="home-posts">
       {posts.map((post) => (

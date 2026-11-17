@@ -1,8 +1,4 @@
-/* Extra grid themes the hero can switch to (the default theme ships in index.css). */
-@import '../../../../source/dist/theme/terminal.css';
-@import '../../../../source/dist/theme/sheet.css';
-@import '../../../../source/dist/theme/paper.css';
-
+/* The hero's own styles: shared by the React hero and the Vue one. */
 .hero-auto {
   height: 100%;
 }

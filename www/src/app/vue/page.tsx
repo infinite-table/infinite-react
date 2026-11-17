@@ -2,6 +2,7 @@
 // /vue/docs/...; this page is their front door.
 import { VueHomePage } from '@www/components/home/VueHomePage';
 import { asMeta } from '@www/utils/asMeta';
+import { sortedPosts } from '../blog/sortedPosts';
 
 export const metadata = asMeta(
   {
@@ -14,5 +15,9 @@ export const metadata = asMeta(
 );
 
 export default function VueLandingPage() {
-  return <VueHomePage />;
+  return (
+    <VueHomePage
+      posts={sortedPosts.filter((post) => !post.hide_in_homepage).slice(0, 4)}
+    />
+  );
 }

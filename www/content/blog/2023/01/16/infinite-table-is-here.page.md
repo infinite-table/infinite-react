@@ -156,9 +156,9 @@ We're thrilled to share Infinite Table with the world.
 
 We wanted to make it very easy for everyone to [get started](/docs/learn/getting-started) with it, so all you require is just an npm install:
 
-<TerminalBlock>
+```bash
 npm i @infinite-table/infinite-react
-</TerminalBlock>
+```
 
 The component will show a footer with a [Powered by Infinite Table](https://infinite-table.com) link displayed. However, all the functionalities are still available and fully working. So if you keep the link visible, you can use the component for free in any setup!
 

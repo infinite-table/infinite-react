@@ -1,0 +1,7 @@
+/*
+ * Extra grid themes the React hero can switch to (the default theme ships in
+ * index.css). The Vue hero imports the same themes from its own package.
+ */
+@import '../../../../source/dist/theme/terminal.css';
+@import '../../../../source/dist/theme/sheet.css';
+@import '../../../../source/dist/theme/paper.css';

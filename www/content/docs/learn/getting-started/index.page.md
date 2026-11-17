@@ -23,9 +23,9 @@ It's built specifically for React from the ground up and with performance in min
 
 `Infinite Table` is available on the public [npm registry](https://www.npmjs.com/package/@infinite-table/infinite-react) - install it by running the following command:
 
-<TerminalBlock>
+```bash
 npm i @infinite-table/infinite-react
-</TerminalBlock>
+```
 
 ## Meet the Code
 

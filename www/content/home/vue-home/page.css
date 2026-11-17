@@ -1,0 +1,43 @@
+/*
+ * The page of a Vue home page demo (vue-home-*.demo.vue): the site's tokens,
+ * keys and home page styles, so the card is the one of the React home page.
+ * The page is only the card: the home page sizes the iframe to it.
+ */
+@import '../../../src/styles/tokens.css';
+@import '../../../src/styles/keys.css';
+@import '../../../src/components/home/home.css';
+@import '../../../src/components/home/demos/site-grid.css';
+
+/* tokens.css sets these in its Tailwind `@theme` block, which only the site builds */
+:root {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+}
+
+html,
+body {
+  margin: 0;
+  background: transparent !important;
+}
+body {
+  font-family: var(--font-sans);
+  color: var(--fg);
+}
+/* the card keeps its own height (the page's root is a column that fills the
+   iframe): the home page sizes the iframe to it */
+.home-demo {
+  flex: none;
+}
+/* fills the iframe (the pivot: the iframe is as tall as the code next to it) */
+.home-demo--fill {
+  height: 100vh;
+  min-height: 0 !important;
+}
+
+/* the site resets `code` (Tailwind's preflight); here the browser's own
+   monospace sizing would apply */
+.home-demo__snippet code {
+  font: inherit;
+}

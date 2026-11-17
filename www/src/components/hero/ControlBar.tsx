@@ -4,15 +4,16 @@ import * as React from 'react';
 
 import type { FeedStats, HeroFeed } from './data/feed';
 import { formatCompact, formatInt } from './format';
+import {
+  ROW_COUNTS,
+  TICK_RATES,
+  type HeroDataMode,
+  type HeroView,
+} from './heroTypes';
 import { HERO_DENSITIES, HERO_THEMES, type HeroDensity } from './themes';
 
-export type HeroView = 'flat' | 'grouped' | 'pivot';
-export type HeroDataMode = 'client' | 'server';
-
-export const ROW_COUNTS = [1_000, 10_000, 100_000, 1_000_000] as const;
-export const TICK_RATES = [
-  10, 50, 100, 250, 500, 1_000, 2_500, 5_000, 10_000, 25_000,
-] as const;
+export { ROW_COUNTS, TICK_RATES };
+export type { HeroDataMode, HeroView };
 
 type SegmentOption<V extends string | number> = {
   value: V;

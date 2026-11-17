@@ -2,6 +2,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { useDocsFramework } from './DocsFrameworks';
 import { ExternalLink } from './ExternalLink';
 
 type FooterItem = { label: string; href: string };
@@ -50,10 +51,11 @@ const COLUMNS: { title: string; items: FooterItem[] }[] = [
 ];
 
 function FooterLink({ label, href }: FooterItem) {
+  const docs = useDocsFramework();
   if (/^(https:|mailto:)/.test(href)) {
     return <ExternalLink href={href}>{label}</ExternalLink>;
   }
-  return <Link href={href}>{label}</Link>;
+  return <Link href={docs.hrefFor(href)}>{label}</Link>;
 }
 
 export const Footer = () => {

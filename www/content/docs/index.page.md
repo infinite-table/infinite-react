@@ -38,9 +38,9 @@ It helps you display huge datasets and get the most out of your data by providin
 
 Installation could not be more straightforward - just one npm command:
 
-<TerminalBlock >
+```bash
 npm i @infinite-table/infinite-react
-</TerminalBlock>
+```
 
 ## ❤️ TypeScript
 

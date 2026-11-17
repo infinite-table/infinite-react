@@ -42,11 +42,13 @@
   // docs-kit.bootstrap.vue.ts imports @infinite-table/infinite-vue, which is
   // resolved by the docs-kit Vue build (docs-kit.config.mjs) - this tsconfig
   // resolves the source as React (moduleSuffixes)
+  // content/home is the Vue home page hero: checked by tsconfig.vue.json
   "exclude": [
     "node_modules",
     "out",
     "content/docs",
     "content/blog",
+    "content/home",
     "docs-kit.bootstrap.vue.ts"
   ]
 }

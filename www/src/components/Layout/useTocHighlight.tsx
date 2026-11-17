@@ -1,77 +1,90 @@
-import { siteConfig } from '@www/siteConfig';
 import * as React from 'react';
 
-const TOP_OFFSET = 75;
+/** How far below the place a heading scrolls to (when its link is clicked) it still counts as reached. */
+const SLACK = 10;
+const BOTTOM_OFFSET = 75;
 
-export function getHeaderAnchors(): HTMLAnchorElement[] {
-  return Array.prototype.filter.call(
-    document.getElementsByClassName(siteConfig.headerIdConfig.className),
-    function (testElement) {
-      return (
-        testElement.parentNode.nodeName === 'H1' ||
-        testElement.parentNode.nodeName === 'H2' ||
-        testElement.parentNode.nodeName === 'H3'
-      );
-    },
-  );
+/**
+ * The headings the table of contents links (`#its-id`) point to; `null` for
+ * `#`, the top of the page. Two headings with the same text have the same
+ * id: the second link is then matched with the second heading.
+ */
+function headingsOf(urls: string[]): (Element | null)[] {
+  const seen = new Map<string, number>();
+  return urls.map((url) => {
+    const id = decodeURIComponent(url.slice(url.indexOf('#') + 1));
+    if (!id) {
+      return null;
+    }
+    const nth = seen.get(id) ?? 0;
+    seen.set(id, nth + 1);
+    return document.querySelectorAll(`[id="${CSS.escape(id)}"]`)[nth] ?? null;
+  });
 }
 
 /**
- * Sets up Table of Contents highlighting.
+ * The index of the table of contents entry for the section being read: the
+ * last heading scrolled to or past the top of the page (below the header).
+ *
+ * @param urls the links of the table of contents, in order
  */
-export function useTocHighlight() {
+export function useTocHighlight(urls: string[]) {
   const [currentIndex, setCurrentIndex] = React.useState<number>(0);
-  const timeoutRef = React.useRef<number | null>(null);
+  const key = urls.join('\n');
 
   React.useEffect(() => {
-    function updateActiveLink() {
-      const pageHeight = document.body.scrollHeight;
-      const scrollPosition = window.scrollY + window.innerHeight;
-      const headersAnchors = getHeaderAnchors();
+    const urls = key ? key.split('\n') : [];
+    let timeoutId: number | null = null;
 
-      if (scrollPosition >= 0 && pageHeight - scrollPosition <= TOP_OFFSET) {
-        // Scrolled to bottom of page.
-        setCurrentIndex(headersAnchors.length - 1);
+    function updateActiveLink() {
+      const pageHeight = document.documentElement.scrollHeight;
+      const scrollBottom = window.scrollY + window.innerHeight;
+
+      if (window.scrollY > 0 && pageHeight - scrollBottom <= BOTTOM_OFFSET) {
+        // scrolled to the bottom of the page
+        setCurrentIndex(urls.length - 1);
         return;
       }
 
-      let index = -1;
-      while (index < headersAnchors.length - 1) {
-        const headerAnchor = headersAnchors[index + 1];
-        const { top } = headerAnchor.getBoundingClientRect();
+      // a clicked link scrolls its heading to this distance from the top
+      const threshold =
+        (parseFloat(
+          getComputedStyle(document.documentElement).scrollPaddingTop,
+        ) || 0) + SLACK;
 
-        if (top >= TOP_OFFSET) {
-          break;
+      let index = 0;
+      headingsOf(urls).forEach((heading, i) => {
+        if (heading && heading.getBoundingClientRect().top <= threshold) {
+          index = i;
         }
-        index += 1;
-      }
-
-      setCurrentIndex(Math.max(index, 0));
+      });
+      setCurrentIndex(index);
     }
 
     function throttledUpdateActiveLink() {
-      if (timeoutRef.current === null) {
-        timeoutRef.current = window.setTimeout(() => {
-          timeoutRef.current = null;
+      if (timeoutId === null) {
+        timeoutId = window.setTimeout(() => {
+          timeoutId = null;
           updateActiveLink();
         }, 100);
       }
     }
 
-    document.addEventListener('scroll', throttledUpdateActiveLink);
-    document.addEventListener('resize', throttledUpdateActiveLink);
+    window.addEventListener('scroll', throttledUpdateActiveLink, {
+      passive: true,
+    });
+    window.addEventListener('resize', throttledUpdateActiveLink);
 
     updateActiveLink();
 
     return () => {
-      if (timeoutRef.current != null) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+      if (timeoutId != null) {
+        clearTimeout(timeoutId);
       }
-      document.removeEventListener('scroll', throttledUpdateActiveLink);
-      document.removeEventListener('resize', throttledUpdateActiveLink);
+      window.removeEventListener('scroll', throttledUpdateActiveLink);
+      window.removeEventListener('resize', throttledUpdateActiveLink);
     };
-  }, []);
+  }, [key]);
 
   return {
     currentIndex,

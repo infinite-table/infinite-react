@@ -30,6 +30,13 @@ import {
 } from './heroScript';
 import { formatInt } from './format';
 import {
+  BUILD_MESSAGE_THRESHOLD,
+  DEFAULT_ROW_COUNT,
+  DEFAULT_TICK_RATE,
+  REDUCED_MOTION_TICK_CAP,
+  canHandleMillionRows,
+} from './heroTypes';
+import {
   DEFAULT_DENSITY_ID,
   DEFAULT_THEME_ID,
   getHeroDensity,
@@ -37,14 +44,11 @@ import {
   type HeroColorMode,
 } from './themes';
 
+import './hero-tokens.css';
 import './hero-frame.css';
 import './hero.css';
+import './hero-themes.css';
 import '@thedatagrid/docs-kit/showcase/styles.css';
-
-export const DEFAULT_ROW_COUNT = 10_000;
-export const DEFAULT_TICK_RATE = 2_500;
-const REDUCED_MOTION_TICK_CAP = 40;
-const BUILD_MESSAGE_THRESHOLD = 20_000;
 
 const GROUP_BY_SECTOR: DataSourceGroupBy<Instrument>[] = [{ field: 'sector' }];
 const NO_GROUPS: DataSourceGroupBy<Instrument>[] = [];
@@ -69,16 +73,6 @@ function useSiteColorMode(override?: HeroColorMode): HeroColorMode {
     return () => observer.disconnect();
   }, [override]);
   return mode;
-}
-
-function canHandleMillionRows() {
-  if (typeof window === 'undefined') return false;
-  const memory = (navigator as Navigator & { deviceMemory?: number })
-    .deviceMemory;
-  return (
-    !window.matchMedia('(pointer: coarse)').matches &&
-    (memory === undefined || memory >= 4)
-  );
 }
 
 export type HeroDemoProps = LazyShowcaseLoadedProps & {

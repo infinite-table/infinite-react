@@ -58,10 +58,13 @@ self.onmessage = (event: MessageEvent<WorkerInMessage>) => {
       break;
     case 'pause':
       paused = true;
+      carry = 0;
+      stopTimer();
       break;
     case 'resume':
       paused = false;
       last = performance.now();
+      startTimer();
       break;
     case 'focus':
       sim.setFocus(message.ids);
@@ -70,4 +73,15 @@ self.onmessage = (event: MessageEvent<WorkerInMessage>) => {
   }
 };
 
-setInterval(loop, 16);
+// The timer only runs while the hero is live: paused (tab hidden, or the hero
+// scrolled out of view), the worker doesn't wake up at all.
+let timer: ReturnType<typeof setInterval> | null = null;
+function startTimer() {
+  if (timer == null) timer = setInterval(loop, 16);
+}
+function stopTimer() {
+  if (timer != null) {
+    clearInterval(timer);
+    timer = null;
+  }
+}

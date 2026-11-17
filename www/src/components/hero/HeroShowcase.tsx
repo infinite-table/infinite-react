@@ -5,6 +5,7 @@ import type { HeroDemoProps } from './HeroDemo';
 import { HeroPoster } from './HeroPoster';
 
 import '@thedatagrid/docs-kit/showcase/styles.css';
+import './hero-tokens.css';
 import './hero-frame.css';
 
 const loadHeroDemo = () => import('./HeroDemo');

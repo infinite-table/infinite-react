@@ -12,8 +12,6 @@
  * - tells the worker which rows are on screen, so a share of the ticks goes to
  *   them — the way real trading UIs subscribe to visible symbols.
  */
-import type { DataSourceApi } from '@infinite-table/infinite-react';
-
 import {
   SECTORS,
   avgCostOf,
@@ -56,6 +54,22 @@ export type FeedStats = {
   running: boolean;
 };
 
+/**
+ * What the feed needs from the grid: the DataSource API of either framework's
+ * grid fits (this file has no framework imports, the Vue hero uses it too).
+ */
+export type FeedDataSourceApi = {
+  updateDataArray(updates: InstrumentUpdate[]): unknown;
+};
+
+export type HeroFeedOptions = {
+  /**
+   * Creates the tick worker (data/tick.worker.ts). The default is for
+   * bundlers that understand `new Worker(new URL(…, import.meta.url))`.
+   */
+  createWorker?: () => Worker;
+};
+
 type Ring = { values: Float32Array; head: number };
 
 export type HeatTile = {
@@ -96,7 +110,7 @@ export class HeroFeed {
   totalDayPnl = 0;
 
   private worker: Worker | null = null;
-  private api: DataSourceApi<Instrument> | null = null;
+  private api: FeedDataSourceApi | null = null;
   private pending = new Map<number, InstrumentUpdate>();
   private tickSeq = 1;
   private holdFlushes = 0;
@@ -143,13 +157,17 @@ export class HeroFeed {
   private focusProvider: (() => number[]) | null = null;
   private focusTimer = 0;
 
+  constructor(private options: HeroFeedOptions = {}) {}
+
   start() {
     if (this.worker) return;
     try {
-      this.worker = new Worker(new URL('./tick.worker.ts', import.meta.url), {
-        type: 'module',
-        name: 'hero-ticks',
-      });
+      this.worker = this.options.createWorker
+        ? this.options.createWorker()
+        : new Worker(new URL('./tick.worker.ts', import.meta.url), {
+            type: 'module',
+            name: 'hero-ticks',
+          });
     } catch (error) {
       console.warn('[hero] could not start the tick worker', error);
       return;
@@ -158,7 +176,8 @@ export class HeroFeed {
       this.onTicks(event.data);
     this.post({ type: 'rate', ticksPerSecond: this.ticksPerSecond });
     if (this.rowCount) this.post({ type: 'rows', rowCount: this.rowCount });
-    this.focusTimer = window.setInterval(() => this.sendFocus(), 250);
+    // running before the worker existed: the worker starts paused
+    if (this.running) this.post({ type: 'resume' });
   }
 
   /** Stop the worker and timers. `start()` may be called again (StrictMode). */
@@ -166,7 +185,6 @@ export class HeroFeed {
     this.setRunning(false);
     this.worker?.terminate();
     this.worker = null;
-    window.clearInterval(this.focusTimer);
   }
 
   private post(message: WorkerInMessage) {
@@ -271,7 +289,7 @@ export class HeroFeed {
   // grid wiring
   // -------------------------------------------------------------------------
 
-  attach(api: DataSourceApi<Instrument> | null) {
+  attach(api: FeedDataSourceApi | null) {
     this.api = api;
   }
 
@@ -324,6 +342,11 @@ export class HeroFeed {
     if (running === this.running) return;
     this.running = running;
     this.post({ type: running ? 'resume' : 'pause' });
+    // the focus (visible rows) only matters while ticking
+    window.clearInterval(this.focusTimer);
+    this.focusTimer = running
+      ? window.setInterval(() => this.sendFocus(), 250)
+      : 0;
     if (running) {
       this.lastFrameAt = 0;
       // a pause is not a commit: drop any half-finished cost measurement

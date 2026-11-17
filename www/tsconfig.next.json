@@ -29,12 +29,13 @@
   ],
   // the docs demos and snippets have their own project: content/tsconfig.json
   // (and `out` is the static export, which holds a copied .ts worker file)
-  // docs-kit.bootstrap.vue.ts: see tsconfig.json
+  // docs-kit.bootstrap.vue.ts and content/home: see tsconfig.json
   "exclude": [
     "node_modules",
     "out",
     "content/docs",
     "content/blog",
+    "content/home",
     "docs-kit.bootstrap.vue.ts"
   ]
 }

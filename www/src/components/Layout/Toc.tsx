@@ -24,13 +24,10 @@ export function Toc({
   //     ...headings,
   //   ];
   // }
-  const { currentIndex } = useTocHighlight();
-  // TODO: We currently have a mismatch between the headings in the document
-  // and the headings we find in MarkdownPage (i.e. we don't find Recap or Challenges).
-  // Select the max TOC item we have here for now, but remove this after the fix.
-  const selectedIndex = noHighlight
-    ? -1
-    : Math.min(currentIndex, headings.length - 1);
+  const { currentIndex } = useTocHighlight(
+    React.useMemo(() => headings.map((h) => h.url ?? ''), [headings]),
+  );
+  const selectedIndex = noHighlight ? -1 : currentIndex;
   return (
     <nav role="navigation" aria-label="On this page" className="docs-toc">
       <h2 className="docs-toc__label">On this page</h2>

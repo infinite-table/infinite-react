@@ -12,19 +12,45 @@ import {
   waitFor,
   type ShowcaseScriptContext,
 } from '@thedatagrid/docs-kit/showcase';
-import type { HeroView } from './ControlBar';
 import type { HeroFeed } from './data/feed';
 import type { Instrument } from './data/instruments';
-import type { HeroGridApis } from './HeroGrid';
+import type { HeroView } from './heroTypes';
 import {
   DEFAULT_DENSITY_ID,
   DEFAULT_THEME_ID,
   SHOW_THEME_SEQUENCE,
 } from './themes';
 
+/**
+ * The part of the grid's APIs the show uses. The React grid and the Vue one
+ * both fit, so this file imports neither.
+ */
+export type HeroScriptApis = {
+  api: {
+    getSortingForColumn(columnId: string): 1 | -1 | null;
+    setSortingForColumn(columnId: string, dir: 1 | -1 | null): void;
+    getColumnApi(columnId: string):
+      | {
+          showContextMenu(target: HTMLElement): void;
+          hideContextMenu(): void;
+        }
+      | null
+      | undefined;
+    hideContextMenu(): void;
+    getColumnOrder(): string[];
+    setColumnOrder(order: string[] | true): void;
+    isDestroyed(): boolean;
+    scrollLeft: number;
+    readonly scrollLeftMax: number;
+    scrollTop: number;
+    readonly scrollTopMax: number;
+  };
+  dataSourceApi: { setSortInfo(sortInfo: null): void };
+};
+
 export type HeroController = {
   feed: HeroFeed;
-  getApis: () => HeroGridApis | null;
+  getApis: () => HeroScriptApis | null;
   getState: () => {
     rowCount: number;
     themeId: string;

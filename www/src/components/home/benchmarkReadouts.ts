@@ -1,16 +1,41 @@
 /*
- * The homepage's benchmark numbers, computed at build time from the raw
+ * The home pages' benchmark numbers, computed at build time from the raw
  * samples of the latest run (src/benchmark/stats.ts, the same medians and
- * confidence intervals as /benchmark). Every grid of the run is shown; the
- * "of 4" badge only appears where Infinite Table wins against each of them.
+ * confidence intervals as /benchmark): the React run on the React home page,
+ * the Vue run (src/benchmark/vueStats.ts) on the Vue one. Every grid of the
+ * run is shown; the "of 4" badge only appears where Infinite Table wins
+ * against each of them.
  */
 import {
   BENCHMARK_RUN_PATH,
-  GRIDS,
-  OTHER_GRIDS,
-  benchmark,
-  metric,
+  reactBenchmark,
+  type GridInfo,
+  type MetricSummary,
 } from '@www/benchmark/stats';
+import {
+  VUE_BENCHMARK_REPO,
+  VUE_BENCHMARK_RUN_PATH,
+  vueBenchmark,
+} from '@www/benchmark/vueStats';
+
+/** What the readouts need from a run (createBenchmarkStats returns it). */
+type Run = {
+  benchmark: {
+    environment: {
+      chrome: string;
+      cpu: string;
+      runs: number;
+      versions: Record<string, string>;
+    };
+  };
+  grids: GridInfo[];
+  otherGrids: GridInfo[];
+  metric: (
+    size: string,
+    scenario: string,
+    key: string,
+  ) => MetricSummary<string>;
+};
 
 const SIZE = '1m';
 
@@ -47,14 +72,19 @@ function format(value: number, unit: string, shownUnit: string) {
 }
 
 function readout(
+  run: Run,
   label: string,
   scenario: string,
   key: string,
   winsLabel: string,
+  /** grids left out of this readout: ones that don't do what it measures */
+  exclude: string[] = [],
 ): Readout {
-  const summary = metric(SIZE, scenario, key);
+  const summary = run.metric(SIZE, scenario, key);
   const { unit } = summary.metric;
-  const measured = GRIDS.filter((grid) => summary.values[grid.id] != null);
+  const measured = run.grids.filter(
+    (grid) => summary.values[grid.id] != null && !exclude.includes(grid.id),
+  );
   const shownUnit = unitFor(
     measured.map((grid) => summary.values[grid.id]!),
     unit,
@@ -71,9 +101,9 @@ function readout(
     })
     .sort((a, b) => a.value - b.value);
 
-  const winsAll = OTHER_GRIDS.every(
-    (grid) => summary.vs[grid.id]?.winner === 'infinite',
-  );
+  const winsAll = run.otherGrids
+    .filter((grid) => !exclude.includes(grid.id))
+    .every((grid) => summary.vs[grid.id]?.winner === 'infinite');
 
   return {
     label,
@@ -84,27 +114,73 @@ function readout(
   };
 }
 
-export function getBenchmarkReadouts() {
-  const env = benchmark.environment;
-  const versions = GRIDS.map(
-    (grid) =>
-      `${grid.name} ${(env.versions as Record<string, string>)[grid.id]}`,
+function readoutsOf(run: Run, sortExclude: string[] = []) {
+  const env = run.benchmark.environment;
+  const versions = run.grids.map(
+    (grid) => `${grid.name} ${env.versions[grid.id]}`,
   );
   return {
     readouts: [
-      readout('Mount 1,000,000 rows', 'mount', 'visibleMs', 'Fastest'),
+      readout(run, 'Mount 1,000,000 rows', 'mount', 'visibleMs', 'Fastest'),
       readout(
+        run,
         'Sort 1,000,000 rows by text',
         'sort-string',
         'ascVisibleMs',
         'Fastest',
+        sortExclude,
       ),
-      readout('Memory with 1,000,000 rows', 'mount', 'heapMB', 'Lowest'),
+      readout(run, 'Memory with 1,000,000 rows', 'mount', 'heapMB', 'Lowest'),
     ],
     footnote: `${versions.join(', ')}. Chrome ${env.chrome.split('.')[0]}, ${
       env.cpu
     }, medians of ${env.runs} runs.`,
+  };
+}
+
+/** The React run: the numbers of the React home page. */
+export function getBenchmarkReadouts() {
+  return {
+    ...readoutsOf(reactBenchmark as unknown as Run),
     href: '/benchmark',
     runPath: BENCHMARK_RUN_PATH,
+  };
+}
+
+/**
+ * The Vue run: the numbers of the Vue home page. Its report is the
+ * benchmark's repository.
+ *
+ * Element Plus Table V2 is not in the sort readout: it has no sorting. Its
+ * benchmark page sorts the array itself (Array.prototype.sort) and the table
+ * renders the result, so that time is the browser's, not a grid's - it is
+ * given in the note instead. Its mount time and memory are in: it renders the
+ * rows it is given and keeps nothing per row, so neither grows with the row
+ * count (the same at 300,000 rows as at 1,000,000).
+ */
+export function getVueBenchmarkReadouts() {
+  const run = vueBenchmark as unknown as Run;
+  const pageSort = run.metric(SIZE, 'sort-string', 'ascVisibleMs').values[
+    'element-plus'
+  ]!;
+  const flat = (key: string) =>
+    (['300k', SIZE] as const).map(
+      (size) => run.metric(size, 'mount', key).values['element-plus']!,
+    );
+  const [mountSmall, mountBig] = flat('visibleMs');
+  const [heapSmall, heapBig] = flat('heapMB');
+  return {
+    ...readoutsOf(run, ['element-plus']),
+    // note:
+    //   `Element Plus Table V2 renders the rows it is given and keeps no index of them: ` +
+    //   `it mounts in ${mountSmall.toFixed(
+    //     0,
+    //   )} ms with 300,000 rows and ${mountBig.toFixed(0)} ms with 1,000,000, ` +
+    //   `and retains ${heapSmall.toFixed(1)} MB and ${heapBig.toFixed(1)} MB. ` +
+    //   `It has no sorting, so it is not in the sort readout: its benchmark page sorts the array itself, in ${(
+    //     pageSort / 1000
+    //   ).toFixed(2)} s.`,
+    href: VUE_BENCHMARK_REPO,
+    runPath: VUE_BENCHMARK_RUN_PATH,
   };
 }

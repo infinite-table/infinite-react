@@ -3,6 +3,7 @@ import {
   remarkDemoFences,
   remarkFrameworkLinks,
   remarkFrameworkText,
+  remarkTerminalFences,
 } from '@thedatagrid/docs-kit/remark';
 import * as runtime from 'react/jsx-runtime';
 import remarkMdx from 'remark-mdx';
@@ -123,7 +124,10 @@ export async function renderMarkdownPage(options: {
             'process.env.NEXT_PUBLIC_BASE_URL': `'${env.NEXT_PUBLIC_BASE_URL}'`,
           },
         }),
-        // the other inline fences (css, sh, json…)
+        // bash / sh fences: a terminal with a copy button; the `$` prompt
+        // isn't selectable or copied (`prompt=false` on a fence hides it)
+        remarkTerminalFences({ prompt: true }),
+        // the other inline fences (css, json…)
         snippetTransformer(),
       ],
     }),

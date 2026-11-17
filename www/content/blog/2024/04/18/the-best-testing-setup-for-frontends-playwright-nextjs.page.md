@@ -31,7 +31,7 @@ When one of your tests fails, Playwright outputs a command you can run to reprod
 
 ### Step 1 - creating the NextJS app
 ```sh
-$ npx create-next-app@latest
+npx create-next-app@latest
 ```
 
 You're being asked a few questions. For `Would you like to use src/ directory?` we chose `Yes`. Also, we're using TypeScript.
@@ -58,7 +58,7 @@ So you know all your `.page` files are pages that your tests will be run against
 ### Step 2 - setting up Playwright
 
 ```sh
-$ npm init playwright@latest
+npm init playwright@latest
 ```
 
 Again a few questions about your setup.

@@ -98,6 +98,11 @@ body > .dk-demo-overlay {
   z-index: 10100;
 }
 
+/* the kit's --dk-muted reads too faint for a paragraph of prose */
+.dk-demo-description {
+  color: color-mix(in srgb, var(--fg) 80%, var(--muted));
+}
+
 .dk-demo-description code {
   font-family: var(--dk-font-mono);
   font-size: 0.9em;
@@ -214,4 +219,21 @@ body > .dk-demo-overlay {
 }
 [data-theme='dark'] .dk-demo[data-framework='vue'] {
   --docs-demo-framework-icon: url('/icons/frameworks/vue-dark.svg');
+}
+
+/* shell fences (Terminal): the bar and the prompt as the site's labels */
+.dk-terminal-bar {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dk-terminal-copy {
+  letter-spacing: normal;
+  text-transform: none;
+}
+.dk-terminal-body {
+  color: var(--heading);
+}
+.dk-terminal-line--command::before {
+  color: var(--accent-text);
 }

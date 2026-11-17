@@ -6,7 +6,6 @@ import componentsStyle from '@www/components/components.module.css';
 
 import { Footer } from '@www/components/Footer';
 import { MenuProvider } from '@www/components/useMenu';
-import { DocsFrameworkLinks } from '@www/components/DocsFrameworks';
 import { ThemeSync } from '@www/components/ThemeToggle';
 
 export default function ClientLayout({
@@ -17,7 +16,6 @@ export default function ClientLayout({
   return (
     <MenuProvider>
       <ThemeSync />
-      <DocsFrameworkLinks />
       <div className={`w-full flex flex-col ${componentsStyle.minHeightFull}`}>
         <MainNavBar />
         {/* each page sets its own width; the header and footer span the window */}

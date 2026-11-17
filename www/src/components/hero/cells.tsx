@@ -2,9 +2,15 @@
 
 import * as React from 'react';
 
+import {
+  SPARK_HEIGHT,
+  SPARK_WIDTH,
+  dayRangeGeometry,
+  sparkGeometry,
+  volumeRatio,
+} from './cellGeometry';
 import type { HeroFeed } from './data/feed';
-import { SPARK_LENGTH } from './data/feed';
-import { SECTOR_HUES, avgVolumeOf, type Sector } from './data/instruments';
+import { SECTOR_HUES, type Sector } from './data/instruments';
 import { formatCompact, formatMoney, formatPct, tone } from './format';
 
 /** Initials avatar tinted by sector + ticker. */
@@ -50,9 +56,6 @@ export function MoneyCell({ value }: { value: number }) {
   );
 }
 
-// one scratch buffer: sparklines render synchronously, one at a time
-const sparkScratch = new Float32Array(SPARK_LENGTH);
-
 /**
  * Inline SVG sparkline of the row's last ticks. Memoized on `tick`, so it
  * only re-renders when its own row updates.
@@ -66,26 +69,9 @@ export const Sparkline = React.memo(function Sparkline({
   /** Only used to invalidate the memo when the row ticks. */
   tick: number;
 }) {
-  const values = feed.sparkline(id, sparkScratch);
-  let min = Infinity;
-  let max = -Infinity;
-  for (let k = 0; k < SPARK_LENGTH; k++) {
-    if (values[k] < min) min = values[k];
-    if (values[k] > max) max = values[k];
-  }
-  const range = max - min || 1;
-  const W = 100;
-  const H = 24;
-  const pad = 2;
-  let line = '';
-  for (let k = 0; k < SPARK_LENGTH; k++) {
-    const x = (k / (SPARK_LENGTH - 1)) * W;
-    const y = pad + (1 - (values[k] - min) / range) * (H - pad * 2);
-    line += `${k ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`;
-  }
-  const up = values[SPARK_LENGTH - 1] >= values[0];
-  const lastY =
-    pad + (1 - (values[SPARK_LENGTH - 1] - min) / range) * (H - pad * 2);
+  const { line, area, up, lastY } = sparkGeometry(feed, id);
+  const W = SPARK_WIDTH;
+  const H = SPARK_HEIGHT;
   return (
     <svg
       className={`hero-spark hero-spark--${up ? 'up' : 'down'}`}
@@ -93,7 +79,7 @@ export const Sparkline = React.memo(function Sparkline({
       preserveAspectRatio="none"
       aria-hidden
     >
-      <path className="hero-spark__area" d={`${line}L${W} ${H}L0 ${H}Z`} />
+      <path className="hero-spark__area" d={area} />
       <path
         className="hero-spark__line"
         d={line}
@@ -112,7 +98,7 @@ export const Sparkline = React.memo(function Sparkline({
 
 /** Traded volume vs a typical day. */
 export function VolumeBar({ id, volume }: { id: number; volume: number }) {
-  const ratio = Math.min(1, volume / (avgVolumeOf(id) * 1.1));
+  const ratio = volumeRatio(id, volume);
   return (
     <span className="hero-vol">
       <span className="hero-vol__track">
@@ -136,12 +122,7 @@ export function DayRange({
   id: number;
   price: number;
 }) {
-  const low = feed.low[id] ?? price;
-  const high = feed.high[id] ?? price;
-  const open = feed.open[id] ?? price;
-  const span = high - low || 1;
-  const at = ((price - low) / span) * 100;
-  const openAt = ((open - low) / span) * 100;
+  const { low, high, at, openAt, up } = dayRangeGeometry(feed, id, price);
   return (
     <span
       className="hero-range"
@@ -151,7 +132,7 @@ export function DayRange({
       <span className="hero-range__open" style={{ left: `${openAt}%` }} />
       <span
         className={`hero-range__marker hero-range__marker--${
-          price >= open ? 'up' : 'down'
+          up ? 'up' : 'down'
         }`}
         style={{ left: `${at}%` }}
       />

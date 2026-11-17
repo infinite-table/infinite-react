@@ -8,6 +8,7 @@
 // entry of the same source tree).
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import nextEnv from '@next/env';
 
@@ -60,6 +61,15 @@ const INFINITE_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || sourcePackage.version;
 
 const SOURCE_DIR = path.resolve(import.meta.dirname, '../source/src');
+
+// the framework-neutral part of the kit's showcase toolkit (the cursor, sleep,
+// waitFor, fling…), for the Vue hero
+const SHOWCASE_SCRIPTED = path.join(
+  path.dirname(
+    fileURLToPath(import.meta.resolve('@thedatagrid/docs-kit/showcase')),
+  ),
+  'scripted.js',
+);
 
 const FORK_STYLES = `.Infinite {
   flex: 1;
@@ -163,6 +173,17 @@ export default {
             { entry: `../source/src/generate-theme-${theme}.ts` },
           ]),
         ),
+        // The Vue home page hero (content/home/vue-hero.demo.vue):
+        // - its tick worker is an entry of the import map, so the demo starts
+        //   it with `new Worker(import.meta.resolve('hero-tick-worker'))`
+        'hero-tick-worker': {
+          entry: 'src/components/hero/data/tick.worker.ts',
+        },
+        // - the scripted cursor is the kit's own, without its React
+        //   components (the package entry exports those too)
+        '@thedatagrid/docs-kit/showcase': {
+          entry: SHOWCASE_SCRIPTED,
+        },
       },
       stubImports: [/^@infinite-table\/infinite-vue\/index\.css$/],
       // sets the global license key - the Vue build starts without the React bootstrap

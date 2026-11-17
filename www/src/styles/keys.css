@@ -1,0 +1,49 @@
+/*
+ * The keys (buttons) of the site: .site-key. Imported by app/layout.tsx, and by the
+ * pages of the Vue home page demos (content/home/vue-home/page.css).
+ */
+.site-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--heading);
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.site-key:hover {
+  border-color: var(--muted);
+}
+.site-key--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+.site-key--primary:hover {
+  border-color: var(--accent);
+  filter: brightness(1.08);
+}
+.site-key--lg {
+  height: 42px;
+  padding: 0 18px;
+  font-size: 12.5px;
+}
+.site-key--sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.site-key svg {
+  width: 12px;
+  height: 12px;
+}

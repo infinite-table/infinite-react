@@ -21,7 +21,6 @@ import { LI, UnorderedList } from '@www/components/UnorderedList';
 import { Blockquote } from '@www/components/Blockquote';
 
 import HomepageHero from '@www/components/MDX/HomepageHero';
-import TerminalBlock from '../src/components/MDX/TerminalBlock';
 import { BenchmarkChart } from '../src/components/MDX/BenchmarkChart';
 
 import Intro from '../src/components/MDX/Intro';
@@ -50,7 +49,7 @@ import {
   RowDetailApiLink,
 } from '../src/components/MDX/Prop';
 import { DocsLink } from '../src/components/DocsLink';
-import { createDemoComponents } from '@thedatagrid/docs-kit/react';
+import { createDemoComponents, Terminal } from '@thedatagrid/docs-kit/react';
 import { createFrameworkContent } from '@thedatagrid/docs-kit/frameworks/react';
 import { resolveFrameworkLink } from '@thedatagrid/docs-kit/frameworks';
 import {
@@ -124,7 +123,7 @@ export function useMDXComponents(
     // <FrameworkContent framework="vue"> … </FrameworkContent>
     FrameworkContent: createFrameworkContent(framework),
     HomepageHero: () => <HomepageHero linkFor={linkFor} />,
-    TerminalBlock,
+    Terminal,
     BenchmarkChart,
     HeroCards,
     Illustration,

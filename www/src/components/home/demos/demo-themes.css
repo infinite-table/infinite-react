@@ -9,36 +9,4 @@
 @import '../../../../../source/dist/theme/minimalist.css';
 @import '../../../../../source/dist/theme/ocean.css';
 @import '../../../../../source/dist/theme/balsam.css';
-
-/*
- * The site's own grids (the million rows, the pivot) use the Terminal theme
- * in the site's palette: its amber accent and, in light mode, its warm greys
- * give way to the site tokens. The theme gallery shows the themes as they ship.
- */
-.home-grid--site .Infinite {
-  --infinite-accent-color: var(--accent) !important;
-  --infinite-active-cell-border-color: var(--accent) !important;
-  --infinite-flashing-background: color-mix(in srgb, var(--accent) 20%, transparent) !important;
-  --infinite-row-selected-background: color-mix(in srgb, var(--accent) 12%, var(--bg)) !important;
-  --infinite-row-selected-hover-background: color-mix(in srgb, var(--accent) 18%, var(--bg)) !important;
-  --infinite-menu-item-active-background: color-mix(in srgb, var(--accent) 10%, var(--bg)) !important;
-  --infinite-menu-item-pressed-background: color-mix(in srgb, var(--accent) 16%, var(--bg)) !important;
-  --infinite-background: var(--bg) !important;
-  --infinite-row-background: var(--bg) !important;
-  --infinite-row-odd-background: var(--bg) !important;
-  --infinite-row-hover-background: var(--surface) !important;
-  --infinite-header-background: var(--surface) !important;
-  --infinite-header-cell-background: var(--surface) !important;
-  --infinite-group-row-background: var(--surface) !important;
-  --infinite-header-cell-hover-background: var(--raised) !important;
-  --infinite-cell-border-color: var(--line) !important;
-  --infinite-cell-border: 1px solid var(--line) !important;
-  --infinite-cell-border-top: 1px solid var(--line) !important;
-  --infinite-cell-border-right: 1px solid var(--line) !important;
-  --infinite-header-cell-border: 1px solid var(--line) !important;
-  --infinite-header-cell-border-right: 1px solid var(--line) !important;
-  --infinite-pinned-cell-border: 1px solid var(--line-strong) !important;
-  --infinite-color: var(--fg) !important;
-  --infinite-header-color: var(--muted) !important;
-  --infinite-expand-collapse-icon-color: var(--muted) !important;
-}
+@import './site-grid.css';

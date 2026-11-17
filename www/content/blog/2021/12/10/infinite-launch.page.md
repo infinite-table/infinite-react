@@ -7,9 +7,9 @@ tags: product
 
 Today we are announcing the alpha version (`0.0.7`) of `Infinite Table` ready to be used by early adopters - you can take it from npm
 
-<TerminalBlock>
+```bash
 npm i @infinite-table/infinite-react
-</TerminalBlock>
+```
 
 We're thrilled by the work done by the whole team and this is the result of years of their combined experience and passion 🎉!
 

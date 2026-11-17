@@ -1,67 +1,77 @@
 /*
  * /vue - the home page of Infinite Table for Vue. The same sections and
- * styles as the React home page (HomePage.tsx), with demos that run the Vue
- * grid: the docs' own Vue demos, with their code and the editor.
+ * styles as the React home page (HomePage.tsx), in the same order, with demos
+ * that run the Vue grid: the hero and the section demos are the Vue ports of
+ * the React ones (content/home/vue-*.demo.vue), and the numbers are those of
+ * the Vue benchmark.
  */
+import fs from 'node:fs';
+
 import Link from 'next/link';
 import * as React from 'react';
-import { createDemoComponents } from '@thedatagrid/docs-kit/react';
 
 import { competitors } from '@www/compare/matrix';
+import { CodeBlock } from '@www/components/CodeBlock';
+import { VueHeroShowcase } from '@www/components/hero/VueHeroShowcase';
 import { getStats } from '@www/compare/matrixUtils';
 import { getDocsPage, getDocsPagePaths } from '@www/utils/docsFrameworkContent';
 import { docsFrameworks } from '@www/utils/docsFrameworks';
-import {
-  DOCS_CODE_THEMES,
-  DOCS_CONTENT_DIR,
-  DOCS_DEMO_ANCHOR_PREFIX,
-  DOCS_DEMO_HEIGHTS,
-  DOCS_DEMO_MANIFEST_VUE,
-} from '@www/utils/docsKit';
+import { DOCS_DEMO_MANIFEST_VUE } from '@www/utils/docsKit';
+import type { BlogPost } from '@www/utils/blogUtils';
 
-import { FEATURES, SectionBar } from './HomePage';
+import { getVueBenchmarkReadouts } from './benchmarkReadouts';
+import {
+  BlogList,
+  FEATURES,
+  PRINCIPLES,
+  ReadoutCard,
+  SectionBar,
+} from './HomePage';
 import { InstallCommand } from './InstallCommand';
 import { Schematic } from './Schematic';
+import { VueFrameDemo } from './VueFrameDemo';
 
 import './home.css';
 
 const vue = (path: string) => docsFrameworks.pathFor(path, 'vue');
 
-/** the Vue demos of a docs folder, as on the Vue docs pages */
-const demosOf = (folder: string) =>
-  createDemoComponents({
-    contentDir: DOCS_CONTENT_DIR,
-    folder,
-    manifest: DOCS_DEMO_MANIFEST_VUE,
-    heights: DOCS_DEMO_HEIGHTS,
-    themes: DOCS_CODE_THEMES,
-    anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
-  }).Demo;
+const PIVOT_CODE = `<DataSource
+  :data="trades"
+  primaryKey="id"
+  :groupBy="[{ field: 'sector' }]"
+  :pivotBy="[{ field: 'region' }]"
+  :aggregationReducers="{
+    pnl: {
+      field: 'pnl',
+      initialValue: 0,
+      reducer: (a, b) => a + b,
+    },
+  }"
+>
+  <template #default="{ pivotColumns, pivotColumnGroups }">
+    <InfiniteTable
+      :pivotColumns="pivotColumns"
+      :pivotColumnGroups="pivotColumnGroups"
+    />
+  </template>
+</DataSource>`;
 
-const GettingStartedDemo = demosOf('docs/learn/getting-started');
-const PivotDemo = demosOf('docs/learn/grouping-and-pivoting/pivoting');
-const ThemingDemo = demosOf('docs/learn/theming');
+/**
+ * The page the docs-kit Vue build made of a demo in content/home: the hero
+ * (vue-hero.demo.vue) and the section demos (vue-home-*.demo.vue).
+ */
+function vueDemoPage(name: string): string {
+  const manifest = JSON.parse(fs.readFileSync(DOCS_DEMO_MANIFEST_VUE, 'utf8'));
+  const page = manifest.demos?.[`home/${name}`]?.html;
+  if (!page) {
+    throw new Error(
+      `The Vue demo "home/${name}" is not in ${DOCS_DEMO_MANIFEST_VUE}: run \`npm run build-demos\`.`,
+    );
+  }
+  return page;
+}
 
-const PRINCIPLES = [
-  {
-    title: 'Vue components',
-    text: 'DataSource and InfiniteTable are Vue 3 components: bind props in the template.',
-  },
-  {
-    title: 'Refs and composables',
-    text: 'Controlled state lives in refs. Cells and headers read theirs from composables.',
-  },
-  {
-    title: 'One grid, two frameworks',
-    text: 'Built from the same source as the React package, released with the same version.',
-  },
-  {
-    title: 'The same tests',
-    text: 'The end-to-end specs run against both the React and the Vue grid.',
-  },
-];
-
-export function VueHomePage() {
+export function VueHomePage({ posts = [] }: { posts?: BlogPost[] }) {
   const stats = getStats('infinite-vue');
   const gzipKB = Math.round(stats.bundle.jsGzip / 1000);
   const dependencies = stats.transitiveDependencyCount;
@@ -74,6 +84,8 @@ export function VueHomePage() {
   );
   const vuePages = new Set(getDocsPagePaths('vue'));
   const vueGuides = guides.filter((path) => vuePages.has(path));
+  const heroPage = vueDemoPage('vue-hero');
+  const bench = getVueBenchmarkReadouts();
 
   return (
     <div className="home">
@@ -134,47 +146,124 @@ export function VueHomePage() {
               </dl>
             </div>
           </div>
+
+          <div className="home-frame">
+            <div className="home-frame__bar">
+              <span className="home-live">Live</span>
+              <span className="home-frame__hint">
+                Live demo, built with Vue · click the grid to take over
+              </span>
+              <span className="home-grow" />
+              <a href={heroPage} target="_blank" rel="noreferrer">
+                Open full-page demo ↗
+              </a>
+            </div>
+            <VueHeroShowcase src={heroPage} />
+          </div>
         </div>
       </section>
 
-      {/* ---- 01 a component ---- */}
-      <section className="home-sec" id="component">
+      {/* ---- 01 performance ---- */}
+      <section className="home-sec" id="performance">
         <SectionBar
           no="01"
-          name="A single-file component"
-          aside="Live · the Vue grid"
+          name="Performance"
+          aside={`${bench.readouts[0].bars.length} Vue grids, one benchmark`}
         />
         <div className="home-wrap">
           <div className="home-sec__head">
-            <h2>The whole grid, in one component.</h2>
+            <h2>Measured, not claimed.</h2>
             <p>
-              This is a real Vue grid, not a screenshot. Open the <b>Code</b>{' '}
-              tab to read the component, <b>edit</b> it and watch the grid
-              update, or <b>fork</b> it.
+              The same data, the same machine, the same gestures, seven runs
+              each, with the Vue build of every grid. The benchmark is open:
+              read the method, then run it yourself.
             </p>
           </div>
-          <div className="home-vue-demo">
-            <GettingStartedDemo
-              name="meet-the-code"
-              height="small"
-              title="Infinite Table in Vue"
-            />
-          </div>
-          <div className="home-principles">
-            {PRINCIPLES.map((principle) => (
-              <div key={principle.title} className="home-principle">
-                <h3>{principle.title}</h3>
-                <p>{principle.text}</p>
-              </div>
+          <div className="home-readouts">
+            {bench.readouts.map((readout) => (
+              <ReadoutCard key={readout.label} readout={readout} />
             ))}
+            <div className="home-readout">
+              <div className="home-readout__top">
+                <span className="home-label">Dependencies</span>
+              </div>
+              <div className="home-readout__num">{dependencies}</div>
+              <p className="home-readout__note">
+                Nothing but Vue.
+                <br />
+                <b>{gzipKB} kB</b> of gzipped JavaScript.
+              </p>
+            </div>
+          </div>
+          <div className="home-footnote">
+            <span>
+              {bench.footnote} {bench.note} Scrolling and the other scenarios
+              are in the benchmark's repository.
+            </span>
+            <a href={bench.href} target="_blank" rel="noreferrer">
+              Read the method and all the results →
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ---- 02 pivot ---- */}
-      <section className="home-sec" id="pivot">
+      {/* ---- 02 scale ---- */}
+      <section className="home-sec" id="scale">
         <SectionBar
           no="02"
+          name="Scale"
+          aside="Live · rows and columns virtualized"
+        />
+        <div className="home-wrap">
+          <div className="home-sec__head">
+            <h2>A million rows. Go on, scroll.</h2>
+            <div>
+              <p>
+                You scroll an empty container sized like the content; the grid
+                moves its header and body itself, on the same frame. The header
+                never trails the cells, and a fast fling never shows blank rows.
+              </p>
+              <p>
+                Rows and columns are both virtualized: only what is on screen is
+                ever rendered.
+              </p>
+            </div>
+          </div>
+          <VueFrameDemo
+            name="million"
+            src={vueDemoPage('vue-home-million')}
+            title="Infinite Table for Vue: a million rows"
+          />
+        </div>
+      </section>
+
+      {/* ---- 03 themes ---- */}
+      <section className="home-sec" id="themes">
+        <SectionBar
+          no="03"
+          name="Themes"
+          aside={<Link href="/themes">The theme gallery →</Link>}
+        />
+        <div className="home-wrap">
+          <div className="home-sec__head">
+            <h2>Themes that change more than color.</h2>
+            <p>
+              Pick a theme, a mode and a density. Each one is a CSS file and a
+              class, and every value is a CSS variable you can override.
+            </p>
+          </div>
+          <VueFrameDemo
+            name="themes"
+            src={vueDemoPage('vue-home-themes')}
+            title="Infinite Table for Vue: themes, modes and densities"
+          />
+        </div>
+      </section>
+
+      {/* ---- 04 pivot ---- */}
+      <section className="home-sec" id="pivot">
+        <SectionBar
+          no="04"
           name="Pivot"
           aside={
             <Link
@@ -193,43 +282,26 @@ export function VueHomePage() {
               slot of the DataSource.
             </p>
           </div>
-          <div className="home-vue-demo">
-            <PivotDemo
-              name="pivoting-example"
-              title="Pivoting with an average aggregation"
+          <div className="home-split">
+            <div className="home-split__code">
+              <CodeBlock lang="vue" title="Pivot.vue" highlight="4-5">
+                {PIVOT_CODE}
+              </CodeBlock>
+            </div>
+            <VueFrameDemo
+              name="pivot"
+              src={vueDemoPage('vue-home-pivot')}
+              title="Infinite Table for Vue: pivoting"
+              fill
             />
           </div>
         </div>
       </section>
 
-      {/* ---- 03 themes ---- */}
-      <section className="home-sec" id="themes">
-        <SectionBar
-          no="03"
-          name="Themes"
-          aside={<Link href="/themes">The theme gallery →</Link>}
-        />
-        <div className="home-wrap">
-          <div className="home-sec__head">
-            <h2>Themes that change more than color.</h2>
-            <p>
-              Pick a theme and a mode. Each one is a CSS file and a className,
-              and every value is a CSS variable you can override.
-            </p>
-          </div>
-          <div className="home-vue-demo">
-            <ThemingDemo
-              name="theme-switching-minimalist-theme-default-example"
-              title="Switching the theme and the mode"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ---- 04 features ---- */}
+      {/* ---- 05 features ---- */}
       <section className="home-sec" id="features">
         <SectionBar
-          no="04"
+          no="05"
           name="Features"
           aside="Everything in one component"
         />
@@ -258,13 +330,21 @@ export function VueHomePage() {
               </Link>
             ))}
           </div>
+          <div className="home-principles">
+            {PRINCIPLES.map((principle) => (
+              <div key={principle.title} className="home-principle">
+                <h3>{principle.title}</h3>
+                <p>{principle.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ---- 05 compare ---- */}
+      {/* ---- 06 compare ---- */}
       <section className="home-sec" id="compare">
         <SectionBar
-          no="05"
+          no="06"
           name="Compare"
           aside={`${competitors.length} grids, one matrix`}
         />
@@ -289,9 +369,9 @@ export function VueHomePage() {
         </div>
       </section>
 
-      {/* ---- 06 get started ---- */}
+      {/* ---- 07 get started ---- */}
       <section className="home-sec" id="editions">
-        <SectionBar no="06" name="Get started" aside="Vue 3" />
+        <SectionBar no="07" name="Get started" aside="Vue 3" />
         <div className="home-wrap">
           <div className="home-editions">
             <div className="home-edition">
@@ -335,6 +415,20 @@ export function VueHomePage() {
           </div>
         </div>
       </section>
+
+      {/* ---- 08 blog ---- */}
+      {posts.length ? (
+        <section className="home-sec" id="blog">
+          <SectionBar
+            no="08"
+            name="Blog"
+            aside={<Link href="/blog">All posts →</Link>}
+          />
+          <div className="home-wrap">
+            <BlogList posts={posts} />
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -661,6 +661,17 @@
   color: var(--fg);
 }
 
+/* the Vue page: the same demos, each in an iframe (VueFrameDemo.tsx) that
+   takes the height of its card, or fills the demo's box (the pivot) */
+.home-demo__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  border: 0;
+  background: transparent;
+}
+
 /* pivot: the code next to the grid */
 .home-split {
   display: grid;
@@ -673,21 +684,6 @@
 }
 .home-split__code > * {
   margin: 0;
-}
-
-/* the Vue home page: a docs demo card (the Vue grid, its code, the editor) */
-.home-vue-demo {
-  min-width: 0;
-}
-.home-vue-demo > * {
-  margin: 0;
-}
-/* on a phone the card's toolbar is wider than the page: it scrolls */
-.home-vue-demo .dk-demo-toolbar {
-  overflow-x: auto;
-}
-.home-vue-demo + .home-principles {
-  margin-top: 24px;
 }
 
 /* ---- features ------------------------------------------------------------------ */

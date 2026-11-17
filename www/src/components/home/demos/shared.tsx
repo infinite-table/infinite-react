@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 
-export type ColorMode = 'light' | 'dark';
+import type { ColorMode } from './theme';
+
+export { type ColorMode, themeClassName } from './theme';
 
 function readSiteMode(): ColorMode {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
@@ -28,21 +30,6 @@ export function useSiteMode(): ColorMode {
     readSiteMode,
     () => 'dark',
   );
-}
-
-/** The library's classNames for a theme, a mode and a density. */
-export function themeClassName(
-  theme: string,
-  mode: ColorMode,
-  density?: 'compact' | 'comfortable' | 'spacious',
-) {
-  return [
-    theme !== 'default' ? `infinite-theme-name--${theme}` : '',
-    `infinite-theme-mode--${mode}`,
-    density ? `infinite-density--${density}` : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
 }
 
 export function Segmented<T extends string>(props: {
