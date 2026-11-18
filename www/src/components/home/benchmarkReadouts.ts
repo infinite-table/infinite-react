@@ -8,6 +8,7 @@
  */
 import {
   BENCHMARK_RUN_PATH,
+  describeMachine,
   reactBenchmark,
   type GridInfo,
   type MetricSummary,
@@ -24,6 +25,8 @@ type Run = {
     environment: {
       chrome: string;
       cpu: string;
+      os: string;
+      runId: string;
       runs: number;
       versions: Record<string, string>;
     };
@@ -132,9 +135,9 @@ function readoutsOf(run: Run, sortExclude: string[] = []) {
       ),
       readout(run, 'Memory with 1,000,000 rows', 'mount', 'heapMB', 'Lowest'),
     ],
-    footnote: `${versions.join(', ')}. Chrome ${env.chrome.split('.')[0]}, ${
-      env.cpu
-    }, medians of ${env.runs} runs.`,
+    footnote: `${versions.join(', ')}. Chrome ${env.chrome.split('.')[0]}, ${describeMachine(
+      env,
+    )}, medians of ${env.runs} runs.`,
   };
 }
 

@@ -90,6 +90,28 @@ type Results<G extends string = Grid> = {
   sizes: Record<string, Size<G>>;
 };
 
+/**
+ * The machine of a run, in words. The results only record the CPU model and
+ * the logical CPU count (`"<model> × <count>"`). On CI that is a shared
+ * GitHub-hosted virtual machine: it gets a few virtual CPUs of the host's
+ * processor, not the whole processor, so we say that and leave the model out.
+ */
+export function describeMachine(env: {
+  runId: string;
+  os: string;
+  cpu: string;
+}) {
+  const [, model = env.cpu, count = ''] =
+    env.cpu.match(/^(.*?)\s*×\s*(\d+)$/) ?? [];
+  const hosted = env.runId === 'ci' || /azure/i.test(env.os);
+  if (hosted) {
+    return count
+      ? `GitHub Actions hosted runner (shared VM and ${count} vCPUs)`
+      : 'GitHub Actions hosted runner (shared VM)';
+  }
+  return count ? `${model} (${count} cores)` : model;
+}
+
 function percentile(values: number[], p: number) {
   const v = values.filter((x) => Number.isFinite(x)).sort((a, b) => a - b);
   if (!v.length) return NaN;

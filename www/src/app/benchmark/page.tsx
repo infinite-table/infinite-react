@@ -4,6 +4,7 @@ import {
   benchmark,
   BENCHMARK_RUN_PATH,
   Comparison as GridComparison,
+  describeMachine,
   formatMetric,
   Grid,
   gridName,
@@ -627,7 +628,7 @@ export default function BenchmarkPage() {
           <table className={styles.table}>
             <tbody>
               {[
-                ['Machine', `${env.cpu}, ${env.os}`],
+                ['Machine', `${describeMachine(env)}, ${env.os}`],
                 [
                   'Browser',
                   `Chrome ${env.chrome}, ${env.headless ? 'headless' : 'headed'}, sandboxed, display scale 1, en-US`,
