@@ -135,6 +135,6 @@ We release often - see [what each release contains here](https://infinite-table.
 
 ## 📑 License 
 
-Both Open and [Commercial License](https://infinite-table.com/eula)
+Infinite Table is source-available, not open source. You can use it for free in any product, with every feature: without a license key, the grid shows a "Powered by Infinite Table" link in its footer.
 
-For commercial license and support, see our [Pricing page](https://infinite-table.com/pricing).
+A [commercial license](https://infinite-table.com/eula) removes the footer and includes support. One license covers both the React and the Vue packages - see the [Pricing page](https://infinite-table.com/pricing) and [Licensing](https://infinite-table.com/docs/learn/getting-started/licensing).

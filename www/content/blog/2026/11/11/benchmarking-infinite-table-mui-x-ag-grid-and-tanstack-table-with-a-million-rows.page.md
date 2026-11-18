@@ -354,3 +354,5 @@ Both are also in the benchmark repository, under [`results/blog-post-2026-11-12`
 ## Help us make it fairer
 
 If you find a flaw in the methodology, a setting that unfairly favors one grid, or a scenario that's missing, please [open an issue](https://github.com/infinite-table/datagrid-performance-comparison/issues) or send a pull request. That goes double for the MUI X, AG Grid and TanStack teams: if there's a configuration you'd recommend for a fair comparison - or a better way to render TanStack Table - we'll gladly add it, re-run the numbers, and update this post. You can also reach us at [admin@infinite-table.com](mailto:admin@infinite-table.com).
+
+If the benchmark was useful to you, a star on [Infinite Table](https://github.com/infinite-table/infinite-react) and on the [benchmark repository](https://github.com/infinite-table/datagrid-performance-comparison) helps other developers find them.
