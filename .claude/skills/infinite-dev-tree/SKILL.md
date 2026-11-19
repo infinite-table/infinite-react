@@ -47,7 +47,7 @@ A worktree on a branch from before the switch to pnpm (no `scripts/install-all.m
 
 ## Installing
 
-Every folder with a `pnpm-lock.yaml` (root, `source`, `examples`, `www`, `www/dataserver`, `devtools`, `devtools-ui`, `devtools-www`, `vue-playground`) is its own pnpm project with its own flat `node_modules`. `pnpm install` at the root installs all of them (its postinstall runs `scripts/install-all.mjs`). Never use `npm install` / `npm ci` there (a preinstall check stops it); `npm run <script>` is fine.
+Every folder with a `pnpm-lock.yaml` (root, `source`, `examples`, `www`, `www/dataserver`, `devtools`, `devtools-ui`, `devtools-www`, `vue-playground`) is its own pnpm project with its own flat `node_modules`. `pnpm install` at the root installs all of them (its postinstall runs `scripts/install-all.mjs`). Never use `npm install` / `npm ci` there: each folder's preinstall (`scripts/only-pnpm.cjs`) stops it, says to use pnpm and removes the `package-lock.json` npm wrote. `npm run <script>` is fine. npm doesn't run that check for `npm install <package>`: if that happened, the next `pnpm install` removes the stray `package-lock.json` and locks the package (or use `pnpm add` in the first place).
 
 - Add or update a dependency inside its folder: `pnpm -C examples add <pkg>`. Commit that folder's `pnpm-lock.yaml`.
 - `node scripts/install-all.mjs --only source,examples` installs some folders, `--clean` removes all `node_modules`, `--check` verifies the setup (each folder has a copy of the root `pnpm-workspace.yaml`: keep them identical).

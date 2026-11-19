@@ -6,7 +6,7 @@
   "description": "The most productive Data Table for React",
   "main": "index.js",
   "scripts": {
-    "preinstall": "node -e \"process.env.npm_config_user_agent?.startsWith('pnpm/') || (console.error('\\\\nThis repo uses pnpm, not npm: npm run <script> is fine, but install with pnpm install (at the repo root: it installs every folder).\\\\nIf npm already installed here, remove that node_modules folder and its package-lock.json first.\\\\n'), process.exit(1))\"",
+    "preinstall": "node scripts/only-pnpm.cjs",
     "postinstall": "node scripts/install-all.mjs --skip-root",
     "bundlewatch": "bundlewatch --config bundlewatch.config.json",
     "clean-deps": "node scripts/install-all.mjs --clean",

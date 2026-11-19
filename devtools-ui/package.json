@@ -2,6 +2,7 @@
   "name": "devtools-ui",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "node ../scripts/only-pnpm.cjs",
     "build": "rm -fr dist && npm run tsup",
     "tsup": "tsup",
     "generate-theme-vars": "node ../scripts/generate-theme-vars.cjs",

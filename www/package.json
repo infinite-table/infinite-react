@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "node -e \"process.env.npm_config_user_agent?.startsWith('pnpm/') || (console.error('\\\\nThis repo uses pnpm, not npm: npm run <script> is fine, but install with pnpm install (at the repo root: it installs every folder).\\\\nIf npm already installed here, remove that node_modules folder and its package-lock.json first.\\\\n'), process.exit(1))\"",
+    "preinstall": "node -e \"try{require('../scripts/only-pnpm.cjs')}catch(e){if(e.code!=='MODULE_NOT_FOUND')throw e}\"",
     "build-dev": "npm run source-build && npm run generate-lib-dts && npm run dev",
     "dev": "concurrently \"npm run copy-license\" \"npm run watch-content\" \"npm run watch-demos\" \"npm run next-dev\"",
     "watch-content": "npm run index-content && npm run generate-llms-docs && chokidar \"./content/**/*.{page,code,demo,snippet}.{md,tsx,vue}\" -c 'npm run index-content && npm run generate-llms-docs && npm run touch-slug-pages'",

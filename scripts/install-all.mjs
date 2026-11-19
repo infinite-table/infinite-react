@@ -11,7 +11,8 @@
 //   --only a,b       only these folders (e.g. --only source,examples)
 //   --clean          remove the node_modules of all folders instead
 //   --check          verify the setup: identical pnpm-workspace.yaml copies,
-//                    a pnpm-lock.yaml and no package-lock.json in each folder
+//                    a pnpm-lock.yaml, no package-lock.json and the
+//                    preinstall that stops npm install, in each folder
 //
 // Each folder is a separate pnpm project with its own lockfile and its own
 // flat node_modules (see pnpm-workspace.yaml for why). They are installed
@@ -163,6 +164,16 @@ function check() {
     }
     if (!fs.existsSync(file('pnpm-lock.yaml'))) {
       problems.push(`${rel('pnpm-lock.yaml')} is missing`);
+    }
+    const { scripts } = JSON.parse(
+      fs.readFileSync(file('package.json'), 'utf8'),
+    );
+    if (!scripts?.preinstall?.includes('only-pnpm.cjs')) {
+      problems.push(
+        `${rel(
+          'package.json',
+        )} has no preinstall that runs scripts/only-pnpm.cjs (it stops npm install)`,
+      );
     }
     if (fs.existsSync(file('package-lock.json'))) {
       problems.push(
