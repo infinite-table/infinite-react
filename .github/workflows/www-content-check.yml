@@ -12,6 +12,7 @@ on:
       - 'www/docs-kit.bootstrap.ts'
       - 'www/docs-kit.tailwind.css'
       - 'www/package.json'
+      - 'www/pnpm-lock.yaml'
       - '.github/workflows/www-content-check.yml'
 
 concurrency:
@@ -30,22 +31,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+      # pnpm, in the version of the root package.json's "packageManager"
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
+          cache_dependency_path: |
+            pnpm-lock.yaml
+            source/pnpm-lock.yaml
+            examples/pnpm-lock.yaml
+            www/pnpm-lock.yaml
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Execute 'npm ci' in monorepo
-        run: npm ci
-
-      - name: Install source
-        run: npm i --prefix source
-
-      - name: Install www
-        run: npm i --prefix www
+      # the root's postinstall installs every folder (scripts/install-all.mjs),
+      # each from its own pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Type-check the docs demos and snippets against the source
-        run: npm run --prefix www tsc:content
+        run: pnpm -C www run tsc:content
 
       - name: Build the docs demos
-        run: npm run --prefix www build-demos
+        run: pnpm -C www run build-demos

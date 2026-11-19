@@ -1,12 +1,20 @@
-// `next dev` on the first free port from PREFERRED_PORT (3001) upwards, since
-// Next.js only retries ports by itself when no port is given.
+// `next dev` on the first free port from PREFERRED_PORT upwards, since
+// Next.js only retries ports by itself when no port is given. The preferred
+// port is the `www` port picked by scripts/with-ports.mjs (3001 unless
+// another checkout has it), or PORT.
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 import net from 'node:net';
 
-const PREFERRED_PORT = Number(process.env.PORT) || 3001;
+const { getPort } = createRequire(import.meta.url)(
+  '../../scripts/dev-ports.cjs',
+);
+
+const PREFERRED_PORT = Number(process.env.PORT) || getPort('www');
 const MAX_ATTEMPTS = 20;
-// 3002 belongs to `serve:data`, which kills whatever is listening on it.
-const RESERVED_PORTS = new Set([3002]);
+// The data port belongs to `serve:data`, which restarts this checkout's data
+// server on it.
+const RESERVED_PORTS = new Set([getPort('data')]);
 
 function isPortFree(port) {
   return new Promise((resolve) => {

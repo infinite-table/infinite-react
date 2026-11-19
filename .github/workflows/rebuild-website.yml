@@ -50,29 +50,29 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # pnpm, in the version of the root package.json's "packageManager"
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
+          cache_dependency_path: |
+            pnpm-lock.yaml
+            source/pnpm-lock.yaml
+            examples/pnpm-lock.yaml
+            www/pnpm-lock.yaml
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: |
-            package-lock.json
-            source/package-lock.json
-            www/package-lock.json
-            examples/package-lock.json
 
-      - name: Install
-        run: npm ci --force
-
-      - name: Install source
-        run: npm i --prefix source
-
-      - name: Install www
-        run: npm i --prefix www
+      # the root's postinstall installs every folder (scripts/install-all.mjs),
+      # each from its own pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: 'Building'
         run: |
-          npm run build:all
+          pnpm run build:all
 
       - name: checkout infinite-www-dist repo
         uses: actions/checkout@v5

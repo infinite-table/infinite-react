@@ -1,5 +1,9 @@
-export const REACT_EXAMPLES_PORT = 5555;
-export const VUE_EXAMPLES_PORT = 5556;
+// 5555 / 5556, or other ports when those are taken by another checkout
+// (scripts/dev-ports.cjs): passed in by next.config.js and vite.config.ts
+export const REACT_EXAMPLES_PORT =
+  Number(process.env.NEXT_PUBLIC_EXAMPLES_PORT) || 5555;
+export const VUE_EXAMPLES_PORT =
+  Number(process.env.NEXT_PUBLIC_EXAMPLES_VUE_PORT) || 5556;
 
 export type ExamplesFramework = 'react' | 'vue';
 

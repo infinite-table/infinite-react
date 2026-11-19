@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Install & caches "fresh" node_modules
+  # Install & caches "fresh" node_modules (from the npm days, kept for reference)
   # npm-install:
   # name: Install npm deps
   # runs-on: ubuntu-latest
@@ -105,28 +105,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+      # pnpm, in the version of the root package.json's "packageManager"
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
+          cache_dependency_path: |
+            pnpm-lock.yaml
+            source/pnpm-lock.yaml
+            examples/pnpm-lock.yaml
+            www/pnpm-lock.yaml
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Execute 'npm ci' in monorepo
-        run: npm ci
-
-      - name: Install source
-        run: npm i --prefix source
-
-      - name: Install examples
-        run: npm ci --prefix examples
-
-      - name: Install www
-        run: npm i --prefix www
-
-      - name: Execute 'npm i' in www/dataserver
-        run: npm run www-dataserver:install
+      # the root's postinstall installs every folder (scripts/install-all.mjs),
+      # each from its own pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Compile source code in monorepo
-        run: npm run ci:ts-check
+        run: pnpm run ci:ts-check
 
   run-tests:
     # needs: npm-install
@@ -146,26 +145,28 @@ jobs:
       - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      # pnpm, in the version of the root package.json's "packageManager"
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
+          cache_dependency_path: |
+            pnpm-lock.yaml
+            source/pnpm-lock.yaml
+            examples/pnpm-lock.yaml
+            www/pnpm-lock.yaml
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Execute 'npm ci' in monorepo
-        run: npm ci
-
-      - name: Install source
-        run: npm i --prefix source
-
-      - name: Install examples
-        run: npm ci --prefix examples
-
-      - name: Execute 'npm i' in www/dataserver
-        run: npm run www-dataserver:install
+      # the root's postinstall installs every folder (scripts/install-all.mjs),
+      # each from its own pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Get installed Playwright version
         id: playwright-version
-        run: echo "::set-output name=version::$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')"
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
         working-directory: examples
 
       - name: Restore cached browser binaries for Playwright
@@ -177,7 +178,7 @@ jobs:
 
       - name: Install Playwright browsers
         # this will not download anything if the previous step found a cached browser binary
-        run: npx playwright install chromium
+        run: pnpm exec playwright install chromium
         working-directory: examples
         env:
           CI: true
@@ -187,21 +188,21 @@ jobs:
         # fonts are missing, and the tests do not compare screenshots, so an unreachable Ubuntu
         # mirror (a DNS outage failed two release runs) must not fail the job
         continue-on-error: true
-        run: npx playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium
         working-directory: examples
         env:
           CI: true
 
       - name: Build component # in the www folder, some CSS files are used from the source/dist folder
-        run: npm run build
+        run: pnpm run build
 
       - name: Build test app
-        run: npm run ci:test:build
+        run: pnpm run ci:test:build
         env:
           NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
 
       - name: Running Playwright Tests
-        run: npm run ci:test:run
+        run: pnpm run ci:test:run
         env:
           NEXT_PUBLIC_INFINITE_LICENSE_KEY: ${{ secrets.NEXT_PUBLIC_INFINITE_LICENSE_KEY }}
 

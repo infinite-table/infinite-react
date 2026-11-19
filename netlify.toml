@@ -1,3 +1,14 @@
+# Used by the site built from infinite-table/infinite-www-dist: the
+# "Rebuild website" workflow builds the docs in GitHub Actions and pushes the
+# `www` folder and this file there.
+#
+# Netlify then only needs the node modules that the functions leave external
+# (see `external_node_modules`): it installs `www` from its pnpm-lock.yaml
+# (www/pnpm-workspace.yaml keeps node_modules flat). This command overrides
+# the one in the Netlify UI.
+[build]
+  command = "cd www && npx --yes pnpm@10.28.1 install --frozen-lockfile && npm run install-serverless-deps"
+
 [functions]
   directory = "www/functions"
   node_bundler = "esbuild"

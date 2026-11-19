@@ -34,8 +34,9 @@
   "module": "index.mjs",
   "typings": "index.d.ts",
   "scripts": {
-    "build": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} npm-run-all -s rm-out-folder tsc esbuild esbuild-theming generate-dts-file api-extract update-md copy-license-and-readme",
-    "build:vue": "INFINITE_OUT_FOLDER=dist-vue npm-run-all -s rm-out-folder tsc:vue esbuild:vue esbuild-theming generate-dts-file:vue check-dts:vue copy-license-and-readme",
+    "preinstall": "node -e \"process.env.npm_config_user_agent?.startsWith('pnpm/') || (console.error('\\\\nThis repo uses pnpm, not npm: npm run <script> is fine, but install with pnpm install (at the repo root: it installs every folder).\\\\nIf npm already installed here, remove that node_modules folder and its package-lock.json first.\\\\n'), process.exit(1))\"",
+    "build": "export INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} && npm run rm-out-folder && npm run tsc && npm run esbuild && npm run esbuild-theming && npm run generate-dts-file && npm run api-extract && npm run update-md && npm run copy-license-and-readme",
+    "build:vue": "export INFINITE_OUT_FOLDER=dist-vue && npm run rm-out-folder && npm run tsc:vue && npm run esbuild:vue && npm run esbuild-theming && npm run generate-dts-file:vue && npm run check-dts:vue && npm run copy-license-and-readme",
     "rm-out-folder": "rimraf $INFINITE_OUT_FOLDER",
     "api-extract": "npm run tsc-api-extract && npm run api-extractor",
     "api-extractor": "api-extractor run --local --verbose --diagnostics",

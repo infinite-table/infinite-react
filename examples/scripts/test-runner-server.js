@@ -15,7 +15,8 @@
 // or a test folder index (`/foo` -> runs every spec under `src/pages/foo/`
 // recursively).
 //
-// Run: `node scripts/test-runner-server.js` (default port 5599, override via
+// Run: `npm run dev:test-runner` (port 5599, or another one when that is
+// taken by another checkout, see scripts/dev-ports.cjs; override via
 // `TEST_RUNNER_PORT`).
 
 const http = require('http');
@@ -23,7 +24,10 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const PORT = Number(process.env.TEST_RUNNER_PORT || 5599);
+const PORT = Number(
+  process.env.TEST_RUNNER_PORT ||
+    require('../../scripts/dev-ports.cjs').getPort('testRunner'),
+);
 const EXAMPLES_ROOT = path.resolve(__dirname, '..');
 const PAGES_DIR = path.join(EXAMPLES_ROOT, 'src', 'pages');
 

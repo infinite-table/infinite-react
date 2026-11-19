@@ -126,7 +126,11 @@ examples/**/*.trace.json
 dist-vue
 out-vue
 # plans & prompts live in a separate private repo, nested in this folder
-/plans/
+# (a symlink to it in git worktrees, see scripts/worktree.mjs)
+/plans
+
+# where this checkout's dev servers run (scripts/dev-ports.cjs)
+.dev-ports.json
 
 # grid benchmark (examples/src/benchmark)
 /examples/.next-benchmark

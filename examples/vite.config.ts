@@ -12,6 +12,10 @@ import { testPagesIndexPlugin } from './scripts/vite-plugin-test-pages-index.js'
  * Consumes the actual built Vue package (source/dist-vue), exactly what
  * @infinite-table/infinite-vue ships as.
  */
+// this checkout's dev ports: the defaults, or other ones when those are
+// taken by another checkout
+const { getPort } = require('../scripts/dev-ports.cjs');
+
 export default defineConfig(({ mode }) => {
   // the React (Next.js) test pages read process.env.NEXT_PUBLIC_* - the Vue
   // siblings use the same expressions, inlined here from the same .env files
@@ -32,7 +36,14 @@ export default defineConfig(({ mode }) => {
         env.NEXT_PUBLIC_INFINITE_LICENSE_KEY,
       ),
       'import.meta.env.VITE_TEST_RUNNER_PORT': JSON.stringify(
-        process.env.TEST_RUNNER_PORT || '5599',
+        process.env.TEST_RUNNER_PORT || String(getPort('testRunner')),
+      ),
+      // the React <-> Vue links of the test pages (src/test-index)
+      'process.env.NEXT_PUBLIC_EXAMPLES_PORT': JSON.stringify(
+        String(getPort('examples')),
+      ),
+      'process.env.NEXT_PUBLIC_EXAMPLES_VUE_PORT': JSON.stringify(
+        String(getPort('examplesVue')),
       ),
       'import.meta.env.VITE_TEST_PROJECT': JSON.stringify('vue'),
     },
@@ -64,7 +75,7 @@ export default defineConfig(({ mode }) => {
       postcss: {},
     },
     server: {
-      port: 5556,
+      port: getPort('examplesVue'),
       strictPort: true,
       fs: {
         // allow serving files from the sibling source/ folder (dist-vue, themes)
@@ -72,7 +83,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     preview: {
-      port: 5556,
+      port: getPort('examplesVue'),
       strictPort: true,
     },
     build: {
