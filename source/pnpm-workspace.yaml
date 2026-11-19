@@ -1,0 +1,34 @@
+# pnpm settings for this folder.
+#
+# Every folder with a package.json that is installed with pnpm (see FOLDERS
+# in scripts/install-all.mjs) is its own pnpm project: its own
+# pnpm-lock.yaml, its own node_modules and a copy of this file. `pnpm install`
+# at the repo root installs all of them. Keep the copies identical:
+# `node scripts/install-all.mjs --check` verifies it.
+#
+# They are not one pnpm workspace on purpose: the folders pin different
+# versions of the same tools (vite, next, typescript, ...), configs point
+# into a folder's own node_modules (e.g. examples/next.config.js,
+# www/tsconfig.vue.json), and `www` is deployed on its own, with its
+# lockfile and this file (see netlify.toml).
+
+# npm-style flat node_modules. Packages are still hard-linked from the global
+# pnpm store, so a new git worktree installs in seconds and takes almost no
+# extra disk.
+nodeLinker: hoisted
+
+# pnpm 10 runs dependency install scripts only when allowed here
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+# Not run on purpose:
+# - husky (v4) rewrites the hooks in .git/hooks, which all git worktrees
+#   share, to point at the checkout that installed last
+# - core-js and es5-ext only print a message
+ignoredBuiltDependencies:
+  - core-js
+  - es5-ext
+  - husky

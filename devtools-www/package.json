@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3456",
+    "preinstall": "node ../scripts/only-pnpm.cjs",
+    "dev": "node ../scripts/with-ports.mjs --for devtoolsWww next dev --port {devtoolsWww}",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

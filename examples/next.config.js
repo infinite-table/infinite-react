@@ -24,6 +24,10 @@ function readPackageVersion(name) {
 
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 
+// this checkout's dev ports: the defaults, or other ones when those are
+// taken by another checkout
+const { getPort } = require('../scripts/dev-ports.cjs');
+
 module.exports = {
   webpack: (config) => {
     const definePlugin = new webpack.DefinePlugin({
@@ -66,6 +70,12 @@ module.exports = {
         output: 'export',
         pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
       }),
+  env: {
+    // read by the test index pages (src/test-index)
+    NEXT_PUBLIC_TEST_RUNNER_PORT: String(getPort('testRunner')),
+    NEXT_PUBLIC_EXAMPLES_PORT: String(getPort('examples')),
+    NEXT_PUBLIC_EXAMPLES_VUE_PORT: String(getPort('examplesVue')),
+  },
   transpilePackages: ['@infinite-table/infinite-react'],
   reactStrictMode: false, // in order to not break tests loading data by double loading
   eslint: {

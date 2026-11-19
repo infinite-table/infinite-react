@@ -7,6 +7,10 @@ declare global {
 // Define __DEV__ globally for the test environment
 global.__DEV__ = !process.env.CI;
 
+// where this checkout's test apps run: 5555 / 5556, or other ports when
+// those were taken by another checkout
+const { getPort } = require('../scripts/dev-ports.cjs');
+
 const width = 1400;
 const height = 1200;
 
@@ -35,7 +39,7 @@ const config: PlaywrightTestConfig = {
     //   slowMo: 500000, // uncomment this and also add headless: false, so you can easily debug
     // },
 
-    baseURL: 'http://localhost:5555/',
+    baseURL: `http://localhost:${getPort('examples')}/`,
   },
   projects: [
     {
@@ -45,7 +49,7 @@ const config: PlaywrightTestConfig = {
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      // runs the same specs against the Vue examples app (port 5556).
+      // runs the same specs against the Vue examples app (port 5556 by default).
       // Specs without a .page.vue sibling are auto-skipped (see
       // test-fixtures.ts), so parity progress is measurable as
       // "specs no longer skipped on vue".
@@ -62,7 +66,7 @@ const config: PlaywrightTestConfig = {
 
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'http://localhost:5556/',
+        baseURL: `http://localhost:${getPort('examplesVue')}/`,
       },
     },
   ],

@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "A Chrome extension for Infinite Table",
   "scripts": {
+    "preinstall": "node ../scripts/only-pnpm.cjs",
     "build": "rm -fr devtools.zip && vite build && zip -r devtools.zip dist",
     "dev": "NODE_ENV=development vite build --watch",
     "watch": "npm run dev",
