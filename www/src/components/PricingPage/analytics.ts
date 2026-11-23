@@ -10,6 +10,7 @@ declare global {
   interface Window {
     fathom: {
       trackGoal: (code: string, value: number) => void;
+      trackPageview: (opts?: { url?: string; referrer?: string }) => void;
     };
   }
 }

@@ -1,4 +1,5 @@
 import { IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google';
+import { FathomPageviews } from '@www/components/FathomPageviews';
 
 import '@docsearch/css';
 import '../styles/index.css';
@@ -70,10 +71,13 @@ export default function RootLayout({
         </div>
 
         <script
+          id="fathom-script"
           src="https://cdn.usefathom.com/script.js"
           data-site="GPFWXKHK"
+          data-auto="false"
           defer
         ></script>
+        <FathomPageviews />
       </body>
     </html>
   );
