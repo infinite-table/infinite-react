@@ -11,6 +11,17 @@ import { GridRenderer } from './ReactHeadlessTableRenderer';
 
 import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 
+/**
+ * No renderer was passed in, so this is a table used on its own, not inside
+ * InfiniteTable - nobody else sets the CSS vars that position the cells
+ * (see GridRenderer.ownsPositionVars).
+ */
+function createOwnRenderer(brain: MatrixBrain) {
+  const result = createRenderer(brain);
+  result.renderer.ownsPositionVars = true;
+  return result;
+}
+
 export type RawTableProps = {
   name?: string;
   brain: MatrixBrain;
@@ -32,7 +43,7 @@ export function RawTableFn(props: RawTableProps) {
           renderer: props.renderer,
           onRenderUpdater: props.onRenderUpdater,
         }
-      : createRenderer(brain);
+      : createOwnRenderer(brain);
   }, [brain, props.onRenderUpdater, props.renderer]);
 
   useLayoutEffect(() => {

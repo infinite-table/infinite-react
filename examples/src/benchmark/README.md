@@ -33,6 +33,7 @@ report handle any of the four grids.
 | `src/pages/benchmark/<grid>-<size>.page.tsx`   | the demo pages (`ag-grid-300k`, `infinite-1m`, ...) - also in the regular examples app, e.g. http://localhost:5555/benchmark/infinite-1m      |
 | `src/pages/benchmark/*.bench.tsx`              | the same pages, as entries of the production benchmark build                                                                                  |
 | `data.ts`                                      | the deterministic dataset (20 columns) - both grids import it, the spec checks the checksum                                                   |
+| `updates.ts`                                   | the views (sorted, filtered, grouped) and the row changes of the live-update scenarios (`updates-*`)                                         |
 | `AgGridBenchmark.tsx`, `InfiniteBenchmark.tsx` | each grid with its defaults (only row/header height and column widths are set) + its DOM adapter                                              |
 | `BenchmarkPage.tsx`, `harness.ts`              | identical page shell; `window.__bench` - what the spec calls in the page (mount, jumps, probes, ...)                                          |
 | `grid-comparison.bench.ts`                     | the Playwright spec: scenarios, runs, report                                                                                                  |
@@ -68,6 +69,16 @@ report handle any of the four grids.
   there for the current scroll position - "blank" (no cell) or "wrong"
   (another row's content, or a cell lagging the scroll). It reads layout, so
   it runs in its own pass, never together with timing.
+- **Live updates** (`updates-low-*`, `updates-high-*`): the grid mounts with
+  the rows as they are, sorted, filtered or grouped (`?view=` on the page),
+  and gets changed rows - random ones plus the ones in the viewport - through
+  the API it documents for that (`dataSourceApi.updateDataArray` in Infinite
+  Table, `applyTransaction` in AG Grid). Low frequency: one update at a time,
+  measured to the frame that shows it. High frequency: a feed of 50 updates a
+  second, handed to the grid once per animation frame; lag at the end, frame
+  rate and main-thread work. The grouped scenarios only run for grids with
+  row grouping and aggregation (Infinite Table and TanStack Table), so they
+  are skipped here, where Infinite Table is the only one of the two.
 - **Screencast** (`visual-blank-vertical`): records what the compositor
   actually displays during a fast scroll and counts blank rows - this also
   catches the compositor scrolling ahead of the main thread.
@@ -126,6 +137,10 @@ report handle any of the four grids.
 | `BENCH_NO_SANDBOX`                             | off              | `1` = run Chromium without its sandbox (where the sandbox can't start, e.g. some containers) |
 | `BENCH_SCROLL_SPEED` / `BENCH_SCROLL_DISTANCE` | `8000` / `24000` | wheel gesture (px/s, px) for the smoothness scenarios                                        |
 | `BENCH_FAST_SCROLL_SPEED`                      | `20000`          | the fast gesture of the correctness / screencast scenarios                                   |
+| `BENCH_LOW_UPDATES` / `BENCH_LOW_UPDATE_ROWS`  | `10` / `1000`    | low-frequency updates: how many, and the random rows each one changes                        |
+| `BENCH_LOW_UPDATE_PAUSE`                       | `500`            | ms between an update being painted and the next one                                          |
+| `BENCH_HIGH_UPDATE_RATE`                       | `50`             | high-frequency feed: updates a second                                                        |
+| `BENCH_HIGH_UPDATE_ROWS` / `BENCH_HIGH_UPDATE_SECONDS` | `100` / `4` | the random rows each update of the feed changes, and how long the feed lasts            |
 | `BENCH_SAVE_TRACES`                            | off              | `1` = save every trace to `benchmark-results/<run id>/traces`                                |
 | `BENCH_VERBOSE`                                | off              | `1` = log the last DOM mutations ("settled") and the first wrong samples of the probes       |
 | `BENCH_RUN_ID`                                 | ISO date         | results folder name                                                                          |

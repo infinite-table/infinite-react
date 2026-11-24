@@ -9,7 +9,13 @@ export const VirtualScrollContainerCls = style([
     outline: 'none',
 
     /** MANDATORY BLOCK - START **/
-    position: 'fixed',
+    // `absolute`, not `fixed` (as it was until 10.2.1): the parent is
+    // positioned and transformed, so both put the scroller in the same place,
+    // but with `fixed` Chrome repainted every cell whenever a recycled cell got
+    // new content while scrolling - about 6x more paints, 4x more paint time.
+    // `absolute` also doesn't depend on the parent's transform.
+    // See https://infinite-table.com/blog/2026/11/24/one-line-of-css-a-quarter-of-the-paint-work
+    position: 'absolute',
     height: '100%',
     width: '100%',
     left: 0,

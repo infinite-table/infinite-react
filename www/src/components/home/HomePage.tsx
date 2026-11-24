@@ -306,9 +306,9 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
             <h2>A million rows. Go on, scroll.</h2>
             <div>
               <p>
-                You scroll an empty container sized like the content; the grid
-                moves its header and body itself, on the same frame. The header
-                never trails the cells, and a fast fling never shows blank rows.
+                The grid scrolls its header and body on the same frame. The
+                header never trails the cells, and a fast fling never shows
+                blank rows.
               </p>
               <p>
                 Rows and columns are both virtualized: only what is on screen is

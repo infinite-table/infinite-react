@@ -203,6 +203,222 @@ describe('Vue rendering bridge (RawTable + GridRenderer + Vue pools)', () => {
   });
 });
 
+describe('Detached cells (shared GridRenderer)', () => {
+  let container: HTMLElement;
+  let app: App | null = null;
+  let brain: MatrixBrain;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    brain = new MatrixBrain('detached-cells-test');
+    brain.update({
+      width: VIEWPORT_WIDTH,
+      height: VIEWPORT_HEIGHT,
+      cols: 10,
+      rows: 100,
+      colWidth: COL_WIDTH,
+      rowHeight: ROW_HEIGHT,
+    });
+  });
+
+  afterEach(() => {
+    app?.unmount();
+    app = null;
+    brain.destroy();
+    container.remove();
+  });
+
+  it('does not touch the class of cells that are recycled while scrolling', async () => {
+    const { renderer, onRenderUpdater } = createRenderer(brain);
+
+    app = createApp({
+      render: () =>
+        h(RawTable, {
+          brain,
+          renderer,
+          onRenderUpdater,
+          renderCell,
+          cellDetachedClassNames: ['detached'],
+        }),
+    });
+    app.mount(container);
+
+    await flush();
+
+    const initialCellElements = new Set(
+      Array.from(container.querySelectorAll('[data-cell]')),
+    );
+
+    let classMutations = 0;
+    const observer = new MutationObserver((records) => {
+      classMutations += records.length;
+    });
+    observer.observe(container, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    // rows leave at the top and their cells are reused at the bottom
+    for (let i = 1; i <= 5; i++) {
+      brain.setScrollPosition({
+        scrollTop: i * 2 * ROW_HEIGHT,
+        scrollLeft: 0,
+      });
+      await flush();
+    }
+
+    observer.disconnect();
+
+    const cellElements = Array.from(container.querySelectorAll('[data-cell]'));
+    const [startRow] = brain.getRenderRange().start;
+
+    // cells were recycled ...
+    expect(getRenderedCellIds(container)).toContain(`${startRow}-0`);
+    expect(getRenderedCellIds(container)).not.toContain('0-0');
+    expect(cellElements.some((el) => initialCellElements.has(el))).toBe(true);
+
+    // ... without ever getting (and losing) the detached class
+    expect(classMutations).toBe(0);
+    expect(container.querySelectorAll('.detached').length).toBe(0);
+  });
+
+  it('adds the class to cells left detached by a render, and removes it when they are attached again', async () => {
+    const { renderer, onRenderUpdater } = createRenderer(brain);
+
+    let hideFirstColumn = false;
+    const renderCellOrNothing = (param: TableRenderCellFnParam) => {
+      // no node for a cell in the range = the cell gets detached
+      return hideFirstColumn && param.colIndex === 0
+        ? (null as unknown as Renderable)
+        : renderCell(param);
+    };
+
+    app = createApp({
+      render: () =>
+        h(RawTable, {
+          brain,
+          renderer,
+          onRenderUpdater,
+          renderCell: renderCellOrNothing,
+          cellDetachedClassNames: ['detached'],
+        }),
+    });
+    app.mount(container);
+
+    await flush();
+
+    const [startRow] = brain.getRenderRange().start;
+    const [endRow] = brain.getRenderRange().end;
+    const rowCount = endRow - startRow;
+
+    const firstColumnElements = Array.from(
+      container.querySelectorAll('[data-cell$="-0"]'),
+    );
+    expect(firstColumnElements.length).toBe(rowCount);
+    expect(container.querySelectorAll('.detached').length).toBe(0);
+
+    const rerender = () => {
+      renderer.renderRange(brain.getRenderRange(), {
+        force: true,
+        renderCell: renderCellOrNothing,
+        onRender: onRenderUpdater,
+      });
+    };
+
+    hideFirstColumn = true;
+    rerender();
+    await flush();
+
+    // exactly the cells of the first column are detached now
+    const detached = Array.from(container.querySelectorAll('.detached'));
+    expect(detached.length).toBe(rowCount);
+    expect(new Set(detached)).toEqual(new Set(firstColumnElements));
+
+    // scrolling by a row recycles other cells, the detached ones stay so
+    brain.setScrollPosition({ scrollTop: ROW_HEIGHT, scrollLeft: 0 });
+    await flush();
+    expect(
+      Array.from(container.querySelectorAll('[data-cell]')).filter(
+        (el) => !el.classList.contains('detached'),
+      ).length,
+    ).toBeGreaterThan(0);
+    container.querySelectorAll('[data-cell]').forEach((el) => {
+      const [, col] = el.getAttribute('data-cell')!.split('-');
+      // a visible cell is never one of the first column, and never detached
+      if (!el.classList.contains('detached')) {
+        expect(col).not.toBe('0');
+      }
+    });
+
+    hideFirstColumn = false;
+    rerender();
+    await flush();
+
+    expect(container.querySelectorAll('.detached').length).toBe(0);
+    const range = brain.getRenderRange();
+    const cellIds = getRenderedCellIds(container);
+    for (let row = range.start[0]; row < range.end[0]; row++) {
+      expect(cellIds).toContain(`${row}-0`);
+    }
+  });
+
+  it('adds the class to the cells left detached even when rendering a cell throws', async () => {
+    const { renderer, onRenderUpdater } = createRenderer(brain);
+
+    let mode: 'normal' | 'hide-then-throw' = 'normal';
+    const renderCellThatCanThrow = (param: TableRenderCellFnParam) => {
+      if (mode === 'hide-then-throw') {
+        if (param.colIndex === 0) {
+          return null as unknown as Renderable;
+        }
+        if (param.colIndex === 2) {
+          throw new Error('cannot render');
+        }
+      }
+      return renderCell(param);
+    };
+
+    app = createApp({
+      render: () =>
+        h(RawTable, {
+          brain,
+          renderer,
+          onRenderUpdater,
+          renderCell: renderCellThatCanThrow,
+          cellDetachedClassNames: ['detached'],
+        }),
+    });
+    app.mount(container);
+
+    await flush();
+
+    mode = 'hide-then-throw';
+    expect(() =>
+      renderer.renderRange(brain.getRenderRange(), {
+        force: true,
+        renderCell: renderCellThatCanThrow,
+        onRender: onRenderUpdater,
+      }),
+    ).toThrow('cannot render');
+
+    // the first cell of the first row was detached before the error
+    expect(container.querySelectorAll('.detached').length).toBe(1);
+
+    // and the next render is a normal one (nothing left over from the failed one)
+    mode = 'normal';
+    renderer.renderRange(brain.getRenderRange(), {
+      force: true,
+      renderCell: renderCellThatCanThrow,
+      onRender: onRenderUpdater,
+    });
+    await flush();
+    expect(container.querySelectorAll('.detached').length).toBe(0);
+  });
+});
+
 describe('RenderSlot (Vue AvoidReactDiff sibling)', () => {
   it('re-renders only from updater pushes, including pre-mount updates', async () => {
     const updater = buildSubscriptionCallback<Renderable>();

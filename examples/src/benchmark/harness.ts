@@ -18,8 +18,18 @@ import {
   BENCH_HEADER_HEIGHT,
   BENCH_ROW_HEIGHT,
   BenchRow,
+  createRandom,
   getDataChecksum,
 } from './data';
+import {
+  BENCH_AGGREGATE_FIELD,
+  BENCH_GROUP_FIELD,
+  BENCH_SORT_DIR,
+  BENCH_SORT_FIELD,
+  BenchView,
+  driftRow,
+  passesBenchFilter,
+} from './updates';
 
 export type BenchGridName = 'mui' | 'ag-grid' | 'tanstack' | 'infinite';
 
@@ -58,6 +68,32 @@ export type BenchAdapter = {
 export type BenchControls = {
   mount(): void;
   isMounted(): boolean;
+  /** what the grid shows - see updates.ts */
+  view: BenchView;
+  /**
+   * gives the grid new versions of some rows, the way the grid documents
+   * for changing rows (see the benchmark page of each grid)
+   */
+  update(rows: BenchRow[]): void;
+};
+
+/**
+ * What the visible part of the grid shows after an update (or at mount),
+ * in the view of the page
+ */
+type Expectation =
+  /** `plain`, `filtered`: the rows of the viewport are these, in this order */
+  | { kind: 'rows'; ids: number[] }
+  /** `sorted`: the rows of the viewport are sorted, starting with `first` */
+  | { kind: 'sorted'; first: string }
+  /** `grouped`: one row per group, with these sums (ascending) */
+  | { kind: 'groups'; sums: number[] };
+
+type UpdatePlan = {
+  /** each batch: the new versions of the rows it changes */
+  batches: BenchRow[][];
+  /** what the grid shows after each batch */
+  expected: Expectation[];
 };
 
 type FrameRecord = {
@@ -141,6 +177,12 @@ function createBench(
   dataGenerationTime: number,
 ) {
   let frameRecorder: { stop(): FrameRecord } | null = null;
+  /**
+   * the rows as they are now, by id - `data` until the first update, then a
+   * copy that the updates change. The checks compare the grid with it
+   */
+  let truth = data;
+  let plan: UpdatePlan | null = null;
   let probe: { stop(): ProbeFrame[] } | null = null;
   let checksum: string | null = null;
 
@@ -313,7 +355,7 @@ function createBench(
 
   /** row `rowIndex` shows data row `dataIndex` - checks first & last visible column */
   const isRowCorrect = (rowIndex: number, dataIndex: number) => {
-    const row = data[dataIndex];
+    const row = truth[dataIndex];
     return (
       !!row &&
       isCellCorrect(rowIndex, 'id', String(row.id)) &&
@@ -332,7 +374,7 @@ function createBench(
     let prev: string | number | null = null;
     for (let r = 0; r <= LAST_ROW; r++) {
       const id = Number(cellText(adapter.getCell(r, 'id')));
-      const row = data[id - 1];
+      const row = truth[id - 1];
       if (!row || !isRowCorrect(r, id - 1)) {
         return false;
       }
@@ -348,6 +390,120 @@ function createBench(
     return true;
   };
 
+  // --- views and updates (see updates.ts) --------------------------------
+
+  /** rows in the viewport, which the checks look at */
+  const VIEWPORT_ROWS = LAST_ROW + 1;
+
+  /** row `rowIndex` shows `row` as it is now - id, last column and the updated salary */
+  const isRowShowing = (rowIndex: number, row: BenchRow) =>
+    isCellCorrect(rowIndex, 'id', String(row.id)) &&
+    isCellCorrect(rowIndex, 'salary', String(row.salary)) &&
+    isCellCorrect(rowIndex, LAST_COL_FIELD, String(row[LAST_COL_FIELD]));
+
+  /** the first rows that pass the filter, in the order of the data */
+  const firstFilteredIds = (rows: BenchRow[]) => {
+    const ids: number[] = [];
+    for (let i = 0; i < rows.length && ids.length < VIEWPORT_ROWS; i++) {
+      if (passesBenchFilter(rows[i])) {
+        ids.push(rows[i].id);
+      }
+    }
+    return ids;
+  };
+
+  /** the rows with the highest salary, highest first */
+  const topSortedRows = (rows: BenchRow[]) => {
+    const top: BenchRow[] = [];
+    const field = BENCH_SORT_FIELD;
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (
+        top.length === VIEWPORT_ROWS &&
+        row[field] <= top[VIEWPORT_ROWS - 1][field]
+      ) {
+        continue;
+      }
+      let at = top.length;
+      while (at > 0 && top[at - 1][field] < row[field]) {
+        at--;
+      }
+      top.splice(at, 0, row);
+      if (top.length > VIEWPORT_ROWS) {
+        top.pop();
+      }
+    }
+    return top;
+  };
+
+  const groupSums = (rows: BenchRow[]) => {
+    const sums = new Map<string, number>();
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const key = row[BENCH_GROUP_FIELD];
+      sums.set(key, (sums.get(key) ?? 0) + row[BENCH_AGGREGATE_FIELD]);
+    }
+    return sums;
+  };
+  const sortedSums = (sums: Map<string, number>) =>
+    Array.from(sums.values()).sort((a, b) => a - b);
+
+  /** what the grid shows for `rows`, in the view of the page */
+  const getExpectation = (rows: BenchRow[]): Expectation => {
+    switch (controls.view) {
+      case 'plain':
+        return {
+          kind: 'rows',
+          ids: rows.slice(0, VIEWPORT_ROWS).map((row) => row.id),
+        };
+      case 'filtered':
+        return { kind: 'rows', ids: firstFilteredIds(rows) };
+      case 'sorted':
+        return {
+          kind: 'sorted',
+          first: String(topSortedRows(rows)[0][BENCH_SORT_FIELD]),
+        };
+      case 'grouped':
+        return { kind: 'groups', sums: sortedSums(groupSums(rows)) };
+    }
+  };
+
+  /**
+   * The grid shows `expected`, with the values of `truth`. Before an update
+   * is rendered this is false: every update changes the salary of all the
+   * rows in the viewport (and of every group)
+   */
+  const isShowing = (expected: Expectation) => {
+    switch (expected.kind) {
+      case 'rows':
+        return expected.ids.every((id, r) => isRowShowing(r, truth[id - 1]));
+      case 'sorted':
+        return isSorted(BENCH_SORT_FIELD, BENCH_SORT_DIR, expected.first);
+      case 'groups': {
+        const shown: number[] = [];
+        for (let r = 0; r < expected.sums.length; r++) {
+          const text = cellText(adapter.getCell(r, BENCH_AGGREGATE_FIELD));
+          if (!text) {
+            return false;
+          }
+          shown.push(Number(text));
+        }
+        shown.sort((a, b) => a - b);
+        // the grids add the salaries in different orders, and the float sums
+        // differ by a tiny bit - an update changes them by much more
+        return shown.every((sum, i) => Math.abs(sum - expected.sums[i]) < 0.5);
+      }
+    }
+  };
+
+  const applyBatch = (index: number) => {
+    const batch = plan!.batches[index];
+    for (let i = 0; i < batch.length; i++) {
+      truth[batch[i].id - 1] = batch[i];
+    }
+    return batch;
+  };
+
   return {
     grid: adapter.grid,
     version: adapter.version,
@@ -355,6 +511,7 @@ function createBench(
     env: process.env.NODE_ENV,
     dev: typeof __DEV__ !== 'undefined' ? __DEV__ : null,
     rowCount: data.length,
+    view: controls.view,
     dataGenerationTime,
     rowHeight: BENCH_ROW_HEIGHT,
     columnWidth: BENCH_COLUMN_WIDTH,
@@ -375,9 +532,12 @@ function createBench(
      * right content.
      */
     async mount() {
-      const ready = waitForDOM(
-        'mount',
-        () => isRowCorrect(0, 0) && isRowCorrect(LAST_ROW, LAST_ROW),
+      const expected =
+        controls.view === 'plain' ? null : getExpectation(truth);
+      const ready = waitForDOM('mount', () =>
+        expected
+          ? isShowing(expected)
+          : isRowCorrect(0, 0) && isRowCorrect(LAST_ROW, LAST_ROW),
       );
       performance.mark('bench:start:mount');
       const startAt = performance.now();
@@ -392,9 +552,9 @@ function createBench(
      * so it's cheap and independent of either grid's comparator.
      */
     getExpectedFirstValue(field: keyof BenchRow, dir: 1 | -1) {
-      let best = data[0][field];
-      for (let i = 1; i < data.length; i++) {
-        const value = data[i][field];
+      let best = truth[0][field];
+      for (let i = 1; i < truth.length; i++) {
+        const value = truth[i][field];
         if (dir === 1 ? value < best : value > best) {
           best = value;
         }
@@ -447,6 +607,157 @@ function createBench(
         stopSettle();
       }
       return settleResults.get(label) ?? null;
+    },
+
+    /**
+     * Works out `batches` updates, before anything is measured: each one
+     * changes `rowsPerBatch` random rows and all the rows in the viewport (so
+     * every update changes what is on screen), by drifting their numbers
+     * (see driftRow). The same seed gives every grid the same updates. Also
+     * works out what the grid shows after each of them.
+     */
+    prepareUpdates(batches: number, rowsPerBatch: number, seed = 7) {
+      if (truth === data) {
+        truth = data.slice();
+      }
+      const random = createRandom(seed);
+      const rows = truth.slice();
+      const count = rows.length;
+      let sums = controls.view === 'grouped' ? groupSums(rows) : null;
+      // the rows in the viewport now
+      let inView: number[] =
+        controls.view === 'plain'
+          ? rows.slice(0, VIEWPORT_ROWS).map((row) => row.id)
+          : controls.view === 'filtered'
+            ? firstFilteredIds(rows)
+            : controls.view === 'sorted'
+              ? topSortedRows(rows).map((row) => row.id)
+              : [];
+
+      const result: UpdatePlan = { batches: [], expected: [] };
+      for (let b = 0; b < batches; b++) {
+        const ids = new Set(inView);
+        while (ids.size < inView.length + rowsPerBatch) {
+          ids.add(1 + Math.floor(random() * count));
+        }
+        const batch: BenchRow[] = [];
+        for (const id of ids) {
+          const old = rows[id - 1];
+          const row = driftRow(old, random);
+          rows[id - 1] = row;
+          batch.push(row);
+          if (sums) {
+            const key = row[BENCH_GROUP_FIELD];
+            sums.set(
+              key,
+              sums.get(key)! +
+                row[BENCH_AGGREGATE_FIELD] -
+                old[BENCH_AGGREGATE_FIELD],
+            );
+          }
+        }
+        result.batches.push(batch);
+
+        let expected: Expectation;
+        if (controls.view === 'sorted') {
+          const top = topSortedRows(rows);
+          expected = { kind: 'sorted', first: String(top[0][BENCH_SORT_FIELD]) };
+          inView = top.map((row) => row.id);
+        } else if (sums) {
+          expected = { kind: 'groups', sums: sortedSums(sums) };
+        } else {
+          expected = getExpectation(rows);
+          inView = (expected as { ids: number[] }).ids;
+        }
+        result.expected.push(expected);
+      }
+      plan = result;
+      return {
+        batches: result.batches.length,
+        rowsChanged: result.batches.reduce((sum, b) => sum + b.length, 0),
+      };
+    },
+
+    /**
+     * Sends update `index` to the grid and resolves when the viewport shows
+     * it (see isShowing)
+     */
+    async pushUpdate(label: string, index: number) {
+      if (!plan) {
+        throw new Error('prepareUpdates() first');
+      }
+      const batch = applyBatch(index);
+      const expected = plan.expected[index];
+      const ready = waitForDOM(label, () => isShowing(expected));
+      performance.mark(`bench:start:${label}`);
+      const startAt = performance.now();
+      controls.update(batch);
+      const res = await ready;
+      return { startAt, ...res };
+    },
+
+    /**
+     * A live feed: the updates arrive one every `intervalMs`, and the page
+     * hands them to the grid once per animation frame - all those that
+     * arrived since the previous frame, as one update (the way an app
+     * buffers the messages of a socket). A grid that keeps the main thread
+     * busy gets the updates later, and more of them at once.
+     *
+     * Resolves when the viewport shows the last update. `bench:start:<label>`
+     * is when the first update arrives; the last one arrives
+     * (batches - 1) × intervalMs later.
+     */
+    runUpdateStream(label: string, intervalMs: number) {
+      if (!plan) {
+        throw new Error('prepareUpdates() first');
+      }
+      const { batches, expected } = plan;
+      const delays: number[] = [];
+      return new Promise<{
+        startAt: number;
+        domReadyAt: number;
+        /** ms between an update arriving and the grid getting it */
+        delays: number[];
+        /** how many times the grid was given updates */
+        flushes: number;
+      }>((resolve, reject) => {
+        performance.mark(`bench:start:${label}`);
+        const startAt = performance.now();
+        let next = 0;
+        let flushes = 0;
+        const flush = () => {
+          const now = performance.now();
+          const due = Math.min(
+            batches.length,
+            Math.floor((now - startAt) / intervalMs) + 1,
+          );
+          if (due > next) {
+            const merged = new Map<number, BenchRow>();
+            for (; next < due; next++) {
+              delays.push(now - (startAt + next * intervalMs));
+              for (const row of applyBatch(next)) {
+                merged.set(row.id, row);
+              }
+            }
+            flushes++;
+            const rows = Array.from(merged.values());
+            if (next === batches.length) {
+              waitForDOM(label, () =>
+                isShowing(expected[batches.length - 1]),
+                60_000,
+              ).then(
+                (res) => resolve({ startAt, ...res, delays, flushes }),
+                reject,
+              );
+              controls.update(rows);
+              return;
+            }
+            controls.update(rows);
+          }
+          requestAnimationFrame(flush);
+        };
+        flush();
+      });
     },
 
     getHeaderCellCenter(field: string) {

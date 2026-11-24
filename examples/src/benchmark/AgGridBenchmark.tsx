@@ -5,6 +5,8 @@ import {
   AllCommunityModule,
   ColDef,
   GetRowIdParams,
+  GridReadyEvent,
+  GridState,
   ModuleRegistry,
   themeQuartz,
 } from 'ag-grid-community';
@@ -17,7 +19,14 @@ import {
   BenchRow,
 } from './data';
 import { BenchAdapter } from './harness';
-import { BenchmarkPage } from './BenchmarkPage';
+import { BenchGridProps, BenchmarkPage } from './BenchmarkPage';
+import {
+  BENCH_FILTER_FIELD,
+  BENCH_FILTER_MIN,
+  BENCH_SORT_DIR,
+  BENCH_SORT_FIELD,
+  BenchView,
+} from './updates';
 
 declare const __AG_GRID_VERSION__: string;
 
@@ -30,6 +39,12 @@ const columnDefs: ColDef<BenchRow>[] = BENCH_COLUMNS.map((c) => ({
   width: BENCH_COLUMN_WIDTH,
   sortable: true,
 }));
+
+// the filtered view: the salary column has AG Grid's number filter (columns
+// have no filter by default)
+const filteredColumnDefs: ColDef<BenchRow>[] = columnDefs.map((c) =>
+  c.field === BENCH_FILTER_FIELD ? { ...c, filter: 'agNumberColumnFilter' } : c,
+);
 
 const getRowId = (params: GetRowIdParams<BenchRow>) => String(params.data.id);
 
@@ -91,6 +106,29 @@ const adapter: BenchAdapter = {
     null,
 };
 
+// the views of the live-update scenarios - see updates.ts. AG Grid
+// Community has no row grouping or aggregation: it has no `grouped` view
+const initialStates: Partial<Record<BenchView, GridState>> = {
+  sorted: {
+    sort: {
+      sortModel: [
+        { colId: BENCH_SORT_FIELD, sort: BENCH_SORT_DIR === -1 ? 'desc' : 'asc' },
+      ],
+    },
+  },
+  filtered: {
+    filter: {
+      filterModel: {
+        [BENCH_FILTER_FIELD]: {
+          filterType: 'number',
+          type: 'greaterThanOrEqual',
+          filter: BENCH_FILTER_MIN,
+        },
+      },
+    },
+  },
+};
+
 const style = { flex: 1, minHeight: 0 };
 /**
  * AG Grid with defaults, except for the settings below, which only make the
@@ -99,14 +137,30 @@ const style = { flex: 1, minHeight: 0 };
  *  - animateRows: false - Infinite does not animate row moves on sort, and the
  *    animation would make "sorted rows visible" ambiguous
  *  - getRowId - Infinite always has a primary key
+ *
+ * Rows are changed with `api.applyTransaction({ update })`, the transaction
+ * API AG Grid documents for updating rows.
  */
-function AgGrid({ data }: { data: BenchRow[] }) {
+function AgGrid({ data, view, onUpdater }: BenchGridProps) {
+  if (view === 'grouped') {
+    throw new Error('AG Grid Community has no row grouping');
+  }
+  const onGridReady = React.useCallback(
+    ({ api }: GridReadyEvent<BenchRow>) => {
+      onUpdater((rows) => {
+        api.applyTransaction({ update: rows });
+      });
+    },
+    [onUpdater],
+  );
   return (
     <div style={style}>
       <AgGridReact<BenchRow>
         theme={themeQuartz}
+        initialState={initialStates[view]}
+        onGridReady={onGridReady}
         rowData={data}
-        columnDefs={columnDefs}
+        columnDefs={view === 'filtered' ? filteredColumnDefs : columnDefs}
         getRowId={getRowId}
         rowHeight={BENCH_ROW_HEIGHT}
         headerHeight={BENCH_HEADER_HEIGHT}
@@ -122,7 +176,7 @@ export function AgGridBenchmark({ rowCount }: { rowCount: number }) {
       title={`AG Grid ${__AG_GRID_VERSION__}`}
       rowCount={rowCount}
       adapter={adapter}
-      renderGrid={(data) => <AgGrid data={data} />}
+      renderGrid={(props) => <AgGrid {...props} />}
     />
   );
 }

@@ -38,6 +38,7 @@
     "benchmark:build": "node scripts/grid-benchmark-build.js",
     "benchmark:run": "playwright test --config playwright.benchmark.config.ts",
     "benchmark:serve": "GRID_BENCHMARK=1 next start",
+    "benchmark:builds": "playwright test --config playwright.build-comparison.config.ts",
     "tsc": "tsc --project tsconfig.json",
     "tscw": "tsc --watch --project tsconfig.json"
   },

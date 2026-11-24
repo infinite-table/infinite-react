@@ -1,6 +1,7 @@
 import type { PerfMarker } from '../devTools/PerfMarker';
 import { treeTraverse } from '../groupAndPivot/treeUtils';
-import TYPES from './sortTypes';
+import { sortByNumber, SORT_BY_NUMBER_MIN_LENGTH } from './sortByNumber';
+import TYPES, { numberComparator } from './sortTypes';
 
 export type SortDir = 1 | -1;
 
@@ -94,7 +95,11 @@ export const multisort = <T>(
     marker.start();
   }
 
-  array.sort(getMultisortFunction<T>(toPlainSortInfo(sortInfo), get));
+  const plainSortInfo = toPlainSortInfo(sortInfo);
+
+  if (!sortByNumberIfPossible(plainSortInfo, array, get)) {
+    array.sort(getMultisortFunction<T>(plainSortInfo, get));
+  }
 
   if (marker) {
     marker.end();
@@ -194,6 +199,49 @@ export const multisortNested = <T>(
 };
 
 multisort.knownTypes = TYPES;
+
+/**
+ * A big array sorted by one column with the built-in number comparator can
+ * be sorted without calling the comparator - see sortByNumber.
+ *
+ * Returns true if it sorted the array (in place, in the same order the
+ * comparator would give).
+ */
+function sortByNumberIfPossible<T>(
+  sortInfo: MultisortInfo<T>[],
+  array: T[],
+  get?: (item: any) => T,
+): boolean {
+  if (sortInfo.length !== 1 || array.length < SORT_BY_NUMBER_MIN_LENGTH) {
+    return false;
+  }
+
+  const info = sortInfo[0];
+
+  if (!info || info.fn || !info.type || (info.dir !== 1 && info.dir !== -1)) {
+    return false;
+  }
+
+  const type = Array.isArray(info.type) ? info.type[0] : info.type;
+
+  // the type could be overridden with a custom comparator
+  if (multisort.knownTypes[type] !== numberComparator) {
+    return false;
+  }
+
+  const { field, valueGetter } = info;
+
+  return sortByNumber(
+    array,
+    (item: T) => {
+      if (get) {
+        item = get(item);
+      }
+      return valueGetter ? valueGetter(item) : field ? item[field] : item;
+    },
+    info.dir,
+  );
+}
 
 const getSingleSortFunction = <T>(info: MultisortInfo<T>) => {
   if (!info) {

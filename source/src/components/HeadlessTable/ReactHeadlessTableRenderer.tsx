@@ -57,6 +57,7 @@ export type GridRendererPools = {
 export const currentTransformY = stripVar(InternalVars.y);
 
 export const scrollTopCSSVar = stripVar(InternalVars.scrollTop);
+export const scrollLeftCSSVar = stripVar(InternalVars.scrollLeft);
 export const columnOffsetAtIndex = stripVar(InternalVars.columnOffsetAtIndex);
 export const columnOffsetAtIndexWhileReordering = stripVar(
   InternalVars.columnOffsetAtIndexWhileReordering,
@@ -73,6 +74,17 @@ export class GridRenderer extends Logger {
   public cellHoverClassNames: string[] = [];
 
   public cellDetachedClassNames: string[] = [];
+
+  /**
+   * Inside InfiniteTable, the table owns the CSS vars that position the
+   * cells horizontally (one offset var per column, plus the scroll position
+   * vars used by pinned cells) and sets them on its root node.
+   *
+   * A HeadlessTable used on its own has nobody to set them. With this on,
+   * the renderer writes each cell's x from the brain, and sets the scroll
+   * position vars itself, on the parent node of the cells.
+   */
+  public ownsPositionVars = false;
 
   public cellManager: GridCellManager<GridCellAdditionalInfo>;
   protected rowManager: ListRowManager;
@@ -123,10 +135,8 @@ export class GridRenderer extends Logger {
     colIndex: number,
 
     {
-      //@ts-ignore
       x,
       y,
-      //@ts-ignore
       scrollLeft,
       scrollTop,
     }: { x: number; y: number; scrollLeft?: boolean; scrollTop?: boolean },
@@ -159,7 +169,7 @@ export class GridRenderer extends Logger {
     // so it stays below what browsers can handle - see largeContent.ts
     // (the origin is 0 unless the content is huge)
     const currentTransformYValue = scrollTop
-      ? `calc( ${y}px + var(${scrollTopCSSVar}) )`
+      ? `calc( ${y}px + var(${scrollTopCSSVar}, 0px) )`
       : `${y - this.brain.getScrollOrigin().scrollTop}px`;
     //@ts-ignore
     if (element.__currentTransformY !== currentTransformYValue) {
@@ -168,7 +178,15 @@ export class GridRenderer extends Logger {
       element.style.setProperty(currentTransformY, currentTransformYValue);
     }
 
-    const transformValue = `translate3d(var(${columnOffsetXWhileReordering}, ${columnOffsetX}), var(${currentTransformY}), 0)`;
+    // see ownsPositionVars - like y: `scrollLeft: true` (fixed cols) means x
+    // is relative to the viewport, otherwise it's a content offset
+    const transformX = this.ownsPositionVars
+      ? scrollLeft
+        ? `calc( ${x}px + var(${scrollLeftCSSVar}, 0px) )`
+        : `${x - this.brain.getScrollOrigin().scrollLeft}px`
+      : `var(${columnOffsetXWhileReordering}, ${columnOffsetX})`;
+
+    const transformValue = `translate3d(${transformX}, var(${currentTransformY}), 0)`;
 
     // this does not change, but we need for initial setup
     //@ts-ignore
@@ -178,9 +196,17 @@ export class GridRenderer extends Logger {
       element.style.transform = transformValue;
     }
 
-    if (zIndex != null) {
-      // TODO this would be needed if zIndex would not be managed in grid
-      // this.infiniteNode!.style.setProperty(columnZIndex, `${zIndex}`);
+    if (zIndex != null && this.ownsPositionVars) {
+      // inside InfiniteTable, the z-index of pinned cells comes from the
+      // column z-index vars - on its own, fixed cells need it set here,
+      // so they stay above the cells scrolling under them
+      const zIndexValue = `${zIndex}`;
+      //@ts-ignore
+      if (element.__zIndex !== zIndexValue) {
+        //@ts-ignore
+        element.__zIndex = zIndexValue;
+        element.style.zIndex = zIndexValue;
+      }
     }
   };
 
@@ -264,7 +290,23 @@ export class GridRenderer extends Logger {
     this.adjustFixedElementsOnScroll();
   };
 
+  /**
+   * While a render pass is in progress, the cells it detaches are collected
+   * here and only get the detached class names when the pass ends - if they
+   * are still detached by then.
+   *
+   * Most of the cells detached by a render pass (while scrolling, all of
+   * them) are re-attached at another position by the same pass, so they
+   * would get the class names added and then removed, with no visible effect
+   * - only the cost of the DOM writes and of the style invalidations.
+   */
+  private cellsDetachedInRenderPass: Set<GridCellInterface> | null = null;
+
   private onCellAttached(cell: GridCellInterface) {
+    if (this.cellsDetachedInRenderPass?.delete(cell)) {
+      // detached earlier in this render pass, so it never got the class names
+      return;
+    }
     if (this.cellDetachedClassNames.length) {
       const el = cell.getElement();
       if (el) {
@@ -276,6 +318,14 @@ export class GridRenderer extends Logger {
   }
 
   private onCellDetached(cell: GridCellInterface) {
+    if (this.cellsDetachedInRenderPass) {
+      this.cellsDetachedInRenderPass.add(cell);
+      return;
+    }
+    this.addDetachedClassNames(cell);
+  }
+
+  private addDetachedClassNames(cell: GridCellInterface) {
     if (this.cellDetachedClassNames.length) {
       const el = cell.getElement();
       if (el) {
@@ -754,13 +804,33 @@ export class GridRenderer extends Logger {
 
   renderRange(
     range: TableRenderRange,
-
-    { renderCell, renderDetailRow, force, onRender }: RenderRangeOptions,
+    options: RenderRangeOptions,
   ): Renderable[] {
     if (this.destroyed) {
       return [];
     }
 
+    if (this.cellsDetachedInRenderPass) {
+      // a render pass started from inside another one - the outer one
+      // takes care of the detached cells
+      return this.renderRangeInternal(range, options);
+    }
+
+    const detachedCells = (this.cellsDetachedInRenderPass = new Set());
+    try {
+      return this.renderRangeInternal(range, options);
+    } finally {
+      this.cellsDetachedInRenderPass = null;
+      // the cells that are still detached at the end of the pass
+      detachedCells.forEach((cell) => this.addDetachedClassNames(cell));
+    }
+  }
+
+  private renderRangeInternal(
+    range: TableRenderRange,
+
+    { renderCell, renderDetailRow, force, onRender }: RenderRangeOptions,
+  ): Renderable[] {
     const { start, end } = range;
 
     const horizontalLayout = this.brain.isHorizontalLayoutBrain;
@@ -1569,7 +1639,21 @@ export class GridRenderer extends Logger {
         (itemElement.dataset as any).colIndex = realCoords.colIndex;
 
         if (ITEM_POSITION_WITH_TRANSFORM) {
-          this.setTransform(itemElement, rowIndex, colIndex, { x, y }, null);
+          // on its own (see ownsPositionVars), a fixed cell is placed as fixed
+          // right away: adjustFixedElementsOnScroll runs at the end of a render
+          // pass, and may miss cells whose element was not mounted yet.
+          // Inside InfiniteTable, x comes from the column vars anyway
+          const fixedPlacement = this.ownsPositionVars
+            ? this.getFixedCellPlacement(rowIndex, colIndex, { x, y })
+            : null;
+
+          this.setTransform(
+            itemElement,
+            rowIndex,
+            colIndex,
+            fixedPlacement ?? { x, y },
+            null,
+          );
 
           itemElement.style.willChange = 'transform';
           itemElement.style.backfaceVisibility = 'hidden';
@@ -1582,6 +1666,8 @@ export class GridRenderer extends Logger {
 
           const zIndex = hidden
             ? '-1'
+            : fixedPlacement
+            ? `${fixedPlacement.zIndex}`
             : // #updatezindex - we need to allow elements use their own zIndex, so we
               // resort to allowing them to have it as a data-z-index attribute
               itemElement.dataset.zIndex || 'auto';
@@ -1688,6 +1774,66 @@ export class GridRenderer extends Logger {
     }
   };
 
+  /**
+   * Where a fixed (pinned) cell goes: its x and/or y relative to the viewport
+   * (`scrollLeft` / `scrollTop: true` - see setTransform), and its z-index:
+   * the corners above the pinned rows and columns, those above the cells
+   * scrolling under them. null for a cell that is not fixed.
+   */
+  private getFixedCellPlacement(
+    rowIndex: number,
+    colIndex: number,
+    { x, y }: { x: number; y: number },
+    fixedEndOffsets?: { cols: number[]; rows: number[] },
+  ) {
+    const { fixedRowsStart, fixedRowsEnd, fixedColsStart, fixedColsEnd } =
+      this.brain.getFixedCellInfo();
+    const cols = this.brain.getColCount();
+    const rows = this.brain.getRowCount();
+
+    const colStart = colIndex < fixedColsStart;
+    const colEnd =
+      !colStart && !!fixedColsEnd && colIndex >= cols - fixedColsEnd;
+    const rowStart = rowIndex < fixedRowsStart;
+    const rowEnd =
+      !rowStart && !!fixedRowsEnd && rowIndex >= rows - fixedRowsEnd;
+
+    const colFixed = colStart || colEnd;
+    const rowFixed = rowStart || rowEnd;
+
+    if (!colFixed && !rowFixed) {
+      return null;
+    }
+
+    if (colEnd) {
+      x = (fixedEndOffsets?.cols ??
+        this.brain.getFixedEndColsOffsets({ skipScroll: true }))[colIndex];
+    }
+    if (rowEnd) {
+      y = (fixedEndOffsets?.rows ??
+        this.brain.getFixedEndRowsOffsets({ skipScroll: true }))[rowIndex];
+    }
+
+    const zIndex =
+      colFixed && rowFixed
+        ? colStart
+          ? rowStart
+            ? 100_000
+            : 200_000
+          : rowStart
+          ? 300_000
+          : 400_000
+        : colStart
+        ? fixedColsStart - colIndex
+        : colEnd
+        ? cols - colIndex
+        : rowStart
+        ? fixedRowsStart - rowIndex
+        : rows - rowIndex;
+
+    return { x, y, scrollLeft: colFixed, scrollTop: rowFixed, zIndex };
+  }
+
   public adjustFixedElementsOnScroll = (
     scrollPosition: ScrollPosition = this.brain.getScrollPosition(),
   ) => {
@@ -1732,192 +1878,60 @@ export class GridRenderer extends Logger {
         // fixed cells are positioned with these, inside the scroll layer
         // which is translated relative to the scroll origin
         brain.getDOMScrollPosition(scrollPosition),
-        this.getInfiniteNode(attachedCell.getElement()!),
+        this.ownsPositionVars
+          ? // null on the first render pass, before the cells are in the DOM:
+            // the cells fall back to a scroll position of 0 - see setTransform
+            attachedCell.getElement()?.parentElement ?? null
+          : this.getInfiniteNode(attachedCell.getElement()!),
       );
     }
 
-    const fixedEndColsOffsets = this.brain.getFixedEndColsOffsets({
-      skipScroll: true,
-    });
-    const fixedEndRowsOffsets = this.brain.getFixedEndRowsOffsets({
-      skipScroll: true,
-    });
+    const fixedEndOffsets = {
+      cols: this.brain.getFixedEndColsOffsets({ skipScroll: true }),
+      rows: this.brain.getFixedEndRowsOffsets({ skipScroll: true }),
+    };
 
     const { start, end } = this.brain.getRenderRange();
 
     const [startRow, startCol] = start;
     const [endRow, endCol] = end;
 
-    function adjustElementPosition(
-      rowIndex: number,
-      colIndex: number,
-      fn: (
-        rowIndex: number,
-        colIndex: number,
-        node: HTMLElement,
-        { x, y }: { x: number; y: number },
-      ) => void,
-    ) {
-      const cell = cellManager.getCellAt([rowIndex, colIndex]);
-      if (cell == null) {
+    const adjust = (rowIndex: number, colIndex: number) => {
+      const node = cellManager.getCellAt([rowIndex, colIndex])?.getElement();
+      const itemPosition = node
+        ? brain.getCellOffset(rowIndex, colIndex)
+        : null;
+
+      if (!node || !itemPosition) {
         return;
       }
-      const itemPosition = brain.getCellOffset(rowIndex, colIndex);
-
-      const node = cell.getElement();
-
-      if (node && itemPosition) {
-        fn(rowIndex, colIndex, node!, itemPosition);
+      const placement = this.getFixedCellPlacement(
+        rowIndex,
+        colIndex,
+        itemPosition,
+        fixedEndOffsets,
+      );
+      if (placement) {
+        this.setTransform(
+          node,
+          rowIndex,
+          colIndex,
+          placement,
+          placement.zIndex,
+        );
       }
-    }
-
-    const adjustColStart = (
-      _rowIndex: number,
-      colIndex: number,
-      node: HTMLElement,
-      { x, y }: { x: number; y: number },
-    ) => {
-      this.setTransform(
-        node,
-        _rowIndex,
-        colIndex,
-        { x: x, y, scrollLeft: true },
-        fixedColsStart - colIndex,
-      );
-    };
-
-    const adjustRowStart = (
-      rowIndex: number,
-      _colIndex: number,
-      node: HTMLElement,
-      coords: { x: number; y: number },
-    ) => {
-      this.setTransform(
-        node,
-        rowIndex,
-        _colIndex,
-
-        { x: coords.x, y: coords.y, scrollTop: true },
-        fixedRowsStart - rowIndex,
-      );
-    };
-
-    const adjustColEnd = (
-      _rowIndex: number,
-      colIndex: number,
-      node: HTMLElement,
-      { y }: { y: number },
-    ) => {
-      const val = fixedEndColsOffsets[colIndex];
-
-      this.setTransform(
-        node,
-        _rowIndex,
-        colIndex,
-        { x: val, y, scrollLeft: true },
-        cols - colIndex,
-      );
-    };
-
-    const adjustRowEnd = (
-      rowIndex: number,
-      _colIndex: number,
-      node: HTMLElement,
-      coords: { x: number; y: number },
-    ) => {
-      this.setTransform(
-        node,
-        rowIndex,
-        _colIndex,
-        { x: coords.x, y: fixedEndRowsOffsets[rowIndex], scrollTop: true },
-        rows - rowIndex,
-      );
-    };
-
-    const adjustColStartRowStart = (
-      _rowIndex: number,
-      _colIndex: number,
-      node: HTMLElement,
-      { x, y }: { x: number; y: number },
-    ) => {
-      this.setTransform(
-        node,
-        _rowIndex,
-        _colIndex,
-        { x: x, scrollLeft: true, y: y, scrollTop: true },
-        100_000,
-      );
-    };
-
-    const adjustColStartRowEnd = (
-      _rowIndex: number,
-      _colIndex: number,
-      node: HTMLElement,
-      { x }: { x: number; y: number },
-    ) => {
-      this.setTransform(
-        node,
-        _rowIndex,
-        _colIndex,
-        {
-          x: x,
-          scrollLeft: true,
-          y: fixedEndRowsOffsets[_rowIndex],
-          scrollTop: true,
-        },
-        200_000,
-      );
-    };
-
-    const adjustColEndRowStart = (
-      _rowIndex: number,
-      colIndex: number,
-      node: HTMLElement,
-      coords: { y: number },
-    ) => {
-      this.setTransform(
-        node,
-        _rowIndex,
-        colIndex,
-        {
-          x: fixedEndColsOffsets[colIndex],
-          y: coords.y,
-          scrollLeft: true,
-          scrollTop: true,
-        },
-        300_000,
-      );
-    };
-
-    const adjustColEndRowEnd = (
-      rowIndex: number,
-      colIndex: number,
-      node: HTMLElement,
-    ) => {
-      this.setTransform(
-        node,
-        rowIndex,
-        colIndex,
-        {
-          x: fixedEndColsOffsets[colIndex],
-          y: fixedEndRowsOffsets[rowIndex],
-          scrollLeft: true,
-          scrollTop: true,
-        },
-        400_000,
-      );
     };
 
     if (fixedColsStart || fixedColsEnd) {
       for (let rowIndex = startRow; rowIndex < endRow; rowIndex++) {
         for (let colIndex = 0; colIndex < fixedColsStart; colIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustColStart);
+          adjust(rowIndex, colIndex);
         }
         if (fixedColsEnd) {
           const firstColFixedEnd = cols - fixedColsEnd;
 
           for (let colIndex = firstColFixedEnd; colIndex < cols; colIndex++) {
-            adjustElementPosition(rowIndex, colIndex, adjustColEnd);
+            adjust(rowIndex, colIndex);
           }
         }
       }
@@ -1926,12 +1940,12 @@ export class GridRenderer extends Logger {
     if (fixedRowsStart || fixedRowsEnd) {
       for (let colIndex = startCol; colIndex < endCol; colIndex++) {
         for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustRowStart);
+          adjust(rowIndex, colIndex);
         }
         if (fixedRowsEnd) {
           const firstRowFixedEnd = rows - fixedRowsEnd;
           for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
-            adjustElementPosition(rowIndex, colIndex, adjustRowEnd);
+            adjust(rowIndex, colIndex);
           }
         }
       }
@@ -1940,7 +1954,7 @@ export class GridRenderer extends Logger {
     if (fixedColsStart && fixedRowsStart) {
       for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
         for (let colIndex = 0; colIndex < fixedColsStart; colIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustColStartRowStart);
+          adjust(rowIndex, colIndex);
         }
       }
     }
@@ -1948,7 +1962,7 @@ export class GridRenderer extends Logger {
       const firstRowFixedEnd = rows - fixedRowsEnd;
       for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
         for (let colIndex = 0; colIndex < fixedColsStart; colIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustColStartRowEnd);
+          adjust(rowIndex, colIndex);
         }
       }
     }
@@ -1957,7 +1971,7 @@ export class GridRenderer extends Logger {
       const firstColFixedEnd = cols - fixedColsEnd;
       for (let rowIndex = 0; rowIndex < fixedRowsStart; rowIndex++) {
         for (let colIndex = firstColFixedEnd; colIndex < cols; colIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustColEndRowStart);
+          adjust(rowIndex, colIndex);
         }
       }
     }
@@ -1968,7 +1982,7 @@ export class GridRenderer extends Logger {
 
       for (let rowIndex = firstRowFixedEnd; rowIndex < rows; rowIndex++) {
         for (let colIndex = firstColFixedEnd; colIndex < cols; colIndex++) {
-          adjustElementPosition(rowIndex, colIndex, adjustColEndRowEnd);
+          adjust(rowIndex, colIndex);
         }
       }
     }

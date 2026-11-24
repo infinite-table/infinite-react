@@ -50,6 +50,11 @@ import {
 } from './benchUtils';
 import { BENCH_ROW_HEIGHT, BENCH_SIZES, BenchSize } from './data';
 import type { Bench } from './harness';
+import {
+  BENCH_FILTER_MIN,
+  BENCH_UPDATED_FIELDS,
+  BenchView,
+} from './updates';
 
 declare global {
   interface Window {
@@ -74,6 +79,18 @@ const SCROLL_SPEED = Number(process.env.BENCH_SCROLL_SPEED || 8000);
 const SCROLL_DISTANCE = Number(process.env.BENCH_SCROLL_DISTANCE || 24000);
 // very fast "fling", to provoke blank areas
 const FAST_SCROLL_SPEED = Number(process.env.BENCH_FAST_SCROLL_SPEED || 20000);
+// live updates, low frequency: one update at a time, each one after the
+// previous one is painted, with a pause in between
+const LOW_UPDATES = Number(process.env.BENCH_LOW_UPDATES || 10);
+const LOW_UPDATE_ROWS = Number(process.env.BENCH_LOW_UPDATE_ROWS || 1000);
+const LOW_UPDATE_PAUSE = Number(process.env.BENCH_LOW_UPDATE_PAUSE || 500);
+// live updates, high frequency: a feed of updates, handed to the grid once
+// per frame
+const HIGH_UPDATE_RATE = Number(process.env.BENCH_HIGH_UPDATE_RATE || 50);
+const HIGH_UPDATE_ROWS = Number(process.env.BENCH_HIGH_UPDATE_ROWS || 100);
+const HIGH_UPDATE_SECONDS = Number(
+  process.env.BENCH_HIGH_UPDATE_SECONDS || 4,
+);
 
 const SIZES = (process.env.BENCH_SIZES || Object.keys(BENCH_SIZES).join(','))
   .split(',')
@@ -151,6 +168,7 @@ async function openGrid(
   grid: GridName,
   size: BenchSize,
   runName: string,
+  view: BenchView = 'plain',
 ) {
   const context = await browser.newContext({
     viewport: VIEWPORT,
@@ -167,7 +185,8 @@ async function openGrid(
   const extraHeight = boxExtraHeight?.[grid] ?? 0;
   await page.goto(
     `benchmark/${grid}-${size}?autoMount=0` +
-      (extraHeight ? `&extraHeight=${extraHeight}` : ''),
+      (extraHeight ? `&extraHeight=${extraHeight}` : '') +
+      (view !== 'plain' ? `&view=${view}` : ''),
     { waitUntil: 'load' },
   );
   await page.waitForFunction(() => !!window.__bench, null, {
@@ -182,9 +201,11 @@ async function openGrid(
       dev: b.dev,
       version: b.version,
       rowCount: b.rowCount,
+      view: b.view,
     };
   });
   expect(info.grid).toBe(grid);
+  expect(info.view).toBe(view);
   const ratio = scrollInfo[size]?.[grid]?.ratio;
   if (ratio != null) {
     await page.evaluate(
@@ -346,6 +367,10 @@ type Scenario = {
   id: string;
   description: string;
   metrics: MetricDef[];
+  /** what the grid shows - the sorting / filter / grouping it mounts with */
+  view?: BenchView;
+  /** only these grids can do the scenario (default: all) */
+  grids?: GridName[];
   run(ctx: RunContext): Promise<Record<string, number>>;
 };
 
@@ -847,6 +872,206 @@ const visualScenario: Scenario = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// live updates
+// ---------------------------------------------------------------------------
+
+/**
+ * The grids that group rows and aggregate them in the version that is
+ * measured. MUI X Data Grid has them in its paid versions, AG Grid in
+ * Enterprise.
+ */
+const GROUPING_GRIDS: GridName[] = ['tanstack', 'infinite'];
+
+const UPDATE_VIEWS: { view: BenchView; suffix: string; what: string }[] = [
+  { view: 'plain', suffix: '', what: 'the rows in the order of the data' },
+  {
+    view: 'sorted',
+    suffix: '-sorted',
+    what: 'sorted by salary, highest first - the updates change the salaries, so rows move',
+  },
+  {
+    view: 'filtered',
+    suffix: '-filtered',
+    what: `filtered to a salary of at least ${BENCH_FILTER_MIN.toLocaleString(
+      'en-US',
+    )} (about half of the rows) - the updates change the salaries, so rows go in and out of the filter`,
+  },
+  {
+    view: 'grouped',
+    suffix: '-grouped',
+    what: 'grouped by department (10 collapsed groups), with the sum of the salaries of each group - the updates change the salaries, so the sums change',
+  },
+];
+
+const updatesText =
+  `An update changes ${BENCH_UPDATED_FIELDS.join(
+    ', ',
+  )} (by up to ±1%) in new copies of the rows: random rows, plus all the rows in the viewport, so that every update changes what is on screen. ` +
+  'Every grid gets the same updates, through the API it documents for changing rows. ';
+
+function lowFrequencyScenario(
+  view: BenchView,
+  suffix: string,
+  what: string,
+): Scenario {
+  return {
+    id: `updates-low${suffix}`,
+    view,
+    grids: view === 'grouped' ? GROUPING_GRIDS : undefined,
+    description:
+      `Live updates, low frequency. The grid shows ${what}. ` +
+      `${LOW_UPDATES} updates of ${LOW_UPDATE_ROWS.toLocaleString(
+        'en-US',
+      )} random rows each, one at a time: each update is sent ${LOW_UPDATE_PAUSE} ms after the previous one is painted. ` +
+      updatesText +
+      'Measured from sending the update to the end of the first frame committed with the viewport showing it (the right rows, with the new values, in the right order).',
+    metrics: [
+      ms('visibleMs', 'Update to rows painted (median of updates)'),
+      ms('visibleMaxMs', 'Update to rows painted (worst update)'),
+      ms('settledMs', 'Update to settled (median of updates)'),
+      ...cpuMetrics.map((m) => ({ ...m, label: `${m.label} (all updates)` })),
+    ],
+    async run(ctx) {
+      const { page, cdp } = ctx;
+      await mountAndSettle(ctx);
+      await page.evaluate(
+        ([batches, rows]) => window.__bench!.prepareUpdates(batches, rows),
+        [LOW_UPDATES, LOW_UPDATE_ROWS] as const,
+      );
+      await collectGarbage(cdp);
+      await settle(page, 200);
+
+      await setThrottle(ctx, true);
+      const m0 = await getMetrics(cdp);
+      const { trace } = await traced(
+        ctx,
+        LATENCY_TRACE_CATEGORIES,
+        async () => {
+          for (let i = 0; i < LOW_UPDATES; i++) {
+            await page.evaluate(
+              ([label, i]) => window.__bench!.pushUpdate(label, i),
+              [`update-${i}`, i] as const,
+            );
+            await page.waitForTimeout(LOW_UPDATE_PAUSE);
+          }
+          await page.evaluate(() => window.__bench!.markIdle());
+        },
+      );
+      const m1 = await getMetrics(cdp);
+      await setThrottle(ctx, false);
+
+      const visible: number[] = [];
+      const settled: number[] = [];
+      for (let i = 0; i < LOW_UPDATES; i++) {
+        visible.push(getVisibleLatency(trace, `update-${i}`).visible);
+        settled.push(await getSettled(ctx, trace, `update-${i}`));
+      }
+      return {
+        visibleMs: median(visible),
+        visibleMaxMs: Math.max(...visible),
+        settledMs: median(settled),
+        ...metricsDelta(m0, m1),
+      };
+    },
+  };
+}
+
+function highFrequencyScenario(
+  view: BenchView,
+  suffix: string,
+  what: string,
+): Scenario {
+  const interval = 1000 / HIGH_UPDATE_RATE;
+  const count = Math.round(HIGH_UPDATE_RATE * HIGH_UPDATE_SECONDS);
+  return {
+    id: `updates-high${suffix}`,
+    view,
+    grids: view === 'grouped' ? GROUPING_GRIDS : undefined,
+    description:
+      `Live updates, high frequency. The grid shows ${what}. ` +
+      `A feed of ${HIGH_UPDATE_RATE} updates a second, of ${HIGH_UPDATE_ROWS} random rows each, for ${HIGH_UPDATE_SECONDS} s (${count} updates). ` +
+      updatesText +
+      'The page hands the grid the updates once per animation frame: all the ones that arrived since the previous frame, as one update - so a grid that keeps the main thread busy gets them later, and more at once. ' +
+      '"Lag at the end" = from the arrival of the last update to the end of the first frame committed with the viewport showing it. ' +
+      '"Update delay" = from the arrival of an update to the frame that hands it to the grid.',
+    metrics: [
+      ms('lagMs', 'Lag at the end: last update to painted'),
+      ms('delayP95Ms', 'Update delay, p95'),
+      {
+        key: 'rafFps',
+        label: 'Main thread frame rate (rAF)',
+        unit: 'fps',
+        better: 'higher',
+      },
+      ms('p95FrameMs', 'p95 rAF frame interval'),
+      ms('maxFrameMs', 'Worst rAF frame interval'),
+      ms('loafBlockingMs', 'Long animation frames: total blocking'),
+      ...cpuMetrics,
+    ],
+    async run(ctx) {
+      const { page, cdp } = ctx;
+      await mountAndSettle(ctx);
+      await page.evaluate(
+        ([batches, rows]) => window.__bench!.prepareUpdates(batches, rows),
+        [count, HIGH_UPDATE_ROWS] as const,
+      );
+      await collectGarbage(cdp);
+      await settle(page, 200);
+
+      await setThrottle(ctx, true);
+      const m0 = await getMetrics(cdp);
+      const { trace, result } = await traced(
+        ctx,
+        LATENCY_TRACE_CATEGORIES,
+        async () => {
+          await page.evaluate(() => window.__bench!.startFrameRecorder());
+          const stream = await page.evaluate(
+            (interval) =>
+              window.__bench!.runUpdateStream('update-stream', interval),
+            interval,
+          );
+          const record = await page.evaluate(() =>
+            window.__bench!.stopFrameRecorder(),
+          );
+          await page.waitForTimeout(300);
+          await page.evaluate(() => window.__bench!.markIdle());
+          return { stream, record };
+        },
+      );
+      const m1 = await getMetrics(cdp);
+      await setThrottle(ctx, false);
+
+      const { stream, record } = result;
+      const intervals: number[] = [];
+      for (let i = 1; i < record.frames.length; i++) {
+        intervals.push(record.frames[i] - record.frames[i - 1]);
+      }
+      const duration =
+        record.frames[record.frames.length - 1] - record.frames[0];
+      if (VERBOSE) {
+        console.log(
+          `   ${ctx.grid}: ${count} updates handed to the grid in ${stream.flushes} frames`,
+        );
+      }
+      return {
+        lagMs:
+          getVisibleLatency(trace, 'update-stream').visible -
+          (count - 1) * interval,
+        delayP95Ms: percentile(stream.delays, 95),
+        rafFps: ((record.frames.length - 1) / duration) * 1000,
+        p95FrameMs: percentile(intervals, 95),
+        maxFrameMs: Math.max(...intervals),
+        loafBlockingMs: record.loaf.reduce(
+          (sum, l) => sum + l.blockingDuration,
+          0,
+        ),
+        ...metricsDelta(m0, m1),
+      };
+    },
+  };
+}
+
 const SCENARIOS: Scenario[] = [
   mountScenario,
   sortScenario('code', 'string'),
@@ -857,6 +1082,8 @@ const SCENARIOS: Scenario[] = [
   probeScenario('vertical'),
   probeScenario('horizontal'),
   visualScenario,
+  ...UPDATE_VIEWS.map((v) => lowFrequencyScenario(v.view, v.suffix, v.what)),
+  ...UPDATE_VIEWS.map((v) => highFrequencyScenario(v.view, v.suffix, v.what)),
 ];
 
 // ---------------------------------------------------------------------------
@@ -1120,7 +1347,13 @@ for (const size of SIZES) {
           !!ONLY && !ONLY.includes(scenario.id),
           'not in BENCH_SCENARIOS',
         );
-        const grids = GRIDS;
+        const grids = scenario.grids
+          ? GRIDS.filter((grid) => scenario.grids!.includes(grid))
+          : GRIDS;
+        test.skip(
+          grids.length < 2,
+          `needs two of ${(scenario.grids ?? GRIDS).join(', ')}`,
+        );
         test.setTimeout((WARMUP + RUNS) * grids.length * 120_000);
         if (!environment || !scrollInfo[size]) {
           // the setup test did not run in this process (e.g. --grep)
@@ -1151,6 +1384,7 @@ for (const size of SIZES) {
               grid,
               size,
               runName,
+              scenario.view,
             );
             try {
               const sample = await scenario.run(ctx);

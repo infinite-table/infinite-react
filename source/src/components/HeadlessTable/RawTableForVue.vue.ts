@@ -20,6 +20,17 @@ import { GridRenderer } from './ReactHeadlessTableRenderer';
 import { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 
 /**
+ * No renderer was passed in, so this is a table used on its own, not inside
+ * InfiniteTable - nobody else sets the CSS vars that position the cells
+ * (see GridRenderer.ownsPositionVars).
+ */
+function createOwnRenderer(brain: MatrixBrain) {
+  const result = createRenderer(brain);
+  result.renderer.ownsPositionVars = true;
+  return result;
+}
+
+/**
  * Vue sibling of RawTable.tsx: wires the MatrixBrain render range to the
  * shared GridRenderer and renders the root RenderSlot the renderer pushes
  * cell nodes into.
@@ -65,7 +76,7 @@ export const RawTable = defineComponent({
             renderer: props.renderer,
             onRenderUpdater: props.onRenderUpdater,
           }
-        : createRenderer(props.brain);
+        : createOwnRenderer(props.brain);
     });
 
     watchEffect(() => {

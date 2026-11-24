@@ -3,6 +3,11 @@ title: Releases
 description: All releases | Infinite Table DataGrid for React
 ---
 
+## 10.2.1
+
+- Scrolling vertically takes a quarter of the paint work it used to - see [Changing one line of CSS to save a quarter of the paint work](/blog/2026/11/24/one-line-of-css-a-quarter-of-the-paint-work).
+- Sorting a large number column is about 3 times faster.
+
 ## 10.2.0
 
 - An invalid `licenseKey` shows a pale red footer saying the license is invalid (see the console for details). A missing or expired license shows the "Powered by Infinite Table" footer, as before. See [licensing](/docs/learn/getting-started/licensing).

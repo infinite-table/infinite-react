@@ -85,7 +85,7 @@ export const BENCH_COLUMNS: BenchColumn[] = [
 ];
 
 // mulberry32 - tiny, fast, seedable PRNG
-function createRandom(seed: number) {
+export function createRandom(seed: number) {
   let a = seed >>> 0;
   return function random() {
     a = (a + 0x6d2b79f5) >>> 0;
