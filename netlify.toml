@@ -27,7 +27,11 @@
     max-age=31536000,
     immutable'''
 [[headers]]
-  for = "/_next/static/*.{png,css}"
+  # everything Next emits under /_next/static is content-hashed (chunks, css,
+  # and the next/font .woff2 files in /_next/static/media), so it can be cached
+  # forever. Without this the fonts fell under "/*" = no-store and were
+  # downloaded again on every reload, showing the fallback font first.
+  for = "/_next/static/*"
   [headers.values]
     cache-control = '''
     public,
