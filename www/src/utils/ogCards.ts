@@ -12,6 +12,10 @@ import {
   getDocsPageMeta,
   getDocsPagePaths,
 } from '@www/utils/docsFrameworkContent';
+import {
+  docsFrameworks,
+  type DocsFrameworkId,
+} from '@www/utils/docsFrameworks';
 
 export type OgCard = {
   /** the image is /og/<slug>.png */
@@ -102,32 +106,40 @@ function docsKicker(neutralPath: string) {
   return `Docs / ${words[0].toUpperCase()}${words.slice(1)}`;
 }
 
-/** The slug of a docs page's card, from its neutral path (`/docs/learn/sorting`). */
-export function docsOgSlug(neutralPath: string) {
-  return neutralPath.replace(/^\/+|\/+$/g, '') || 'docs';
+/**
+ * The slug of a docs page's card, from its neutral path (`/docs/learn/sorting`)
+ * and the framework of the URL: each framework's page has its own card
+ * (`docs/learn/sorting`, `vue/docs/learn/sorting`), with its own wording.
+ */
+export function docsOgSlug(
+  neutralPath: string,
+  framework: DocsFrameworkId = 'react',
+) {
+  const slug = neutralPath.replace(/^\/+|\/+$/g, '') || 'docs';
+  return framework === 'react' ? slug : `${framework}/${slug}`;
 }
 
 function docsCards(): OgCard[] {
-  const paths = new Set([
-    ...getDocsPagePaths('react'),
-    ...getDocsPagePaths('vue'),
-  ]);
-  const vuePaths = new Set(getDocsPagePaths('vue'));
   const cards: OgCard[] = [];
-  for (const path of paths) {
-    const page = getDocsPage(path);
-    if (!page || page.frontmatter.redirect_to) continue;
-    const meta = getDocsPageMeta(page, 'react');
-    const title = meta.title ?? page.frontmatter.title;
-    if (!title) continue;
-    cards.push({
-      slug: docsOgSlug(path),
-      kicker: docsKicker(path),
-      title,
-      // only a description the page wrote, not an excerpt of its first lines
-      description: page.frontmatter.description ? meta.description : undefined,
-      frameworks: vuePaths.has(path) ? ['React', 'Vue'] : ['React'],
-    });
+  for (const framework of ['react', 'vue'] as const) {
+    const label = docsFrameworks.label(framework) as 'React' | 'Vue';
+    for (const path of getDocsPagePaths(framework)) {
+      const page = getDocsPage(path);
+      if (!page || page.frontmatter.redirect_to) continue;
+      const meta = getDocsPageMeta(page, framework);
+      const title = meta.title ?? page.frontmatter.title;
+      if (!title) continue;
+      cards.push({
+        slug: docsOgSlug(path, framework),
+        kicker: docsKicker(path),
+        title,
+        // only a description the page wrote, not an excerpt of its first lines
+        description: page.frontmatter.description
+          ? meta.description
+          : undefined,
+        frameworks: [label],
+      });
+    }
   }
   return cards;
 }

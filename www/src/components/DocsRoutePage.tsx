@@ -74,7 +74,7 @@ export function docsPageMetadata(
     alternates: {
       canonical: `${SITE_URL}${docsFrameworks.pathFor(neutralPath, framework)}`,
     },
-  }, docsOgSlug(neutralPath));
+  }, docsOgSlug(neutralPath, framework));
 }
 
 export async function DocsRoutePage(props: {
