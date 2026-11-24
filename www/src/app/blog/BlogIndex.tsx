@@ -113,11 +113,12 @@ function PostThumbnail({
 }
 
 function FeaturedPost({ post }: { post: BlogPost }) {
+  // Not a <Link> around the whole card: the tags are links too, and an <a> in
+  // an <a> is invalid HTML (the parser closes the outer one, so hydration
+  // fails). The title link covers the card instead (its ::after), and the
+  // tags sit above it.
   return (
-    <Link
-      href={post.href}
-      className="group block mb-16 rounded-xl border border-white/10 bg-deep-dark/40 hover:bg-deep-dark/60 transition-colors overflow-hidden"
-    >
+    <div className="group relative mb-16 rounded-xl border border-white/10 bg-deep-dark/40 hover:bg-deep-dark/60 transition-colors overflow-hidden">
       <div className="flex flex-col lg:flex-row">
         <div className="flex-1 p-6 md:p-8">
           <div className="flex flex-wrap items-center gap-3 mb-3">
@@ -127,13 +128,20 @@ function FeaturedPost({ post }: { post: BlogPost }) {
             <DraftNote post={post} />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-content-color group-hover:text-link transition-colors">
-            {post.title}
+            <Link
+              href={post.href}
+              className="after:absolute after:inset-0 after:content-['']"
+            >
+              {post.title}
+            </Link>
           </h2>
           <div className="text-content-color/70 mb-4 leading-relaxed">
             <BlostPostExcerpt post={post} />
           </div>
           <PostMeta post={post} />
-          <PostTags tags={post.tags} />
+          <div className="relative z-10">
+            <PostTags tags={post.tags} />
+          </div>
         </div>
         {post.thumbnail ? (
           <PostThumbnail
@@ -142,7 +150,7 @@ function FeaturedPost({ post }: { post: BlogPost }) {
           />
         ) : null}
       </div>
-    </Link>
+    </div>
   );
 }
 
