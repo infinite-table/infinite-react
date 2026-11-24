@@ -37,7 +37,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   add('/pricing');
   add('/demo');
   add('/themes');
-  add('/devtools');
   add('/compare');
   competitors.forEach((product) => {
     add(`/compare/${product.id}`, { lastModified: new Date(product.lastVerified) });

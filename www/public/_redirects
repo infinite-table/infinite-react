@@ -1,4 +1,10 @@
 # single instances of (re)moved pages
+# moved pages whose old URL still has a stub page (redirect_to in the frontmatter):
+# "!" makes Netlify redirect even though the stub file exists, so the browser
+# never loads the stub (which redirected client-side, and was not counted by analytics)
+/blog/2026/11/11/benchmarking-infinite-table-and-ag-grid-with-a-million-rows /blog/2026/11/11/benchmarking-infinite-table-mui-x-ag-grid-and-tanstack-table-with-a-million-rows 301!
+/docs/learn/editing/inline-editing /docs/learn/editing/overview 301!
+/docs/reference/selection-api /docs/reference/row-selection-api 301!
 /docs/learn     /docs/learn/getting-started
 /docs/latest/learn     /docs/learn/getting-started
 /docs/latest/getting-started /docs/learn/getting-started
@@ -14,9 +20,7 @@
 /docs/learn/getting-started/full-demo /demo
 /full-demo /demo
 /docs/learn/working-with-data/sorting /docs/learn/sorting/overview
-/docs/learn/editing/inline-editing /docs/learn/editing/overview
 
-/docs/reference/selection-api /docs/reference/row-selection-api
 /docs/learn/tree-grid/tree-expand-and-collpapse-state /docs/learn/tree-grid/tree-expand-and-collapse-state
 # comparison pages moved out of the docs
 /docs/learn/compare /compare 301
@@ -33,4 +37,4 @@
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
 
-/devtools /docs/devtools
+/devtools /docs/devtools 301

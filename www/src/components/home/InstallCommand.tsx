@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { trackFathomEvent } from '@www/components/FathomTracking';
+
 const PACKAGES = {
   react: '@infinite-table/infinite-react',
   vue: '@infinite-table/infinite-vue',
@@ -27,6 +29,7 @@ export function InstallCommand({
         aria-label="Copy the install command"
         onClick={() => {
           navigator.clipboard?.writeText(command).catch(() => {});
+          trackFathomEvent(`Copy install: ${framework}`);
           setCopied(true);
           window.clearTimeout(timer.current);
           timer.current = window.setTimeout(() => setCopied(false), 1500);

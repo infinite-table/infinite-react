@@ -11,6 +11,7 @@ declare global {
     fathom: {
       trackGoal: (code: string, value: number) => void;
       trackPageview: (opts?: { url?: string; referrer?: string }) => void;
+      trackEvent: (name: string, opts?: { _value?: number }) => void;
     };
   }
 }

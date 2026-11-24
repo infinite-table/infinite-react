@@ -1,5 +1,5 @@
 import { IBM_Plex_Sans, JetBrains_Mono } from 'next/font/google';
-import { FathomPageviews } from '@www/components/FathomPageviews';
+import { FathomTracking } from '@www/components/FathomTracking';
 
 import '@docsearch/css';
 import '../styles/index.css';
@@ -77,7 +77,7 @@ export default function RootLayout({
           data-auto="false"
           defer
         ></script>
-        <FathomPageviews />
+        <FathomTracking />
       </body>
     </html>
   );
