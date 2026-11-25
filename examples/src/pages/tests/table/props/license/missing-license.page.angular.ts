@@ -1,0 +1,47 @@
+import { Component } from '@angular/core';
+
+import { DataSource, InfiniteTable } from '@infinite-table/infinite-angular';
+import type { InfiniteTablePropColumns } from '@infinite-table/infinite-angular';
+
+type Person = {
+  id: number;
+  firstName: string;
+  age: number;
+};
+
+const data: Person[] = Array.from({ length: 20 }, (_, index) => ({
+  id: index,
+  firstName: `Person ${index}`,
+  age: 20 + index,
+}));
+
+const columns: InfiniteTablePropColumns<Person> = {
+  id: { field: 'id', type: 'number' },
+  firstName: { field: 'firstName' },
+  age: { field: 'age', type: 'number' },
+};
+
+const domProps = {
+  style: { height: '80vh' },
+};
+
+@Component({
+  imports: [DataSource, InfiniteTable],
+  template: `
+    <infinite-data-source [data]="data" primaryKey="id">
+      <!-- an empty string means no license key - the global license key
+      (provideInfiniteTable in main.ts) is not used -->
+      <infinite-table
+        licenseKey=""
+        [columns]="columns"
+        [columnDefaultWidth]="150"
+        [domProps]="domProps"
+      />
+    </infinite-data-source>
+  `,
+})
+export default class MissingLicensePage {
+  protected readonly data = data;
+  protected readonly columns = columns;
+  protected readonly domProps = domProps;
+}
