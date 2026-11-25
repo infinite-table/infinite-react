@@ -38,12 +38,7 @@ const HOST_CLASS_NAME = join(
     '[style]': 'hostStyle()',
     '[class]': 'hostClassName()',
   },
-  template: `@if (showIndex()) {
-    <div data-name="index" [class]="indexClassName">{{ index() }}</div>
-    }
-    <div [class]="lineClassName" [style]="lineStyles()[0]"></div>
-    <div [class]="lineClassName" [style]="lineStyles()[1]"></div>
-    <div [class]="lineClassName" [style]="lineStyles()[2]"></div>`,
+  template: `@if (showIndex()) {<div data-name="index" [class]="indexClassName">{{ index() }}</div>}<div [class]="lineClassName" [style]="lineStyles()[0]"></div><div [class]="lineClassName" [style]="lineStyles()[1]"></div><div [class]="lineClassName" [style]="lineStyles()[2]"></div>`,
 })
 export class FilterIcon {
   readonly size = input<number>();

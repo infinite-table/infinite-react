@@ -20,6 +20,13 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
+import { pageSourceHasFramework } from '../src/utils/docsFrameworkPages.ts';
+import {
+  DOCS_DEFAULT_FRAMEWORK,
+  DOCS_FRAMEWORK_IDS,
+  docsFramework,
+} from '../src/utils/docsFrameworksRegistry.ts';
+
 const WWW_DIR = path.resolve(import.meta.dirname, '..');
 const CONTENT_DIR = path.join(WWW_DIR, 'content');
 
@@ -37,16 +44,19 @@ for (let index = 0; index < args.length; index++) {
   else if (args[index] === '--color-scheme') colorScheme = args[++index];
   else targets.push(args[index]);
 }
-// React pages have no prefix
-const prefix = framework && framework !== 'react' ? `/${framework}` : '';
-
-/** `vue: true`, or `vue:` with the page's own title / description */
-function pageHasFramework(file) {
-  if (!prefix) return true;
-  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(fs.readFileSync(file, 'utf8'))?.[1] ?? '';
-  const value = new RegExp(`^${framework}:(.*)$`, 'm').exec(frontmatter)?.[1].trim();
-  return value != null && value !== 'false';
+if (framework && !DOCS_FRAMEWORK_IDS.includes(framework)) {
+  console.error(`--framework: one of ${DOCS_FRAMEWORK_IDS.join(', ')} (www/frameworks.json)`);
+  process.exit(1);
 }
+// React pages have no prefix, Vue ones are under /vue
+const prefix = docsFramework(framework ?? DOCS_DEFAULT_FRAMEWORK).prefix;
+
+// where the framework's demos are served from: /gen/demos/_vue
+const DEMO_URL = docsFramework(framework ?? DOCS_DEFAULT_FRAMEWORK).demoOutDir.replace(/^public/, '');
+
+/** `vue: true`, or `vue:` with the page's own title / description (React: no `react: false`) */
+const pageHasFramework = (file) =>
+  pageSourceHasFramework(fs.readFileSync(file, 'utf8'), framework ?? DOCS_DEFAULT_FRAMEWORK);
 
 const routes = [];
 for (const target of targets) {
@@ -147,7 +157,7 @@ for (const route of routes) {
       continue;
     }
     const src = (await frameElement.getAttribute('src')) ?? '';
-    if (prefix && !isFallback && !src.includes(`/_${framework}/`)) {
+    if (prefix && !isFallback && !src.includes(`${DEMO_URL}/`)) {
       problems.push(`"${title.trim()}": shows ${src}, not the ${framework} demo`);
     }
     const frame = await frameElement.elementHandle().then((handle) => handle.contentFrame());

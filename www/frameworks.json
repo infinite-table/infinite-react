@@ -1,0 +1,28 @@
+{
+  "//": "The UI frameworks the docs are written for, the default one first. Read through src/utils/docsFrameworksRegistry.ts, which documents every field; docs-kit.config.mjs and scripts/generate-llms-docs.js read it as well.",
+  "default": "react",
+  "roots": ["/docs"],
+  "storageKey": "infinite-docs-framework",
+  "frameworks": {
+    "react": {
+      "label": "React",
+      "prefix": "",
+      "home": "/",
+      "package": "@infinite-table/infinite-react",
+      "demoSuffix": ".demo.tsx",
+      "snippetSuffixes": [".snippet.tsx", ".snippet.ts"],
+      "demoOutDir": "public/gen/demos",
+      "fork": "codesandbox"
+    },
+    "vue": {
+      "label": "Vue",
+      "prefix": "/vue",
+      "home": "/vue",
+      "package": "@infinite-table/infinite-vue",
+      "demoSuffix": ".demo.vue",
+      "snippetSuffixes": [".snippet.vue", ".snippet.vue.ts"],
+      "demoOutDir": "public/gen/demos/_vue",
+      "fork": "stackblitz"
+    }
+  }
+}

@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   ViewEncapsulation,
-  DestroyRef,
   computed,
   effect,
   inject,
@@ -45,8 +45,8 @@ export class InfiniteCheckBox {
   readonly onChange = input<(checked: InfiniteCheckBoxPropChecked) => void>();
   readonly change = output<InfiniteCheckBoxPropChecked>();
 
-  private readonly input =
-    inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
+  private readonly input = inject<ElementRef<HTMLInputElement>>(ElementRef)
+    .nativeElement;
 
   // the uncontrolled value
   private readonly localChecked = signal<InfiniteCheckBoxPropChecked>(false);
@@ -67,8 +67,8 @@ export class InfiniteCheckBox {
   });
 
   constructor() {
-    // a native listener: a host `(change)` listener would also subscribe to
-    // this component's own `change` output, and re-enter on every emit
+    // a native listener, not a host `(change)` one: that would also be
+    // subscribed to the `change` output of this component, and call itself
     const onChange = () => this.onInputChange();
     this.input.addEventListener('change', onChange);
     inject(DestroyRef).onDestroy(() =>
@@ -83,10 +83,7 @@ export class InfiniteCheckBox {
       if (!this.initialized) {
         this.initialized = true;
         const defaultChecked = untracked(this.defaultChecked);
-        if (
-          untracked(this.checked) === undefined &&
-          defaultChecked !== undefined
-        ) {
+        if (untracked(this.checked) === undefined && defaultChecked !== undefined) {
           this.localChecked.set(defaultChecked);
           return;
         }

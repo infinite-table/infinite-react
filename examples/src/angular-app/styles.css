@@ -1,0 +1,23 @@
+/* The global styles of the Angular examples app: the same as the Vue app's
+   (src/vue-app/main.ts) */
+@import '../index.global.css';
+
+/* the dev build of the library (build:angular-lib) */
+@import '../../.angular-lib/infinite-angular/index.css';
+
+@import '../../../source/dist/theme/shadcn.css';
+@import '../../../source/dist/theme/ocean.css';
+@import '../../../source/dist/theme/minimalist.css';
+@import '../../../source/dist/theme/balsam.css';
+@import '../../../source/dist/theme/terminal.css';
+@import '../../../source/dist/theme/sheet.css';
+@import '../../../source/dist/theme/paper.css';
+
+/* The router-outlet and the routed page hosts (`ng-component`) add no layout
+   layer: what the page template renders are the flex items of the .__next
+   root, as in the React and Vue apps. Global, not in the App component's
+   styles: emulated encapsulation would scope the selector to App's own
+   elements. */
+examples-app > * {
+  display: contents;
+}

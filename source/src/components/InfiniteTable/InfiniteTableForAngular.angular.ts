@@ -100,8 +100,22 @@ import {
 } from './components/InfiniteTableRow/InfiniteTableColumnCellForAngular.angular';
 import { computeRowHeightWithCache } from './hooks/computedRowHeightShared';
 import { InfiniteTableColumnCellClassName } from './components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
+// slice B: editing, license footer
+import { renderColumnEditor } from './components/InfiniteTableRow/InfiniteTableColumnEditorForAngular.angular';
+import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter/InfiniteTableLicenseFooterForAngular.angular';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMaskForAngular.angular';
+// master-detail: the detail rows
+import {
+  InfiniteTableDetailRow,
+  InfiniteTableDetailRowPlaceholder,
+  type InfiniteTableDetailRowProps,
+} from './components/InfiniteTableRow/InfiniteTableDetailRowForAngular.angular';
+import type {
+  TableRenderDetailRowFn,
+  TableRenderDetailRowFnParam,
+} from '../HeadlessTable/rendererTypes';
+import { TableHeaderWrapper } from './components/InfiniteTableHeader/TableHeaderWrapperForAngular.angular';
 // menus
 import {
   InfiniteOverlayPortal,
@@ -273,14 +287,18 @@ const PORTAL_CLASS_NAME = join(
  * `#grid="infiniteTable"` -> `grid.api()`, or the `(ready)` output.
  */
 @Component({
-  selector: 'infinite-table',
+  // <infinite-tree-grid>: the TreeGrid is an InfiniteTable (the tree comes
+  // from the TreeDataSource and the column's renderTreeIcon)
+  selector: 'infinite-table, infinite-tree-grid',
   exportAs: 'infiniteTable',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
+    TableHeaderWrapper,
     HeadlessTable,
     InfiniteRender,
     CSSNumericVariableWatch,
+    InfiniteTableLicenseFooter,
     InfiniteOverlayPortal,
   ],
   host: {
@@ -298,6 +316,15 @@ const PORTAL_CLASS_NAME = join(
   template: `
     @if (initialized) {
       @let s = state();
+      <!-- React: InfiniteTableHeader renders the wrapper only when the header is enabled -->
+      @if (s.header) {
+        <div
+          infiniteTableHeaderWrapper
+          [headerBrain]="s.headerBrain"
+          [bodyBrain]="s.brain"
+          [wrapRowsHorizontally]="!!s.wrapRowsHorizontally"
+        ></div>
+      }
       <div #body [class]="bodyClassName">
         <div
           infiniteHeadlessTable
@@ -305,6 +332,7 @@ const PORTAL_CLASS_NAME = join(
           [renderer]="$any(s.renderer)"
           [onRenderUpdater]="s.onRenderUpdater"
           [renderCell]="renderCell()"
+          [renderDetailRow]="renderDetailRow()"
           [cellHoverClassNames]="hoverClassNames()"
           [scrollStopDelay]="s.scrollStopDelay"
           [forceRerenderTimestamp]="s.forceBodyRerenderTimestamp"
@@ -312,6 +340,9 @@ const PORTAL_CLASS_NAME = join(
           [scrollerRef]="onScrollerElement"
           [tabIndex]="scrollerTabIndex()"
           [autoFocus]="scrollerAutoFocus()"
+          [activeRowIndex]="activeIndicators().activeRowIndex"
+          [activeCellIndex]="activeIndicators().activeCellIndex"
+          [activeCellRowHeight]="activeIndicators().activeCellRowHeight"
         ></div>
         <ng-container [infiniteRender]="loadMask()" />
       </div>
@@ -342,6 +373,12 @@ const PORTAL_CLASS_NAME = join(
           [varName]="s.columnHeaderHeightCSSVar"
           [onChange]="s.onColumnHeaderHeightCSSVarChange"
         />
+      }
+      @if (licenseStatus() !== 'valid') {
+        <div
+          infiniteLicenseFooter
+          [invalid]="licenseStatus() === 'invalid'"
+        ></div>
       }
     }
   `,
@@ -403,6 +440,7 @@ export class InfiniteTable<T = any>
   contextValue!: InfiniteTableContextValueForAngular<T>;
 
   protected renderCell!: Signal<TableRenderCellFn>;
+  protected renderDetailRow!: Signal<TableRenderDetailRowFn | undefined>;
   protected hoverClassNames!: Signal<string[] | undefined>;
   protected loadMask!: Signal<Renderable>;
   // assigned in ngOnInit (host bindings first run after it)
@@ -412,6 +450,14 @@ export class InfiniteTable<T = any>
   protected scrollerTabIndex!: Signal<number>;
   protected scrollerAutoFocus!: Signal<boolean>;
   protected onScrollerElement: (el: HTMLElement | null) => void = () => {};
+  // slice B: the HeadlessTable active row/cell indicator inputs + the
+  // license footer (assigned in setup)
+  protected activeIndicators!: Signal<{
+    activeRowIndex: number | null;
+    activeCellIndex: [number, number] | null;
+    activeCellRowHeight: number | ((rowIndex: number) => number);
+  }>;
+  protected licenseStatus!: Signal<ReturnType<typeof getLicenseStatus>>;
 
   ngOnInit() {
     if (!this.dataSource) {
@@ -1927,6 +1973,8 @@ export class InfiniteTable<T = any>
             getComputedVisibleColumns: getComputedVisibleColumns as () => any[],
             getComputedColumnOrder,
             dataSourceStatePartial,
+            // slice B: column.components.Editor, or the default editor
+            renderEditor: renderColumnEditor,
             onMouseEnter,
             onMouseLeave,
           };
@@ -1939,6 +1987,67 @@ export class InfiniteTable<T = any>
             ColumnCell
               ? renderPooled(ColumnCell, props, [InfiniteColumnCellHost])
               : renderPooled(InfiniteTableColumnCell, props)
+          ) as unknown as Renderable;
+        };
+      },
+    );
+
+    // ---- master-detail: the detail rows ----
+    // mirrors renderDetailRow from React's useCellRendering
+    this.renderDetailRow = computedWithDeps<TableRenderDetailRowFn | undefined>(
+      () => {
+        const s = state();
+        return [s.isRowDetailExpanded, s.rowDetailRenderer, s.rowDetailCache];
+      },
+      () => {
+        const s = getState();
+        const isRowDetailsExpanded = s.isRowDetailExpanded;
+        const rowDetailRenderer = s.rowDetailRenderer;
+
+        if (!isRowDetailsExpanded || !rowDetailRenderer) {
+          return undefined;
+        }
+
+        const rowDetailCache = s.rowDetailCache;
+
+        return (params: TableRenderDetailRowFnParam) => {
+          const { rowIndex } = params;
+
+          const rowInfo = getData()[rowIndex];
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+
+          if (
+            !rowInfo ||
+            !isRowDetailsExpanded(rowInfo) ||
+            !computedRowSizeCacheForDetails
+          ) {
+            // normally we would have returned `null`
+            // but if we return null, the headless renderer will lose track
+            // of the HTMLElement, and then when we scroll down and want
+            // to reuse the HTMLElement, it will be gone, and the rendering
+            // will break
+            return renderPooled(
+              InfiniteTableDetailRowPlaceholder,
+              null,
+            ) as unknown as Renderable;
+          }
+
+          const { rowDetailHeight, rowHeight } =
+            computedRowSizeCacheForDetails.getSize(rowIndex);
+
+          const props: InfiniteTableDetailRowProps<T> = {
+            rowInfo,
+            rowDetailsCache: rowDetailCache,
+            rowIndex,
+            detailOffset: rowHeight,
+            rowDetailHeight,
+            rowDetailRenderer: rowDetailRenderer as any,
+          };
+
+          return renderPooled(
+            InfiniteTableDetailRow,
+            props,
           ) as unknown as Renderable;
         };
       },
@@ -1970,6 +2079,30 @@ export class InfiniteTable<T = any>
         { isDetail },
       ),
     );
+    // the license footer (React/Vue: <InfiniteTableLicenseFooter /> when not valid)
+    this.licenseStatus = licenseStatus;
+
+    // ---- slice B: the active row / cell indicators (same as the Vue root's
+    // HeadlessTable props) ----
+    this.activeIndicators = computed(() => {
+      const s = state();
+      return {
+        activeRowIndex:
+          s.ready && s.keyboardNavigation === 'row'
+            ? s.activeRowIndex ?? null
+            : null,
+        activeCellIndex:
+          s.ready &&
+          s.keyboardNavigation === 'cell' &&
+          // hide the active cell indicator while column reordering
+          !s.columnReorderDragColumnId
+            ? s.activeCellIndex ?? null
+            : null,
+        activeCellRowHeight:
+          getComputedRowHeightResult().computedRowSizeCacheForDetails
+            ?.getRowHeight || getComputedRowHeight(),
+      };
+    });
 
     const rootClass = computed(() => {
       const s = state();
@@ -2017,7 +2150,6 @@ export class InfiniteTable<T = any>
           focused,
           focusedWithin,
         }),
-        licenseStatus() === 'valid' ? null : `${rootClassName}--unlicensed`,
       );
     });
     this.rootClassName = rootClass;
@@ -2062,6 +2194,7 @@ export class InfiniteTable<T = any>
       getComputed,
       computed: computedValues,
       getComputedVisibleColumns,
+      scrollbars: scrollbars.asReadonly(),
       dataSourceContext,
     } as InfiniteTableContextValueForAngular<T>;
 

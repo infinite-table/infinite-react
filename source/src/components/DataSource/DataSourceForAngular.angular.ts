@@ -36,6 +36,7 @@ import { injectGetMasterDetailContext } from './DataSourceMasterDetailContextFor
 import type {
   DataSourceApi,
   DataSourceComponentActions,
+  DataSourceProps,
   DataSourceState,
 } from './types';
 
@@ -127,7 +128,16 @@ export class DataSource<T = any> extends DataSourceInputs<T> implements OnInit {
   private readonly managed = injectManagedDataSource(
     this,
     DATA_SOURCE_PROPS_META,
+    () => this.presetProps() as any,
   );
+
+  /**
+   * The values a preset (TreeDataSource) gives props that are not
+   * specified. Read in a reactive context.
+   */
+  protected presetProps(): Partial<DataSourceProps<T>> | null {
+    return null;
+  }
 
   private dataSourceApi: DataSourceApi<T> | null = null;
 

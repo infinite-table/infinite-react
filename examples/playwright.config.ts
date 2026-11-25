@@ -11,6 +11,16 @@ global.__DEV__ = !process.env.CI;
 // those were taken by another checkout
 const { getPort } = require('../scripts/dev-ports.cjs');
 
+const {
+  REACT_ONLY_GLOBS,
+  pagelessSpecs,
+  specsRegExp,
+} = require('./scripts/test-specs.cjs');
+
+// the vue and angular projects run the specs that have a test page: the
+// React-only ones and the node-side unit specs (no page) run on react only
+const NON_REACT_IGNORE = [...REACT_ONLY_GLOBS, specsRegExp(pagelessSpecs())];
+
 const width = 1400;
 const height = 1200;
 
@@ -56,17 +66,24 @@ const config: PlaywrightTestConfig = {
       name: 'vue',
       testMatch: /.*.spec.ts/,
 
-      // these specs import `test` directly from @playwright/test (bypassing
-      // the auto-skip fixture) and test React-only internals:
-      // - lists: the RawList/VirtualList React component wrappers (the Vue
-      //   siblings ListRowPoolForVue/RawTableForVue are covered by jest
-      //   bridge specs)
-      // - hooks: the React useComponentState/useProperty hook pages
-      testIgnore: ['**/tests/lists/**', '**/tests/hooks/**'],
+      testIgnore: NON_REACT_IGNORE,
 
       use: {
         ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${getPort('examplesVue')}/`,
+      },
+    },
+    {
+      // the same specs against the Angular examples app (port 5558 by
+      // default), skipped when there's no .page.angular.ts sibling
+      name: 'angular',
+      testMatch: /.*.spec.ts/,
+
+      testIgnore: NON_REACT_IGNORE,
+
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: `http://localhost:${getPort('examplesAngular')}/`,
       },
     },
   ],

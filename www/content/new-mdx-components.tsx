@@ -58,12 +58,12 @@ import {
   DOCS_DEMO_ANCHOR_PREFIX,
   DOCS_DEMO_HEIGHTS,
   DOCS_DEMO_MANIFEST,
-  DOCS_DEMO_MANIFEST_VUE,
+  DOCS_DEMO_MANIFESTS,
 } from '../src/utils/docsKit';
 import { docsHasPage } from '../src/utils/docsFrameworkContent';
 import {
   docsFrameworks,
-  REACT_ONLY_NOTICE,
+  DOCS_FALLBACK_NOTICE,
   type DocsFrameworkId,
 } from '../src/utils/docsFrameworks';
 // import { Note } from '@www/components/Note';
@@ -85,7 +85,7 @@ const Description = (props: { children: React.ReactNode }) => (
 
 /** On a page of another framework: this demo, snippet or link has no version for it yet. */
 const ReactOnlyNotice = () => (
-  <span className="docs-framework-notice">{REACT_ONLY_NOTICE}</span>
+  <span className="docs-framework-notice">{DOCS_FALLBACK_NOTICE}</span>
 );
 
 export function useMDXComponents(
@@ -110,14 +110,13 @@ export function useMDXComponents(
     ...createDemoComponents({
       contentDir: DOCS_CONTENT_DIR,
       folder: fileInfo.folderPath,
-      manifest:
-        framework === 'vue' ? DOCS_DEMO_MANIFEST_VUE : DOCS_DEMO_MANIFEST,
+      manifest: DOCS_DEMO_MANIFESTS[framework],
       heights: DOCS_DEMO_HEIGHTS,
       themes: DOCS_CODE_THEMES,
       anchorPrefix: DOCS_DEMO_ANCHOR_PREFIX,
       // a demo or snippet without a Vue sibling: the React one, with a notice
       fallback: otherFramework
-        ? { manifest: DOCS_DEMO_MANIFEST, notice: REACT_ONLY_NOTICE }
+        ? { manifest: DOCS_DEMO_MANIFEST, notice: DOCS_FALLBACK_NOTICE }
         : undefined,
     }),
     // <FrameworkContent framework="vue"> … </FrameworkContent>
