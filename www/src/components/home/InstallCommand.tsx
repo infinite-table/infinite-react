@@ -3,19 +3,19 @@
 import * as React from 'react';
 
 import { trackFathomEvent } from '@www/components/FathomTracking';
-
-const PACKAGES = {
-  react: '@infinite-table/infinite-react',
-  vue: '@infinite-table/infinite-vue',
-};
+import {
+  docsFrameworks,
+  DOCS_FRAMEWORK_PACKAGE,
+  type DocsFrameworkId,
+} from '@www/utils/docsFrameworks';
 
 /** `$ npm i …` with a copy button. */
 export function InstallCommand({
-  framework = 'react',
+  framework = docsFrameworks.default,
 }: {
-  framework?: keyof typeof PACKAGES;
+  framework?: DocsFrameworkId;
 }) {
-  const command = `npm i ${PACKAGES[framework]}`;
+  const command = `npm i ${DOCS_FRAMEWORK_PACKAGE[framework]}`;
   const [copied, setCopied] = React.useState(false);
   const timer = React.useRef<number | undefined>(undefined);
 

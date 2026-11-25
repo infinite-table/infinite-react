@@ -2,31 +2,30 @@ import path from 'node:path';
 
 import type { FenceDefaults, FenceInfo } from '@thedatagrid/docs-kit/remark';
 
+import {
+  DOCS_DEFAULT_FRAMEWORK,
+  DOCS_FRAMEWORK_IDS,
+  docsFramework,
+  type DocsFrameworkId,
+} from './docsFrameworksRegistry.ts';
+
 /** Absolute path of the docs content (Next runs from the www folder). */
 export const DOCS_CONTENT_DIR = path.join(process.cwd(), 'content');
 
-/** Written by `npm run build-demos` / `npm run watch-demos` (docs-kit.config.mjs). */
-export const DOCS_DEMO_MANIFEST = path.join(
-  process.cwd(),
-  'public/gen/demos/manifest.json',
-);
-
-/** The Vue build of the same config: `x.demo.vue` siblings of the React demos. */
-export const DOCS_DEMO_MANIFEST_VUE = path.join(
-  process.cwd(),
-  'public/gen/demos/_vue/manifest.json',
-);
-
 /**
- * On a Vue page, a fence naming `x.demo.tsx` / `x.snippet.tsx` shows the
- * sibling `x.demo.vue` / `x.snippet.vue` (or `x.snippet.vue.ts`). Without a
- * sibling, the React file is shown with a "React only for now" notice.
+ * Each framework's demo manifest, written by `npm run build-demos` /
+ * `npm run watch-demos` (docs-kit.config.mjs): the React demos in
+ * public/gen/demos, their `x.demo.vue` siblings in public/gen/demos/_vue.
  */
-export const DOCS_VUE_SIBLINGS = {
-  '.demo.tsx': '.demo.vue',
-  '.snippet.tsx': ['.snippet.vue', '.snippet.vue.ts'],
-  '.snippet.ts': ['.snippet.vue', '.snippet.vue.ts'],
-};
+export const DOCS_DEMO_MANIFESTS = Object.fromEntries(
+  DOCS_FRAMEWORK_IDS.map((id) => [
+    id,
+    path.join(process.cwd(), docsFramework(id).demoOutDir, 'manifest.json'),
+  ]),
+) as Record<DocsFrameworkId, string>;
+
+/** The React one: what a page of another framework falls back to. */
+export const DOCS_DEMO_MANIFEST = DOCS_DEMO_MANIFESTS[DOCS_DEFAULT_FRAMEWORK];
 
 /** Demo card anchors are `#demo-<title>` (keep in sync with docs-kit.config.mjs). */
 export const DOCS_DEMO_ANCHOR_PREFIX = 'demo-';

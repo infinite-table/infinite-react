@@ -1,21 +1,26 @@
 // Which docs pages exist for which framework. Imported by Node scripts
-// (docs-kit.config.mjs) as well as by the site, so: relative imports only,
-// and no TypeScript syntax that needs transpiling.
+// (docs-kit.config.mjs, scripts/generate-llms-docs.js) as well as by the
+// site, so: relative imports only (with their `.ts` extension), and no
+// TypeScript syntax that needs transpiling.
+import {
+  DOCS_DEFAULT_FRAMEWORK,
+  type DocsFrameworkId,
+} from './docsFrameworksRegistry.ts';
 
-/** Frameworks the docs are written for. React is the default: its URLs have no prefix. */
-export type DocsFrameworkId = 'react' | 'vue';
+export type { DocsFrameworkId };
 
 /**
- * A page is written for React unless its frontmatter says `react: false`. It
- * has a Vue version when the frontmatter has a `vue` key: `vue: true`, or an
- * object with the Vue page's own `title` / `description`.
+ * A page is written for the default framework (React) unless its frontmatter
+ * says `react: false`. It has a version for another framework when the
+ * frontmatter has that framework's key: `vue: true`, or an object with the
+ * Vue page's own `title` / `description`.
  */
 export function frontmatterHasFramework(
   frontmatter: Record<string, unknown> | undefined,
   framework: DocsFrameworkId,
 ): boolean {
-  if (framework === 'react') {
-    return frontmatter?.react !== false;
+  if (framework === DOCS_DEFAULT_FRAMEWORK) {
+    return frontmatter?.[framework] !== false;
   }
   const value = frontmatter?.[framework];
   return value != null && value !== false;
@@ -50,7 +55,8 @@ const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---/;
 /**
  * The same check on a page's source, without a YAML parser (for Node scripts
  * that only have the file): a top-level `vue:` key in the frontmatter, not set
- * to `false`. `null`: the page doesn't exist.
+ * to `false` (for the default framework: no `react: false`). `null`: the page
+ * doesn't exist.
  */
 export function pageSourceHasFramework(
   source: string | null,
@@ -62,7 +68,7 @@ export function pageSourceHasFramework(
   const frontmatter = FRONTMATTER_RE.exec(source)?.[1] ?? '';
   const match = new RegExp(`^${framework}:[ \\t]*(.*)$`, 'm').exec(frontmatter);
   if (!match) {
-    return framework === 'react';
+    return framework === DOCS_DEFAULT_FRAMEWORK;
   }
   return match[1].trim() !== 'false';
 }

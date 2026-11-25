@@ -8,6 +8,7 @@ import path from 'node:path';
 
 import { ImageResponse } from 'next/og';
 
+import { docsFrameworks } from '@www/utils/docsFrameworks';
 import { getOgCards, type OgCard } from '@www/utils/ogCards';
 
 export const dynamic = 'force-static';
@@ -30,6 +31,14 @@ const C = {
   selected: '#16243b',
   glow: 'rgba(92, 157, 255, 0.16)',
 };
+
+/** The bottom line of every card: `REACT / VUE / 0 DEPENDENCIES`. */
+const FOOTER_ITEMS = [
+  ...docsFrameworks.ids.map((framework) =>
+    docsFrameworks.label(framework).toUpperCase(),
+  ),
+  '0 DEPENDENCIES',
+];
 
 /** `['docs', 'learn', 'sorting.png']` for `docs/learn/sorting` */
 export function generateStaticParams() {
@@ -515,10 +524,10 @@ function Card({ card }: { card: OgCard }) {
         ) : null}
         {card.frameworks ? (
           <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-            {(['React', 'Vue'] as const).map((framework) =>
+            {docsFrameworks.ids.map((framework) =>
               card.frameworks!.includes(framework) ? (
                 <Chip key={framework} on>
-                  {framework.toUpperCase()}
+                  {docsFrameworks.label(framework).toUpperCase()}
                 </Chip>
               ) : null,
             )}
@@ -540,11 +549,17 @@ function Card({ card }: { card: OgCard }) {
         }}
       >
         <div style={{ display: 'flex', gap: 24 }}>
-          <span>REACT</span>
-          <span style={{ color: C.lineStrong }}>/</span>
-          <span>VUE</span>
-          <span style={{ color: C.lineStrong }}>/</span>
-          <span>0 DEPENDENCIES</span>
+          {FOOTER_ITEMS.flatMap((text, index) => {
+            const item = <span key={text}>{text}</span>;
+            return index === 0
+              ? [item]
+              : [
+                  <span key={`/${text}`} style={{ color: C.lineStrong }}>
+                    /
+                  </span>,
+                  item,
+                ];
+          })}
         </div>
         <div style={{ display: 'flex', color: C.accentText }}>
           infinite-table.com

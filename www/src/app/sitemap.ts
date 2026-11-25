@@ -4,10 +4,14 @@ import { competitors } from '@www/compare/matrix';
 import { siteContent } from '@www/content';
 import { getBlogPosts } from '@www/utils/blogUtils';
 import {
+  docsHasPage,
   getDocsPage,
   getDocsPagePaths,
 } from '@www/utils/docsFrameworkContent';
-import { docsFrameworks } from '@www/utils/docsFrameworks';
+import {
+  docsFrameworks,
+  DOCS_FRAMEWORK_HOME,
+} from '@www/utils/docsFrameworks';
 
 import { getAllTagsFromPosts, tagHref } from './blog/blogTagUtils';
 
@@ -43,29 +47,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
   add('/benchmark');
 
-  // all markdown-driven pages: docs, community, eula, privacy.
+  // all markdown-driven pages: the React docs, community, eula, privacy.
   // blog posts are added below (with dates and draft filtering), so skip them here.
   siteContent.routes.forEach((route) => {
     const path = normalizePath(route.routePath);
     if (
       path === '/404' ||
       path.startsWith('/blog') ||
-      route.frontmatter?.draft === true
+      route.frontmatter?.draft === true ||
+      // a docs page written only for other frameworks (`react: false`)
+      (docsFrameworks.frameworkOf(path) != null &&
+        !docsHasPage(path, docsFrameworks.default))
     ) {
       return;
     }
     add(path);
   });
 
-  // the Vue docs: /vue and the pages that have a Vue version, under /vue/docs
-  add('/vue');
-  getDocsPagePaths('vue').forEach((neutralPath) => {
-    // like the React pages above: drafts stay out
-    if (getDocsPage(neutralPath)?.frontmatter?.draft === true) {
-      return;
-    }
-    add(docsFrameworks.pathFor(neutralPath, 'vue'));
-  });
+  // the docs of the other frameworks: their home (/vue) and the pages that
+  // have a version for them, under their prefix (/vue/docs)
+  docsFrameworks.ids
+    .filter((framework) => framework !== docsFrameworks.default)
+    .forEach((framework) => {
+      add(DOCS_FRAMEWORK_HOME[framework]);
+      getDocsPagePaths(framework).forEach((neutralPath) => {
+        // like the React pages above: drafts stay out
+        if (getDocsPage(neutralPath)?.frontmatter?.draft === true) {
+          return;
+        }
+        add(docsFrameworks.pathFor(neutralPath, framework));
+      });
+    });
 
   const posts = getBlogPosts({ skipDrafts: true });
 

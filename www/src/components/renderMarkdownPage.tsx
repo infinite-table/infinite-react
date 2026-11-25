@@ -16,7 +16,6 @@ import snippetTransformer from '@www/utils/markdownSnippetTransformer';
 import {
   DOCS_CONTENT_DIR,
   DOCS_FENCE_DEFAULTS,
-  DOCS_VUE_SIBLINGS,
   isDocsKitFence,
 } from '@www/utils/docsKit';
 import { docsHasPage } from '@www/utils/docsFrameworkContent';
@@ -25,6 +24,10 @@ import {
   DOCS_FRAMEWORK_PACKAGE,
   type DocsFrameworkId,
 } from '@www/utils/docsFrameworks';
+import {
+  docsFramework,
+  docsFrameworkSiblings,
+} from '@www/utils/docsFrameworksRegistry';
 import markdownLinkChecker from '@www/utils/markdownLinkChecker';
 import markdownPropLinkChecker from '@www/utils/markdownPropLinkChecker';
 import remarkMilestonePlugin from '@www/components/remarkMilestone';
@@ -119,7 +122,11 @@ export async function renderMarkdownPage(options: {
           banInlineCode: true,
           staticFences: 'card',
           fenceDefaults: DOCS_FENCE_DEFAULTS,
-          siblings: framework === 'vue' ? DOCS_VUE_SIBLINGS : undefined,
+          demoSuffixes: [docsFramework(docsFrameworks.default).demoSuffix],
+          // on a Vue page, a fence naming `x.demo.tsx` / `x.snippet.tsx`
+          // shows `x.demo.vue` / `x.snippet.vue` (or `x.snippet.vue.ts`);
+          // without one, the React file with a "React only for now" notice
+          siblings: docsFrameworkSiblings(framework),
           sourceReplacements: {
             'process.env.NEXT_PUBLIC_BASE_URL': `'${env.NEXT_PUBLIC_BASE_URL}'`,
           },
