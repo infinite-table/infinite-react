@@ -794,6 +794,14 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
       height:
         typeof style.height === 'number' ? `${style.height}px` : style.height,
     };
+    const zIndex = finalStyle.zIndex;
+    if (hidden) {
+      // covered by a rowspan / colspan cell: under it. The renderer sets
+      // z-index -1 on the element, but this style binding is applied after
+      // it (at the commit of the render pass) and would put the column's
+      // z-index back, painting the empty cell over the spanning one
+      finalStyle.zIndex = -1;
+    }
 
     // what the row mouse callbacks get (same as React and Vue)
     this.mouseEnterContext = { ...formattedValueContext, rowIndex };
@@ -805,7 +813,7 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
       style: finalStyle,
       columnId: column.id,
       rowId: `${rowInfo.id}`,
-      zIndex: finalStyle.zIndex,
+      zIndex,
       contentClassName: join(
         `${InfiniteTableCellClassName}_content`,
         cssEllipsis ? cssEllipsisClassName : overflow.hidden,
