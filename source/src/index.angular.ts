@@ -79,3 +79,13 @@ export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngul
 
 // master-detail
 export { injectMasterRowInfo } from './components/DataSource/DataSourceMasterDetailContextForAngular.angular';
+
+// tree grid
+export {
+  TreeGrid,
+  TreeDataSource,
+  toTreeDataArray,
+  withSelectedLeafNodesOnly,
+} from './components/TreeGrid/TreeGridForAngular.angular';
+export type * from './components/TreeGrid/types/TreeGridProps';
+export type * from './components/TreeGrid/types/TreeDataSourceProps';

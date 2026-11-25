@@ -11,8 +11,8 @@ import { booleanInput } from '../hooks/useComponentState/angularPropsMeta';
 /**
  * The props the members below are generated from, as one object type.
  */
-export type DataSourceInputsProps<T> = MergeUnion<DataSourceProps<T>> &
-  Omit<MergeUnion<TreeDataSourceProps<T>>, keyof MergeUnion<DataSourceProps<T>>>;
+export type DataSourceInputsProps<T> = Omit<MergeUnion<DataSourceProps<T>>, 'nodesKey'> &
+  Omit<MergeUnion<TreeDataSourceProps<T>>, Exclude<keyof MergeUnion<DataSourceProps<T>>, 'nodesKey'>>;
 
 /**
  * The inputs, models and outputs of the component, generated from

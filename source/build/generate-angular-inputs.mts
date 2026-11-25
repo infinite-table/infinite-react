@@ -403,10 +403,27 @@ function generate(target: Target) {
     .join('\n\n');
 
   const merged = (typeName: string) => `MergeUnion<${typeName}${T}>`;
+  // props the main type forbids (`nodesKey?: never` in DataSourceProps) and
+  // an extra type defines (TreeDataSourceProps): the extra type's wins
+  const mainPropNames = new Set(
+    checker
+      .getPropertiesOfType(getExportedType(target.typeFile, target.typeName))
+      .map((symbol) => symbol.name),
+  );
+  const fromExtraTypes = props
+    .filter((prop) => prop.fromType !== target.typeName && mainPropNames.has(prop.name))
+    .map((prop) => `'${prop.name}'`)
+    .join(' | ');
+  const mainProps = fromExtraTypes
+    ? `Omit<${merged(target.typeName)}, ${fromExtraTypes}>`
+    : merged(target.typeName);
+  const mainKeys = fromExtraTypes
+    ? `Exclude<keyof ${merged(target.typeName)}, ${fromExtraTypes}>`
+    : `keyof ${merged(target.typeName)}`;
   const extraTypeAlias = `\n/**\n * The props the members below are generated from, as one object type.\n */\nexport type ${target.className}Props${T} = ${[
-    merged(target.typeName),
+    mainProps,
     ...(target.extraTypes ?? []).map(
-      (extra) => `Omit<${merged(extra.typeName)}, keyof ${merged(target.typeName)}>`,
+      (extra) => `Omit<${merged(extra.typeName)}, ${mainKeys}>`,
     ),
   ].join(' &\n  ')};\n`;
 

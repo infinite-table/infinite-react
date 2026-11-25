@@ -30,6 +30,7 @@ import { createDataSourceEffects } from './dataSourceEffects';
 import {
   DATA_SOURCE_PROPS_META,
   DataSourceInputs,
+  type DataSourceInputsProps,
 } from './DataSourceInputs.generated.angular';
 import { injectGetMasterDetailContext } from './DataSourceMasterDetailContextForAngular.angular';
 
@@ -38,6 +39,8 @@ import type {
   DataSourceComponentActions,
   DataSourceState,
 } from './types';
+
+const NO_PROP_OVERRIDES = {};
 
 /**
  * What a DataSource gives the components inside it (the InfiniteTable,
@@ -127,7 +130,17 @@ export class DataSource<T = any> extends DataSourceInputs<T> implements OnInit {
   private readonly managed = injectManagedDataSource(
     this,
     DATA_SOURCE_PROPS_META,
+    () => this.propOverrides(),
   );
+
+  /**
+   * Props that replace (or add to) the inputs - for subclasses:
+   * TreeDataSource defaults `nodesKey` to 'children'. Read in a reactive
+   * context, so it may read signals.
+   */
+  protected propOverrides(): Partial<DataSourceInputsProps<T>> {
+    return NO_PROP_OVERRIDES;
+  }
 
   private dataSourceApi: DataSourceApi<T> | null = null;
 

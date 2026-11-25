@@ -7,6 +7,7 @@ import {
   InjectionToken,
   Injector,
   OnInit,
+  Provider,
   Signal,
   ViewEncapsulation,
   afterNextRender,
@@ -255,38 +256,20 @@ const PORTAL_CLASS_NAME = join(
   left[0],
 );
 
-/**
- * The DataGrid. Put it inside a DataSource:
- *
- * ```html
- * <infinite-data-source primaryKey="id" [data]="data">
- *   <infinite-table [columns]="columns" [(columnOrder)]="columnOrder" />
- * </infinite-data-source>
- * ```
- *
- * The host element is the grid's root element (`.Infinite`): `class`,
- * `style` and `aria-*` on it work as on any element. The imperative api is
- * `#grid="infiniteTable"` -> `grid.api()`, or the `(ready)` output.
- */
-@Component({
-  selector: 'infinite-table',
-  exportAs: 'infiniteTable',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
-  imports: [HeadlessTable, InfiniteRender, CSSNumericVariableWatch],
-  host: {
-    ngSkipHydration: 'true',
-    '[class]': 'rootClassName()',
-    '[style]': 'rootStyle()',
-    '[attr.data-debug-id]': 'debugIdAttr()',
-  },
-  providers: [
+// The view, imports and providers of the grid: constants, because TreeGrid
+// (a subclass with its own selector) has the same ones - component
+// metadata isn't inherited.
+export const INFINITE_TABLE_IMPORTS = [HeadlessTable, InfiniteRender, CSSNumericVariableWatch];
+
+// a TreeGrid provides itself as InfiniteTable
+export const INFINITE_TABLE_PROVIDERS: Provider[] = [
     {
       provide: INFINITE_TABLE,
       useFactory: () => inject(InfiniteTable).contextValue,
     },
-  ],
-  template: `
+];
+
+export const INFINITE_TABLE_TEMPLATE = `
     @if (initialized) {
       @let s = state();
       <div #body [class]="bodyClassName">
@@ -332,7 +315,35 @@ const PORTAL_CLASS_NAME = join(
         />
       }
     }
-  `,
+  `;
+
+/**
+ * The DataGrid. Put it inside a DataSource:
+ *
+ * ```html
+ * <infinite-data-source primaryKey="id" [data]="data">
+ *   <infinite-table [columns]="columns" [(columnOrder)]="columnOrder" />
+ * </infinite-data-source>
+ * ```
+ *
+ * The host element is the grid's root element (`.Infinite`): `class`,
+ * `style` and `aria-*` on it work as on any element. The imperative api is
+ * `#grid="infiniteTable"` -> `grid.api()`, or the `(ready)` output.
+ */
+@Component({
+  selector: 'infinite-table',
+  exportAs: 'infiniteTable',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  imports: INFINITE_TABLE_IMPORTS,
+  host: {
+    ngSkipHydration: 'true',
+    '[class]': 'rootClassName()',
+    '[style]': 'rootStyle()',
+    '[attr.data-debug-id]': 'debugIdAttr()',
+  },
+  providers: INFINITE_TABLE_PROVIDERS,
+  template: INFINITE_TABLE_TEMPLATE,
 })
 export class InfiniteTable<T = any>
   extends InfiniteTableInputs<T>
