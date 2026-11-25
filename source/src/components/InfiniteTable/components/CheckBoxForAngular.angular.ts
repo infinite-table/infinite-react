@@ -22,9 +22,10 @@ import type { HTMLProps } from '../../types/FrameworkTypes';
  * Angular sibling of InfiniteCheckBox: the host IS the input
  * (`<input infiniteCheckBox>`, same `input.InfiniteCheckBox` DOM as React
  * and Vue). `checked` is controlled when bound (null = indeterminate),
- * `defaultChecked` uncontrolled; every click emits `(change)` and calls the
- * `[onChange]` function, which is the contract of `components.CheckBox`
- * overrides.
+ * `defaultChecked` uncontrolled (`[(checked)]` binds both ways); every
+ * click emits `(checkedChange)` - not `(change)`, the native event of the
+ * input - and calls the `[onChange]` function, which is the contract of
+ * `components.CheckBox` overrides.
  */
 @Component({
   selector: 'input[infiniteCheckBox]',
@@ -43,7 +44,7 @@ export class InfiniteCheckBox {
   readonly disabled = input<boolean>();
   readonly domProps = input<HTMLProps<HTMLElement>>();
   readonly onChange = input<(checked: InfiniteCheckBoxPropChecked) => void>();
-  readonly change = output<InfiniteCheckBoxPropChecked>();
+  readonly checkedChange = output<InfiniteCheckBoxPropChecked>();
 
   private readonly input =
     inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
@@ -67,8 +68,8 @@ export class InfiniteCheckBox {
   });
 
   constructor() {
-    // a native listener, not a host `(change)` one: that would also be
-    // subscribed to the `change` output of this component, and call itself
+    // a native listener: a host `(change)` listener would also catch an
+    // output of the same name, and the clicks fire often
     const onChange = () => this.onInputChange();
     this.input.addEventListener('change', onChange);
     inject(DestroyRef).onDestroy(() =>
@@ -105,7 +106,7 @@ export class InfiniteCheckBox {
       this.localChecked.set(newChecked);
     }
     this.onChange()?.(newChecked);
-    this.change.emit(newChecked);
+    this.checkedChange.emit(newChecked);
     // the controlled value may stay the same: put it back on the input
     queueMicrotask(() => {
       const checked = untracked(this.currentChecked);

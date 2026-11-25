@@ -24,7 +24,8 @@ const THIS_ICON = `${InfiniteIconClassName}-expand-collapse`;
  * Angular sibling of ExpandCollapseIcon - the host IS the svg
  * (`<svg infiniteExpandCollapseIcon>`), same data attributes and class names
  * as React and Vue. `expanded` is controlled when bound, `defaultExpanded`
- * uncontrolled; a click emits `(change)` and calls `[onChange]`.
+ * uncontrolled (`[(expanded)]` binds both ways); a click emits
+ * `(expandedChange)` and calls `[onChange]`.
  */
 @Component({
   selector: 'svg[infiniteExpandCollapseIcon]',
@@ -53,7 +54,7 @@ export class ExpandCollapseIcon {
   readonly style = input<CSSProperties | null>();
   readonly className = input<string>();
   readonly onChange = input<(expanded: boolean) => void>();
-  readonly change = output<boolean>();
+  readonly expandedChange = output<boolean>();
 
   protected readonly path = expandCollapseIconPath;
 
@@ -98,7 +99,7 @@ export class ExpandCollapseIcon {
     }
     const newExpanded = !this.isExpanded();
     this.onChange()?.(newExpanded);
-    this.change.emit(newExpanded);
+    this.expandedChange.emit(newExpanded);
     if (this.expanded() === undefined) {
       this.localExpanded.set(newExpanded);
     }
