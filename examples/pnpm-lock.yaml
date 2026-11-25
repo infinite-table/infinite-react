@@ -99,8 +99,8 @@ importers:
         specifier: ^1.4.2
         version: 1.6.0
       typescript:
-        specifier: 5.7.2
-        version: 5.7.2
+        specifier: 6.0.3
+        version: 6.0.3
     devDependencies:
       '@playwright/test':
         specifier: 1.52.0
@@ -125,7 +125,7 @@ importers:
         version: 2.3.22(babel-plugin-macros@3.1.0)(webpack@5.102.0)
       '@vitejs/plugin-vue':
         specifier: ^6.0.7
-        version: 6.0.7(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@5.7.2))
+        version: 6.0.7(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))
       babel-plugin-dev-expression:
         specifier: ^0.2.2
         version: 0.2.3(@babel/core@7.28.4)
@@ -170,10 +170,10 @@ importers:
         version: 8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0)
       vue:
         specifier: ^3.5.39
-        version: 3.5.39(typescript@5.7.2)
+        version: 3.5.39(typescript@6.0.3)
       vue-router:
         specifier: ^5.1.0
-        version: 5.1.0(@vue/compiler-sfc@3.5.39)(rolldown@1.1.5)(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@5.7.2))(webpack@5.102.0)
+        version: 5.1.0(@vue/compiler-sfc@3.5.39)(rolldown@1.1.5)(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))(webpack@5.102.0)
 
 packages:
 
@@ -2850,8 +2850,8 @@ packages:
     resolution: {integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==}
     engines: {node: '>=4'}
 
-  typescript@5.7.2:
-    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -4197,13 +4197,13 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  '@vitejs/plugin-vue@6.0.7(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@5.7.2))':
+  '@vitejs/plugin-vue@6.0.7(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0)
-      vue: 3.5.39(typescript@5.7.2)
+      vue: 3.5.39(typescript@6.0.3)
 
-  '@vue-macros/common@3.1.2(vue@3.5.39(typescript@5.7.2))':
+  '@vue-macros/common@3.1.2(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       '@vue/compiler-sfc': 3.5.39
       ast-kit: 2.2.0
@@ -4211,7 +4211,7 @@ snapshots:
       magic-string-ast: 1.0.3
       unplugin-utils: 0.3.2
     optionalDependencies:
-      vue: 3.5.39(typescript@5.7.2)
+      vue: 3.5.39(typescript@6.0.3)
 
   '@vue/compiler-core@3.5.39':
     dependencies:
@@ -4272,11 +4272,11 @@ snapshots:
       '@vue/shared': 3.5.39
       csstype: 3.2.3
 
-  '@vue/server-renderer@3.5.39(vue@3.5.39(typescript@5.7.2))':
+  '@vue/server-renderer@3.5.39(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.39
       '@vue/shared': 3.5.39
-      vue: 3.5.39(typescript@5.7.2)
+      vue: 3.5.39(typescript@6.0.3)
 
   '@vue/shared@3.5.39': {}
 
@@ -5660,7 +5660,7 @@ snapshots:
 
   type-detect@4.0.8: {}
 
-  typescript@5.7.2: {}
+  typescript@6.0.3: {}
 
   ufo@1.6.4: {}
 
@@ -5733,10 +5733,10 @@ snapshots:
       terser: 5.44.0
       yaml: 2.9.0
 
-  vue-router@5.1.0(@vue/compiler-sfc@3.5.39)(rolldown@1.1.5)(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@5.7.2))(webpack@5.102.0):
+  vue-router@5.1.0(@vue/compiler-sfc@3.5.39)(rolldown@1.1.5)(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))(webpack@5.102.0):
     dependencies:
       '@babel/generator': 8.0.0
-      '@vue-macros/common': 3.1.2(vue@3.5.39(typescript@5.7.2))
+      '@vue-macros/common': 3.1.2(vue@3.5.39(typescript@6.0.3))
       '@vue/devtools-api': 8.1.5
       ast-walker-scope: 0.9.0
       chokidar: 5.0.0
@@ -5751,7 +5751,7 @@ snapshots:
       tinyglobby: 0.2.17
       unplugin: 3.3.0(rolldown@1.1.5)(vite@8.1.4(@types/node@22.18.8)(jiti@2.6.1)(terser@5.44.0)(yaml@2.9.0))(webpack@5.102.0)
       unplugin-utils: 0.3.2
-      vue: 3.5.39(typescript@5.7.2)
+      vue: 3.5.39(typescript@6.0.3)
       yaml: 2.9.0
     optionalDependencies:
       '@vue/compiler-sfc': 3.5.39
@@ -5766,15 +5766,15 @@ snapshots:
       - unloader
       - webpack
 
-  vue@3.5.39(typescript@5.7.2):
+  vue@3.5.39(typescript@6.0.3):
     dependencies:
       '@vue/compiler-dom': 3.5.39
       '@vue/compiler-sfc': 3.5.39
       '@vue/runtime-dom': 3.5.39
-      '@vue/server-renderer': 3.5.39(vue@3.5.39(typescript@5.7.2))
+      '@vue/server-renderer': 3.5.39(vue@3.5.39(typescript@6.0.3))
       '@vue/shared': 3.5.39
     optionalDependencies:
-      typescript: 5.7.2
+      typescript: 6.0.3
 
   watchpack@2.4.4:
     dependencies:
