@@ -2,6 +2,7 @@
 title: Infinite Table Documentation
 description: Developer Documentation for Infinite Table, your go-to React DataGrid component to handle huge amounts of data
 vue: true
+angular: true
 ---
 
 <HomepageHero />
@@ -17,6 +18,12 @@ Infinite Table is a React DataGrid component for displaying virtualized tabular 
 <FrameworkContent framework="vue">
 
 Infinite Table is a Vue DataGrid component for displaying virtualized tabular data.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Infinite Table is an Angular DataGrid component for displaying virtualized tabular data.
 
 </FrameworkContent>
 
@@ -106,8 +113,23 @@ Check out our end-to-end tests in GitHub
 
 It ships with both a **light** and a **dark** theme - all you have to do is import the CSS file from the package.
 
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="themable"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+In an Angular application, it's a global stylesheet - add it to the `styles` of the build options in `angular.json`, or import it at the top of `src/styles.css`:
+
+```css
+/* this file includes both the light and the dark themes */
+@import '@infinite-table/infinite-angular/index.css';
+```
+
+</FrameworkContent>
 
 <HeroCards>
 <YouWillLearnCard title="Theming with CSS Variables" path="/docs/learn/theming#css-variables">
