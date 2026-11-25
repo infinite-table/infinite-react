@@ -99,13 +99,17 @@ export async function renderMarkdownPage(options: {
                 },
         }),
         // /docs/x → /vue/docs/x on a Vue page; the React page (marked as a
-        // fallback) when there is no Vue version yet
+        // fallback) when there is no Vue version yet - also for relative links
         remarkFrameworkLinks({
           frameworks: docsFrameworks,
           framework,
           hasPage: docsHasPage,
           jsxAttributes: { YouWillLearnCard: ['path'] },
           file: fileInfo.fileAbsolutePath,
+          // relative links (`[root API](api)`) whose page has no version in
+          // this framework go to the React page too (the URLs have no
+          // trailing slash, as the browser resolves them)
+          pagePath: fileInfo.routePath.replace(/\/$/, ''),
         }),
         remarkMilestonePlugin,
         markdownPropLinkChecker({
