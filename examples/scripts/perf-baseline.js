@@ -59,12 +59,16 @@ function printBaselines(baselines, title) {
   console.log(`\n${title}:\n`);
 
   for (const [name, baseline] of entries) {
-    // Extract just the test name part after the colon
+    // `[project:]tests/path:title` - React keys have no project prefix
+    // (see formatTestName in perfUtils.ts)
     const testNameParts = name.split(':');
+    const project = testNameParts[0].startsWith('tests/')
+      ? null
+      : testNameParts.shift();
     const shortPath = testNameParts[0].replace('tests/', '');
     const testTitle = testNameParts.slice(1).join(':');
 
-    console.log(`📊 ${shortPath}`);
+    console.log(`📊 ${project ? `[${project}] ` : ''}${shortPath}`);
     console.log(`   "${testTitle}"`);
     console.log(`   ┌──────────────────────────────────┐`);
     console.log(

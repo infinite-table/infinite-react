@@ -38,12 +38,15 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_TEST_RUNNER_PORT': JSON.stringify(
         process.env.TEST_RUNNER_PORT || String(getPort('testRunner')),
       ),
-      // the React <-> Vue links of the test pages (src/test-index)
+      // the React / Vue / Angular links of the test pages (src/test-index)
       'process.env.NEXT_PUBLIC_EXAMPLES_PORT': JSON.stringify(
         String(getPort('examples')),
       ),
       'process.env.NEXT_PUBLIC_EXAMPLES_VUE_PORT': JSON.stringify(
         String(getPort('examplesVue')),
+      ),
+      'process.env.NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT': JSON.stringify(
+        String(getPort('examplesAngular')),
       ),
       'import.meta.env.VITE_TEST_PROJECT': JSON.stringify('vue'),
     },

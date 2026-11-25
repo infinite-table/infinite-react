@@ -2,8 +2,9 @@
 /**
  * Re-run the sibling Playwright spec when a test page or spec changes.
  *
- *   node scripts/test-watch.js           # --project=react, watches .page.tsx
- *   node scripts/test-watch.js --vue     # --project=vue, watches .page.vue
+ *   node scripts/test-watch.js            # --project=react, watches .page.tsx
+ *   node scripts/test-watch.js --vue      # --project=vue, watches .page.vue
+ *   node scripts/test-watch.js --angular  # --project=angular, watches .page.angular.ts
  *
  * Watches the tests directory as a folder (not two globs) so Cursor/VS Code
  * atomic saves still fire change events.
@@ -16,9 +17,13 @@ const EXAMPLES_ROOT = path.resolve(__dirname, '..');
 const WATCH_DIR = path.join(EXAMPLES_ROOT, 'src', 'pages');
 const DEBOUNCE_MS = 200;
 
-const vue = process.argv.includes('--vue');
-const project = vue ? 'vue' : 'react';
-const pageExt = vue ? '.page.vue' : '.page.tsx';
+const { PAGE_EXTENSIONS } = require('./test-specs.cjs');
+const project = process.argv.includes('--angular')
+  ? 'angular'
+  : process.argv.includes('--vue')
+  ? 'vue'
+  : 'react';
+const pageExt = PAGE_EXTENSIONS[project];
 
 function toSpec(filePath) {
   if (filePath.endsWith('.spec.ts')) {

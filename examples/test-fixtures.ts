@@ -42,13 +42,19 @@ type TestExtras = {
 
 export type TestPage = Page & TestExtras;
 
+/**
+ * The page sibling of a spec, per Playwright project: the `vue` and
+ * `angular` projects run the same specs against the Vue and Angular
+ * examples apps (.page.vue, .page.angular.ts).
+ */
+const { PAGE_EXTENSIONS } = require('./scripts/test-specs.cjs') as {
+  PAGE_EXTENSIONS: Record<string, string>;
+};
+
 function getFileInfoFromTestInfo(testInfo: TestInfo) {
   const [_, __, ...rest] = testInfo.titlePath[0].split(pathSep);
 
-  // the `vue` Playwright project runs the same specs against the Vue
-  // examples app - the page sibling is the .page.vue file
-  const pageExtension =
-    testInfo.project.name === 'vue' ? '.page.vue' : '.page.tsx';
+  const pageExtension = PAGE_EXTENSIONS[testInfo.project.name] ?? '.page.tsx';
 
   const fileName = rest.join(pathSep).replace('.spec.ts', '');
   const filePath = path.resolve(
@@ -94,17 +100,19 @@ export const test = base.extend<
         title: testInfo.title,
         filePathNoExt,
         browser,
+        project: testInfo.project.name,
       }),
     );
   },
   //@ts-ignore
   page: async ({ baseURL, page }, use, testInfo) => {
-    const { fileName, exists } = getFileInfoFromTestInfo(testInfo);
+    const { fileName, exists, pageExtension } =
+      getFileInfoFromTestInfo(testInfo);
 
-    // parity gate: specs without a .page.vue sibling yet are skipped on the
-    // vue project instead of failing
-    if (testInfo.project.name === 'vue' && !exists) {
-      testInfo.skip(true, `no .page.vue sibling for ${fileName}`);
+    // parity gate: specs without a .page.vue / .page.angular.ts sibling yet
+    // are skipped on the vue / angular project instead of failing
+    if (testInfo.project.name !== 'react' && !exists) {
+      testInfo.skip(true, `no ${pageExtension} sibling for ${fileName}`);
     }
 
     const url = `${baseURL}${fileName}`;
