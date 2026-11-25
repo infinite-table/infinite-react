@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules"],
+  // Angular siblings are checked by tsconfig.angular.json (ngc) only
+  "exclude": ["node_modules", "src/**/*.angular.ts"],
   "compilerOptions": {
     "noEmit": true,
     "isolatedModules": false,

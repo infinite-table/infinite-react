@@ -436,7 +436,11 @@ export function buildManagedComponent<
     return { contextValue, ContextComponent: Context };
   }
 
-  const ManagedComponentContextProvider = React.memo(function CSR(
+  // annotated so the public type doesn't depend on how the TypeScript version
+  // prints the inferred React.memo type
+  const ManagedComponentContextProvider: React.NamedExoticComponent<
+    T_PROPS & { children?: React.ReactNode }
+  > = React.memo(function CSR(
     props: T_PROPS & { children?: React.ReactNode },
   ) {
     const { contextValue, ContextComponent } = useManagedComponent(props);

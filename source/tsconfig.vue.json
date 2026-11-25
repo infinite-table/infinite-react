@@ -4,6 +4,8 @@
     // sibling-file resolution: `./Foo` resolves Foo.vue.tsx/.vue.ts before Foo.tsx/.ts.
     // Keep in sync with framework-resolve-plugin.ts (the esbuild counterpart).
     "moduleSuffixes": [".vue", ""],
+    // no jest: www/tsconfig.vue.json extends this file and has no @types/jest
+    "types": ["node"],
     "noEmit": true
   },
   // Graph-based checking: roots are the Vue siblings only; everything they

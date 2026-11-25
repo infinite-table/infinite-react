@@ -56,9 +56,12 @@ const program = ts.createProgram([consumer], {
   lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],
   // no ambient @types packages: @types/react must not be picked up
   types: [],
-  baseUrl: __dirname,
+  // absolute: without a tsconfig (and without the deprecated baseUrl) there
+  // is no directory to resolve relative paths against
   paths: {
-    '@infinite-table/infinite-vue': ['./dist-vue/index.d.ts'],
+    '@infinite-table/infinite-vue': [
+      path.resolve(__dirname, 'dist-vue', 'index.d.ts'),
+    ],
   },
 });
 
