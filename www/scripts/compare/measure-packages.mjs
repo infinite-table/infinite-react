@@ -33,15 +33,35 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
+
 const ESBUILD_VERSION = '0.25.10';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** The frameworks the docs are written for (www/frameworks.json). */
+const docsFrameworks = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, '../../frameworks.json'), 'utf8'),
+);
 const OUTPUT_FILE = path.resolve(
   __dirname,
   '../../src/compare/package-stats.json',
 );
 
-const FRAMEWORK_PACKAGES = new Set(['react', 'react-dom', 'vue']);
+/**
+ * Per framework (the `framework` of a target): its own packages, where the
+ * dependency walk stops, and the imports kept out of the bundle.
+ */
+const FRAMEWORK_RUNTIMES = {
+  react: {
+    packages: ['react', 'react-dom'],
+    external: ['react', 'react-dom', 'react/jsx-runtime', 'react-dom/client'],
+  },
+  vue: { packages: ['vue'], external: ['vue'] },
+};
+
+const FRAMEWORK_PACKAGES = new Set(
+  Object.values(FRAMEWORK_RUNTIMES).flatMap((runtime) => runtime.packages),
+);
 
 /**
  * Every distinct package reachable from `roots` in the npm lockfile, without
@@ -496,10 +516,11 @@ async function measure(target, root, esbuildPath) {
 
   fs.writeFileSync(path.join(dir, 'entry.jsx'), target.entry);
   const { build } = await import(esbuildPath);
-  const external =
-    target.framework === 'vue'
-      ? ['vue']
-      : ['react', 'react-dom', 'react/jsx-runtime', 'react-dom/client'];
+  const runtime = FRAMEWORK_RUNTIMES[target.framework];
+  if (!runtime) {
+    throw new Error(`${target.id}: no FRAMEWORK_RUNTIMES entry for "${target.framework}"`);
+  }
+  const external = runtime.external;
   const outdir = path.join(dir, 'out');
   await build({
     absWorkingDir: dir,
@@ -557,7 +578,24 @@ async function measure(target, root, esbuildPath) {
   };
 }
 
+/** Infinite Table is measured in every framework the docs are written for (www/frameworks.json). */
+function checkInfiniteTargets() {
+  for (const [id, { label, package: packageName }] of Object.entries(
+    docsFrameworks.frameworks,
+  )) {
+    const target = TARGETS.find(
+      (t) => t.framework === id && t.packages.includes(packageName),
+    );
+    if (!target || !FRAMEWORK_RUNTIMES[id]) {
+      console.warn(
+        `warning: Infinite Table for ${label} (${packageName}) has no target / FRAMEWORK_RUNTIMES entry here`,
+      );
+    }
+  }
+}
+
 async function main() {
+  checkInfiniteTargets();
   const only = process.argv.slice(2);
   const targets = only.length
     ? TARGETS.filter((t) => only.includes(t.id))

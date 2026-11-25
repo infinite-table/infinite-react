@@ -195,7 +195,9 @@ body > .dk-demo-overlay {
 /* a live demo's framework (data-framework, set by docs-kit), as an icon
    before its title: the React icon on a React-only demo of a Vue page.
    A demo with no title shows its description instead, so the icon goes
-   before the description's first line */
+   before the description's first line.
+   One rule per framework of www/frameworks.json (light and dark), with its
+   icons in public/icons/frameworks/<id>-light.svg and <id>-dark.svg */
 .dk-demo[data-framework] .dk-demo-title::before,
 .dk-demo[data-framework]:not(:has(.dk-demo-title))
   .dk-demo-description

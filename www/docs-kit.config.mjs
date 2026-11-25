@@ -6,6 +6,10 @@
 // A sibling `x.demo.vue` is the Vue version of `x.demo.tsx`: those are built
 // into public/gen/demos/_vue, against `@infinite-table/infinite-vue` (the Vue
 // entry of the same source tree).
+//
+// The frameworks, their packages, demo suffixes and folders come from
+// www/frameworks.json; what only this build knows about a framework (its
+// library entry, its bootstrap) is in FRAMEWORK_BUILDS below.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,8 +18,14 @@ import nextEnv from '@next/env';
 
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
+import { importDocsKit } from './scripts/docs-kit-import.mjs';
 import { DOCS_FENCE_DEFAULTS } from './src/utils/docsKit.ts';
 import { pageSourceHasFramework } from './src/utils/docsFrameworkPages.ts';
+import {
+  DOCS_DEFAULT_FRAMEWORK,
+  DOCS_FRAMEWORK_IDS,
+  docsFramework,
+} from './src/utils/docsFrameworksRegistry.ts';
 
 // the docs-kit CLI isn't Next, so it doesn't read .env* (the license key lives in .env.local)
 nextEnv.loadEnvConfig(
@@ -85,33 +95,144 @@ const forkPrelude = (packageName) =>
     "document.documentElement.classList.add('infinite-theme-mode--dark');",
   ].join('\n');
 
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+
+/**
+ * What the demo build of each framework of www/frameworks.json needs beyond
+ * the registry: the library entry in ../source, and the settings only that
+ * framework has.
+ */
+const FRAMEWORK_BUILDS = {
+  react: {
+    entry: '../source/src/index.tsx',
+    bootstrap: 'docs-kit.bootstrap.ts',
+    fork: {
+      variants: [
+        {
+          // `*-tailwind.demo.tsx`: the same Tailwind setup as in the docs
+          // (docs-kit.bootstrap.ts), in the forked sandbox's page
+          match: '-tailwind\\.demo\\.tsx$',
+          indexHtmlHead: [
+            `<style>${TAILWIND_LAYER_ORDER}</style>`,
+            `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@${TAILWIND_BROWSER_VERSION}"></script>`,
+            `<style type="text/tailwindcss">\n${TAILWIND_STYLE}</style>`,
+          ].join('\n'),
+        },
+      ],
+    },
+  },
+  vue: {
+    entry: '../source/src/index.vue.tsx',
+    libraries: {
+      // The Vue home page hero (content/home/vue-hero.demo.vue):
+      // - its tick worker is an entry of the import map, so the demo starts
+      //   it with `new Worker(import.meta.resolve('hero-tick-worker'))`
+      'hero-tick-worker': {
+        entry: 'src/components/hero/data/tick.worker.ts',
+      },
+      // - the scripted cursor is the kit's own, without its React
+      //   components (the package entry exports those too)
+      '@thedatagrid/docs-kit/showcase': {
+        entry: SHOWCASE_SCRIPTED,
+      },
+    },
+    // sets the global license key - the Vue build starts without the React bootstrap
+    bootstrap: 'docs-kit.bootstrap.vue.ts',
+  },
+};
+
+// docs-kit decides where a framework's demos fork to: the registry says the same
+const { FORK_TARGETS } = await importDocsKit('fork');
+for (const id of DOCS_FRAMEWORK_IDS) {
+  if (!FRAMEWORK_BUILDS[id]) {
+    throw new Error(`docs-kit.config.mjs: no FRAMEWORK_BUILDS entry for "${id}"`);
+  }
+  if (FORK_TARGETS[id]?.id !== docsFramework(id).fork) {
+    throw new Error(
+      `www/frameworks.json: "${id}" forks to ${FORK_TARGETS[id]?.id ?? 'nowhere'} in docs-kit, not ${docsFramework(id).fork}`,
+    );
+  }
+}
+
+/**
+ * The part of the docs-kit config that is per framework: the library (from
+ * source) and its themes, the demo suffix, the stubbed CSS import, the fork
+ * dependencies. Top level for React, under `frameworks` for the others.
+ */
+function frameworkBuild(id) {
+  const { package: packageName, demoSuffix, prefix } = docsFramework(id);
+  const build = FRAMEWORK_BUILDS[id];
+  return {
+    demoSuffix,
+    libraries: {
+      [packageName]: {
+        entry: build.entry,
+        plugins: () => [frameworkResolvePlugin(id), vanillaConfig],
+        watch: [SOURCE_DIR],
+      },
+      // `import '@infinite-table/infinite-react/theme/<name>.css'` in a demo:
+      // the themes are built from source as well. Their CSS is linked in every
+      // demo, which is fine: a theme only applies under its
+      // `infinite-theme-name--<name>` class. Every package ships the same
+      // theme/<name>.css.
+      ...Object.fromEntries(
+        THEMES.map((theme) => [
+          `${packageName}/theme/${theme}.css`,
+          { entry: `../source/src/generate-theme-${theme}.ts` },
+        ]),
+      ),
+      ...build.libraries,
+    },
+    // the library CSS comes from the vanilla-extract build above
+    stubImports: [new RegExp(`^${escapeRegExp(packageName)}/index\\.css$`)],
+    bootstrap: build.bootstrap,
+    // a Vue demo opened on its own links back to the Vue page, when there is
+    // one (React: the default, the page next to the demo)
+    ...(id === DOCS_DEFAULT_FRAMEWORK
+      ? null
+      : {
+          routeForPage: (pagePath) => {
+            const pageFile = path.join(
+              import.meta.dirname,
+              'content',
+              `${pagePath}.page.md`,
+            );
+            const source = fs.existsSync(pageFile)
+              ? fs.readFileSync(pageFile, 'utf8')
+              : null;
+            return pageSourceHasFramework(source, id)
+              ? `${prefix}/${pagePath}`.replace(/\/index$/, '')
+              : null;
+          },
+        }),
+    // the packages are versioned and published together
+    fork: {
+      dependencies: { [packageName]: INFINITE_VERSION },
+      entryPrelude: forkPrelude(packageName),
+      styles: FORK_STYLES,
+      ...build.fork,
+    },
+  };
+}
+
+const DEMO_OUT_DIR = docsFramework(DOCS_DEFAULT_FRAMEWORK).demoOutDir;
+
+const { demoSuffix, libraries, stubImports, bootstrap, fork } =
+  frameworkBuild(DOCS_DEFAULT_FRAMEWORK);
+
 /** @type {import('@thedatagrid/docs-kit/demos').DocsKitConfig} */
 export default {
   contentDir: 'content',
-  outDir: 'public/gen/demos',
-  urlRoot: '/gen/demos',
+  // the other frameworks build into <outDir>/_<id> (public/gen/demos/_vue)
+  outDir: DEMO_OUT_DIR,
+  urlRoot: DEMO_OUT_DIR.replace(/^public/, ''),
   // card anchors are #demo-<title>, so they never clash with heading ids
   anchorPrefix: DEMO_ANCHOR_PREFIX,
   fenceDefaults: DOCS_FENCE_DEFAULTS,
-  libraries: {
-    '@infinite-table/infinite-react': {
-      entry: '../source/src/index.tsx',
-      plugins: () => [frameworkResolvePlugin('react'), vanillaConfig],
-      watch: [SOURCE_DIR],
-    },
-    // `import '@infinite-table/infinite-react/theme/<name>.css'` in a demo:
-    // the themes are built from source as well. Their CSS is linked in every
-    // demo, which is fine: a theme only applies under its
-    // `infinite-theme-name--<name>` class.
-    ...Object.fromEntries(
-      THEMES.map((theme) => [
-        `@infinite-table/infinite-react/theme/${theme}.css`,
-        { entry: `../source/src/generate-theme-${theme}.ts` },
-      ]),
-    ),
-  },
-  // the library CSS comes from the vanilla-extract build above
-  stubImports: [/^@infinite-table\/infinite-react\/index\.css$/],
+  framework: DOCS_DEFAULT_FRAMEWORK,
+  demoSuffix,
+  libraries,
+  stubImports,
   define: {
     'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify(BASE_URL),
     __DEV__: 'false',
@@ -131,7 +252,7 @@ export default {
   sourceReplacements: {
     'process.env.NEXT_PUBLIC_BASE_URL': `'${BASE_URL}'`,
   },
-  bootstrap: 'docs-kit.bootstrap.ts',
+  bootstrap,
   defaultTheme: 'dark',
   themeClasses: {
     dark: ['infinite-theme-mode--dark'],
@@ -141,73 +262,10 @@ export default {
     body { background: var(--infinite-background); color: var(--infinite-cell-color); }
     #root > .Infinite, .Infinite { flex: 1; }
   `,
-  fork: {
-    dependencies: { '@infinite-table/infinite-react': INFINITE_VERSION },
-    entryPrelude: forkPrelude('@infinite-table/infinite-react'),
-    styles: FORK_STYLES,
-    variants: [
-      {
-        // `*-tailwind.demo.tsx`: the same Tailwind setup as in the docs
-        // (docs-kit.bootstrap.ts), in the forked sandbox's page
-        match: '-tailwind\\.demo\\.tsx$',
-        indexHtmlHead: [
-          `<style>${TAILWIND_LAYER_ORDER}</style>`,
-          `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@${TAILWIND_BROWSER_VERSION}"></script>`,
-          `<style type="text/tailwindcss">\n${TAILWIND_STYLE}</style>`,
-        ].join('\n'),
-      },
-    ],
-  },
-  frameworks: {
-    vue: {
-      libraries: {
-        '@infinite-table/infinite-vue': {
-          entry: '../source/src/index.vue.tsx',
-          plugins: () => [frameworkResolvePlugin('vue'), vanillaConfig],
-          watch: [SOURCE_DIR],
-        },
-        // the themes, as for React: the Vue package ships the same theme/<name>.css
-        ...Object.fromEntries(
-          THEMES.map((theme) => [
-            `@infinite-table/infinite-vue/theme/${theme}.css`,
-            { entry: `../source/src/generate-theme-${theme}.ts` },
-          ]),
-        ),
-        // The Vue home page hero (content/home/vue-hero.demo.vue):
-        // - its tick worker is an entry of the import map, so the demo starts
-        //   it with `new Worker(import.meta.resolve('hero-tick-worker'))`
-        'hero-tick-worker': {
-          entry: 'src/components/hero/data/tick.worker.ts',
-        },
-        // - the scripted cursor is the kit's own, without its React
-        //   components (the package entry exports those too)
-        '@thedatagrid/docs-kit/showcase': {
-          entry: SHOWCASE_SCRIPTED,
-        },
-      },
-      stubImports: [/^@infinite-table\/infinite-vue\/index\.css$/],
-      // sets the global license key - the Vue build starts without the React bootstrap
-      bootstrap: 'docs-kit.bootstrap.vue.ts',
-      // a Vue demo opened on its own links back to the Vue page, when there is one
-      routeForPage: (pagePath) => {
-        const pageFile = path.join(
-          import.meta.dirname,
-          'content',
-          `${pagePath}.page.md`,
-        );
-        const source = fs.existsSync(pageFile)
-          ? fs.readFileSync(pageFile, 'utf8')
-          : null;
-        return pageSourceHasFramework(source, 'vue')
-          ? `/vue/${pagePath}`.replace(/\/index$/, '')
-          : null;
-      },
-      // the React and Vue packages are versioned and published together
-      fork: {
-        dependencies: { '@infinite-table/infinite-vue': INFINITE_VERSION },
-        entryPrelude: forkPrelude('@infinite-table/infinite-vue'),
-        styles: FORK_STYLES,
-      },
-    },
-  },
+  fork,
+  frameworks: Object.fromEntries(
+    DOCS_FRAMEWORK_IDS.filter((id) => id !== DOCS_DEFAULT_FRAMEWORK).map(
+      (id) => [id, frameworkBuild(id)],
+    ),
+  ),
 };
