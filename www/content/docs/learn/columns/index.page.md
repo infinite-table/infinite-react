@@ -58,7 +58,7 @@ The same goes for the other props that are objects, arrays or functions: don't w
 
 It's very important to remember you should not pass a different reference of an input on each change detection. `<infinite-table />` is optimized to only re-render when its inputs change - so if you give it new objects every time, you will get a performance penalty.
 
-Define the columns as a field of your component (or a module-level `const`) - or as a `signal`, when they change - and bind them with `[columns]="columns"`. Don't bind the result of a getter or of a method call that creates a new object, and don't write object or array literals inline in the template.
+Define the columns as a field of your component (or a module-level `const`) - or as a `signal`, when they change - and bind them with `[columns]="columns"`. Don't bind a getter or a method call that creates a new object every time Angular checks the template.
 
 </Note>
 
