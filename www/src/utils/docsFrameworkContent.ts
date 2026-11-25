@@ -45,28 +45,39 @@ export function getDocsPagePaths(framework: DocsFrameworkId): string[] {
 }
 
 /**
- * What the client components get (the switcher, the banner): the list of Vue
- * pages. React has every page, so it needs no list - unless a page opts out
- * with `react: false`.
+ * What the client components get (the switcher, the banner): the list of
+ * pages of each framework other than React. React has every page, so it needs
+ * no list - unless a page opts out with `react: false`.
  */
 export function getDocsFrameworkPages(): DocsFrameworkPages {
-  const pages: DocsFrameworkPages = { vue: getDocsPagePaths('vue') };
-  const react = getDocsPagePaths('react');
-  if (react.length !== docsPages.size) {
-    pages.react = react;
+  const pages: DocsFrameworkPages = {};
+  for (const framework of docsFrameworks.ids) {
+    const paths = getDocsPagePaths(framework);
+    if (
+      framework !== docsFrameworks.default ||
+      paths.length !== docsPages.size
+    ) {
+      pages[framework] = paths;
+    }
   }
   return pages;
 }
 
+/** The default framework's name as a word: `React` (not `ReactDOM`). */
+const DEFAULT_LABEL_RE = new RegExp(
+  `\\b${docsFrameworks.label(docsFrameworks.default)}\\b`,
+  'g',
+);
+
 /** `Vue DataGrid …` instead of `React DataGrid …`, and the Vue package name. */
 export function textForFramework(text: string, framework: DocsFrameworkId) {
-  if (framework === 'react') {
+  if (framework === docsFrameworks.default) {
     return text;
   }
   return text
-    .split(DOCS_FRAMEWORK_PACKAGE.react)
+    .split(DOCS_FRAMEWORK_PACKAGE[docsFrameworks.default])
     .join(DOCS_FRAMEWORK_PACKAGE[framework])
-    .replace(/\bReact\b/g, docsFrameworks.label(framework));
+    .replace(DEFAULT_LABEL_RE, docsFrameworks.label(framework));
 }
 
 /** Title and description of a page for a framework: its own (`vue: { title, description }`), or the page's. */
@@ -76,7 +87,8 @@ export function getDocsPageMeta(
 ): { title?: string; description?: string } {
   const frontmatter = page?.frontmatter ?? {};
   const own =
-    framework !== 'react' && typeof frontmatter[framework] === 'object'
+    framework !== docsFrameworks.default &&
+    typeof frontmatter[framework] === 'object'
       ? (frontmatter[framework] as { title?: string; description?: string })
       : {};
   const description: string | undefined =

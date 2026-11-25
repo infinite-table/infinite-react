@@ -21,6 +21,7 @@ import { asMeta } from '@www/utils/asMeta';
 import { docsOgSlug } from '@www/utils/ogCards';
 import {
   docsHasPage,
+  getDocsFrameworkPages,
   getDocsPage,
   getDocsPageMeta,
   getDocsPagePaths,
@@ -120,9 +121,11 @@ export async function DocsRoutePage(props: {
     : getMarkdownHeadingsForPage(content);
 
   // the sidebar of another framework: its own pages, and the React page
-  // (marked) where it has none yet
+  // (marked) where it has none yet. React's is mapped only when it lacks a
+  // page (`react: false`): then that entry links to the page of another
+  // framework.
   const routeTree =
-    framework === docsFrameworks.default
+    framework === docsFrameworks.default && !getDocsFrameworkPages()[framework]
       ? sidebar
       : mapRouteTree(docsFrameworks, sidebar, framework, docsHasPage, {
           onFallback: (route, fallback) => ({

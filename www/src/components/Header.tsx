@@ -19,6 +19,7 @@ import {
   useDocsFramework,
   useDocsFrameworkHome,
 } from '@www/components/DocsFrameworks';
+import { docsFrameworksText } from '@www/utils/docsFrameworksRegistry';
 import { ThemeToggle } from './ThemeToggle';
 
 export function TwitterLink(props: {
@@ -308,7 +309,7 @@ export const HeroHeader = (props: {
   const title = props.title ?? <>One Table — Infinite Applications</>;
   const subtitle =
     props.subtitle === undefined
-      ? 'The DataGrid for React and Vue, built for speed.'
+      ? `The DataGrid for ${docsFrameworksText()}, built for speed.`
       : props.subtitle;
 
   return (

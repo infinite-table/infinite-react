@@ -16,7 +16,7 @@ import { VueHeroShowcase } from '@www/components/hero/VueHeroShowcase';
 import { getStats } from '@www/compare/matrixUtils';
 import { getDocsPage, getDocsPagePaths } from '@www/utils/docsFrameworkContent';
 import { docsFrameworks } from '@www/utils/docsFrameworks';
-import { DOCS_DEMO_MANIFEST_VUE } from '@www/utils/docsKit';
+import { DOCS_DEMO_MANIFESTS } from '@www/utils/docsKit';
 import type { BlogPost } from '@www/utils/blogUtils';
 
 import { getVueBenchmarkReadouts } from './benchmarkReadouts';
@@ -61,11 +61,11 @@ const PIVOT_CODE = `<DataSource
  * (vue-hero.demo.vue) and the section demos (vue-home-*.demo.vue).
  */
 function vueDemoPage(name: string): string {
-  const manifest = JSON.parse(fs.readFileSync(DOCS_DEMO_MANIFEST_VUE, 'utf8'));
+  const manifest = JSON.parse(fs.readFileSync(DOCS_DEMO_MANIFESTS.vue, 'utf8'));
   const page = manifest.demos?.[`home/${name}`]?.html;
   if (!page) {
     throw new Error(
-      `The Vue demo "home/${name}" is not in ${DOCS_DEMO_MANIFEST_VUE}: run \`npm run build-demos\`.`,
+      `The Vue demo "home/${name}" is not in ${DOCS_DEMO_MANIFESTS.vue}: run \`npm run build-demos\`.`,
     );
   }
   return page;

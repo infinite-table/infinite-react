@@ -61,9 +61,7 @@ export const INFINITE_DATA_SOURCE = new InjectionToken<
 /**
  * In an injection context inside a DataSource: its state, actions and api.
  */
-export function injectDataSource<
-  T = any,
->(): DataSourceContextValueForAngular<T> {
+export function injectDataSource<T = any>(): DataSourceContextValueForAngular<T> {
   return inject(INFINITE_DATA_SOURCE) as DataSourceContextValueForAngular<T>;
 }
 
@@ -201,8 +199,7 @@ export class DataSource<T = any> extends DataSourceInputs<T> implements OnInit {
     this.managed.init();
 
     const context = this.managed.context;
-    const getDataSourceState =
-      context.getComponentState as () => DataSourceState<T>;
+    const getDataSourceState = context.getComponentState as () => DataSourceState<T>;
     const dataSourceActions =
       context.componentActions as unknown as DataSourceComponentActions<T>;
     const state = context.state as Signal<DataSourceState<T>>;
@@ -216,10 +213,7 @@ export class DataSource<T = any> extends DataSourceInputs<T> implements OnInit {
     });
     this.dataSourceApi = dataSourceApi;
 
-    const scrollbars = signal<Scrollbars>({
-      vertical: false,
-      horizontal: false,
-    });
+    const scrollbars = signal<Scrollbars>({ vertical: false, horizontal: false });
 
     const dataSourceEffects = createDataSourceEffects<T>({
       state: () => state(),
