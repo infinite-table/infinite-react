@@ -56,3 +56,23 @@ export {
   INFINITE_DATA_SOURCE,
   type DataSourceContextValueForAngular,
 } from './components/DataSource/DataSourceForAngular.angular';
+
+export {
+  InfiniteTable,
+  InfiniteTableClassName,
+  provideInfiniteTable,
+  INFINITE_TABLE_CONFIG,
+  type InfiniteTableConfig,
+} from './components/InfiniteTable/InfiniteTableForAngular.angular';
+export {
+  injectInfiniteTable,
+  INFINITE_TABLE,
+  type InfiniteTableContextValueForAngular,
+} from './components/InfiniteTable/InfiniteTableContextForAngular.angular';
+export {
+  injectColumnCell,
+  INFINITE_COLUMN_CELL,
+} from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnCellForAngular.angular';
+export { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
+export { ExpandCollapseIcon } from './components/InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForAngular.angular';
+export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngular.angular';

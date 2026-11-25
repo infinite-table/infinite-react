@@ -168,26 +168,22 @@ export function getInfiniteCSSVars<T>(
   // we need this if here - if it's not here, for whatever reason,
   // the scrollbarWidth is not updated correctly on re-renders (as it comes 0 initially when server-side rendered in nextjs for example)
   if (bodySize.width) {
-    //@ts-ignore
-    cssVars[
+    (cssVars as Record<string, unknown>)[
       publicRuntimeVars.browserScrollbarWidth.name
     ] = `${getScrollbarWidth()}px`;
   }
 
-  //@ts-ignore
-  cssVars[
+  (cssVars as Record<string, unknown>)[
     publicRuntimeVars.bodyWidth.name
   ] = `calc(${InternalVars.bodyWidth} - ${InternalVars.scrollbarWidthVertical})`;
 
-  //@ts-ignore
-  cssVars[publicRuntimeVars.totalVisibleColumnsWidthValue.name] = `${
+  (cssVars as Record<string, unknown>)[publicRuntimeVars.totalVisibleColumnsWidthValue.name] = `${
     computedPinnedStartColumnsWidth +
     computedPinnedEndColumnsWidth +
     computedUnpinnedColumnsWidth
   }px`;
 
-  //@ts-ignore
-  cssVars[
+  (cssVars as Record<string, unknown>)[
     publicRuntimeVars.totalVisibleColumnsWidthVar.name
   ] = `calc(${computedVisibleColumns
     .map((_col, index) => {
@@ -195,13 +191,11 @@ export function getInfiniteCSSVars<T>(
     })
     .join(' + ')})`;
 
-  //@ts-ignore
-  cssVars[publicRuntimeVars.visibleColumnsCount.name] =
+  (cssVars as Record<string, unknown>)[publicRuntimeVars.visibleColumnsCount.name] =
     computedVisibleColumns.length;
 
   if (activeCellIndex != null) {
-    //@ts-ignore
-    cssVars[activeCellColWidth] = InternalVarUtils.columnWidths.get(
+    (cssVars as Record<string, unknown>)[activeCellColWidth] = InternalVarUtils.columnWidths.get(
       activeCellIndex[1],
     );
     const defaultActiveCellColOffset = InternalVarUtils.columnOffsets.get(
@@ -220,45 +214,36 @@ export function getInfiniteCSSVars<T>(
     }
   }
 
-  //@ts-ignore
-  cssVars[computedVisibleColumnsCountCSSVar] = computedVisibleColumns.length;
+  (cssVars as Record<string, unknown>)[computedVisibleColumnsCountCSSVar] = computedVisibleColumns.length;
 
-  //@ts-ignore
-  cssVars[scrollbarWidthHorizontal] = scrollbars.horizontal
+  (cssVars as Record<string, unknown>)[scrollbarWidthHorizontal] = scrollbars.horizontal
     ? `${scrollbarWidth}px`
     : '0px';
-  //@ts-ignore
-  cssVars[scrollbarWidthVertical] = scrollbars.vertical
+  (cssVars as Record<string, unknown>)[scrollbarWidthVertical] = scrollbars.vertical
     ? `${scrollbarWidth}px`
     : '0px';
-  //@ts-ignore
-  cssVars[pinnedStartWidthCSSVar] =
+  (cssVars as Record<string, unknown>)[pinnedStartWidthCSSVar] =
     `calc( ` +
     computedPinnedStartColumns
       .map((c) => InternalVarUtils.columnWidths.get(c.computedVisibleIndex))
       .join(' + ') +
     ')';
 
-  //@ts-ignore
-  cssVars[pinnedEndWidthCSSVar] =
+  (cssVars as Record<string, unknown>)[pinnedEndWidthCSSVar] =
     `calc( ` +
     computedPinnedEndColumns
       .map((c) => InternalVarUtils.columnWidths.get(c.computedVisibleIndex))
       .join(' + ') +
     ')';
-  //@ts-ignore
-  cssVars[baseZIndexForCells] = computedVisibleColumns.length * 10;
+  (cssVars as Record<string, unknown>)[baseZIndexForCells] = computedVisibleColumns.length * 10;
 
-  //@ts-ignore
-  cssVars[
+  (cssVars as Record<string, unknown>)[
     pinnedEndOffsetCSSVar
   ] = `calc( var(${bodyWidthCSSVar}) - var(${pinnedEndWidthCSSVar}) - var(${scrollbarWidthVertical}) )`;
 
-  //@ts-ignore
-  cssVars[bodyWidthCSSVar] = `${bodySize.width}px`;
+  (cssVars as Record<string, unknown>)[bodyWidthCSSVar] = `${bodySize.width}px`;
 
-  //@ts-ignore
-  cssVars[bodyHeightCSSVar] = `${bodySize.height}px`;
+  (cssVars as Record<string, unknown>)[bodyHeightCSSVar] = `${bodySize.height}px`;
 
   return cssVars;
 }
