@@ -5,7 +5,11 @@
 //
 // A sibling `x.demo.vue` is the Vue version of `x.demo.tsx`: those are built
 // into public/gen/demos/_vue, against `@infinite-table/infinite-vue` (the Vue
-// entry of the same source tree).
+// entry of the same source tree). A sibling `x.demo.angular.ts` is the Angular
+// version, built into public/gen/demos/_angular against
+// `@infinite-table/infinite-angular`: the Angular compiler's partial emit of
+// the same source (../source/.angular-out, `pnpm -C ../source run
+// ngc:angular`), which the demo iframes link at runtime (JIT).
 //
 // The frameworks, their packages, demo suffixes and folders come from
 // www/frameworks.json; what only this build knows about a framework (its
@@ -16,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 
 import nextEnv from '@next/env';
 
+import { angularCssFromSourcePlugin } from '../source/angular-css-from-source-plugin.ts';
 import { frameworkResolvePlugin } from '../source/framework-resolve-plugin.ts';
 import { vanillaConfig } from '../source/tsup-vanilla-extract-config.ts';
 import { importDocsKit } from './scripts/docs-kit-import.mjs';
@@ -71,6 +76,11 @@ const INFINITE_VERSION =
   process.env.NEXT_PUBLIC_INFINITE_REACT_VERSION || sourcePackage.version;
 
 const SOURCE_DIR = path.resolve(import.meta.dirname, '../source/src');
+// the Angular compiler's emit of SOURCE_DIR (source/tsconfig.angular.json)
+const ANGULAR_OUT_DIR = path.resolve(
+  import.meta.dirname,
+  '../source/.angular-out',
+);
 
 // the framework-neutral part of the kit's showcase toolkit (the cursor, sleep,
 // waitFor, fling…), for the Vue hero
@@ -89,18 +99,19 @@ body {
   background: rgb(35, 39, 47);
 }`;
 
+const FORK_DARK_MODE =
+  "document.documentElement.classList.add('infinite-theme-mode--dark');";
+
 const forkPrelude = (packageName) =>
-  [
-    `import '${packageName}/index.css';`,
-    "document.documentElement.classList.add('infinite-theme-mode--dark');",
-  ].join('\n');
+  [`import '${packageName}/index.css';`, FORK_DARK_MODE].join('\n');
 
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
 
 /**
  * What the demo build of each framework of www/frameworks.json needs beyond
- * the registry: the library entry in ../source, and the settings only that
- * framework has.
+ * the registry: the library entry in ../source (with its esbuild plugins and
+ * the folders to watch, when they're not the source's), and the settings
+ * only that framework has.
  */
 const FRAMEWORK_BUILDS = {
   react: {
@@ -139,6 +150,33 @@ const FRAMEWORK_BUILDS = {
     // sets the global license key - the Vue build starts without the React bootstrap
     bootstrap: 'docs-kit.bootstrap.vue.ts',
   },
+  angular: {
+    // not the TypeScript source: Angular components are compiled by ngc
+    // first (`www dev` keeps it running in watch mode)
+    entry: '../source/.angular-out/index.angular.js',
+    plugins: () => [
+      // the class names of the React and Vue builds
+      angularCssFromSourcePlugin(
+        path.resolve(import.meta.dirname, '../source'),
+      ),
+      frameworkResolvePlugin('angular'),
+      vanillaConfig,
+    ],
+    watch: [ANGULAR_OUT_DIR],
+    // the license key, as `provideInfiniteTable({ licenseKey })`
+    bootstrap: 'docs-kit.bootstrap.angular.ts',
+    // no pageStyle of its own: the `.Infinite { flex: 1 }` of the
+    // top-level one works, since <infinite-table> is the grid's root
+    // element (`.Infinite`) and the hosts above it (the demo's, the
+    // DataSource's) are `display: contents` (`#root > .Infinite` doesn't
+    // match)
+    fork: {
+      // an Angular CLI project lists its global CSS in angular.json; it
+      // can't be imported from TypeScript
+      globalStyles: [`${docsFramework('angular').package}/index.css`],
+      entryPrelude: FORK_DARK_MODE,
+    },
+  },
 };
 
 // docs-kit decides where a framework's demos fork to: the registry says the same
@@ -167,8 +205,9 @@ function frameworkBuild(id) {
     libraries: {
       [packageName]: {
         entry: build.entry,
-        plugins: () => [frameworkResolvePlugin(id), vanillaConfig],
-        watch: [SOURCE_DIR],
+        plugins:
+          build.plugins ?? (() => [frameworkResolvePlugin(id), vanillaConfig]),
+        watch: build.watch ?? [SOURCE_DIR],
       },
       // `import '@infinite-table/infinite-react/theme/<name>.css'` in a demo:
       // the themes are built from source as well. Their CSS is linked in every
