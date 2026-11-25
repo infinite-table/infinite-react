@@ -1454,7 +1454,7 @@ Same as the table-level <PropLink name="repaintCellsKey" />, but only for the ce
 
 Typical use: a column whose <PropLink name="columns.render" /> or <PropLink name="columns.valueGetter" /> reads other rows (a group average, a running total, a cross-row lookup). Return the derived value from the function, and the cells repaint exactly when that value changes:
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-repaintcellskey"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-repaintcellskey" neutral
 ```
 
 <Note>
@@ -2160,7 +2160,7 @@ When returning a `Promise`, the context menu will be shown after the promise res
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems"
+```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems" neutral
 ```
 
 <DemoDescription>
@@ -2607,7 +2607,7 @@ The first (and only) argument is an object with `{start, end}` where both `start
 
  So if you want to get the start and end indexes, you can do
 
- ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange"
+ ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange" neutral
  ```
 
 <Note>
@@ -2632,7 +2632,7 @@ This is called when the user stops scrolling for a period of time - as configure
 The function is called with an object that has the following properties:
  - `renderRange` - the render range of the viewport. This is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
  So if you want to get the start and end indexes, you can do
- ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop"
+ ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop" neutral
  ```
 
  - `viewportSize` - the size of the viewport - `{width, height}`
@@ -2879,7 +2879,7 @@ See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
 You can either return a valid style object, or undefined.
 
-```tsx file="infinite-table-props.snippet.tsx" region="rowstyle"
+```tsx file="infinite-table-props.snippet.tsx" region="rowstyle" neutral
 ```
 
 ```tsx file="rowStyle-example.demo.tsx" title="rowStyle example usage"
