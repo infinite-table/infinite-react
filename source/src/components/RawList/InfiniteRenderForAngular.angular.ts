@@ -274,6 +274,7 @@ export class InfiniteRender implements OnChanges, OnDestroy {
 
     let structureChanged = leaves.length !== rendered.length;
     const next: RenderedLeaf[] = [];
+    let toRefresh: ComponentRef<unknown>[] | null = null;
     let viewIndex = 0;
 
     for (let i = 0; i < leaves.length; i++) {
@@ -312,8 +313,14 @@ export class InfiniteRender implements OnChanges, OnDestroy {
         current.component === leaf.component &&
         current.injector === leaf.injector
       ) {
-        current.holder.context = leaf.context;
-        current.holder.inputs = leaf.inputs;
+        if (
+          current.holder.context !== leaf.context ||
+          current.holder.inputs !== leaf.inputs
+        ) {
+          current.holder.context = leaf.context;
+          current.holder.inputs = leaf.inputs;
+          (toRefresh ??= []).push(current.ref);
+        }
         next.push(current);
         viewIndex++;
         continue;
@@ -362,6 +369,18 @@ export class InfiniteRender implements OnChanges, OnDestroy {
 
     if (structureChanged) {
       this.placeNodes();
+    }
+
+    // Reused components with new inputs: the input bindings are evaluated
+    // when the component's host view is refreshed, and the host view of an
+    // OnPush component is not CheckAlways - the parent's refresh skips it,
+    // so it would keep its old inputs. detectChanges() refreshes just that
+    // view (markForCheck() would mark every ancestor up to the app root and
+    // schedule an app-wide check, eg after every scroll frame).
+    if (toRefresh) {
+      for (const ref of toRefresh) {
+        ref.changeDetectorRef.detectChanges();
+      }
     }
   }
 
