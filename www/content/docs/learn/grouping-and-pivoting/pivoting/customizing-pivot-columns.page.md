@@ -1,6 +1,7 @@
 ---
 title: Customizing Pivot Columns
 vue: true
+angular: true
 ---
 
 There are a number of ways to customize the generated pivot columns and we'll cover each of them in this page. For a longer walkthrough with live demos, see [customizing generated pivot columns](/blog/2026/09/03/customizing-generated-pivot-columns).
