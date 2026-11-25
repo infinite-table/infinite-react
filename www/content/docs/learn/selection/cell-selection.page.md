@@ -2,6 +2,7 @@
 title: Cell Selection
 description: InfiniteTable DataGrid component supports single and multiple cell selection.
 vue: true
+angular: true
 ---
 
 To use multi-cell selection, you need to configure the `<DataSource />` component with `selectionMode="multi-cell"` - see <DPropLink name="selectionMode" /> for details. For selecting rows, see the [Row Selection](/docs/learn/selection/row-selection) page.
@@ -93,11 +94,31 @@ It's also possible to use wildcards for selecting cells. This is useful if you w
 
 ## Using controlled selection
 
+<FrameworkContent not="angular">
+
 When using the controlled <DPropLink name="cellSelection" /> you have to update the value of the property yourself, by listening to the <DPropLink name="onCellSelectionChange" /> event.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The controlled <DPropLink name="cellSelection" /> is a model: bind it two-way to a signal, and the grid writes the selection the user makes back to your signal. To react to the change, use the <DPropLink name="onCellSelectionChange" /> output.
+
+</FrameworkContent>
 
 <DemoDescription>
 
+<FrameworkContent not="angular">
+
 This example shows how to use the <DPropLink name="onCellSelectionChange" /> callback prop to listen to changes to the controlled <DPropLink name="cellSelection" /> prop on the `<DataSource />` component.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This example binds the <DPropLink name="cellSelection" /> model of the `<DataSource />` component two-way to a signal, and shows the current value of the signal above the grid.
+
+</FrameworkContent>
 
 </DemoDescription>
 
