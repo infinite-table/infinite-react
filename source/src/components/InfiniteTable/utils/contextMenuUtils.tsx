@@ -7,6 +7,7 @@ import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback
 import type { GetContextMenuItemsReturnType } from '../types/InfiniteTableProps';
 
 import {
+  getLazyMenuProps,
   getMenuDefaultProps,
   getMenuItemsAndColumns,
 } from './contextMenuUtilsShared';
@@ -25,11 +26,9 @@ export function getLazyMenu(
   const updater = buildSubscriptionCallback<Renderable>();
 
   menuDefinition.then((menuDefinition) => {
-    const { items, columns } = getMenuItemsAndColumns(menuDefinition);
-    if (items && items.length) {
-      updater(
-        <MenuCmp {...menuDefaultProps} items={items || []} columns={columns} />,
-      );
+    const menuProps = getLazyMenuProps(menuDefinition, menuDefaultProps);
+    if (menuProps) {
+      updater(<MenuCmp {...menuProps} />);
     }
   });
 
