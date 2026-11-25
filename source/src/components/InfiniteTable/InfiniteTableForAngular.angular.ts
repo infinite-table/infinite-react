@@ -105,6 +105,17 @@ import { renderColumnEditor } from './components/InfiniteTableRow/InfiniteTableC
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter/InfiniteTableLicenseFooterForAngular.angular';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMaskForAngular.angular';
+// master-detail: the detail rows
+import {
+  InfiniteTableDetailRow,
+  InfiniteTableDetailRowPlaceholder,
+  type InfiniteTableDetailRowProps,
+} from './components/InfiniteTableRow/InfiniteTableDetailRowForAngular.angular';
+import type {
+  TableRenderDetailRowFn,
+  TableRenderDetailRowFnParam,
+} from '../HeadlessTable/rendererTypes';
+import { TableHeaderWrapper } from './components/InfiniteTableHeader/TableHeaderWrapperForAngular.angular';
 import {
   INFINITE_TABLE,
   type InfiniteTableContextValueForAngular,
@@ -269,6 +280,7 @@ const PORTAL_CLASS_NAME = join(
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
+    TableHeaderWrapper,
     HeadlessTable,
     InfiniteRender,
     CSSNumericVariableWatch,
@@ -289,6 +301,15 @@ const PORTAL_CLASS_NAME = join(
   template: `
     @if (initialized) {
       @let s = state();
+      <!-- React: InfiniteTableHeader renders the wrapper only when the header is enabled -->
+      @if (s.header) {
+        <div
+          infiniteTableHeaderWrapper
+          [headerBrain]="s.headerBrain"
+          [bodyBrain]="s.brain"
+          [wrapRowsHorizontally]="!!s.wrapRowsHorizontally"
+        ></div>
+      }
       <div #body [class]="bodyClassName">
         <div
           infiniteHeadlessTable
@@ -296,6 +317,7 @@ const PORTAL_CLASS_NAME = join(
           [renderer]="$any(s.renderer)"
           [onRenderUpdater]="s.onRenderUpdater"
           [renderCell]="renderCell()"
+          [renderDetailRow]="renderDetailRow()"
           [cellHoverClassNames]="hoverClassNames()"
           [scrollStopDelay]="s.scrollStopDelay"
           [forceRerenderTimestamp]="s.forceBodyRerenderTimestamp"
@@ -397,6 +419,7 @@ export class InfiniteTable<T = any>
   contextValue!: InfiniteTableContextValueForAngular<T>;
 
   protected renderCell!: Signal<TableRenderCellFn>;
+  protected renderDetailRow!: Signal<TableRenderDetailRowFn | undefined>;
   protected hoverClassNames!: Signal<string[] | undefined>;
   protected loadMask!: Signal<Renderable>;
   // assigned in ngOnInit (host bindings first run after it)
@@ -1928,6 +1951,67 @@ export class InfiniteTable<T = any>
       },
     );
 
+    // ---- master-detail: the detail rows ----
+    // mirrors renderDetailRow from React's useCellRendering
+    this.renderDetailRow = computedWithDeps<TableRenderDetailRowFn | undefined>(
+      () => {
+        const s = state();
+        return [s.isRowDetailExpanded, s.rowDetailRenderer, s.rowDetailCache];
+      },
+      () => {
+        const s = getState();
+        const isRowDetailsExpanded = s.isRowDetailExpanded;
+        const rowDetailRenderer = s.rowDetailRenderer;
+
+        if (!isRowDetailsExpanded || !rowDetailRenderer) {
+          return undefined;
+        }
+
+        const rowDetailCache = s.rowDetailCache;
+
+        return (params: TableRenderDetailRowFnParam) => {
+          const { rowIndex } = params;
+
+          const rowInfo = getData()[rowIndex];
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+
+          if (
+            !rowInfo ||
+            !isRowDetailsExpanded(rowInfo) ||
+            !computedRowSizeCacheForDetails
+          ) {
+            // normally we would have returned `null`
+            // but if we return null, the headless renderer will lose track
+            // of the HTMLElement, and then when we scroll down and want
+            // to reuse the HTMLElement, it will be gone, and the rendering
+            // will break
+            return renderPooled(
+              InfiniteTableDetailRowPlaceholder,
+              null,
+            ) as unknown as Renderable;
+          }
+
+          const { rowDetailHeight, rowHeight } =
+            computedRowSizeCacheForDetails.getSize(rowIndex);
+
+          const props: InfiniteTableDetailRowProps<T> = {
+            rowInfo,
+            rowDetailsCache: rowDetailCache,
+            rowIndex,
+            detailOffset: rowHeight,
+            rowDetailHeight,
+            rowDetailRenderer: rowDetailRenderer as any,
+          };
+
+          return renderPooled(
+            InfiniteTableDetailRow,
+            props,
+          ) as unknown as Renderable;
+        };
+      },
+    );
+
     // the load mask (components.LoadMask overrides it, like in React)
     this.loadMask = computed(() => {
       const s = state();
@@ -2069,6 +2153,7 @@ export class InfiniteTable<T = any>
       getComputed,
       computed: computedValues,
       getComputedVisibleColumns,
+      scrollbars: scrollbars.asReadonly(),
       dataSourceContext,
     } as InfiniteTableContextValueForAngular<T>;
 
