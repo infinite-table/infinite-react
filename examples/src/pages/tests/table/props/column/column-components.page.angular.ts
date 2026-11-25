@@ -6,10 +6,12 @@ import {
   InfiniteTable,
   injectColumnCell,
   injectColumnCellChildren,
+  injectHeaderCell,
 } from '@infinite-table/infinite-angular';
 import type {
   DataSourceData,
   InfiniteTablePropColumns,
+  InfiniteTablePropColumnTypes,
 } from '@infinite-table/infinite-angular';
 
 type Developer = {
@@ -50,9 +52,35 @@ const dataSource: DataSourceData<Developer> = ({}) => {
   ];
 };
 
-// TODO: the components.HeaderCell override of the React/Vue page (the
-// column field + a custom sort tool), once header cell overrides are
-// supported in Angular
+// the header cell override: its host element is the header cell; instead of
+// the default children (the content and the sort icon), it renders the field
+// and its own sort tool
+@Component({
+  selector: 'div[defaultHeaderCell]',
+  host: { style: 'border: 1px solid #fefefe' },
+  template: `{{ text() }}`,
+})
+class DefaultHeaderCell {
+  private readonly headerCell = injectHeaderCell<Developer>();
+
+  protected readonly text = computed(() => {
+    const { column, columnSortInfo } = this.headerCell();
+
+    let sortTool = '';
+    switch (columnSortInfo?.dir) {
+      case undefined:
+        sortTool = '👉';
+        break;
+      case 1:
+        sortTool = '👇';
+        break;
+      case -1:
+        sortTool = '👆';
+        break;
+    }
+    return `${column.field} ${sortTool}`;
+  });
+}
 
 // the cell override: its host element is the cell
 @Component({
@@ -88,6 +116,7 @@ class CountryCell {
       <infinite-table
         [columns]="columns"
         [columnDefaultWidth]="500"
+        [columnTypes]="columnTypes"
         [domProps]="domProps"
       />
     </infinite-data-source>
@@ -101,6 +130,7 @@ export default class ColumnComponentsPage {
       field: 'country',
       renderValue: ({ data }) => 'Country: ' + data?.country,
       components: {
+        HeaderCell: DefaultHeaderCell,
         ColumnCell: CountryCell,
       },
     },
@@ -109,6 +139,14 @@ export default class ColumnComponentsPage {
     },
     preferredLanguage: {
       field: 'currency',
+    },
+  };
+  protected readonly columnTypes: InfiniteTablePropColumnTypes<Developer> = {
+    default: {
+      // override all columns to use these components
+      components: {
+        HeaderCell: DefaultHeaderCell,
+      },
     },
   };
   protected readonly domProps = {
