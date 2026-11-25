@@ -46,8 +46,10 @@ export default test.describe.parallel('Density - header filters', () => {
   test('the grouping toolbar item padding is scaled by the density', async ({
     page,
   }, testInfo) => {
-    // the grouping toolbar is React only
-    test.skip(testInfo.project.name === 'vue');
+    test.skip(
+      testInfo.project.name !== 'react',
+      'the grouping toolbar is React only',
+    );
     await page.waitForInfinite();
 
     expect((await getSpacing(page)).toolbarItemPadding).toBe(4);

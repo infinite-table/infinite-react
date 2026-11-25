@@ -75,6 +75,7 @@ module.exports = {
     NEXT_PUBLIC_TEST_RUNNER_PORT: String(getPort('testRunner')),
     NEXT_PUBLIC_EXAMPLES_PORT: String(getPort('examples')),
     NEXT_PUBLIC_EXAMPLES_VUE_PORT: String(getPort('examplesVue')),
+    NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT: String(getPort('examplesAngular')),
   },
   transpilePackages: ['@infinite-table/infinite-react'],
   reactStrictMode: false, // in order to not break tests loading data by double loading
