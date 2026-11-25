@@ -22,7 +22,10 @@ import { stripVar } from '../../../../utils/stripVar';
 import type { GridMouseEvent } from '../../../types/DOMTypes';
 import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
 import { injectPooledProps } from '../../../HeadlessTable/AngularPooledViews.angular';
-import { InfiniteRender, renderComponent } from '../../../RawList/InfiniteRenderForAngular.angular';
+import {
+  InfiniteRender,
+  renderComponent,
+} from '../../../RawList/InfiniteRenderForAngular.angular';
 import { renderDiv } from '../../../RawList/InfiniteDivForAngular.angular';
 import {
   RenderStage,
@@ -313,8 +316,8 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
   private readonly props = injectPooledProps<InfiniteTableColumnCellProps>();
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly injector = inject(Injector);
-  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef)
-    .nativeElement;
+  private readonly element =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   /** the render param of the cell, for injectColumnCell() */
   readonly renderParam = signal<InfiniteTableColumnCellContextType<any>>(
@@ -429,15 +432,21 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
     const { rowInfoStore, rowIndex, repaintCellsKey, column } = props;
     const current = this.subscribedFor;
 
-    if (current.rowInfoStore !== rowInfoStore || current.rowIndex !== rowIndex) {
+    if (
+      current.rowInfoStore !== rowInfoStore ||
+      current.rowIndex !== rowIndex
+    ) {
       this.unsubscribeRowInfo?.();
       this.rowInfo = rowInfoStore.getRowInfoAtIndex(rowIndex);
       // per-row updates (eg mutations) re-render just this cell (React:
       // useSyncExternalStore on the rowInfoStore)
-      this.unsubscribeRowInfo = rowInfoStore.subscribeToRowIndex(rowIndex, () => {
-        this.rowInfo = rowInfoStore.getRowInfoAtIndex(rowIndex);
-        this.cdr.markForCheck();
-      });
+      this.unsubscribeRowInfo = rowInfoStore.subscribeToRowIndex(
+        rowIndex,
+        () => {
+          this.rowInfo = rowInfoStore.getRowInfoAtIndex(rowIndex);
+          this.cdr.markForCheck();
+        },
+      );
     }
 
     if (

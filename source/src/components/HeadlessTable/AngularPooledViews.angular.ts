@@ -430,10 +430,7 @@ class ListRowForAngular extends PooledView implements ListRowInterface {
 export class GridCellPoolForAngular<
   T_ADDITIONAL_CELL_INFO,
 > extends GridCellPoolBase<T_ADDITIONAL_CELL_INFO> {
-  constructor(
-    private cellDebugId: string,
-    private viewHost: PooledViewHost,
-  ) {
+  constructor(private cellDebugId: string, private viewHost: PooledViewHost) {
     super(`${cellDebugId}:GridCellPoolForAngular`);
   }
 
@@ -446,10 +443,7 @@ export class GridCellPoolForAngular<
 }
 
 export class ListRowPoolForAngular extends ListRowPoolBase {
-  constructor(
-    private rowDebugId: string,
-    private viewHost: PooledViewHost,
-  ) {
+  constructor(private rowDebugId: string, private viewHost: PooledViewHost) {
     super(`${rowDebugId}:ListRowPoolForAngular`);
   }
 

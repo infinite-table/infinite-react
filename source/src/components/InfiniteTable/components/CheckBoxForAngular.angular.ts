@@ -45,8 +45,8 @@ export class InfiniteCheckBox {
   readonly onChange = input<(checked: InfiniteCheckBoxPropChecked) => void>();
   readonly change = output<InfiniteCheckBoxPropChecked>();
 
-  private readonly input = inject<ElementRef<HTMLInputElement>>(ElementRef)
-    .nativeElement;
+  private readonly input =
+    inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
 
   // the uncontrolled value
   private readonly localChecked = signal<InfiniteCheckBoxPropChecked>(false);
@@ -83,7 +83,10 @@ export class InfiniteCheckBox {
       if (!this.initialized) {
         this.initialized = true;
         const defaultChecked = untracked(this.defaultChecked);
-        if (untracked(this.checked) === undefined && defaultChecked !== undefined) {
+        if (
+          untracked(this.checked) === undefined &&
+          defaultChecked !== undefined
+        ) {
           this.localChecked.set(defaultChecked);
           return;
         }

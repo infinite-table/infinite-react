@@ -1,4 +1,3 @@
-
 import type { InfiniteTableColumnCellContextType } from '..';
 import type { InfiniteTable_HasGrouping_RowInfoGroup } from '../../../utils/groupAndPivot';
 import { join } from '../../../utils/join';

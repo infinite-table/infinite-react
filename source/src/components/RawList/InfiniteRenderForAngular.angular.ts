@@ -465,7 +465,9 @@ function componentBindings(leaf: ComponentLeaf, holder: ComponentHolder) {
       // through the holder: a reused component calls the listeners of the
       // latest content, not the ones it was created with
       bindings.push(
-        outputBinding(name, (value: unknown) => holder.outputs?.[name]?.(value)),
+        outputBinding(name, (value: unknown) =>
+          holder.outputs?.[name]?.(value),
+        ),
       );
     }
   }

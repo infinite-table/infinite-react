@@ -31,9 +31,15 @@ const META: AngularPropsMeta = {
   callbacks: { onValueChange: { model: 'value', fn: false } },
 };
 
-const injectManaged = buildManagedAngularComponent<Props, { value: string }, {}, any>({
+const injectManaged = buildManagedAngularComponent<
+  Props,
+  { value: string },
+  {},
+  any
+>({
   // undefined -> '' : a reset is visible in the state
-  forwardProps: () => ({ value: (value: string | undefined) => value ?? '' }) as any,
+  forwardProps: () =>
+    ({ value: (value: string | undefined) => value ?? '' } as any),
   mapPropsToState: ({ props }) => ({
     valueWasControlled: props.value !== undefined,
     label: props.label,

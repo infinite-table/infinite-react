@@ -16,7 +16,8 @@ export function computedWithDeps<T>(
 ): Signal<T> {
   const deps = computed(getDeps, {
     equal: (a, b) =>
-      a.length === b.length && a.every((dep, index) => Object.is(dep, b[index])),
+      a.length === b.length &&
+      a.every((dep, index) => Object.is(dep, b[index])),
   });
   return computed(() => {
     deps();

@@ -14,7 +14,10 @@ import type { Renderable } from '../types/Renderable';
 import type { SubscriptionCallback } from '../types/SubscriptionCallback';
 import type { MatrixBrain } from '../VirtualBrain/MatrixBrain';
 import type { GridRenderer } from './ReactHeadlessTableRenderer';
-import type { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
+import type {
+  TableRenderCellFn,
+  TableRenderDetailRowFn,
+} from './rendererTypes';
 import { createRenderer, getPooledViewHost } from './createRenderer.angular';
 
 /**
@@ -115,14 +118,16 @@ export class RawTable implements OnDestroy {
       renderDetailRow,
     });
 
-    this.removeOnRenderRangeChange = brain.onRenderRangeChange((renderRange) => {
-      renderer.renderRange(renderRange, {
-        force: false,
-        onRender,
-        renderCell,
-        renderDetailRow,
-      });
-    });
+    this.removeOnRenderRangeChange = brain.onRenderRangeChange(
+      (renderRange) => {
+        renderer.renderRange(renderRange, {
+          force: false,
+          onRender,
+          renderCell,
+          renderDetailRow,
+        });
+      },
+    );
   }
 
   ngOnDestroy() {

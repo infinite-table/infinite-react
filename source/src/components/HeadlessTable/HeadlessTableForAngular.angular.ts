@@ -28,7 +28,10 @@ import {
 import { getScrollableClassName } from '../VirtualScrollContainer/getScrollableClassName';
 import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetachedCls';
 import type { GridRenderer } from './ReactHeadlessTableRenderer';
-import type { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
+import type {
+  TableRenderCellFn,
+  TableRenderDetailRowFn,
+} from './rendererTypes';
 import { RawTable } from './RawTableForAngular.angular';
 import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicatorForAngular.angular';
 import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicatorForAngular.angular';
@@ -125,7 +128,9 @@ export class HeadlessTable {
   readonly activeRowIndex = input<number | null>(null);
   /** the active cell indicator is rendered (inside the scroll transform target) when not null */
   readonly activeCellIndex = input<[number, number] | null>(null);
-  readonly activeCellRowHeight = input<number | ((rowIndex: number) => number)>();
+  readonly activeCellRowHeight = input<
+    number | ((rowIndex: number) => number)
+  >();
 
   protected readonly childToScrollCls = CHILD_TO_SCROLL_CLS;
   protected readonly cellDetachedClassNames = CELL_DETACHED_CLASSNAMES;
@@ -133,8 +138,8 @@ export class HeadlessTable {
 
   protected readonly scrollSize = signal<Size>({ width: 0, height: 0 });
 
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
-    .nativeElement;
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly transformTarget =
     viewChild.required<ElementRef<HTMLElement>>('transformTarget');
 
@@ -246,7 +251,11 @@ export class HeadlessTable {
     // starts/stops being huge), keep the content the user was looking at:
     // rewrite the native scroll position for the new ratio - see
     // largeContent.ts
-    let scrollRatio: { brain: MatrixBrain | null; vertical: number; horizontal: number } = {
+    let scrollRatio: {
+      brain: MatrixBrain | null;
+      vertical: number;
+      horizontal: number;
+    } = {
       brain: null,
       vertical: 1,
       horizontal: 1,

@@ -35,7 +35,15 @@
  *   the parent pushes later goes through the normal prop diff, including
  *   `undefined` (resets the state, as React's defined -> undefined)
  */
-import { DestroyRef, Signal, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  DestroyRef,
+  Signal,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 
 import {
   applyPropsDiff,
