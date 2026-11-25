@@ -23,6 +23,7 @@ export { multisort, multisortNested } from './utils/multisort';
 export { RowSelectionState } from './components/DataSource/RowSelectionState';
 export { CellSelectionState } from './components/DataSource/CellSelectionState';
 export { RowDetailState } from './components/DataSource/RowDetailState';
+export { RowDisabledState } from './components/DataSource/RowDisabledState';
 export { TreeExpandState } from './components/DataSource/TreeExpandState';
 export { TreeSelectionState } from './components/DataSource/TreeSelectionState';
 export { GroupRowsState } from './components/DataSource/GroupRowsState';

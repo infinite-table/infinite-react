@@ -133,6 +133,22 @@ Read more about how to use our TypeScript types.
 - columns stay plain objects. Their `render*` functions return text, a template (a `TemplateRef`), or a component (`renderComponent(MyCell)`) that reads the cell with <HookLink name="useInfiniteColumnCell" />.
 - the imperative API is on the component: `#grid="infiniteTable"`, then `grid.api()`.
 
+<DemoDescription>
+
+This is an example of how you might configure `InfiniteTable` in a real-world application and puts together several functionalities:
+
+- grouping
+- aggregation
+- pinned columns
+- sorting
+- multiple selection
+- custom cell rendering
+
+</DemoDescription>
+
+```tsx file="full-demo.demo.tsx"
+```
+
 </FrameworkContent>
 
 <FrameworkContent framework="react">
