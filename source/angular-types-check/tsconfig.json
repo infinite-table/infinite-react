@@ -1,0 +1,19 @@
+{
+  // Compiled by check-angular-package.cjs (ngc, full AOT compilation, strict
+  // templates) against the built @infinite-table/infinite-angular.
+  "files": ["consumer.ts"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "dom"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": []
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true
+  }
+}

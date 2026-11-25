@@ -37,19 +37,59 @@ const VUE_REPLACEMENTS = [
   ['href="https://infinite-table.com"', 'href="https://infinite-table.com/vue"'],
 ];
 
+/**
+ * Angular: until the Angular docs and home page are live, the docs links
+ * stay on the React docs and the banner is the React one; only the framework
+ * wording and the package name change.
+ */
+const ANGULAR_REPLACEMENTS = [
+  [
+    'alt="The React DataGrid built for speed"',
+    'alt="The Angular DataGrid built for speed"',
+  ],
+  ['for building React apps', 'for building Angular apps'],
+  ['is a React DataGrid component', 'is an Angular DataGrid component'],
+  [
+    "Choosing a React DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits — particularly if you value a component that feels native to React (hooks, controlled/uncontrolled props).",
+    "Choosing a DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits.",
+  ],
+  // MUI X Data Grid has no Angular version
+  [
+    '- [vs MUI X Data Grid](https://infinite-table.com/compare/mui-x-data-grid)\n',
+    '',
+  ],
+  // the benchmark page measures the React grids; there is no Angular run yet
+  [
+    '- [Benchmark: Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table at 300k and 1M rows](https://infinite-table.com/benchmark)\n',
+    '',
+  ],
+  ['@infinite-table/infinite-react', '@infinite-table/infinite-angular'],
+];
+
 const outFolder = process.env.INFINITE_OUT_FOLDER;
 if (!outFolder) {
   throw new Error('copyReadme: INFINITE_OUT_FOLDER is not set');
 }
 
-const framework = path.basename(outFolder) === 'dist-vue' ? 'vue' : 'react';
+const framework =
+  path.basename(outFolder) === 'dist-vue'
+    ? 'vue'
+    : path.basename(outFolder) === 'dist-angular'
+    ? 'angular'
+    : 'react';
 let readme = fs.readFileSync(
   path.resolve(__dirname, '../../README.md'),
   'utf8',
 );
 
-if (framework === 'vue') {
-  for (const [from, to] of VUE_REPLACEMENTS) {
+const REPLACEMENTS = {
+  vue: VUE_REPLACEMENTS,
+  angular: ANGULAR_REPLACEMENTS,
+  react: [],
+};
+
+{
+  for (const [from, to] of REPLACEMENTS[framework]) {
     if (!readme.includes(from)) {
       throw new Error(`copyReadme: the README does not contain: ${from}`);
     }

@@ -1,0 +1,47 @@
+{
+  // The Angular build (@infinite-table/infinite-angular), compiled by ngc in
+  // partial compilation mode (the Angular Package Format requirement), then
+  // bundled by tsup.angular.config.ts.
+  //
+  // Standalone on purpose: it doesn't extend ../tsconfig.root.json, which
+  // folders on older TypeScript versions share.
+  "files": ["src/index.angular.ts", "globals.d.ts"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    // sibling-file resolution: `./Foo` resolves Foo.angular.ts before Foo.ts.
+    // Keep in sync with framework-resolve-plugin.ts (the esbuild counterpart).
+    "moduleSuffixes": [".angular", ""],
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    // the type graph reaches a few React files through type-only imports
+    "jsx": "react",
+    "types": [],
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    // no tslib: the package has no runtime dependency besides Angular
+    "importHelpers": false,
+    "declaration": true,
+    "sourceMap": false,
+    "rootDir": "./src",
+    "outDir": "./.angular-out"
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "strictTemplates": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "extendedDiagnostics": {
+      "defaultCategory": "error"
+    }
+  }
+}
