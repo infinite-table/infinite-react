@@ -99,6 +99,7 @@ node_modules
 # the ngc emit the Angular package is bundled from (tsup.angular.config.ts)
 .angular-out
 .angular-spec-out
+.angular-spec-bundles
 /source/angular-types-check/tsconfig.generated.json
 /source/out
 /www/out

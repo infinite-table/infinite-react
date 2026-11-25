@@ -48,6 +48,8 @@ const SKIP_DIRS = new Set([
   'out-angular',
   '.angular',
   '.angular-out',
+  '.angular-spec-out',
+  '.angular-spec-bundles',
   '.angular-lib',
   'test-results',
   'benchmark-results',

@@ -1,0 +1,17 @@
+{
+  // The Angular unit tests (*.spec.angular.ts), compiled by ngc in full mode
+  // into .angular-spec-out, bundled by tsup.angular.spec.config.ts (same
+  // sibling resolution and styles as the package) and run by Vitest
+  // (vitest.angular.config.mts). `npm run test:angular`.
+  "extends": "./tsconfig.angular.json",
+  "files": ["globals.d.ts"],
+  "include": ["src/**/*.spec.angular.ts"],
+  "compilerOptions": {
+    "declaration": false,
+    "outDir": "./.angular-spec-out",
+    "noUnusedLocals": false
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "full"
+  }
+}
