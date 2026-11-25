@@ -168,6 +168,23 @@ window.__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY = (_id, ready, api
       await page.load();
       await page.waitForFunction(() => (window as any).INFINITE_GRID_READY);
       await page.waitForInfiniteSelector();
+      // the header cells can render a few ms after the body cells: wait for
+      // them too, in every grid that has a header (a header without cells,
+      // eg no visible columns, doesn't make the test wait longer than this)
+      await page
+        .waitForFunction(
+          () =>
+            Array.from(
+              document.querySelectorAll('.InfiniteHeaderWrapper'),
+            ).every(
+              (header) =>
+                header.querySelector('.InfiniteHeaderCell[data-column-id]') !=
+                null,
+            ),
+          undefined,
+          { timeout: 3000 },
+        )
+        .catch(() => {});
 
       if (extraTimeout) {
         await page.waitForTimeout(extraTimeout);
