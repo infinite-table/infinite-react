@@ -20,7 +20,8 @@ export type PriceChartTarget = {
 /**
  * One frame of the live price line of the feed's selected row: one minute of
  * 200ms samples that scrolls smoothly, the open as a dashed reference, a
- * crosshair on hover. No framework code: the React and the Vue chart call it.
+ * crosshair on hover. No framework code: the React, Vue and Angular charts
+ * call it.
  */
 export function drawPriceChart(
   feed: HeroFeed,

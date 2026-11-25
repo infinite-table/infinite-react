@@ -83,13 +83,28 @@ const ANGULAR_OUT_DIR = path.resolve(
 );
 
 // the framework-neutral part of the kit's showcase toolkit (the cursor, sleep,
-// waitFor, fling…), for the Vue hero
+// waitFor, fling…), for the Vue and Angular heroes
 const SHOWCASE_SCRIPTED = path.join(
   path.dirname(
     fileURLToPath(import.meta.resolve('@thedatagrid/docs-kit/showcase')),
   ),
   'scripted.js',
 );
+
+// What the home page heroes of the frameworks that aren't in the site's
+// bundle need (content/home/vue-hero.demo.vue, angular-hero.demo.angular.ts):
+const HERO_LIBRARIES = {
+  // - the tick worker is an entry of the import map, so the demo starts it
+  //   with `new Worker(import.meta.resolve('hero-tick-worker'))`
+  'hero-tick-worker': {
+    entry: 'src/components/hero/data/tick.worker.ts',
+  },
+  // - the scripted cursor is the kit's own, without its React components
+  //   (the package entry exports those too)
+  '@thedatagrid/docs-kit/showcase': {
+    entry: SHOWCASE_SCRIPTED,
+  },
+};
 
 const FORK_STYLES = `.Infinite {
   flex: 1;
@@ -134,19 +149,7 @@ const FRAMEWORK_BUILDS = {
   },
   vue: {
     entry: '../source/src/index.vue.tsx',
-    libraries: {
-      // The Vue home page hero (content/home/vue-hero.demo.vue):
-      // - its tick worker is an entry of the import map, so the demo starts
-      //   it with `new Worker(import.meta.resolve('hero-tick-worker'))`
-      'hero-tick-worker': {
-        entry: 'src/components/hero/data/tick.worker.ts',
-      },
-      // - the scripted cursor is the kit's own, without its React
-      //   components (the package entry exports those too)
-      '@thedatagrid/docs-kit/showcase': {
-        entry: SHOWCASE_SCRIPTED,
-      },
-    },
+    libraries: HERO_LIBRARIES,
     // sets the global license key - the Vue build starts without the React bootstrap
     bootstrap: 'docs-kit.bootstrap.vue.ts',
   },
@@ -163,6 +166,7 @@ const FRAMEWORK_BUILDS = {
       vanillaConfig,
     ],
     watch: [ANGULAR_OUT_DIR],
+    libraries: HERO_LIBRARIES,
     // the license key, as `provideInfiniteTable({ licenseKey })`
     bootstrap: 'docs-kit.bootstrap.angular.ts',
     // no pageStyle of its own: the `.Infinite { flex: 1 }` of the

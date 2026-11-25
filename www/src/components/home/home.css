@@ -661,8 +661,8 @@
   color: var(--fg);
 }
 
-/* the Vue page: the same demos, each in an iframe (VueFrameDemo.tsx) that
-   takes the height of its card, or fills the demo's box (the pivot) */
+/* the Vue and Angular pages: the same demos, each in an iframe (FrameDemo.tsx)
+   that takes the height of its card, or fills the demo's box (the pivot) */
 .home-demo__frame {
   display: block;
   width: 100%;

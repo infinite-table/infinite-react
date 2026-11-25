@@ -8,9 +8,11 @@ const readSiteMode = (): ColorMode =>
   document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
 /**
- * A home page demo of the Vue page (/vue): the Vue port of a LazyDemo
- * (content/home/vue-home-<name>.demo.vue). A Vue app, so it runs in its own
- * page, the one the docs-kit Vue build makes of the demo; this is its iframe.
+ * A home page demo of the Vue page (/vue) or the Angular one (/angular): the
+ * port of a LazyDemo to that framework (content/home/vue-home-<name>.demo.vue,
+ * angular-home-<name>.demo.angular.ts). An app of a framework the site doesn't
+ * bundle, so it runs in its own page, the one the docs-kit build of its
+ * framework makes of the demo; this is its iframe.
  *
  * Like LazyDemo, it loads when it nears the viewport, in a placeholder of the
  * demo's size (home.css). The page posts the height of its card, and the
@@ -18,14 +20,14 @@ const readSiteMode = (): ColorMode =>
  * as tall as the code next to it). It opens in the site's light / dark mode
  * and is told when the mode changes.
  */
-export function VueFrameDemo({
+export function FrameDemo({
   name,
   src,
   title,
   fill = false,
 }: {
   name: 'million' | 'themes' | 'pivot';
-  /** The demo's page, from the Vue demo manifest. */
+  /** The demo's page, from the demo manifest of its framework. */
   src: string;
   title: string;
   fill?: boolean;

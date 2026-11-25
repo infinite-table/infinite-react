@@ -22,8 +22,8 @@ import {
 } from './themes';
 
 /**
- * The part of the grid's APIs the show uses. The React grid and the Vue one
- * both fit, so this file imports neither.
+ * The part of the grid's APIs the show uses. The React, Vue and Angular grids
+ * all fit, so this file imports none of them.
  */
 export type HeroScriptApis = {
   api: {
