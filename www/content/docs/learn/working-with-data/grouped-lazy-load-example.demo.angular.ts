@@ -22,7 +22,6 @@ type Developer = {
   age: number;
 };
 
-
 const groupBy: DataSourceProps<Developer>['groupBy'] = [
   {
     field: 'country',
@@ -127,7 +126,8 @@ const dataSource: DataSourceData<Developer> = ({
   `,
 })
 export default class App {
-  private readonly avgTemplate = viewChild.required<TemplateRef<unknown>>('avg');
+  private readonly avgTemplate =
+    viewChild.required<TemplateRef<unknown>>('avg');
 
   protected readonly columns: InfiniteTablePropColumns<Developer> = {
     country: { field: 'country', header: 'Country' },

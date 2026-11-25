@@ -57,7 +57,9 @@ import type {
   `,
 })
 export class DataGrid {
-  protected readonly data: DataSourceData<DATA_TYPE> = [/* ... */];
+  protected readonly data: DataSourceData<DATA_TYPE> = [
+    /* ... */
+  ];
   protected readonly columns: InfiniteTablePropColumns<DATA_TYPE> = {
     /* ... */
   };
