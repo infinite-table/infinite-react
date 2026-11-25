@@ -95,3 +95,38 @@ export {
 export { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
 export { ExpandCollapseIcon } from './components/InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForAngular.angular';
 export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngular.angular';
+
+// master-detail
+export { injectMasterRowInfo } from './components/DataSource/DataSourceMasterDetailContextForAngular.angular';
+
+// tree grid (TreeGrid, TreeDataSource: above)
+export type * from './components/TreeGrid/types/TreeGridProps';
+export type * from './components/TreeGrid/types/TreeDataSourceProps';
+
+// drag and drop: the same names as in the React entry, plus the Angular
+// inject functions
+export {
+  DragDropProvider,
+  injectDragDropProvider,
+  INFINITE_DRAG_DROP_PROVIDER,
+  type DragDropSourceAndTarget,
+  type DragDropProviderContextValue,
+} from './components/InfiniteTable/components/draggable/DragDropProvider.angular';
+export {
+  DragList,
+  DragItem,
+  DragHandle,
+  injectDragList,
+  INFINITE_DRAG_LIST,
+  DRAG_ITEM_ATTRIBUTE,
+  createDefaultProxy,
+  defaultDragProxyMove,
+  type DragListProps,
+  type DragListContextValue,
+  type DragItemContextValue,
+  type DragProxyTemplateContext,
+  type DragProxyRenderState,
+  type DragProxySetupParams,
+  type DragProxySetupResult,
+  type DragProxyMoveParams,
+} from './components/InfiniteTable/components/draggable/DragList.angular';
