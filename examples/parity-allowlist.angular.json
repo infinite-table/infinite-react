@@ -1,0 +1,54 @@
+{
+  "//": "Specs (or single tests) that run on react but are skipped on angular on purpose. Read by scripts/parity.mjs --project angular and scripts/generate-angular-app.js (a spec listed without `test` gets no Angular route). The list can only shrink.",
+  "entries": [
+    {
+      "spec": "tests/table/props/sortInfo/controlled-single.spec.ts",
+      "reason": "strictly controlled prop; Angular model() has no locked mode"
+    },
+    {
+      "spec": "tests/table/props/column-order/controlled-with-value/no-change.spec.ts",
+      "reason": "strictly controlled prop; Angular model() has no locked mode"
+    },
+    {
+      "spec": "tests/table/props/column-visibility/controlled-with-value/no-change.spec.ts",
+      "reason": "strictly controlled prop; Angular model() has no locked mode"
+    },
+    {
+      "spec": "tests/CSSNumericVariableWatch.spec.ts",
+      "reason": "React internals: the CSSNumericVariableWatch React component"
+    },
+    {
+      "spec": "tests/useEffectWhen.spec.ts",
+      "reason": "React internals: the useEffectWhen hook"
+    },
+    {
+      "spec": "tests/useEffectWhenSameDeps.spec.ts",
+      "reason": "React internals: the useEffectWhen hook"
+    },
+    {
+      "spec": "tests/datasource/loadDataFn.spec.ts",
+      "reason": "React internals: useDataSourceInternal"
+    },
+    {
+      "spec": "tests/datasource/useDataSource/default.spec.ts",
+      "reason": "React internals: useDataSourceInternal"
+    },
+    {
+      "spec": "tests/headless-table/pinned-rows-and-cols.spec.ts",
+      "reason": "React internals: HeadlessTable and MatrixBrain"
+    },
+    {
+      "spec": "tests/table/props/group-by/grouping-toolbar-two-grids.spec.ts",
+      "reason": "the grouping toolbar is React only (not in the Vue and Angular v1 scope)"
+    },
+    {
+      "spec": "tests/table/props/group-by/grouping-toolbar-vertical.spec.ts",
+      "reason": "the grouping toolbar is React only (not in the Vue and Angular v1 scope)"
+    },
+    {
+      "spec": "tests/table/theme/density-filters.spec.ts",
+      "test": "the grouping toolbar item padding is scaled by the density",
+      "reason": "the grouping toolbar is React only (not in the Vue and Angular v1 scope)"
+    }
+  ]
+}

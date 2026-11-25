@@ -1,0 +1,50 @@
+{
+  // The Angular examples app (angular.json): the .page.angular.ts test
+  // pages, served by the Angular CLI. Standalone: it doesn't extend
+  // tsconfig.json, which belongs to the Next.js (React) app.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "strict": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": [],
+    "paths": {
+      // the dev build of the library (build:angular-lib) - inside examples/,
+      // so its @angular/* imports resolve to examples/node_modules, the
+      // copy the app uses (two copies build fine and fail at runtime, NG0203)
+      "@infinite-table/infinite-angular": ["./.angular-lib/infinite-angular"],
+      // the shared common.ts / columns.ts modules of the test pages import
+      // types from the React package: they get the Angular types (type-only,
+      // nothing reaches the bundle)
+      "@infinite-table/infinite-react": ["./.angular-lib/infinite-angular"],
+      "@examples/*": ["./src/*"],
+      "@src/*": ["../source/src/*"],
+      // sinon's browser entry (lib/sinon.js) requires node's util - its
+      // browser ESM bundle doesn't (typed by shims.d.ts)
+      "sinon": ["./node_modules/sinon/pkg/sinon-esm.js"]
+    }
+  },
+  // the program starts at main.ts: the pages are in it because the routes
+  // import them, so a page left out of the routes is not type-checked either
+  "files": [
+    "src/angular-app/main.ts",
+    "src/angular-app/shims.d.ts",
+    "../source/globals.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "enableI18nLegacyMessageIdFormat": false
+  }
+}

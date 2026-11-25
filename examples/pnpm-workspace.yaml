@@ -23,6 +23,8 @@ onlyBuiltDependencies:
   - '@swc/core'
   - '@tailwindcss/oxide'
   - esbuild
+  - lmdb
+  - msgpackr-extract
   - sharp
 # Not run on purpose:
 # - husky (v4) rewrites the hooks in .git/hooks, which all git worktrees
