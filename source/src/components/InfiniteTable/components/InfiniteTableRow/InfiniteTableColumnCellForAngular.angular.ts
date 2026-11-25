@@ -17,6 +17,7 @@ import {
 } from '@angular/core';
 
 import { join } from '../../../../utils/join';
+import { shallowEqualObjects } from '../../../../utils/shallowEqualObjects';
 import { stripVar } from '../../../../utils/stripVar';
 import type { GridMouseEvent } from '../../../types/DOMTypes';
 import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
@@ -478,7 +479,17 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
 
     const built = this.builtFor;
     if (
-      built.props === props &&
+      // the root builds new props for every cell on every render: like
+      // React.memo (and Vue's props check), the cell re-renders only when
+      // one of them changed. Except while it is edited: the editor follows
+      // the editing state (readOnly while the edit is persisted, a new edit
+      // of the same cell), which is not a prop - React's editor reads it
+      // from the context
+      (built.props === props ||
+        (!!built.props &&
+          !props.inEditMode &&
+          !this.editorSession &&
+          shallowEqualObjects(built.props, props))) &&
       built.rowInfo === this.rowInfo &&
       built.repaintTick === this.repaintTick
     ) {
