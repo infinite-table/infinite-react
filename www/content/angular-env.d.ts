@@ -6,6 +6,8 @@ declare const process: {
   env: {
     NEXT_PUBLIC_BASE_URL: string;
     NEXT_PUBLIC_INFINITE_LICENSE_KEY?: string;
+    /** the Tailwind setup of `*-tailwind` demos (docs-kit.bootstrap.angular.ts) */
+    DOCS_TAILWIND_STYLE?: string;
   };
 };
 
