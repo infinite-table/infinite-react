@@ -17,6 +17,7 @@ import {
 } from '@angular/core';
 
 import { join } from '../../../../utils/join';
+import { shallowEqualObjects } from '../../../../utils/shallowEqualObjects';
 import { stripVar } from '../../../../utils/stripVar';
 import type { GridMouseEvent } from '../../../types/DOMTypes';
 import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
@@ -55,7 +56,6 @@ import {
 import { getColumnRenderingParams } from './columnRendering';
 import type { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 import { getColumnCellStyling } from './columnCellStyling';
-import { shallowEqualObjects } from '../../../../utils/shallowEqualObjects';
 import {
   InfiniteTableCellClassName,
   InfiniteTableCellContentClassName,
@@ -477,15 +477,19 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
     }
     this.subscribe(props);
 
-    // the root creates new props for every cell on every render: like
-    // React.memo, the cell only re-renders when a prop changed (or its row
-    // info, or its repaint key). A cell in edit mode always does: its editor
-    // session follows state.editingCell, which isn't a prop
     const built = this.builtFor;
     if (
-      built.props &&
+      // the root builds new props for every cell on every render: like
+      // React.memo (and Vue's props check), the cell re-renders only when
+      // one of them changed. Except while it is edited: the editor follows
+      // the editing state (readOnly while the edit is persisted, a new edit
+      // of the same cell), which is not a prop - React's editor reads it
+      // from the context
       (built.props === props ||
-        (!props.inEditMode && shallowEqualObjects(built.props, props))) &&
+        (!!built.props &&
+          !props.inEditMode &&
+          !this.editorSession &&
+          shallowEqualObjects(built.props, props))) &&
       built.rowInfo === this.rowInfo &&
       built.repaintTick === this.repaintTick
     ) {
