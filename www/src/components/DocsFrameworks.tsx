@@ -95,9 +95,13 @@ export function useDocsFramework() {
         );
         return link.kind === 'missing' ? href : link.href;
       },
-      /** A sidebar tree for this page's framework. */
+      /**
+       * A sidebar tree for this page's framework (React's is the tree as it
+       * is, unless React lacks a page: then there's a list of its pages).
+       */
       routesFor<R extends { path?: string; routes?: R[] }>(routes: R[]): R[] {
-        return framework && framework !== docsFrameworks.default
+        return framework &&
+          (framework !== docsFrameworks.default || pages[framework])
           ? mapRouteTree(docsFrameworks, routes, framework, hasPage, {
               onFallback: (route, fallback) => ({
                 ...route,
