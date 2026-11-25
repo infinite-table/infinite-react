@@ -1,6 +1,7 @@
 ---
 title: Disabled Rows
 vue: true
+angular: true
 ---
 
 Disabling rows allows you to have some rows that are not selectable, not clickable, not reacheable via keyboard navigation and other interactions.
