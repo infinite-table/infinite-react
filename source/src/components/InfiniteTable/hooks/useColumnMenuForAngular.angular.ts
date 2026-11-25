@@ -3,7 +3,8 @@
  * useColumnMenuForVue.vue.ts) - shows/hides the column menu overlay in
  * response to menu-icon clicks (state.onColumnMenuClick, which
  * `columnApi.toggleContextMenu()` publishes) and the
- * columnMenuVisibleForColumnId state.
+ * columnMenuVisibleForColumnId state, through the shared wiring
+ * (menuOverlayShared.ts).
  *
  * Called in the InfiniteTable root's setup; render the returned overlay
  * with `infiniteOverlayPortal` in the root's portal element.
@@ -14,15 +15,14 @@ import { watchSignals } from '../../hooks/watchSignals.angular';
 import {
   createOverlay,
   type InfiniteOverlay,
-  type ShowOverlayFn,
 } from '../../hooks/useOverlay/OverlayForAngular.angular';
-import { menuIconSelector } from '../components/icons/menuIconAttributes';
 import { getMenuForColumn } from '../utils/getMenuForColumnForAngular.angular';
 
+import { getMenuPortalContainer } from '../utils/menuOverlayTargets';
 import {
-  getMenuConstrainTo,
-  getMenuPortalContainer,
-} from '../utils/menuOverlayTargets';
+  columnMenuVisibilityEffect,
+  getColumnMenuClickHandler,
+} from '../utils/menuOverlayShared';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 import type { InfiniteTableState } from '../types';
 
@@ -46,67 +46,9 @@ export function getMenuOverlayPortalContainer<T>(params: MenuHookParams<T>) {
   );
 }
 
-function showMenuForColumn<T>(options: {
-  columnId: string;
-  target?: HTMLElement;
-  context: InfiniteTableStableContextValue<T>;
-  clearAll: VoidFunction;
-  showOverlay: ShowOverlayFn;
-  injector: Injector;
-}) {
-  const { columnId, context, clearAll, showOverlay, injector } = options;
-  const { getState, actions } = context;
-  const { columnMenuTargetRef, domRef } = getState();
-
-  function onHideIntent() {
-    clearAll();
-    actions.columnMenuVisibleForColumnId = null;
-  }
-
-  let target = options.target;
-
-  if (!target) {
-    target = columnMenuTargetRef.current ?? undefined;
-
-    if (target && !domRef.current!.contains(target)) {
-      // if not in DOM anymore, clear it
-      target = undefined;
-    }
-  }
-
-  if (!target) {
-    const iconSelector = `[data-column-id="${columnId}"] ${menuIconSelector}`;
-
-    target = getState().domRef.current!.querySelector(
-      iconSelector,
-    ) as HTMLElement;
-  }
-
-  if (!target) {
-    console.warn(`Cannot show column menu for column "${columnId}"`);
-    return;
-  }
-
-  // clear this so it won't become stale
-  columnMenuTargetRef.current = null;
-
-  showOverlay(
-    () => getMenuForColumn(columnId, context, onHideIntent, injector),
-    {
-      constrainTo: getMenuConstrainTo(getState()),
-      id: 'column-menu',
-      alignTo: target,
-      alignPosition: [
-        ['TopLeft', 'BottomLeft'],
-        ['TopRight', 'BottomRight'],
-      ],
-    },
-  );
-}
-
 export function setupColumnMenu<T>(params: MenuHookParams<T>): InfiniteOverlay {
   const { context, state, injector } = params;
-  const { getState, actions } = context;
+  const { getState } = context;
 
   const overlay = createOverlay({
     portalContainer: getMenuOverlayPortalContainer(params),
@@ -114,17 +56,7 @@ export function setupColumnMenu<T>(params: MenuHookParams<T>): InfiniteOverlay {
   const { showOverlay, clearAll } = overlay;
 
   const removeOnColumnMenuClick = getState().onColumnMenuClick.onChange(
-    (info) => {
-      if (!info) {
-        return;
-      }
-      getState().columnMenuTargetRef.current = info.target as HTMLElement;
-
-      actions.contextMenuVisibleFor = null;
-      actions.cellContextMenuVisibleFor = null;
-      actions.filterOperatorMenuVisibleForColumnId = null;
-      actions.columnMenuVisibleForColumnId = info.column.id;
-    },
+    getColumnMenuClickHandler(context),
   );
 
   watchSignals(
@@ -133,38 +65,15 @@ export function setupColumnMenu<T>(params: MenuHookParams<T>): InfiniteOverlay {
         state().columnMenuVisibleForColumnId,
         state().columnMenuVisibleKey,
       ] as const,
-    () => {
-      const { columnMenuVisibleForColumnId, columnMenuTargetRef } = getState();
-
-      if (columnMenuVisibleForColumnId) {
-        function handleMouseDown(event: MouseEvent) {
-          // @ts-ignore
-          if (event.__insideMenu !== true) {
-            clearAll();
-            actions.columnMenuVisibleForColumnId = null;
-          }
-        }
-        document.documentElement.addEventListener('mousedown', handleMouseDown);
-
-        showMenuForColumn({
-          columnId: columnMenuVisibleForColumnId,
-          context,
-          clearAll,
-          showOverlay,
-          injector,
-        });
-
-        return () => {
-          document.documentElement.removeEventListener(
-            'mousedown',
-            handleMouseDown,
-          );
-        };
-      }
-      columnMenuTargetRef.current = null;
-      clearAll();
-      return undefined;
-    },
+    () =>
+      columnMenuVisibilityEffect(context, {
+        clearAll,
+        show: (columnId, onHideIntent, params) =>
+          showOverlay(
+            () => getMenuForColumn(columnId, context, onHideIntent, injector),
+            params,
+          ),
+      }),
     { injector, flush: 'post' },
   );
 

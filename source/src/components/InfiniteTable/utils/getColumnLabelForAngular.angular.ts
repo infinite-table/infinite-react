@@ -12,7 +12,7 @@ import {
   isTemplateRenderable,
 } from '../../RawList/InfiniteRenderForAngular.angular';
 import type { Renderable } from '../../types/FrameworkTypes.angular';
-import { getColumnApiForColumn } from '../api/getColumnApi';
+import { getColumnLabel } from '../components/InfiniteTableHeader/getColumnLabel';
 import type { GetImperativeApiParam } from '../api/type';
 import type { InfiniteTableApi, InfiniteTableComputedColumn } from '../types';
 import type { InfiniteTableColumnHeaderParam } from '../types/InfiniteTableColumn';
@@ -40,50 +40,7 @@ export function getColumnLabelForAngular<T>(
       ? context.getComputed().computedColumnsMap.get(colIdOrCol)!
       : colIdOrCol;
 
-  const {
-    api,
-    getComputed,
-    getDataSourceState,
-    actions,
-    dataSourceActions,
-    dataSourceApi,
-  } = context;
-  const { allRowsSelected, someRowsSelected, selectionMode } =
-    getDataSourceState();
-  const computed = getComputed();
-
-  const defaultLabel: Renderable = col.name || col.id || '';
-
-  const columnApi = getColumnApiForColumn(col.id, {
-    ...context,
-    actions,
-    dataSourceActions,
-    dataSourceApi,
-  })!;
-
-  const param = {
-    horizontalLayoutPageIndex: null,
-    column: col,
-    columnApi,
-    dataSourceApi,
-    renderLocation,
-    dragging: false,
-    columnsMap: computed.computedColumnsMap,
-    columnSortInfo: col.computedSortInfo,
-    columnFilterValue: col.computedFilterValue,
-    filtered: col.computedFiltered,
-    allRowsSelected,
-    someRowsSelected,
-    selectionMode,
-    api,
-    renderBag: {
-      header: defaultLabel,
-    },
-  } as any as InfiniteTableColumnHeaderParam<any>;
-
-  const header = col.header as unknown;
-
-  const bind = (content: Renderable) =>
+  return getColumnLabel(col, context, renderLocation, (content, param) =>
     injector
       ? bindRenderable(
           content,
@@ -91,18 +48,11 @@ export function getColumnLabelForAngular<T>(
           getStage(injector, `${renderLocation}:${col.id}`),
           (p) => p.column,
         )
-      : bindToHeaderParam(content, param);
-
-  if (typeof header === 'function') {
-    const label = (header as Function)(param) ?? null;
-    return bind(label);
-  }
-
-  if (header) {
-    return bind(header as Renderable);
-  }
-
-  return defaultLabel;
+      : bindToHeaderParam(
+          content,
+          param as InfiniteTableColumnHeaderParam<any>,
+        ),
+  );
 }
 
 /**

@@ -1,84 +1,44 @@
 import * as React from 'react';
 
 import { Menu } from '../../Menu';
-import { getCellContext } from '../components/InfiniteTableRow/columnRendering';
+import type { MenuProps } from '../../Menu/MenuProps';
 
 import {
   CellContextMenuLocationWithEvent,
   ContextMenuLocationWithEvent,
 } from '../types/InfiniteTableState';
+import { getLazyMenu } from './contextMenuUtils';
 import {
-  getLazyMenu,
-  getMenuDefaultProps,
-  getMenuItemsAndColumns,
-} from './contextMenuUtils';
+  ContextMenuBinder,
+  getCellContextMenuContent,
+  getTableContextMenuContent,
+} from './menuItemsShared';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
+
+function getContextMenuBinder<T>(
+  context: InfiniteTableStableContextValue<T>,
+): ContextMenuBinder<React.ReactNode> {
+  const MenuCmp: React.ComponentType<MenuProps> =
+    context.getState().components?.Menu ?? Menu;
+
+  return {
+    renderMenu: (props) => <MenuCmp {...props} />,
+    renderLazyMenu: (menuDefinition, menuDefaultProps) =>
+      getLazyMenu(menuDefinition, menuDefaultProps, MenuCmp),
+  };
+}
 
 export function getCellContextMenu<T>(
   cellLocation: CellContextMenuLocationWithEvent,
   context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
-  const { columnId, rowIndex, event } = cellLocation;
-  const { getComputed, getState } = context;
-
-  const { components, getCellContextMenuItems } = getState();
-
-  const MenuCmp = components?.Menu ?? Menu;
-
-  const { computedColumnsMap } = getComputed();
-
-  const column = computedColumnsMap.get(columnId)!;
-
-  const cellContext = {
-    ...getCellContext({
-      ...context,
-      rowIndex,
-      columnId: column.id,
-    }),
-    event,
-  };
-
-  if (!column || !getCellContextMenuItems) {
-    return {
-      cellContext,
-      menu: null,
-      preventDefault: false,
-    };
-  }
-
-  const menuDefaultProps = getMenuDefaultProps({
+  return getCellContextMenuContent(
+    cellLocation,
+    context,
     onHideIntent,
-  });
-
-  const menuDefinition = getCellContextMenuItems(cellContext, context);
-
-  const preventDefault =
-    menuDefinition instanceof Promise
-      ? true
-      : Array.isArray(menuDefinition)
-      ? true
-      : !!(menuDefinition && Array.isArray(menuDefinition.items));
-
-  if (menuDefinition instanceof Promise) {
-    return {
-      cellContext,
-      menu: getLazyMenu(menuDefinition, menuDefaultProps, MenuCmp),
-      preventDefault,
-    };
-  }
-
-  const { items, columns } = getMenuItemsAndColumns(menuDefinition);
-
-  if (!items || !items.length) {
-    return { cellContext, menu: null, preventDefault: Array.isArray(items) };
-  }
-
-  return {
-    preventDefault,
-    menu: <MenuCmp {...menuDefaultProps} columns={columns} items={items} />,
-    cellContext,
-  };
+    getContextMenuBinder(context),
+  );
 }
 
 export function getTableContextMenu<T>(
@@ -86,60 +46,10 @@ export function getTableContextMenu<T>(
   context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
-  const { getState, getComputed } = context;
-  const { components, getContextMenuItems } = getState();
-
-  const MenuCmp = components?.Menu ?? Menu;
-
-  const { computedColumnsMap } = getComputed();
-
-  const column = menuLocation.columnId
-    ? computedColumnsMap.get(menuLocation.columnId)
-    : undefined;
-
-  const cellContext = column
-    ? {
-        ...menuLocation,
-        ...getCellContext({
-          ...context,
-          rowIndex: menuLocation.rowIndex!,
-          columnId: column.id,
-        }),
-      }
-    : menuLocation;
-
-  if (!getContextMenuItems) {
-    return { cellContext, menu: null, preventDefault: false };
-  }
-
-  const menuDefaultProps = getMenuDefaultProps({
+  return getTableContextMenuContent(
+    menuLocation,
+    context,
     onHideIntent,
-  });
-  const menuDefinition = getContextMenuItems(cellContext, context);
-
-  const preventDefault =
-    menuDefinition instanceof Promise
-      ? true
-      : Array.isArray(menuDefinition)
-      ? true
-      : !!(menuDefinition && Array.isArray(menuDefinition.items));
-
-  if (menuDefinition instanceof Promise) {
-    return {
-      cellContext,
-      menu: getLazyMenu(menuDefinition, menuDefaultProps, MenuCmp),
-      preventDefault,
-    };
-  }
-
-  const { items, columns } = getMenuItemsAndColumns(menuDefinition);
-  if (!items || !items.length) {
-    return { cellContext, menu: null, preventDefault: Array.isArray(items) };
-  }
-
-  return {
-    preventDefault,
-    menu: <MenuCmp {...menuDefaultProps} columns={columns} items={items} />,
-    cellContext,
-  };
+    getContextMenuBinder(context),
+  );
 }
