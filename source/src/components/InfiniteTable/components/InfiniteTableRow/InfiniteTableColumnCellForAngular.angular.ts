@@ -17,6 +17,7 @@ import {
 } from '@angular/core';
 
 import { join } from '../../../../utils/join';
+import { shallowEqualObjects } from '../../../../utils/shallowEqualObjects';
 import { stripVar } from '../../../../utils/stripVar';
 import type { GridMouseEvent } from '../../../types/DOMTypes';
 import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
@@ -478,7 +479,11 @@ export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
 
     const built = this.builtFor;
     if (
-      built.props === props &&
+      // shallow, like React.memo and Vue's props check: the root creates new
+      // props objects for every render range, the cells that get the same
+      // values don't render again
+      (built.props === props ||
+        (!!built.props && shallowEqualObjects(built.props, props))) &&
       built.rowInfo === this.rowInfo &&
       built.repaintTick === this.repaintTick
     ) {
