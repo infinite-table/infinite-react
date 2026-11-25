@@ -102,6 +102,16 @@ import { computeRowHeightWithCache } from './hooks/computedRowHeightShared';
 import { InfiniteTableColumnCellClassName } from './components/InfiniteTableRow/InfiniteTableColumnCellClassNames';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMaskForAngular.angular';
+// master-detail: the detail rows
+import {
+  InfiniteTableDetailRow,
+  InfiniteTableDetailRowPlaceholder,
+  type InfiniteTableDetailRowProps,
+} from './components/InfiniteTableRow/InfiniteTableDetailRowForAngular.angular';
+import type {
+  TableRenderDetailRowFn,
+  TableRenderDetailRowFnParam,
+} from '../HeadlessTable/rendererTypes';
 import {
   INFINITE_TABLE,
   type InfiniteTableContextValueForAngular,
@@ -286,6 +296,7 @@ const PORTAL_CLASS_NAME = join(
           [renderer]="$any(s.renderer)"
           [onRenderUpdater]="s.onRenderUpdater"
           [renderCell]="renderCell()"
+          [renderDetailRow]="renderDetailRow()"
           [cellHoverClassNames]="hoverClassNames()"
           [scrollStopDelay]="s.scrollStopDelay"
           [forceRerenderTimestamp]="s.forceBodyRerenderTimestamp"
@@ -378,6 +389,7 @@ export class InfiniteTable<T = any>
   contextValue!: InfiniteTableContextValueForAngular<T>;
 
   protected renderCell!: Signal<TableRenderCellFn>;
+  protected renderDetailRow!: Signal<TableRenderDetailRowFn | undefined>;
   protected hoverClassNames!: Signal<string[] | undefined>;
   protected loadMask!: Signal<Renderable>;
   // assigned in ngOnInit (host bindings first run after it)
@@ -1894,6 +1906,67 @@ export class InfiniteTable<T = any>
             ColumnCell
               ? renderPooled(ColumnCell, props, [InfiniteColumnCellHost])
               : renderPooled(InfiniteTableColumnCell, props)
+          ) as unknown as Renderable;
+        };
+      },
+    );
+
+    // ---- master-detail: the detail rows ----
+    // mirrors renderDetailRow from React's useCellRendering
+    this.renderDetailRow = computedWithDeps<TableRenderDetailRowFn | undefined>(
+      () => {
+        const s = state();
+        return [s.isRowDetailExpanded, s.rowDetailRenderer, s.rowDetailCache];
+      },
+      () => {
+        const s = getState();
+        const isRowDetailsExpanded = s.isRowDetailExpanded;
+        const rowDetailRenderer = s.rowDetailRenderer;
+
+        if (!isRowDetailsExpanded || !rowDetailRenderer) {
+          return undefined;
+        }
+
+        const rowDetailCache = s.rowDetailCache;
+
+        return (params: TableRenderDetailRowFnParam) => {
+          const { rowIndex } = params;
+
+          const rowInfo = getData()[rowIndex];
+          const computedRowSizeCacheForDetails =
+            getComputedRowHeightResult().computedRowSizeCacheForDetails;
+
+          if (
+            !rowInfo ||
+            !isRowDetailsExpanded(rowInfo) ||
+            !computedRowSizeCacheForDetails
+          ) {
+            // normally we would have returned `null`
+            // but if we return null, the headless renderer will lose track
+            // of the HTMLElement, and then when we scroll down and want
+            // to reuse the HTMLElement, it will be gone, and the rendering
+            // will break
+            return renderPooled(
+              InfiniteTableDetailRowPlaceholder,
+              null,
+            ) as unknown as Renderable;
+          }
+
+          const { rowDetailHeight, rowHeight } =
+            computedRowSizeCacheForDetails.getSize(rowIndex);
+
+          const props: InfiniteTableDetailRowProps<T> = {
+            rowInfo,
+            rowDetailsCache: rowDetailCache,
+            rowIndex,
+            detailOffset: rowHeight,
+            rowDetailHeight,
+            rowDetailRenderer: rowDetailRenderer as any,
+          };
+
+          return renderPooled(
+            InfiniteTableDetailRow,
+            props,
           ) as unknown as Renderable;
         };
       },

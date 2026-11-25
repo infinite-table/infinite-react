@@ -76,3 +76,6 @@ export {
 export { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
 export { ExpandCollapseIcon } from './components/InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForAngular.angular';
 export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngular.angular';
+
+// master-detail
+export { injectMasterRowInfo } from './components/DataSource/DataSourceMasterDetailContextForAngular.angular';
