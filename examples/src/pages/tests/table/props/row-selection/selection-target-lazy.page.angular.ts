@@ -5,7 +5,6 @@ import type { DataSourcePropGroupBy } from '@infinite-table/infinite-angular';
 
 (globalThis as any).dataParamsCalls = [];
 
-
 const dataSource = ({
   groupBy,
   groupKeys = [],

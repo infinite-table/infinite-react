@@ -13,7 +13,6 @@ import type {
 
 import { data, height80vhDomProps, type Developer } from './common';
 
-
 const columns: Record<string, any> = {
   checkbox: { renderSelectionCheckBox: true, defaultWidth: 70 },
   id: { field: 'id' },
