@@ -1,0 +1,10 @@
+// Ambient types for the Angular docs demos (tsconfig.angular.json).
+
+// inlined by the demo build (docs-kit.config.mjs): `define`s for the demos,
+// `bootstrapDefine`s for docs-kit.bootstrap.angular.ts
+declare const process: {
+  env: {
+    NEXT_PUBLIC_BASE_URL: string;
+    NEXT_PUBLIC_INFINITE_LICENSE_KEY?: string;
+  };
+};
