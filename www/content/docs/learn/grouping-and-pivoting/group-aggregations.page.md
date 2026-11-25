@@ -3,6 +3,8 @@ title: Aggregations
 description: Learn how to define & use aggregations on grouped rows in Infinite Table for React.
 vue:
   description: Learn how to define & use aggregations on grouped rows in Infinite Table for Vue.
+angular:
+  description: Learn how to define & use aggregations on grouped rows in Infinite Table for Angular.
 ---
 
 A natural next step when grouping data is **aggregating the grouped values**. We allow developers to define any number of aggregations and bind them to any column.
