@@ -41,9 +41,11 @@ A common use-case is integrating date editors. The following example uses the [M
 
 <FrameworkContent framework="angular">
 
-A common use-case is integrating date editors. The following example uses the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/), which is a React component, so it's shown in its React version. In Angular, a date editor is a [custom editor](/docs/learn/editing/custom-editor) like any other: a component that calls <HookLink name="useInfiniteColumnEditor" /> and renders the date picker you already use in your project (or a native `<input type="date">`).
+A common use-case is integrating date editors. In Angular, a date editor is a [custom editor](/docs/learn/editing/custom-editor) like any other: a component that calls <HookLink name="useInfiniteColumnEditor" /> and renders a date input. The following example uses the browser's native `<input type="date">`; the date picker you already use in your project fits in the same way.
 
 </FrameworkContent>
+
+<FrameworkContent not="angular">
 
 <DemoDescription>
 
@@ -53,6 +55,21 @@ This is a basic example integrating with the [MUI X Date Picker](https://mui.com
 
 ```tsx file="date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker for editing dates in the DataGrid"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<DemoDescription>
+
+Click any cell in the **Birth Date** column to edit it with the browser's date input: pick a day to confirm the edit, press Escape (or click elsewhere) to cancel it.
+
+</DemoDescription>
+
+```tsx file="date-editor-example.demo.tsx" height="large" title="Using a native date input for editing dates in the DataGrid"
+```
+
+</FrameworkContent>
 
 ## Configure Editors for Column Types
 
