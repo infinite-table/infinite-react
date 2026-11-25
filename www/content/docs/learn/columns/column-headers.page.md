@@ -2,6 +2,7 @@
 title: Column Headers
 description: Configure column headers with custom column header, custom sort icon, menu icon and more.
 vue: true
+angular: true
 ---
 
 Column headers have the same level of customization as column cells - you can fully control what is being rendered and when. Here's a summary of the things you can do in the column header:
@@ -94,6 +95,20 @@ The `renderBag` object contains the following properties available to the render
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+- `header` - the label of the column header.
+- `sortIcon` - the default sort icon
+- `filterIcon` - the filter icon - displayed when the current column is used in filtering
+- `filterEditor` - the current filter editor
+- `menuIcon` - the menu icon that can be clicked to open the column menu
+- `selectionCheckBox` - the selection check box - displays the current selection status and controls the selection for all rows.
+- `all` - all of the above combined together, as an array.
+
+Each of them is a renderable value (text, a template, a component, or an array of those): show it in a template with `<ng-container [infiniteRender]="renderBag.sortIcon" />` (`InfiniteRender` from `@infinite-table/infinite-angular`).
+
+</FrameworkContent>
+
 ### Customizing the Sort Icon
 
 For customizing the sort icon, use the <PropLink name="columns.renderSortIcon">column.renderSortIcon</PropLink> function.
@@ -112,6 +127,12 @@ or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same
 <FrameworkContent framework="vue">
 
 or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information. The composable returns a ref and has to be called in the `setup` of a component rendered inside the column header - calling it directly in the `renderSortIcon` function doesn't work.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+or you can return a component (`renderComponent(SortIcon)`) that uses <HookLink name="useInfiniteHeaderCell"/> to get the same information. It returns a signal and has to be called in a field initializer (or the constructor) of a component rendered inside the column header - calling it directly in the `renderSortIcon` function doesn't work.
 
 </FrameworkContent>
 
@@ -139,6 +160,12 @@ or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same
 <FrameworkContent framework="vue">
 
 or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+or you can return a component (with `renderComponent`) that uses <HookLink name="useInfiniteHeaderCell"/> to get the same information, as a signal.
 
 </FrameworkContent>
 
@@ -182,6 +209,12 @@ or you can use the <HookLink name="useInfiniteHeaderCell"/> hook to get the same
 <FrameworkContent framework="vue">
 
 or you can return a component that uses the <HookLink name="useInfiniteHeaderCell"/> composable to get the same information.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+or you can return a component (with `renderComponent`) that uses <HookLink name="useInfiniteHeaderCell"/> to get the same information, as a signal.
 
 </FrameworkContent>
 
