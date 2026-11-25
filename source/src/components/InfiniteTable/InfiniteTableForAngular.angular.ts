@@ -20,12 +20,11 @@ import {
 } from '@angular/core';
 
 import { join } from '../../utils/join';
-import { shallowEqualObjects } from '../../utils/shallowEqualObjects';
 import { styleWithUnits } from '../../utils/styleWithUnits';
 import { selectParentUntil } from '../../utils/selectParent';
 import { buildManagedAngularComponent } from '../hooks/useComponentState/useManagedComponent.angular';
 import { computedWithDeps } from '../hooks/computedWithDeps.angular';
-import { watchSignals } from '../hooks/watchSignals.angular';
+import { runControllerEffectsForAngular } from '../hooks/runControllerEffectsForAngular.angular';
 import { setupResizeObserver } from '../ResizeObserver/setupResizeObserver';
 import {
   INFINITE_DATA_SOURCE,
@@ -40,8 +39,6 @@ import {
   renderComponent,
 } from '../RawList/InfiniteRenderForAngular.angular';
 import type { Renderable } from '../types/FrameworkTypes.angular';
-import type { CellPositionByIndex } from '../types/CellPositionByIndex';
-import type { MatrixBrainOptions } from '../VirtualBrain/MatrixBrain';
 import type {
   TableRenderCellFn,
   TableRenderCellFnParam,
@@ -49,7 +46,6 @@ import type {
 
 import {
   cleanupState,
-  createBrains,
   forwardProps,
   getCellSelector,
   getGroupByMap,
@@ -58,13 +54,12 @@ import {
   mapPropsToState,
 } from './state/getInitialState';
 import {
-  getColumnVisibilityForHideEmptyGroupColumns,
-  getGroupColumnsForComputedColumns,
-} from './state/getColumnVisibilityForHideEmptyGroupColumns';
-import { getColumnContentMaxWidths } from './utils/getColumnContentMaxWidths';
-import { DEBUG_NAME } from './InfiniteDebugName';
+  createRootEffects,
+  getColumnSizeFn,
+  getRowspanFn,
+  updateBrain,
+} from './controller/rootEffects';
 import { getComputedColumns } from './utils/getComputedColumns';
-import { getColumnsWhenGrouping } from './utils/getColumnsWhenGrouping';
 import { getInfiniteCSSVars } from './utils/getInfiniteCSSVars';
 import { getImperativeApi } from './api/getImperativeApi';
 import { MultiRowSelector } from './utils/MultiRowSelector';
@@ -79,15 +74,7 @@ import {
   InfiniteClsHasPinnedStart,
   InfiniteClsRecipe,
 } from './InfiniteCls.css';
-import { onCellClick } from './eventHandlers/onCellClick';
-import { onCellMouseDown } from './eventHandlers/onCellMouseDown';
-import { onKeyDown } from './eventHandlers/onKeyDown';
-import {
-  getEditingCellContext,
-  warnEditedRowGone,
-} from './utils/getEditingCellContext';
 import { position, top, left, zIndex } from './utilities.css';
-import { getColumnApiForColumn } from './api/getColumnApi';
 import { cloneRowSelection } from './api/getRowSelectionApi';
 import { cloneTreeSelection } from '../DataSource/TreeApi';
 import type { InfiniteTableEventHandlerContext } from './eventHandlers/eventHandlerTypes';
@@ -139,7 +126,6 @@ import {
   InfiniteTableInputs,
 } from './InfiniteTableInputs.generated.angular';
 import type {
-  InfiniteTableComputedColumn,
   InfiniteTableComputedValues,
   InfiniteTableState,
   Scrollbars,
@@ -149,8 +135,6 @@ import type { InfiniteTableColumnRenderingContext } from './components/InfiniteT
 import {
   DEFAULT_COLUMN_HEADER_HEIGHT,
   DEFAULT_ROW_HEIGHT_CSS_VALUE,
-  getColumnHeaderHeightFromCSSValue,
-  getRowHeightFromCSSValue,
 } from './shared';
 
 export const InfiniteTableClassName = internalProps.rootClassName;
@@ -220,43 +204,6 @@ const injectManagedInfiniteTable = buildManagedAngularComponent({
   } as any,
   debugName: 'InfiniteTable',
 });
-
-/**
- * mirrors useColumnSizeFn + useColumnRowspan (pure logic, no hooks)
- */
-function getColumnSizeFn<T>(columns: InfiniteTableComputedColumn<T>[]) {
-  return (index: number) => columns[index]?.computedWidth ?? 0;
-}
-
-function getRowspanFn<T>(
-  computedVisibleColumns: InfiniteTableComputedColumn<T>[],
-  getDataSourceState: () => { dataArray: any[] },
-): MatrixBrainOptions['rowspan'] {
-  const colsWithRowspan = computedVisibleColumns.filter(
-    (col) => typeof col.rowspan === 'function',
-  );
-
-  return colsWithRowspan.length
-    ? ({ rowIndex, colIndex }) => {
-        const dataArray = getDataSourceState().dataArray;
-        const rowInfo = dataArray[rowIndex];
-        if (!rowInfo) {
-          return 1;
-        }
-        const column = computedVisibleColumns[colIndex];
-        if (!column || !column.rowspan) {
-          return 1;
-        }
-        return column.rowspan({
-          column,
-          data: rowInfo.data,
-          dataArray,
-          rowInfo,
-          rowIndex,
-        });
-      }
-    : undefined;
-}
 
 // same default hover class names as InfiniteTableBody.rowHoverClassName
 const HOVERED_CLASS_NAMES = [
@@ -490,348 +437,7 @@ export class InfiniteTable<T = any>
 
     const isDetail = !!this.getMasterDetailContext();
 
-    const watch = <D extends readonly unknown[]>(
-      getDeps: () => D,
-      callback: (current: D, previous: D | undefined) => void | VoidFunction,
-      options?: { immediate?: boolean; flush?: 'pre' | 'post' },
-    ) => watchSignals(getDeps, callback, { injector, ...options });
-
     getState().domRef.current = this.host as HTMLDivElement;
-
-    // ---- columns when grouping (React: useColumnsWhenGrouping) ----
-    const toggleGroupRowFromState = (groupKeys: any[]) => {
-      api.toggleGroupRow(groupKeys);
-    };
-    watch(
-      () => {
-        const s = state();
-        const ds = dataSourceState();
-        return [
-          s.columns,
-          ds.groupBy,
-          ds.pivotBy,
-          ds.selectionMode,
-          s.hideColumnWhenGrouped,
-          s.groupColumn,
-          s.groupRenderStrategy,
-          s.pivotColumns,
-          s.pivotTotalColumnPosition,
-          s.pivotColumn,
-        ] as const;
-      },
-      () => {
-        const s = getState();
-        const ds = getDSState();
-
-        const { columns: columnsWhenGrouping, groupColumnIds } =
-          getColumnsWhenGrouping({
-            columns: s.columns,
-            groupColumn: s.groupColumn,
-            pivotColumn: s.pivotColumn,
-            pivotTotalColumnPosition: s.pivotTotalColumnPosition,
-            pivotGrandTotalColumnPosition: s.pivotGrandTotalColumnPosition,
-            groupRenderStrategy:
-              s.groupRenderStrategy === 'inline'
-                ? 'single-column'
-                : s.groupRenderStrategy,
-            groupBy: ds.groupBy,
-            pivotBy: ds.pivotBy,
-            pivotColumns: s.pivotColumns,
-            toggleGroupRow: toggleGroupRowFromState,
-            selectionMode: ds.selectionMode,
-          } as any);
-
-        actions.columnsWhenGrouping = columnsWhenGrouping as any;
-
-        let currentColumnOrder = getState().columnOrder;
-        if (groupColumnIds.length && Array.isArray(currentColumnOrder)) {
-          const colOrder = new Set(currentColumnOrder);
-          let shouldUpdate = false;
-          groupColumnIds.forEach((groupColId: string) => {
-            if (!colOrder.has(groupColId)) {
-              shouldUpdate = true;
-              currentColumnOrder = [
-                groupColId,
-                ...(currentColumnOrder as string[]),
-              ];
-            }
-          });
-          if (shouldUpdate) {
-            actions.columnOrder = currentColumnOrder;
-          }
-        }
-      },
-      { immediate: true },
-    );
-
-    // the DataSource generates group rows unless the render strategy is inline
-    watch(
-      () => [state().groupRenderStrategy] as const,
-      ([groupRenderStrategy]) => {
-        dataSourceContext.dataSourceActions.generateGroupRows =
-          groupRenderStrategy !== 'inline';
-      },
-      { immediate: true },
-    );
-    // the DataSource pivot pipeline needs this flag to decide whether
-    // single-aggregation pivots get their own column group
-    watch(
-      () => [state().showSeparatePivotColumnForSingleAggregation] as const,
-      ([showSeparatePivotColumnForSingleAggregation]) => {
-        dataSourceContext.dataSourceActions.showSeparatePivotColumnForSingleAggregation =
-          showSeparatePivotColumnForSingleAggregation as any;
-      },
-      { immediate: true },
-    );
-    // the totals column positions go into the DataSource, which generates
-    // the pivot total/grand-total columns
-    watch(
-      () => [state().pivotTotalColumnPosition] as const,
-      ([pivotTotalColumnPosition]) => {
-        dataSourceContext.dataSourceActions.pivotTotalColumnPosition =
-          pivotTotalColumnPosition as any;
-      },
-      { immediate: true },
-    );
-    watch(
-      () => [state().pivotGrandTotalColumnPosition] as const,
-      ([pivotGrandTotalColumnPosition]) => {
-        if (pivotGrandTotalColumnPosition != undefined) {
-          dataSourceContext.dataSourceActions.pivotGrandTotalColumnPosition =
-            pivotGrandTotalColumnPosition as any;
-        }
-      },
-      { immediate: true },
-    );
-
-    // ---- auto size columns (React: useAutoSizeColumns) ----
-    const autoSizeRefreshId = signal(0);
-    let lastExecutedAutoSizeKey: string | number | null = null;
-
-    const getAutoSizeKey = (s: InfiniteTableState<T>) => {
-      const { autoSizeColumnsKey } = s;
-      return typeof autoSizeColumnsKey === 'object'
-        ? autoSizeColumnsKey.key
-        : autoSizeColumnsKey;
-    };
-
-    watch(
-      () => [state().brain] as const,
-      ([brain]) => {
-        return brain.onRenderRangeChange(() => {
-          const key = getAutoSizeKey(getState());
-          if (key == null) {
-            return;
-          }
-          // compare the key, not the prop: for an object prop the prop
-          // never equals the last executed key
-          if (key !== lastExecutedAutoSizeKey) {
-            autoSizeRefreshId.update((id) => id + 1);
-          }
-        });
-      },
-      { immediate: true },
-    );
-
-    watch(
-      () =>
-        [getAutoSizeKey(state()), state().ready, autoSizeRefreshId()] as const,
-      () => {
-        const s = getState();
-        const theKey = getAutoSizeKey(s);
-        if (theKey == null) {
-          return;
-        }
-
-        const { autoSizeColumnsKey, domRef } = s;
-
-        let columnsToResize: Set<string> | undefined;
-        let columnsToSkip: Set<string> | undefined;
-        let includeHeader = true;
-
-        if (typeof autoSizeColumnsKey === 'object') {
-          if (autoSizeColumnsKey.columnsToResize) {
-            columnsToResize = new Set(autoSizeColumnsKey.columnsToResize);
-          }
-          if (autoSizeColumnsKey.columnsToSkip) {
-            columnsToSkip = new Set(autoSizeColumnsKey.columnsToSkip);
-          }
-          includeHeader = autoSizeColumnsKey.includeHeader ?? includeHeader;
-        }
-
-        lastExecutedAutoSizeKey = theKey;
-
-        const measuredMaxWidths = getColumnContentMaxWidths(domRef, {
-          includeHeader,
-          columnsToResize,
-          columnsToSkip,
-        });
-
-        const colIds = Object.keys(measuredMaxWidths);
-        if (!colIds.length) {
-          return;
-        }
-
-        const columnSizing = s.columnSizing;
-        const newColumnSizing: Record<string, { width: number }> = {
-          ...columnSizing,
-        } as any;
-
-        let changed = false;
-        colIds.forEach((colId) => {
-          newColumnSizing[colId] = { width: measuredMaxWidths[colId] };
-          changed =
-            changed ||
-            newColumnSizing[colId].width !==
-              (columnSizing as any)[colId]?.width;
-        });
-
-        if (changed) {
-          actions.columnSizing = newColumnSizing;
-        }
-      },
-      { immediate: true, flush: 'post' },
-    );
-
-    // ---- hide columns (React: useHideColumns in useColumnsWhen.ts) ----
-    const groupByMap = computed(() => getGroupByMap(dataSourceState().groupBy));
-
-    // hideEmptyGroupColumns
-    watch(
-      () => {
-        const s = state();
-        const ds = dataSourceState();
-        return [
-          s.groupRenderStrategy,
-          ds.originalLazyGroupDataChangeDetect,
-          ds.groupBy,
-          groupByMap(),
-          s.computedColumns,
-          s.hideEmptyGroupColumns ? ds.dataArray : null,
-          s.hideEmptyGroupColumns ? ds.groupRowsState : null,
-          s.hideEmptyGroupColumns ? ds.groupRowsIndexesInDataArray : null,
-          s.hideEmptyGroupColumns,
-        ] as const;
-      },
-      () => {
-        const s = getState();
-        const ds = getDSState();
-        if (s.groupRenderStrategy !== 'multi-column') {
-          return;
-        }
-        const map = untracked(groupByMap);
-
-        const computedGroupColumns = getGroupColumnsForComputedColumns(
-          s.computedColumns,
-          map,
-        );
-
-        const newColumnVisibility =
-          getColumnVisibilityForHideEmptyGroupColumns<any>({
-            computedGroupColumns,
-            columnVisibility: s.columnVisibility,
-            hideEmptyGroupColumns: s.hideEmptyGroupColumns,
-            groupRowsIndexesInDataArray: ds.groupRowsIndexesInDataArray,
-            dataArray: ds.dataArray,
-            groupBy: ds.groupBy,
-            groupByMap: map,
-          } as any);
-
-        if (!shallowEqualObjects(s.columnVisibility, newColumnVisibility)) {
-          actions.columnVisibility = newColumnVisibility;
-        }
-      },
-      { immediate: true },
-    );
-
-    // column.defaultHiddenWhenGroupedBy and hideColumnWhenGrouped
-    watch(
-      () => {
-        const s = state();
-        return [
-          s.computedColumns,
-          s.columnTypes,
-          dataSourceState().groupBy,
-          groupByMap(),
-          s.hideColumnWhenGrouped,
-        ] as const;
-      },
-      () => {
-        const s = getState();
-        const map = untracked(groupByMap);
-        const isGrouped = getDSState().groupBy.length > 0;
-
-        const {
-          columnVisibility,
-          columnVisibilityForGrouping,
-          hideColumnWhenGrouped,
-          computedColumns,
-        } = s;
-
-        const newColumnVisibility = { ...columnVisibility };
-        const newColumnVisibilityForGrouping = {
-          ...columnVisibilityForGrouping,
-        } as Record<string, any>;
-
-        let updatedVisibilityWhenGrouping = false;
-
-        const newlyHiddenColumns = new Set<string>();
-        const newlyDisplayedColumns = new Set<string>();
-
-        Object.keys(computedColumns).forEach((id) => {
-          const col = (computedColumns as any)[id];
-          if (col.defaultHiddenWhenGroupedBy || hideColumnWhenGrouped != null) {
-            const hideWhenGrouped =
-              (col.defaultHiddenWhenGroupedBy === '*' && isGrouped) ||
-              ((col.defaultHiddenWhenGroupedBy === true ||
-                hideColumnWhenGrouped) &&
-                col.field &&
-                map.get(col.field)) ||
-              (typeof col.defaultHiddenWhenGroupedBy === 'string' &&
-                map.get(col.defaultHiddenWhenGroupedBy as any)) ||
-              (typeof col.defaultHiddenWhenGroupedBy === 'object' &&
-                Object.keys(col.defaultHiddenWhenGroupedBy).reduce(
-                  (acc: boolean, field) => acc || map.has(field as any),
-                  false,
-                ));
-
-            if (hideWhenGrouped) {
-              if (newColumnVisibilityForGrouping[id] !== false) {
-                if ((columnVisibility as any)[id] === false) {
-                  // already specified as invisible: not in the list of
-                  // columns made invisible by the grouping rules
-                  return;
-                }
-                newColumnVisibilityForGrouping[id] = false;
-                updatedVisibilityWhenGrouping = true;
-                newlyHiddenColumns.add(id);
-              }
-            } else {
-              if (newColumnVisibilityForGrouping[id] === false) {
-                delete newColumnVisibilityForGrouping[id];
-                updatedVisibilityWhenGrouping = true;
-                newlyDisplayedColumns.add(id);
-              }
-            }
-          }
-        });
-
-        if (updatedVisibilityWhenGrouping) {
-          actions.columnVisibilityForGrouping =
-            newColumnVisibilityForGrouping as any;
-
-          newlyDisplayedColumns.forEach((colId) => {
-            delete (newColumnVisibility as any)[colId];
-          });
-          newlyHiddenColumns.forEach((colId) => {
-            (newColumnVisibility as any)[colId] = false;
-          });
-
-          actions.columnVisibility = newColumnVisibility;
-        }
-      },
-      { immediate: true },
-    );
 
     // ---- computed columns (React: useComputedColumns), on the same deps,
     // so column identities survive unrelated state changes
@@ -939,32 +545,6 @@ export class InfiniteTable<T = any>
       vertical: false,
       horizontal: false,
     });
-    watch(
-      () => [state().brain] as const,
-      ([brain]) =>
-        brain.onRenderCountChange(() => {
-          const { scrollTopMax, scrollLeftMax } = brain;
-          const vertical = scrollTopMax > 0;
-          const horizontal = scrollLeftMax > 0;
-          const prev = untracked(scrollbars);
-          if (prev.vertical !== vertical || prev.horizontal !== horizontal) {
-            scrollbars.set({ vertical, horizontal });
-          }
-        }),
-      { immediate: true },
-    );
-    watch(
-      () => [scrollbars()] as const,
-      ([currentScrollbars]) => {
-        const ds = getDSState();
-        const { onScrollbarsChange } = getState();
-        if (onScrollbarsChange && ds.updatedAt && ds.dataArray.length) {
-          onScrollbarsChange(currentScrollbars);
-        }
-        ds.notifyScrollbarsChange(currentScrollbars);
-      },
-    );
-
     // React: useComputedRowHeight - memoized on the same inputs so the
     // RowSizeCache survives data changes
     let rowHeightMemo: {
@@ -1086,88 +666,33 @@ export class InfiniteTable<T = any>
 
     const cleanups: VoidFunction[] = [];
 
-    cleanups.push(
-      getState().keyDown.onChange((event) => {
-        onKeyDown(eventHandlerContext, event!);
-      }),
-    );
-
-    cleanups.push(
-      getState().cellClick.onChange(
-        (cellClickParam: (CellPositionByIndex & { event: any }) | null) => {
-          if (!cellClickParam) {
-            return;
-          }
-          const { event, rowIndex, colIndex } = cellClickParam;
-
-          const column = getComputed().computedVisibleColumns[colIndex];
-          const columnApi = getColumnApiForColumn(
-            column.id,
-            eventHandlerContext,
-          )!;
-
-          // React spreads its synthetic event ({ ...event, key: '' }) - that
-          // doesn't work with native DOM events (their props live on the
-          // prototype), so the shared handler gets the `key` expando
-          (event as any).key = '';
-
-          onCellClick(
-            { ...eventHandlerContext, rowIndex, colIndex, column, columnApi },
-            event,
-          );
-        },
-      ),
-    );
-
-    cleanups.push(
-      getState().cellMouseDown.onChange(
-        (param: (CellPositionByIndex & { event: any }) | null) => {
-          if (!param) {
-            return;
-          }
-          const { event, rowIndex, colIndex } = param;
-
-          const column = getComputed().computedVisibleColumns[colIndex];
-          const columnApi = getColumnApiForColumn(
-            column.id,
-            eventHandlerContext,
-          )!;
-
-          onCellMouseDown(
-            { ...eventHandlerContext, rowIndex, colIndex, column, columnApi },
-            event,
-          );
-        },
-      ),
-    );
-
-    // the CSS var subscriptions (React: useComputed)
-    getState().onRowHeightCSSVarChange.onChange((value) => {
-      const rowHeight = getRowHeightFromCSSValue(value as any, getState());
-      if (rowHeight != null) {
-        actions.rowHeight = rowHeight;
-      }
+    // ---- the effects shared with the Vue root (controller/rootEffects.ts):
+    // columns when grouping, the DataSource flags, auto size, the hidden
+    // columns, scrollbars, scrolling to the active row/cell, the editing
+    // callbacks, the horizontal layout, ready, the render range and scroll
+    // stop notifications + the event handler and CSS var subscriptions.
+    // Three groups, each run where its watchers were created before (the
+    // creation order decides which watcher runs first)
+    const groupByMap = computed(() => getGroupByMap(dataSourceState().groupBy));
+    const autoSizeRefreshId = signal(0);
+    const rootEffects = createRootEffects<T>({
+      state,
+      dataSourceState,
+      groupByMap,
+      eventHandlerContext,
+      scrollbars: {
+        get: () => scrollbars(),
+        peek: () => untracked(scrollbars),
+        set: (value) => scrollbars.set(value),
+      },
+      autoSizeRefreshId: {
+        get: () => autoSizeRefreshId(),
+        peek: () => untracked(autoSizeRefreshId),
+        set: (id) => autoSizeRefreshId.set(id),
+      },
     });
-    getState().onFlashingDurationCSSVarChange.onChange((flashingDuration) => {
-      const num = flashingDuration ? (flashingDuration as number) * 1 : null;
-      if (num != null && !isNaN(num)) {
-        actions.flashingDurationCSSVarValue = num;
-      }
-    });
-    getState().onRowDetailHeightCSSVarChange.onChange((rowDetailHeight) => {
-      if (rowDetailHeight) {
-        actions.rowDetailHeight = rowDetailHeight as any;
-      }
-    });
-    getState().onColumnHeaderHeightCSSVarChange.onChange((value) => {
-      const columnHeaderHeight = getColumnHeaderHeightFromCSSValue(
-        value as any,
-        getState(),
-      );
-      if (columnHeaderHeight != null) {
-        actions.columnHeaderHeight = columnHeaderHeight;
-      }
-    });
+    cleanups.push(rootEffects.destroy);
+    runControllerEffectsForAngular(rootEffects.columnEffects, { injector });
 
     // ---- menus (React: useColumnMenu, useCellContextMenu,
     // useTableContextMenu, useColumnFilterOperatorMenu) - their overlays are
@@ -1321,481 +846,35 @@ export class InfiniteTable<T = any>
       { injector },
     );
 
-    // ---- scroll the active row/cell into view (useScrollToActiveRow/Cell) ----
-    const SCROLL_RETRIES = 10;
-    const setupScrollToActive = (
-      getActive: () => number | [number, number] | null | undefined,
-      scroll: (active: any) => boolean,
-    ) => {
-      let didScroll = false;
-      let rafId: number | null = null;
-
-      watch(
-        () => [getActive(), dataSourceState().dataArray.length] as const,
-        ([active], previous) => {
-          const prevActive = previous?.[0];
-          if (active != null && active !== prevActive) {
-            didScroll = false;
-            if (rafId != null) {
-              cancelAnimationFrame(rafId);
-            }
-          }
-          if (active == null || didScroll) {
-            return;
-          }
-          const tryScroll = (times = 0) => {
-            times++;
-            if (rafId != null) {
-              cancelAnimationFrame(rafId);
-            }
-            rafId = requestAnimationFrame(() => {
-              didScroll = scroll(active);
-              if (!didScroll && times < SCROLL_RETRIES) {
-                tryScroll(times);
-              }
-            });
-          };
-
-          tryScroll();
-        },
-        { immediate: true },
-      );
-
-      cleanups.push(() => {
-        if (rafId != null) {
-          cancelAnimationFrame(rafId);
-        }
-      });
-    };
-
-    setupScrollToActive(
-      () => state().activeRowIndex,
-      (activeRowIndex: number) =>
-        api.scrollRowIntoView(activeRowIndex, { offset: 0 }),
-    );
-    setupScrollToActive(
-      () => state().activeCellIndex,
-      (activeCellIndex: [number, number]) =>
-        api.scrollCellIntoView(activeCellIndex[0], activeCellIndex[1], {
-          offset: 30,
-        }),
-    );
-
-    // ---- editing callbacks (React: useEditingCallbackProps) ----
-    // the edited row is resolved by primary key: the edit may have moved or
-    // removed it by the time a callback runs. `null` = the row is gone.
-    const editingCellContext = () =>
-      getEditingCellContext<any>(
-        {
-          getComputed,
-          getState,
-          getDataSourceState: getDSState,
-          getDataSourceMasterContext,
-          actions,
-          dataSourceActions: dataSourceContext.dataSourceActions,
-          api,
-          dataSourceApi,
-        } as any,
-        getState().editingCell!,
-      );
-
-    watch(
-      () => {
-        const ec = state().editingCell;
-        return [
-          ec && !ec.active ? ec.cancelled : undefined,
-          ec && !ec.active && ec.accepted instanceof Error
-            ? ec.accepted
-            : undefined,
-          !!(ec && !ec.active && !ec.cancelled && ec.accepted === true),
-          ec?.persisted,
-          ec?.active,
-        ] as const;
-      },
-      ([cancelled, rejected, accepted, persisted, active], previous) => {
-        const [
-          prevCancelled,
-          prevRejected,
-          prevAccepted,
-          prevPersisted,
-          prevActive,
-        ] = previous ?? ([] as any[]);
-        // each branch fires only on its own transition - the semantics of
-        // the separate dependency-keyed effects in React
-        if (cancelled && cancelled !== prevCancelled) {
-          const editingCell = getState().editingCell!;
-          const { onEditCancelled } = getState();
-          if (onEditCancelled) {
-            const cellContext = editingCellContext();
-            if (cellContext) {
-              onEditCancelled({
-                ...cellContext,
-                initialValue: editingCell.initialValue,
-              } as any);
-            } else {
-              warnEditedRowGone('onEditCancelled', editingCell);
-            }
-          }
-        }
-
-        if (rejected && rejected !== prevRejected) {
-          const editingCell = getState().editingCell!;
-          const { onEditRejected } = getState();
-          if (onEditRejected) {
-            const cellContext = editingCellContext();
-            if (cellContext) {
-              onEditRejected({
-                ...cellContext,
-                value: editingCell.value,
-                error: rejected as Error,
-                initialValue: editingCell.initialValue,
-              } as any);
-            } else {
-              warnEditedRowGone('onEditRejected', editingCell);
-            }
-          }
-        }
-
-        if (accepted && accepted !== prevAccepted) {
-          const editingCell = getState().editingCell!;
-          const { value, initialValue } = editingCell;
-          const { onEditAccepted } = getState();
-          if (onEditAccepted) {
-            const cellContext = editingCellContext();
-            if (cellContext) {
-              onEditAccepted({ ...cellContext, value, initialValue } as any);
-            } else {
-              warnEditedRowGone('onEditAccepted', editingCell);
-            }
-          }
-
-          api.persistEdit({ value });
-        }
-
-        if (persisted && persisted !== prevPersisted) {
-          const editingCell = getState().editingCell;
-          if (editingCell) {
-            const callbackName =
-              persisted instanceof Error
-                ? 'onEditPersistError'
-                : 'onEditPersistSuccess';
-            if ((getState() as any)[callbackName]) {
-              const cellContext = editingCellContext();
-              if (!cellContext) {
-                warnEditedRowGone(callbackName, editingCell);
-              } else {
-                const params = {
-                  ...cellContext,
-                  value: editingCell.value,
-                  initialValue: editingCell.initialValue,
-                };
-                if (persisted instanceof Error) {
-                  getState().onEditPersistError?.({
-                    ...params,
-                    error: persisted,
-                  } as any);
-                } else {
-                  getState().onEditPersistSuccess?.(params as any);
-                }
-              }
-            }
-          }
-        }
-
-        // focus the table again when editing stops (useFocusOnEditStop)
-        if (!active && prevActive) {
-          api.focus();
-        }
-      },
-    );
+    runControllerEffectsForAngular(rootEffects.interactionEffects, {
+      injector,
+    });
 
     // ---- brain wiring (React: useYourBrain / useMatrixBrain) ----
     effect(
       () => {
         const s = state();
         const ds = dataSourceState();
-        const {
-          computedVisibleColumns,
-          computedPinnedStartColumns,
-          computedPinnedEndColumns,
-        } = computedColumnsResult();
+        const cc = computedColumnsResult();
 
-        untracked(() => {
-          const brain = s.brain;
-
-          brain.updateFixedCells({
-            fixedColsStart: computedPinnedStartColumns.length,
-            fixedColsEnd: computedPinnedEndColumns.length,
-          });
-
-          // rowHeight given as fn(rowInfo) is adapted to fn(index); with row
-          // details, the height includes the expanded detail height
-          const rowHeight = getComputedRowHeight();
-
-          brain.update({
-            colWidth: getColumnSizeFn(computedVisibleColumns),
-            rowHeight,
-            rows: ds.dataArray.length,
-            cols: computedVisibleColumns.length,
-            rowspan: getRowspanFn(computedVisibleColumns, getDSState),
-          } as any);
-        });
+        untracked(() =>
+          updateBrain<T>({
+            state: s,
+            dataSourceState: ds,
+            computedColumns: cc as any,
+            getRowHeight: getComputedRowHeight,
+            getDataSourceState: getDSState,
+          }),
+        );
       },
       { injector },
     );
 
-    // ---- toggling the horizontal layout needs new brains + renderers
-    // (React: useToggleWrapRowsHorizontally)
-    watch(
-      () => [state().wrapRowsHorizontally] as const,
-      ([wrapRowsHorizontally], previous) => {
-        if (!previous || previous[0] === wrapRowsHorizontally) {
-          return;
-        }
-        const { brain, headerBrain, renderer, onRenderUpdater } = getState();
-
-        brain.destroy();
-        headerBrain.destroy();
-        renderer.destroy();
-        onRenderUpdater.destroy();
-
-        const newBrains = createBrains(DEBUG_NAME, !!wrapRowsHorizontally);
-
-        actions.brain = newBrains.brain;
-        actions.headerBrain = newBrains.headerBrain;
-        actions.renderer = newBrains.renderer;
-        actions.onRenderUpdater = newBrains.onRenderUpdater;
-        actions.headerRenderer = newBrains.headerRenderer;
-        actions.headerOnRenderUpdater = newBrains.headerOnRenderUpdater;
-      },
-      { flush: 'post' },
-    );
-
-    // ---- keeps the DataSource rowsPerPage + repeatWrappedGroupRows in sync
-    // with the brain when rows wrap horizontally (React: useHorizontalLayout)
-    watch(
-      () => {
-        const s = state();
-        const ds = dataSourceState();
-        return [
-          s.brain,
-          s.wrapRowsHorizontally,
-          ds.groupBy,
-          ds.isTree,
-          s.wrapRowsHorizontally ? s.repeatWrappedGroupRows : false,
-        ] as const;
-      },
-      ([
-        brain,
-        wrapRowsHorizontally,
-        groupBy,
-        isTree,
-        repeatWrappedGroupRows,
-      ]) => {
-        const dsActions = dataSourceContext.dataSourceActions;
-
-        if (!wrapRowsHorizontally) {
-          if (getDSState().repeatWrappedGroupRows) {
-            dsActions.repeatWrappedGroupRows = false;
-          }
-          return;
-        }
-
-        let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-        const onVerticalRenderRangeChange = () => {
-          const {
-            rowsPerPage: currentRowsPerPage,
-            repeatWrappedGroupRows: currentRepeatWrappedGroupRows,
-          } = getDSState();
-
-          let changes = false;
-
-          const rowsPerPage = (brain as any).rowsPerPage;
-          const newRowsPerPage =
-            ((groupBy && groupBy.length > 0) || isTree) && rowsPerPage > 0
-              ? rowsPerPage
-              : null;
-
-          if (currentRowsPerPage != newRowsPerPage) {
-            dsActions.rowsPerPage = newRowsPerPage;
-            changes = true;
-          }
-
-          if (currentRepeatWrappedGroupRows != repeatWrappedGroupRows) {
-            dsActions.repeatWrappedGroupRows = !!repeatWrappedGroupRows;
-            changes = true;
-          }
-
-          return changes;
-        };
-
-        onVerticalRenderRangeChange();
-
-        const removeSub = brain.onVerticalRenderRangeChange(() => {
-          if (onVerticalRenderRangeChange()) {
-            timeoutId = setTimeout(() => {
-              // by the time the render range changes, the DataSource has not
-              // finished recomputing the artificial group rows, so the body
-              // has to be re-rendered
-              actions.forceBodyRerenderTimestamp = Date.now();
-            });
-          }
-        });
-
-        return () => {
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-          }
-          removeSub();
-        };
-      },
-      { immediate: true, flush: 'post' },
-    );
-
-    // the scroll stop delay goes to the brain and to the DataSource
-    watch(
-      () => [state().scrollStopDelay] as const,
-      ([scrollStopDelay]) => {
-        getState().brain.setScrollStopDelay(scrollStopDelay);
-        dataSourceContext.dataSourceActions.scrollStopDelayUpdatedByTable =
-          scrollStopDelay;
-      },
-      { immediate: true },
-    );
-
-    // the readiness hook of the tests/tooling (same contract as React's
-    // index.tsx effect - the Playwright fixtures rely on it) + onReady, on
-    // every `ready` transition, the initial one included
-    watch(
-      () => [state().ready] as const,
-      ([ready]) => {
-        if (
-          typeof (globalThis as any)
-            .__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY ===
-          'function'
-        ) {
-          (
-            globalThis as any
-          ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
-            getState().id,
-            ready,
-            api,
-            { dataSourceApi },
-          );
-        }
-        const { onReady } = getState();
-        if (onReady) {
-          onReady({ api: api as any, dataSourceApi });
-        }
-      },
-      { immediate: true, flush: 'post' },
-    );
-
-    watch(
-      () => [!!state().bodySize.height] as const,
-      ([hasHeight]) => {
-        if (hasHeight) {
-          actions.ready = true;
-        }
-      },
-      { immediate: true },
-    );
-
-    // the render range goes to the DataSource (lazy loading) and to the
-    // onRenderRangeChange callback (React: useCellRendering)
-    watch(
-      () => [state().brain] as const,
-      ([brain]) => {
-        const removeRenderRangeChange = brain.onVerticalRenderRangeChange(
-          (renderRange: [number, number]) => {
-            getDSState().notifyRenderRangeChange({
-              renderStartIndex: renderRange[0],
-              renderEndIndex: renderRange[1],
-            });
-          },
-        );
-        const removeRenderRangeChangeCallback = brain.onRenderRangeChange(
-          (range) => {
-            getState().onRenderRangeChange?.(range);
-          },
-        );
-        return () => {
-          removeRenderRangeChange();
-          removeRenderRangeChangeCallback();
-        };
-      },
-      { immediate: true },
-    );
-
-    // scroll stop -> onScrollToTop/onScrollToBottom/onScrollStop + the
-    // livePagination cursor (React: useCellRendering)
-    const SCROLL_BOTTOM_OFFSET = 1;
-    watch(
-      () => [state().brain] as const,
-      ([brain]) => {
-        let scrollTopMax = 0;
-        const removeRenderCount = brain.onRenderCountChange(() => {
-          scrollTopMax = brain.scrollTopMax;
-        });
-
-        const removeScrollStop = brain.onScrollStop((scrollPosition) => {
-          const { scrollTop, scrollLeft } = scrollPosition;
-          const { onScrollToTop, onScrollToBottom, onScrollStop } = getState();
-
-          if (scrollTop === 0) {
-            onScrollToTop?.();
-          }
-
-          const offset =
-            getState().scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
-          const isScrollBottom = scrollTop + offset >= scrollTopMax;
-
-          if (isScrollBottom) {
-            onScrollToBottom?.();
-
-            const { livePagination, livePaginationCursor, dataArray } =
-              getDSState();
-            if (livePagination) {
-              dataSourceContext.dataSourceActions.cursorId =
-                livePaginationCursor !== undefined
-                  ? // with a `livePaginationCursor`, a new cursorId makes the
-                    // DataSource fetch more data
-                    Date.now()
-                  : // otherwise dataArray.length is the cursorId - see
-                    // #useDataArrayLengthAsCursor
-                    dataArray.length;
-            }
-          }
-
-          if (onScrollStop) {
-            const range = brain.getRenderRange();
-            onScrollStop({
-              scrollTop,
-              scrollLeft,
-              renderRange: range,
-              viewportSize: getState().bodySize,
-              firstVisibleRowIndex: range.start[0],
-              lastVisibleRowIndex: range.end[0],
-              firstVisibleColIndex: range.start[1],
-              lastVisibleColIndex: range.end[1],
-            } as any);
-          }
-        });
-
-        return () => {
-          removeRenderCount();
-          removeScrollStop();
-        };
-      },
-      { immediate: true },
-    );
+    runControllerEffectsForAngular(rootEffects.layoutEffects, { injector });
 
     // the body size, from the scroller element
-    let scrollerElement: HTMLElement | null = null;
     let removeScrollerResizeObserver: VoidFunction | null = null;
     this.onScrollerElement = (el: HTMLElement | null) => {
-      scrollerElement = el;
       getState().scrollerDOMRef.current = el as HTMLDivElement | null;
 
       removeScrollerResizeObserver?.();
@@ -1819,16 +898,6 @@ export class InfiniteTable<T = any>
       }
     };
     cleanups.push(() => removeScrollerResizeObserver?.());
-
-    // a new scrollTopKey scrolls the grid back to the top
-    watch(
-      () => [state().scrollTopKey] as const,
-      () => {
-        if (scrollerElement) {
-          scrollerElement.scrollTop = 0;
-        }
-      },
-    );
 
     // ---- cells ----
     const getData = () => getDSState().dataArray;
