@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -21,6 +22,7 @@ import type { GridMouseEvent } from '../../../types/DOMTypes';
 import type { RowInfoStore } from '../../../DataSource/RowInfoStore';
 import { injectPooledProps } from '../../../HeadlessTable/AngularPooledViews.angular';
 import { InfiniteRender, renderComponent } from '../../../RawList/InfiniteRenderForAngular.angular';
+import { renderDiv } from '../../../RawList/InfiniteDivForAngular.angular';
 import {
   RenderStage,
   bindRenderable,
@@ -53,7 +55,15 @@ import {
 import { getColumnRenderingParams } from './columnRendering';
 import type { InfiniteTableColumnRenderingContext } from './columnRenderingContextType';
 import { getColumnCellStyling } from './columnCellStyling';
-import { InfiniteTableCellClassName } from './InfiniteTableCellClassNames';
+import {
+  InfiniteTableCellClassName,
+  InfiniteTableCellContentClassName,
+} from './InfiniteTableCellClassNames';
+import {
+  type ColumnEditorSession,
+  createColumnEditorSession,
+  focusTemplateEditor,
+} from './InfiniteTableColumnEditorForAngular.angular';
 
 const columnWidthAtIndex = stripVar(InternalVars.columnWidthAtIndex);
 const columnReorderEffectDurationAtIndex = stripVar(
@@ -79,6 +89,43 @@ export function injectColumnCell<T = any>(): Signal<
   return inject(INFINITE_COLUMN_CELL) as Signal<
     InfiniteTableColumnCellContextType<T>
   >;
+}
+
+/**
+ * The default children of the cell - the content div (with the render bag)
+ * and, while editing, the editor: what React passes to a
+ * `components.ColumnCell` override as `props.children` and Vue as the
+ * default slot.
+ */
+export const INFINITE_COLUMN_CELL_CHILDREN = new InjectionToken<
+  Signal<Renderable>
+>('INFINITE_COLUMN_CELL_CHILDREN');
+
+/**
+ * In a `components.ColumnCell` override: the default children of the cell
+ * (the content div with the render bag and, while editing, the editor) -
+ * React's `props.children`, Vue's default slot. Render them where the default
+ * content goes, at the top level of the template, so the content div stays a
+ * direct child of the cell:
+ *
+ * ```ts
+ * @Component({
+ *   selector: 'div[countryCell]', // an attribute selector: the host is the cell div
+ *   imports: [InfiniteRender],
+ *   host: { style: 'padding: 5px 20px' },
+ *   template: `<ng-container [infiniteRender]="children()" /> {{ cell().value }}`,
+ * })
+ * class CountryCell {
+ *   readonly cell = injectColumnCell();
+ *   readonly children = injectColumnCellChildren();
+ * }
+ * ```
+ *
+ * The host element of the override is the cell root: the grid applies the
+ * cell's class names, styles, data attributes and listeners to it.
+ */
+export function injectColumnCellChildren(): Signal<Renderable> {
+  return inject(INFINITE_COLUMN_CELL_CHILDREN);
 }
 
 /**
@@ -117,9 +164,14 @@ export type InfiniteTableColumnCellProps<T = any> = {
   };
   /**
    * The editor of the cell when it is in edit mode (rendered after the
-   * content), from the root.
+   * content), from the root. `session` is the editing session of the cell:
+   * the editor is rendered with its injector, which provides
+   * `injectColumnEditor()`.
    */
-  renderEditor?: (param: InfiniteTableColumnCellContextType<T>) => Renderable;
+  renderEditor?: (
+    param: InfiniteTableColumnCellContextType<T>,
+    session: ColumnEditorSession<T>,
+  ) => Renderable;
   onMouseEnter?: (event: GridMouseEvent) => void;
   onMouseLeave?: (event: GridMouseEvent) => void;
 };
@@ -218,6 +270,23 @@ const HIDDEN_VIEW: CellView = {
  * bag pipeline, binds every render hook result to its stage (see
  * bindRenderable) and the shared styling. Clicks, mouse down and hover are
  * native listeners: they never schedule a change detection.
+ *
+ * Cell root overrides (`column.components.ColumnCell`; the header cells
+ * follow the same pattern for `components.HeaderCell`):
+ * - the root returns `renderPooled(Override, props, [InfiniteColumnCellHost])`,
+ *   so the pool creates the user's component with this directive on its host
+ *   element: the host IS the cell root and gets the class names, styles,
+ *   data attributes, listeners and the context providers from here;
+ * - the default children (content div + editor) reach the override as ONE
+ *   Renderable, `injectColumnCellChildren()`, which the override renders
+ *   with `<ng-container [infiniteRender]="children()" />` at the top level of
+ *   its template - the content div stays a direct child of the cell root.
+ *   Built only when injected, so default cells don't pay for it;
+ * - `createComponent({ directives })` puts the component before this
+ *   directive, so the component's own ngDoCheck runs BEFORE this one: an
+ *   override reads the cell through the signals (`injectColumnCell()`,
+ *   `injectColumnCellChildren()`), in its template or an effect, never in
+ *   ngDoCheck.
  */
 @Directive({
   selector: '[infiniteColumnCellHost]',
@@ -233,9 +302,13 @@ const HIDDEN_VIEW: CellView = {
       provide: INFINITE_COLUMN_CELL,
       useFactory: () => inject(InfiniteColumnCellHost).renderParam,
     },
+    {
+      provide: INFINITE_COLUMN_CELL_CHILDREN,
+      useFactory: () => inject(InfiniteColumnCellHost).requestChildren(),
+    },
   ],
 })
-export class InfiniteColumnCellHost implements DoCheck {
+export class InfiniteColumnCellHost implements DoCheck, AfterViewChecked {
   private readonly props = injectPooledProps<InfiniteTableColumnCellProps>();
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly injector = inject(Injector);
@@ -249,6 +322,16 @@ export class InfiniteColumnCellHost implements DoCheck {
   );
 
   view: CellView = HIDDEN_VIEW;
+
+  /**
+   * The default children as one Renderable, for `components.ColumnCell`
+   * overrides (built only once someone asked for them)
+   */
+  private readonly children = signal<Renderable>(null);
+  private childrenRequested = false;
+
+  /** the editing session, while the cell is in edit mode */
+  private editorSession: ColumnEditorSession<any> | null = null;
 
   private builtFor: {
     props: InfiniteTableColumnCellProps | null;
@@ -292,6 +375,36 @@ export class InfiniteColumnCellHost implements DoCheck {
       this.unsubscribeRowInfo?.();
       this.unsubscribeRepaintKey?.();
     });
+  }
+
+  /** for INFINITE_COLUMN_CELL_CHILDREN */
+  requestChildren(): Signal<Renderable> {
+    if (!this.childrenRequested) {
+      this.childrenRequested = true;
+      this.updateChildren();
+    }
+    return this.children.asReadonly();
+  }
+
+  private updateChildren() {
+    const view = this.view;
+    this.children.set(
+      view.hidden
+        ? null
+        : [renderDiv(view.contentClassName, view.children), view.editor],
+    );
+  }
+
+  ngAfterViewChecked() {
+    // a template editor: focus it once its view exists
+    const session = this.editorSession;
+    if (session?.focusPending) {
+      focusTemplateEditor(
+        session,
+        this.element,
+        InfiniteTableCellContentClassName,
+      );
+    }
   }
 
   private stage(name: string): RenderStage<any> {
@@ -377,7 +490,51 @@ export class InfiniteColumnCellHost implements DoCheck {
       repaintTick: this.repaintTick,
     };
     this.view = this.buildView(props, this.rowInfo);
+    if (this.view.hidden) {
+      this.editorSession = null;
+    }
+    if (this.childrenRequested) {
+      this.updateChildren();
+    }
     this.cdr.markForCheck();
+  }
+
+  /**
+   * The editor while the cell is in edit mode: one session per edit, kept
+   * while the editor stays open, so the editor is not recreated by the cell
+   * re-renders that happen meanwhile.
+   */
+  private renderEditor(
+    props: InfiniteTableColumnCellProps,
+    renderParam: InfiniteTableColumnCellContextType<any>,
+    inEdit: boolean,
+  ): Renderable {
+    if (!inEdit || !props.renderEditor) {
+      this.editorSession = null;
+      return null;
+    }
+    const { getState } = props.renderingContext;
+    const editingCell = getState().editingCell;
+    const key = `${renderParam.rowInfo.id}:${renderParam.column.id}`;
+
+    let session = this.editorSession;
+    if (
+      !session ||
+      session.key !== key ||
+      // a new edit started while the previous one was still visible
+      (editingCell?.active && !session.active)
+    ) {
+      session = createColumnEditorSession({
+        key,
+        renderParam,
+        getState,
+        parentInjector: this.injector,
+      });
+      this.editorSession = session;
+    } else {
+      session.update(editingCell);
+    }
+    return props.renderEditor(renderParam, session);
   }
 
   private buildView(
@@ -634,7 +791,7 @@ export class InfiniteColumnCellHost implements DoCheck {
         cssEllipsis ? cssEllipsisClassName : overflow.hidden,
       ),
       children,
-      editor: inEdit && props.renderEditor ? props.renderEditor(renderParam) : null,
+      editor: this.renderEditor(props, renderParam, inEdit),
       renderParam,
     };
   }

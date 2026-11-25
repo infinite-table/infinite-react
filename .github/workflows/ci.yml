@@ -5,6 +5,7 @@ on:
     paths:
       - 'devtools-ui/src/**'
       - 'source/src/**'
+      - 'source/build/**'
       - 'source/tsconfig*.json'
       - 'source/*.config.ts'
       - 'source/framework-resolve-plugin.ts'

@@ -20,7 +20,11 @@
     // the source's sibling-file resolution (`./Foo` → `Foo.react.tsx`),
     // see source/tsconfig.react.json
     "moduleSuffixes": [".react", ""],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    // the modules that Node scripts load as well (docs-kit.config.mjs,
+    // scripts/generate-llms-docs.js) import each other with their `.ts`
+    // extension, e.g. src/utils/docsFrameworksRegistry.ts
+    "allowImportingTsExtensions": true
   },
   "include": [
     "next-env.d.ts",

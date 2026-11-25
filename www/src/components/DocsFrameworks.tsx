@@ -20,6 +20,7 @@ import {
   type DocsFrameworkId,
   type DocsFrameworkPages,
 } from '@www/utils/docsFrameworks';
+import { docsFramework } from '@www/utils/docsFrameworksRegistry';
 
 const PagesContext = React.createContext<DocsFrameworkPages>({});
 
@@ -94,9 +95,13 @@ export function useDocsFramework() {
         );
         return link.kind === 'missing' ? href : link.href;
       },
-      /** A sidebar tree for this page's framework. */
+      /**
+       * A sidebar tree for this page's framework (React's is the tree as it
+       * is, unless React lacks a page: then there's a list of its pages).
+       */
       routesFor<R extends { path?: string; routes?: R[] }>(routes: R[]): R[] {
-        return framework && framework !== docsFrameworks.default
+        return framework &&
+          (framework !== docsFrameworks.default || pages[framework])
           ? mapRouteTree(docsFrameworks, routes, framework, hasPage, {
               onFallback: (route, fallback) => ({
                 ...route,
@@ -108,11 +113,6 @@ export function useDocsFramework() {
     };
   }, [pages, pathname, preference]);
 }
-
-const DEMO_MAIN_FILE_EXTENSION: Record<DocsFrameworkId, string> = {
-  react: '.demo.tsx',
-  vue: '.demo.vue',
-};
 
 /**
  * The current hash, for the same page in the `target` framework.
@@ -134,16 +134,17 @@ function hashFor(hash: string, target: DocsFrameworkId): string {
   }
   const slug = raw.slice(0, slash);
   const file = raw.slice(slash + 1);
-  for (const ext of Object.values(DEMO_MAIN_FILE_EXTENSION)) {
+  for (const id of docsFrameworks.ids) {
+    const ext = docsFramework(id).demoSuffix;
     if (file.endsWith(ext)) {
-      return `#${slug}/${file.slice(0, -ext.length)}${DEMO_MAIN_FILE_EXTENSION[target]}`;
+      return `#${slug}/${file.slice(0, -ext.length)}${docsFramework(target).demoSuffix}`;
     }
   }
   return `#${slug}`;
 }
 
 /**
- * React | Vue, in the site header.
+ * React | Vue (every framework of www/frameworks.json), in the site header.
  *
  * - On a docs page, each option links to the same page in that framework (or
  *   the nearest parent that exists there).

@@ -77,8 +77,68 @@ export {
 } from './components/InfiniteTable/InfiniteTableContextForAngular.angular';
 export {
   injectColumnCell,
+  injectColumnCellChildren,
   INFINITE_COLUMN_CELL,
+  INFINITE_COLUMN_CELL_CHILDREN,
 } from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnCellForAngular.angular';
+export {
+  injectColumnEditor,
+  InfiniteTableColumnEditor,
+  InfiniteEditorInput,
+  type InfiniteColumnEditorContextForAngular,
+} from './components/InfiniteTable/components/InfiniteTableRow/InfiniteTableColumnEditorForAngular.angular';
+export {
+  createFlashingColumnCellComponent,
+  FlashingColumnCell,
+  type FlashingCellOptions,
+} from './components/InfiniteTable/components/InfiniteTableRow/FlashingColumnCellForAngular.angular';
 export { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
 export { ExpandCollapseIcon } from './components/InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForAngular.angular';
 export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngular.angular';
+
+// master-detail
+export { injectMasterRowInfo } from './components/DataSource/DataSourceMasterDetailContextForAngular.angular';
+
+// tree grid (TreeGrid, TreeDataSource: above)
+export type * from './components/TreeGrid/types/TreeGridProps';
+export type * from './components/TreeGrid/types/TreeDataSourceProps';
+
+// drag and drop: the same names as in the React entry, plus the Angular
+// inject functions
+export {
+  DragDropProvider,
+  injectDragDropProvider,
+  INFINITE_DRAG_DROP_PROVIDER,
+  type DragDropSourceAndTarget,
+  type DragDropProviderContextValue,
+} from './components/InfiniteTable/components/draggable/DragDropProvider.angular';
+export {
+  DragList,
+  DragItem,
+  DragHandle,
+  injectDragList,
+  INFINITE_DRAG_LIST,
+  DRAG_ITEM_ATTRIBUTE,
+  createDefaultProxy,
+  defaultDragProxyMove,
+  type DragListProps,
+  type DragListContextValue,
+  type DragItemContextValue,
+  type DragProxyTemplateContext,
+  type DragProxyRenderState,
+  type DragProxySetupParams,
+  type DragProxySetupResult,
+  type DragProxyMoveParams,
+} from './components/InfiniteTable/components/draggable/DragList.angular';
+
+// column header
+export {
+  injectHeaderCell,
+  injectHeaderCellChildren,
+  INFINITE_HEADER_CELL,
+  INFINITE_HEADER_CELL_CHILDREN,
+} from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderCellForAngular.angular';
+export { SortIcon } from './components/InfiniteTable/components/icons/SortIcon/SortIconForAngular.angular';
+export { FilterIcon } from './components/InfiniteTable/components/icons/FilterIcon/FilterIconForAngular.angular';
+export { MenuIcon } from './components/InfiniteTable/components/icons/MenuIconForAngular.angular';
+export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIconTypes';
