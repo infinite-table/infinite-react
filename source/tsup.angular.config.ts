@@ -74,6 +74,8 @@ export const tsupAngularConfig: Options = {
   // tsup externalizes the package.json dependencies by default; the package
   // has no dependencies besides Angular, so they are bundled
   noExternal: Object.keys(dependencies),
+  // read by check-angular-package.cjs (the bare imports of the bundle), then removed
+  metafile: true,
   onSuccess: async () => {
     const cssFrom = path.join(OUT_DIR, 'fesm2022', 'infinite-angular.css');
     if (fs.existsSync(cssFrom)) {

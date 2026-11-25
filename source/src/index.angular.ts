@@ -48,3 +48,11 @@ export {
   renderTemplate,
   renderComponent,
 } from './components/RawList/InfiniteRenderForAngular.angular';
+
+export {
+  DataSource,
+  injectDataSource,
+  injectDataSourceState,
+  INFINITE_DATA_SOURCE,
+  type DataSourceContextValueForAngular,
+} from './components/DataSource/DataSourceForAngular.angular';

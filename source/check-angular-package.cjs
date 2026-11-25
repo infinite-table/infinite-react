@@ -47,15 +47,24 @@ if (/ɵɵdefine(Component|Directive)\(/.test(fesm)) {
 }
 
 const ALLOWED_IMPORT = /^(@angular\/|rxjs($|\/))/;
+// the imports esbuild left in the bundle (the externals) - from its
+// metafile, not by scanning the code (strings contain `import '...'` too)
+const metafileFile = path.join(outFolder, 'fesm2022', 'metafile-esm.json');
 const importSpecifiers = new Set();
-const importPattern =
-  /(?:^|[;\n])\s*(?:import|export)\s*(?:[^'";]*?\sfrom\s*)?["']([^"']+)["']/g;
-const dynamicImportPattern = /\bimport\(\s*["']([^"']+)["']\s*\)/g;
-for (const pattern of [importPattern, dynamicImportPattern]) {
-  let match;
-  while ((match = pattern.exec(fesm))) {
-    importSpecifiers.add(match[1]);
+if (fs.existsSync(metafileFile)) {
+  const metafile = JSON.parse(fs.readFileSync(metafileFile, 'utf8'));
+  fs.rmSync(metafileFile);
+  for (const output of Object.values(metafile.outputs)) {
+    for (const imported of output.imports || []) {
+      if (imported.external) {
+        importSpecifiers.add(imported.path);
+      }
+    }
   }
+} else {
+  problems.push(
+    'no esbuild metafile next to the FESM (metafile: true in tsup.angular.config.ts)',
+  );
 }
 const badImports = [...importSpecifiers].filter(
   (specifier) => !ALLOWED_IMPORT.test(specifier),

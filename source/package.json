@@ -71,6 +71,8 @@
     "check-dts:vue": "node check-vue-dts.cjs",
     "generate-dts-file:angular": "tsup --config dts.angular.tsup.config.ts",
     "check-dts:angular": "node check-angular-package.cjs",
+    "generate:angular-inputs": "node build/generate-angular-inputs.mts",
+    "check:angular-inputs": "node build/generate-angular-inputs.mts --check",
     "generate-dts-file-watch": "tsup --config dts.tsup.config.ts --watch",
     "////************xxx": "////",
     "tscw": "INFINITE_OUT_FOLDER=${INFINITE_OUT_FOLDER:=$npm_package_config_outdir} && tsc --watch --project tsconfig.dev.json --outDir $INFINITE_OUT_FOLDER",
