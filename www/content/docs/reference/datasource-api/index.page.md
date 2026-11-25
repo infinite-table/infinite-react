@@ -2,14 +2,35 @@
 title: DataSource API
 layout: API
 vue: true
+angular: true
 ---
 
+<FrameworkContent not="angular">
+
 When rendering the `DataSource` component, you can get access to the API by getting it from the <DPropLink name="onReady" /> callback prop.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When rendering the `DataSource` component, you can get access to the API from its <DPropLink name="onReady" /> output.
+
+</FrameworkContent>
 
 ```tsx file="index.snippet.tsx" region="intro"
 ```
 
+<FrameworkContent not="angular">
+
 You can also get it from the `InfiniteTable` <PropLink name="onReady" /> callback prop:
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+You can also get it from the <PropLink name="onReady" /> output of the `InfiniteTable`:
+
+</FrameworkContent>
 
 ```tsx file="index.snippet.tsx" region="intro-infinitetable-onready"
 ```
@@ -450,7 +471,17 @@ See related <DApiLink name="updateData" /> method.
 
 > Called only once, after the DataSource component has been mounted.
 
+<FrameworkContent not="angular">
+
 This callback prop will be called with an `DataSourceApi` instance. For retrieving the [`InfiniteTableApi`](/docs/reference/api), see the `InfiniteTable` <PropLink name="onReady" /> callback prop.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The <DPropLink name="onReady" /> output of the `DataSource` emits a `DataSourceApi` instance. For retrieving the [`InfiniteTableApi`](/docs/reference/api), see the <PropLink name="onReady" /> output of the `InfiniteTable`.
+
+</FrameworkContent>
 
 </Prop>
 
