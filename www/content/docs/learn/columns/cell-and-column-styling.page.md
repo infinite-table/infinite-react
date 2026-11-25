@@ -3,6 +3,8 @@ title: Column Styling
 description: Styling columns in the InfiniteTable React DataGrid via both style and className properties.
 vue:
   description: Styling columns in the InfiniteTable Vue DataGrid via both style and className properties.
+angular:
+  description: Styling columns in the InfiniteTable Angular DataGrid via both style and className properties.
 ---
 
 ## Using the column `style`
@@ -24,6 +26,12 @@ The <PropLink name="columns.style">column.style</PropLink> property can either b
 <FrameworkContent framework="vue">
 
 The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `CSSProperties`, the type exported by `vue`) or a function that returns an object (of the same type).
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The <PropLink name="columns.style">column.style</PropLink> property can either be an object (of type `CSSProperties`, exported by `@infinite-table/infinite-angular`: camelCase property names, and numbers get `px`, as in React) or a function that returns an object (of the same type).
 
 </FrameworkContent>
 
@@ -51,6 +59,16 @@ If defined as a function, the <PropLink name="columns.style">column.style</PropL
 Mirroring the behavior already described for the <PropLink name="columns.style">column.style</PropLink> property, the <PropLink name="columns.className">column.className</PropLink> property can be used to apply a CSS class to the cells in a column.
 
 It can be used as a string or a function that returns a string.
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The cells are rendered by the grid, not by the template of your component, so the styles of your component - which Angular scopes to its own template - don't reach them. Define the class in a global stylesheet (`src/styles.css`), or in a component with `encapsulation: ViewEncapsulation.None`, as the demos below do.
+
+</Note>
+
+</FrameworkContent>
 
 ```ts file="cell-and-column-styling.snippet.tsx" region="styling-a-column-using-column-classname" title="Styling a column using column.className" neutral
 ```
