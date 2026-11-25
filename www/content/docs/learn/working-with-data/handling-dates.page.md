@@ -2,6 +2,7 @@
 title: Handling Date Objects
 description: Learn how to display, manipulate and render dates with Infinite Table
 vue: true
+angular: true
 ---
 
 InfiniteTable can handle dates just like any other data type - make sure you specify <PropLink name="columns.type" code={false}>type="date"</PropLink> for date columns.

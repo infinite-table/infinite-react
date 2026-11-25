@@ -2,6 +2,7 @@
 title: Licensing Infinite Table
 description: Free Usage and Licensing with Infinite Table
 vue: true
+angular: true
 ---
 
 ## Free Usage
@@ -15,6 +16,12 @@ You can immediately download and use [Infinite Table from the NPM registry](http
 <FrameworkContent framework="vue">
 
 You can immediately download and use [Infinite Table for Vue from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-vue) free of charge. `@infinite-table/infinite-vue` is published under the same license as the React package - one license covers both.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+You can immediately download and use [Infinite Table for Angular from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-angular) free of charge. `@infinite-table/infinite-angular` is published under the same license as the React package - one license covers both.
 
 </FrameworkContent>
 
@@ -37,6 +44,17 @@ You can use it for free in any product, but make sure the footer is always visib
 We invite you to try out Infinite Table and explore all the features it has to offer. We're confident it will be a useful addition to your applications.
 
 We encourage companies 🙌 to purchase development licenses for their teams and help us improve the product and support the development of new features.
+
+<FrameworkContent framework="angular">
+
+After purchasing, you receive a license key. Provide it once, for every grid of your application, with `provideInfiniteTable` in your application config:
+
+```ts file="index.snippet.angular.ts" region="license-key"
+```
+
+A grid's own `[licenseKey]` input wins over it.
+
+</FrameworkContent>
 
 <HeroCards>
 <YouWillLearnCard title="See Pricing" path="/pricing">

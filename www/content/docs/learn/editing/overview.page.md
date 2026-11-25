@@ -3,6 +3,8 @@ title: Editing
 description: Learn how to use inline editing to update your data with Infinite Table for React
 vue:
   description: Learn how to use inline editing to update your data with Infinite Table for Vue
+angular:
+  description: Learn how to use inline editing to update your data with Infinite Table for Angular
 ---
 
 By default, editing is not enabled.
@@ -104,6 +106,8 @@ When neither the global <PropLink name="shouldAcceptEdit"/> nor the column-level
 
 </Note>
 
+<FrameworkContent not="angular">
+
 <Note>
 
 Once an edit is accepted, the <PropLink name="onEditAccepted"/> callback prop is called, if defined.
@@ -113,6 +117,22 @@ When an edit is rejected, the <PropLink name="onEditRejected"/> callback prop is
 The accept/reject status of an edit is decided by using the `shouldAcceptEdit` props described above. However an edit can also be cancelled by the user pressing the `Escape` key in the cell editor - to be notified of this, use the <PropLink name="onEditCancelled"/> callback prop.
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+Once an edit is accepted, the <PropLink name="onEditAccepted"/> output emits.
+
+When an edit is rejected, the <PropLink name="onEditRejected"/> output emits instead.
+
+The accept/reject status of an edit is decided by using the `shouldAcceptEdit` inputs described above. However an edit can also be cancelled by the user pressing the `Escape` key in the cell editor - to be notified of this, use the <PropLink name="onEditCancelled"/> output.
+
+</Note>
+
+</FrameworkContent>
 
 <DemoDescription>
 
@@ -133,6 +153,16 @@ To change how you persist values (which might include persisting to remote locat
 
 The <PropLink name="persistEdit"/> function prop can return a `Promise` for async persistence. To signal that the persisting failed, reject the promise or resolve it with an `Error` object.
 
+<FrameworkContent not="angular">
+
 After persisting the edit, if all went well, the <PropLink name="onEditPersistSuccess" /> callback prop is called. If the persisting failed (was rejected), the <PropLink name="onEditPersistError" /> callback prop is called instead.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+After persisting the edit, if all went well, the <PropLink name="onEditPersistSuccess" /> output emits. If the persisting failed (was rejected), the <PropLink name="onEditPersistError" /> output emits instead.
+
+</FrameworkContent>
 
 </Note>

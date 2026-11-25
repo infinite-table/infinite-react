@@ -2,6 +2,7 @@
 title: TypeScript Types
 description: Infinite Table types for TypeScript are published as part of the package, as named exports from the root of the package.
 vue: true
+angular: true
 ---
 
 Our `TypeScript` types are published as part of the package, as named exports from the root of the package.
@@ -39,6 +40,21 @@ The Vue components are not generic: the types of their props are. Bind those typ
 ```
 
 Throughout the documentation, we will use the `DATA_TYPE` placeholder to refer to the type of the data that those types are bound to.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The Angular components are generic classes (`InfiniteTable<T>`, `DataSource<T>`): with `strictTemplates`, Angular infers the type of the data from the inputs you bind in the template. Bind the types of the values you pass as inputs - the fields of your component - to the type of the data you are rendering: that is where TypeScript checks them.
+
+```tsx file="typescript-types.snippet.tsx" region="generic-components"
+```
+
+Throughout the documentation, we will use the `DATA_TYPE` placeholder to refer to the type of the data that the `InfiniteTable` and `DataSource` components are bound to.
 
 </Note>
 

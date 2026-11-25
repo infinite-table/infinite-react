@@ -2,6 +2,7 @@
 title: Excel-like Editing
 description: Configuring the DataGrid to use Excel-like editing via keyboard shortcuts
 vue: true
+angular: true
 ---
 
 InfiniteTable offers support for Excel-like editing. This means users can simply start typing in an editable cell and the editor is displayed and updated immediately (no `Enter` key is required to start typing).
