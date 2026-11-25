@@ -2,6 +2,7 @@
 title: Working with Data
 description: Learn how to visualise and manage your data in new ways with Infinite Table
 vue: true
+angular: true
 ---
 
 When working with data, you will mostly interact with the `<DataSource />` component, which is responsible for handling and managing the data and passing it down to the `<InfiniteTable />` component, which is the rendering engine for the DataGrid.
@@ -56,6 +57,23 @@ Most of our examples in these docs have a `Developer` or `Employee` TypeScript d
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+The `DataSource` component (`<infinite-data-source>`) is a generic class, bound to an array of items of the generic type. In a template you don't pass the type: with `strictTemplates`, Angular infers it from the inputs you bind, so type the values you bind with it: `DataSourceData<DATA_TYPE>` for the `data` input, `InfiniteTablePropColumns<DATA_TYPE>` for the columns.
+
+<Note>
+
+In this documentation, we'll use `DATA_TYPE` when referring to the generic type. Rarely, we'll use `T`.
+
+```tsx file="index.snippet.tsx" region="generic-type"
+```
+
+Most of our examples in these docs have a `Developer` or `Employee` TypeScript data type used as the generic type.
+
+</Note>
+
+</FrameworkContent>
+
 ```tsx file="index.snippet.tsx" region="local-data"
 ```
 
@@ -74,6 +92,14 @@ In the snippet above, we see 3 important details:
 1. the `employees` array is typed as `Employee[]`
 2. we use a `primaryKey` property - here it is `id`, which is a property of the `Employee` type
 3. we pass the `employees` array as the `data` property, bound with `:data`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+1. the `employees` array is typed as `Employee[]`, and the type of the `DataSource` is inferred from it
+2. we use a `primaryKey` input - here it is `id`, which is a property of the `Employee` type
+3. we pass the `employees` array as the `data` input, bound with `[data]`.
 
 </FrameworkContent>
 
