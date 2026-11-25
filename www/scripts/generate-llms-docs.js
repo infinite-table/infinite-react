@@ -571,7 +571,7 @@ function run() {
     ...otherDocsEntries.flatMap(({ framework, entries }) => [
       `## ${labelOf(framework)} Docs`,
       '',
-      `The same docs for the ${labelOf(framework)} DataGrid (${packageOf(framework)}), for the pages that have a ${labelOf(framework)} version:`,
+      `The same docs for the ${labelOf(framework)} DataGrid (${packageOf(framework)}), for the pages that have ${/^[AEIOU]/.test(labelOf(framework)) ? 'an' : 'a'} ${labelOf(framework)} version:`,
       '',
       ...entries.map(entryLine),
       '',

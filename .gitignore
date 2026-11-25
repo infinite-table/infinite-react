@@ -124,6 +124,7 @@ test-results
 /www/public/docs
 /www/public/blog
 /www/public/vue/docs
+/www/public/angular/docs
 /www/public/llms.txt
 /www/public/llms-full.txt
 tsconfig.tsbuildinfo
