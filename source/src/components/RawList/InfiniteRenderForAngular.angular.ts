@@ -9,11 +9,13 @@ import {
   TemplateRef,
   Type,
   ViewContainerRef,
+  WritableSignal,
   inject,
   input,
   inputBinding,
   outputBinding,
   reflectComponentType,
+  signal,
 } from '@angular/core';
 
 import type {
@@ -175,12 +177,22 @@ type RenderedLeaf =
       kind: 'component';
       component: Type<unknown>;
       ref: ComponentRef<unknown>;
-      holder: {
-        context: any;
-        inputs?: Record<string, unknown>;
-      };
+      holder: ComponentHolder;
       injector?: Injector;
     };
+
+/**
+ * What the input bindings of a component leaf read. `version` is a signal
+ * the bindings read, so updating the holder marks just that component's
+ * host view for refresh: the host view of an OnPush component created in a
+ * container is not checked with its parent, so plain getters would never be
+ * re-evaluated when a cell is recycled.
+ */
+type ComponentHolder = {
+  context: any;
+  inputs?: Record<string, unknown>;
+  version: WritableSignal<number>;
+};
 
 /**
  * The context the views of a template leaf are created with: it forwards
@@ -312,8 +324,12 @@ export class InfiniteRender implements OnChanges, OnDestroy {
         current.component === leaf.component &&
         current.injector === leaf.injector
       ) {
-        current.holder.context = leaf.context;
-        current.holder.inputs = leaf.inputs;
+        const holder = current.holder;
+        if (holder.context !== leaf.context || holder.inputs !== leaf.inputs) {
+          holder.context = leaf.context;
+          holder.inputs = leaf.inputs;
+          holder.version.update((version) => version + 1);
+        }
         next.push(current);
         viewIndex++;
         continue;
@@ -337,7 +353,11 @@ export class InfiniteRender implements OnChanges, OnDestroy {
           injector: leaf.injector,
         });
       } else {
-        const holder = { context: leaf.context, inputs: leaf.inputs };
+        const holder: ComponentHolder = {
+          context: leaf.context,
+          inputs: leaf.inputs,
+          version: signal(0),
+        };
         const ref = this.vcr.createComponent(leaf.component, {
           index: viewIndex,
           injector: leaf.injector ?? this.injector,
@@ -416,10 +436,7 @@ function getInputNames(component: Type<unknown>): string[] {
   return names;
 }
 
-function componentBindings(
-  leaf: ComponentLeaf,
-  holder: { context: any; inputs?: Record<string, unknown> },
-) {
+function componentBindings(leaf: ComponentLeaf, holder: ComponentHolder) {
   const bindings = [];
   const context = leaf.context;
   for (const name of getInputNames(leaf.component)) {
@@ -428,11 +445,12 @@ function componentBindings(
     const fromInputs = !!leaf.inputs && name in leaf.inputs;
     if (fromContext || fromInputs) {
       bindings.push(
-        inputBinding(name, () =>
-          holder.inputs && name in holder.inputs
+        inputBinding(name, () => {
+          holder.version();
+          return holder.inputs && name in holder.inputs
             ? holder.inputs[name]
-            : holder.context?.[name],
-        ),
+            : holder.context?.[name];
+        }),
       );
     }
   }
