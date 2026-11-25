@@ -33,6 +33,7 @@ import {
   INFINITE_MASTER_DETAIL_CONTEXT,
   INFINITE_MASTER_ROW_INFO,
 } from '../../../DataSource/DataSourceMasterDetailContextForAngular.angular';
+import { shallowEqualObjects } from '../../../../utils/shallowEqualObjects';
 import { injectPooledProps } from '../../../HeadlessTable/AngularPooledViews.angular';
 import {
   InfiniteRender,
@@ -177,12 +178,18 @@ export class InfiniteTableDetailRow implements DoCheck {
   protected view: DetailRowView = EMPTY_VIEW;
 
   /**
-   * Like a React render: the view is built when the props changed. The
-   * user's `rowDetailRenderer` runs here, not in a computed.
+   * Like a React render: the view is built when a prop changed (compared
+   * shallowly, like React.memo on the React detail row - the root creates
+   * new props on every render). The user's `rowDetailRenderer` runs here,
+   * not in a computed.
    */
   ngDoCheck() {
     const props = untracked(this.props);
-    if (!props || props === this.builtFor) {
+    if (
+      !props ||
+      props === this.builtFor ||
+      (this.builtFor && shallowEqualObjects(this.builtFor, props))
+    ) {
       return;
     }
     this.builtFor = props;
