@@ -59,7 +59,14 @@ import {
   getRowspanFn,
   updateBrain,
 } from './controller/rootEffects';
-import { getComputedColumns } from './utils/getComputedColumns';
+import {
+  getComputedColumnsDeps,
+  getComputedColumnsFromState,
+} from './controller/getComputedColumnsDeps';
+import {
+  createGetColumnCellProps,
+  getRenderCellDeps,
+} from './controller/renderCellParams';
 import { getInfiniteCSSVars } from './utils/getInfiniteCSSVars';
 import { getImperativeApi } from './api/getImperativeApi';
 import { MultiRowSelector } from './utils/MultiRowSelector';
@@ -441,84 +448,10 @@ export class InfiniteTable<T = any>
 
     // ---- computed columns (React: useComputedColumns), on the same deps,
     // so column identities survive unrelated state changes
+    // (controller/getComputedColumnsDeps.ts)
     const computedColumnsResult = computedWithDeps(
-      () => {
-        const s = state();
-        const ds = dataSourceState();
-        return [
-          s.computedColumns,
-          s.bodySize.width,
-          s.columnMinWidth,
-          s.columnMaxWidth,
-          s.columnDefaultWidth,
-          s.columnDefaultFlex,
-          s.columnCssEllipsis,
-          s.columnHeaderCssEllipsis,
-          s.viewportReservedWidth,
-          s.resizableColumns,
-          ds.filterValue,
-          ds.filterTypes,
-          s.sortable,
-          ds.sortInfo,
-          ds.multiSort,
-          s.pinnedEndMaxWidth,
-          s.pinnedStartMaxWidth,
-          s.draggableColumns,
-          s.columnDefaultDraggable,
-          s.columnOrder,
-          s.columnPinning,
-          s.columnDefaultEditable,
-          s.columnDefaultFilterable,
-          s.columnDefaultGroupable,
-          s.columnDefaultSortable,
-          s.editable,
-          s.columnSizing,
-          s.columnTypes,
-          s.columnVisibility,
-          s.initialColumns,
-          ds.groupBy,
-        ];
-      },
-      () => {
-        const s = getState();
-        const ds = getDSState();
-
-        return getComputedColumns({
-          columns: s.computedColumns,
-          userColumns: s.initialColumns,
-          scrollbarWidth: undefined,
-          bodySize: s.bodySize,
-          columnMinWidth: s.columnMinWidth,
-          columnMaxWidth: s.columnMaxWidth,
-          columnDefaultWidth: s.columnDefaultWidth,
-          columnDefaultFlex: s.columnDefaultFlex,
-          columnCssEllipsis: s.columnCssEllipsis,
-          columnHeaderCssEllipsis: s.columnHeaderCssEllipsis,
-          viewportReservedWidth: s.viewportReservedWidth,
-          resizableColumns: s.resizableColumns,
-          filterValue: ds.filterValue,
-          filterTypes: ds.filterTypes,
-          sortable: s.sortable,
-          sortInfo: ds.sortInfo ?? undefined,
-          multiSort: ds.multiSort,
-          pinnedEndMaxWidth: s.pinnedEndMaxWidth,
-          pinnedStartMaxWidth: s.pinnedStartMaxWidth,
-          draggableColumns: s.draggableColumns,
-          columnDefaultDraggable: s.columnDefaultDraggable,
-          columnOrder: s.columnOrder,
-          columnPinning: s.columnPinning,
-          columnDefaultEditable: s.columnDefaultEditable,
-          columnDefaultFilterable: s.columnDefaultFilterable,
-          columnDefaultGroupable: s.columnDefaultGroupable,
-          columnDefaultSortable: s.columnDefaultSortable,
-          editable: s.editable,
-          columnSizing: s.columnSizing,
-          columnTypes: s.columnTypes,
-          columnVisibility: s.columnVisibility,
-          columnVisibilityAssumeVisible: true,
-          groupBy: ds.groupBy,
-        } as any);
-      },
+      () => getComputedColumnsDeps(state(), dataSourceState()),
+      () => getComputedColumnsFromState(getState(), getDSState()),
     );
 
     const getComputedVisibleColumns = () =>
@@ -948,132 +881,41 @@ export class InfiniteTable<T = any>
       },
     );
 
-    // on the same deps as React's useCellRendering renderCell useCallback:
-    // NOT on dataArray (read lazily via getData), so a data update doesn't
-    // force-rerender every cell - per-row updates reach the cells through
-    // their rowInfoStore subscriptions
+    // on the same deps as React's useCellRendering renderCell useCallback
+    // (controller/renderCellParams.ts)
     this.renderCell = computedWithDeps<TableRenderCellFn>(
-      () => {
-        const s = state();
-        const ds = dataSourceState();
-        return [
+      () =>
+        getRenderCellDeps(
+          state(),
+          dataSourceState(),
           computedColumnsResult(),
-          s.rowHeight,
-          s.rowDetailHeight,
-          s.onRowMouseEnter,
-          s.onRowMouseLeave,
-          s.isRowDetailExpanded,
-          s.isRowDetailEnabled,
-          s.groupRenderStrategy,
-          s.wrapRowsHorizontally,
-          s.showZebraRows,
-          s.brain,
-          s.rowStyle,
-          s.rowClassName,
-          s.cellStyle,
-          s.cellClassName,
-          s.repaintCellsKey,
-          s.editingCell,
-          s.updatedAt,
-          ds.rowInfoStore,
           dataSourceStatePartialForCell(),
-        ];
-      },
+        ),
       () => {
-        const { computedVisibleColumns, computedColumnsMap, fieldsToColumn } =
-          untracked(computedColumnsResult) as any;
-        const s = getState();
-        const showZebraRows = s.showZebraRows;
-        const rowInfoStore = getDSState().rowInfoStore;
-        const dataSourceStatePartial = untracked(dataSourceStatePartialForCell);
+        const getCellProps = createGetColumnCellProps<any>({
+          computedColumns: untracked(computedColumnsResult) as any,
+          state: getState(),
+          rowInfoStore: getDSState().rowInfoStore,
+          dataSourceStatePartial: untracked(dataSourceStatePartialForCell),
+          getData: getData as () => any[],
+          getComputedRowHeightResult,
+          api: api as any,
+          renderingContext,
+          getComputedVisibleColumns: getComputedVisibleColumns as () => any[],
+          getComputedColumnOrder,
+        });
 
         return (params: TableRenderCellFnParam) => {
-          const {
-            rowIndex,
-            colIndex,
-            hidden,
-            width,
-            heightWithRowspan,
-            onMouseEnter,
-            onMouseLeave,
-          } = params;
-
-          const rowInfo = getData()[rowIndex];
-          const column = computedVisibleColumns[colIndex];
-
-          if (!rowInfo || !column) {
+          const props = getCellProps(
+            params,
+          ) as InfiniteTableColumnCellProps | null;
+          if (!props) {
             return null;
           }
+          // slice B: column.components.Editor, or the default editor
+          props.renderEditor = renderColumnEditor;
 
-          // when rows have details, the brain sizes the row as row + detail,
-          // so the cell takes its own height from the row size cache
-          const computedRowSizeCacheForDetails =
-            getComputedRowHeightResult().computedRowSizeCacheForDetails;
-          const rowHeight = computedRowSizeCacheForDetails
-            ? computedRowSizeCacheForDetails.getRowHeight(rowIndex)
-            : heightWithRowspan;
-
-          let rowDetailState: false | 'collapsed' | 'expanded' = false;
-          const isRowDetailsEnabled = s.isRowDetailEnabled;
-          const isRowDetailsExpanded = s.isRowDetailExpanded;
-          if (
-            !isRowDetailsEnabled ||
-            (typeof isRowDetailsEnabled === 'function' &&
-              !isRowDetailsEnabled(rowInfo))
-          ) {
-            rowDetailState = false;
-          } else if (isRowDetailsExpanded) {
-            rowDetailState = isRowDetailsExpanded(rowInfo)
-              ? 'expanded'
-              : 'collapsed';
-          }
-
-          // whether THIS cell is in edit mode - a prop (like React), so an
-          // editing start/stop re-renders exactly the affected cell
-          const inEditMode = api.isEditorVisibleForCell({
-            rowIndex,
-            columnId: column.id,
-          });
-
-          const props: InfiniteTableColumnCellProps = {
-            rowIndex,
-            rowHeight,
-            width,
-            hidden,
-            column,
-            columnsMap: computedColumnsMap,
-            fieldsToColumn,
-            showZebraRows,
-            rowDetailState,
-            inEditMode,
-            rowIndexInHorizontalLayoutPage: s.wrapRowsHorizontally
-              ? (s.brain as any).getRowIndexInPage(rowIndex)
-              : null,
-            horizontalLayoutPageIndex: s.wrapRowsHorizontally
-              ? (s.brain as any).getPageIndexForRow(rowIndex)
-              : null,
-            rowStyle: s.rowStyle as any,
-            rowClassName: s.rowClassName as any,
-            cellStyle: s.cellStyle as any,
-            cellClassName: s.cellClassName as any,
-            // the column-level key wins over the table-level one
-            repaintCellsKey:
-              column.repaintCellsKey !== undefined
-                ? column.repaintCellsKey
-                : s.repaintCellsKey,
-            getData: getData as () => any[],
-            rowInfoStore,
-            renderingContext,
-            getComputedVisibleColumns: getComputedVisibleColumns as () => any[],
-            getComputedColumnOrder,
-            dataSourceStatePartial,
-            // slice B: column.components.Editor, or the default editor
-            renderEditor: renderColumnEditor,
-            onMouseEnter,
-            onMouseLeave,
-          };
-
-          const ColumnCell = (column as any).components?.ColumnCell;
+          const ColumnCell = (props.column as any).components?.ColumnCell;
 
           // the pooled cell keeps its component and DOM element while
           // scrolling and only gets new props
