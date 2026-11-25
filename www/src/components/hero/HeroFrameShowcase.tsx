@@ -17,18 +17,25 @@ type ColorMode = 'light' | 'dark';
 const siteMode = (): ColorMode =>
   document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
-type VueHeroFrameProps = LazyShowcaseLoadedProps & {
-  /** The page of the Vue hero demo (content/home/vue-hero.demo.vue). */
+type HeroFrameProps = {
+  /** The page of the hero demo (content/home/vue-hero.demo.vue, angular-hero.demo.angular.ts). */
   src: string;
+  /** The iframe's title. */
+  title: string;
 };
 
 /**
- * The Vue hero is a Vue app, so it runs in its own page: the one the docs-kit
- * Vue build makes of content/home/vue-hero.demo.vue. This is its iframe. It
- * opens in the site's light / dark mode and is told when the mode changes;
- * the hero posts `hero-live` once its first rows have painted.
+ * The Vue and Angular heroes are apps of frameworks the site doesn't bundle,
+ * so each runs in its own page: the one the docs-kit build of its framework
+ * makes of content/home/<framework>-hero.demo.*. This is its iframe. It opens
+ * in the site's light / dark mode and is told when the mode changes; the hero
+ * posts `hero-live` once its first rows have painted.
  */
-function VueHeroFrame({ src, onReady }: VueHeroFrameProps) {
+function HeroFrame({
+  src,
+  title,
+  onReady,
+}: LazyShowcaseLoadedProps & HeroFrameProps) {
   const frameRef = React.useRef<HTMLIFrameElement | null>(null);
   // the mode at mount goes in the URL (the page paints in it from the start);
   // later changes are messages, so the hero isn't reloaded
@@ -66,31 +73,31 @@ function VueHeroFrame({ src, onReady }: VueHeroFrameProps) {
       ref={frameRef}
       className="hero-frame__iframe"
       src={`${src}?theme=${initialMode}`}
-      title="Infinite Table for Vue: live trading blotter"
+      title={title}
     />
   );
 }
 
-const loadVueHeroFrame = async () => ({ default: VueHeroFrame });
+const loadHeroFrame = async () => ({ default: HeroFrame });
 
 /**
- * The Vue hero as it goes on the Vue home page: the same frame and poster as
- * the React one (HeroShowcase), with the Vue demo's page loaded in an iframe
+ * The hero of the Vue or the Angular home page: the same frame and poster as
+ * the React one (HeroShowcase), with the hero demo's page loaded in an iframe
  * when the frame nears the viewport and the browser is idle.
  */
-export function VueHeroShowcase({
+export function HeroFrameShowcase({
   src,
+  title,
   className,
-}: {
-  src: string;
+}: HeroFrameProps & {
   /** Extra frame classes, e.g. `hero-frame--page`. */
   className?: string;
 }) {
-  const props = React.useMemo(() => ({ src }), [src]);
+  const props = React.useMemo(() => ({ src, title }), [src, title]);
   return (
-    <LazyShowcase<{ src: string }>
+    <LazyShowcase<HeroFrameProps>
       className={className ? `hero-frame ${className}` : 'hero-frame'}
-      load={loadVueHeroFrame}
+      load={loadHeroFrame}
       props={props}
       poster={<HeroPoster />}
     />

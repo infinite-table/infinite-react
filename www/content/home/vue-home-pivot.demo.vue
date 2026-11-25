@@ -2,13 +2,13 @@
 /**
  * The pivot demo of the Vue home page (/vue): the Vue port of
  * src/components/home/demos/PivotDemo.tsx, with the same card and data. The
- * home page shows this page in an iframe (VueFrameDemo.tsx), as tall as the
+ * home page shows this page in an iframe (FrameDemo.tsx), as tall as the
  * code next to it.
  */
 import '@infinite-table/infinite-vue/index.css';
 import '@infinite-table/infinite-vue/theme/terminal.css';
 
-import './vue-home/page.css';
+import './home-demo/page.css';
 
 import { h } from 'vue';
 import {

@@ -8,7 +8,7 @@
  * The Vue port of src/components/hero/HeroDemo.tsx. The feed, the worker,
  * the script of the show, the chart drawing and the styles have no framework
  * code and are shared with the React hero; the components are in ./vue-hero.
- * The home page shows this demo's page in an iframe (VueHeroShowcase.tsx).
+ * The home page shows this demo's page in an iframe (HeroFrameShowcase.tsx).
  */
 import '@infinite-table/infinite-vue/index.css';
 // extra grid themes the hero can switch to (the default one is in index.css)

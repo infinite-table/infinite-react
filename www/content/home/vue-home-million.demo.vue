@@ -2,12 +2,12 @@
 /**
  * The million rows demo of the Vue home page (/vue): the Vue port of
  * src/components/home/demos/MillionRowsDemo.tsx, with the same card, data and
- * controls. The home page shows this page in an iframe (VueFrameDemo.tsx).
+ * controls. The home page shows this page in an iframe (FrameDemo.tsx).
  */
 import '@infinite-table/infinite-vue/index.css';
 import '@infinite-table/infinite-vue/theme/terminal.css';
 
-import './vue-home/page.css';
+import './home-demo/page.css';
 
 import { h, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import {

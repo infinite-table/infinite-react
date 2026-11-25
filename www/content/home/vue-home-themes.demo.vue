@@ -2,7 +2,7 @@
 /**
  * The themes demo of the Vue home page (/vue): the Vue port of
  * src/components/home/demos/ThemesDemo.tsx, with the same card, data and
- * controls. The home page shows this page in an iframe (VueFrameDemo.tsx).
+ * controls. The home page shows this page in an iframe (FrameDemo.tsx).
  */
 import '@infinite-table/infinite-vue/index.css';
 // the default theme is in index.css
@@ -13,7 +13,7 @@ import '@infinite-table/infinite-vue/theme/minimalist.css';
 import '@infinite-table/infinite-vue/theme/ocean.css';
 import '@infinite-table/infinite-vue/theme/balsam.css';
 
-import './vue-home/page.css';
+import './home-demo/page.css';
 
 import { computed, h, ref, watch } from 'vue';
 import {
