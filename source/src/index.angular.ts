@@ -186,3 +186,21 @@ export { SortIcon } from './components/InfiniteTable/components/icons/SortIcon/S
 export { FilterIcon } from './components/InfiniteTable/components/icons/FilterIcon/FilterIconForAngular.angular';
 export { MenuIcon } from './components/InfiniteTable/components/icons/MenuIconForAngular.angular';
 export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIconTypes';
+
+// the built-in components, under the names `components.*` overrides use
+// (same object as the React entry)
+import { InfiniteCheckBox as CheckBoxComponent } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
+import { LoadMask as LoadMaskComponent } from './components/InfiniteTable/components/LoadMaskForAngular.angular';
+import { MenuIcon as MenuIconComponent } from './components/InfiniteTable/components/icons/MenuIconForAngular.angular';
+import {
+  StringFilterEditor as StringFilterEditorComponent,
+  NumberFilterEditor as NumberFilterEditorComponent,
+} from './components/InfiniteTable/components/FilterEditorsForAngular.angular';
+
+export const components = {
+  CheckBox: CheckBoxComponent,
+  LoadMask: LoadMaskComponent,
+  MenuIcon: MenuIconComponent,
+  StringFilterEditor: StringFilterEditorComponent,
+  NumberFilterEditor: NumberFilterEditorComponent,
+};
