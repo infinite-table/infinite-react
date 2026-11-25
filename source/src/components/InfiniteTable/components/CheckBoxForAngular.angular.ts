@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   ViewEncapsulation,
   computed,
@@ -34,7 +35,6 @@ import type { HTMLProps } from '../../types/FrameworkTypes';
     type: 'checkbox',
     '[class]': 'className()',
     '[disabled]': '!!disabled()',
-    '(change)': 'onInputChange()',
   },
 })
 export class InfiniteCheckBox {
@@ -67,6 +67,14 @@ export class InfiniteCheckBox {
   });
 
   constructor() {
+    // a native listener, not a host `(change)` one: that would also be
+    // subscribed to the `change` output of this component, and call itself
+    const onChange = () => this.onInputChange();
+    this.input.addEventListener('change', onChange);
+    inject(DestroyRef).onDestroy(() =>
+      this.input.removeEventListener('change', onChange),
+    );
+
     // writes the value to the input: a click has already toggled it, so a
     // controlled value that doesn't change after the click (or renders the
     // same: null -> false) must still reset it, as React does
