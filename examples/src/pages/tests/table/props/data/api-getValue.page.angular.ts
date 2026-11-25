@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 import { DataSource, InfiniteTable } from '@infinite-table/infinite-angular';
 
-
 type Developer = {
   id: number;
   firstName: string;
