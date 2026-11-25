@@ -89,3 +89,31 @@ export {
 } from './components/TreeGrid/TreeGridForAngular.angular';
 export type * from './components/TreeGrid/types/TreeGridProps';
 export type * from './components/TreeGrid/types/TreeDataSourceProps';
+
+// drag and drop: the same names as in the React entry, plus the Angular
+// inject functions
+export {
+  DragDropProvider,
+  injectDragDropProvider,
+  INFINITE_DRAG_DROP_PROVIDER,
+  type DragDropSourceAndTarget,
+  type DragDropProviderContextValue,
+} from './components/InfiniteTable/components/draggable/DragDropProvider.angular';
+export {
+  DragList,
+  DragItem,
+  DragHandle,
+  injectDragList,
+  INFINITE_DRAG_LIST,
+  DRAG_ITEM_ATTRIBUTE,
+  createDefaultProxy,
+  defaultDragProxyMove,
+  type DragListProps,
+  type DragListContextValue,
+  type DragItemContextValue,
+  type DragProxyTemplateContext,
+  type DragProxyRenderState,
+  type DragProxySetupParams,
+  type DragProxySetupResult,
+  type DragProxyMoveParams,
+} from './components/InfiniteTable/components/draggable/DragList.angular';
