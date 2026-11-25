@@ -6,6 +6,7 @@ import type {
   InfiniteTableComputedColumn,
   InfiniteTableComputedValues,
   InfiniteTableState,
+  Scrollbars,
 } from './types';
 import type { InfiniteTableActions } from './types/InfiniteTableState';
 
@@ -27,6 +28,8 @@ export type InfiniteTableContextValueForAngular<T = any> = {
   /** tracked: the computed columns (changes when the columns do) */
   computed: Signal<InfiniteTableComputedValues<T>>;
   getComputedVisibleColumns: () => InfiniteTableComputedColumn<T>[];
+  /** tracked: whether the body shows scrollbars */
+  scrollbars: Signal<Scrollbars>;
   dataSourceContext: DataSourceContextValueForAngular<T>;
 };
 
@@ -38,6 +41,8 @@ export const INFINITE_TABLE = new InjectionToken<
  * In an injection context inside an InfiniteTable: its state, actions, api
  * and computed values.
  */
-export function injectInfiniteTable<T = any>(): InfiniteTableContextValueForAngular<T> {
+export function injectInfiniteTable<
+  T = any,
+>(): InfiniteTableContextValueForAngular<T> {
   return inject(INFINITE_TABLE) as InfiniteTableContextValueForAngular<T>;
 }
