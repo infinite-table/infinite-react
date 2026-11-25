@@ -4,10 +4,13 @@
  *
  * The state machine (runtime items derivation, controlled/uncontrolled
  * props) is the shared managed-component system + menuStateShared.ts; the
- * submenu triangulation logic is the shared MenuTriangleContext; alignment
- * comes through the Angular overlay. This file owns the Angular view: the
- * CSS-grid menu, item rows, keyboard navigation and submenu spawning - same
- * DOM structure, class names and data attributes as React and Vue.
+ * keyboard navigation, item actions and focus handling are shared
+ * (menuKeyboardNav.ts), and so are the submenu props, triangulation, grid
+ * style and row cells (menuViewShared.ts); alignment comes through the
+ * Angular overlay. This file owns the Angular view: the CSS-grid menu, item
+ * rows and submenu spawning - same DOM structure, class names and data
+ * attributes as React and Vue. Different from React and Vue: the blur of
+ * the menu element is deferred (see onMenuBlur).
  *
  * Angular menus are items-driven (`[items]`), like the Vue ones.
  *
@@ -37,8 +40,6 @@ import {
 } from '@angular/core';
 
 import { join } from '../../utils/join';
-import { raf } from '../../utils/raf';
-import { Rectangle } from '../../utils/pageGeometry/Rectangle';
 import { styleWithUnits } from '../../utils/styleWithUnits';
 
 import { display } from '../InfiniteTable/utilities.css';
@@ -62,12 +63,7 @@ import type {
   Renderable,
 } from '../types/FrameworkTypes.angular';
 
-import {
-  MenuCls,
-  MenuItemCls,
-  MenuRowCls,
-  MenuSeparatorCls,
-} from './MenuCls.css';
+import { MenuCls, MenuRowCls, MenuSeparatorCls } from './MenuCls.css';
 import { MenuInputs, MENU_PROPS_META } from './MenuInputs.generated.angular';
 import type {
   MenuColumn,
@@ -83,10 +79,19 @@ import {
   type MenuRenderAdapters,
 } from './menuStateShared';
 import {
-  getFirstCheckBoxInsideMenuItem,
-  getMenuItemRect,
-} from './menuDomUtils';
-import { MenuTriangleContext } from './MenuTriangleContext';
+  createMenuFocus,
+  handleMenuKeyDown,
+  hideMenuAndParents,
+  runMenuItemClick,
+} from './menuKeyboardNav';
+import {
+  createMenuTriangleHandlers,
+  getActiveSubmenuItem,
+  getMenuGridStyle,
+  getMenuItemCells,
+  getSubmenuOverlayParams,
+  getSubmenuProps,
+} from './menuViewShared';
 import { propToIdentifyMenu } from './propToIdentifyMenu';
 
 /**
@@ -248,56 +253,21 @@ export class MenuRow {
     if (item.type !== 'item') {
       return [];
     }
-    const columns = this.columns();
-    const index = this.index();
-    const active = this.active();
-    const keyboardActive = this.keyboardActive();
-    const pressed = this.pressed();
-    const key = item.value.key;
+    const target = item.value;
 
-    const className = join(
-      MenuItemCls({
-        active,
-        disabled: !!item.disabled,
-        keyboardActive,
-        pressed: pressed || active,
-      }),
-      item.className,
-    );
-
-    const cells: MenuCellView[] = [];
-    let spanIndex = 0;
-
-    columns.forEach((col, i) => {
-      const target = item.value;
-      const field = col.field || col.name;
-      const start = i + 1;
-      const end = start + item.span;
-
-      if (start < spanIndex) {
-        return;
-      }
-      spanIndex = end;
-
-      const style = styleWithUnits({
-        ...(col.style as Record<string, any>),
-        ...(item.style as Record<string, any>),
-        gridColumnStart: start,
-        gridColumnEnd: end,
-      });
-
-      const columnId = `${item.parentMenuId}-col-${col.name}`;
-      const rowId = `${item.parentMenuId}-row-${index}`;
-      const value = (target as any)[field];
+    return getMenuItemCells(item, this.columns(), this.index(), {
+      active: this.active(),
+      keyboardActive: this.keyboardActive(),
+      pressed: this.pressed(),
+    }).map((cell): MenuCellView => {
+      const col = cell.column;
+      const { value, className, dataAttributes } = cell;
+      const style = styleWithUnits(cell.style);
 
       const domProps = {
         style,
         className,
-        'data-menu-column-id': columnId,
-        'data-menu-col-name': `${col.name}`,
-        'data-menu-row-id': rowId,
-        'data-menu-row-index': `${index}`,
-        'data-menu-item-key': `${item.key}`,
+        ...dataAttributes,
       };
 
       const content = col.render
@@ -309,21 +279,19 @@ export class MenuRow {
           }) as Renderable)
         : (value as Renderable);
 
-      cells.push({
-        key: `${key}-${field}`,
+      return {
+        key: cell.key,
         className,
         style,
-        columnId,
-        colName: `${col.name}`,
-        rowId,
-        rowIndex: `${index}`,
-        itemKey: `${item.key}`,
+        columnId: dataAttributes['data-menu-column-id'],
+        colName: dataAttributes['data-menu-col-name'],
+        rowId: dataAttributes['data-menu-row-id'],
+        rowIndex: dataAttributes['data-menu-row-index'],
+        itemKey: dataAttributes['data-menu-item-key'],
         content,
         context: { $implicit: target, item: target, column: col, value },
-      });
+      };
     });
-
-    return cells;
   });
 
   private selectable(): MenuRuntimeItemSelectable | null {
@@ -448,29 +416,13 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
     );
   });
 
-  protected readonly menuStyle = computed(() => {
-    const { columns, runtimeItems, wrapLabels } = this.state();
-    const gridTemplateColumns = columns
-      .map((col) => {
-        return (
-          col.width ||
-          (typeof col.flex === 'number' ? `${col.flex}fr` : col.flex) ||
-          'auto'
-        );
-      })
-      .map((width) => (typeof width === 'number' ? `${width}px` : width))
-      .join(' ');
-
-    const style: Record<string, any> = {
-      ...styleWithUnits(this.domProps()?.style as Record<string, any>),
-      gridTemplateColumns,
-      gridTemplateRows: runtimeItems.map(() => `auto`).join(' '),
-    };
-    if (!wrapLabels) {
-      style.whiteSpace = 'nowrap';
-    }
-    return style;
-  });
+  protected readonly menuStyle = computed(() =>
+    getMenuGridStyle(
+      this.state(),
+      styleWithUnits(this.domProps()?.style as Record<string, any>),
+      (width) => (typeof width === 'number' ? `${width}px` : width),
+    ),
+  );
 
   private mounted = false;
   private shown = false;
@@ -478,6 +430,8 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
   private submenuApi: MenuApi | null = null;
 
   protected rowHandlers!: MenuRowHandlers;
+
+  private onMenuFocusHandler!: VoidFunction;
 
   /**
    * The menu's api (null until the menu is initialized).
@@ -525,10 +479,7 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
     this.componentActions.activeItemKey = key;
   }
 
-  private hideAll = () => {
-    const state = this.getState();
-    state.onHideIntent?.(state);
-  };
+  private hideAll = () => hideMenuAndParents(this.getState);
 
   ngOnInit() {
     this.managed.init();
@@ -536,56 +487,28 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
 
     const getState = this.getState;
 
-    this.api = {
-      hideMenu: this.hideAll,
-      focus: () => {
-        const domNode = getState().domRef.current;
-        if (domNode) {
-          (domNode as HTMLElement).focus();
-
-          setTimeout(() => {
-            // sometimes the above focus does not work, so try again
-            const node = getState().domRef.current as HTMLElement | null;
-            if (node && node !== document.activeElement) {
-              node.focus();
-            }
-          }, 10);
-
-          // when doing arrow-left navigation from a third-level menu to a
-          // second level and then to a root menu, the focus event may not
-          // fire for the root menu - so call it explicitly
-          this.onMenuFocus();
-        }
+    const { api, onMenuFocus } = createMenuFocus({
+      getState,
+      setFocused: (focused) => {
+        this.componentActions.focused = focused;
       },
-      getMenuId: () => getState().menuId,
-      getParentMenuId: () => getState().parentMenuId,
-    };
+      setKeyboardActiveItemKey: (key) => this.setKeyboardActiveItemKey(key),
+      shouldSelectFirstItemOnFocus: () => this.shouldSelectFirstItemOnFocus,
+      hideAll: this.hideAll,
+    });
+    this.api = api;
+    this.onMenuFocusHandler = onMenuFocus;
 
     // ---- submenu triangulation (shared MenuTriangleContext) ----
-    const { onItemEnter, onItemLeave } = new MenuTriangleContext({
-      parentMenuId: getState().parentMenuId,
-      onItemActivate: (itemKey: string | null) => {
+    const { onItemEnter, onItemLeave } = createMenuTriangleHandlers(
+      getState,
+      (itemKey: string | null) => {
         if (!this.mounted) {
           return;
         }
         this.setActiveItemKey(itemKey);
       },
-      itemHasSubMenu: (itemKey: string) => {
-        const item = getState().runtimeItems.filter(
-          (item) => item.type === 'item' && item.key === itemKey && item.menu,
-        )[0];
-
-        return !!item;
-      },
-      getMenuRectFor: (itemKey) => {
-        const selector = `[data-submenu-for="${itemKey}"]`;
-        const menuNode = document.querySelector(selector);
-        if (!menuNode) {
-          return undefined;
-        }
-        return Rectangle.from(menuNode.getBoundingClientRect());
-      },
-    }).getHandlers();
+    );
 
     this.rowHandlers = {
       onItemEnter: (item, event) => onItemEnter(item.key, event),
@@ -606,13 +529,11 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
       ([activeItemKey], previous) => {
         const { runtimeItems, menuId, constrainTo } = getState();
 
-        const activeItem = runtimeItems.filter(
-          (item) => item.type === 'item' && activeItemKey === item.key,
-        )[0] as MenuRuntimeItemSelectable | null;
+        const activeItem = getActiveSubmenuItem(runtimeItems, activeItemKey);
 
         const activeItemKeyChanged = !previous || previous[0] !== activeItemKey;
 
-        if (!activeItem || !activeItem.menu) {
+        if (!activeItem) {
           if (activeItemKeyChanged || updateSubmenu) {
             this.submenuApi = null;
             updateSubmenu = null;
@@ -628,20 +549,16 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
           return;
         }
 
-        const alignTo = getMenuItemRect(menuId, activeItem.key)!;
+        const overlayParams = getSubmenuOverlayParams(
+          menuId,
+          activeItem,
+          constrainTo,
+        );
 
-        if (alignTo) {
+        if (overlayParams) {
           updateSubmenu = this.submenuOverlay.showOverlay(
             () => this.renderSubmenuForItem(activeItem),
-            {
-              id: `${menuId}-submenu`,
-              alignTo,
-              alignPosition: [
-                ['TopLeft', 'TopRight'],
-                ['TopRight', 'TopLeft'],
-              ],
-              constrainTo,
-            },
+            overlayParams,
           );
         }
       },
@@ -672,25 +589,7 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
   }
 
   protected onMenuFocus() {
-    this.componentActions.focused = true;
-
-    // we're using a special lazy focus (we consider
-    // shouldSelectFirstItemOnFocus), as the user might be actually clicking
-    // a menu item directly - in that case selecting the first item and then
-    // the clicked item would flicker
-    setTimeout(() => {
-      const domNode = this.getState().domRef.current;
-      if (
-        this.shouldSelectFirstItemOnFocus &&
-        domNode &&
-        domNode === document.activeElement &&
-        this.getState().keyboardActiveItemKey == null
-      ) {
-        this.setKeyboardActiveItemKey(
-          this.getState().runtimeSelectableItems[0]?.key ?? null,
-        );
-      }
-    });
+    this.onMenuFocusHandler();
   }
 
   protected onMenuBlur(event: FocusEvent) {
@@ -718,207 +617,43 @@ export class Menu extends MenuInputs implements OnInit, OnDestroy {
     event: MouseEvent | KeyboardEvent,
     item: MenuRuntimeItemSelectable,
   ) {
-    this.setKeyboardActiveItemKey(item.key);
-    this.setActiveItemKey(item.key);
-
-    if (item.originalMenuItem.onClick) {
-      item.originalMenuItem.onClick(event as any);
-    }
-    const onActionParam = {
-      key: item.key,
-      item: item.originalMenuItem,
-      hideMenu: this.hideAll,
-    };
-    if (item.originalMenuItem.onAction) {
-      item.originalMenuItem.onAction(onActionParam);
-    }
-    const { onAction } = this.getState();
-    if (onAction) {
-      onAction(onActionParam);
-    }
-
-    if (item.originalMenuItem.hideMenuOnAction) {
-      this.hideAll();
-    }
-  }
-
-  private renderSubmenuForItem(item: MenuRuntimeItemSelectable): Renderable {
-    const parentMenuId = this.getState().menuId;
-
-    let itemMenu = item.menu;
-    if (!itemMenu) {
-      return null;
-    }
-    if (typeof itemMenu === 'function') {
-      itemMenu = itemMenu();
-    }
-    const submenu = itemMenu as MenuProps;
-
-    return renderMenu({
-      parentMenuItemKey: item.key,
-      parentMenuId,
-      constrainTo: this.getState().constrainTo as any,
-      ...submenu,
-      autoFocus: false,
-      onShow: (state: MenuState, submenuApi: MenuApi) => {
-        submenu?.onShow?.(state, submenuApi);
-        this.submenuApi = submenuApi;
-      },
-      onHideIntent: (state: MenuState) => {
-        submenu?.onHideIntent?.(state);
-        this.hideAll();
-      },
-      onHide: (state: MenuState) => {
-        if (state.focused) {
-          // the submenu was focused but now is unmounted
-          this.setActiveItemKey(null);
-          this.setKeyboardActiveItemKey(item.key);
-          // so make sure we focus the current menu
-          this.api.focus();
-        }
-      },
+    runMenuItemClick(event, item, {
+      getState: this.getState,
+      setActiveItemKey: (key) => this.setActiveItemKey(key),
+      setKeyboardActiveItemKey: (key) => this.setKeyboardActiveItemKey(key),
+      hideAll: this.hideAll,
     });
   }
 
-  // ---- keyboard navigation (ported verbatim from Menu.tsx) ----
+  private renderSubmenuForItem(item: MenuRuntimeItemSelectable): Renderable {
+    const submenuProps = getSubmenuProps(item, {
+      parentMenuId: this.getState().menuId,
+      constrainTo: this.getState().constrainTo,
+      api: this.api,
+      hideAll: this.hideAll,
+      setSubmenuApi: (submenuApi) => {
+        this.submenuApi = submenuApi;
+      },
+      setActiveItemKey: (key) => this.setActiveItemKey(key),
+      setKeyboardActiveItemKey: (key) => this.setKeyboardActiveItemKey(key),
+    });
+
+    return submenuProps ? renderMenu(submenuProps) : null;
+  }
+
+  // ---- keyboard navigation (shared menuKeyboardNav.ts) ----
   protected handleKeydown(keyboardEvent: KeyboardEvent) {
-    const getState = this.getState;
-    const { runtimeItems, runtimeSelectableItems, keyboardActiveItemKey } =
-      getState();
-    const keyboardActiveIndex = runtimeItems.findIndex(
-      (runtimeItem) =>
-        runtimeItem.type === 'item' &&
-        runtimeItem.key === keyboardActiveItemKey,
-    );
-
-    let newKeyboardActiveItemKey = keyboardActiveItemKey;
-
-    const keyboardActiveItem = runtimeItems[
-      keyboardActiveIndex
-    ] as MenuRuntimeItemSelectable;
-
-    const validKeys = {
-      ArrowUp: () => {
-        const newActiveItem = runtimeItems
-          .slice(0, keyboardActiveIndex)
-          .filter((item) => item.type === 'item' && !item.disabled)
-          .pop();
-        if (
-          newActiveItem &&
-          newActiveItem.type === 'item' &&
-          newActiveItem.key
-        ) {
-          newKeyboardActiveItemKey = newActiveItem.key;
-        }
+    handleMenuKeyDown(keyboardEvent, {
+      getState: this.getState,
+      setActiveItemKey: (key) => this.setActiveItemKey(key),
+      setKeyboardActiveItemKey: (key) => this.setKeyboardActiveItemKey(key),
+      destroy: () => {
+        this.componentActions.destroyed = true;
       },
-      ArrowDown: () => {
-        const newActiveItem = runtimeItems
-          .slice(keyboardActiveIndex + 1)
-          .filter((item) => item.type === 'item' && !item.disabled)[0];
-
-        if (
-          newActiveItem &&
-          newActiveItem.type === 'item' &&
-          newActiveItem.key
-        ) {
-          newKeyboardActiveItemKey = newActiveItem.key;
-        }
-      },
-      Home: () => {
-        validKeys.PageUp();
-      },
-      End: () => {
-        validKeys.PageDown();
-      },
-      PageUp: () => {
-        newKeyboardActiveItemKey = runtimeSelectableItems[0].key;
-      },
-      PageDown: () => {
-        newKeyboardActiveItemKey =
-          runtimeSelectableItems[runtimeSelectableItems.length - 1].key;
-      },
-      ArrowLeft: () => {
-        this.setActiveItemKey(null);
-
-        // if we're in a submenu, we want to hide it (destroy it)
-        if (getState().parentMenuId) {
-          this.componentActions.destroyed = true;
-        }
-      },
-
-      ArrowRight: () => {
-        if (!keyboardActiveItem) {
-          return;
-        }
-        this.setActiveItemKey(keyboardActiveItem.key);
-
-        raf(() => {
-          const submenuApi = this.submenuApi;
-          if (
-            this.mounted &&
-            submenuApi &&
-            submenuApi.getParentMenuId() === getState().menuId
-          ) {
-            submenuApi.focus();
-          }
-        });
-      },
-      Enter: () => {
-        if (!keyboardActiveItem) {
-          return;
-        }
-        if (keyboardActiveItem.originalMenuItem?.menu) {
-          // we close it if it was opened
-          if (this.submenuApi) {
-            validKeys.ArrowLeft();
-            return;
-          }
-          // or open if it was closed
-          this.setActiveItemKey(keyboardActiveItem.key);
-        } else {
-          this.onItemClick(keyboardEvent, keyboardActiveItem);
-        }
-      },
-      ' ': () => {
-        if (!keyboardActiveItem) {
-          return;
-        }
-        if (!keyboardActiveItem.originalMenuItem.menu) {
-          this.onItemClick(keyboardEvent, keyboardActiveItem);
-        }
-
-        const checkbox = getFirstCheckBoxInsideMenuItem(
-          getState().menuId,
-          keyboardActiveItem.key,
-        );
-        if (!checkbox) {
-          return;
-        }
-
-        checkbox.click();
-      },
-      Escape: () => {
-        validKeys.ArrowLeft();
-
-        const state = getState();
-
-        if (!state.parentMenuId) {
-          // this is a root menu, so make known to the parent that
-          // it should possibly be hidden/destroyed on Escape
-          state.onHideIntent?.(state);
-        }
-      },
-    };
-
-    const fn = validKeys[keyboardEvent.key as keyof typeof validKeys];
-
-    if (fn) {
-      fn();
-      keyboardEvent.preventDefault();
-    }
-    if (newKeyboardActiveItemKey != keyboardActiveItemKey) {
-      this.setKeyboardActiveItemKey(newKeyboardActiveItemKey);
-    }
+      getSubmenuApi: () => this.submenuApi,
+      isMounted: () => this.mounted,
+      onItemClick: (event, item) => this.onItemClick(event, item),
+    });
   }
 }
 
