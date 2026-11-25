@@ -22,7 +22,7 @@ import { DeepMap } from '../../../utils/DeepMap';
 import defaultSortTypes from '../../../utils/multisort/sortTypes';
 import { raf } from '../../../utils/raf';
 import { shallowEqualObjects } from '../../../utils/shallowEqualObjects';
-import type { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import type { ForwardPropsToStateFnResult } from '../../hooks/useComponentState/managedComponentState';
 import { ComponentInterceptedActions } from '../../hooks/useComponentState/types';
 import type {
   InfiniteTableRowInfo,

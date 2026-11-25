@@ -18,7 +18,7 @@ import {
   RowDetailCacheKey,
 } from '../../DataSource/state/getInitialState';
 
-import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import type { ForwardPropsToStateFnResult } from '../../hooks/useComponentState/managedComponentState';
 import { CellPositionByIndex } from '../../types/CellPositionByIndex';
 import { buildSubscriptionCallback } from '../../utils/buildSubscriptionCallback';
 import { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
