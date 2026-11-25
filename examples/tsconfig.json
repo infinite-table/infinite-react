@@ -13,7 +13,6 @@
     "typeRoots": ["node_modules/@types"],
     "strict": true,
     "jsx": "preserve",
-    "baseUrl": "./",
     "rootDir": "..",
     "paths": {
       "@src/*": ["../source/src/*"],

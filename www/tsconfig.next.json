@@ -8,7 +8,6 @@
     "rootDir": ".",
     "paths": {
       "react": ["../node_modules/@types/react"],
-      "react-dom": ["../node_modules/react-dom"],
       "@www/*": ["./src/*"],
       "components/*": ["./src/components/*"],
       "@infinite-table/infinite-react": ["../source/dist"],
