@@ -17,17 +17,12 @@ import type { InjectionKey, ShallowRef, SlotsType, VNodeChild } from 'vue';
 
 import { DragManager } from './DragManager';
 
-export type DragDropSourceAndTarget = {
-  dragSourceListId: string | null;
-  dropTargetListId: string | null;
-  dragItemId: string;
-  status: 'accepted' | 'rejected';
-};
+import type {
+  DragDropSourceAndTarget,
+  DragDropProviderContextValue,
+} from './dragDropTypes';
 
-export type DragDropProviderContextValue = DragDropSourceAndTarget & {
-  updateDragOperationSourceAndTarget: (params: DragDropSourceAndTarget) => void;
-  getCurrentDragSourceAndTarget: () => DragDropSourceAndTarget;
-};
+export type { DragDropSourceAndTarget, DragDropProviderContextValue };
 
 const NO_DRAG: DragDropSourceAndTarget = {
   dragSourceListId: null,

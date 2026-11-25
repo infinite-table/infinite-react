@@ -23,7 +23,7 @@ import {
 import { moveXatY } from '../utils/moveXatY';
 import { progressiveSpeedScroller } from '../utils/progressiveSpeedScroller';
 import { Rectangle } from '../../../utils/pageGeometry/Rectangle';
-import { DragDropSourceAndTarget } from '../components/draggable/DragDropProvider';
+import type { DragDropSourceAndTarget } from '../components/draggable/dragDropTypes';
 import { createSteppedScrollPosition } from '../../VirtualBrain/largeContent';
 
 type TopLeft = {

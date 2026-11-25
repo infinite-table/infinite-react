@@ -2,17 +2,12 @@ import * as React from 'react';
 import { DragManager } from './DragManager';
 import { useEffect } from 'react';
 
-export type DragDropSourceAndTarget = {
-  dragSourceListId: string | null;
-  dropTargetListId: string | null;
-  dragItemId: string;
-  status: 'accepted' | 'rejected';
-};
+import type {
+  DragDropSourceAndTarget,
+  DragDropProviderContextValue,
+} from './dragDropTypes';
 
-type DragDropProviderContextValue = DragDropSourceAndTarget & {
-  updateDragOperationSourceAndTarget: (params: DragDropSourceAndTarget) => void;
-  getCurrentDragSourceAndTarget: () => DragDropSourceAndTarget;
-};
+export type { DragDropSourceAndTarget };
 
 const DragDropProviderContext =
   React.createContext<DragDropProviderContextValue>({
