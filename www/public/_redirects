@@ -33,8 +33,10 @@
 # (/vue/docs/...) and need a 302 line like Vue's
 /react/docs /docs 301
 /react/docs/* /docs/:splat 301
-# a docs page that has no Vue version yet: the React one (until the Vue page exists)
+# a docs page that has no Vue (Angular) version yet: the React one (until the
+# Vue (Angular) page exists)
 /vue/docs/* /docs/:splat 302
+/angular/docs/* /docs/:splat 302
 
 # permanently move docs from under /latest dir
 /docs/latest/*  /docs/:splat
