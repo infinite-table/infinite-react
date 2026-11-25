@@ -509,7 +509,15 @@ export function PropTable({
       if (!name) {
         hidden = true;
       }
-      if (!hidden && filterText && !lowerName.includes(filterText)) {
+      // on a page of another framework, its name for the prop as well (`(cellClick)`)
+      // @ts-ignore
+      const lowerLabel = (child.props.label ?? '').toLowerCase();
+      if (
+        !hidden &&
+        filterText &&
+        !lowerName.includes(filterText) &&
+        !lowerLabel.includes(filterText)
+      ) {
         hidden = true;
       }
       if (!hidden) {
@@ -536,10 +544,13 @@ export function PropTable({
   });
 
   if (sort) {
+    // by the name the page shows: `[(sortInfo)]` sorts as `sortInfo`
+    const sortName = (child: any) =>
+      (child.props.label ?? child.props.name).replace(/^[[(]+/, '');
     contents = contents.filter(Boolean).sort((a, b) => {
       //@ts-ignore
       if (!a?.props.name || !b?.props.name) return 0;
-      return (a as any).props.name.localeCompare((b as any).props.name);
+      return sortName(a).localeCompare(sortName(b));
     });
   }
 

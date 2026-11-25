@@ -1,10 +1,21 @@
 ---
 title: Infinite Table Props
 layout: API
+angular: true
 description: Infinite Table Props Reference page with complete examples
 ---
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The props are listed with the names you use in an Angular template: `[(columnOrder)]` is a model (bind it two-way to a signal), `(columnOrderChange)` and `(cellClick)` are outputs, `[onKeyDown]` is a function input. The other inputs keep their names. The examples are the React ones for now.
+
+</Note>
+
+</FrameworkContent>
 
 <PropTable sort>
 
