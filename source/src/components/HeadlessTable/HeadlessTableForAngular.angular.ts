@@ -30,6 +30,8 @@ import { CELL_DETACHED_CLASSNAMES } from '../InfiniteTable/components/cellDetach
 import type { GridRenderer } from './ReactHeadlessTableRenderer';
 import type { TableRenderCellFn, TableRenderDetailRowFn } from './rendererTypes';
 import { RawTable } from './RawTableForAngular.angular';
+import { ActiveCellIndicator } from '../InfiniteTable/components/ActiveCellIndicatorForAngular.angular';
+import { ActiveRowIndicator } from '../InfiniteTable/components/ActiveRowIndicatorForAngular.angular';
 
 const CHILD_TO_SCROLL_CLS = join(
   scrollTransformTargetCls,
@@ -45,8 +47,9 @@ const SCROLL_CONTAINER_CLS = join(
 /**
  * Angular sibling of HeadlessTable (HeadlessTable/index.tsx): the scrollable
  * virtualized grid shell. Its host IS the scroll container (put it on a
- * div: `<div infiniteHeadlessTable ...>`), with the transform target, the
- * RawTable cells and the scroll-size placeholder inside.
+ * div: `<div infiniteHeadlessTable ...>`), with the transform target (the
+ * RawTable cells and the active cell indicator), the active row indicator
+ * and the scroll-size placeholder inside.
  *
  * The scroll listener is a native one: it never schedules an Angular change
  * detection; the brain repositions the cells and the transform target gets
@@ -56,7 +59,7 @@ const SCROLL_CONTAINER_CLS = join(
   selector: 'div[infiniteHeadlessTable]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [RawTable],
+  imports: [RawTable, ActiveCellIndicator, ActiveRowIndicator],
   host: {
     '[attr.tabindex]': 'tabIndex()',
   },
@@ -77,8 +80,23 @@ const SCROLL_CONTAINER_CLS = join(
         [onRenderUpdater]="onRenderUpdater()"
         [forceRerenderTimestamp]="forceRerenderTimestamp()"
       />
+      @if (activeCellIndex() != null) {
+        <div
+          infiniteActiveCellIndicator
+          [brain]="brain()"
+          [rowHeight]="activeCellRowHeight()"
+          [activeCellIndex]="activeCellIndex()"
+        ></div>
+      }
       <ng-content select="[infiniteTransformTargetContent]" />
     </div>
+    @if (activeRowIndex() != null) {
+      <div
+        infiniteActiveRowIndicator
+        [brain]="brain()"
+        [activeRowIndex]="activeRowIndex()"
+      ></div>
+    }
     <ng-content />
     <div
       data-name="SpacePlaceholder"
@@ -103,6 +121,11 @@ export class HeadlessTable {
   readonly autoFocus = input<boolean>();
   readonly tabIndex = input<number>();
   readonly scrollerRef = input<(el: HTMLElement | null) => void>();
+  /** the active row indicator is rendered (outside the scroll transform target) when not null */
+  readonly activeRowIndex = input<number | null>(null);
+  /** the active cell indicator is rendered (inside the scroll transform target) when not null */
+  readonly activeCellIndex = input<[number, number] | null>(null);
+  readonly activeCellRowHeight = input<number | ((rowIndex: number) => number)>();
 
   protected readonly childToScrollCls = CHILD_TO_SCROLL_CLS;
   protected readonly cellDetachedClassNames = CELL_DETACHED_CLASSNAMES;
