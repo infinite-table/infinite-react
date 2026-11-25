@@ -24,6 +24,7 @@ import { styleWithUnits } from '../../utils/styleWithUnits';
 import { selectParentUntil } from '../../utils/selectParent';
 import { buildManagedAngularComponent } from '../hooks/useComponentState/useManagedComponent.angular';
 import { computedWithDeps } from '../hooks/computedWithDeps.angular';
+import { watchSignals } from '../hooks/watchSignals.angular';
 import { runControllerEffectsForAngular } from '../hooks/runControllerEffectsForAngular.angular';
 import { setupResizeObserver } from '../ResizeObserver/setupResizeObserver';
 import {
@@ -97,6 +98,8 @@ import { InfiniteTableColumnCellClassName } from './components/InfiniteTableRow/
 // slice B: editing, license footer
 import { renderColumnEditor } from './components/InfiniteTableRow/InfiniteTableColumnEditorForAngular.angular';
 import { InfiniteTableLicenseFooter } from './components/InfiniteTableLicenseFooter/InfiniteTableLicenseFooterForAngular.angular';
+import { focusLastFocusableCell } from './utils/cellFocusUtils';
+import { createRestDomPropsApplier } from './utils/restDomPropsForAngular.angular';
 import { RowHoverCls } from './components/InfiniteTableRow/row.css';
 import { LoadMask } from './components/LoadMaskForAngular.angular';
 // master-detail: the detail rows
@@ -143,6 +146,15 @@ import {
   DEFAULT_COLUMN_HEADER_HEIGHT,
   DEFAULT_ROW_HEIGHT_CSS_VALUE,
 } from './shared';
+
+const FOCUS_DETECT_STYLE = {
+  width: '0px',
+  height: '0px',
+  overflow: 'hidden',
+  pointerEvents: 'none',
+  outline: 'none',
+  zIndex: -1,
+};
 
 export const InfiniteTableClassName = internalProps.rootClassName;
 
@@ -334,6 +346,12 @@ const PORTAL_CLASS_NAME = join(
           [invalid]="licenseStatus() === 'invalid'"
         ></div>
       }
+      <div
+        #focusDetect
+        tabindex="0"
+        [style]="focusDetectStyle"
+        (focus)="onFocusDetect()"
+      ></div>
     }
   `,
 })
@@ -379,6 +397,23 @@ export class InfiniteTable<T = any>
 
   private readonly bodyRef = viewChild<ElementRef<HTMLElement>>('body');
   private readonly portalRef = viewChild<ElementRef<HTMLElement>>('portal');
+
+  /**
+   * After the table (React: FocusDetect): Tab from the last cell goes past
+   * it to what follows the table, and Shift+Tab back into the table lands
+   * on it, which focuses the last focusable cell.
+   */
+  private readonly focusDetectRef =
+    viewChild<ElementRef<HTMLDivElement>>('focusDetect');
+  protected readonly focusDetectStyle = FOCUS_DETECT_STYLE;
+  private focusDetectContext: InfiniteTableEventHandlerContext<any> | null =
+    null;
+
+  protected onFocusDetect() {
+    if (this.focusDetectContext) {
+      focusLastFocusableCell(this.focusDetectContext as any);
+    }
+  }
 
   /** the state (tracked) */
   protected readonly state = computed(
@@ -596,6 +631,7 @@ export class InfiniteTable<T = any>
         return cloneRowSelection<any>(rowSelection, getDSState as any);
       },
     } as any;
+    this.focusDetectContext = eventHandlerContext;
 
     const cleanups: VoidFunction[] = [];
 
@@ -764,6 +800,17 @@ export class InfiniteTable<T = any>
       this.host.removeEventListener('focusout', onRootFocusOut);
     });
 
+    // the rest of domProps (attributes, on* handlers) on the root element,
+    // as React and Vue spread them there
+    const restDomProps = createRestDomPropsApplier(this.host);
+    watchSignals(
+      () => [state().domProps] as const,
+      ([domProps]) =>
+        restDomProps.update(domProps as Record<string, any> | undefined),
+      { injector, immediate: true },
+    );
+    cleanups.push(() => restDomProps.update(undefined));
+
     afterNextRender(
       () => {
         const body = this.bodyRef()?.nativeElement;
@@ -775,6 +822,8 @@ export class InfiniteTable<T = any>
         }
         getState().portalDOMRef.current =
           (this.portalRef()?.nativeElement as HTMLDivElement) ?? null;
+        getState().focusDetectDOMRef.current =
+          this.focusDetectRef()?.nativeElement ?? null;
       },
       { injector },
     );
