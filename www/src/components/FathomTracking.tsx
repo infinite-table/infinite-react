@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 // the analytics types for window.fathom
 import '@www/components/PricingPage/analytics';
+import { docsFrameworks } from '@www/utils/docsFrameworks';
 
 export function trackFathomEvent(name: string) {
   window.fathom?.trackEvent?.(name);
@@ -31,7 +32,8 @@ function eventForLink(link: HTMLAnchorElement): string | null {
   }
   if (
     url.origin === window.location.origin &&
-    /^(\/vue)?\/docs\/learn\/getting-started\/?$/.test(url.pathname)
+    // of any framework: /docs/learn/getting-started, /vue/docs/...
+    docsFrameworks.neutralPath(url.pathname) === '/docs/learn/getting-started'
   ) {
     return 'Get started';
   }

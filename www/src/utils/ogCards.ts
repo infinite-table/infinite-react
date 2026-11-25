@@ -16,6 +16,7 @@ import {
   docsFrameworks,
   type DocsFrameworkId,
 } from '@www/utils/docsFrameworks';
+import { docsFrameworksText } from '@www/utils/docsFrameworksRegistry';
 
 export type OgCard = {
   /** the image is /og/<slug>.png */
@@ -26,7 +27,7 @@ export type OgCard = {
   /** one or two lines under the title */
   description?: string;
   /** docs pages: the frameworks the page is written for */
-  frameworks?: ('React' | 'Vue')[];
+  frameworks?: DocsFrameworkId[];
   /**
    * what the card shows next to the text: a data grid (the default), the
    * two products of a comparison, or a list of names
@@ -45,7 +46,7 @@ const STATIC_CARDS: OgCard[] = [
   {
     slug: SITE_OG_SLUG,
     kicker: 'One Table — Infinite Applications',
-    title: 'The DataGrid for React and Vue, built for speed.',
+    title: `The DataGrid for ${docsFrameworksText()}, built for speed.`,
     description:
       'Sorting, grouping, pivoting, filtering, editing and lazy loading, with no dependencies.',
   },
@@ -113,16 +114,15 @@ function docsKicker(neutralPath: string) {
  */
 export function docsOgSlug(
   neutralPath: string,
-  framework: DocsFrameworkId = 'react',
+  framework: DocsFrameworkId = docsFrameworks.default,
 ) {
   const slug = neutralPath.replace(/^\/+|\/+$/g, '') || 'docs';
-  return framework === 'react' ? slug : `${framework}/${slug}`;
+  return framework === docsFrameworks.default ? slug : `${framework}/${slug}`;
 }
 
 function docsCards(): OgCard[] {
   const cards: OgCard[] = [];
-  for (const framework of ['react', 'vue'] as const) {
-    const label = docsFrameworks.label(framework) as 'React' | 'Vue';
+  for (const framework of docsFrameworks.ids) {
     for (const path of getDocsPagePaths(framework)) {
       const page = getDocsPage(path);
       if (!page || page.frontmatter.redirect_to) continue;
@@ -137,7 +137,7 @@ function docsCards(): OgCard[] {
         description: page.frontmatter.description
           ? meta.description
           : undefined,
-        frameworks: [label],
+        frameworks: [framework],
       });
     }
   }
