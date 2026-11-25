@@ -41,8 +41,6 @@ export const INFINITE_TABLE = new InjectionToken<
  * In an injection context inside an InfiniteTable: its state, actions, api
  * and computed values.
  */
-export function injectInfiniteTable<
-  T = any,
->(): InfiniteTableContextValueForAngular<T> {
+export function injectInfiniteTable<T = any>(): InfiniteTableContextValueForAngular<T> {
   return inject(INFINITE_TABLE) as InfiniteTableContextValueForAngular<T>;
 }

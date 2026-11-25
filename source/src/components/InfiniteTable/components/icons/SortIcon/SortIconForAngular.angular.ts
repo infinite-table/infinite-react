@@ -44,18 +44,7 @@ import type { SortIconProps } from './shared';
     '[style]': 'hostStyle()',
     '[class]': 'hostClassName()',
   },
-  template: `@if (showIndex()) {
-    <div data-name="index" [style]="indexStyle()" [class]="indexClassName">
-      {{ index() }}
-    </div>
-    }
-    <div
-      [class]="lineClassName"
-      [style]="lineStyles()[0]"
-      (transitionend)="onTransitionEnd()"
-    ></div>
-    <div [class]="lineClassName" [style]="lineStyles()[1]"></div>
-    <div [class]="lineClassName" [style]="lineStyles()[2]"></div>`,
+  template: `@if (showIndex()) {<div data-name="index" [style]="indexStyle()" [class]="indexClassName">{{ index() }}</div>}<div [class]="lineClassName" [style]="lineStyles()[0]" (transitionend)="onTransitionEnd()"></div><div [class]="lineClassName" [style]="lineStyles()[1]"></div><div [class]="lineClassName" [style]="lineStyles()[2]"></div>`,
 })
 export class SortIcon {
   readonly direction = input<SortIconProps['direction']>(0);
