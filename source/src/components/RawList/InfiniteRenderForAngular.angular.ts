@@ -9,11 +9,13 @@ import {
   TemplateRef,
   Type,
   ViewContainerRef,
+  WritableSignal,
   inject,
   input,
   inputBinding,
   outputBinding,
   reflectComponentType,
+  signal,
 } from '@angular/core';
 
 import type {
@@ -162,6 +164,18 @@ export function flattenRenderable(
   return leaves;
 }
 
+/**
+ * What the input bindings of a component leaf read. Signals: the host view
+ * of an OnPush component created with `createComponent` is only refreshed
+ * when it is dirty, so new values must mark it - a signal read by the
+ * bindings refreshes that view alone (the rest of the tree is only
+ * traversed).
+ */
+type ComponentHolder = {
+  context: WritableSignal<any>;
+  inputs: WritableSignal<Record<string, unknown> | undefined>;
+};
+
 type RenderedLeaf =
   | { kind: 'text'; node: Text }
   | {
@@ -175,10 +189,7 @@ type RenderedLeaf =
       kind: 'component';
       component: Type<unknown>;
       ref: ComponentRef<unknown>;
-      holder: {
-        context: any;
-        inputs?: Record<string, unknown>;
-      };
+      holder: ComponentHolder;
       injector?: Injector;
     };
 
@@ -312,8 +323,8 @@ export class InfiniteRender implements OnChanges, OnDestroy {
         current.component === leaf.component &&
         current.injector === leaf.injector
       ) {
-        current.holder.context = leaf.context;
-        current.holder.inputs = leaf.inputs;
+        current.holder.context.set(leaf.context);
+        current.holder.inputs.set(leaf.inputs);
         next.push(current);
         viewIndex++;
         continue;
@@ -337,7 +348,10 @@ export class InfiniteRender implements OnChanges, OnDestroy {
           injector: leaf.injector,
         });
       } else {
-        const holder = { context: leaf.context, inputs: leaf.inputs };
+        const holder: ComponentHolder = {
+          context: signal(leaf.context),
+          inputs: signal(leaf.inputs),
+        };
         const ref = this.vcr.createComponent(leaf.component, {
           index: viewIndex,
           injector: leaf.injector ?? this.injector,
@@ -416,10 +430,7 @@ function getInputNames(component: Type<unknown>): string[] {
   return names;
 }
 
-function componentBindings(
-  leaf: ComponentLeaf,
-  holder: { context: any; inputs?: Record<string, unknown> },
-) {
+function componentBindings(leaf: ComponentLeaf, holder: ComponentHolder) {
   const bindings = [];
   const context = leaf.context;
   for (const name of getInputNames(leaf.component)) {
@@ -428,11 +439,12 @@ function componentBindings(
     const fromInputs = !!leaf.inputs && name in leaf.inputs;
     if (fromContext || fromInputs) {
       bindings.push(
-        inputBinding(name, () =>
-          holder.inputs && name in holder.inputs
-            ? holder.inputs[name]
-            : holder.context?.[name],
-        ),
+        inputBinding(name, () => {
+          const inputs = holder.inputs();
+          return inputs && name in inputs
+            ? inputs[name]
+            : holder.context()?.[name];
+        }),
       );
     }
   }
