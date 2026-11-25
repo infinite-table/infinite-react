@@ -3,6 +3,8 @@ title: Getting Started
 description: Get help starting with Infinite Table for React. Our DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
 vue:
   description: Get started with Infinite Table for Vue. Our Vue DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
+angular:
+  description: Get started with Infinite Table for Angular. Our Angular DataGrid component helps with sorting, filtering, row/column grouping, pivoting, aggregations ...
 ---
 
 > `Infinite Table` is a UI component for data virtualization - helps you display huge datasets of tabular data.
@@ -16,6 +18,12 @@ It's built specifically for React from the ground up and with performance in min
 <FrameworkContent framework="vue">
 
 `@infinite-table/infinite-vue` is Infinite Table for Vue 3: the same DataGrid, built from the same source and with the same focus on performance, with Vue components and composables.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+`@infinite-table/infinite-angular` is Infinite Table for Angular: the same DataGrid, built from the same source and with the same focus on performance, as standalone Angular components with signal inputs, models and outputs.
 
 </FrameworkContent>
 
@@ -40,10 +48,28 @@ This is an example to get you started with Infinite Table with minimal setup. Cl
 
 <Note>
 
+<FrameworkContent not="angular">
+
 Don't forget to import the CSS to see the component in action!
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Don't forget to add the CSS to your application's global styles to see the component in action - in the `styles` of the build options in `angular.json`, or at the top of `src/styles.css`:
+
+```css
+@import '@infinite-table/infinite-angular/index.css';
+```
+
+</FrameworkContent>
+
+<FrameworkContent not="angular">
 
 ```tsx file="index.snippet.tsx" region="css-import"
 ```
+
+</FrameworkContent>
 </Note>
 
 ## Using the Components
@@ -54,6 +80,12 @@ In the code snippet above, you notice we're using 2 components:
 - `InfiniteTable` - the actual virtualized table component - needs to be inside a `DataSource` (can be at any level of nesting).
 
 Both components are named exports of the `@infinite-table/infinite-react` package.
+
+<FrameworkContent framework="angular">
+
+In a template they are the `<infinite-data-source>` and `<infinite-table>` elements: add both classes to the `imports` of your component.
+
+</FrameworkContent>
 
 ## TypeScript Types
 
@@ -89,6 +121,20 @@ Read more about how to use our TypeScript types.
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+## Built for Angular
+
+`Infinite Table` for Angular is fully declarative and fully typed - standalone components, signals and `OnPush`, with no zone.js needed. It's configured through inputs, with the same names as the props of the React version:
+
+- bind inputs in the template - `[columns]="columns"`, `[columnDefaultWidth]="120"`. The templates are type-checked against your data type (`strictTemplates`).
+- the state the user changes (sorting, selection, column order, …) is a model: bind it two-way to a signal, for example <DPropLink name="sortInfo" />. The uncontrolled version (<DPropLink name="defaultSortInfo" />) is an input that needs nothing bound back.
+- callbacks are outputs: <DPropLink name="onSortInfoChange" />, <PropLink name="onCellClick" />.
+- columns stay plain objects. Their `render*` functions return text, a template (a `TemplateRef`), or a component (`renderComponent(MyCell)`) that reads the cell with <HookLink name="useInfiniteColumnCell" />.
+- the imperative API is on the component: `#grid="infiniteTable"`, then `grid.api()`.
+
+</FrameworkContent>
+
 <FrameworkContent framework="react">
 
 ## Built for React from the ground-up
@@ -118,6 +164,17 @@ This is an example of how you might configure `InfiniteTable` in a real-world ap
 <FrameworkContent framework="vue">
 
 `@infinite-table/infinite-vue` is published under the same license as the React package.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+`@infinite-table/infinite-angular` is published under the same license as the React package. Without a license key, the grid shows a [Powered by Infinite Table](https://infinite-table.com) footer. Provide your key once, for every grid of your application:
+
+```ts file="index.snippet.angular.ts" region="license-key"
+```
+
+A grid's own `[licenseKey]` input wins over it.
 
 </FrameworkContent>
 

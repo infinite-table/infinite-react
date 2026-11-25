@@ -66,6 +66,13 @@ import {
   DOCS_FALLBACK_NOTICE,
   type DocsFrameworkId,
 } from '../src/utils/docsFrameworks';
+import {
+  docsHookName,
+  docsPropAnchors,
+  docsPropName,
+  type DocsPropsComponent,
+  type DocsReferenceName,
+} from '../src/utils/docsReferenceNames';
 // import { Note } from '@www/components/Note';
 
 type IgnoreChildrenCmpProps = { className?: string; children: React.ReactNode };
@@ -82,6 +89,20 @@ const IgnoreChildren = (Cmp: React.FC<IgnoreChildrenCmpProps>) => {
 const Description = (props: { children: React.ReactNode }) => (
   <>{props.children}</>
 );
+
+type ReferenceLinkComponent = React.ComponentType<any>;
+
+/** The props that have a value: the others stay out of the page's payload. */
+const definedProps = <T extends Record<string, unknown>>(props: T) =>
+  Object.fromEntries(
+    Object.entries(props).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
+
+/** The reference page a `<Prop>` list is on: the component whose props it lists. */
+const PROPS_PAGES: Record<string, DocsPropsComponent> = {
+  '/docs/reference/infinite-table-props': 'InfiniteTable',
+  '/docs/reference/datasource-props': 'DataSource',
+};
 
 /** On a page of another framework: this demo, snippet or link has no version for it yet. */
 const ReactOnlyNotice = () => (
@@ -103,6 +124,67 @@ export function useMDXComponents(
       docsHasPage,
     );
     return link.kind === 'missing' ? href : link.href;
+  };
+
+  /**
+   * `<PropLink>`, `<HookLink>`, `<ApiLink>`… for the page's framework: they
+   * link to its reference page (the React one while it has none), and show
+   * the name as it spells it (`[(sortInfo)]` on an Angular page), unless the
+   * link has its own text.
+   */
+  const referenceLink = (
+    Link: ReferenceLinkComponent,
+    referencePath: string,
+    nameFor?: (name: string) => DocsReferenceName | null,
+  ) => {
+    const path = linkFor(referencePath);
+    const FrameworkReferenceLink = (props: {
+      name?: string;
+      children?: React.ReactNode;
+    }) => {
+      const name =
+        props.name ??
+        (typeof props.children === 'string' ? props.children : undefined);
+      const showsName = props.children == null || props.children === name;
+      const framed = name && nameFor && showsName ? nameFor(name) : null;
+      // only what differs from the React link (it's in the page's payload)
+      return (
+        <Link
+          {...props}
+          {...definedProps({
+            path: path === referencePath ? undefined : path,
+            label: framed?.label,
+            chip: framed?.chip,
+          })}
+        />
+      );
+    };
+    return FrameworkReferenceLink;
+  };
+  const propName = (component: DocsPropsComponent) => (name: string) =>
+    docsPropName(framework, component, name);
+
+  // a reference page listing the props of a component: its `<Prop>` entries
+  // show the names of the page's framework, and can be linked with those too
+  const propsComponent = PROPS_PAGES[fileInfo.routePath.replace(/\/$/, '')];
+  const FrameworkProp = (props: React.ComponentProps<typeof Prop>) => {
+    const framed = propsComponent
+      ? docsPropName(framework, propsComponent, props.name)
+      : null;
+    const anchors = propsComponent
+      ? docsPropAnchors(framework, propsComponent, props.name)
+      : [];
+    return (
+      <Prop
+        {...props}
+        {...definedProps({
+          label: framed?.label,
+          chip: framed?.chip,
+          more: framed?.more,
+          anchors: anchors.length ? anchors : undefined,
+        })}
+      />
+    );
   };
 
   const components: MDXComponents = {
@@ -197,20 +279,43 @@ export function useMDXComponents(
     // inline code fences in languages that are not type-checked (css, sh…)
     CodeSnippet,
 
-    DPropLink: DataSourcePropLink,
-    DataSourcePropLink,
-    DApiLink,
-    TreeApiLink,
-    ApiLink,
-    HookLink,
-    PropLink,
-    Prop,
-    TypeLink,
+    DPropLink: referenceLink(
+      DataSourcePropLink,
+      '/docs/reference/datasource-props',
+      propName('DataSource'),
+    ),
+    DataSourcePropLink: referenceLink(
+      DataSourcePropLink,
+      '/docs/reference/datasource-props',
+      propName('DataSource'),
+    ),
+    DApiLink: referenceLink(DApiLink, '/docs/reference/datasource-api'),
+    TreeApiLink: referenceLink(TreeApiLink, '/docs/reference/tree-api'),
+    ApiLink: referenceLink(ApiLink, '/docs/reference/api'),
+    HookLink: referenceLink(HookLink, '/docs/reference/hooks', (name) =>
+      docsHookName(framework, name),
+    ),
+    PropLink: referenceLink(
+      PropLink,
+      '/docs/reference/infinite-table-props',
+      propName('InfiniteTable'),
+    ),
+    Prop: FrameworkProp,
+    TypeLink: referenceLink(TypeLink, '/docs/reference/type-definitions'),
     PropTable,
-    KeyNavApiLink,
-    ColumnApiLink,
-    CellApiLink,
-    RowDetailApiLink,
+    KeyNavApiLink: referenceLink(
+      KeyNavApiLink,
+      '/docs/reference/keyboard-navigation-api',
+    ),
+    ColumnApiLink: referenceLink(ColumnApiLink, '/docs/reference/column-api'),
+    CellApiLink: referenceLink(
+      CellApiLink,
+      '/docs/reference/cell-selection-api',
+    ),
+    RowDetailApiLink: referenceLink(
+      RowDetailApiLink,
+      '/docs/reference/row-detail-api',
+    ),
 
     LearnLink,
     YTEmbed: ({ url, code }: { url?: string; code?: string }) => {

@@ -23,6 +23,16 @@
       "snippetSuffixes": [".snippet.vue", ".snippet.vue.ts"],
       "demoOutDir": "public/gen/demos/_vue",
       "fork": "stackblitz"
+    },
+    "angular": {
+      "label": "Angular",
+      "prefix": "/angular",
+      "home": "/angular",
+      "package": "@infinite-table/infinite-angular",
+      "demoSuffix": ".demo.angular.ts",
+      "snippetSuffixes": [".snippet.angular.ts", ".snippet.angular.html"],
+      "demoOutDir": "public/gen/demos/_angular",
+      "fork": "stackblitz"
     }
   }
 }

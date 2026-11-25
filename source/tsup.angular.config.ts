@@ -1,5 +1,4 @@
 import { defineConfig, Options } from 'tsup';
-import type { Plugin } from 'esbuild';
 
 // @ts-ignore
 import packageJSON from './package.json';
@@ -9,6 +8,7 @@ import path from 'path';
 
 import { vanillaConfig } from './tsup-vanilla-extract-config';
 import { frameworkResolvePlugin } from './framework-resolve-plugin';
+import { angularCssFromSourcePlugin } from './angular-css-from-source-plugin';
 
 /**
  * Build config for @infinite-table/infinite-angular.
@@ -21,41 +21,19 @@ import { frameworkResolvePlugin } from './framework-resolve-plugin';
  * - the framework resolve plugin prefers `.angular.js` siblings (TypeScript
  *   doesn't rewrite `./Foo` to `./Foo.angular`)
  * - vanilla-extract compiles the `.css.js` files, from their `.css.ts`
- *   source (see cssFromSource) so the class names are the React/Vue ones
+ *   source (angular-css-from-source-plugin.ts) so the class names are the
+ *   React/Vue ones
  * - the same build-time defines
  *
  * The output is one FESM (fesm2022/infinite-angular.mjs) plus index.css -
  * the Angular Package Format layout. Run `npm run build:angular`.
  */
 
-const resolve = path.resolve;
 const { dependencies } = packageJSON;
 
 const PUBLISHED_AT = Date.now();
 
 const OUT_DIR = process.env.INFINITE_OUT_FOLDER || 'dist-angular';
-const NGC_OUT = resolve(__dirname, '.angular-out');
-const SRC = resolve(__dirname, 'src');
-
-/**
- * The vanilla-extract class names are hashed from the file scope (the path
- * of the `.css.ts` file). Compiling the ngc copies in .angular-out would give
- * other names than the React/Vue builds (and the shared themes), so `./x.css`
- * imports from the emit resolve to src/x.css.ts.
- */
-const cssFromSource: Plugin = {
-  name: 'infinite-angular-css-from-source',
-  setup(build) {
-    build.onResolve({ filter: /\.css$/ }, (args) => {
-      if (!args.resolveDir.startsWith(NGC_OUT)) {
-        return null;
-      }
-      const emitted = resolve(args.resolveDir, args.path);
-      const source = path.join(SRC, path.relative(NGC_OUT, emitted)) + '.ts';
-      return fs.existsSync(source) ? { path: source } : null;
-    });
-  },
-};
 
 export const tsupAngularConfig: Options = {
   entry: { 'infinite-angular': './.angular-out/index.angular.js' },
@@ -147,7 +125,7 @@ export const tsupAngularConfig: Options = {
     };
   },
   esbuildPlugins: [
-    cssFromSource,
+    angularCssFromSourcePlugin(__dirname),
     frameworkResolvePlugin('angular'),
     vanillaConfig,
   ],

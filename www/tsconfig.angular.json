@@ -1,0 +1,54 @@
+{
+  // Type checking of the Angular docs demos and snippets, templates included
+  // (`npm run tsc:angular`): `content/**/*.angular.ts` against the Angular
+  // entry of the library *source*, like tsconfig.json does for the React
+  // ones. Run by the Angular compiler and the TypeScript of ../source
+  // (`pnpm -C ../source exec ngc -p ../www/tsconfig.angular.json`): Angular
+  // needs a newer TypeScript than www's.
+  //
+  // Standalone on purpose (like source/tsconfig.angular.json): it doesn't
+  // extend tsconfig.json, which is for www's own TypeScript.
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    // the source's sibling-file resolution (`./Foo` → `Foo.angular.ts`),
+    // see source/tsconfig.angular.json
+    "moduleSuffixes": [".angular", ""],
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    // the library's type graph reaches a few React files through type-only imports
+    "jsx": "react",
+    "types": [],
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "rootDir": "..",
+    "paths": {
+      "@infinite-table/infinite-angular": ["../source/src/index.angular.ts"],
+      // one copy of Angular's types for the demos and the library source
+      "@angular/core": ["../source/node_modules/@angular/core"],
+      "@angular/core/*": ["../source/node_modules/@angular/core/*"],
+      "@angular/common": ["../source/node_modules/@angular/common"],
+      "@angular/common/*": ["../source/node_modules/@angular/common/*"]
+    }
+  },
+  "include": [
+    "content/**/*.angular.ts",
+    "content/angular-env.d.ts",
+    "docs-kit.bootstrap.angular.ts",
+    "../source/globals.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "extendedDiagnostics": {
+      "defaultCategory": "error"
+    }
+  }
+}

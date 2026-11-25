@@ -1,10 +1,21 @@
 ---
 title: DataSource Props
 layout: API
+angular: true
 description: Props Reference page for your DataSource in Infinite Table - with complete examples
 ---
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The props are listed with the names you use in an Angular template: `[(sortInfo)]` is a model (bind it two-way to a signal), `(sortInfoChange)` is an output, `[onRowSelectionChange]` is a function input. The other inputs keep their names. The examples are the React ones for now.
+
+</Note>
+
+</FrameworkContent>
 
 <PropTable sort searchPlaceholder="Type to filter DataSource Props">
 

@@ -17,6 +17,7 @@
     "blog/**/*.ts",
     "blog/**/*.tsx"
   ],
-  // the Vue ones (`*.snippet.vue.ts`) are checked by ../tsconfig.vue.json
-  "exclude": ["**/*.vue.ts"]
+  // the Vue ones (`*.snippet.vue.ts`) are checked by ../tsconfig.vue.json,
+  // the Angular ones (`*.angular.ts`) by ../tsconfig.angular.json
+  "exclude": ["**/*.vue.ts", "**/*.angular.ts"]
 }
