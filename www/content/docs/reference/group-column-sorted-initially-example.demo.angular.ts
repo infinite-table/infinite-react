@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 
-import {
-  InfiniteTable,
-  DataSource,
-} from '@infinite-table/infinite-angular';
+import { InfiniteTable, DataSource } from '@infinite-table/infinite-angular';
 import type {
   DataSourcePropSortInfo,
   DataSourcePropGroupBy,

@@ -37,21 +37,19 @@ class FolderIcon {
 
 export function parentNodeCheck() {
   //#region checking-if-the-node-is-a-parent-node
-  const renderTreeIcon: InfiniteTableColumn<FileSystemNode>['renderTreeIcon'] = ({
-    rowInfo,
-    toggleCurrentTreeNode,
-  }) => {
-    if (!rowInfo.isParentNode) {
-      // rowInfo.nodeExpanded not available here
-      return renderComponent(FileIcon);
-    }
+  const renderTreeIcon: InfiniteTableColumn<FileSystemNode>['renderTreeIcon'] =
+    ({ rowInfo, toggleCurrentTreeNode }) => {
+      if (!rowInfo.isParentNode) {
+        // rowInfo.nodeExpanded not available here
+        return renderComponent(FileIcon);
+      }
 
-    // it's now OK for TS to use rowInfo.nodeExpanded
-    return renderComponent(FolderIcon, {
-      inputs: { open: rowInfo.nodeExpanded },
-      outputs: { toggle: toggleCurrentTreeNode },
-    });
-  };
+      // it's now OK for TS to use rowInfo.nodeExpanded
+      return renderComponent(FolderIcon, {
+        inputs: { open: rowInfo.nodeExpanded },
+        outputs: { toggle: toggleCurrentTreeNode },
+      });
+    };
   //#endregion
   return renderTreeIcon;
 }

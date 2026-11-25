@@ -82,7 +82,8 @@ export class MasterDetailSnippets {
   //   [rowDetailRenderer]="renderDetail"
   //   [isRowDetailEnabled]="isRowDetailEnabled" // #highlight
   // />
-  protected readonly isRowDetailEnabled = (rowInfo: InfiniteTableRowInfo<City>) =>
-    rowInfo.data?.cityName?.includes('i') ?? false;
+  protected readonly isRowDetailEnabled = (
+    rowInfo: InfiniteTableRowInfo<City>,
+  ) => rowInfo.data?.cityName?.includes('i') ?? false;
   //#endregion
 }

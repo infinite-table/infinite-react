@@ -250,7 +250,7 @@ export default class App {
 
   protected readonly currentExpandedRow = computed(() => {
     const { expandedRows } = this.rowDetailState();
-    return expandedRows === true ? '---' : (expandedRows[0] ?? 'none');
+    return expandedRows === true ? '---' : expandedRows[0] ?? 'none';
   });
 
   protected onReady({ api }: { api: InfiniteTableApi<City> }) {

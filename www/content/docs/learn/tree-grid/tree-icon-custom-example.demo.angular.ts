@@ -174,7 +174,11 @@ export default class App {
     InfiniteTableColumn<FileSystemNode>
   > = {
     // the template gets the render params (rowInfo, toggleCurrentTreeNode, ...)
-    name: { renderTreeIcon: () => this.treeIcon(), field: 'name', header: 'Name' },
+    name: {
+      renderTreeIcon: () => this.treeIcon(),
+      field: 'name',
+      header: 'Name',
+    },
     type: { field: 'type', header: 'Type' },
     extension: { field: 'extension', header: 'Extension' },
     size: { field: 'sizeInKB', type: 'number', header: 'Size (KB)' },
