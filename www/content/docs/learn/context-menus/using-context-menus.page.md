@@ -2,6 +2,7 @@
 title: Using Context Menus
 description: InfiniteTable DataGrid allows you to easily configure context menus for any row and cell in the table and for the whole table body.
 vue: true
+angular: true
 ---
 
 The easiest way to configure a context menu is to provide the <PropLink name="getCellContextMenuItems" /> callback function and use it to return the menu items you want to show in the context menu.

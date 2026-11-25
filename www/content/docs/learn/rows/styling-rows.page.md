@@ -1,6 +1,7 @@
 ---
 title: Styling Rows
 vue: true
+angular: true
 ---
 
 Rows can be styled by using the `rowStyle` and the `rowClassName` props
@@ -16,6 +17,16 @@ Rows can be styled by using the `rowStyle` and the `rowClassName` props
 The <PropLink name="rowClassName" /> function prop has the same signature as the <PropLink name="rowStyle" /> function prop.
 
 </Note>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The rows are rendered by the grid, not by the template of your component, so the styles of your component - which Angular scopes to its own template - don't reach them. Define the classes you return from <PropLink name="rowClassName" /> in a global stylesheet (`src/styles.css`), or in a component with `encapsulation: ViewEncapsulation.None`.
+
+</Note>
+
+</FrameworkContent>
 
 ## Row styling example
 

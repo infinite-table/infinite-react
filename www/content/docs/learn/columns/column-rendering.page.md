@@ -186,6 +186,9 @@ A component you render from the <PropLink name="columns.renderValue"/> and <Prop
 
 It returns a signal: read it in the template of your component (or in a `computed`), not once in the constructor.
 
+```tsx file="column-rendering.snippet.tsx" region="use-rendervalue-and-render-to-display-custom"
+```
+
 </Note>
 
 </FrameworkContent>
@@ -271,6 +274,14 @@ For column headers, a component rendered inside the header can use the <HookLink
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+### Inject function: <HookLink name="useInfiniteHeaderCell" />
+
+For column headers, a component rendered inside the header (with `renderComponent`) can use <HookLink name="useInfiniteHeaderCell" /> to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function - as a signal.
+
+</FrameworkContent>
+
 ```tsx file="column-rendering.use-infinite-header-cell.snippet.tsx" region="use-infinite-header-cell"
 ```
 
@@ -315,6 +326,23 @@ A custom component needs a single root element, and the attributes the grid pass
 The default content of the cell is passed as the default slot: render `slots.default?.()` where you want it.
 
 You don't have to pass the `domRef` returned by the composables (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) to the root element - the grid uses the root element of your component.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+A custom component is the cell (or the header cell) itself: give it an attribute selector on a `div` (`selector: 'div[myColumnCell]'`). The grid creates the cell element with your component on it and adds the class names, styles and event listeners of the cell to that element - the `host` styles and classes of your component are merged with them.
+
+```tsx file="column-rendering.snippet.tsx" region="use-column-components-to-customize-the-column"
+```
+
+The default content of the cell is a renderable you get with `injectColumnCellChildren()` (`injectHeaderCellChildren()` for header cells): render it with `<ng-container [infiniteRender]="children()" />` where you want it.
+
+There is no `domRef` to pass on - the host element of your component is the cell. The cell information is available through <HookLink name="useInfiniteColumnCell" /> (<HookLink name="useInfiniteHeaderCell" /> for header cells).
 
 </Note>
 

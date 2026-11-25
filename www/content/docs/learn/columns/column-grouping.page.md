@@ -2,6 +2,7 @@
 title: Column Groups
 description: Columns can be grouped with multiple levels of nesting thus making Infinite Table DataGrid a powerful tool for data analysts
 vue: true
+angular: true
 ---
 
 Specify column groups via the controlled <PropLink name="columnGroups" /> (or uncontrolled <PropLink name="defaultColumnGroups"/>) prop.

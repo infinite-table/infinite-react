@@ -2,6 +2,7 @@
 title: Column Order
 description: Change column order by drag-and-drop - drag columns around and reorder them live
 vue: true
+angular: true
 ---
 
 <FrameworkContent framework="react">
@@ -16,6 +17,12 @@ React `Infinite Table` allows columns to be reordered in the grid by drag-and-dr
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+`Infinite Table` for Angular allows columns to be reordered in the grid by drag-and-drop. Drag columns around (start dragging the column header) to change their order and arrange them in the desired position.
+
+</FrameworkContent>
+
 <Note>
 
 Column ordering via drag & drop works by default.
@@ -24,7 +31,17 @@ Column ordering via drag & drop works by default.
 
 You don't have to specify an initial column order or any other callback props to update the column order. The default behavior of the component is to initially display all columns that are provided in the <PropLink name="columns" /> object (in the iteration order of the object keys).
 
+<FrameworkContent not="angular">
+
 If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> prop, which gives you full control over the order of the columns - in this case, you have to update the column order as a result of user interaction, by specifying <PropLink name="onColumnOrderChange" />.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+If using the <PropLink name="defaultColumnOrder" code={false}>default uncontrolled column order</PropLink> is not enough, try using the controlled <PropLink name="columnOrder" /> model, which gives you full control over the order of the columns - bind it two-way to a signal, so the grid writes the new order back when the user drags a column. To react to the change, use the <PropLink name="onColumnOrderChange" /> output.
+
+</FrameworkContent>
 
 <DemoTitle>Column reordering via drag & drop with controlled `columnOrder`</DemoTitle>
 ```tsx file="/docs/reference/columnOrder-example.demo.tsx"

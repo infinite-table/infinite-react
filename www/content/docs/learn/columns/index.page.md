@@ -3,6 +3,8 @@ title: Working with Columns
 description: Define columns to configure your Infinite Table React DataGrid - fixed and flexible columns, resize, column groups and more
 vue:
   description: Define columns to configure your Infinite Table Vue DataGrid - fixed and flexible columns, resize, column groups and more
+angular:
+  description: Define columns to configure your Infinite Table Angular DataGrid - fixed and flexible columns, resize, column groups and more
 ---
 
 Columns are a central feature in `InfiniteTable`.
@@ -50,6 +52,18 @@ The same goes for the other props that are objects, arrays or functions: don't w
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+<Note>
+
+It's very important to remember you should not pass a different reference of an input on each change detection. `<infinite-table />` is optimized to only re-render when its inputs change - so if you give it new objects every time, you will get a performance penalty.
+
+Define the columns as a field of your component (or a module-level `const`) - or as a `signal`, when they change - and bind them with `[columns]="columns"`. Don't bind a getter or a method call that creates a new object every time Angular checks the template.
+
+</Note>
+
+</FrameworkContent>
+
 ```tsx file="basic-columns-example.demo.tsx" title="Basic Column Configuration"
 ```
 
@@ -88,7 +102,18 @@ The <PropLink name="columnOrder" /> array can contain identifiers that are not y
 <Note>
 <PropLink name="columnOrder" /> is a controlled prop. For the uncontrolled version, see <PropLink name="defaultColumnOrder" />
 
+<FrameworkContent not="angular">
+
 When using controlled <PropLink name="columnOrder" />, make sure you also update the order by using the <PropLink name="onColumnOrderChange" /> callback prop.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<PropLink name="columnOrder" /> is a model: bind it two-way to a signal, so the grid writes the new order back when the user reorders the columns. To react to the change, use the <PropLink name="onColumnOrderChange" /> output.
+
+</FrameworkContent>
+
 </Note>
 
 ```tsx file="/docs/reference/columnOrder-example.demo.tsx" title="Column Order demo, with firstName col displayed twice"

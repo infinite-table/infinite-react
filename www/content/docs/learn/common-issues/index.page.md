@@ -2,6 +2,7 @@
 title: Common Issues
 description: Avoid common pitfalls and issues when using the component. Learn how to use it properly to perform smooth and avoid jank.
 vue: true
+angular: true
 ---
 
 As people have started using `<InfiniteTable />` we've noticed a few issues keep popping up.
@@ -26,6 +27,14 @@ Instead pass the **same** reference when things do change - stored in state or a
 Here `groupField` is a `ref`. The array is created again every time the component renders, so the `<DataSource />` receives a new `groupBy` and groups the data again, even when `groupField` has not changed. Props are compared by reference, so the same goes for any array or object that is built in the template from reactive state.
 
 Instead, keep the value in a `ref`, or build it in a `computed`, so the same reference is passed until the value really changes:
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Here `getGroupBy()` is called every time Angular checks the template, and it returns a new array every time - so the `<infinite-data-source>` receives a new `groupBy` and groups the data again, even when `groupField` has not changed. Inputs are compared by reference, so the same goes for a getter that builds an array or an object. An array or object literal written in the template is fine: Angular creates it again only when a value used inside it changes.
+
+Instead, keep the value in a signal, or build it in a `computed`, so the same reference is passed until the value really changes:
 
 </FrameworkContent>
 
@@ -60,10 +69,32 @@ When using custom rendering or custom components for columns, make sure your ren
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+When using custom rendering or custom components for columns, make sure your rendering logic doesn't have any local or transient state (a signal of a custom component that copies the cell's value, for example) - what a cell renders should come from the cell information, or from state that lives outside the cell.
+
+</FrameworkContent>
+
+<FrameworkContent not="angular">
+
 This is important because `InfiniteTable` makes heavy use of virtualization, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This is important because `InfiniteTable` makes heavy use of virtualization, in both _column cells and column headers_, so **custom components can and will be destroyed and created again multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+
+</FrameworkContent>
 
 <FrameworkContent framework="vue">
 
 A component can also be kept and reused for another row - after sorting, for example - and then its local state shows up in the wrong row.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+A component can also be kept and reused for another row - after sorting, for example - and then the state it keeps on its own shows up in the wrong row.
 
 </FrameworkContent>

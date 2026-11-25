@@ -1,6 +1,7 @@
 ---
 title: Using Rows at Runtime
 vue: true
+angular: true
 ---
 
 At runtime, the <PropLink name="columns.render" /> function and a <PropLink name="rowStyle">lot</PropLink> <PropLink name="rowClassName">of</PropLink> <PropLink name="columns.style">other</PropLink> functions use the <TypeLink name="InfiniteTableRowInfo">rowInfo</TypeLink> object to access the current row and use it to decide how to render the current cell or row.
