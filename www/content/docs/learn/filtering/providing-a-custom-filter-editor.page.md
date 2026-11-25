@@ -2,6 +2,7 @@
 title: Providing a Custom Filter Editor
 description: Writing a custom filter editor for a column in Infinite Table is straightforward.
 vue: true
+angular: true
 ---
 
 Almost certainly, our current `string` and `number` filters are not enough for you. You will definitely need to write your custom filter editor.
@@ -15,6 +16,12 @@ Fortunately, doing this is straightforward - it involves using the <HookLink nam
 <FrameworkContent framework="vue">
 
 Fortunately, doing this is straightforward - it involves using the <HookLink name="useInfiniteColumnFilterEditor" /> composable.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Fortunately, doing this is straightforward - it involves writing a component that uses the <HookLink name="useInfiniteColumnFilterEditor" /> inject function.
 
 </FrameworkContent>
 
@@ -53,6 +60,12 @@ The last part of the `bool` filter type will be to specify the `FilterEditor` co
 ```tsx file="providing-a-custom-filter-editor.snippet.tsx" region="specifying-the-filtereditor-component" title="Specifying the FilterEditor component"
 ```
 
+<FrameworkContent framework="angular">
+
+`components.FilterEditor` is a function that returns what to render - for a component, `renderComponent(BoolFilterEditor)`. The component is created with the injector of the filter cell, so it can use <HookLink name="useInfiniteColumnFilterEditor" />.
+
+</FrameworkContent>
+
 Now it's time to write the actual `BoolFilterEditor` that the `bool` filter type is using:
 
 ```tsx file="providing-a-custom-filter-editor.boolfiltereditor.snippet.tsx" region="boolfiltereditor" title="BoolFilterEditor"
@@ -75,6 +88,18 @@ In the snippet above, note how we're using the <HookLink name="useInfiniteColumn
 In the snippet above, note how we're using the <HookLink name="useInfiniteColumnFilterEditor" /> composable to get the current `value` of the filter and also to retrieve the `setValue` function that we need to call when we want to update filtering.
 
 `value` is a ref: read `value.value` inside the render function, so the editor is updated when the filter changes.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+In the snippet above, note how we're using the <HookLink name="useInfiniteColumnFilterEditor" /> inject function to get the current `value` of the filter and also to retrieve the `setValue` function that we need to call when we want to update filtering.
+
+`value` is a signal: read it in the template (`editor.value()`), so the editor is updated when the filter changes.
 
 </Note>
 
