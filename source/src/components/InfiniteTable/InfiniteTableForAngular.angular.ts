@@ -115,6 +115,7 @@ import type {
   TableRenderDetailRowFn,
   TableRenderDetailRowFnParam,
 } from '../HeadlessTable/rendererTypes';
+import { TableHeaderWrapper } from './components/InfiniteTableHeader/TableHeaderWrapperForAngular.angular';
 import {
   INFINITE_TABLE,
   type InfiniteTableContextValueForAngular,
@@ -279,6 +280,7 @@ const PORTAL_CLASS_NAME = join(
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [
+    TableHeaderWrapper,
     HeadlessTable,
     InfiniteRender,
     CSSNumericVariableWatch,
@@ -299,6 +301,15 @@ const PORTAL_CLASS_NAME = join(
   template: `
     @if (initialized) {
       @let s = state();
+      <!-- React: InfiniteTableHeader renders the wrapper only when the header is enabled -->
+      @if (s.header) {
+        <div
+          infiniteTableHeaderWrapper
+          [headerBrain]="s.headerBrain"
+          [bodyBrain]="s.brain"
+          [wrapRowsHorizontally]="!!s.wrapRowsHorizontally"
+        ></div>
+      }
       <div #body [class]="bodyClassName">
         <div
           infiniteHeadlessTable
@@ -2142,6 +2153,7 @@ export class InfiniteTable<T = any>
       getComputed,
       computed: computedValues,
       getComputedVisibleColumns,
+      scrollbars: scrollbars.asReadonly(),
       dataSourceContext,
     } as InfiniteTableContextValueForAngular<T>;
 

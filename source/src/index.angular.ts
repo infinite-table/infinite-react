@@ -130,3 +130,15 @@ export {
   type DragProxySetupResult,
   type DragProxyMoveParams,
 } from './components/InfiniteTable/components/draggable/DragList.angular';
+
+// column header
+export {
+  injectHeaderCell,
+  injectHeaderCellChildren,
+  INFINITE_HEADER_CELL,
+  INFINITE_HEADER_CELL_CHILDREN,
+} from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableHeaderCellForAngular.angular';
+export { SortIcon } from './components/InfiniteTable/components/icons/SortIcon/SortIconForAngular.angular';
+export { FilterIcon } from './components/InfiniteTable/components/icons/FilterIcon/FilterIconForAngular.angular';
+export { MenuIcon } from './components/InfiniteTable/components/icons/MenuIconForAngular.angular';
+export type { MenuIconProps } from './components/InfiniteTable/components/icons/MenuIconTypes';
