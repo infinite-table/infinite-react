@@ -92,6 +92,12 @@ const Description = (props: { children: React.ReactNode }) => (
 
 type ReferenceLinkComponent = React.ComponentType<any>;
 
+/** The props that have a value: the others stay out of the page's payload. */
+const definedProps = <T extends Record<string, unknown>>(props: T) =>
+  Object.fromEntries(
+    Object.entries(props).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
+
 /** The reference page a `<Prop>` list is on: the component whose props it lists. */
 const PROPS_PAGES: Record<string, DocsPropsComponent> = {
   '/docs/reference/infinite-table-props': 'InfiniteTable',
@@ -141,12 +147,15 @@ export function useMDXComponents(
         (typeof props.children === 'string' ? props.children : undefined);
       const showsName = props.children == null || props.children === name;
       const framed = name && nameFor && showsName ? nameFor(name) : null;
+      // only what differs from the React link (it's in the page's payload)
       return (
         <Link
           {...props}
-          path={path}
-          label={framed?.label}
-          chip={framed?.chip}
+          {...definedProps({
+            path: path === referencePath ? undefined : path,
+            label: framed?.label,
+            chip: framed?.chip,
+          })}
         />
       );
     };
@@ -162,17 +171,18 @@ export function useMDXComponents(
     const framed = propsComponent
       ? docsPropName(framework, propsComponent, props.name)
       : null;
+    const anchors = propsComponent
+      ? docsPropAnchors(framework, propsComponent, props.name)
+      : [];
     return (
       <Prop
         {...props}
-        label={framed?.label}
-        chip={framed?.chip}
-        more={framed?.more}
-        anchors={
-          propsComponent
-            ? docsPropAnchors(framework, propsComponent, props.name)
-            : undefined
-        }
+        {...definedProps({
+          label: framed?.label,
+          chip: framed?.chip,
+          more: framed?.more,
+          anchors: anchors.length ? anchors : undefined,
+        })}
       />
     );
   };
