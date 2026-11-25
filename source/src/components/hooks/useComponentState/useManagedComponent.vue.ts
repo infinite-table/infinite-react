@@ -39,17 +39,14 @@ import {
   initManagedState,
   managedComponentReducer,
   createGeneratedActions,
-  computePropsDiff,
+  applyPropsDiff,
   notifyChange as defaultNotifyChange,
   ForwardPropsToStateFnResult,
+  ManagedComponentConfig,
   NotifyChangeFn,
 } from './managedComponentState';
 
-import {
-  ComponentInterceptedActions,
-  ComponentMappedCallbacks,
-  ComponentStateActions,
-} from './types';
+import { ComponentStateActions } from './types';
 
 export type VueManagedComponentContextValue<COMPONENT_STATE, ACTIONS_TYPE> = {
   /** reactive handle — .value swaps on every state change */
@@ -68,57 +65,20 @@ export type VueManagedComponentConfig<
   COMPONENT_SETUP_STATE = {},
   COMPONENT_DERIVED_STATE = {},
   T_PARENT_STATE = {},
-> = {
-  debugName?: string | ((props: T_PROPS) => string);
-  initSetupState?: (props: T_PROPS) => COMPONENT_SETUP_STATE;
-
+> = ManagedComponentConfig<
+  T_PROPS,
+  COMPONENT_MAPPED_STATE,
+  COMPONENT_SETUP_STATE,
+  COMPONENT_DERIVED_STATE,
+  T_PARENT_STATE
+> & {
   injectionKey?: InjectionKey<any>;
-
-  forwardProps?: (
-    setupState: COMPONENT_SETUP_STATE,
-    props: T_PROPS,
-  ) => ForwardPropsToStateFnResult<
-    T_PROPS,
-    COMPONENT_MAPPED_STATE,
-    COMPONENT_SETUP_STATE
-  >;
-  allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
-  interceptActions?: ComponentInterceptedActions<any>;
-  mappedCallbacks?: ComponentMappedCallbacks<any>;
-  onPropChange?: (
-    params: { name: keyof T_PROPS; oldValue: any; newValue: any },
-    props: T_PROPS,
-    actions: any,
-    state: any,
-  ) => void;
-  onPropsChange?: (
-    newPropValues: {
-      [k in keyof T_PROPS]?: { newValue: T_PROPS[k]; oldValue: T_PROPS[k] };
-    },
-    props: T_PROPS,
-    actions: any,
-    state: any,
-  ) => void;
-  mapPropsToState?: (params: {
-    props: T_PROPS;
-    state: any;
-    oldState: any;
-    parentState: T_PARENT_STATE | null;
-  }) => COMPONENT_DERIVED_STATE;
-  concludeReducer?: (params: {
-    previousState: any;
-    state: any;
-    updatedProps: Partial<T_PROPS> | null;
-    parentState: T_PARENT_STATE | null;
-  }) => any;
 
   /**
    * Called inside setup; may use inject(). May return a plain value, a Ref,
    * or a getter — refs and getters make parent-state changes observable.
    */
   getParentState?: () => any;
-
-  cleanup?: (state: any) => void;
 };
 
 /**
@@ -286,64 +246,22 @@ export function buildManagedVueComponent<
     watch(
       () => ({ props: snapshotProps(), parentState: readParentState() }),
       (current, prev) => {
-        const currentProps = current.props;
-        const prevProps = prev.props;
         const parentStateChanged = current.parentState !== prev.parentState;
 
-        const {
-          newMappedState,
-          newMappedStateCount,
-          updatedPropsToState,
-          updatedPropsToStateCount,
-          rawUpdatedProps,
-          rawUpdatedPropsCount,
-        } = computePropsDiff<T_PROPS, COMPONENT_MAPPED_STATE>({
-          currentProps,
-          prevProps,
+        const dispatchedPropsUpdate = applyPropsDiff<
+          T_PROPS,
+          COMPONENT_MAPPED_STATE
+        >({
+          currentProps: current.props,
+          prevProps: prev.props,
           state: state.value,
           propsToForward,
           propsToStateSet,
+          dispatch,
+          actions,
+          onPropChange: config.onPropChange,
+          onPropsChange: config.onPropsChange,
         });
-
-        let dispatchedPropsUpdate = false;
-
-        if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
-          const action = {
-            payload: {
-              mappedState: newMappedStateCount ? newMappedState : null,
-              updatedPropsToState: updatedPropsToStateCount
-                ? updatedPropsToState
-                : null,
-            },
-          };
-
-          const stateBeforeDispatch = state.value;
-          dispatch(action);
-          dispatchedPropsUpdate = true;
-
-          if (config.onPropChange) {
-            for (const prop in rawUpdatedProps) {
-              if (rawUpdatedProps.hasOwnProperty(prop)) {
-                const { newValue, oldValue } =
-                  rawUpdatedProps[prop as keyof T_PROPS]!;
-                config.onPropChange(
-                  { name: prop as keyof T_PROPS, newValue, oldValue },
-                  currentProps,
-                  actions,
-                  stateBeforeDispatch,
-                );
-              }
-            }
-          }
-          if (config.onPropsChange && rawUpdatedPropsCount) {
-            config.onPropsChange(
-              rawUpdatedProps,
-              currentProps,
-              actions,
-              stateBeforeDispatch,
-            );
-          }
-        }
 
         if (
           parentStateChanged &&

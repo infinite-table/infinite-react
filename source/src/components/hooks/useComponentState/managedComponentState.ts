@@ -496,3 +496,157 @@ export function computePropsDiff<
     rawUpdatedPropsCount,
   };
 }
+
+/**
+ * The configuration of a managed component, shared by every framework
+ * adapter (each adds its own scheduling/context options on top).
+ */
+export type ManagedComponentConfig<
+  T_PROPS,
+  COMPONENT_MAPPED_STATE,
+  COMPONENT_SETUP_STATE = {},
+  COMPONENT_DERIVED_STATE = {},
+  T_PARENT_STATE = {},
+> = {
+  debugName?: string | ((props: T_PROPS) => string);
+  initSetupState?: (props: T_PROPS) => COMPONENT_SETUP_STATE;
+  forwardProps?: (
+    setupState: COMPONENT_SETUP_STATE,
+    props: T_PROPS,
+  ) => ForwardPropsToStateFnResult<
+    T_PROPS,
+    COMPONENT_MAPPED_STATE,
+    COMPONENT_SETUP_STATE
+  >;
+  allowedControlledPropOverrides?: Record<keyof T_PROPS, true>;
+  interceptActions?: ComponentInterceptedActions<any>;
+  mappedCallbacks?: ComponentMappedCallbacks<any>;
+  onPropChange?: OnPropChangeFn<T_PROPS>;
+  onPropsChange?: OnPropsChangeFn<T_PROPS>;
+  mapPropsToState?: (params: {
+    props: T_PROPS;
+    state: any;
+    oldState: any;
+    parentState: T_PARENT_STATE | null;
+  }) => COMPONENT_DERIVED_STATE;
+  concludeReducer?: (params: {
+    previousState: any;
+    state: any;
+    updatedProps: Partial<T_PROPS> | null;
+    parentState: T_PARENT_STATE | null;
+  }) => any;
+  cleanup?: (state: any) => void;
+};
+
+export type OnPropChangeFn<T_PROPS> = (
+  params: { name: keyof T_PROPS; oldValue: any; newValue: any },
+  props: T_PROPS,
+  actions: any,
+  state: any,
+) => void;
+
+export type OnPropsChangeFn<T_PROPS> = (
+  newPropValues: {
+    [k in keyof T_PROPS]?: { newValue: T_PROPS[k]; oldValue: T_PROPS[k] };
+  },
+  props: T_PROPS,
+  actions: any,
+  state: any,
+) => void;
+
+/**
+ * Applies a props change: diffs the props (computePropsDiff), dispatches
+ * the state update if a controlled or derived-from prop changed, then fires
+ * onPropChange (per changed prop) and onPropsChange (once) - both AFTER the
+ * dispatch, with the state from before it.
+ *
+ * Returns whether it dispatched: when it did, the reducer already ran with
+ * the latest parent state, so the adapter must not dispatch a parent-state
+ * change for the same update (the double-dispatch guard).
+ */
+export function applyPropsDiff<
+  T_PROPS extends object,
+  COMPONENT_MAPPED_STATE,
+>(params: {
+  currentProps: T_PROPS;
+  prevProps: T_PROPS;
+  state: any;
+  propsToForward: Partial<
+    ForwardPropsToStateFnResult<T_PROPS, COMPONENT_MAPPED_STATE, any>
+  >;
+  propsToStateSet: Set<string>;
+  dispatch: ManagedComponentDispatch;
+  actions: any;
+  onPropChange?: OnPropChangeFn<T_PROPS>;
+  onPropsChange?: OnPropsChangeFn<T_PROPS>;
+  /**
+   * Called right before the dispatch (debug logging)
+   */
+  beforeDispatch?: (
+    diff: PropsDiffResult<T_PROPS, COMPONENT_MAPPED_STATE>,
+  ) => void;
+}): boolean {
+  const {
+    currentProps,
+    prevProps,
+    state,
+    propsToForward,
+    propsToStateSet,
+    dispatch,
+    actions,
+    onPropChange,
+    onPropsChange,
+    beforeDispatch,
+  } = params;
+
+  const diff = computePropsDiff<T_PROPS, COMPONENT_MAPPED_STATE>({
+    currentProps,
+    prevProps,
+    state,
+    propsToForward,
+    propsToStateSet,
+  });
+
+  const {
+    newMappedState,
+    newMappedStateCount,
+    updatedPropsToState,
+    updatedPropsToStateCount,
+    rawUpdatedProps,
+    rawUpdatedPropsCount,
+  } = diff;
+
+  if (updatedPropsToStateCount === 0 && newMappedStateCount === 0) {
+    return false;
+  }
+
+  beforeDispatch?.(diff);
+
+  dispatch({
+    payload: {
+      mappedState: newMappedStateCount ? newMappedState : null,
+      updatedPropsToState: updatedPropsToStateCount
+        ? updatedPropsToState
+        : null,
+    },
+  });
+
+  if (onPropChange) {
+    for (const prop in rawUpdatedProps) {
+      if (rawUpdatedProps.hasOwnProperty(prop)) {
+        const { newValue, oldValue } = rawUpdatedProps[prop as keyof T_PROPS]!;
+        onPropChange(
+          { name: prop as keyof T_PROPS, newValue, oldValue },
+          currentProps,
+          actions,
+          state,
+        );
+      }
+    }
+  }
+  if (onPropsChange && rawUpdatedPropsCount) {
+    onPropsChange(rawUpdatedProps, currentProps, actions, state);
+  }
+
+  return true;
+}

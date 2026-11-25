@@ -19,7 +19,7 @@ import {
 
 import { dbg } from '../../../utils/debugLoggers';
 
-import { notNullable, UPDATED_VALUES } from '../../InfiniteTable/types/Utility';
+import { notNullable } from '../../InfiniteTable/types/Utility';
 
 import { useEffectOnce } from '../useEffectOnceWithProperUnmount';
 import { useLatest } from '../useLatest';
@@ -38,8 +38,10 @@ import {
   initManagedState,
   managedComponentReducer,
   createGeneratedActions,
-  computePropsDiff,
+  applyPropsDiff,
   ForwardPropsToStateFnResult,
+  OnPropChangeFn,
+  OnPropsChangeFn,
 } from './managedComponentState';
 
 export { notifyChange };
@@ -55,7 +57,6 @@ export function getComponentStateContext<T>(): React.Context<T> {
   return (ComponentContext = createContext<T>(null as any as T));
 }
 
-type UPDATED_PROPS<T> = UPDATED_VALUES<T>;
 type ComponentStateRootConfig<
   T_PROPS,
   COMPONENT_MAPPED_STATE,
@@ -319,102 +320,74 @@ export function buildManagedComponent<
     effectFn(() => {
       const currentProps = props;
 
-      const {
-        newMappedState,
-        newMappedStateCount,
-        updatedPropsToState,
-        updatedPropsToStateCount,
-        rawUpdatedProps,
-        rawUpdatedPropsCount,
-      } = computePropsDiff<T_PROPS, COMPONENT_MAPPED_STATE>({
+      const dispatched = applyPropsDiff<T_PROPS, COMPONENT_MAPPED_STATE>({
         currentProps,
         prevProps,
         state,
         propsToForward,
         propsToStateSet: propsToStateSetRef.current,
+        dispatch,
+        actions,
+        onPropChange: config.onPropChange as OnPropChangeFn<T_PROPS>,
+        onPropsChange: config.onPropsChange as OnPropsChangeFn<T_PROPS>,
+        beforeDispatch: ({
+          newMappedState,
+          newMappedStateCount,
+          updatedPropsToState,
+          updatedPropsToStateCount,
+        }) => {
+          const debugId = (state as any).debugId as string | undefined;
+
+          const marker = debugId
+            ? getMarker(debugId).track.ComponentState.label.PropUpdate.start()
+            : undefined;
+
+          const debugChannelName = config.debugName
+            ? typeof config.debugName === 'function'
+              ? `${config.debugName(currentProps)}:rerender`
+              : `${config.debugName}:rerender`
+            : 'rerender';
+          const logger = dbg(debugChannelName);
+
+          logger(
+            'Triggered by new values for the following props',
+            ...[
+              ...Object.keys(newMappedState ?? {}),
+              ...Object.keys(updatedPropsToState ?? {}),
+            ],
+          );
+
+          if (marker) {
+            marker.end({
+              label: debugChannelName,
+              details: [
+                newMappedStateCount > 0
+                  ? {
+                      name: 'Updated properties',
+                      value: Object.keys(newMappedState).join(', '),
+                    }
+                  : undefined,
+                updatedPropsToStateCount > 0
+                  ? {
+                      name: 'Updated props',
+                      value: Object.keys(updatedPropsToState).join(', '),
+                    }
+                  : undefined,
+                updatedPropsToStateCount > 0 || updatedPropsToState
+                  ? {
+                      name: 'Details',
+                      value:
+                        'The time for this marker is not accurate. The marker is only displayed so you can easily identify the props that triggered the rerender.',
+                    }
+                  : undefined,
+              ].filter(notNullable),
+            });
+          }
+        },
       });
 
-      if (updatedPropsToStateCount > 0 || newMappedStateCount > 0) {
-        const debugId = (state as any).debugId as string | undefined;
-
-        const marker = debugId
-          ? getMarker(debugId).track.ComponentState.label.PropUpdate.start()
-          : undefined;
-
-        const debugChannelName = config.debugName
-          ? typeof config.debugName === 'function'
-            ? `${config.debugName(currentProps)}:rerender`
-            : `${config.debugName}:rerender`
-          : 'rerender';
-        const logger = dbg(debugChannelName);
-
-        logger(
-          'Triggered by new values for the following props',
-          ...[
-            ...Object.keys(newMappedState ?? {}),
-            ...Object.keys(updatedPropsToState ?? {}),
-          ],
-        );
-
-        if (marker) {
-          marker.end({
-            label: debugChannelName,
-            details: [
-              newMappedStateCount > 0
-                ? {
-                    name: 'Updated properties',
-                    value: Object.keys(newMappedState).join(', '),
-                  }
-                : undefined,
-              updatedPropsToStateCount > 0
-                ? {
-                    name: 'Updated props',
-                    value: Object.keys(updatedPropsToState).join(', '),
-                  }
-                : undefined,
-              updatedPropsToStateCount > 0 || updatedPropsToState
-                ? {
-                    name: 'Details',
-                    value:
-                      'The time for this marker is not accurate. The marker is only displayed so you can easily identify the props that triggered the rerender.',
-                  }
-                : undefined,
-            ].filter(notNullable),
-          });
-        }
-        const action = {
-          payload: {
-            mappedState: newMappedStateCount ? newMappedState : null,
-            updatedPropsToState: updatedPropsToStateCount
-              ? updatedPropsToState
-              : null,
-          },
-        };
-
+      if (dispatched) {
         skipTriggerParentStateChangeRef.current = true;
-        dispatch(action);
-
-        if (config.onPropChange) {
-          for (var prop in rawUpdatedProps)
-            if (rawUpdatedProps.hasOwnProperty(prop)) {
-              const { newValue, oldValue } =
-                rawUpdatedProps[prop as keyof T_PROPS]!;
-              config.onPropChange(
-                { name: prop as keyof T_PROPS, newValue, oldValue },
-                props,
-                actions,
-                state,
-              );
-            }
-        }
-        if (config.onPropsChange && rawUpdatedPropsCount) {
-          config.onPropsChange(
-            rawUpdatedProps as UPDATED_PROPS<T_PROPS>,
-            props,
-            actions,
-            state,
-          );
-        }
       }
     });
 
