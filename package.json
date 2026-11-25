@@ -50,7 +50,7 @@
     "examples-dev": "pnpm -C examples run dev",
     "examples-dev-no-output": "pnpm -C examples run dev-no-output",
     "examples-test": "pnpm -C examples run test",
-    "examples-test:build": "pnpm -C examples run build && pnpm -C examples run build:vue",
+    "examples-test:build": "pnpm -C examples run build && pnpm -C examples run build:vue && pnpm -C examples run build:angular",
     "examples-test:ci": "pnpm -C examples run ci:test",
     "examples-test:watch": "pnpm -C examples run test:watch",
     "www-dev": "pnpm -C www run dev",

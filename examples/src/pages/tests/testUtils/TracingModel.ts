@@ -18,6 +18,8 @@ type TracingModelOptions = {
   browser: Browser;
   title: string;
   filePathNoExt: string;
+  /** the Playwright project (react, vue, angular): part of the baseline key */
+  project: string;
 };
 
 export interface TracingResult {
@@ -40,6 +42,7 @@ export class TracingModel {
   private filePathNoExt: string;
   private browser: Browser;
   private title: string;
+  private project: string;
   private tracePath: string | null = null;
 
   constructor(options: TracingModelOptions) {
@@ -47,6 +50,7 @@ export class TracingModel {
     this.filePathNoExt = options.filePathNoExt;
     this.browser = options.browser;
     this.title = options.title;
+    this.project = options.project;
   }
 
   async start() {
@@ -68,7 +72,11 @@ export class TracingModel {
       throw new Error('Tracing was not started');
     }
 
-    const testName = formatTestName(this.filePathNoExt, this.title);
+    const testName = formatTestName(
+      this.filePathNoExt,
+      this.title,
+      this.project,
+    );
     const metrics = parseTraceFile(this.tracePath);
 
     const compare = options?.compare ?? 'scriptingTime';
@@ -138,7 +146,11 @@ export class TracingModel {
       throw new Error('Tracing was not started');
     }
 
-    const testName = formatTestName(this.filePathNoExt, this.title);
+    const testName = formatTestName(
+      this.filePathNoExt,
+      this.title,
+      this.project,
+    );
     const metrics = parseTraceFile(this.tracePath);
 
     // Save as baseline

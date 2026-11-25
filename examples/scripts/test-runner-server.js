@@ -46,10 +46,11 @@ const inferPaths = (pathname) => {
     .filter(Boolean);
   const base = parts.length === 0 ? PAGES_DIR : path.join(PAGES_DIR, ...parts);
   return {
-    // Page-mode (leaf): foo/bar.spec.ts + foo/bar.page.tsx|.page.vue
+    // Page-mode (leaf): foo/bar.spec.ts + foo/bar.page.tsx|.page.vue|.page.angular.ts
     specPath: parts.length === 0 ? null : base + '.spec.ts',
     pagePathTsx: parts.length === 0 ? null : base + '.page.tsx',
     pagePathVue: parts.length === 0 ? null : base + '.page.vue',
+    pagePathAngular: parts.length === 0 ? null : base + '.page.angular.ts',
     // Folder-mode (index): the directory itself, when it exists
     folderPath: base,
   };
@@ -95,6 +96,7 @@ const isWatchableFile = (name) =>
   isSpecFile(name) ||
   name.endsWith('.page.tsx') ||
   name.endsWith('.page.vue') ||
+  name.endsWith('.page.angular.ts') ||
   name.endsWith('.page.ts');
 
 /**
@@ -153,13 +155,20 @@ const getFrameworkSiblingInfo = (pathname) => {
   const base = parts.length === 0 ? PAGES_DIR : path.join(PAGES_DIR, ...parts);
   let pagePathTsx = base + '.page.tsx';
   let pagePathVue = base + '.page.vue';
-  if (!fs.existsSync(pagePathTsx) && !fs.existsSync(pagePathVue)) {
+  let pagePathAngular = base + '.page.angular.ts';
+  if (
+    !fs.existsSync(pagePathTsx) &&
+    !fs.existsSync(pagePathVue) &&
+    !fs.existsSync(pagePathAngular)
+  ) {
     pagePathTsx = path.join(base, 'index.page.tsx');
     pagePathVue = path.join(base, 'index.page.vue');
+    pagePathAngular = path.join(base, 'index.page.angular.ts');
   }
   return {
     hasReactPage: fs.existsSync(pagePathTsx),
     hasVuePage: fs.existsSync(pagePathVue),
+    hasAngularPage: fs.existsSync(pagePathAngular),
   };
 };
 
@@ -292,10 +301,13 @@ const handleRun = async (req, res) => {
     return sendJson(res, 400, { error: 'pathname required' });
   }
 
-  const playwrightProject =
-    project === 'vue' ? 'vue' : project === 'react' ? 'react' : null;
+  const playwrightProject = ['react', 'vue', 'angular'].includes(project)
+    ? project
+    : null;
   if (!playwrightProject) {
-    return sendJson(res, 400, { error: 'project must be react or vue' });
+    return sendJson(res, 400, {
+      error: 'project must be react, vue or angular',
+    });
   }
 
   const paths = inferPaths(pathname);
@@ -323,9 +335,12 @@ const handleRun = async (req, res) => {
   // Page mode: spec + page file. Folder mode: every spec/page under the folder.
   const watchedFiles =
     resolved.mode === 'page'
-      ? [paths.specPath, paths.pagePathTsx, paths.pagePathVue].filter(
-          (f) => f && fs.existsSync(f),
-        )
+      ? [
+          paths.specPath,
+          paths.pagePathTsx,
+          paths.pagePathVue,
+          paths.pagePathAngular,
+        ].filter((f) => f && fs.existsSync(f))
       : walkFiles(resolved.target, isWatchableFile);
   let currentProc = null;
   let stopped = false;
