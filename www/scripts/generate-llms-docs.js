@@ -39,6 +39,13 @@ let frontmatterHasFramework = () => true;
 let frameworks = null;
 let DEFAULT_FRAMEWORK = null;
 
+/**
+ * src/utils/docsReferenceNames.ts (loaded in `main`): how a page of a
+ * framework spells a prop or a hook of the reference (`[(sortInfo)]` on an
+ * Angular page), as the links on the docs page show it.
+ */
+let referenceNames = null;
+
 const packageOf = (framework) => frameworks.docsFramework(framework).package;
 const prefixOf = (framework) => frameworks.docsFramework(framework).prefix;
 const labelOf = (framework) => frameworks.docsFramework(framework).label;
@@ -79,6 +86,24 @@ const LINK_COMPONENTS = {
   HookLink: '/docs/reference/hooks',
   TypeLink: '/docs/reference/type-definitions',
 };
+
+// the link components whose name a page of another framework may spell
+// differently (src/utils/docsReferenceNames.ts)
+const FRAMEWORK_NAMES = {
+  PropLink: (framework, name) =>
+    referenceNames.docsPropName(framework, 'InfiniteTable', name),
+  DataSourcePropLink: (framework, name) =>
+    referenceNames.docsPropName(framework, 'DataSource', name),
+  DPropLink: (framework, name) =>
+    referenceNames.docsPropName(framework, 'DataSource', name),
+  HookLink: (framework, name) => referenceNames.docsHookName(framework, name),
+};
+
+/** The name of a link component's entry as a page of `framework` shows it. */
+function linkLabel(cmp, name, framework) {
+  const framed = FRAMEWORK_NAMES[cmp]?.(framework, name);
+  return framed ? framed.label : name;
+}
 
 // wrapper components whose tags we drop but whose inner content we keep
 const STRIP_WRAPPERS = [
@@ -144,7 +169,8 @@ function inlineCodeFence(fence, mdFileAbsolutePath, framework) {
     notice = `_${frameworks.DOCS_FALLBACK_NOTICE}:_\n\n`;
   } else if (siblingPath !== fileAbsolutePath) {
     fileAbsolutePath = siblingPath;
-    // `x.demo.vue` → vue, `x.snippet.vue.ts` → ts
+    // `x.demo.vue` → vue, `x.snippet.vue.ts` and `x.demo.angular.ts` → ts,
+    // `x.snippet.angular.html` → html
     lang = path.extname(siblingPath).slice(1);
   }
   let code = fs.readFileSync(fileAbsolutePath, 'utf8').trim();
@@ -157,7 +183,9 @@ function inlineCodeFence(fence, mdFileAbsolutePath, framework) {
   }
   if (
     docsKitCode &&
-    /\.(demo|snippet)\.(?:[cm]?[jt]sx?|vue|vue\.ts)$/.test(fileAbsolutePath)
+    /\.(demo|snippet)\.(?:[cm]?[jt]sx?|vue|vue\.ts|angular\.ts|angular\.html)$/.test(
+      fileAbsolutePath,
+    )
   ) {
     code = docsKitCode.extractCodeMarkers(code, context).source;
   }
@@ -190,7 +218,9 @@ function transformProse(text, framework) {
       new RegExp(`<${cmp}\\b${ATTRS}/>`, 'g'),
       (_all, attrs) => {
         const name = getAttr(attrs, 'name');
-        return name ? `[\`${name}\`](${url}#${name})` : '';
+        return name
+          ? `[\`${linkLabel(cmp, name, framework)}\`](${url}#${name})`
+          : '';
       },
     );
 
@@ -198,7 +228,11 @@ function transformProse(text, framework) {
       new RegExp(`<${cmp}\\b${ATTRS}>([\\s\\S]*?)</${cmp}>`, 'g'),
       (_all, attrs, children) => {
         const name = getAttr(attrs, 'name') || children.trim();
-        const label = children.trim() || name;
+        let label = children.trim() || name;
+        const framed = linkLabel(cmp, name, framework);
+        if (label === name && framed !== name) {
+          label = `\`${framed}\``;
+        }
         return name ? `[${label}](${url}#${name})` : label;
       },
     );
@@ -571,8 +605,10 @@ Promise.all([
   ),
   import('../src/utils/docsFrameworkPages.ts'),
   import('../src/utils/docsFrameworksRegistry.ts'),
+  import('../src/utils/docsReferenceNames.ts'),
 ])
-  .then(([code, frameworkPages, registry]) => {
+  .then(([code, frameworkPages, registry, names]) => {
+    referenceNames = names;
     docsKitCode = code;
     contentForFramework = frameworkPages.contentForFramework;
     frontmatterHasFramework = frameworkPages.frontmatterHasFramework;

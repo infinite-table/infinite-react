@@ -37,320 +37,153 @@ interface PropProps {
   highlight?: boolean;
   defaultValue?: string | number | boolean | null | undefined;
   onPropExpand?: (name: string, hash: string) => void;
+
+  // set by the MDX components factory, for the page's framework (see
+  // ReferenceLinkFrameworkProps): the name as that framework spells it
+  label?: string;
+  chip?: string;
+  /** more names of the same entry: the function input of a change callback */
+  more?: string[];
+  /** ids the entry can also be linked with, next to `name`: its Angular name */
+  anchors?: string[];
+}
+
+/**
+ * Set by the MDX components factory (content/new-mdx-components.tsx), for the
+ * page's framework: the reference page there, and the name as that framework
+ * spells it (on an Angular page, `sortInfo` is `[(sortInfo)]`, a model).
+ */
+type ReferenceLinkFrameworkProps = {
+  /** The reference page for the page's framework (else the React one). */
+  path?: string;
+  /** Shown instead of the name. */
+  label?: string;
+  /** A pill after the name: what kind of member it is. */
+  chip?: string;
+};
+
+type ReferenceLinkProps<NAME> = {
+  name: NAME;
+  children?: React.JSX.Element;
+  code?: boolean;
+  nocode?: boolean;
+} & ReferenceLinkFrameworkProps;
+
+/** A link to an entry of a reference page: `<path>#<name>`. */
+function ReferenceLink({
+  defaultPath,
+  name,
+  children,
+  code = true,
+  nocode,
+  path: framePath,
+  label,
+  chip,
+}: Omit<ReferenceLinkProps<string>, 'name'> & {
+  name: string | undefined;
+  defaultPath: string;
+}) {
+  const pathname = usePathname();
+  let path = framePath ?? defaultPath;
+  if (pathname === path) {
+    path = ''; // we're on this page already
+  }
+  const href = `${path}#${name as string}`;
+  if (nocode) {
+    code = false;
+  }
+  const text = label ?? children ?? name;
+  const content = code ? <InlineCode isLink={false}>{text}</InlineCode> : text;
+  return (
+    <Link href={href}>
+      {content}
+      {chip ? <span className="docs-ref-chip">{chip}</span> : null}
+    </Link>
+  );
 }
 
 export const PropLink = ({
   name,
   children,
-  code = true,
-
-  nocode,
-}: {
-  name: keyof InfiniteTableProps<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
+  ...props
+}: ReferenceLinkProps<keyof InfiniteTableProps<any>>) => {
   let theName = name;
   if (!name && typeof children === 'string') {
     theName = children as keyof InfiniteTableProps<any>;
   }
-
-  const pathname = usePathname();
-  let path = '/docs/reference/infinite-table-props';
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${theName as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? theName}</InlineCode>
-  ) : (
-    children ?? theName
+  return (
+    <ReferenceLink
+      defaultPath="/docs/reference/infinite-table-props"
+      name={theName as string}
+      {...props}
+    >
+      {children}
+    </ReferenceLink>
   );
-  return <Link href={href}>{content}</Link>;
 };
 
 PropLink.displayName = 'PropLink';
 
-export const DataSourcePropLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof InfiniteTableProps<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  const pathname = usePathname();
-  let path = '/docs/reference/datasource-props';
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const DataSourcePropLink = (
+  props: ReferenceLinkProps<keyof InfiniteTableProps<any>>,
+) => (
+  <ReferenceLink defaultPath="/docs/reference/datasource-props" {...props} />
+);
 
 DataSourcePropLink.displayName = 'DataSourcePropLink';
 
-export const DApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/datasource-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const DApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/datasource-api" {...props} />;
 
 DApiLink.displayName = 'DApiLink';
 
-export const TreeApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/tree-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const TreeApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/tree-api" {...props} />;
 
 TreeApiLink.displayName = 'TreeApiLink';
 
-export const ColumnApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/column-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const ColumnApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/column-api" {...props} />;
 
 ColumnApiLink.displayName = 'ColumnApiLink';
 
-export const CellApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/cell-selection-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const CellApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => (
+  <ReferenceLink defaultPath="/docs/reference/cell-selection-api" {...props} />
+);
 
 CellApiLink.displayName = 'CellApiLink';
 
-export const RowDetailApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/row-detail-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const RowDetailApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/row-detail-api" {...props} />;
 
 RowDetailApiLink.displayName = 'RowDetailApiLink';
 
-export const KeyNavApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/keyboard-navigation-api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const KeyNavApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => (
+  <ReferenceLink
+    defaultPath="/docs/reference/keyboard-navigation-api"
+    {...props}
+  />
+);
 
 KeyNavApiLink.displayName = 'KeyNavApiLink';
 
-export const TypeLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: string;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/type-definitions';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const TypeLink = (props: ReferenceLinkProps<string>) => (
+  <ReferenceLink defaultPath="/docs/reference/type-definitions" {...props} />
+);
 
 TypeLink.displayName = 'TypeLink';
 
-export const ApiLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof DataSourceApi<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/api';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const ApiLink = (
+  props: ReferenceLinkProps<keyof DataSourceApi<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/api" {...props} />;
 
 ApiLink.displayName = 'ApiLink';
 
@@ -367,34 +200,9 @@ export const LearnLink = ({
   return <Link href={href}>{content}</Link>;
 };
 
-export const HookLink = ({
-  name,
-  children,
-  code = true,
-  nocode,
-}: {
-  name: keyof InfiniteTableProps<any>;
-  children?: React.JSX.Element;
-  code?: boolean;
-  nocode?: boolean;
-}) => {
-  let path = '/docs/reference/hooks';
-  const pathname = usePathname();
-
-  if (pathname === path) {
-    path = ''; // we're on this page already
-  }
-  const href = `${path}#${name as string}`;
-  if (nocode) {
-    code = false;
-  }
-  const content = code ? (
-    <InlineCode isLink={false}>{children ?? name}</InlineCode>
-  ) : (
-    children ?? name
-  );
-  return <Link href={href}>{content}</Link>;
-};
+export const HookLink = (
+  props: ReferenceLinkProps<keyof InfiniteTableProps<any>>,
+) => <ReferenceLink defaultPath="/docs/reference/hooks" {...props} />;
 
 HookLink.displayName = 'HookLink';
 
@@ -434,6 +242,10 @@ export function Prop({
   returnType,
   deprecated,
   returnTypeLink,
+  label,
+  chip,
+  more,
+  anchors,
 }: PropProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -474,7 +286,16 @@ export function Prop({
               }`}
             >
               <IconCodeBlock className="docs-prop__icon" />
-              {name}
+              {anchors?.map((anchor) => (
+                <span key={anchor} id={anchor} className="docs-prop__anchor" />
+              ))}
+              {label ?? name}
+              {more?.map((other) => (
+                <span key={other} className="docs-prop__more">
+                  {other}
+                </span>
+              ))}
+              {chip ? <span className="docs-ref-chip">{chip}</span> : null}
               {generic ? (
                 <span className="italic opacity-40">{` <T>`}</span>
               ) : null}
