@@ -36,8 +36,8 @@ const ACCEPT_DROPS_FROM = ['long', 'short'];
             infiniteDragList="long"
             orientation="vertical"
             [acceptDropsFrom]="acceptDropsFrom"
-            [onDrop]="onLongDrop"
-            [onAcceptDrop]="onLongAcceptDrop"
+            (dropped)="onLongDrop($event.sortedIndexes, $event)"
+            (dropAccepted)="onLongAcceptDrop($event)"
             data-name="long"
             [style]="scrollListStyle"
           >
@@ -49,8 +49,8 @@ const ACCEPT_DROPS_FROM = ['long', 'short'];
           <div
             infiniteDragList="short"
             orientation="vertical"
-            [onDrop]="onShortDrop"
-            [onRemove]="onShortRemove"
+            (dropped)="onShortDrop($event.sortedIndexes, $event)"
+            (removed)="onShortRemove($event.sortedIndexes, $event)"
             data-name="short"
             style="width: 200px; height: 200px; background: #eee"
           >
@@ -100,7 +100,7 @@ export default class AutoScrollPage {
     this.long.update((items) => sortedIndexes.map((index) => items[index]));
   };
 
-  protected readonly onLongAcceptDrop: DragListProps['onAcceptDrop'] = (
+  protected readonly onLongAcceptDrop: NonNullable<DragListProps['onAcceptDrop']> = (
     options,
   ) => {
     this.log({ name: 'long.onAcceptDrop', ...options });
@@ -114,7 +114,7 @@ export default class AutoScrollPage {
 
   protected readonly onShortDrop: DragListProps['onDrop'] = () => {};
 
-  protected readonly onShortRemove: DragListProps['onRemove'] = (
+  protected readonly onShortRemove: NonNullable<DragListProps['onRemove']> = (
     sortedIndexes,
     options,
   ) => {

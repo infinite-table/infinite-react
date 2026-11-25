@@ -41,9 +41,9 @@ type ListCallbacks = {
           <div
             [infiniteDragList]="name"
             orientation="vertical"
-            [onDrop]="callbacks[name].onDrop"
-            [onRemove]="callbacks[name].onRemove"
-            [onAcceptDrop]="callbacks[name].onAcceptDrop"
+            (dropped)="callbacks[name].onDrop($event.sortedIndexes, $event)"
+            (removed)="callbacks[name].onRemove($event.sortedIndexes, $event)"
+            (dropAccepted)="callbacks[name].onAcceptDrop($event)"
             [attr.data-name]="name"
             style="width: 200px; height: 240px; background: #eee"
           >

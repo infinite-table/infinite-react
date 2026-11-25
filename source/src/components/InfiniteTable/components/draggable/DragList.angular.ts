@@ -11,7 +11,7 @@
  *   the pointer down listener of an item):
  *
  *   ```html
- *   <div infiniteDragList="vertical" orientation="vertical" [onDrop]="onDrop">
+ *   <div infiniteDragList="vertical" orientation="vertical" (dropped)="onDrop($event)">
  *     @for (id of items; track id) {
  *       <div [infiniteDragItem]="id">{{ id }}</div>
  *     }
@@ -40,6 +40,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -70,6 +71,27 @@ import {
   type DragProxySetupResult,
   type UpdateDragProxyRenderState,
 } from './dragListController';
+
+/** `(dropped)`: the new order of the old indexes, and what moved. */
+export type DragListDropEvent = {
+  sortedIndexes: number[];
+  dragIndex: number;
+  dropIndex: number;
+  dragItemId: string;
+  dropItemId?: string;
+};
+
+/** `(removed)`: the order without the removed item, and which one it was. */
+export type DragListRemoveEvent = {
+  sortedIndexes: number[];
+  dragIndex: number;
+  dragItemId: string;
+};
+
+/** `(dropAccepted)`: the item that came from another list, and where. */
+export type DragListAcceptDropEvent = Parameters<
+  NonNullable<DragListProps['onAcceptDrop']>
+>[0];
 
 // the framework-neutral part of the drag list is in dragListController.ts
 export {
@@ -168,9 +190,21 @@ export class DragList {
     boolean | '' | undefined
   >(undefined, { transform: booleanInput });
   readonly shouldAcceptDrop = input<DragListProps['shouldAcceptDrop']>();
-  readonly onRemove = input<DragListProps['onRemove']>();
-  readonly onAcceptDrop = input<DragListProps['onAcceptDrop']>();
-  readonly onDrop = input.required<DragListProps['onDrop']>();
+  /**
+   * A drop inside the list reordered its items: `sortedIndexes` is the new
+   * order of the old indexes (React / Vue: `onDrop`).
+   */
+  readonly dropped = output<DragListDropEvent>();
+  /**
+   * An item was dragged out of the list and dropped outside it, with
+   * `removeOnDropOutside` (React / Vue: `onRemove`).
+   */
+  readonly removed = output<DragListRemoveEvent>();
+  /**
+   * An item of another list (one of `acceptDropsFrom`) was dropped in this
+   * list (React / Vue: `onAcceptDrop`).
+   */
+  readonly dropAccepted = output<DragListAcceptDropEvent>();
   readonly updatePosition = input<DragListProps['updatePosition']>();
   readonly dragStrategy = input<DragListProps['dragStrategy']>();
   readonly onDragProxySetup = input<DragListProps['onDragProxySetup']>();
@@ -187,6 +221,16 @@ export class DragList {
    */
   private readonly props: DragListProps = (() => {
     const self = this;
+    // the shared controller calls callbacks: they emit the outputs
+    const onDrop: DragListProps['onDrop'] = (sortedIndexes, options) =>
+      self.dropped.emit({ sortedIndexes, ...options });
+    const onRemove: NonNullable<DragListProps['onRemove']> = (
+      sortedIndexes,
+      options,
+    ) => self.removed.emit({ sortedIndexes, ...options });
+    const onAcceptDrop: NonNullable<DragListProps['onAcceptDrop']> = (
+      options,
+    ) => self.dropAccepted.emit(options);
     return {
       get dragListId() {
         return untracked(self.dragListId);
@@ -203,15 +247,9 @@ export class DragList {
       get shouldAcceptDrop() {
         return untracked(self.shouldAcceptDrop);
       },
-      get onRemove() {
-        return untracked(self.onRemove);
-      },
-      get onAcceptDrop() {
-        return untracked(self.onAcceptDrop);
-      },
-      get onDrop() {
-        return untracked(self.onDrop);
-      },
+      onRemove,
+      onAcceptDrop,
+      onDrop,
       get updatePosition() {
         return untracked(self.updatePosition);
       },

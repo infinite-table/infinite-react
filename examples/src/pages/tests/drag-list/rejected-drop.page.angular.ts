@@ -13,6 +13,7 @@ import {
   DragList,
   injectDragDropProvider,
   type DragListProps,
+  type DragListRemoveEvent,
 } from '@infinite-table/infinite-angular';
 
 type LoggedCall = { name: string; [key: string]: any };
@@ -40,8 +41,8 @@ const shouldAcceptDrop: DragListProps['shouldAcceptDrop'] = (event) =>
       <div
         infiniteDragList="source"
         orientation="vertical"
-        [onDrop]="onSourceDrop"
-        [onRemove]="onRemove"
+        (dropped)="onSourceDrop($event.sortedIndexes)"
+        (removed)="onRemove($event)"
         data-name="source"
         [style]="listStyle"
       >
@@ -54,8 +55,8 @@ const shouldAcceptDrop: DragListProps['shouldAcceptDrop'] = (event) =>
         orientation="vertical"
         [acceptDropsFrom]="acceptDropsFrom"
         [shouldAcceptDrop]="shouldAcceptDrop"
-        [onDrop]="onTargetDrop"
-        [onAcceptDrop]="onAcceptDrop"
+        (dropped)="onTargetDrop($event.sortedIndexes)"
+        (dropAccepted)="onAcceptDrop($event)"
         data-name="target"
         [style]="listStyle"
       >
@@ -79,10 +80,10 @@ class DragLists {
 
   private readonly dragDropProvider = injectDragDropProvider();
 
-  protected readonly onRemove: DragListProps['onRemove'] = (
+  protected readonly onRemove = ({
     sortedIndexes,
-    options,
-  ) => {
+    ...options
+  }: DragListRemoveEvent) => {
     // the provider still has the state of the drag when the callbacks run
     const { status, dropTargetListId } =
       this.dragDropProvider().getCurrentDragSourceAndTarget();
@@ -100,7 +101,7 @@ class DragLists {
     this.source.update((items) => sortedIndexes.map((index) => items[index]));
   };
 
-  protected readonly onAcceptDrop: DragListProps['onAcceptDrop'] = (
+  protected readonly onAcceptDrop: NonNullable<DragListProps['onAcceptDrop']> = (
     options,
   ) => {
     this.log()({ name: 'target.onAcceptDrop', ...options });

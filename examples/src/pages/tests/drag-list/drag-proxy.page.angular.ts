@@ -46,7 +46,7 @@ const listStyle = 'width: 200px; height: 240px; background: #eee';
             infiniteDragList="rendered"
             orientation="vertical"
             [renderDragProxy]="proxy"
-            [onDrop]="onRenderedDrop"
+            (dropped)="onRenderedDrop($event.sortedIndexes)"
             data-name="rendered"
             [style]="listStyle"
           >
@@ -61,7 +61,7 @@ const listStyle = 'width: 200px; height: 240px; background: #eee';
             preserveDragSpace
             [onDragProxySetup]="onDragProxySetup"
             [onDragProxyMove]="onDragProxyMove"
-            [onDrop]="onCustomizedDrop"
+            (dropped)="onCustomizedDrop($event.sortedIndexes)"
             data-name="customized"
             [style]="listStyle"
           >

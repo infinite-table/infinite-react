@@ -28,7 +28,7 @@ const itemStyle =
         <div
           infiniteDragList="vertical"
           orientation="vertical"
-          [onDrop]="onVerticalDrop"
+          (dropped)="onVerticalDrop($event.sortedIndexes, $event)"
           data-name="vertical"
           style="width: 200px"
         >
@@ -41,7 +41,7 @@ const itemStyle =
           infiniteDragList="horizontal"
           orientation="horizontal"
           dragStrategy="inline"
-          [onDrop]="onHorizontalDrop"
+          (dropped)="onHorizontalDrop($event.sortedIndexes, $event)"
           data-name="horizontal"
           style="display: flex; width: 320px; margin-top: 40px"
         >
@@ -55,7 +55,7 @@ const itemStyle =
         <div
           infiniteDragList="with-handle"
           orientation="vertical"
-          [onDrop]="onWithHandleDrop"
+          (dropped)="onWithHandleDrop($event.sortedIndexes, $event)"
           data-name="with-handle"
           style="width: 200px; margin-top: 40px"
         >
