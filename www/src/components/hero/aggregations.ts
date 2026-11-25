@@ -1,7 +1,8 @@
 /*
  * The aggregations and the column menu of the blotter, as plain objects: no
- * framework imports, so the React grid (columns.tsx) and the Vue one
- * (content/home/vue-hero) share them.
+ * framework imports, so the React grid (columns.tsx), the Vue one
+ * (content/home/vue-hero) and the Angular one (content/home/angular-hero)
+ * share them.
  */
 import type { Instrument } from './data/instruments';
 

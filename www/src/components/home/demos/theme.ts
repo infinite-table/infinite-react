@@ -1,6 +1,7 @@
 /*
  * The grid theme classNames of the homepage demos. No framework code: shared
- * by the React demos (via shared.tsx) and their Vue ports (content/home).
+ * by the React demos (via shared.tsx) and their Vue and Angular ports
+ * (content/home).
  */
 export type ColorMode = 'light' | 'dark';
 

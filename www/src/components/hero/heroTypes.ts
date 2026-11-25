@@ -1,6 +1,7 @@
 /**
- * Types and constants shared by the React hero and the Vue one
- * (content/home/vue-hero): no framework imports here.
+ * Types and constants shared by the React hero, the Vue one
+ * (content/home/vue-hero) and the Angular one (content/home/angular-hero): no
+ * framework imports here.
  */
 export type HeroView = 'flat' | 'grouped' | 'pivot';
 export type HeroDataMode = 'client' | 'server';

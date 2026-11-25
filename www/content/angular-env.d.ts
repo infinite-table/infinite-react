@@ -8,3 +8,8 @@ declare const process: {
     NEXT_PUBLIC_INFINITE_LICENSE_KEY?: string;
   };
 };
+
+// CSS imported for its side effects (the home page demos in content/home:
+// the library's themes, the site's and the hero's styles), bundled by the
+// demo build
+declare module '*.css';

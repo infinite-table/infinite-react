@@ -1,6 +1,7 @@
 /*
  * The numbers behind the custom cells: no framework imports, so the React
- * cells (cells.tsx) and the Vue ones (content/home/vue-hero) share them.
+ * cells (cells.tsx), the Vue ones (content/home/vue-hero) and the Angular ones
+ * (content/home/angular-hero) share them.
  */
 import { SPARK_LENGTH, type HeroFeed } from './data/feed';
 import { avgVolumeOf } from './data/instruments';
