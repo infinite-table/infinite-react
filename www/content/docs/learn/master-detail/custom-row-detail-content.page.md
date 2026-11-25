@@ -2,6 +2,7 @@
 title: Master Detail with Custom Row Detail Contents
 description: Learn how to use master-detail to customise your row detail contents
 vue: true
+angular: true
 ---
 
 <FrameworkContent framework="react">
@@ -13,6 +14,12 @@ The Infinite Table React DataGrid allows you to render any valid JSX nodes as ro
 <FrameworkContent framework="vue">
 
 The Infinite Table Vue DataGrid allows you to render any VNodes as row details - the <PropLink name="rowDetailRenderer" /> function creates them with `h()`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The Infinite Table Angular DataGrid allows you to render any template as row details - the <PropLink name="rowDetailRenderer" /> function returns an `ng-template` of your component (a `TemplateRef`, read with `viewChild`), which gets the master row as its context (`let-rowInfo`), or a component (`renderComponent(MyRowDetail)`).
 
 </FrameworkContent>
 
@@ -38,6 +45,16 @@ The DataGrid you're rendering inside the row detail doesn't need to be the retur
 <Note>
 
 The DataGrid you're rendering inside the row detail doesn't need to be the return value of the <PropLink name="rowDetailRenderer" /> function - it can be nested inside other VNodes you return from the function.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The DataGrid you're rendering inside the row detail doesn't need to be the root of the template the <PropLink name="rowDetailRenderer" /> function returns - it can be nested inside other elements of that template.
 
 </Note>
 
@@ -94,7 +111,17 @@ In this example, we have 3 levels of nesting:
 
 You have to keep in mind that the content you render in the row detail can be mounted and unmounted multiple times. Whenever the user expands the row detail, it gets mounted and rendered, but then it will be unmounted when the user scrolls the content out of view. This can happen very often.
 
+<FrameworkContent not="angular">
+
 Also note that the content can be recycled - meaning the same component can be reused for different rows. If you don't want recycling to happen, make sure you use a unique key for the row detail content - you can use the `masterRowInfo.id` for that.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Also note that the row detail element is recycled - it can be reused for different rows. When that happens, the content you render (the views of your template, or your component) is destroyed and created again for the new master row, so a component never shows the details of two different rows.
+
+</FrameworkContent>
 
 <Note>
 
