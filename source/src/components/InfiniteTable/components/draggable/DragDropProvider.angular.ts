@@ -10,7 +10,7 @@
  *
  * ```html
  * <div infiniteDragDropProvider #dnd="infiniteDragDropProvider">
- *   <div infiniteDragList="left" orientation="vertical" [onDrop]="onDrop">...</div>
+ *   <div infiniteDragList="left" orientation="vertical" (dropped)="onDrop($event)">...</div>
  *   {{ dnd.context().dropTargetListId }}
  * </div>
  * ```
