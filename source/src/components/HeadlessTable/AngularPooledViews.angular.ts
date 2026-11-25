@@ -119,12 +119,19 @@ export class PooledViewHost {
     this.views.forEach((view) => view.forgetView());
   }
 
+  /**
+   * The RawTable stops using this renderer (another renderer replaced it, eg
+   * when wrapRowsHorizontally changes, or the RawTable is destroyed): its
+   * views are removed from the container. Only forgetting them would leave
+   * them in the DOM next to the new renderer's views, and the renderer's own
+   * destroy, which may run later, would find nothing to destroy.
+   */
   unbind(vcr: ViewContainerRef) {
     if (this.host?.vcr !== vcr) {
       return;
     }
     this.host = null;
-    this.views.forEach((view) => view.forgetView());
+    this.views.forEach((view) => view.releaseView());
   }
 
   getHost(): PoolHost | null {
@@ -171,6 +178,7 @@ export class PooledViewHost {
   destroy() {
     this.destroyed = true;
     this.host = null;
+    this.views.forEach((view) => view.releaseView());
     this.views.clear();
     this.dirty.clear();
   }
@@ -298,6 +306,14 @@ abstract class PooledView {
       ref.destroy();
     }
     this.setElement(null);
+  }
+
+  /**
+   * Removes the view from its container (a view that is already destroyed,
+   * with its container, is left alone); it is recreated on the next update.
+   */
+  releaseView() {
+    this.destroyView();
   }
 
   /**
