@@ -170,7 +170,7 @@ Each node gets a `nodePath` property, which is the array with the ids of all the
 </Note>
 
 
-```tsx file="index.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id"
+```tsx file="index.snippet.tsx" region="node-path-vs-row-id" title="Node path vs row id" neutral
 ```
 
 ```tsx file="tree-nodesKey-example.demo.tsx" title="Using a custom nodesKey prop"
@@ -385,7 +385,7 @@ Has the same shape as a normal <PropLink name="columns">column</PropLink> (or a 
 
 Also supports <DPropLink name="aggregationReducers.pivotColumn.inheritFromColumn" /> to control which original column (if any) the generated columns inherit from.
 
-```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn"
+```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn" neutral
 ```
 
 In the example above, only the `salary` pivot columns are sortable. See [customizing pivot columns](/docs/learn/grouping-and-pivoting/pivoting/customizing-pivot-columns) for the other override points (<PropLink name="pivotColumn" /> and <DataSourcePropLink name="pivotBy.column" />).
@@ -402,7 +402,7 @@ By default, pivot columns inherit the configuration of the initial column bound 
 - `false` — do not inherit from any column
 - `true` or omitted — inherit from the column bound to the aggregator's `field` (the default)
 
-```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn-inheritfromcolumn"
+```ts file="index.snippet.tsx" region="aggregationreducers-pivotcolumn-inheritfromcolumn" neutral
 ```
 
 ```tsx file="/docs/learn/grouping-and-pivoting/pivoting/pivot-column-inherit-example.demo.tsx" title="Pivot columns inherit from original columns bound to the same field"
@@ -469,7 +469,7 @@ For single selection, the prop will be of type: `number | string | null`. Use `n
 
 For multiple selection, the prop will have the following shape:
 
-```ts file="index.snippet.tsx" region="rowselection"
+```ts file="index.snippet.tsx" region="rowselection" neutral
 ```
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
@@ -649,7 +649,7 @@ Let's imagine you have a `DataSource` with developers, each with a `salary` colu
 
 For this, you would define the following filter type:
 
-```tsx file="index.snippet.tsx" region="filtertypes"
+```tsx file="index.snippet.tsx" region="filtertypes" neutral
 ```
 
 <Note>
@@ -785,7 +785,7 @@ You can control the visibility of the column filters by using the <PropLink name
 See related <DPropLink name="defaultGroupRowsState" />, <DPropLink name="onGroupRowsStateChange" /> and <DPropLink name="groupBy" />
 
 
-```tsx file="index.snippet.tsx" region="specifying-the-state-for-group-rows" title="Specifying the state for group rows"
+```tsx file="index.snippet.tsx" region="specifying-the-state-for-group-rows" title="Specifying the state for group rows" neutral
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -822,7 +822,7 @@ See <TypeLink name="GroupRowsState" /> reference to find out all the utility met
 For the controlled version, see related <DPropLink name="groupRowsState" />.
 
 
-```tsx file="index.snippet.tsx" region="specifying-the-initial-state-for-group-rows" title="Specifying the initial state for group rows"
+```tsx file="index.snippet.tsx" region="specifying-the-initial-state-for-group-rows" title="Specifying the initial state for group rows" neutral
 ```
 
 The two properties in this object are `collapsedRows` and `expandedRows`, and each can have the following values:
@@ -1107,7 +1107,7 @@ For single selection, the prop will be of type: `number | string | null`. Use `n
 
 For multiple selection, the prop will have the following shape:
 
-```ts file="index.snippet.tsx" region="rowselection"
+```ts file="index.snippet.tsx" region="rowselection" neutral
 ```
 
 For using group keys in the selection value, see related <DPropLink name="useGroupKeysForMultiRowSelection" />
@@ -1125,7 +1125,7 @@ Use your mouse or keyboard (press the spacebar) to select/deselect a single row.
 
 When <DPropLink name="lazyLoad" /> is being used - this means not all available groups/rows have actually been loaded yet in the dataset - we need a way to allow you to specify that those possibly unloaded rows/groups are selected or not. In this case, the `rowSelection.selectedRows`/`rowSelection.deselectedRows` arrays should not have row primary keys as strings/numbers, but rather rows/groups specified by their full path (so <DPropLink name="useGroupKeysForMultiRowSelection" /> should be set to `true`).
 
-```ts file="index.snippet.tsx" region="rowselection-lazyload"
+```ts file="index.snippet.tsx" region="rowselection-lazyload" neutral
 ```
 
 In the example above, we know that there are 3 groups (`continent`, `country`, `city`), so any item in the array that has a 4th element is a fully specified leaf node. While lazy loading, we need this fully specified path for specific nodes, so we know which group rows to render with indeterminate selection.
@@ -1317,7 +1317,7 @@ Currently there are two `sortTypes` available:
 
 Those values can be used for the <PropLink name="columns.sortType">column.sortType</PropLink> and <PropLink name="columns.sortType">column.dataType</PropLink> properties.
 
-```ts file="index.snippet.tsx" region="sorttypes"
+```ts file="index.snippet.tsx" region="sorttypes" neutral
 ```
 
 When a column does not explicitly specify the <PropLink name="columns.sortType">column.sortType</PropLink>, the <PropLink name="columns.dataType">column.dataType</PropLink> will be used instead. And if no <PropLink name="columns.dataType">column.dataType</PropLink> is defined, it will default to `string`.
