@@ -296,51 +296,54 @@ const PORTAL_CLASS_NAME = join(
     },
   ],
   template: `
-    @if (initialized) { @let s = state();
-    <div #body [class]="bodyClassName">
-      <div
-        infiniteHeadlessTable
-        [brain]="s.brain"
-        [renderer]="$any(s.renderer)"
-        [onRenderUpdater]="s.onRenderUpdater"
-        [renderCell]="renderCell()"
-        [cellHoverClassNames]="hoverClassNames()"
-        [scrollStopDelay]="s.scrollStopDelay"
-        [forceRerenderTimestamp]="s.forceBodyRerenderTimestamp"
-        [wrapRowsHorizontally]="!!s.wrapRowsHorizontally"
-        [scrollerRef]="onScrollerElement"
-        [tabIndex]="scrollerTabIndex()"
-        [autoFocus]="scrollerAutoFocus()"
-      ></div>
-      <ng-container [infiniteRender]="loadMask()" />
-    </div>
-    <div #portal [class]="portalClassName">
-      @for (overlay of menuOverlays; track $index) {
-      <ng-container [infiniteOverlayPortal]="overlay" />
+    @if (initialized) {
+      @let s = state();
+      <div #body [class]="bodyClassName">
+        <div
+          infiniteHeadlessTable
+          [brain]="s.brain"
+          [renderer]="$any(s.renderer)"
+          [onRenderUpdater]="s.onRenderUpdater"
+          [renderCell]="renderCell()"
+          [cellHoverClassNames]="hoverClassNames()"
+          [scrollStopDelay]="s.scrollStopDelay"
+          [forceRerenderTimestamp]="s.forceBodyRerenderTimestamp"
+          [wrapRowsHorizontally]="!!s.wrapRowsHorizontally"
+          [scrollerRef]="onScrollerElement"
+          [tabIndex]="scrollerTabIndex()"
+          [autoFocus]="scrollerAutoFocus()"
+        ></div>
+        <ng-container [infiniteRender]="loadMask()" />
+      </div>
+      <div #portal [class]="portalClassName">
+        @for (overlay of menuOverlays; track $index) {
+          <ng-container [infiniteOverlayPortal]="overlay" />
+        }
+      </div>
+      @if (s.rowHeightCSSVar) {
+        <infinite-css-numeric-variable-watch
+          [varName]="s.rowHeightCSSVar"
+          [onChange]="s.onRowHeightCSSVarChange"
+        />
       }
-    </div>
-    @if (s.rowHeightCSSVar) {
-    <infinite-css-numeric-variable-watch
-      [varName]="s.rowHeightCSSVar"
-      [onChange]="s.onRowHeightCSSVarChange"
-    />
+      <infinite-css-numeric-variable-watch
+        [allowInts]="true"
+        [varName]="flashingDurationVar"
+        [onChange]="s.onFlashingDurationCSSVarChange"
+      />
+      @if (s.rowDetailHeightCSSVar) {
+        <infinite-css-numeric-variable-watch
+          [varName]="s.rowDetailHeightCSSVar"
+          [onChange]="s.onRowDetailHeightCSSVarChange"
+        />
+      }
+      @if (s.columnHeaderHeightCSSVar) {
+        <infinite-css-numeric-variable-watch
+          [varName]="s.columnHeaderHeightCSSVar"
+          [onChange]="s.onColumnHeaderHeightCSSVarChange"
+        />
+      }
     }
-    <infinite-css-numeric-variable-watch
-      [allowInts]="true"
-      [varName]="flashingDurationVar"
-      [onChange]="s.onFlashingDurationCSSVarChange"
-    />
-    @if (s.rowDetailHeightCSSVar) {
-    <infinite-css-numeric-variable-watch
-      [varName]="s.rowDetailHeightCSSVar"
-      [onChange]="s.onRowDetailHeightCSSVarChange"
-    />
-    } @if (s.columnHeaderHeightCSSVar) {
-    <infinite-css-numeric-variable-watch
-      [varName]="s.columnHeaderHeightCSSVar"
-      [onChange]="s.onColumnHeaderHeightCSSVarChange"
-    />
-    } }
   `,
 })
 export class InfiniteTable<T = any>
@@ -356,12 +359,10 @@ export class InfiniteTable<T = any>
 
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly host =
-    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
+    .nativeElement;
   private readonly config = inject(INFINITE_TABLE_CONFIG);
-  private readonly dataSource = inject(INFINITE_DATA_SOURCE, {
-    optional: true,
-  });
+  private readonly dataSource = inject(INFINITE_DATA_SOURCE, { optional: true });
   private readonly getMasterDetailContext = injectGetMasterDetailContext();
 
   private readonly managed = injectManagedInfiniteTable(
@@ -585,8 +586,7 @@ export class InfiniteTable<T = any>
     );
 
     watch(
-      () =>
-        [getAutoSizeKey(state()), state().ready, autoSizeRefreshId()] as const,
+      () => [getAutoSizeKey(state()), state().ready, autoSizeRefreshId()] as const,
       () => {
         const s = getState();
         const theKey = getAutoSizeKey(s);
@@ -886,10 +886,7 @@ export class InfiniteTable<T = any>
     });
 
     // scrollbars tracking (React: useScrollbars)
-    const scrollbars = signal<Scrollbars>({
-      vertical: false,
-      horizontal: false,
-    });
+    const scrollbars = signal<Scrollbars>({ vertical: false, horizontal: false });
     watch(
       () => [state().brain] as const,
       ([brain]) =>
@@ -1129,7 +1126,8 @@ export class InfiniteTable<T = any>
         state,
         injector,
         getMasterPortalElement: () =>
-          this.getMasterDetailContext()?.getMasterState().portalDOMRef?.current,
+          this.getMasterDetailContext()?.getMasterState().portalDOMRef
+            ?.current,
       };
       this.menuOverlays = [
         setupColumnMenu(menuHookParams),
@@ -1146,11 +1144,7 @@ export class InfiniteTable<T = any>
       const s = getState();
       const target = event.target as HTMLElement;
 
-      const cell = selectParentUntil(
-        target,
-        getCellSelector(),
-        s.domRef.current,
-      );
+      const cell = selectParentUntil(target, getCellSelector(), s.domRef.current);
 
       let columnId: string | undefined;
       let colIndex: number | undefined;
@@ -1230,9 +1224,7 @@ export class InfiniteTable<T = any>
         }
         return;
       }
-      const contained = s.domRef.current?.contains(
-        (event as any).relatedTarget,
-      );
+      const contained = s.domRef.current?.contains((event as any).relatedTarget);
 
       if (!contained) {
         setFocusedWithin(false);
@@ -1364,13 +1356,8 @@ export class InfiniteTable<T = any>
         ] as const;
       },
       ([cancelled, rejected, accepted, persisted, active], previous) => {
-        const [
-          prevCancelled,
-          prevRejected,
-          prevAccepted,
-          prevPersisted,
-          prevActive,
-        ] = previous ?? ([] as any[]);
+        const [prevCancelled, prevRejected, prevAccepted, prevPersisted, prevActive] =
+          previous ?? ([] as any[]);
         // each branch fires only on its own transition - the semantics of
         // the separate dependency-keyed effects in React
         if (cancelled && cancelled !== prevCancelled) {
@@ -1536,13 +1523,7 @@ export class InfiniteTable<T = any>
           s.wrapRowsHorizontally ? s.repeatWrappedGroupRows : false,
         ] as const;
       },
-      ([
-        brain,
-        wrapRowsHorizontally,
-        groupBy,
-        isTree,
-        repeatWrappedGroupRows,
-      ]) => {
+      ([brain, wrapRowsHorizontally, groupBy, isTree, repeatWrappedGroupRows]) => {
         const dsActions = dataSourceContext.dataSourceActions;
 
         if (!wrapRowsHorizontally) {
@@ -1626,9 +1607,7 @@ export class InfiniteTable<T = any>
             .__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY ===
           'function'
         ) {
-          (
-            globalThis as any
-          ).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
+          (globalThis as any).__DO_NOT_USE_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_IS_READY(
             getState().id,
             ready,
             api,
@@ -1698,8 +1677,7 @@ export class InfiniteTable<T = any>
             onScrollToTop?.();
           }
 
-          const offset =
-            getState().scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
+          const offset = getState().scrollToBottomOffset ?? SCROLL_BOTTOM_OFFSET;
           const isScrollBottom = scrollTop + offset >= scrollTopMax;
 
           if (isScrollBottom) {
@@ -1957,12 +1935,11 @@ export class InfiniteTable<T = any>
 
           // the pooled cell keeps its component and DOM element while
           // scrolling and only gets new props
-          return (ColumnCell
-            ? renderPooled(ColumnCell, props, [InfiniteColumnCellHost])
-            : renderPooled(
-                InfiniteTableColumnCell,
-                props,
-              )) as unknown as Renderable;
+          return (
+            ColumnCell
+              ? renderPooled(ColumnCell, props, [InfiniteColumnCellHost])
+              : renderPooled(InfiniteTableColumnCell, props)
+          ) as unknown as Renderable;
         };
       },
     );
@@ -2031,9 +2008,7 @@ export class InfiniteTable<T = any>
         focusedWithin && s.focusedWithinClassName
           ? s.focusedWithinClassName
           : null,
-        pinnedStartOverflow
-          ? `${rootClassName}--has-pinned-start-overflow`
-          : null,
+        pinnedStartOverflow ? `${rootClassName}--has-pinned-start-overflow` : null,
         pinnedEndOverflow ? `${rootClassName}--has-pinned-end-overflow` : null,
         InfiniteClsRecipe({
           horizontalLayout: !!s.wrapRowsHorizontally,
