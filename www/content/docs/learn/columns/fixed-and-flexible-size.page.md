@@ -1,6 +1,7 @@
 ---
 title: Column Sizing
 vue: true
+angular: true
 ---
 
 Columns are a core concept for `Infinite Table` and sizing columns is an important topic to master. Here is a summary of how columns can be sized:
@@ -53,6 +54,16 @@ The <PropLink name="columnSizing" /> entry for a column is the actual sizing and
 
 ```tsx file="fixed-and-flexible-size.snippet.tsx" region="controlled-column-sizing" neutral
 ```
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+<PropLink name="columnSizing" /> is a model: bind it two-way to a signal, so the grid writes the new sizes back when the user resizes a column - the signal always has the current sizing, ready to be persisted. To react to the change, use the <PropLink name="onColumnSizingChange" /> output.
+
+</Note>
+
+</FrameworkContent>
 
 <Note>
 
