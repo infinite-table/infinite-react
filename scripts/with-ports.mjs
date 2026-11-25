@@ -62,9 +62,10 @@ while (argv[0]?.startsWith('--')) {
 
 if (print) {
   const running = runningServices();
+  const width = Math.max(...Object.keys(SERVICES).map((name) => name.length));
   for (const [service, port] of Object.entries(currentPorts())) {
     const state = service in running ? 'running' : '';
-    console.log(`${service.padEnd(14)} ${String(port).padEnd(6)} ${state}`);
+    console.log(`${service.padEnd(width)} ${String(port).padEnd(6)} ${state}`);
   }
   process.exit(0);
 }

@@ -22,6 +22,7 @@ const SERVICES = {
   examples: 5555, // examples: React test app (next dev / http-server)
   examplesVue: 5556, // examples: Vue test app (vite / http-server)
   vuePlayground: 5557, // vue-playground
+  examplesAngular: 5558, // examples: Angular test app (ng serve / http-server)
   testRunner: 5599, // examples: test-runner sidecar of the test index
   wwwBuild: 3000, // www: `serve-build` (the static export)
   www: 3001, // www: docs site (next dev)
@@ -325,9 +326,10 @@ function envForPorts(slot, ports, dir = process.cwd()) {
   // Read by examples/scripts/test-runner-server.js and the test index pages
   env.TEST_RUNNER_PORT = String(ports.testRunner);
   env.NEXT_PUBLIC_TEST_RUNNER_PORT = String(ports.testRunner);
-  // The React <-> Vue links of the test pages (examples/src/test-index)
+  // The React / Vue / Angular links of the test pages (examples/src/test-index)
   env.NEXT_PUBLIC_EXAMPLES_PORT = String(ports.examples);
   env.NEXT_PUBLIC_EXAMPLES_VUE_PORT = String(ports.examplesVue);
+  env.NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT = String(ports.examplesAngular);
   const dataUrl = localDataUrl(ports.data, dir);
   if (dataUrl) env.NEXT_PUBLIC_BASE_URL = dataUrl;
   return env;
