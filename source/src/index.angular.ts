@@ -65,6 +65,12 @@ export {
   type InfiniteTableConfig,
 } from './components/InfiniteTable/InfiniteTableForAngular.angular';
 export {
+  TreeGrid,
+  TreeDataSource,
+  toTreeDataArray,
+  withSelectedLeafNodesOnly,
+} from './components/TreeGrid/TreeGridForAngular.angular';
+export {
   injectInfiniteTable,
   INFINITE_TABLE,
   type InfiniteTableContextValueForAngular,

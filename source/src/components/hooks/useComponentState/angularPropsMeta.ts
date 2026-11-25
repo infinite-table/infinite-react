@@ -54,3 +54,22 @@ export type MergeUnion<U> = {
       : never
     : never;
 };
+
+/**
+ * The keys of T whose type is `never` (props the type forbids, eg
+ * DataSourceProps' `nodesKey`, which only a TreeDataSource takes).
+ */
+export type NeverKeys<T> = {
+  [K in keyof T]-?: [Exclude<T[K], undefined>] extends [never] ? K : never;
+}[keyof T];
+
+/**
+ * A's props, plus the props of B that A doesn't have or forbids
+ * (`FORBIDDEN`: `NeverKeys` of A, computed on a non-generic A so that the
+ * keys of the result stay known for a generic one).
+ */
+export type MergeProps<A, B, FORBIDDEN extends PropertyKey> = Omit<
+  A,
+  FORBIDDEN
+> &
+  Omit<B, Exclude<keyof A, FORBIDDEN>>;

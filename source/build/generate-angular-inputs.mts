@@ -403,12 +403,19 @@ function generate(target: Target) {
     .join('\n\n');
 
   const merged = (typeName: string) => `MergeUnion<${typeName}${T}>`;
-  const extraTypeAlias = `\n/**\n * The props the members below are generated from, as one object type.\n */\nexport type ${target.className}Props${T} = ${[
+  // the extra types add the props the main one doesn't have or forbids
+  // (`nodesKey?: never` in DataSourceProps)
+  const mergedPropsType = (target.extraTypes ?? []).reduce(
+    (acc, extra, index) => {
+      if (index > 0) {
+        throw new Error(`${target.className}: only one extra props type is supported`);
+      }
+      const forbidden = `NeverKeys<MergeUnion<${target.typeName}${target.generic ? '<any>' : ''}>>`;
+      return `MergeProps<\n  ${acc},\n  ${merged(extra.typeName)},\n  ${forbidden}\n>`;
+    },
     merged(target.typeName),
-    ...(target.extraTypes ?? []).map(
-      (extra) => `Omit<${merged(extra.typeName)}, keyof ${merged(target.typeName)}>`,
-    ),
-  ].join(' &\n  ')};\n`;
+  );
+  const extraTypeAlias = `\n/**\n * The props the members below are generated from, as one object type.\n */\nexport type ${target.className}Props${T} = ${mergedPropsType};\n`;
 
   const usesBoolean = members.some((m) => m.kind === 'input' && m.boolean);
   const usesModel = members.some((m) => m.kind === 'model');
@@ -441,7 +448,7 @@ import type { ${angularTypeImports} } from '@angular/core';
 ${typeImports
   .map((t) => `import type { ${t.typeName} } from '${importPath(t.typeFile)}';`)
   .join('\n')}
-import type { AngularPropsMeta, MergeUnion } from '${importPath('components/hooks/useComponentState/angularPropsMeta.ts')}';
+import type { AngularPropsMeta, ${target.extraTypes?.length ? 'MergeProps, ' : ''}MergeUnion${target.extraTypes?.length ? ', NeverKeys' : ''} } from '${importPath('components/hooks/useComponentState/angularPropsMeta.ts')}';
 ${usesBoolean ? `import { booleanInput } from '${importPath('components/hooks/useComponentState/angularPropsMeta.ts')}';\n` : ''}${extraTypeAlias}
 /**
  * The inputs, models and outputs of the component, generated from
