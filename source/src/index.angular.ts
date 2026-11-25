@@ -76,3 +76,48 @@ export {
 export { InfiniteCheckBox } from './components/InfiniteTable/components/CheckBoxForAngular.angular';
 export { ExpandCollapseIcon } from './components/InfiniteTable/components/icons/ExpandCollapseIcon/ExpandCollapseIconForAngular.angular';
 export { LoadMask } from './components/InfiniteTable/components/LoadMaskForAngular.angular';
+
+// menus and overlays
+export { Menu, MenuSeparator } from './components/Menu/MenuForAngular.angular';
+export type * from './components/Menu/MenuProps';
+export type { MenuApi, MenuState } from './components/Menu/MenuState';
+export {
+  createOverlay,
+  injectOverlay,
+  InfiniteOverlayPortal,
+  type InfiniteOverlay,
+  type OverlayParams,
+  type OverlayContent,
+  type ShowOverlayFn,
+  type UpdateOverlayContentFn,
+} from './components/hooks/useOverlay/OverlayForAngular.angular';
+// framework-neutral: positions a node next to another one
+export { alignNode } from './components/hooks/useOverlay/overlayUtils';
+export { injectInfinitePortalContainer } from './components/InfiniteTable/hooks/useInfinitePortalContainerForAngular.angular';
+
+// filters
+export { defaultFilterTypes } from './components/DataSource/defaultFilterTypes';
+export {
+  injectColumnFilterEditor,
+  INFINITE_COLUMN_FILTER,
+  InfiniteTableColumnHeaderFilter,
+  InfiniteTableFilterOperatorSwitch,
+  type ColumnFilterEditorForAngular,
+} from './components/InfiniteTable/components/InfiniteTableHeader/InfiniteTableColumnHeaderFilterForAngular.angular';
+export {
+  StringFilterEditor,
+  NumberFilterEditor,
+} from './components/InfiniteTable/components/FilterEditorsForAngular.angular';
+export {
+  IncludesOperatorIcon,
+  StartsWithOperatorIcon,
+  EndsWithOperatorIcon,
+  EqualOperatorIcon,
+  NotEqualOperatorIcon,
+  GTOperatorIcon,
+  GTEOperatorIcon,
+  LTOperatorIcon,
+  LTEOperatorIcon,
+  DoneIcon,
+  ClearIcon,
+} from './components/InfiniteTable/components/icons/FilterOperatorIconsForAngular.angular';

@@ -9,11 +9,13 @@ import {
   TemplateRef,
   Type,
   ViewContainerRef,
+  WritableSignal,
   inject,
   input,
   inputBinding,
   outputBinding,
   reflectComponentType,
+  signal,
 } from '@angular/core';
 
 import type {
@@ -175,12 +177,21 @@ type RenderedLeaf =
       kind: 'component';
       component: Type<unknown>;
       ref: ComponentRef<unknown>;
-      holder: {
-        context: any;
-        inputs?: Record<string, unknown>;
-      };
+      holder: ComponentHolder;
       injector?: Injector;
     };
+
+type ComponentHolder = {
+  context: any;
+  inputs?: Record<string, unknown>;
+  outputs?: Record<string, (value: any) => void>;
+  /**
+   * Bumped when the context or the inputs change. The host view of a
+   * dynamically created OnPush component is not CheckAlways: its input
+   * bindings run again only when a signal they read changes.
+   */
+  version: WritableSignal<number>;
+};
 
 /**
  * The context the views of a template leaf are created with: it forwards
@@ -312,8 +323,13 @@ export class InfiniteRender implements OnChanges, OnDestroy {
         current.component === leaf.component &&
         current.injector === leaf.injector
       ) {
-        current.holder.context = leaf.context;
-        current.holder.inputs = leaf.inputs;
+        const holder = current.holder;
+        if (holder.context !== leaf.context || holder.inputs !== leaf.inputs) {
+          holder.context = leaf.context;
+          holder.inputs = leaf.inputs;
+          holder.version.update((v) => v + 1);
+        }
+        holder.outputs = leaf.outputs;
         next.push(current);
         viewIndex++;
         continue;
@@ -337,7 +353,12 @@ export class InfiniteRender implements OnChanges, OnDestroy {
           injector: leaf.injector,
         });
       } else {
-        const holder = { context: leaf.context, inputs: leaf.inputs };
+        const holder: ComponentHolder = {
+          context: leaf.context,
+          inputs: leaf.inputs,
+          outputs: leaf.outputs,
+          version: signal(0),
+        };
         const ref = this.vcr.createComponent(leaf.component, {
           index: viewIndex,
           injector: leaf.injector ?? this.injector,
@@ -416,10 +437,7 @@ function getInputNames(component: Type<unknown>): string[] {
   return names;
 }
 
-function componentBindings(
-  leaf: ComponentLeaf,
-  holder: { context: any; inputs?: Record<string, unknown> },
-) {
+function componentBindings(leaf: ComponentLeaf, holder: ComponentHolder) {
   const bindings = [];
   const context = leaf.context;
   for (const name of getInputNames(leaf.component)) {
@@ -428,17 +446,24 @@ function componentBindings(
     const fromInputs = !!leaf.inputs && name in leaf.inputs;
     if (fromContext || fromInputs) {
       bindings.push(
-        inputBinding(name, () =>
-          holder.inputs && name in holder.inputs
+        inputBinding(name, () => {
+          holder.version();
+          return holder.inputs && name in holder.inputs
             ? holder.inputs[name]
-            : holder.context?.[name],
-        ),
+            : holder.context?.[name];
+        }),
       );
     }
   }
   if (leaf.outputs) {
     for (const name in leaf.outputs) {
-      bindings.push(outputBinding(name, leaf.outputs[name]));
+      // through the holder: a reused component gets the listeners of the
+      // latest content, not the ones it was created with
+      bindings.push(
+        outputBinding(name, (value: unknown) =>
+          holder.outputs?.[name]?.(value),
+        ),
+      );
     }
   }
   return bindings;

@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   ViewEncapsulation,
+  DestroyRef,
   computed,
   effect,
   inject,
@@ -34,7 +35,6 @@ import type { HTMLProps } from '../../types/FrameworkTypes';
     type: 'checkbox',
     '[class]': 'className()',
     '[disabled]': '!!disabled()',
-    '(change)': 'onInputChange()',
   },
 })
 export class InfiniteCheckBox {
@@ -45,8 +45,8 @@ export class InfiniteCheckBox {
   readonly onChange = input<(checked: InfiniteCheckBoxPropChecked) => void>();
   readonly change = output<InfiniteCheckBoxPropChecked>();
 
-  private readonly input = inject<ElementRef<HTMLInputElement>>(ElementRef)
-    .nativeElement;
+  private readonly input =
+    inject<ElementRef<HTMLInputElement>>(ElementRef).nativeElement;
 
   // the uncontrolled value
   private readonly localChecked = signal<InfiniteCheckBoxPropChecked>(false);
@@ -67,6 +67,14 @@ export class InfiniteCheckBox {
   });
 
   constructor() {
+    // a native listener: a host `(change)` listener would also subscribe to
+    // this component's own `change` output, and re-enter on every emit
+    const onChange = () => this.onInputChange();
+    this.input.addEventListener('change', onChange);
+    inject(DestroyRef).onDestroy(() =>
+      this.input.removeEventListener('change', onChange),
+    );
+
     // writes the value to the input: a click has already toggled it, so a
     // controlled value that doesn't change after the click (or renders the
     // same: null -> false) must still reset it, as React does
@@ -75,7 +83,10 @@ export class InfiniteCheckBox {
       if (!this.initialized) {
         this.initialized = true;
         const defaultChecked = untracked(this.defaultChecked);
-        if (untracked(this.checked) === undefined && defaultChecked !== undefined) {
+        if (
+          untracked(this.checked) === undefined &&
+          defaultChecked !== undefined
+        ) {
           this.localChecked.set(defaultChecked);
           return;
         }
