@@ -490,13 +490,11 @@ export const ${target.metaName}: AngularPropsMeta = {
 }
 
 async function format(file: string, source: string) {
-  try {
-    const prettier = await import('prettier');
-    const options = (await prettier.resolveConfig(file)) ?? {};
-    return await prettier.format(source, { ...options, filepath: file });
-  } catch {
-    return source;
-  }
+  // prettier 2 is CommonJS: its functions are on the default export
+  const imported: any = await import('prettier');
+  const prettier = imported.default ?? imported;
+  const options = (await prettier.resolveConfig(file)) ?? {};
+  return await prettier.format(source, { ...options, filepath: file });
 }
 
 const outputs: { file: string; source: string }[] = [];
