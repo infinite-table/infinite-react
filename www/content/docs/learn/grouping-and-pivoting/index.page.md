@@ -1,6 +1,7 @@
 ---
 title: Grouping and Pivoting
 vue: true
+angular: true
 ---
 
 Infinite Table comes with grouping and pivoting capabilities built-in. The `DataSource` component does the actual data grouping and pivoting - while the `InfiniteTable` component does the specialized rendering.

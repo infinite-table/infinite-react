@@ -2,6 +2,7 @@
 title: Using tree selection
 description: Learn how to leverage the tree and specify the tree selection state
 vue: true
+angular: true
 ---
 
 When using a tree grid, a common use-case is to allow users to select nodes, both parent and child nodes.
@@ -76,14 +77,34 @@ The tree is filtered to only show `.docx` files. Select a folder or click "Selec
 
 ## Reacting to user actions
 
+<FrameworkContent not="angular">
+
 To listen to selection changes, you can use the <DPropLink name="onTreeSelectionChange" /> callback.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+To listen to selection changes, you can use the <DPropLink name="onTreeSelectionChange" /> output - it emits the new tree selection. To also get the second argument of the callback (with the `treeSelectionState` - the mouse and keyboard example above uses it to show the selected files), bind a function to the `[onTreeSelectionChange]` input instead.
+
+</FrameworkContent>
 
 This callback is called both when the user interacts with the grid, and when you use the [Tree API](/docs/reference/tree-api) to change the selection.
 
 
 ## Using controlled tree selection
 
+<FrameworkContent not="angular">
+
 When using the controlled <DPropLink name="treeSelection" /> prop, you have to make sure you update the tree selection via <DPropLink name="onTreeSelectionChange" />.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<DPropLink name="treeSelection" /> is a model: bind it two-way to a signal, and the grid writes the user's selection back to it. To react to the change, use the <DPropLink name="onTreeSelectionChange" /> output.
+
+</FrameworkContent>
 
 Controlled tree selection also gives you a more declarative way to manage the selection state.
 You no longer have to call [Tree API](/docs/reference/tree-api) methods to change the selection. Simply pass a new tree selection state object to the <DPropLink name="treeSelection" /> prop and the tree grid will be updated accordingly.
