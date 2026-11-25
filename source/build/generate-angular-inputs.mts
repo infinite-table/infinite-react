@@ -82,6 +82,17 @@ const TARGETS: Target[] = [
     // a cursor function can't be replaced by the cursor value it computed
     notModels: ['livePaginationCursor'],
   },
+  {
+    out: 'components/Menu/MenuInputs.generated.angular.ts',
+    className: 'MenuInputs',
+    metaName: 'MENU_PROPS_META',
+    typeName: 'MenuProps',
+    typeFile: 'components/Menu/MenuProps.ts',
+    generic: false,
+    // children: Angular menus are items-driven (like Vue)
+    exclude: ['children'],
+    notModels: [],
+  },
 ];
 
 const parsedConfig = ts.getParsedCommandLineOfConfigFile(

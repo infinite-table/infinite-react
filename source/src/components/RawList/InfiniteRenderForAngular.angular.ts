@@ -175,12 +175,15 @@ type RenderedLeaf =
       kind: 'component';
       component: Type<unknown>;
       ref: ComponentRef<unknown>;
-      holder: {
-        context: any;
-        inputs?: Record<string, unknown>;
-      };
+      holder: ComponentHolder;
       injector?: Injector;
     };
+
+type ComponentHolder = {
+  context: any;
+  inputs?: Record<string, unknown>;
+  outputs?: Record<string, (value: any) => void>;
+};
 
 /**
  * The context the views of a template leaf are created with: it forwards
@@ -321,6 +324,7 @@ export class InfiniteRender implements OnChanges, OnDestroy {
           current.holder.inputs = leaf.inputs;
           (toRefresh ??= []).push(current.ref);
         }
+        current.holder.outputs = leaf.outputs;
         next.push(current);
         viewIndex++;
         continue;
@@ -344,7 +348,11 @@ export class InfiniteRender implements OnChanges, OnDestroy {
           injector: leaf.injector,
         });
       } else {
-        const holder = { context: leaf.context, inputs: leaf.inputs };
+        const holder: ComponentHolder = {
+          context: leaf.context,
+          inputs: leaf.inputs,
+          outputs: leaf.outputs,
+        };
         const ref = this.vcr.createComponent(leaf.component, {
           index: viewIndex,
           injector: leaf.injector ?? this.injector,
@@ -435,10 +443,7 @@ function getInputNames(component: Type<unknown>): string[] {
   return names;
 }
 
-function componentBindings(
-  leaf: ComponentLeaf,
-  holder: { context: any; inputs?: Record<string, unknown> },
-) {
+function componentBindings(leaf: ComponentLeaf, holder: ComponentHolder) {
   const bindings = [];
   const context = leaf.context;
   for (const name of getInputNames(leaf.component)) {
@@ -457,7 +462,11 @@ function componentBindings(
   }
   if (leaf.outputs) {
     for (const name in leaf.outputs) {
-      bindings.push(outputBinding(name, leaf.outputs[name]));
+      // through the holder: a reused component calls the listeners of the
+      // latest content, not the ones it was created with
+      bindings.push(
+        outputBinding(name, (value: unknown) => holder.outputs?.[name]?.(value)),
+      );
     }
   }
   return bindings;

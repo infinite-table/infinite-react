@@ -15,13 +15,13 @@ import { CUSTOMIZABLE_ICONS, CustomizableIconName } from './customizableIcons';
 import { iconPaths } from './iconPaths';
 import { InfiniteIconClassName } from './InfiniteIconClassName';
 
-const ICON_HOST = {
+export const ICON_HOST = {
   '[attr.viewBox]': 'viewBoxValue()',
   '[class]': 'classNameValue()',
   '[style]': 'styleValue()',
 };
 
-const ICON_TEMPLATE = `@for (d of pathsValue(); track $index) {<svg:path [attr.d]="d" />}`;
+export const ICON_TEMPLATE = `@for (d of pathsValue(); track $index) {<svg:path [attr.d]="d" />}`;
 
 /**
  * What the svg icons share (Angular sibling of the React Icon wrapper,
@@ -31,7 +31,7 @@ const ICON_TEMPLATE = `@for (d of pathsValue(); track $index) {<svg:path [attr.d
  * `--infinite-icon-<name>` CSS variable (see Icon.css.ts).
  */
 @Directive()
-abstract class IconBase {
+export abstract class IconBase {
   readonly size = input<number>();
   readonly style = input<CSSProperties | null>();
   readonly className = input<string>();

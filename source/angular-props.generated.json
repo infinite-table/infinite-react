@@ -1270,5 +1270,101 @@
         "kind": "model-change"
       }
     ]
+  },
+  "Menu": {
+    "addSubmenuColumnIfNeeded": [
+      {
+        "angularName": "addSubmenuColumnIfNeeded",
+        "kind": "input"
+      }
+    ],
+    "autoFocus": [
+      {
+        "angularName": "autoFocus",
+        "kind": "input"
+      }
+    ],
+    "bubbleActionsFromSubmenus": [
+      {
+        "angularName": "bubbleActionsFromSubmenus",
+        "kind": "input"
+      }
+    ],
+    "columns": [
+      {
+        "angularName": "columns",
+        "kind": "input"
+      }
+    ],
+    "constrainTo": [
+      {
+        "angularName": "constrainTo",
+        "kind": "input"
+      }
+    ],
+    "id": [
+      {
+        "angularName": "id",
+        "kind": "input"
+      }
+    ],
+    "items": [
+      {
+        "angularName": "items",
+        "kind": "input"
+      }
+    ],
+    "onAction": [
+      {
+        "angularName": "action",
+        "kind": "output"
+      }
+    ],
+    "onHide": [
+      {
+        "angularName": "hide",
+        "kind": "output"
+      }
+    ],
+    "onHideIntent": [
+      {
+        "angularName": "hideIntent",
+        "kind": "output"
+      }
+    ],
+    "onShow": [
+      {
+        "angularName": "show",
+        "kind": "output"
+      },
+      {
+        "angularName": "onShow",
+        "kind": "function-input"
+      }
+    ],
+    "parentMenuId": [
+      {
+        "angularName": "parentMenuId",
+        "kind": "input"
+      }
+    ],
+    "parentMenuItemKey": [
+      {
+        "angularName": "parentMenuItemKey",
+        "kind": "input"
+      }
+    ],
+    "portalContainer": [
+      {
+        "angularName": "portalContainer",
+        "kind": "input"
+      }
+    ],
+    "wrapLabels": [
+      {
+        "angularName": "wrapLabels",
+        "kind": "input"
+      }
+    ]
   }
 }

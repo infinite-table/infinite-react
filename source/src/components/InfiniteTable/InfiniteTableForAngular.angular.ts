@@ -116,6 +116,20 @@ import type {
   TableRenderDetailRowFnParam,
 } from '../HeadlessTable/rendererTypes';
 import { TableHeaderWrapper } from './components/InfiniteTableHeader/TableHeaderWrapperForAngular.angular';
+// menus
+import {
+  InfiniteOverlayPortal,
+  type InfiniteOverlay,
+} from '../hooks/useOverlay/OverlayForAngular.angular';
+import {
+  setupColumnMenu,
+  type MenuHookParams,
+} from './hooks/useColumnMenuForAngular.angular';
+import {
+  setupCellContextMenu,
+  setupTableContextMenu,
+} from './hooks/useContextMenuForAngular.angular';
+import { setupColumnFilterOperatorMenu } from './hooks/useColumnFilterOperatorMenuForAngular.angular';
 import {
   INFINITE_TABLE,
   type InfiniteTableContextValueForAngular,
@@ -285,6 +299,7 @@ const PORTAL_CLASS_NAME = join(
     InfiniteRender,
     CSSNumericVariableWatch,
     InfiniteTableLicenseFooter,
+    InfiniteOverlayPortal,
   ],
   host: {
     ngSkipHydration: 'true',
@@ -331,7 +346,11 @@ const PORTAL_CLASS_NAME = join(
         ></div>
         <ng-container [infiniteRender]="loadMask()" />
       </div>
-      <div #portal [class]="portalClassName"></div>
+      <div #portal [class]="portalClassName">
+        @for (overlay of menuOverlays; track $index) {
+          <ng-container [infiniteOverlayPortal]="overlay" />
+        }
+      </div>
       @if (s.rowHeightCSSVar) {
         <infinite-css-numeric-variable-watch
           [varName]="s.rowHeightCSSVar"
@@ -397,6 +416,8 @@ export class InfiniteTable<T = any>
 
   protected readonly bodyClassName = BODY_CLASS_NAME;
   protected readonly portalClassName = PORTAL_CLASS_NAME;
+  /** the column / cell / table / filter operator menus (in the portal element) */
+  protected menuOverlays: InfiniteOverlay[] = [];
   protected readonly flashingDurationVar =
     ThemeVars.components.Cell.flashingDuration;
 
@@ -1141,6 +1162,26 @@ export class InfiniteTable<T = any>
         actions.columnHeaderHeight = columnHeaderHeight;
       }
     });
+
+    // ---- menus (React: useColumnMenu, useCellContextMenu,
+    // useTableContextMenu, useColumnFilterOperatorMenu) - their overlays are
+    // rendered in the portal element ----
+    {
+      const menuHookParams: MenuHookParams<any> = {
+        context: eventHandlerContext,
+        state,
+        injector,
+        getMasterPortalElement: () =>
+          this.getMasterDetailContext()?.getMasterState().portalDOMRef
+            ?.current,
+      };
+      this.menuOverlays = [
+        setupColumnMenu(menuHookParams),
+        setupCellContextMenu(menuHookParams),
+        setupTableContextMenu(menuHookParams),
+        setupColumnFilterOperatorMenu(menuHookParams),
+      ];
+    }
 
     // ---- the body's context menu (React: onContextMenu in InfiniteTableBody):
     // publishes the browser event (+ the cell, when over one) into the shared
