@@ -1,6 +1,7 @@
 ---
 title: Performance with Many Rows and Columns
 vue: true
+angular: true
 ---
 
 This example showcases a DataGrid with **10.000 rows** and **12 columns**.
