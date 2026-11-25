@@ -3,6 +3,8 @@ title: Keyboard Navigation for Table Rows
 description: To enable keyboard navigation for table rows, specify keyboardNavigation="row" in your React Infinite Table component.
 vue:
   description: To enable keyboard navigation for table rows, specify keyboardNavigation="row" in your Infinite Table component.
+angular:
+  description: To enable keyboard navigation for table rows, specify keyboardNavigation="row" on your Angular Infinite Table component.
 ---
 
 <FrameworkContent framework="react">
@@ -14,6 +16,12 @@ To enable keyboard navigation for table rows, specify <PropLink name="keyboardNa
 <FrameworkContent framework="vue">
 
 To enable keyboard navigation for table rows, specify <PropLink name="keyboardNavigation">keyboardNavigation="row"</PropLink> in your Infinite Table component.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+To enable keyboard navigation for table rows, specify <PropLink name="keyboardNavigation">keyboardNavigation="row"</PropLink> on your `<infinite-table>` component.
 
 </FrameworkContent>
 
@@ -53,6 +61,8 @@ This example starts with row at index `2` already active.
 
 ## Listening to active row changes
 
+<FrameworkContent not="angular">
+
 You can easily listen to changes in the row navigation by using the <PropLink name="onActiveRowIndexChange" /> callback.
 
 <Note>
@@ -61,9 +71,27 @@ When you use controlled <PropLink name="activeRowIndex" />, make sure to use <Pr
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<PropLink name="activeRowIndex" /> is a model: bind it two-way to a signal, and the grid writes the active row to your signal as the user navigates. To only listen to the changes, use the <PropLink name="onActiveRowIndexChange">onActiveRowIndexChange</PropLink> output.
+
+</FrameworkContent>
+
 <DemoDescription>
 
+<FrameworkContent not="angular">
+
 This example starts with row at index `2` already active and uses <PropLink name="onActiveRowIndexChange">onActiveRowIndexChange</PropLink> to update <PropLink name="activeRowIndex" />.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This example starts with row at index `2` already active and binds the <PropLink name="activeRowIndex" /> model two-way to a signal.
+
+</FrameworkContent>
 
 </DemoDescription>
 

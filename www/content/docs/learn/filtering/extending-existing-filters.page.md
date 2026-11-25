@@ -3,6 +3,8 @@ title: Extending existing filters
 description: Learn how to extend existing filters and filter types for your Infinite Table React DataGrid
 vue:
   description: Learn how to extend existing filters and filter types for your Infinite Table Vue DataGrid
+angular:
+  description: Learn how to extend existing filters and filter types for your Infinite Table Angular DataGrid
 ---
 
 By default `InfiniteTable` has the following default filter types:

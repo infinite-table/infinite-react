@@ -3,6 +3,8 @@ title: Server-side Filtering
 description: Learn how to integrate server-side filtering with your InfiniteTable React DataGrid
 vue:
   description: Learn how to integrate server-side filtering with your InfiniteTable Vue DataGrid
+angular:
+  description: Learn how to integrate server-side filtering with your InfiniteTable Angular DataGrid
 ---
 
 To filter server-side, use a function as the <DPropLink name="data" /> prop and set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> on the `<DataSource />` component (with <DPropLink name="lazyLoad" /> and <DPropLink name="livePagination" />, this is the default).
