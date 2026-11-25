@@ -1,185 +1,194 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Directive,
   ViewEncapsulation,
-  computed,
-  input,
 } from '@angular/core';
 
-import { join } from '../../../../utils/join';
-import { styleWithUnits } from '../../../../utils/styleWithUnits';
-import type { CSSProperties } from '../../../types/FrameworkTypes';
-import { IconCustomMaskCls } from './Icon.css';
-import { CUSTOMIZABLE_ICONS, CustomizableIconName } from './customizableIcons';
+import type { CustomizableIconName } from './customizableIcons';
 import { iconPaths } from './iconPaths';
-import { InfiniteIconClassName } from './InfiniteIconClassName';
+import { ICON_HOST, ICON_TEMPLATE, IconBase } from './IconForAngular.angular';
 
 /**
  * Angular siblings of the filter operator icons and the done / clear icons
  * of IconForVue.vue.ts (the operator icons of the default filter types, the
- * icons of the filter operator menu).
- *
- * The host IS the svg (`<svg infiniteDoneIcon>`), same class names as React
- * and Vue: sized by `size` (defaults to the `--infinite-icon-size` theme
- * var), filled with the current color, replaceable through the
- * `--infinite-icon-<name>` CSS variable (see Icon.css.ts).
+ * icons of the filter operator menu), on the shared svg icon base
+ * (IconForAngular.angular.ts): the host IS the svg (`<svg infiniteDoneIcon>`),
+ * same class names as React and Vue, replaceable through the
+ * `--infinite-icon-<name>` CSS variable.
  */
-@Directive({
-  host: {
-    viewBox: '0 0 24 24',
-    '[class]': 'classNameValue()',
-    '[style]': 'styleValue()',
-  },
-})
-abstract class PathIcon {
-  readonly size = input<number>();
-  readonly style = input<CSSProperties | null>();
-  readonly className = input<string>();
-
-  protected abstract readonly icon: CustomizableIconName;
-  protected abstract readonly paths: readonly string[];
-
-  protected readonly styleValue = computed(() => {
-    const size = this.size() ?? `var(--infinite-icon-size)`;
-    return {
-      flex: 'none',
-      width: typeof size === 'number' ? `${size}px` : size,
-      height: typeof size === 'number' ? `${size}px` : size,
-      fill: 'currentColor',
-      ...styleWithUnits(this.style() as Record<string, any> | null),
-    };
-  });
-
-  protected readonly classNameValue = computed(() =>
-    join(
-      this.className(),
-      IconCustomMaskCls[this.icon],
-      InfiniteIconClassName,
-      `${InfiniteIconClassName}-${CUSTOMIZABLE_ICONS[this.icon]}`,
-    ),
-  );
-}
-
-const TEMPLATE = `@for (d of paths; track $index) {<svg:path [attr.d]="d" />}`;
 
 @Component({
   selector: 'svg[infiniteIncludesOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class IncludesOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorContains' as const;
-  protected readonly paths = iconPaths.includesOperator;
+export class IncludesOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.includesOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorContains';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteStartsWithOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class StartsWithOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorStartsWith' as const;
-  protected readonly paths = iconPaths.startsWithOperator;
+export class StartsWithOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.startsWithOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorStartsWith';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteEndsWithOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class EndsWithOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorEndsWith' as const;
-  protected readonly paths = iconPaths.endsWithOperator;
+export class EndsWithOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.endsWithOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorEndsWith';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteEqualOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class EqualOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorEq' as const;
-  protected readonly paths = iconPaths.eqOperator;
+export class EqualOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.eqOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorEq';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteNotEqualOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class NotEqualOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorNeq' as const;
-  protected readonly paths = iconPaths.neqOperator;
+export class NotEqualOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.neqOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorNeq';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteGTOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class GTOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorGt' as const;
-  protected readonly paths = iconPaths.gtOperator;
+export class GTOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.gtOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorGt';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteGTEOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class GTEOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorGte' as const;
-  protected readonly paths = iconPaths.gteOperator;
+export class GTEOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.gteOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorGte';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteLTOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class LTOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorLt' as const;
-  protected readonly paths = iconPaths.ltOperator;
+export class LTOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.ltOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorLt';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteLTEOperatorIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class LTEOperatorIcon extends PathIcon {
-  protected readonly icon = 'filterOperatorLte' as const;
-  protected readonly paths = iconPaths.lteOperator;
+export class LTEOperatorIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.lteOperator;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'filterOperatorLte';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteDoneIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class DoneIcon extends PathIcon {
-  protected readonly icon = 'done' as const;
-  protected readonly paths = iconPaths.done;
+export class DoneIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.done;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'done';
+  }
 }
 
 @Component({
   selector: 'svg[infiniteClearIcon]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  template: TEMPLATE,
+  host: ICON_HOST,
+  template: ICON_TEMPLATE,
 })
-export class ClearIcon extends PathIcon {
-  protected readonly icon = 'clear' as const;
-  protected readonly paths = iconPaths.clear;
+export class ClearIcon extends IconBase {
+  protected override pathsValue() {
+    return iconPaths.clear;
+  }
+  protected override iconValue(): CustomizableIconName {
+    return 'clear';
+  }
 }

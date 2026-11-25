@@ -52,8 +52,9 @@ function showMenuForColumn<T>(options: {
   context: InfiniteTableStableContextValue<T>;
   clearAll: VoidFunction;
   showOverlay: ShowOverlayFn;
+  injector: Injector;
 }) {
-  const { columnId, context, clearAll, showOverlay } = options;
+  const { columnId, context, clearAll, showOverlay, injector } = options;
   const { getState, actions } = context;
   const { columnMenuTargetRef, domRef } = getState();
 
@@ -89,15 +90,18 @@ function showMenuForColumn<T>(options: {
   // clear this so it won't become stale
   columnMenuTargetRef.current = null;
 
-  showOverlay(() => getMenuForColumn(columnId, context, onHideIntent), {
-    constrainTo: getMenuConstrainTo(getState()),
-    id: 'column-menu',
-    alignTo: target,
-    alignPosition: [
-      ['TopLeft', 'BottomLeft'],
-      ['TopRight', 'BottomRight'],
-    ],
-  });
+  showOverlay(
+    () => getMenuForColumn(columnId, context, onHideIntent, injector),
+    {
+      constrainTo: getMenuConstrainTo(getState()),
+      id: 'column-menu',
+      alignTo: target,
+      alignPosition: [
+        ['TopLeft', 'BottomLeft'],
+        ['TopRight', 'BottomRight'],
+      ],
+    },
+  );
 }
 
 export function setupColumnMenu<T>(params: MenuHookParams<T>): InfiniteOverlay {
@@ -147,6 +151,7 @@ export function setupColumnMenu<T>(params: MenuHookParams<T>): InfiniteOverlay {
           context,
           clearAll,
           showOverlay,
+          injector,
         });
 
         return () => {

@@ -3,6 +3,8 @@
  * getMenuForColumnForVue.vue.ts) - the column menu content, from the
  * default (or user-provided) column menu items.
  */
+import type { Injector } from '@angular/core';
+
 import { renderMenu } from '../../Menu/MenuForAngular.angular';
 import { MenuState } from '../../Menu/MenuState';
 import type { Renderable } from '../../types/FrameworkTypes.angular';
@@ -14,6 +16,8 @@ export function getMenuForColumn<T>(
   columnId: string | null,
   context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
+  /** the grid's injector (header labels in the Columns submenu) */
+  injector?: Injector,
 ): Renderable {
   if (columnId == null) {
     return null;
@@ -34,7 +38,7 @@ export function getMenuForColumn<T>(
     ...context,
   };
 
-  const defaultItems = defaultGetColumnMenuItems([], param)!;
+  const defaultItems = defaultGetColumnMenuItems([], param, injector)!;
 
   const items = getColumnMenuItems
     ? getColumnMenuItems(defaultItems, param)

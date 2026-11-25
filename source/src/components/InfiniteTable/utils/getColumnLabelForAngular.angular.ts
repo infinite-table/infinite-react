@@ -1,4 +1,11 @@
-import { TemplateRef } from '@angular/core';
+import { Injector, TemplateRef } from '@angular/core';
+
+import {
+  bindRenderable,
+  createRenderStage,
+  type RenderStage,
+} from '../../RawList/bindRenderable.angular';
+import { INFINITE_HEADER_CELL } from '../components/InfiniteTableHeader/InfiniteTableHeaderCellForAngular.angular';
 
 import {
   isComponentRenderable,
@@ -17,11 +24,8 @@ import type { InfiniteTableColumnHeaderParam } from '../types/InfiniteTableColum
  * was computed with, so a header template gets the column (`$implicit`)
  * and the header param (`let-columnApi="columnApi"`, ...), not the context
  * of the menu cell it is shown in; a component gets its inputs named like
- * the header param's properties.
- *
- * TODO(header slice): also provide the header cell token
- * (`injectHeaderCell()`) to the content, from `param` (no `domRef`), once
- * it exists - an `injector` on the bound template/component.
+ * the header param's properties, and `injectHeaderCell()` works in it (the
+ * param, with no `domRef`) when the grid's `injector` is given.
  */
 export function getColumnLabelForAngular<T>(
   colIdOrCol: string | InfiniteTableComputedColumn<T>,
@@ -29,6 +33,7 @@ export function getColumnLabelForAngular<T>(
     api: InfiniteTableApi<T>;
   } & GetImperativeApiParam<T>,
   renderLocation: 'grouping-toolbar' | 'column-menu' | 'column-filter',
+  injector?: Injector,
 ): Renderable {
   const col =
     typeof colIdOrCol === 'string'
@@ -78,16 +83,46 @@ export function getColumnLabelForAngular<T>(
 
   const header = col.header as unknown;
 
+  const bind = (content: Renderable) =>
+    injector
+      ? bindRenderable(
+          content,
+          param,
+          getStage(injector, `${renderLocation}:${col.id}`),
+          (p) => p.column,
+        )
+      : bindToHeaderParam(content, param);
+
   if (typeof header === 'function') {
     const label = (header as Function)(param) ?? null;
-    return bindToHeaderParam(label, param);
+    return bind(label);
   }
 
   if (header) {
-    return bindToHeaderParam(header as Renderable, param);
+    return bind(header as Renderable);
   }
 
   return defaultLabel;
+}
+
+/**
+ * One stable stage per grid, place and column: the menu is rendered again
+ * on state changes, and a new injector would recreate the label's views.
+ */
+const STAGES = new WeakMap<Injector, Map<string, RenderStage<any>>>();
+
+function getStage(injector: Injector, key: string): RenderStage<any> {
+  let stages = STAGES.get(injector);
+  if (!stages) {
+    stages = new Map();
+    STAGES.set(injector, stages);
+  }
+  let stage = stages.get(key);
+  if (!stage) {
+    stage = createRenderStage(INFINITE_HEADER_CELL, injector);
+    stages.set(key, stage);
+  }
+  return stage;
 }
 
 function bindToHeaderParam(

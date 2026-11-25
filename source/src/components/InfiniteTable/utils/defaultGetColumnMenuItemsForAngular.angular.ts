@@ -4,7 +4,7 @@
  * definition (sort/pin/filter items + the Columns / Group by submenus with
  * Angular checkboxes).
  */
-import { TemplateRef } from '@angular/core';
+import { Injector, TemplateRef } from '@angular/core';
 
 import {
   DataSourceApi,
@@ -61,6 +61,8 @@ export function defaultGetColumnMenuItems<T>(
     actions: InfiniteTableActions<T>;
     dataSourceActions: DataSourceComponentActions<T>;
   },
+  /** the grid's injector: header labels can `injectHeaderCell()` */
+  injector?: Injector,
 ): MenuProps['items'] {
   const { columnApi, column, getComputed, api, dataSourceApi, getState } =
     params;
@@ -155,7 +157,12 @@ export function defaultGetColumnMenuItems<T>(
         const computed = getComputed();
 
         computed.computedColumnsMapInInitialOrder.forEach((col, id) => {
-          const label = getColumnLabelForAngular(col, params, 'column-menu');
+          const label = getColumnLabelForAngular(
+            col,
+            params,
+            'column-menu',
+            injector,
+          );
 
           colItems.push({
             key: id,
@@ -204,7 +211,12 @@ export function defaultGetColumnMenuItems<T>(
             // if it's a group column, we skip it
             return;
           }
-          const label = getColumnLabelForAngular(col, params, 'column-menu');
+          const label = getColumnLabelForAngular(
+            col,
+            params,
+            'column-menu',
+            injector,
+          );
 
           colItems.push({
             key: id,

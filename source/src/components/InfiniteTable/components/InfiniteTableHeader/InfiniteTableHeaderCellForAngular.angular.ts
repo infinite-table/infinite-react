@@ -51,6 +51,10 @@ import {
 import { InternalVars } from '../../internalVars.css';
 import { ThemeVars } from '../../vars.css';
 import { injectInfiniteTable } from '../../InfiniteTableContextForAngular.angular';
+import {
+  createColumnFilterChangeHandler,
+  getColumnHeaderFilter,
+} from './InfiniteTableColumnHeaderFilterForAngular.angular';
 
 import type {
   InfiniteTableColumnHeaderParam,
@@ -233,40 +237,6 @@ function overrideRenderable(
   return renderComponent(cmp, { inputs: props });
 }
 
-/**
- * FILTERS SLICE HOOK POINT - the column filter of a header cell (React:
- * InfiniteTableColumnHeaderFilter, Vue: InfiniteTableColumnHeaderFilterForVue).
- *
- * Called for every header cell render. What it returns is
- * `renderBag.filterEditor` and - when `showColumnFilters` is true - is
- * rendered after the content div, before the resize handle (the content div
- * is then half of the cell's height). Until the filters slice lands it
- * renders nothing.
- *
- * What the filters slice has to port here (see the Vue header cell): the
- * filter type / operator lookup (`filterTypes[column.computedFilterType]`,
- * the operator from `column.computedFilterValue` or the type's
- * `defaultOperator`), the FilterEditor / FilterOperatorSwitch component
- * lookup (operator, filter type, column, default), the debounced
- * `api.setColumnFilter(column.id, value)` (recreated when the column id or
- * the DataSource `filterDelay` changes - the cell is pooled, so key it on the
- * column id), and `InfiniteTableColumnHeaderFilterEmpty` for columns that
- * are not filterable.
- */
-export type HeaderFilterHookParam = {
-  column: InfiniteTableComputedColumn<any>;
-  horizontalLayoutPageIndex: number | null;
-  filterTypes: DataSourcePropFilterTypes<any>;
-  columnHeaderHeight: number;
-  showColumnFilters: boolean;
-  headerParam: InfiniteTableHeaderCellContextType<any>;
-};
-export function renderColumnHeaderFilter(
-  _param: HeaderFilterHookParam,
-): Renderable {
-  return null;
-}
-
 const SPACER = renderDiv(flex['1'], null);
 
 const HEADER_CELL_PROXY_CLASS_NAME = `${InfiniteTableHeaderCellClassName}Proxy ${HeaderCellProxy}`;
@@ -393,6 +363,10 @@ export class InfiniteHeaderCellHost implements DoCheck {
   private readonly environmentInjector = inject(EnvironmentInjector);
   private readonly appRef = inject(ApplicationRef);
   private readonly table = injectInfiniteTable();
+  /** the debounced api.setColumnFilter of the filter row (keyed on the column id) */
+  private readonly getOnFilterChange = createColumnFilterChangeHandler(
+    this.table,
+  );
   private readonly element =
     inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
@@ -649,14 +623,15 @@ export class InfiniteHeaderCellHost implements DoCheck {
     const renderParam =
       initialRenderParam as InfiniteTableHeaderCellContextType<any>;
 
-    // FILTERS SLICE HOOK POINT - see renderColumnHeaderFilter
-    const columnFilterEditor = renderColumnHeaderFilter({
+    // the column filter (React: InfiniteTableColumnHeaderFilter) - rendered
+    // after the content div when showColumnFilters is true
+    const columnFilterEditor = getColumnHeaderFilter({
       column,
-      horizontalLayoutPageIndex,
+      columnApi,
       filterTypes: props.filterTypes,
       columnHeaderHeight,
-      showColumnFilters,
-      headerParam: renderParam,
+      horizontalLayoutPageIndex,
+      onChange: this.getOnFilterChange(column.id),
     });
     renderParam.renderBag.filterEditor = columnFilterEditor;
     this.renderParam.set(renderParam);
