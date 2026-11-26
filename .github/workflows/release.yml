@@ -13,8 +13,12 @@ permissions:
   id-token: write # Required for OIDC
   contents: write
 
+# A newer release commit cancels a release still in progress; any other push
+# gets a group of its own (its job is skipped anyway), so it never cancels a
+# running release - which would also cancel the website rebuild at its end.
+# Same condition as the job's `if`.
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ contains(github.event.head_commit.message, 'release version') && 'release' || github.run_id }}
   cancel-in-progress: true
 jobs:
   release:
