@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+import { appPathname } from './frameworkLinkShared';
+
 const TEST_RUNNER_PORT =
   (typeof process !== 'undefined' &&
     (process.env as any).NEXT_PUBLIC_TEST_RUNNER_PORT) ||
@@ -8,14 +10,6 @@ const TEST_RUNNER_PORT =
 
 type Status = 'idle' | 'starting' | 'running' | 'pass' | 'fail';
 type Mode = 'page' | 'folder';
-
-const COLORS: Record<Status, string> = {
-  idle: 'rgba(0, 0, 0, 0.55)',
-  starting: '#3b82f6',
-  running: '#3b82f6',
-  pass: '#16a34a',
-  fail: '#dc2626',
-};
 
 const labelFor = (status: Status, mode: Mode, specCount?: number): string => {
   switch (status) {
@@ -122,9 +116,7 @@ type OpenStatus =
   | { kind: 'ok'; file: string; line: number; col?: number; editor?: string }
   | { kind: 'err'; file: string; line: number; col?: number; error: string };
 
-export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
-  embedded = false,
-}) => {
+export const RunTestButton: React.FC<{ embedded?: boolean }> = () => {
   const [pathname, setPathname] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [mode, setMode] = useState<Mode>('page');
@@ -188,10 +180,13 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
       return;
     }
 
-    const url = window.location.pathname;
+    // the page's path in its app (without the /react base path of dev)
+    const url = appPathname();
     setPathname(url);
 
-    fetch(`${baseUrl()}/check?pathname=${encodeURIComponent(url)}`)
+    fetch(
+      `${baseUrl()}/check?pathname=${encodeURIComponent(url)}&project=react`,
+    )
       .then((r) => r.json())
       .then((data) => {
         setEnabled(!!data?.exists);
@@ -199,6 +194,9 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
         setSpecCount(
           typeof data?.specCount === 'number' ? data.specCount : undefined,
         );
+        // the color of the last run (test-runner-results.js)
+        const last = data?.lastResult?.status;
+        if (last === 'pass' || last === 'fail') setStatus(last);
       })
       .catch(() => setEnabled(false));
   }, []);
@@ -347,7 +345,7 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
       response = await fetch(`${baseUrl()}/trigger`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pathname }),
+        body: JSON.stringify({ pathname, project: 'react' }),
       });
     } catch {
       // network error reaching the sidecar — try a fresh session
@@ -370,8 +368,8 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
       ? 'Stop watching this folder'
       : 'Stop watching this test'
     : mode === 'folder'
-      ? 'Run all Playwright tests in this folder (watch mode)'
-      : 'Run Playwright test for this page (watch mode)';
+    ? 'Run all Playwright tests in this folder (watch mode)'
+    : 'Run Playwright test for this page (watch mode)';
 
   return (
     <>
@@ -380,27 +378,13 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
         onClick={active ? stop : start}
         title={buttonTitle}
         data-testid="infinite-page-run-test"
-        style={{
-          ...(embedded
-            ? {}
-            : {
-                position: 'fixed',
-                bottom: 6,
-                right: 38,
-                zIndex: 10000,
-              }),
-          padding: '4px 10px',
-          fontSize: 12,
-          lineHeight: 1.2,
-          border: '1px solid rgba(0, 0, 0, 0.2)',
-          borderRadius: 4,
-          background: COLORS[status],
-          color: '#fff',
-          cursor: 'pointer',
-          opacity: 0.9,
-          minWidth: 84,
-          fontFamily: 'inherit',
-        }}
+        className={`ex-chrome-item ex-chrome-run tone-${
+          status === 'pass' || status === 'fail'
+            ? status
+            : status === 'idle'
+            ? 'idle'
+            : 'running'
+        }`}
       >
         {buttonLabel}
       </button>
@@ -445,16 +429,18 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
                       openStatus.kind === 'ok'
                         ? '#86efac'
                         : openStatus.kind === 'err'
-                          ? '#fca5a5'
-                          : '#bfdbfe',
+                        ? '#fca5a5'
+                        : '#bfdbfe',
                   }}
                 >
                   ·{' '}
                   {openStatus.kind === 'opening'
                     ? `opening ${openStatus.file}…`
                     : openStatus.kind === 'ok'
-                      ? `opened ${openStatus.file}${openStatus.editor ? ` (${openStatus.editor})` : ''}`
-                      : `open failed: ${openStatus.error}`}
+                    ? `opened ${openStatus.file}${
+                        openStatus.editor ? ` (${openStatus.editor})` : ''
+                      }`
+                    : `open failed: ${openStatus.error}`}
                 </span>
               )}
             </span>
@@ -577,8 +563,8 @@ export const RunTestButton: React.FC<{ embedded?: boolean }> = ({
             {output
               ? renderOutputNodes(output, handleOpen)
               : active
-                ? '(starting…)'
-                : '(no output yet)'}
+              ? '(starting…)'
+              : '(no output yet)'}
           </div>
         </div>
       )}

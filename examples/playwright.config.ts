@@ -10,6 +10,8 @@ global.__DEV__ = !process.env.CI;
 // where this checkout's test apps run: 5555 / 5556, or other ports when
 // those were taken by another checkout
 const { getPort } = require('../scripts/dev-ports.cjs');
+// under /react/, /vue/, /angular/ when the dev servers run there (npm run dev)
+const { testAppBaseURL } = require('./scripts/dev-base-url.cjs');
 
 const {
   REACT_ONLY_GLOBS,
@@ -49,7 +51,7 @@ const config: PlaywrightTestConfig = {
     //   slowMo: 500000, // uncomment this and also add headless: false, so you can easily debug
     // },
 
-    baseURL: `http://localhost:${getPort('examples')}/`,
+    baseURL: testAppBaseURL('react', getPort('examples')),
   },
   projects: [
     {
@@ -70,7 +72,7 @@ const config: PlaywrightTestConfig = {
 
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: `http://localhost:${getPort('examplesVue')}/`,
+        baseURL: testAppBaseURL('vue', getPort('examplesVue')),
       },
     },
     {
@@ -83,7 +85,7 @@ const config: PlaywrightTestConfig = {
 
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: `http://localhost:${getPort('examplesAngular')}/`,
+        baseURL: testAppBaseURL('angular', getPort('examplesAngular')),
       },
     },
   ],

@@ -1,347 +1,36 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-export type { IndexEntry, TestPagesIndexProps } from './TestPagesIndex.types';
-import type { IndexEntry, TestPagesIndexProps } from './TestPagesIndex.types';
+import type { TestPagesIndexProps } from './TestPagesIndex.types';
+import { mountTestPagesIndex } from './testPagesIndexApp';
 
-const STORAGE_KEY = 'infinite-tests:index-search';
+export type { IndexNode, TestPagesIndexProps } from './TestPagesIndex.types';
 
-// Muted, low-contrast palette tuned for the dark (black) page background.
-const ACCENT = '#8faecd';
-const GUIDE_WIDTH = 18;
-const GUIDE_COLOR = 'rgba(255, 255, 255, 0.22)';
+const TEST_RUNNER_PORT =
+  Number(process.env.NEXT_PUBLIC_TEST_RUNNER_PORT) || 5599;
 
-type TreeMeta = {
-  isLast: boolean;
-  ancestorHasNext: boolean[];
-};
-
-const computeTreeMeta = (entries: IndexEntry[]): TreeMeta[] =>
-  entries.map((entry, index) => {
-    const { depth } = entry;
-
-    let isLast = true;
-    for (let i = index + 1; i < entries.length; i++) {
-      if (entries[i].depth <= depth) {
-        isLast = entries[i].depth < depth;
-        break;
-      }
-    }
-
-    const ancestorHasNext: boolean[] = [];
-    for (let level = 0; level < depth; level++) {
-      let ancestorIdx = index;
-      while (ancestorIdx >= 0 && entries[ancestorIdx].depth !== level) {
-        ancestorIdx--;
-      }
-
-      let hasNextSibling = false;
-      if (ancestorIdx >= 0) {
-        for (let i = ancestorIdx + 1; i < entries.length; i++) {
-          if (entries[i].depth === level) {
-            hasNextSibling = true;
-            break;
-          }
-          if (entries[i].depth < level) {
-            break;
-          }
-        }
-      }
-
-      ancestorHasNext.push(hasNextSibling);
-    }
-
-    return { isLast, ancestorHasNext };
-  });
-
-const TreeGuides = ({
-  depth,
-  isLast,
-  ancestorHasNext,
-}: TreeMeta & { depth: number }) => {
-  if (depth === 0) {
-    return null;
-  }
-
-  return (
-    <span
-      aria-hidden
-      style={{
-        display: 'inline-flex',
-        flexShrink: 0,
-        alignSelf: 'stretch',
-      }}
-    >
-      {Array.from({ length: depth }).map((_, level) => {
-        const isBranch = level === depth - 1;
-        const showVertical = isBranch ? true : ancestorHasNext[level];
-
-        return (
-          <span
-            key={level}
-            style={{
-              width: GUIDE_WIDTH,
-              position: 'relative',
-              flexShrink: 0,
-            }}
-          >
-            {showVertical ? (
-              <span
-                style={{
-                  position: 'absolute',
-                  left: GUIDE_WIDTH / 2 - 0.5,
-                  top: 0,
-                  bottom: isBranch && isLast ? '50%' : 0,
-                  borderLeft: `1px dotted ${GUIDE_COLOR}`,
-                }}
-              />
-            ) : null}
-            {isBranch ? (
-              <span
-                style={{
-                  position: 'absolute',
-                  left: GUIDE_WIDTH / 2 - 0.5,
-                  top: '50%',
-                  width: GUIDE_WIDTH / 2 + 2,
-                  borderBottom: `1px dotted ${GUIDE_COLOR}`,
-                }}
-              />
-            ) : null}
-          </span>
-        );
-      })}
-    </span>
-  );
-};
-
-const highlight = (text: string, query: string) => {
-  if (!query) {
-    return text;
-  }
-  const lower = text.toLowerCase();
-  const target = query.toLowerCase();
-  const idx = lower.indexOf(target);
-  if (idx === -1) {
-    return text;
-  }
-  return (
-    <>
-      {text.slice(0, idx)}
-      <mark
-        style={{
-          background: 'rgba(96, 140, 190, 0.35)',
-          color: 'inherit',
-          padding: '0 2px',
-          borderRadius: 2,
-        }}
-      >
-        {text.slice(idx, idx + query.length)}
-      </mark>
-      {text.slice(idx + query.length)}
-    </>
-  );
-};
-
+/**
+ * The test pages index of a folder (the generated index.page.tsx of every
+ * folder): the framework-free index of testPagesIndexApp.ts, shared with
+ * the Vue and Angular apps, mounted after hydration.
+ */
 export const TestPagesIndex: React.FC<TestPagesIndexProps> = ({
   segments,
   parentHref,
   entries,
 }) => {
-  const title = segments.length === 0 ? 'Test pages' : segments.join(' / ');
-
-  const [query, setQuery] = useState('');
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  // Restore the last query (per-session). It is intentionally not part of
-  // SSR output to avoid hydration mismatches; we only sync after mount.
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const saved = window.sessionStorage.getItem(STORAGE_KEY) ?? '';
-    if (saved) {
-      setQuery(saved);
-    }
-  }, []);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    window.sessionStorage.setItem(STORAGE_KEY, query);
-  }, [query]);
+    if (!ref.current) return;
+    return mountTestPagesIndex(ref.current, {
+      framework: 'react',
+      segments,
+      parentHref,
+      entries,
+      testRunnerPort: TEST_RUNNER_PORT,
+    });
+  }, [segments, parentHref, entries]);
 
-  // "/" focuses the search input — common convention; only when not already
-  // typing into another input.
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== '/') {
-        return;
-      }
-      const active = document.activeElement;
-      const isEditable =
-        active instanceof HTMLInputElement ||
-        active instanceof HTMLTextAreaElement ||
-        (active instanceof HTMLElement && active.isContentEditable);
-      if (isEditable) {
-        return;
-      }
-      event.preventDefault();
-      inputRef.current?.focus();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
-
-  const filtered = useMemo(() => {
-    const trimmed = query.trim().toLowerCase();
-    if (!trimmed) {
-      return entries;
-    }
-    return entries.filter(
-      (entry) =>
-        entry.path.toLowerCase().includes(trimmed) ||
-        entry.name.toLowerCase().includes(trimmed),
-    );
-  }, [entries, query]);
-
-  const treeMeta = useMemo(() => computeTreeMeta(filtered), [filtered]);
-
-  // The query is persisted to sessionStorage so that re-rendering the same
-  // index (e.g. after a re-mount) keeps the user's typed filter. When the
-  // user navigates *away* from this index — into a folder, into a page, or
-  // via the Back link — we want each new index view to start unfiltered.
-  const clearPersistedQuery = () => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    window.sessionStorage.removeItem(STORAGE_KEY);
-  };
-
-  return (
-    <div
-      style={{
-        padding: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        fontFamily: 'sans-serif',
-        color: 'rgba(255, 255, 255, 0.75)',
-        // native widgets (search clear button, scrollbars) render dark
-        colorScheme: 'dark',
-      }}
-    >
-      {parentHref !== null && <>
-        <a
-          href={parentHref}
-          onClick={clearPersistedQuery}
-          style={{
-            alignSelf: 'flex-start',
-            color: ACCENT,
-            textDecoration: 'none',
-          }}
-        >
-          ← Back
-        </a>
-        <a
-          href={'/tests'}
-          onClick={clearPersistedQuery}
-          style={{
-            alignSelf: 'flex-start',
-            color: ACCENT,
-            textDecoration: 'none',
-          }}
-        >
-          ← Tests
-        </a>
-        </>
-      }
-
-      <h1 style={{ margin: 0, color: 'rgba(255, 255, 255, 0.85)' }}>
-        {title}
-      </h1>
-
-      {entries.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            flexWrap: 'wrap',
-          }}
-        >
-          <input
-            ref={inputRef}
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Filter subtree… (press / to focus)"
-            aria-label="Filter test pages in this folder and subfolders"
-            style={{
-              flex: '1 1 240px',
-              maxWidth: 360,
-              padding: '6px 10px',
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              background: 'rgba(255, 255, 255, 0.06)',
-              color: 'inherit',
-              font: 'inherit',
-              outline: 'none',
-            }}
-          />
-          <span style={{ opacity: 0.7, fontSize: 13 }}>
-            {query.trim()
-              ? `${filtered.length} / ${entries.length}`
-              : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
-          </span>
-        </div>
-      )}
-
-      {entries.length === 0 ? (
-        <p style={{ opacity: 0.7 }}>No test pages in this folder.</p>
-      ) : filtered.length === 0 ? (
-        <p style={{ opacity: 0.7 }}>No matches for “{query.trim()}”.</p>
-      ) : (
-        <ul
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            paddingLeft: 0,
-            margin: 0,
-            listStyle: 'none',
-          }}
-        >
-          {filtered.map((entry, index) => (
-            <li
-              key={`${entry.type}:${entry.href}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                minHeight: 26,
-              }}
-            >
-              <TreeGuides depth={entry.depth} {...treeMeta[index]} />
-              <a
-                href={entry.href}
-                onClick={clearPersistedQuery}
-                style={{
-                  color: ACCENT,
-                  textDecoration: 'none',
-                  paddingLeft: entry.depth === 0 ? 0 : 4,
-                }}
-              >
-                {entry.type === 'folder' ? '📁 ' : ''}
-                {highlight(entry.path, query.trim())}
-                {entry.type === 'folder' ? '/' : ''}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  return <div ref={ref} />;
 };

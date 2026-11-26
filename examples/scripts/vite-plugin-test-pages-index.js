@@ -13,8 +13,7 @@ const RESOLVED_ROUTES_ID = '\0' + VIRTUAL_ROUTES_ID;
  */
 function testPagesIndexPlugin(options = {}) {
   const pagesRoot =
-    options.pagesRoot ||
-    require('path').join(process.cwd(), 'src', 'pages');
+    options.pagesRoot || require('path').join(process.cwd(), 'src', 'pages');
 
   return {
     name: 'vite-plugin-test-pages-index',
@@ -35,7 +34,11 @@ function testPagesIndexPlugin(options = {}) {
 
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (!req.url || !req.url.startsWith('/__test-index-props')) {
+        // under the base path in dev (/vue/__test-index-props)
+        if (
+          !req.url ||
+          !/^(?:\/[^/?]+)?\/__test-index-props(?:\?|$)/.test(req.url)
+        ) {
           return next();
         }
 

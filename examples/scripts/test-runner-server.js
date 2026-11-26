@@ -10,6 +10,13 @@
 //   POST /run  { pathname, watch }     -> NDJSON event stream
 //   POST /trigger { pathname }         -> re-run in place over the open stream
 //   POST /open { file, line, col }     -> open file in editor (cursor/code)
+//   GET  /results?project=vue          -> the last result of every spec and
+//                                         folder run ({ pages, folders })
+//   GET  /recent?limit=12              -> the recently changed pages / specs
+//   GET  /events                       -> Server-Sent Events: `results`
+//                                         (after a run), `change` (a file)
+//
+// The results and the recent changes: test-runner-results.js.
 //
 // `pathname` may be a leaf page (`/foo/bar` -> runs `src/pages/foo/bar.spec.ts`)
 // or a test folder index (`/foo` -> runs every spec under `src/pages/foo/`
@@ -24,6 +31,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
+const testResults = require('./test-runner-results');
+
 const PORT = Number(
   process.env.TEST_RUNNER_PORT ||
     require('../../scripts/dev-ports.cjs').getPort('testRunner'),
@@ -34,6 +43,8 @@ const PAGES_DIR = path.join(EXAMPLES_ROOT, 'src', 'pages');
 // Tracks the currently-active /run session for each pathname so the /trigger
 // endpoint can request an in-place re-run without tearing down the stream.
 const activeSessions = new Map();
+// numbers the JSON report files of the runs
+let runCount = 0;
 // Files we'll open in the editor must live somewhere under the monorepo root.
 const WORKSPACE_ROOT = path.resolve(EXAMPLES_ROOT, '..');
 const EDITOR_CANDIDATES = (
@@ -151,7 +162,9 @@ const readBody = (req) =>
   });
 
 const getFrameworkSiblingInfo = (pathname) => {
-  const parts = String(pathname || '').split('/').filter(Boolean);
+  const parts = String(pathname || '')
+    .split('/')
+    .filter(Boolean);
   const base = parts.length === 0 ? PAGES_DIR : path.join(PAGES_DIR, ...parts);
   let pagePathTsx = base + '.page.tsx';
   let pagePathVue = base + '.page.vue';
@@ -174,6 +187,9 @@ const getFrameworkSiblingInfo = (pathname) => {
 
 const handleCheck = (req, res, url) => {
   const pathname = url.searchParams.get('pathname') || '';
+  const project = url.searchParams.get('project') || 'react';
+  // the last result of the page's spec (or of the folder's run)
+  const lastResult = testResults.lastResultOf(project, pathname);
   const paths = inferPaths(pathname);
   const framework = getFrameworkSiblingInfo(pathname);
   const resolved = resolveMode(paths);
@@ -182,6 +198,7 @@ const handleCheck = (req, res, url) => {
       exists: false,
       spec: null,
       mode: null,
+      lastResult,
       ...framework,
     });
   }
@@ -190,6 +207,7 @@ const handleCheck = (req, res, url) => {
       exists: true,
       mode: 'page',
       spec: path.relative(EXAMPLES_ROOT, resolved.target),
+      lastResult,
       ...framework,
     });
   }
@@ -198,6 +216,7 @@ const handleCheck = (req, res, url) => {
     mode: 'folder',
     spec: path.relative(EXAMPLES_ROOT, resolved.target),
     specCount: resolved.specs.length,
+    lastResult,
     ...framework,
   });
 };
@@ -210,7 +229,9 @@ const openInEditor = (target) =>
     let i = 0;
     const tryNext = () => {
       if (i >= EDITOR_CANDIDATES.length) {
-        const msg = `no editor CLI found (tried: ${EDITOR_CANDIDATES.join(', ')})`;
+        const msg = `no editor CLI found (tried: ${EDITOR_CANDIDATES.join(
+          ', ',
+        )})`;
         console.error(`[test-runner] ${msg}`);
         return resolve({ ok: false, error: msg });
       }
@@ -367,12 +388,25 @@ const handleRun = async (req, res) => {
       'test',
       relTarget,
       '--retries=0',
-      '--reporter=list',
+      // list: the output the client shows; json: the result of every spec,
+      // for the indexes (test-runner-results.js)
+      '--reporter=list,json',
       `--project=${playwrightProject}`,
     ];
+    const reportFile = path.join(
+      EXAMPLES_ROOT,
+      '.logs',
+      `test-run-${process.pid}-${++runCount}.json`,
+    );
+    fs.mkdirSync(path.dirname(reportFile), { recursive: true });
     currentProc = spawn(cmd, args, {
       cwd: EXAMPLES_ROOT,
-      env: { ...process.env, FORCE_COLOR: '0' },
+      env: {
+        ...process.env,
+        FORCE_COLOR: '0',
+        PLAYWRIGHT_JSON_OUTPUT_FILE: reportFile,
+        PLAYWRIGHT_JSON_OUTPUT_NAME: reportFile,
+      },
     });
     currentProc.stdout.on('data', (chunk) =>
       send({ type: 'stdout', data: chunk.toString() }),
@@ -385,16 +419,26 @@ const handleRun = async (req, res) => {
     );
     currentProc.on('close', (code, signal) => {
       currentProc = null;
-      if (signal === 'SIGTERM' && pendingRerun) {
-        // killed because of a file change — don't report as fail
+      if (signal === 'SIGTERM' && (pendingRerun || stopped)) {
+        // killed because of a file change, or the session was closed: no
+        // result
       } else {
+        const status = code === 0 ? 'pass' : 'fail';
+        testResults.recordRun({
+          project: playwrightProject,
+          mode: resolved.mode,
+          pathname,
+          status,
+          reportFile,
+        });
         send({
           type: 'run-end',
           code,
-          status: code === 0 ? 'pass' : 'fail',
+          status,
           ts: Date.now(),
         });
       }
+      fs.rm(reportFile, { force: true }, () => {});
       if (pendingRerun && !stopped) {
         pendingRerun = false;
         // small debounce to coalesce rapid file events
@@ -449,13 +493,15 @@ const handleRun = async (req, res) => {
   const session = { triggerRerun };
   // Replace any prior session for the same pathname (e.g. a stale connection
   // that wasn't cleaned up yet) — only the most recent one wins.
-  activeSessions.set(pathname, session);
+  // per project: the same page can be watched in two frameworks
+  const sessionKey = `${playwrightProject}:${pathname}`;
+  activeSessions.set(sessionKey, session);
 
   const cleanup = () => {
     if (stopped) return;
     stopped = true;
-    if (activeSessions.get(pathname) === session) {
-      activeSessions.delete(pathname);
+    if (activeSessions.get(sessionKey) === session) {
+      activeSessions.delete(sessionKey);
     }
     if (currentProc) {
       try {
@@ -488,11 +534,11 @@ const handleTrigger = async (req, res) => {
   } catch (e) {
     return sendJson(res, 400, { error: 'Invalid JSON' });
   }
-  const { pathname } = parsed;
+  const { pathname, project = 'react' } = parsed;
   if (typeof pathname !== 'string') {
     return sendJson(res, 400, { error: 'pathname required' });
   }
-  const session = activeSessions.get(pathname);
+  const session = activeSessions.get(`${project}:${pathname}`);
   if (!session) {
     return sendJson(res, 404, { error: 'no active session', pathname });
   }
@@ -517,6 +563,20 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/check') {
       return handleCheck(req, res, url);
     }
+    if (req.method === 'GET' && url.pathname === '/results') {
+      return sendJson(
+        res,
+        200,
+        testResults.resultsOf(url.searchParams.get('project') || 'react'),
+      );
+    }
+    if (req.method === 'GET' && url.pathname === '/recent') {
+      const limit = Number(url.searchParams.get('limit')) || 12;
+      return sendJson(res, 200, testResults.recentChanges(limit));
+    }
+    if (req.method === 'GET' && url.pathname === '/events') {
+      return testResults.handleEvents(req, res);
+    }
     if (req.method === 'POST' && url.pathname === '/open') {
       return await handleOpen(req, res);
     }
@@ -529,7 +589,9 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { error: 'Not found' });
   } catch (e) {
     console.error('[test-runner]', e);
-    return sendJson(res, 500, { error: e && e.message ? e.message : String(e) });
+    return sendJson(res, 500, {
+      error: e && e.message ? e.message : String(e),
+    });
   }
 });
 

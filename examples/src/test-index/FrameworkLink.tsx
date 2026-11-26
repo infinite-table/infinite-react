@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import {
+  appPathname,
   buildFrameworkSiblingHref,
   EXAMPLES_FRAMEWORKS,
   type ExamplesFramework,
@@ -23,31 +24,12 @@ type FrameworkLinkProps = {
   embedded?: boolean;
 };
 
-const linkStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  padding: '4px 10px',
-  fontSize: 12,
-  lineHeight: 1.2,
-  borderRadius: 4,
-  border: '1px solid rgba(0, 0, 0, 0.2)',
-  background: 'rgba(0, 0, 0, 0.55)',
-  color: '#fff',
-  textDecoration: 'none',
-  opacity: 0.9,
-  fontFamily: 'inherit',
-  whiteSpace: 'nowrap',
-};
-
 /**
  * Links to the same test page in the other framework apps (React, Vue,
  * Angular), one for each sibling `.page.tsx` / `.page.vue` /
  * `.page.angular.ts` that exists.
  */
-export const FrameworkLink: React.FC<FrameworkLinkProps> = ({
-  current,
-  embedded = false,
-}) => {
+export const FrameworkLink: React.FC<FrameworkLinkProps> = ({ current }) => {
   const [targets, setTargets] = useState<ExamplesFramework[]>([]);
 
   useEffect(() => {
@@ -55,7 +37,8 @@ export const FrameworkLink: React.FC<FrameworkLinkProps> = ({
       return;
     }
 
-    const pathname = window.location.pathname;
+    // the page's path in its app (without the /react base path of dev)
+    const pathname = appPathname();
     fetch(
       `${testRunnerBaseUrl()}/check?pathname=${encodeURIComponent(pathname)}`,
     )
@@ -75,41 +58,19 @@ export const FrameworkLink: React.FC<FrameworkLinkProps> = ({
     return null;
   }
 
-  const pathname = window.location.pathname;
+  const pathname = appPathname();
   const links = targets.map((target) => (
     <a
       key={target}
       href={buildFrameworkSiblingHref(pathname, target)}
       data-testid="infinite-page-framework-link"
       title={`Open this page in the ${FRAMEWORK_LABELS[target]} examples app`}
-      style={linkStyle}
-      onMouseEnter={(event) => {
-        event.currentTarget.style.opacity = '1';
-      }}
-      onMouseLeave={(event) => {
-        event.currentTarget.style.opacity = '0.9';
-      }}
+      className="ex-chrome-item ex-chrome-link"
     >
       See {FRAMEWORK_LABELS[target]}
     </a>
   ));
 
-  if (embedded) {
-    return <>{links}</>;
-  }
-
-  return (
-    <span
-      style={{
-        position: 'fixed',
-        bottom: 6,
-        right: 132,
-        zIndex: 10000,
-        display: 'inline-flex',
-        gap: 6,
-      }}
-    >
-      {links}
-    </span>
-  );
+  // items of the bar's own row (PageDevChrome)
+  return <>{links}</>;
 };

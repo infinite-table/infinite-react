@@ -15,9 +15,75 @@ body {
   flex-flow: column;
 }
 
+/* The page around the grids, in the light / dark theme the user picked
+   (src/test-index/examplesTheme.ts sets data-examples-theme on <html>). The
+   test pages index, the bottom right bar and the front page use the same
+   tokens. Dark is the default. */
+:root {
+  --ex-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --ex-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ex-bg: #0b0d12;
+  --ex-surface: #12151d;
+  --ex-surface-2: #191d27;
+  --ex-hover: rgba(255, 255, 255, 0.05);
+  --ex-border: rgba(255, 255, 255, 0.09);
+  --ex-border-strong: rgba(255, 255, 255, 0.16);
+  --ex-fg: #e7e9ef;
+  --ex-fg-strong: #f6f7fa;
+  --ex-muted: #949db0;
+  --ex-accent: #7ea6ff;
+  --ex-accent-soft: rgba(126, 166, 255, 0.16);
+  --ex-pass: #34d399;
+  --ex-pass-soft: rgba(52, 211, 153, 0.14);
+  --ex-fail: #f87171;
+  --ex-fail-soft: rgba(248, 113, 113, 0.15);
+  --ex-running: #60a5fa;
+  --ex-warn: #fbbf24;
+  --ex-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  --ex-chrome-bg: rgba(18, 21, 29, 0.96);
+}
+
+:root[data-examples-theme='light'] {
+  --ex-bg: #f5f6fa;
+  --ex-surface: #ffffff;
+  --ex-surface-2: #f0f2f7;
+  --ex-hover: rgba(15, 23, 42, 0.04);
+  --ex-border: rgba(15, 23, 42, 0.09);
+  --ex-border-strong: rgba(15, 23, 42, 0.18);
+  --ex-fg: #1e2533;
+  --ex-fg-strong: #0b1220;
+  --ex-muted: #64708a;
+  --ex-accent: #2f62e6;
+  --ex-accent-soft: rgba(47, 98, 230, 0.1);
+  --ex-pass: #15935f;
+  --ex-pass-soft: rgba(21, 147, 95, 0.1);
+  --ex-fail: #d23c3c;
+  --ex-fail-soft: rgba(210, 60, 60, 0.09);
+  --ex-running: #2f62e6;
+  --ex-warn: #b7791f;
+  --ex-shadow: 0 8px 28px rgba(15, 23, 42, 0.12);
+  --ex-chrome-bg: rgba(255, 255, 255, 0.97);
+}
+
 body {
+  /* as the specs expect (under automation no theme is applied) */
   background: black;
+  /* readable text outside the grid (labels, page controls) on the black
+     background */
+  color: #ddd;
   /* --infinite-flashing-animation-name: flashing; */
+}
+
+:root[data-examples-theme] body {
+  background: var(--ex-bg);
+  color: var(--ex-fg);
+  font-family: var(--ex-font);
+  color-scheme: dark;
+}
+
+:root[data-examples-theme='light'] body {
+  color-scheme: light;
 }
 
 @keyframes flashing {
@@ -36,4 +102,81 @@ body {
   100% {
     opacity: 0;
   }
+}
+
+/* The bar at the bottom right of every test page and index (PageDevChrome
+   of the React, Vue and Angular apps): back, run the spec, the same page in
+   the other apps, the light / dark toggle. Hidden under automation. */
+.ex-chrome {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--ex-chrome-bg);
+  border: 1px solid var(--ex-border);
+  box-shadow: var(--ex-shadow);
+  /* no backdrop-filter: it would make the bar the containing block of the
+     run output panels (position: fixed) rendered in it */
+  font: 500 12px/1 var(--ex-font);
+  color: var(--ex-fg);
+}
+.ex-chrome:empty {
+  display: none;
+}
+.ex-chrome-item {
+  height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+.ex-chrome-item:hover {
+  background: var(--ex-hover);
+  color: var(--ex-fg-strong);
+}
+.ex-chrome-icon {
+  width: 28px;
+  padding: 0;
+  font-size: 14px;
+}
+.ex-chrome-link {
+  color: var(--ex-muted);
+}
+.ex-chrome-run {
+  font-weight: 600;
+  min-width: 92px;
+}
+.ex-chrome-run.tone-pass {
+  color: var(--ex-pass);
+  background: var(--ex-pass-soft);
+}
+.ex-chrome-run.tone-fail {
+  color: var(--ex-fail);
+  background: var(--ex-fail-soft);
+}
+.ex-chrome-run.tone-running {
+  color: var(--ex-running);
+  background: var(--ex-accent-soft);
+}
+.ex-chrome-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 3px;
+  background: var(--ex-border);
 }

@@ -30,28 +30,42 @@ export function useTestRunner(pathnameRef: () => string | null) {
   let openTimer: number | null = null;
 
   const checkPathname = async (pathname: string | null) => {
-    if (!pathname || typeof navigator !== 'undefined' && (navigator as any).webdriver) {
+    if (
+      !pathname ||
+      (typeof navigator !== 'undefined' && (navigator as any).webdriver)
+    ) {
       enabled.value = false;
       return;
     }
 
     try {
       const response = await fetch(
-        `${testRunnerBaseUrl()}/check?pathname=${encodeURIComponent(pathname)}&project=${TEST_RUNNER_PROJECT}`,
+        `${testRunnerBaseUrl()}/check?pathname=${encodeURIComponent(
+          pathname,
+        )}&project=${TEST_RUNNER_PROJECT}`,
       );
       const data = await response.json();
       enabled.value = !!data?.exists;
       mode.value = data?.mode === 'folder' ? 'folder' : 'page';
       specCount.value =
         typeof data?.specCount === 'number' ? data.specCount : undefined;
+      // the color of the last run (test-runner-results.js)
+      const last = data?.lastResult?.status;
+      if (!active.value && (last === 'pass' || last === 'fail')) {
+        status.value = last;
+      }
     } catch {
       enabled.value = false;
     }
   };
 
-  watch(pathnameRef, (pathname) => {
-    void checkPathname(pathname);
-  }, { immediate: true });
+  watch(
+    pathnameRef,
+    (pathname) => {
+      void checkPathname(pathname);
+    },
+    { immediate: true },
+  );
 
   onBeforeUnmount(() => {
     abortController?.abort();
@@ -74,9 +88,7 @@ export function useTestRunner(pathnameRef: () => string | null) {
         status.value = event.status === 'pass' ? 'pass' : 'fail';
         break;
       case 'change':
-        output.value = trimOutput(
-          output.value + `\n[changed] ${event.file}\n`,
-        );
+        output.value = trimOutput(output.value + `\n[changed] ${event.file}\n`);
         break;
       case 'trigger':
         output.value = trimOutput(
@@ -185,7 +197,7 @@ export function useTestRunner(pathnameRef: () => string | null) {
       const response = await fetch(`${testRunnerBaseUrl()}/trigger`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pathname }),
+        body: JSON.stringify({ pathname, project: TEST_RUNNER_PROJECT }),
       });
       if (!response.ok) {
         startFreshSession();
@@ -210,7 +222,13 @@ export function useTestRunner(pathnameRef: () => string | null) {
       .then(async (response) => {
         const data = await response.json().catch(() => ({}));
         if (response.ok && data?.ok) {
-          openStatus.value = { kind: 'ok', file, line, col, editor: data.editor };
+          openStatus.value = {
+            kind: 'ok',
+            file,
+            line,
+            col,
+            editor: data.editor,
+          };
         } else {
           openStatus.value = {
             kind: 'err',

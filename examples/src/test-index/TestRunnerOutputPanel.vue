@@ -1,15 +1,8 @@
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue';
 
-import {
-  labelFor,
-  stripAnsi,
-  type TestRunnerStatus,
-} from './testRunnerShared';
+import { labelFor, outputParts } from './testRunnerShared';
 import type { useTestRunner } from './useTestRunner';
-
-const FILE_REF_RE =
-  /((?:\/|\.{0,2}\/)?[\w@.\-/]+\.(?:tsx?|jsx?|mjs|cjs|vue)):(\d+)(?::(\d+))?/g;
 
 const props = defineProps<{
   runner: ReturnType<typeof useTestRunner>;
@@ -28,39 +21,6 @@ watch(
     }
   },
 );
-
-type OutputPart =
-  | { kind: 'text'; value: string }
-  | { kind: 'link'; value: string; file: string; line: number; col?: number };
-
-const outputParts = (raw: string): OutputPart[] => {
-  const text = stripAnsi(raw);
-  const parts: OutputPart[] = [];
-  const re = new RegExp(FILE_REF_RE.source, 'g');
-  let lastIdx = 0;
-  while (true) {
-    const match = re.exec(text);
-    if (match === null) {
-      break;
-    }
-    const [full, file, lineStr, colStr] = match;
-    if (match.index > lastIdx) {
-      parts.push({ kind: 'text', value: text.slice(lastIdx, match.index) });
-    }
-    parts.push({
-      kind: 'link',
-      value: full,
-      file,
-      line: Number(lineStr),
-      col: colStr ? Number(colStr) : undefined,
-    });
-    lastIdx = match.index + full.length;
-  }
-  if (lastIdx < text.length) {
-    parts.push({ kind: 'text', value: text.slice(lastIdx) });
-  }
-  return parts;
-};
 
 const onOpenClick = (
   event: MouseEvent,

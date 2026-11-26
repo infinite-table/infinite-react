@@ -41,10 +41,7 @@ const demoRoutes: RouteRecordRaw[] = Object.entries(pages)
   });
 
 const indexRoutes: RouteRecordRaw[] = testIndexRoutes.map((routePath) => {
-  const relativePath =
-    routePath === '/'
-      ? ''
-      : routePath.replace(/^\//, '');
+  const relativePath = routePath === '/' ? '' : routePath.replace(/^\//, '');
 
   return {
     path: routePath,
@@ -59,7 +56,8 @@ const indexRoutes: RouteRecordRaw[] = testIndexRoutes.map((routePath) => {
 const routes: RouteRecordRaw[] = [...indexRoutes, ...demoRoutes];
 
 const router = createRouter({
-  history: createWebHistory(),
+  // /vue/ in dev (vite.config.ts), / in the build
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

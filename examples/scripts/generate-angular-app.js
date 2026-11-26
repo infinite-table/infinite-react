@@ -8,6 +8,11 @@
  *   `index` page gets its folder's URL). Specs the parity allowlist skips
  *   as a whole (parity-allowlist.angular.json, entries without `test`) get
  *   no route.
+ * - test-index.generated.ts: the test pages index (TestPagesIndex in
+ *   src/angular-app/test-pages-index.ts) - the folder URLs that have an index
+ *   in the React app (an `index.page.tsx`) and the tree of the routed Angular
+ *   pages, the Angular version of what the Vue app gets from
+ *   scripts/vite-plugin-test-pages-index.js.
  * - env.generated.ts: `process.env.NEXT_PUBLIC_*` for the pages (the test
  *   pages read them as the React ones do), from the same .env files Next.js
  *   reads, plus this checkout's ports (scripts/dev-ports.cjs), and the
@@ -39,6 +44,7 @@ const ALLOWLIST_FILE = path.join(
 );
 const ROUTES_FILE = path.join(APP_DIR, 'routes.generated.ts');
 const ENV_FILE = path.join(APP_DIR, 'env.generated.ts');
+const TEST_INDEX_FILE = path.join(APP_DIR, 'test-index.generated.ts');
 
 const PAGE_EXT = '.page.angular.ts';
 
@@ -123,6 +129,38 @@ export const pageRoutes: Routes = [${routes
 `;
 }
 
+/**
+ * The index of the test pages: the folder URLs with an index (the ones the
+ * React and Vue apps have) and every entry under src/pages, as the React and
+ * Vue indexes list them (scripts/buildTestPagesIndexProps.js), for the
+ * Angular pages that have a route. Folders without one are left out.
+ */
+function testIndexModule() {
+  const {
+    buildTestPagesIndexProps,
+    collectTestIndexRoutePaths,
+  } = require('./buildTestPagesIndexProps');
+
+  const excluded = excludedSpecs();
+  const { entries } = buildTestPagesIndexProps('', {
+    pagesRoot: PAGES_DIR,
+    pageSuffix: PAGE_EXT,
+    // the pages that have a route (routesModule)
+    includePage: (pagePath) => !excluded.has(pagePath + '.spec.ts'),
+  });
+
+  return `${HEADER}import type { IndexNode } from '../test-index/TestPagesIndex.types';
+
+/** the folder URLs that show the index ('/', '/tests', '/tests/table', ...) */
+export const testIndexRoutes: string[] = ${JSON.stringify(
+    collectTestIndexRoutePaths(PAGES_DIR),
+  )};
+
+/** the tree of the folders and pages under src/pages */
+export const testIndexEntries: IndexNode[] = ${JSON.stringify(entries)};
+`;
+}
+
 /** KEY=value lines of a .env file (the subset Next.js and Vite agree on) */
 function parseEnvFile(file) {
   let text;
@@ -171,6 +209,7 @@ function envModule() {
   env.NEXT_PUBLIC_EXAMPLES_PORT = String(getPort('examples'));
   env.NEXT_PUBLIC_EXAMPLES_VUE_PORT = String(getPort('examplesVue'));
   env.NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT = String(getPort('examplesAngular'));
+  env.NEXT_PUBLIC_EXAMPLES_DEV_PORT = String(getPort('examplesDev'));
   env.NEXT_PUBLIC_TEST_RUNNER_PORT = String(getPort('testRunner'));
 
   const sorted = Object.fromEntries(
@@ -200,10 +239,13 @@ export {};
 }
 
 function generateRoutes() {
-  if (writeIfChanged(ROUTES_FILE, routesModule())) {
-    console.log(
-      `[angular-app] wrote ${path.relative(EXAMPLES_ROOT, ROUTES_FILE)}`,
-    );
+  for (const [file, contents] of [
+    [ROUTES_FILE, routesModule()],
+    [TEST_INDEX_FILE, testIndexModule()],
+  ]) {
+    if (writeIfChanged(file, contents)) {
+      console.log(`[angular-app] wrote ${path.relative(EXAMPLES_ROOT, file)}`);
+    }
   }
 }
 
@@ -231,7 +273,13 @@ if (watch) {
     }, 100);
   };
   fs.watch(PAGES_DIR, { recursive: true }, (_event, filename) => {
-    if (filename && filename.endsWith(PAGE_EXT)) schedule();
+    // the pages, and the React index pages (the folders with an index)
+    if (
+      filename &&
+      (filename.endsWith(PAGE_EXT) || filename.endsWith('index.page.tsx'))
+    ) {
+      schedule();
+    }
   });
   fs.watchFile(ALLOWLIST_FILE, { interval: 1000 }, schedule);
   console.log(`[angular-app] watching src/pages for ${PAGE_EXT} files`);

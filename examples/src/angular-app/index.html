@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Infinite Table - Angular examples</title>
     <base href="/" />
+    <!-- the light / dark choice, before the first paint: themeBootScript() of
+         src/test-index/examplesTheme.ts (keep the two the same) -->
+    <script>
+      (function(){try{var d=document.documentElement;if(navigator.webdriver){return;}var t=localStorage.getItem('infinite-tests:theme');if(t!=='light'&&t!=='dark')t='dark';d.setAttribute('data-examples-theme',t);d.classList.add('infinite-theme-mode--'+t);}catch(e){}})();
+    </script>
   </head>
   <body>
     <examples-app></examples-app>

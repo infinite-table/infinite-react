@@ -19,6 +19,9 @@ const path = require('node:path');
 
 /** service -> default port */
 const SERVICES = {
+  // examples: the front of the dev servers - /react, /vue and /angular on
+  // one port (examples/scripts/examples-dev-server.js)
+  examplesDev: 5550,
   examples: 5555, // examples: React test app (next dev / http-server)
   examplesVue: 5556, // examples: Vue test app (vite / http-server)
   vuePlayground: 5557, // vue-playground
@@ -330,6 +333,7 @@ function envForPorts(slot, ports, dir = process.cwd()) {
   env.NEXT_PUBLIC_EXAMPLES_PORT = String(ports.examples);
   env.NEXT_PUBLIC_EXAMPLES_VUE_PORT = String(ports.examplesVue);
   env.NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT = String(ports.examplesAngular);
+  env.NEXT_PUBLIC_EXAMPLES_DEV_PORT = String(ports.examplesDev);
   const dataUrl = localDataUrl(ports.data, dir);
   if (dataUrl) env.NEXT_PUBLIC_BASE_URL = dataUrl;
   return env;

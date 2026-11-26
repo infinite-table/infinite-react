@@ -1,5 +1,7 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 
+import { themeBootScript } from '../test-index/examplesTheme';
+
 export default function Document() {
   return (
     <Html lang="en">
@@ -17,6 +19,13 @@ export default function Document() {
           color: 'var(--infinite-cell-color)',
         }}
       >
+        {/* the light / dark choice, before the first paint. Under automation
+            the dark grids of this className stay, as the specs expect */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeBootScript({ inBody: true }),
+          }}
+        />
         <Main />
         <NextScript />
       </body>

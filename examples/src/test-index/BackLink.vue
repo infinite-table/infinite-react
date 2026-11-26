@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { withBasePath } from './frameworkLinkShared';
+
 const props = withDefaults(
   defineProps<{
     embedded?: boolean;
@@ -27,7 +29,9 @@ const parentHref = computed(() => {
   if (typeof navigator !== 'undefined' && (navigator as any).webdriver) {
     return null;
   }
-  return computeParentHref(route.path);
+  // the parent folder in the app (route.path), with the /vue base path of dev
+  const parent = computeParentHref(route.path);
+  return parent === null ? null : withBasePath(parent);
 });
 </script>
 
@@ -37,38 +41,9 @@ const parentHref = computed(() => {
     :href="parentHref"
     data-testid="infinite-page-back-link"
     :title="`Back to ${parentHref}`"
-    class="back-link"
-    :class="{ embedded: props.embedded }"
+    :aria-label="`Back to ${parentHref}`"
+    class="ex-chrome-item ex-chrome-icon"
   >
     ←
   </a>
 </template>
-
-<style scoped>
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  font-size: 14px;
-  line-height: 1;
-  text-decoration: none;
-  opacity: 0.4;
-  transition: opacity 120ms ease-in-out;
-}
-
-.back-link:not(.embedded) {
-  position: fixed;
-  bottom: 6px;
-  right: 6px;
-  z-index: 10000;
-}
-
-.back-link:hover {
-  opacity: 1;
-}
-</style>

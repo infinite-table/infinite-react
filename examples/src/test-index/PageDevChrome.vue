@@ -2,25 +2,18 @@
 import BackLink from './BackLink.vue';
 import FrameworkLink from './FrameworkLink.vue';
 import RunTestButton from './RunTestButton.vue';
+import ThemeToggle from './ThemeToggle.vue';
+
+// The bar at the bottom right of every page (index.global.css .ex-chrome),
+// right to left: back, run the spec, the page in the other apps, the light /
+// dark toggle. Empty (hidden) under automation.
 </script>
 
 <template>
-  <div class="page-dev-chrome">
-    <BackLink embedded />
-    <RunTestButton embedded />
-    <FrameworkLink current="vue" embedded />
+  <div class="ex-chrome">
+    <BackLink />
+    <RunTestButton />
+    <FrameworkLink current="vue" />
+    <ThemeToggle />
   </div>
 </template>
-
-<style scoped>
-.page-dev-chrome {
-  position: fixed;
-  bottom: 6px;
-  right: 6px;
-  z-index: 10000;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  gap: 6px;
-}
-</style>

@@ -58,55 +58,17 @@ watch(
 </script>
 
 <template>
-  <span v-if="links.length" class="framework-links" :class="{ embedded }">
+  <!-- items of the bar's own row (PageDevChrome) -->
+  <template v-if="links.length">
     <a
       v-for="link in links"
       :key="link.target"
       :href="link.href"
       data-testid="infinite-page-framework-link"
       :title="`Open this page in the ${FRAMEWORK_LABELS[link.target]} examples app`"
-      class="framework-link"
+      class="ex-chrome-item ex-chrome-link"
     >
       See {{ FRAMEWORK_LABELS[link.target] }}
     </a>
-  </span>
+  </template>
 </template>
-
-<style scoped>
-.framework-link {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  font-size: 12px;
-  line-height: 1.2;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
-  text-decoration: none;
-  opacity: 0.9;
-  font-family: inherit;
-  white-space: nowrap;
-}
-
-.framework-links {
-  display: inline-flex;
-  gap: 6px;
-}
-
-.framework-links:not(.embedded) {
-  position: fixed;
-  bottom: 6px;
-  right: 132px;
-  z-index: 10000;
-}
-
-/* embedded: the links are items of the dev chrome's own row */
-.framework-links.embedded {
-  display: contents;
-}
-
-.framework-link:hover {
-  opacity: 1;
-}
-</style>

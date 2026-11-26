@@ -26,19 +26,32 @@ const buildParentHref = (segments) => {
   return buildHref(segments.slice(0, -1));
 };
 
-const buildSubtreeEntries = (
-  dir,
-  routeSegments,
-  pathPrefix,
-  depth,
-  pageSuffix,
-) => {
+/**
+ * The folders and pages under `dir`, as a tree: folders first, then pages,
+ * each by name. Folders without a page in them (at any depth) are left out,
+ * so the Vue and Angular indexes don't list folders only React has pages in.
+ */
+const buildTree = (dir, routeSegments, pageSuffix, includePage) => {
   const dirEntries = fs.readdirSync(dir, { withFileTypes: true });
-  const result = [];
 
   const folders = dirEntries
     .filter((entry) => entry.isDirectory() && isListableFolder(entry.name))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((folder) => {
+      const childRouteSegments = [...routeSegments, folder.name];
+      return {
+        type: 'folder',
+        name: folder.name,
+        href: buildHref(childRouteSegments),
+        children: buildTree(
+          path.join(dir, folder.name),
+          childRouteSegments,
+          pageSuffix,
+          includePage,
+        ),
+      };
+    })
+    .filter((folder) => folder.children.length > 0);
 
   const pages = dirEntries
     .filter(
@@ -48,47 +61,18 @@ const buildSubtreeEntries = (
         entry.name !== `${INDEX_BASENAME}${pageSuffix}` &&
         !entry.name.startsWith('_'),
     )
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((page) => {
+      const baseName = page.name.slice(0, -pageSuffix.length);
+      return {
+        type: 'page',
+        name: baseName,
+        href: buildHref(routeSegments, baseName),
+      };
+    })
+    .filter((page) => !includePage || includePage(page.href.slice(1)));
 
-  for (const folder of folders) {
-    const childRouteSegments = [...routeSegments, folder.name];
-    const entryPath = pathPrefix
-      ? `${pathPrefix}/${folder.name}`
-      : folder.name;
-
-    result.push({
-      type: 'folder',
-      name: folder.name,
-      path: entryPath,
-      href: buildHref(childRouteSegments),
-      depth,
-    });
-
-    result.push(
-      ...buildSubtreeEntries(
-        path.join(dir, folder.name),
-        childRouteSegments,
-        entryPath,
-        depth + 1,
-        pageSuffix,
-      ),
-    );
-  }
-
-  for (const page of pages) {
-    const baseName = page.name.slice(0, -pageSuffix.length);
-    const entryPath = pathPrefix ? `${pathPrefix}/${baseName}` : baseName;
-
-    result.push({
-      type: 'page',
-      name: baseName,
-      path: entryPath,
-      href: buildHref(routeSegments, baseName),
-      depth,
-    });
-  }
-
-  return result;
+  return [...folders, ...pages];
 };
 
 const inferRelativePath = (input) => {
@@ -109,13 +93,17 @@ const inferRelativePath = (input) => {
 
 /**
  * @param {string} pathOrFilename route-relative path or page __filename
- * @param {{ pageSuffix?: string, pagesRoot?: string }} [options]
+ * @param {{
+ *   pageSuffix?: string,
+ *   pagesRoot?: string,
+ *   includePage?: (pagePath: string) => boolean,
+ * }} [options] `includePage` gets the page's path under src/pages, without
+ *   the suffix (`tests/a/b`)
  */
 const buildTestPagesIndexProps = (pathOrFilename, options = {}) => {
   const pageSuffix = options.pageSuffix || DEFAULT_PAGE_SUFFIX;
   const pagesRoot =
-    options.pagesRoot ||
-    path.join(process.cwd(), 'src', 'pages');
+    options.pagesRoot || path.join(process.cwd(), 'src', 'pages');
 
   const relativePath = inferRelativePath(pathOrFilename);
   const segments = relativePath.split('/').filter(Boolean);
@@ -124,7 +112,7 @@ const buildTestPagesIndexProps = (pathOrFilename, options = {}) => {
   return {
     segments,
     parentHref: buildParentHref(segments),
-    entries: buildSubtreeEntries(dir, segments, '', 0, pageSuffix),
+    entries: buildTree(dir, segments, pageSuffix, options.includePage),
   };
 };
 

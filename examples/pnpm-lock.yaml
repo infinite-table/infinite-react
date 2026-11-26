@@ -162,6 +162,9 @@ importers:
       concurrently:
         specifier: ^5.1.0
         version: 5.3.0
+      http-proxy:
+        specifier: 1.18.1
+        version: 1.18.1
       http-server:
         specifier: ^14.1.1
         version: 14.1.1

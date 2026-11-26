@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "preinstall": "node ../scripts/only-pnpm.cjs",
-    "dev": "node ../scripts/with-ports.mjs --for examples,examplesVue,examplesAngular,testRunner --with data concurrently --names \"next,vue,angular,test-runner\" -c \"blue,green,red,magenta\" \"npm:dev:next\" \"npm:dev:vue\" \"npm:dev:angular\" \"npm:dev:test-runner\"",
+    "//dev": "the three test apps, each on its own port under its base path (/react, /vue, /angular), and the front of them on one port: http://localhost:5550/ (scripts/examples-dev-server.js)",
+    "dev": "node ../scripts/with-ports.mjs --for examplesDev,examples,examplesVue,examplesAngular,testRunner --with data concurrently --names \"front,next,vue,angular,test-runner\" -c \"cyan,blue,green,red,magenta\" \"npm:dev:front\" \"npm:dev:next\" \"npm:dev:vue\" \"npm:dev:angular\" \"npm:dev:test-runner\"",
+    "dev:front": "mkdir -p .logs && node ../scripts/with-ports.mjs --for examplesDev node scripts/examples-dev-server.js 2>&1 | tee .logs/dev-front.log",
     "dev:next": "mkdir -p .logs && node ../scripts/with-ports.mjs --for examples --with data next dev -p {examples} 2>&1 | tee .logs/dev-next.log",
     "dev:vue": "mkdir -p .logs && node ../scripts/with-ports.mjs --for examplesVue --with data vite 2>&1 | tee .logs/dev-vue.log",
     "dev:angular": "mkdir -p .logs && node ../scripts/with-ports.mjs --for examplesAngular --with data npm run dev:angular:in-ports 2>&1 | tee .logs/dev-angular.log",
@@ -106,6 +108,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "concurrently": "^5.1.0",
+    "http-proxy": "1.18.1",
     "http-server": "^14.1.1",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",

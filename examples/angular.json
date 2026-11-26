@@ -32,7 +32,8 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "baseHref": "/angular/"
             }
           },
           "defaultConfiguration": "production"
@@ -40,7 +41,8 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "examples:build:development"
+            "buildTarget": "examples:build:development",
+            "servePath": "/angular/"
           }
         }
       }

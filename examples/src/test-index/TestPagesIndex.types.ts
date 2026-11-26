@@ -1,13 +1,20 @@
-export type IndexEntry = {
-  type: 'folder' | 'page';
-  name: string;
-  path: string;
-  href: string;
-  depth: number;
-};
+/** a folder or a page of the test pages index (scripts/buildTestPagesIndexProps.js) */
+export type IndexNode =
+  | {
+      type: 'page';
+      name: string;
+      href: string;
+    }
+  | {
+      type: 'folder';
+      name: string;
+      href: string;
+      children: IndexNode[];
+    };
 
 export type TestPagesIndexProps = {
   segments: string[];
   parentHref: string | null;
-  entries: IndexEntry[];
+  /** the folders and pages of the folder, as a tree */
+  entries: IndexNode[];
 };

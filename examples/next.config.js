@@ -28,58 +28,73 @@ const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 // taken by another checkout
 const { getPort } = require('../scripts/dev-ports.cjs');
 
-module.exports = {
-  webpack: (config) => {
-    const definePlugin = new webpack.DefinePlugin({
-      __DEV__: JSON.stringify(!isGridBenchmark),
-      // only used by the grid benchmark pages, for reporting
-      __AG_GRID_VERSION__: JSON.stringify(
-        readPackageVersion('ag-grid-community'),
-      ),
-      __INFINITE_VERSION__: JSON.stringify(
-        require('../source/package.json').version,
-      ),
-      __VERSION__: JSON.stringify(require('../package.json').version),
-      // as if the source was published now (like the source build does) -
-      // so licenses that ended before today are expired
-      __VERSION_TIMESTAMP__: JSON.stringify(Date.now()),
-    });
+const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 
-    config.plugins.push(definePlugin);
+module.exports = (phase) => {
+  // `next dev` serves the app under /react, as the Vue and Angular dev
+  // servers serve theirs under /vue and /angular, for the front of the dev
+  // servers (scripts/examples-dev-server.js: the three apps on one port). The
+  // static export the tests run on in CI stays at the root.
+  const basePath =
+    phase === PHASE_DEVELOPMENT_SERVER && !isGridBenchmark ? '/react' : '';
 
-    config.resolve.alias['react'] = path.resolve('./node_modules/react');
-    config.resolve.alias['react-dom'] = path.resolve(
-      './node_modules/react-dom',
-    );
+  return {
+    ...(basePath ? { basePath } : {}),
+    webpack: (config) => {
+      const definePlugin = new webpack.DefinePlugin({
+        __DEV__: JSON.stringify(!isGridBenchmark),
+        // only used by the grid benchmark pages, for reporting
+        __AG_GRID_VERSION__: JSON.stringify(
+          readPackageVersion('ag-grid-community'),
+        ),
+        __INFINITE_VERSION__: JSON.stringify(
+          require('../source/package.json').version,
+        ),
+        __VERSION__: JSON.stringify(require('../package.json').version),
+        // as if the source was published now (like the source build does) -
+        // so licenses that ended before today are expired
+        __VERSION_TIMESTAMP__: JSON.stringify(Date.now()),
+      });
 
-    // for whatever reason, due to the monorepo setup
-    // we cannot use the vanilla-extract plugin for next
-    // so we're using the webpack plugin directly
-    config.plugins.push(new VanillaExtractPlugin());
+      config.plugins.push(definePlugin);
 
-    return config;
-  },
-  ...(isGridBenchmark
-    ? {
-        distDir: '.next-benchmark',
-        pageExtensions: ['bench.tsx'],
-        // type-checking the whole examples project would dominate the build
-        typescript: { ignoreBuildErrors: true },
-      }
-    : {
-        output: 'export',
-        pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
-      }),
-  env: {
-    // read by the test index pages (src/test-index)
-    NEXT_PUBLIC_TEST_RUNNER_PORT: String(getPort('testRunner')),
-    NEXT_PUBLIC_EXAMPLES_PORT: String(getPort('examples')),
-    NEXT_PUBLIC_EXAMPLES_VUE_PORT: String(getPort('examplesVue')),
-    NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT: String(getPort('examplesAngular')),
-  },
-  transpilePackages: ['@infinite-table/infinite-react'],
-  reactStrictMode: false, // in order to not break tests loading data by double loading
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+      config.resolve.alias['react'] = path.resolve('./node_modules/react');
+      config.resolve.alias['react-dom'] = path.resolve(
+        './node_modules/react-dom',
+      );
+
+      // for whatever reason, due to the monorepo setup
+      // we cannot use the vanilla-extract plugin for next
+      // so we're using the webpack plugin directly
+      config.plugins.push(new VanillaExtractPlugin());
+
+      return config;
+    },
+    ...(isGridBenchmark
+      ? {
+          distDir: '.next-benchmark',
+          pageExtensions: ['bench.tsx'],
+          // type-checking the whole examples project would dominate the build
+          typescript: { ignoreBuildErrors: true },
+        }
+      : {
+          output: 'export',
+          pageExtensions: ['page.tsx', 'page.ts', 'page.js'],
+        }),
+    env: {
+      // read by the test index pages (src/test-index)
+      NEXT_PUBLIC_TEST_RUNNER_PORT: String(getPort('testRunner')),
+      NEXT_PUBLIC_EXAMPLES_PORT: String(getPort('examples')),
+      NEXT_PUBLIC_EXAMPLES_VUE_PORT: String(getPort('examplesVue')),
+      NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT: String(getPort('examplesAngular')),
+      NEXT_PUBLIC_EXAMPLES_DEV_PORT: String(getPort('examplesDev')),
+      // the links of the test index pages, in the static HTML too
+      NEXT_PUBLIC_EXAMPLES_BASE_PATH: basePath,
+    },
+    transpilePackages: ['@infinite-table/infinite-react'],
+    reactStrictMode: false, // in order to not break tests loading data by double loading
+    eslint: {
+      ignoreDuringBuilds: true,
+    },
+  };
 };

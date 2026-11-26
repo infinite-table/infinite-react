@@ -14,7 +14,8 @@ const loadProps = async (relativePath: string) => {
   props.value = null;
   try {
     const response = await fetch(
-      `/__test-index-props?path=${encodeURIComponent(relativePath)}`,
+      // under the app's base path (/vue/ in dev), like everything it serves
+      `${import.meta.env.BASE_URL}__test-index-props?path=${encodeURIComponent(relativePath)}`,
     );
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);

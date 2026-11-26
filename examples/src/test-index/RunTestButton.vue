@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { STATUS_COLORS } from './testRunnerShared';
 import { useTestRunner } from './useTestRunner';
 import TestRunnerOutputPanel from './TestRunnerOutputPanel.vue';
 
@@ -16,6 +15,12 @@ const props = withDefaults(
 const route = useRoute();
 const pathname = computed(() => route.path);
 const runner = useTestRunner(() => pathname.value);
+
+const tone = computed(() => {
+  const status = runner.status.value;
+  if (status === 'pass' || status === 'fail' || status === 'idle') return status;
+  return 'running';
+});
 
 const buttonTitle = computed(() => {
   if (runner.active.value) {
@@ -34,10 +39,9 @@ const buttonTitle = computed(() => {
     <button
       type="button"
       data-testid="infinite-page-run-test"
-      class="run-button"
-      :class="{ embedded: props.embedded }"
+      class="ex-chrome-item ex-chrome-run"
+      :class="`tone-${tone}`"
       :title="buttonTitle"
-      :style="{ background: STATUS_COLORS[runner.status.value] }"
       @click="runner.active.value ? runner.stop() : runner.start(pathname)"
     >
       {{ runner.buttonLabel(pathname) }}
@@ -50,25 +54,3 @@ const buttonTitle = computed(() => {
     />
   </template>
 </template>
-
-<style scoped>
-.run-button {
-  padding: 4px 10px;
-  font-size: 12px;
-  line-height: 1.2;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  color: #fff;
-  cursor: pointer;
-  opacity: 0.9;
-  min-width: 84px;
-  font-family: inherit;
-}
-
-.run-button:not(.embedded) {
-  position: fixed;
-  bottom: 6px;
-  right: 38px;
-  z-index: 10000;
-}
-</style>

@@ -1,17 +1,16 @@
-import type { IndexEntry, TestPagesIndexProps } from './TestPagesIndex.types';
+import type { IndexNode, TestPagesIndexProps } from './TestPagesIndex.types';
 
-export type { IndexEntry, TestPagesIndexProps };
+export type { IndexNode, TestPagesIndexProps };
 
 // Next.js index pages list .page.tsx siblings; the Vue dev server uses the
 // shared JS helper directly with `.page.vue` via the Vite plugin middleware.
-const {
-  buildTestPagesIndexProps: build,
-} = require('../../scripts/buildTestPagesIndexProps.js') as {
-  buildTestPagesIndexProps: (
-    pathOrFilename: string,
-    options?: { pageSuffix?: string },
-  ) => TestPagesIndexProps;
-};
+const { buildTestPagesIndexProps: build } =
+  require('../../scripts/buildTestPagesIndexProps.js') as {
+    buildTestPagesIndexProps: (
+      pathOrFilename: string,
+      options?: { pageSuffix?: string },
+    ) => TestPagesIndexProps;
+  };
 
 /**
  * Server-only helper that reads a folder under `<cwd>/src/pages` and returns
@@ -21,5 +20,4 @@ const {
  */
 export const buildTestPagesIndexProps = (
   pathOrFilename: string,
-): TestPagesIndexProps =>
-  build(pathOrFilename, { pageSuffix: '.page.tsx' });
+): TestPagesIndexProps => build(pathOrFilename, { pageSuffix: '.page.tsx' });

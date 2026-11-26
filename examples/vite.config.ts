@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { testPagesIndexPlugin } from './scripts/vite-plugin-test-pages-index.js';
+import { themeBootScript } from './src/test-index/examplesTheme';
 
 /**
  * The Vue examples app. Lives in the same folder as the Next.js (React)
@@ -16,13 +17,33 @@ import { testPagesIndexPlugin } from './scripts/vite-plugin-test-pages-index.js'
 // taken by another checkout
 const { getPort } = require('../scripts/dev-ports.cjs');
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   // the React (Next.js) test pages read process.env.NEXT_PUBLIC_* - the Vue
   // siblings use the same expressions, inlined here from the same .env files
   const env = loadEnv(mode, __dirname, 'NEXT_PUBLIC_');
 
   return {
-    plugins: [vue(), testPagesIndexPlugin()],
+    // the dev server serves the app under /vue/, as the React and Angular
+    // dev servers serve theirs under /react and /angular, for the front of
+    // the dev servers (scripts/examples-dev-server.js: the three apps on one
+    // port). The build the tests run on in CI stays at the root.
+    base: command === 'serve' ? '/vue/' : '/',
+    plugins: [
+      vue(),
+      testPagesIndexPlugin(),
+      {
+        // the light / dark choice, before the first paint
+        // (src/test-index/examplesTheme.ts)
+        name: 'examples-theme-boot',
+        transformIndexHtml: () => [
+          {
+            tag: 'script',
+            children: themeBootScript(),
+            injectTo: 'head-prepend',
+          },
+        ],
+      },
+    ],
     define: {
       __DEV__: JSON.stringify(true),
       __VERSION__: JSON.stringify(require('../package.json').version),
@@ -47,6 +68,9 @@ export default defineConfig(({ mode }) => {
       ),
       'process.env.NEXT_PUBLIC_EXAMPLES_ANGULAR_PORT': JSON.stringify(
         String(getPort('examplesAngular')),
+      ),
+      'process.env.NEXT_PUBLIC_EXAMPLES_DEV_PORT': JSON.stringify(
+        String(getPort('examplesDev')),
       ),
       'import.meta.env.VITE_TEST_PROJECT': JSON.stringify('vue'),
     },
