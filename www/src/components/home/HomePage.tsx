@@ -6,10 +6,16 @@ import { getStats } from '@www/compare/matrixUtils';
 import { CodeBlock } from '@www/components/CodeBlock';
 import { HeroShowcase } from '@www/components/hero/HeroShowcase';
 import type { BlogPost } from '@www/utils/blogUtils';
+import {
+  DOCS_FRAMEWORK_IDS,
+  docsFramework,
+  docsFrameworksText,
+} from '@www/utils/docsFrameworksRegistry';
 
 import { getBenchmarkReadouts, type Readout } from './benchmarkReadouts';
 import { InstallCommand } from './InstallCommand';
 import { LazyDemo } from './LazyDemo';
+import { OtherFrameworks } from './OtherFrameworks';
 import { Schematic } from './Schematic';
 
 import './home.css';
@@ -88,7 +94,7 @@ export const PRINCIPLES = [
     text: 'Written in TypeScript, generic over your data type.',
   },
   { title: 'Zero dependencies', text: 'Nothing but your framework.' },
-  { title: 'React and Vue', text: 'The same grid, the same docs.' },
+  { title: docsFrameworksText(), text: 'The same grid, the same docs.' },
 ];
 
 export function SectionBar({
@@ -211,13 +217,11 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
                 </Link>
                 <InstallCommand />
               </div>
-              <p className="home-hero__vue">
-                Using Vue? <Link href="/vue">Infinite Table for Vue →</Link>
-              </p>
+              <OtherFrameworks current="react" />
             </div>
             <div className="home-hero__schema">
               <Schematic />
-              <dl className="home-specs">
+              <dl className="home-specs home-specs--frameworks-row">
                 <div>
                   <dt>Rows</dt>
                   <dd>1,000,000</dd>
@@ -232,7 +236,11 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
                 </div>
                 <div>
                   <dt>Frameworks</dt>
-                  <dd>React / Vue</dd>
+                  <dd>
+                    {DOCS_FRAMEWORK_IDS.map(
+                      (id) => docsFramework(id).label,
+                    ).join(' / ')}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -441,7 +449,7 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
 
       {/* ---- 07 get started ---- */}
       <section className="home-sec" id="editions">
-        <SectionBar no="07" name="Get started" aside="React and Vue" />
+        <SectionBar no="07" name="Get started" aside={docsFrameworksText()} />
         <div className="home-wrap">
           <div className="home-editions">
             <div className="home-edition">
@@ -454,8 +462,9 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
                 with a link back to our website. Everything else works.
               </p>
               <div className="home-edition__installs">
-                <InstallCommand framework="react" />
-                <InstallCommand framework="vue" />
+                {DOCS_FRAMEWORK_IDS.map((id) => (
+                  <InstallCommand key={id} framework={id} />
+                ))}
               </div>
             </div>
             <div className="home-edition home-edition--license">

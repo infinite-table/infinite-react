@@ -144,12 +144,18 @@
   gap: 10px;
   margin-top: 24px;
 }
-.home-hero__vue {
+/* "Using Vue? Infinite Table for Vue →", a line per other framework */
+.home-hero__others {
+  display: grid;
+  gap: 4px;
   margin-top: 16px;
   font: 400 12.5px/1.4 var(--font-mono);
   color: var(--muted);
 }
-.home-hero__vue a {
+.home-hero__others p {
+  margin: 0;
+}
+.home-hero__others a {
   color: var(--accent-text);
 }
 
@@ -307,6 +313,16 @@
   color: var(--heading);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+/* the React home: the frameworks get a row of their own (three names don't
+   fit in a quarter of the box) */
+.home-specs--frameworks-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.home-specs--frameworks-row div:last-child {
+  grid-column: 1 / -1;
+  border-left: 0;
+  border-top: 1px solid var(--line-strong);
 }
 
 /* the live demo: our frame around the hero's (components/hero) */
@@ -951,6 +967,11 @@
   }
   .home-specs div:nth-child(n + 3) {
     border-top: 1px solid var(--line-strong);
+  }
+  /* two columns: Rows | Dependencies, then a row each for Gzip and the
+     frameworks */
+  .home-specs--frameworks-row div:nth-child(3) {
+    grid-column: 1 / -1;
   }
   .home-frame__hint {
     display: none;

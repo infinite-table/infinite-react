@@ -22,6 +22,7 @@ import type { BlogPost } from '@www/utils/blogUtils';
 import { FrameDemo } from './FrameDemo';
 import { BlogList, FEATURES, SectionBar } from './HomePage';
 import { InstallCommand } from './InstallCommand';
+import { OtherFrameworks } from './OtherFrameworks';
 import { Schematic } from './Schematic';
 
 import './home.css';
@@ -136,9 +137,7 @@ export function FrameworkHomePage({
                 </Link>
                 <InstallCommand framework={framework} />
               </div>
-              <p className="home-hero__vue">
-                Using React? <Link href="/">Infinite Table for React →</Link>
-              </p>
+              <OtherFrameworks current={framework} />
             </div>
             <div className="home-hero__schema">
               <Schematic />
