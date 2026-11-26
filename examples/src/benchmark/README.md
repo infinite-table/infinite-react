@@ -1,12 +1,12 @@
 # AG Grid vs Infinite Table benchmark
 
 A Playwright benchmark that compares AG Grid (Community) and Infinite Table on
-the same data, in the same browser, with the same interactions - at 300k and
-1M rows.
+the same data, in the same browser, with the same interactions - at 1M rows
+(`BENCH_SIZES=300k,1m` adds 300k).
 
 ```sh
 cd examples
-npm run benchmark            # production build + all scenarios, both sizes
+npm run benchmark            # production build + all scenarios, 1M rows
 npm run benchmark:run        # reuse the last build
 ```
 
@@ -130,7 +130,7 @@ report handle any of the four grids.
 
 | Variable                                       | Default          |                                                                                              |
 | ---------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
-| `BENCH_SIZES`                                  | `300k,1m`        | dataset sizes to run                                                                         |
+| `BENCH_SIZES`                                  | `1m`             | dataset sizes to run                                                                         |
 | `BENCH_SCENARIOS`                              | all              | comma separated scenario ids, e.g. `mount,scroll-jump`                                       |
 | `BENCH_RUNS` / `BENCH_WARMUP`                  | `7` / `1`        | measured / discarded runs per grid per scenario                                              |
 | `BENCH_CPU_THROTTLE`                           | `1`              | CDP CPU throttling rate during measurements                                                  |

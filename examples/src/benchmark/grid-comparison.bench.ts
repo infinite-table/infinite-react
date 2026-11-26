@@ -1,7 +1,7 @@
 /**
  * Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table -
- * performance comparison, for each dataset size (300k and 1M rows - see
- * BENCH_SIZES in data.ts).
+ * performance comparison at 1M rows (BENCH_SIZES=300k,1m adds the 300k
+ * rows dataset - see BENCH_SIZES in data.ts).
  *
  * Run with `npm run benchmark` (see README.md next to this file for the
  * methodology, options and how to read the report).
@@ -93,7 +93,10 @@ const HIGH_UPDATE_SECONDS = Number(
   process.env.BENCH_HIGH_UPDATE_SECONDS || 4,
 );
 
-const SIZES = (process.env.BENCH_SIZES || Object.keys(BENCH_SIZES).join(','))
+// 1M by default: at 300k the grids mostly rank the same, and scrolling
+// does not depend on the row count - BENCH_SIZES=300k,1m measures both
+const DEFAULT_SIZES: BenchSize[] = ['1m'];
+const SIZES = (process.env.BENCH_SIZES || DEFAULT_SIZES.join(','))
   .split(',')
   .map((s) => s.trim().toLowerCase())
   .filter(Boolean) as BenchSize[];
