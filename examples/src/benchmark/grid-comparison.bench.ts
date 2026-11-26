@@ -67,7 +67,7 @@ declare global {
 // options (env vars)
 // ---------------------------------------------------------------------------
 
-const RUNS = Number(process.env.BENCH_RUNS || 7);
+const RUNS = Number(process.env.BENCH_RUNS || 5);
 const WARMUP = Number(process.env.BENCH_WARMUP ?? 1);
 const CPU_THROTTLE = Number(process.env.BENCH_CPU_THROTTLE || 1);
 const ONLY = process.env.BENCH_SCENARIOS
@@ -82,7 +82,7 @@ const SCROLL_DISTANCE = Number(process.env.BENCH_SCROLL_DISTANCE || 24000);
 const FAST_SCROLL_SPEED = Number(process.env.BENCH_FAST_SCROLL_SPEED || 20000);
 // live updates, low frequency: one update at a time, each one after the
 // previous one is painted, with a pause in between
-const LOW_UPDATES = Number(process.env.BENCH_LOW_UPDATES || 10);
+const LOW_UPDATES = Number(process.env.BENCH_LOW_UPDATES || 5);
 const LOW_UPDATE_ROWS = Number(process.env.BENCH_LOW_UPDATE_ROWS || 1000);
 const LOW_UPDATE_PAUSE = Number(process.env.BENCH_LOW_UPDATE_PAUSE || 500);
 // live updates, high frequency: a feed of updates, handed to the grid once

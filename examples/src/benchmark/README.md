@@ -132,13 +132,13 @@ report handle any of the four grids.
 | ---------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
 | `BENCH_SIZES`                                  | `1m`             | dataset sizes to run                                                                         |
 | `BENCH_SCENARIOS`                              | all              | comma separated scenario ids, e.g. `mount,scroll-jump`                                       |
-| `BENCH_RUNS` / `BENCH_WARMUP`                  | `7` / `1`        | measured / discarded runs per grid per scenario                                              |
+| `BENCH_RUNS` / `BENCH_WARMUP`                  | `5` / `1`        | measured / discarded runs per grid per scenario                                              |
 | `BENCH_CPU_THROTTLE`                           | `1`              | CDP CPU throttling rate during measurements                                                  |
 | `BENCH_HEADLESS`                               | off              | `1` = Chromium's new headless mode (headed by default - closest to real vsync and GPU)       |
 | `BENCH_NO_SANDBOX`                             | off              | `1` = run Chromium without its sandbox (where the sandbox can't start, e.g. some containers) |
 | `BENCH_SCROLL_SPEED` / `BENCH_SCROLL_DISTANCE` | `8000` / `24000` | wheel gesture (px/s, px) for the smoothness scenarios                                        |
 | `BENCH_FAST_SCROLL_SPEED`                      | `20000`          | the fast gesture of the correctness / screencast scenarios                                   |
-| `BENCH_LOW_UPDATES` / `BENCH_LOW_UPDATE_ROWS`  | `10` / `1000`    | low-frequency updates: how many, and the random rows each one changes                        |
+| `BENCH_LOW_UPDATES` / `BENCH_LOW_UPDATE_ROWS`  | `5` / `1000`     | low-frequency updates: how many, and the random rows each one changes                        |
 | `BENCH_LOW_UPDATE_PAUSE`                       | `500`            | ms between an update being painted and the next one                                          |
 | `BENCH_HIGH_UPDATE_RATE`                       | `50`             | high-frequency feed: updates a second                                                        |
 | `BENCH_HIGH_UPDATE_ROWS` / `BENCH_HIGH_UPDATE_SECONDS` | `100` / `4` | the random rows each update of the feed changes, and how long the feed lasts            |
