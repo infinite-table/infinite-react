@@ -20,6 +20,7 @@ import {
   SortIconCls,
   SortIconDirectionCls,
   SortIconLineCls,
+  SortIconLineWidthVarName,
 } from './SortIcon.css';
 import { defaultLineStyle } from './shared';
 import type { SortIconProps } from './shared';
@@ -80,6 +81,8 @@ export class SortIcon {
     const style: Record<string, any> = {
       ...styleWithUnits(this.style() as Record<string, any> | null),
       width: `${this.sizeValue()}px`,
+      // the line width, for the gap between the lines (as React and Vue)
+      [SortIconLineWidthVarName]: `${this.lineWidth() ?? 1}px`,
     };
     if (!this.rendered() && !this.forceSize()) {
       style.display = 'none';
