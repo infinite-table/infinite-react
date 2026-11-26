@@ -45,7 +45,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       # dependencies are installed with pnpm; the packages are still published
-      # with npm (`npm publish` in source/dist and source/dist-vue)
+      # with npm (source/build/publish-packages.mjs: source/dist, dist-vue and
+      # dist-angular, all at the same version)
       - name: Upgrade npm (required for OIDC trusted publishing)
         run: |
           npm i -g npm@^11.5.1
