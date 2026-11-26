@@ -7,6 +7,10 @@ angular:
   description: All releases | Infinite Table DataGrid for Angular
 ---
 
+## 11.0.0
+
+ - Initial Angular version
+ 
 ## 10.2.1
 
 - Scrolling vertically takes a quarter of the paint work it used to - see [Changing one line of CSS to save a quarter of the paint work](/blog/2026/11/24/one-line-of-css-a-quarter-of-the-paint-work).
