@@ -159,6 +159,20 @@ function isNotRendering(node: Node) {
   );
 }
 
+// An attribute written with the value it already had - e.g. a class added to
+// an element that has it (NG-ZORRO Table, in the Angular benchmark, sets its
+// scroll-position classes again after every change of its rows). The DOM
+// reports it as a mutation, but nothing changes on screen, and no frame is
+// committed for it.
+function isNoOpAttributeWrite(record: MutationRecord) {
+  return (
+    record.type === 'attributes' &&
+    record.attributeName != null &&
+    record.oldValue ===
+      (record.target as Element).getAttribute(record.attributeName)
+  );
+}
+
 function describeMutation(record: MutationRecord) {
   const target = record.target as Element;
   const cls =
@@ -178,10 +192,12 @@ function createBench(
 ) {
   let frameRecorder: { stop(): FrameRecord } | null = null;
   /**
-   * the rows as they are now, by id - `data` until the first update, then a
-   * copy that the updates change. The checks compare the grid with it
+   * the rows as they are now, by id - a copy of `data`, which the updates
+   * change. The checks compare the grid with it. A copy from the start, made
+   * before anything is measured, because a grid may reorder the array it is
+   * given (PrimeNG Table, in the Angular benchmark, sorts it in place).
    */
-  let truth = data;
+  const truth = data.slice();
   let plan: UpdatePlan | null = null;
   let probe: { stop(): ProbeFrame[] } | null = null;
   let checksum: string | null = null;
@@ -274,7 +290,9 @@ function createBench(
       recent: [],
     };
     const observer = new MutationObserver((all) => {
-      const records = all.filter((r) => !isNotRendering(r.target));
+      const records = all.filter(
+        (r) => !isNotRendering(r.target) && !isNoOpAttributeWrite(r),
+      );
       if (!records.length) {
         return;
       }
@@ -290,6 +308,7 @@ function createBench(
       childList: true,
       characterData: true,
       attributes: true,
+      attributeOldValue: true,
     });
     activeSettle = { label, observer, info };
   }
@@ -617,9 +636,6 @@ function createBench(
      * works out what the grid shows after each of them.
      */
     prepareUpdates(batches: number, rowsPerBatch: number, seed = 7) {
-      if (truth === data) {
-        truth = data.slice();
-      }
       const random = createRandom(seed);
       const rows = truth.slice();
       const count = rows.length;
@@ -1023,7 +1039,7 @@ function createBench(
             const text = cellText(hit.cell);
             // a few px of slack for the rounding of stretched scrolling
             const isRight = [rowAt(y), rowAt(y - 3), rowAt(y + 3)].some(
-              (r) => r >= 0 && r < data.length && text === String(data[r].id),
+              (r) => r >= 0 && r < truth.length && text === String(truth[r].id),
             );
             if (isRight) {
               ok++;
@@ -1031,7 +1047,7 @@ function createBench(
               wrong++;
               if (!firstWrong) {
                 firstWrong = `y=${Math.round(y - bodyRect.top)} expected id ${
-                  data[rowAt(y)]?.id
+                  truth[rowAt(y)]?.id
                 }, got ${text}`;
               }
             }
@@ -1062,7 +1078,7 @@ function createBench(
             } else if (
               column &&
               adapter.getCellColumnId(hit.cell) === column.field &&
-              cellText(hit.cell) === String(data[rowIndex][column.field])
+              cellText(hit.cell) === String(truth[rowIndex][column.field])
             ) {
               ok++;
             } else {
