@@ -41,6 +41,7 @@ import {
   getFrameStats,
   getMetrics,
   getSettledLatency,
+  getMainThreadStats,
   getVisibleLatency,
   median,
   metricsDelta,
@@ -387,6 +388,14 @@ const cpuMetrics: MetricDef[] = [
   ms('styleMs', 'Main thread: style recalc'),
   ms('taskMs', 'Main thread: all tasks'),
 ];
+
+// The live updates have no "scripting": Chrome's ScriptDuration
+// (Performance.getMetrics) doesn't count the code that runs inside the CDP
+// call that hands the grid an update, so a grid that applies it right away
+// (AG Grid's applyTransaction) would show almost none, and one that renders
+// in a task of its own (a React state update) all of it. "All tasks" has the
+// scripting of every grid.
+const updateCpuMetrics = cpuMetrics.filter((m) => m.key !== 'scriptMs');
 
 const mountScenario: Scenario = {
   id: 'mount',
@@ -930,7 +939,10 @@ function lowFrequencyScenario(
       ms('visibleMs', 'Update to rows painted (median of updates)'),
       ms('visibleMaxMs', 'Update to rows painted (worst update)'),
       ms('settledMs', 'Update to settled (median of updates)'),
-      ...cpuMetrics.map((m) => ({ ...m, label: `${m.label} (all updates)` })),
+      ...updateCpuMetrics.map((m) => ({
+        ...m,
+        label: `${m.label} (all updates)`,
+      })),
     ],
     async run(ctx) {
       const { page, cdp } = ctx;
@@ -994,20 +1006,21 @@ function highFrequencyScenario(
       updatesText +
       'The page hands the grid the updates once per animation frame: all the ones that arrived since the previous frame, as one update - so a grid that keeps the main thread busy gets them later, and more at once. ' +
       '"Lag at the end" = from the arrival of the last update to the end of the first frame committed with the viewport showing it. ' +
-      '"Update delay" = from the arrival of an update to the frame that hands it to the grid.',
+      '"Update delay" = from the arrival of an update to the frame that hands it to the grid. ' +
+      'Frames, gaps and blocking time come from the trace, from the first update until the last one is painted: the frames the main thread committed, and the part over 50 ms of every task.',
     metrics: [
       ms('lagMs', 'Lag at the end: last update to painted'),
       ms('delayP95Ms', 'Update delay, p95'),
       {
-        key: 'rafFps',
-        label: 'Main thread frame rate (rAF)',
+        key: 'fps',
+        label: 'Frames committed per second',
         unit: 'fps',
         better: 'higher',
       },
-      ms('p95FrameMs', 'p95 rAF frame interval'),
-      ms('maxFrameMs', 'Worst rAF frame interval'),
-      ms('loafBlockingMs', 'Long animation frames: total blocking'),
-      ...cpuMetrics,
+      ms('p95GapMs', 'Gap between frames, p95'),
+      ms('maxGapMs', 'Longest gap between frames'),
+      ms('blockingMs', 'Long tasks: total blocking time'),
+      ...updateCpuMetrics,
     ],
     async run(ctx) {
       const { page, cdp } = ctx;
@@ -1025,30 +1038,20 @@ function highFrequencyScenario(
         ctx,
         LATENCY_TRACE_CATEGORIES,
         async () => {
-          await page.evaluate(() => window.__bench!.startFrameRecorder());
           const stream = await page.evaluate(
             (interval) =>
               window.__bench!.runUpdateStream('update-stream', interval),
             interval,
           );
-          const record = await page.evaluate(() =>
-            window.__bench!.stopFrameRecorder(),
-          );
           await page.waitForTimeout(300);
           await page.evaluate(() => window.__bench!.markIdle());
-          return { stream, record };
+          return stream;
         },
       );
       const m1 = await getMetrics(cdp);
       await setThrottle(ctx, false);
 
-      const { stream, record } = result;
-      const intervals: number[] = [];
-      for (let i = 1; i < record.frames.length; i++) {
-        intervals.push(record.frames[i] - record.frames[i - 1]);
-      }
-      const duration =
-        record.frames[record.frames.length - 1] - record.frames[0];
+      const stream = result;
       if (VERBOSE) {
         console.log(
           `   ${ctx.grid}: ${count} updates handed to the grid in ${stream.flushes} frames`,
@@ -1059,13 +1062,7 @@ function highFrequencyScenario(
           getVisibleLatency(trace, 'update-stream').visible -
           (count - 1) * interval,
         delayP95Ms: percentile(stream.delays, 95),
-        rafFps: ((record.frames.length - 1) / duration) * 1000,
-        p95FrameMs: percentile(intervals, 95),
-        maxFrameMs: Math.max(...intervals),
-        loafBlockingMs: record.loaf.reduce(
-          (sum, l) => sum + l.blockingDuration,
-          0,
-        ),
+        ...getMainThreadStats(trace, 'update-stream'),
         ...metricsDelta(m0, m1),
       };
     },

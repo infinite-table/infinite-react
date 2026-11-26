@@ -76,7 +76,8 @@ report handle any of the four grids.
   Table, `applyTransaction` in AG Grid). Low frequency: one update at a time,
   measured to the frame that shows it. High frequency: a feed of 50 updates a
   second, handed to the grid once per animation frame; lag at the end, frame
-  rate and main-thread work. The grouped scenarios only run for grids with
+  rate and main-thread work (frames and blocking time from the trace, not
+  rAF: a main thread blocked for seconds gets few callbacks). The grouped scenarios only run for grids with
   row grouping and aggregation (Infinite Table and TanStack Table), so they
   are skipped here, where Infinite Table is the only one of the two.
 - **Screencast** (`visual-blank-vertical`): records what the compositor

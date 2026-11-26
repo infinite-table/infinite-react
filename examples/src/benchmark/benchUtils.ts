@@ -166,6 +166,57 @@ export function getSettledLatency(
   return (end - start) / 1000;
 }
 
+const RUN_TASK = new Set(['RunTask']);
+
+/**
+ * The main thread while a label's work runs: from its start mark to the end
+ * of the first frame committed showing it (see getVisibleLatency).
+ *   fps:        frames the main thread committed per second
+ *   p95GapMs,
+ *   maxGapMs:   gaps between those frames - and from the start to the first
+ *               one, and from the last one to the end
+ *   blockingMs: total blocking time - the part over 50 ms of every task
+ *
+ * From the trace, not from rAF callbacks in the page: a page whose main
+ * thread is blocked for seconds gets few or no rAF callbacks (and no Long
+ * Animation Frame entries) to measure with.
+ */
+export function getMainThreadStats(trace: Trace, label: string) {
+  const start = getMark(trace, `bench:start:${label}`);
+  const end = firstCommitEndAfter(
+    trace,
+    getMark(trace, `bench:dom-ready:${label}`),
+  );
+  if (end == null) {
+    throw new Error(`No Commit after bench:dom-ready:${label}`);
+  }
+  const commits = mainThreadCompleteEvents(trace, COMMIT)
+    .map((e) => e.ts + (e.dur ?? 0))
+    .filter((ts) => ts > start && ts <= end);
+  const points = [start, ...commits];
+  if (points[points.length - 1] < end) {
+    points.push(end);
+  }
+  const gaps: number[] = [];
+  for (let i = 1; i < points.length; i++) {
+    gaps.push((points[i] - points[i - 1]) / 1000);
+  }
+  let blocking = 0;
+  for (const task of mainThreadCompleteEvents(trace, RUN_TASK)) {
+    const from = Math.max(task.ts, start);
+    const to = Math.min(task.ts + (task.dur ?? 0), end);
+    if (to - from > 50_000) {
+      blocking += (to - from - 50_000) / 1000;
+    }
+  }
+  return {
+    fps: (commits.length / (end - start)) * 1e6,
+    p95GapMs: percentile(gaps, 95),
+    maxGapMs: Math.max(...gaps),
+    blockingMs: blocking,
+  };
+}
+
 /**
  * Compositor frame outcomes, from `PipelineReporter` trace events of the
  * page's renderer, in the [fromMark, toMark] window.
