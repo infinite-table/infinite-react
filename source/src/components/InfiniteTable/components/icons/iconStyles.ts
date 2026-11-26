@@ -1,9 +1,47 @@
 import { fallbackVar, globalStyle } from '@vanilla-extract/css';
 
+import { ThemeVars } from '../../vars.css';
+
 /**
  * Style helpers for the themeable icons. Only imported by .css.ts files
  * (which can only export plain values, not functions).
  */
+
+const LINE_ICON_PADDING_BLOCK = '2px';
+const LINE_ICON_SIZE = ThemeVars.components.HeaderCell.iconSize;
+const LINE_ICON_LINE_COUNT = 3;
+
+/**
+ * The box of the header icons drawn with lines (the menu and sort icons):
+ * a flex column of the header icon size, the lines spread with space-around
+ */
+export const lineIconBoxStyle = {
+  display: 'flex',
+  flexFlow: 'column',
+  justifyContent: 'space-around',
+  paddingBlockStart: LINE_ICON_PADDING_BLOCK,
+  paddingBlockEnd: LINE_ICON_PADDING_BLOCK,
+  minWidth: LINE_ICON_SIZE,
+  height: LINE_ICON_SIZE,
+} as const;
+
+export const ROUND_SUPPORTS_QUERY = '(width: round(1.5px, 1px))';
+
+/**
+ * Evenly spaced lines in a lineIconBoxStyle box, at any icon size: for most
+ * sizes `space-around` gives a fractional gap (a 14px icon: 2.33px), so the
+ * lines snap to uneven pixel rows (3px, then 4px apart). Instead, the lines
+ * are centered with the gap space-around would give (the free space in the
+ * box, minus its padding, split by the line count) rounded to whole pixels -
+ * 3px for the 16px default, the same as space-around.
+ * Needs `round()` - use it under an `@supports` of ROUND_SUPPORTS_QUERY.
+ */
+export function evenlySpacedLinesStyle(lineWidth: string) {
+  return {
+    justifyContent: 'center',
+    gap: `round(calc((${LINE_ICON_SIZE} - 2 * ${LINE_ICON_PADDING_BLOCK} - ${LINE_ICON_LINE_COUNT} * ${lineWidth}) / ${LINE_ICON_LINE_COUNT}), 1px)`,
+  } as const;
+}
 
 const forcedColors = {
   // in forced colors mode, background-color is forced to the Canvas color,

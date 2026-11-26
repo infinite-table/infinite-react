@@ -1,36 +1,33 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { createVar, style, styleVariants } from '@vanilla-extract/css';
 import { ThemeVars } from '../../../vars.css';
-import {
-  display,
-  flexFlow,
-  justifyContent,
-  position,
-} from '../../../utilities.css';
+import { position } from '../../../utilities.css';
+import { cssVarName } from '../../../utils/cssVarName';
 import {
   defineHideWhenIconSpecified,
   defineMaskIconOverlay,
+  evenlySpacedLinesStyle,
+  lineIconBoxStyle,
+  ROUND_SUPPORTS_QUERY,
 } from '../iconStyles';
 
+// the lineWidth prop of the sort icon, for the line gap - set inline
+const SortIconLineWidthVar = createVar();
+
+/**
+ * The custom property name (`--x`) to set the sort icon line width with
+ */
+export const SortIconLineWidthVarName = cssVarName(SortIconLineWidthVar);
+
 export const SortIconCls = style([
-  display.flex,
-  flexFlow.column,
   position.relative,
-  justifyContent.spaceAround,
   {
-    paddingBlockStart: '2px',
-    paddingBlockEnd: '2px',
-    minWidth: ThemeVars.components.HeaderCell.iconSize,
-    height: ThemeVars.components.HeaderCell.iconSize,
-    // space-around gives a fractional gap for most icon sizes (14px: 2.33px),
-    // so the lines snap to uneven pixel rows (3px, then 4px apart). A gap
-    // rounded to whole pixels keeps them evenly spaced: the space-around gap
-    // of three 1px lines in the box (minus its 4px of padding), rounded -
-    // 3px for the 16px default, the same as before
+    ...lineIconBoxStyle,
+    vars: {
+      [SortIconLineWidthVar]: '1px',
+    },
+    // evenly spaced lines at any icon size
     '@supports': {
-      '(width: round(1.5px, 1px))': {
-        justifyContent: 'center',
-        gap: `round(calc((${ThemeVars.components.HeaderCell.iconSize} - 7px) / 3), 1px)`,
-      },
+      [ROUND_SUPPORTS_QUERY]: evenlySpacedLinesStyle(SortIconLineWidthVar),
     },
   },
 ]);

@@ -3,6 +3,7 @@ import { recipe, RecipeVariants } from '@vanilla-extract/recipes';
 
 import { InfiniteClsRecipe } from '../../InfiniteCls.css';
 import { ThemeVars } from '../../vars.css';
+import { lineIconBoxStyle } from '../icons/iconStyles';
 import {
   alignItems,
   color,
@@ -368,16 +369,10 @@ const menuVisibleStyle: CSSProperties = {
 export const HeaderMenuIconCls = recipe({
   base: [
     position.relative,
-    display.flex,
-    flexFlow.column,
-    justifyContent.spaceAround,
     visibility.hidden,
     {
+      ...lineIconBoxStyle,
       cursor: 'context-menu',
-      paddingBlockStart: '2px',
-      paddingBlockEnd: '2px',
-      minWidth: ThemeVars.components.HeaderCell.iconSize,
-      height: ThemeVars.components.HeaderCell.iconSize,
       selectors: {
         '&:active': {
           top: '1px',
@@ -502,8 +497,12 @@ export const HeaderFilterOperatorCls = style([
   alignItems.center,
   position.relative,
   {
-    paddingInline: scaled(ThemeVars.components.HeaderCell.filterOperatorPaddingX),
-    paddingBlock: scaled(ThemeVars.components.HeaderCell.filterOperatorPaddingY),
+    paddingInline: scaled(
+      ThemeVars.components.HeaderCell.filterOperatorPaddingX,
+    ),
+    paddingBlock: scaled(
+      ThemeVars.components.HeaderCell.filterOperatorPaddingY,
+    ),
     selectors: {
       [`.${HeaderFilterRecipe.classNames.variants.active.true} &`]: {
         color: ThemeVars.color.accent,

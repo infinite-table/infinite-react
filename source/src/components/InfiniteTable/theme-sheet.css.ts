@@ -6,12 +6,9 @@ import { rootClassName } from './internalProps';
 
 import { defineTheme } from './defineTheme.css';
 import { ThemeVars } from './vars.css';
+import { cssVarName } from './utils/cssVarName';
 
 const cell = InfiniteTableColumnCellClassName;
-
-// `var(--x)` => `--x` - nested selector blocks don't support `vars`, so
-// the custom properties are declared by name
-const cssVarName = (value: string) => value.replace(/^var\((--[^,)]+)\)$/, '$1');
 
 const sheetStyles = {
   // the first pinned column looks like the row number gutter of a spreadsheet

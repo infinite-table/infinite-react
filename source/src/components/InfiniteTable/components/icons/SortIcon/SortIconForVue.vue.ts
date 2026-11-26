@@ -8,6 +8,7 @@ import {
   SortIconCls,
   SortIconDirectionCls,
   SortIconLineCls,
+  SortIconLineWidthVarName,
 } from './SortIcon.css';
 import { defaultLineStyle, sortIconPropNames } from './shared';
 import type { SortIconProps } from './shared';
@@ -102,7 +103,11 @@ export const SortIcon = defineComponent(
         'div',
         {
           'data-name': 'sort-icon',
-          style: { ...props.style, width: `${size}px` },
+          style: {
+            ...props.style,
+            width: `${size}px`,
+            [SortIconLineWidthVarName]: `${lineWidth}px`,
+          },
           class: join(
             className,
             InfiniteIconClassName,

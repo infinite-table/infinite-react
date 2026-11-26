@@ -8,6 +8,7 @@ import {
   SortIconCls,
   SortIconDirectionCls,
   SortIconLineCls,
+  SortIconLineWidthVarName,
 } from './SortIcon.css';
 import { defaultLineStyle } from './shared';
 import type { SortIconProps } from './shared';
@@ -81,7 +82,13 @@ export function SortIcon(props: SortIconProps<React.CSSProperties>) {
   return (
     <div
       data-name="sort-icon"
-      style={{ ...style, width: size }}
+      style={
+        {
+          ...style,
+          width: size,
+          [SortIconLineWidthVarName]: `${lineWidth}px`,
+        } as React.CSSProperties
+      }
       className={join(
         className,
         InfiniteIconClassName,
