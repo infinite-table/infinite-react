@@ -13,6 +13,7 @@ import {
 } from '@www/utils/docsFrameworksRegistry';
 
 import { getBenchmarkReadouts, type Readout } from './benchmarkReadouts';
+import { FrameworkFlip } from './FrameworkFlip';
 import { InstallCommand } from './InstallCommand';
 import { LazyDemo } from './LazyDemo';
 import { OtherFrameworks } from './OtherFrameworks';
@@ -200,7 +201,7 @@ export function HomePage({ posts = [] }: { posts?: BlogPost[] }) {
             <div className="home-hero__copy">
               <p className="home-tagline">One Table — Infinite Applications</p>
               <h1>
-                The React DataGrid built for speed
+                The <FrameworkFlip /> DataGrid built for speed
                 <span className="home-cursor" aria-hidden="true" />
               </h1>
               <p className="home-hero__sub">

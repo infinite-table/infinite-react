@@ -124,7 +124,8 @@ export function FrameworkHomePage({
             <div className="home-hero__copy">
               <p className="home-tagline">{`Infinite Table for ${name}`}</p>
               <h1>
-                {`The ${name} DataGrid built for speed`}
+                The <span className="home-accent">{name}</span> DataGrid built
+                for speed
                 <span className="home-cursor" aria-hidden="true" />
               </h1>
               <p className="home-hero__sub">{home.heroSub}</p>

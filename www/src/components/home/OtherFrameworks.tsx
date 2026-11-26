@@ -7,22 +7,29 @@ import {
   type DocsFrameworkId,
 } from '@www/utils/docsFrameworksRegistry';
 
+import { FrameworkLogo } from './FrameworkLogo';
+
 /**
- * Under the hero of a home page, a line for each of the other frameworks
- * (www/frameworks.json): "Using Vue? Infinite Table for Vue →".
+ * Under the hero of a home page, a key for each of the other frameworks
+ * (www/frameworks.json): "Also for  [● Vue →]  [● Angular →]".
  */
 export function OtherFrameworks(props: { current: DocsFrameworkId }) {
   return (
-    <div className="home-hero__others">
+    <nav className="home-frameworks" aria-label="Other frameworks">
+      <span className="home-label">Also for</span>
       {DOCS_FRAMEWORK_IDS.filter((id) => id !== props.current).map((id) => {
         const { label, home } = docsFramework(id);
         return (
-          <p key={id}>
-            {`Using ${label}? `}
-            <Link href={home}>{`Infinite Table for ${label} →`}</Link>
-          </p>
+          <Link
+            key={id}
+            className={`home-framework home-framework--${id}`}
+            href={home}
+          >
+            <FrameworkLogo framework={id} />
+            {label} <span aria-hidden="true">→</span>
+          </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }
