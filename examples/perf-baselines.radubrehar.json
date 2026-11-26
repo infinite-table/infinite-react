@@ -117,5 +117,71 @@
     "paintingTime": 3,
     "totalTime": 645.6,
     "threshold": 10
+  },
+  "angular:tests/table/perf/flashing/default:perf should be fine when single click": {
+    "scriptingTime": 119.98,
+    "renderingTime": 0.34,
+    "paintingTime": 0.3,
+    "totalTime": 135.99
+  },
+  "angular:tests/table/perf/default:horizontal-scrolling with tracing": {
+    "scriptingTime": 157.91,
+    "renderingTime": 5.86,
+    "paintingTime": 1.77,
+    "totalTime": 756.41
+  },
+  "angular:tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
+    "scriptingTime": 192.33,
+    "renderingTime": 16.73,
+    "paintingTime": 2.58,
+    "totalTime": 330.76
+  },
+  "angular:tests/table/props/column/column-change:works correctly": {
+    "scriptingTime": 130.95,
+    "renderingTime": 2.39,
+    "paintingTime": 0.44,
+    "totalTime": 305.25
+  },
+  "angular:tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
+    "scriptingTime": 786.98,
+    "renderingTime": 24.15,
+    "paintingTime": 20.26,
+    "totalTime": 4121.89
+  },
+  "angular:tests/table/props/data/basic-add-data:insert data": {
+    "scriptingTime": 143,
+    "renderingTime": 1.31,
+    "paintingTime": 0.45,
+    "totalTime": 182.56
+  },
+  "angular:tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
+    "scriptingTime": 162.56,
+    "renderingTime": 4.78,
+    "paintingTime": 0.84,
+    "totalTime": 298.5
+  },
+  "angular:tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
+    "scriptingTime": 165.63,
+    "renderingTime": 4.83,
+    "paintingTime": 0.88,
+    "totalTime": 704.69
+  },
+  "angular:tests/table/props/data/edit-with-delay:on string column": {
+    "scriptingTime": 170.35,
+    "renderingTime": 6.56,
+    "paintingTime": 1.63,
+    "totalTime": 3966.16
+  },
+  "angular:tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 244.96,
+    "renderingTime": 23.85,
+    "paintingTime": 5.04,
+    "totalTime": 506.87
+  },
+  "angular:tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 453.81,
+    "renderingTime": 16.61,
+    "paintingTime": 12.99,
+    "totalTime": 3120.52
   }
 }
