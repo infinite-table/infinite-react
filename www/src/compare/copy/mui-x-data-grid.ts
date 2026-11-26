@@ -26,7 +26,7 @@ export const muiXDataGridCopy: CompareCopy = {
     'You want multi-column sorting, column pinning, tree data and master-detail without Pro.',
     'You show large datasets without pagination, or sort them often: see the [benchmark](/benchmark).',
     'You want a context menu, which MUI X leaves to you to build.',
-    'You use Vue as well as React.',
+    'You use Vue or Angular as well as React.',
   ],
   sections: [
     {

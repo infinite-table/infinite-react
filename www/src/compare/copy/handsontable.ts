@@ -16,7 +16,7 @@ export const handsontableCopy: CompareCopy = {
     'Your users need a spreadsheet: formulas, a fill handle, merged cells, comments, undo and redo.',
     'You need Excel and CSV export, or clipboard copy and paste, built in.',
     'You need documented accessibility (Handsontable publishes a WCAG 2.2 conformance report) or right-to-left layouts.',
-    'You use Angular or plain JavaScript as well as React and Vue.',
+    'You use plain JavaScript as well as React, Vue or Angular.',
   ],
   chooseInfinite: [
     'You need row grouping with aggregations, pivoting or master-detail.',

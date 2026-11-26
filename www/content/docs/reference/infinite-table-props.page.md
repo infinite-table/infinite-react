@@ -1,10 +1,21 @@
 ---
 title: Infinite Table Props
 layout: API
+angular: true
 description: Infinite Table Props Reference page with complete examples
 ---
 
 In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript type that represents the data the component is bound to.
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+The props are listed with the names you use in an Angular template: `[(columnOrder)]` is a model (bind it two-way to a signal), `(columnOrderChange)` and `(cellClick)` are outputs, `[onKeyDown]` is a function input. The other inputs keep their names. The examples are written for Angular.
+
+</Note>
+
+</FrameworkContent>
 
 <PropTable sort>
 
@@ -708,16 +719,16 @@ This example shows a master DataGrid with the ID column configured to show the r
 </Prop>
 <Prop name="columns.components">
 
-> Specifies custom React components to use for column cells or header
+> Specifies custom components to use for column cells or header
 
 The column components object can have either of the two following properties:
 
-- <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a React component to use for rendering the column cells
-- <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a React component to use for rendering the column header
+- <PropLink name="columns.components.ColumnCell">ColumnCell</PropLink> - a component to use for rendering the column cells
+- <PropLink name="columns.components.HeaderCell">HeaderCell</PropLink> - a component to use for rendering the column header
 
-- <PropLink name="columns.components.Editor">Editor</PropLink> - a React component to use for the editor, when editing is enabled for the column
+- <PropLink name="columns.components.Editor">Editor</PropLink> - a component to use for the editor, when editing is enabled for the column
 
-- <PropLink name="columns.components.FilterOperatorSwitch">FilterOperatorSwitch</PropLink> - a React component to use for the filter operator switch - clicking the operator pops up a menu with the available operators for that column filter.
+- <PropLink name="columns.components.FilterOperatorSwitch">FilterOperatorSwitch</PropLink> - a component to use for the filter operator switch - clicking the operator pops up a menu with the available operators for that column filter.
 
 See [editing docs](/docs/learn/editing/overview).
 
@@ -725,11 +736,13 @@ See [editing docs](/docs/learn/editing/overview).
 
 <Prop name="columns.components.ColumnCell">
 
-> Specifies a custom React component to use for column cells
+> Specifies a custom component to use for column cells
 
 For column header see related <PropLink name="columns.components.HeaderCell"/>.
 
 Inside a component used as a cell, you have to use <HookLink name="useInfiniteColumnCell"/> to retrieve information about the currently rendered cell.
+
+<FrameworkContent not="angular">
 
 <Note>
 
@@ -763,6 +776,33 @@ In order to access the cell-related information, you don't use the props, but yo
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+A cell component is an Angular component whose host element is the cell itself: give it an attribute selector on a `div`. The grid adds its cell directive to that element, so the class names, styles and attributes of the cell go on your host element - there is no `domRef` to pass on and no props to spread.
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-dom-ref"
+```
+
+It reads the cell (value, rowInfo, column...) with <HookLink name="useInfiniteColumnCell"/>, as a signal:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell"
+```
+
+To render the default content of the cell, use `injectColumnCellChildren()` with the `InfiniteRender` outlet:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-signature"
+```
+
+Your own class names, styles and content go around it:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-columncell-example"
+```
+
+</FrameworkContent>
+
+
 ```tsx file="column-components-example.demo.tsx" title="Custom components"
 ```
 
@@ -770,9 +810,19 @@ In order to access the cell-related information, you don't use the props, but yo
 
 <Prop name="columns.components.Editor">
 
-> Specifies a custom React component to use for the editor, when [editing](/docs/learn/editing/overview) is enabled for the column.
+> Specifies a custom component to use for the editor, when [editing](/docs/learn/editing/overview) is enabled for the column.
+
+<FrameworkContent not="angular">
 
 The editor component should use the <HookLink name="useInfiniteColumnEditor"/> hook to have access to cell-related information and to confirm, cancel or reject the edit.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The editor component calls <HookLink name="useInfiniteColumnEditor"/> to read the cell being edited (the value, the initial value, whether it is read-only) and to confirm, cancel or reject the edit. A TemplateRef works as an editor too: mark its input with `infiniteEditorInput`.
+
+</FrameworkContent>
 
 Here's the implementation for our default editor
 
@@ -792,11 +842,13 @@ Try editing the `salary` column - it has a custom editor
 
 <Prop name="columns.components.HeaderCell">
 
-> Specifies a custom React component to use for column headers
+> Specifies a custom component to use for column headers
 
 For column cells see related <PropLink name="columns.components.ColumnCell"/>.
 
 Inside a custom component used as a column header, you have to use <HookLink name="useInfiniteHeaderCell"/> to retrieve information about the currently rendered header cell.
+
+<FrameworkContent not="angular">
 
 <Note>
 
@@ -829,6 +881,33 @@ In order to access the column header-related information, you don't use the prop
 ```
 
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+A header cell component is an Angular component whose host element is the header cell itself: give it an attribute selector on a `div`. The grid adds its header cell directive to that element, so the class names, styles and attributes of the header cell go on your host element - there is no `domRef` to pass on and no props to spread.
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-dom-ref"
+```
+
+It reads the header cell (column, columnApi, sort and filter info...) with <HookLink name="useInfiniteHeaderCell"/>, as a signal:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell"
+```
+
+To render the default content of the header cell, use `injectHeaderCellChildren()` with the `InfiniteRender` outlet:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-signature"
+```
+
+Your own class names, styles and content go around it:
+
+```tsx file="infinite-table-props.snippet.tsx" region="columns-components-headercell-example"
+```
+
+</FrameworkContent>
+
 
 ```tsx file="column-components-example.demo.tsx" title="Custom components"
 ```
@@ -1140,7 +1219,17 @@ For configuring the column header height, see the <PropLink name="columnHeaderHe
 
 <Note>
 
+<FrameworkContent not="angular">
+
 In the `column.header` function you can use hooks or <PropLink name="columns.components.HeaderCell" nocode>render custom React components via column.components.HeaderCell</PropLink>. To make it easier to access the param of the `header` function, we've exposed the <HookLink name="useInfiniteHeaderCell" /> - use it to gain access to the same object that is passed as an argument to the `header` function.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The `column.header` function can return a string, a `TemplateRef` (it gets the column as `$implicit` and the param's properties by name) or a component (`renderComponent(...)`), which reads the same param with <HookLink name="useInfiniteHeaderCell" />. To replace the whole header cell, use <PropLink name="columns.components.HeaderCell" nocode>column.components.HeaderCell</PropLink>.
+
+</FrameworkContent>
 
 </Note>
 
@@ -1268,7 +1357,17 @@ The <PropLink name="columns.render">render</PropLink> and <PropLink name="column
 
 <Note>
 
+<FrameworkContent not="angular">
+
 In the `column.render` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `render` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `render` function.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The `column.render` function can return a string, a `TemplateRef` (it gets the value as `$implicit` and the param's properties by name, eg `let-rowInfo="rowInfo"`) or a component (`renderComponent(...)`), which reads the same param with <HookLink name="useInfiniteColumnCell" />. To replace the whole cell, use <PropLink name="columns.components.ColumnCell" nocode>column.components.ColumnCell</PropLink>.
+
+</FrameworkContent>
 
 </Note>
 
@@ -1426,7 +1525,17 @@ The <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink na
 
 <Note>
 
+<FrameworkContent not="angular">
+
 In the `column.renderValue` function you can use hooks or <PropLink name="columns.components.ColumnCell" nocode>render custom React components</PropLink>. To make it easier to access the param of the `renderValue` function, we've exposed the <HookLink name="useInfiniteColumnCell" /> - use it to gain access to the same object that is passed as an argument to the `renderValue` function.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The `column.renderValue` function can return a string, a `TemplateRef` (it gets the value as `$implicit` and the param's properties by name, eg `let-rowInfo="rowInfo"`) or a component (`renderComponent(...)`), which reads the same param with <HookLink name="useInfiniteColumnCell" />. To replace the whole cell, use <PropLink name="columns.components.ColumnCell" nocode>column.components.ColumnCell</PropLink>.
+
+</FrameworkContent>
 
 </Note>
 
@@ -1443,7 +1552,7 @@ Same as the table-level <PropLink name="repaintCellsKey" />, but only for the ce
 
 Typical use: a column whose <PropLink name="columns.render" /> or <PropLink name="columns.valueGetter" /> reads other rows (a group average, a running total, a cross-row lookup). Return the derived value from the function, and the cells repaint exactly when that value changes:
 
-```tsx file="infinite-table-props.snippet.tsx" region="columns-repaintcellskey"
+```tsx file="infinite-table-props.snippet.tsx" region="columns-repaintcellskey" neutral
 ```
 
 <Note>
@@ -2149,7 +2258,7 @@ When returning a `Promise`, the context menu will be shown after the promise res
 
 In addition, if you need to configure the context menu to have other columns rather than the default column (named `label`), you can do so by returning an object with `columns` and `items`:
 
-```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems"
+```tsx file="infinite-table-props.snippet.tsx" region="getcellcontextmenuitems" neutral
 ```
 
 <DemoDescription>
@@ -2596,7 +2705,7 @@ The first (and only) argument is an object with `{start, end}` where both `start
 
  So if you want to get the start and end indexes, you can do
 
- ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange"
+ ```ts file="infinite-table-props.snippet.tsx" region="onrenderrangechange" neutral
  ```
 
 <Note>
@@ -2621,7 +2730,7 @@ This is called when the user stops scrolling for a period of time - as configure
 The function is called with an object that has the following properties:
  - `renderRange` - the render range of the viewport. This is an object with `{start, end}` where both `start` and `end` are arrays of `[rowIndex, colIndex]` pairs.
  So if you want to get the start and end indexes, you can do
- ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop"
+ ```ts file="infinite-table-props.snippet.tsx" region="onscrollstop" neutral
  ```
 
  - `viewportSize` - the size of the viewport - `{width, height}`
@@ -2868,7 +2977,7 @@ See [Using RowInfo](/docs/learn/rows/using-row-info) for more details.
 
 You can either return a valid style object, or undefined.
 
-```tsx file="infinite-table-props.snippet.tsx" region="rowstyle"
+```tsx file="infinite-table-props.snippet.tsx" region="rowstyle" neutral
 ```
 
 ```tsx file="rowStyle-example.demo.tsx" title="rowStyle example usage"

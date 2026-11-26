@@ -12,7 +12,9 @@ export default defineConfig({
   // named `index` so the output matches the typings field (index.d.ts)
   // of the generated dist-vue/package.json
   entry: { index: './src/index.vue.tsx' },
-  dts: true,
+  // `only` here, not the --dts-only flag: the flag replaces this whole object.
+  // tsup sets `baseUrl` for its dts build, which TypeScript 6 deprecates.
+  dts: { only: true, compilerOptions: { ignoreDeprecations: '6.0' } },
   tsconfig: './tsconfig.vue.json',
   outDir: OUT_DIR,
   splitting: false,

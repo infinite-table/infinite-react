@@ -17,7 +17,7 @@ import {
 import { getGlobal } from '../../../../utils/getGlobal';
 import { selectParent } from '../../../../utils/selectParent';
 import { AutoScroller } from './AutoScroller';
-import type { DragDropSourceAndTarget } from './DragDropProvider';
+import type { DragDropSourceAndTarget } from './dragDropTypes';
 
 export const DRAG_LIST_ATTRIBUTE = 'data-drag-list-id';
 export const DRAG_ITEM_ATTRIBUTE = 'data-drag-item-id';

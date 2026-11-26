@@ -3,7 +3,10 @@ import type {
   HTMLProps,
   MouseEvent,
 } from '../types/FrameworkTypes';
-import { ElementContainerGetter, OverlayShowParams } from '../hooks/useOverlay';
+import type {
+  ElementContainerGetter,
+  OverlayShowParams,
+} from '../hooks/useOverlay/overlayUtils';
 import { NonUndefined } from '../types/NonUndefined';
 import { RemoveObject } from '../types/RemoveObject';
 import { Renderable } from '../types/Renderable';

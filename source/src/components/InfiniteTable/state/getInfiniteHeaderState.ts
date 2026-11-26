@@ -1,4 +1,4 @@
-import { ForwardPropsToStateFnResult } from '../../hooks/useComponentState';
+import type { ForwardPropsToStateFnResult } from '../../hooks/useComponentState/managedComponentState';
 import { ComponentStateActions } from '../../hooks/useComponentState/types';
 import { NonUndefined } from '../../types/NonUndefined';
 import { InfiniteTableHeaderProps } from '../components/InfiniteTablePublicHeader/types';

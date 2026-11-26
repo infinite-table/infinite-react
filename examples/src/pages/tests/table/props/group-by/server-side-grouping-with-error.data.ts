@@ -1,4 +1,4 @@
-import { DataSourceData } from '@infinite-table/infinite-react/components/DataSource/types';
+import type { DataSourceData } from '@infinite-table/infinite-react';
 
 export type Developer = {
   id: number;

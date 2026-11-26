@@ -2,6 +2,7 @@
 title: Master Detail - Caching Detail DataGrid
 description: Learn how to use master-detail with caching for a better user-experience
 vue: true
+angular: true
 ---
 
 By far the most common scenario will be to render another DataGrid in the detail row.

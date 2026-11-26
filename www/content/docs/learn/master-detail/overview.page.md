@@ -3,6 +3,8 @@ title: Master Detail
 description: Learn how to use master-detail rendering with the React DataGrid
 vue:
   description: Learn how to use master-detail rendering with the Vue DataGrid
+angular:
+  description: Learn how to use master-detail rendering with the Angular DataGrid
 ---
 
 <FrameworkContent framework="react">
@@ -17,6 +19,12 @@ The Vue DataGrid that Infinite Table offers has native support for master-detail
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+The Angular DataGrid that Infinite Table offers has native support for master-detail rows.
+
+</FrameworkContent>
+
 <Note>
 
 The single most important property for the master-detail DataGrid configuration is the <PropLink name="rowDetailRenderer" /> function prop - which makes the DataGrid be considered master-detail.
@@ -26,10 +34,30 @@ In addition, make sure you have a column with the `renderRowDetailIcon: true` fl
 The row detail in the DataGrid can contain another DataGrid or any other custom content.
 </Note>
 
+<FrameworkContent not="angular">
+
 <Note>
 
 It's very imporant that the <PropLink name="rowDetailRenderer" /> function prop you pass into `<InfiniteTable />` is stable and doesn't change on every render. So make sure you pass a reference to the same function every time - except of course if you want the row detail to change based on some other state.
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+It's very imporant that the <PropLink name="rowDetailRenderer" /> function you pass into `<infinite-table>` is stable. Make it a field of your component (an arrow function), not a method called in the template, so the grid gets a reference to the same function every time - except of course if you want the row detail to change based on some other state.
+
+</Note>
+
+<Note>
+
+The <PropLink name="rowDetailRenderer" /> function returns the content of the row detail: usually an `ng-template` of your component (a `TemplateRef`, read with `viewChild`), which gets the master row as its context (`let-rowInfo`). For a detail DataGrid, the template holds an `<infinite-data-source>` with an `<infinite-table>` inside.
+
+</Note>
+
+</FrameworkContent>
 
 <FrameworkContent framework="vue">
 
@@ -67,6 +95,12 @@ If you want to use a component instead of the <PropLink name="rowDetailRenderer"
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+If you want to use a component instead of the <PropLink name="rowDetailRenderer" /> function, you can use the <PropLink name="components.RowDetail" /> property. This works similarly and makes the DataGrid be considered master-detail. Inside the component, <HookLink name="useMasterRowInfo" /> gives you the master row information, as a signal.
+
+</FrameworkContent>
+
 
 
 ## Loading the Detail DataSource
@@ -93,6 +127,12 @@ You can, however, render an Infinite Table React DataGrid, at any level of nesti
 <FrameworkContent framework="vue">
 
 You can, however, render an Infinite Table Vue DataGrid, at any level of nesting inside the row detail content.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+You can, however, render an Infinite Table Angular DataGrid, at any level of nesting inside the row detail content.
 
 </FrameworkContent>
 

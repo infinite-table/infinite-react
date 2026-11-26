@@ -4,10 +4,15 @@ description: Learn how to use the React Tree DataGrid to display tree data
 vue:
   title: Using Tree Data in your Vue DataGrid
   description: Learn how to use the Vue Tree DataGrid to display tree data
+angular:
+  title: Using Tree Data in your Angular DataGrid
+  description: Learn how to use the Angular Tree DataGrid to display tree data
 ---
 
 
 Starting with version `6.0.0`, Infinite Table has support for displaying tree data.
+
+<FrameworkContent not="angular">
 
 <Note>
 
@@ -17,6 +22,21 @@ To show tree data, you have to use:
 
 Under the hood, those specialized components have better typing support for tree data, which will make it easier to work with them.
 </Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+To show tree data, you have to use:
+ - the `TreeDataSource` component (`<infinite-tree-data-source>`) instead of `DataSource` (`<infinite-data-source>`)
+ - the `TreeGrid` component (`<infinite-tree-grid>`) instead of `InfiniteTable` (`<infinite-table>`).
+
+Under the hood, those specialized components have better typing support for tree data, which will make it easier to work with them.
+</Note>
+
+</FrameworkContent>
 
 <Note>
 

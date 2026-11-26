@@ -142,7 +142,7 @@ export type HeatmapTarget = {
 
 /**
  * Draws the heatmap: tiles colored by change % on a diverging scale (gray =
- * flat). No framework code: the React and the Vue chart call it.
+ * flat). No framework code: the React, Vue and Angular charts call it.
  */
 export function drawHeatmap(
   feed: HeroFeed,

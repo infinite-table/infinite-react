@@ -5,7 +5,6 @@
   "extends": "../source/tsconfig.vue.json",
   "compilerOptions": {
     "rootDir": "..",
-    "baseUrl": "./",
     "noEmit": true,
     "incremental": false,
     // as in content/tsconfig.json: a snippet declares things only to show them

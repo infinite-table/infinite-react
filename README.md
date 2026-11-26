@@ -58,7 +58,7 @@
 * [<img src="https://infinite-table.com/icons/fixed-flex-cols.svg" align="center" />
  fixed and flexible columns](https://infinite-table.com/docs/learn/columns/fixed-and-flexible-size)
 * [<img src="https://infinite-table.com/icons/column-grouping.svg" align="center" />
- column grouping](https://infinite-table.com/docs/learn/column-groups)
+ column grouping](https://infinite-table.com/docs/learn/columns/column-grouping)
 * [<img src="https://infinite-table.com/icons/filtering.svg" align="center" />
  filtering](https://infinite-table.com/docs/learn/filtering)
 * [<img src="https://infinite-table.com/icons/theming.svg" align="center" />
@@ -137,4 +137,4 @@ We release often - see [what each release contains here](https://infinite-table.
 
 Infinite Table is source-available, not open source. You can use it for free in any product, with every feature: without a license key, the grid shows a "Powered by Infinite Table" link in its footer.
 
-A [commercial license](https://infinite-table.com/eula) removes the footer and includes support. One license covers both the React and the Vue packages - see the [Pricing page](https://infinite-table.com/pricing) and [Licensing](https://infinite-table.com/docs/learn/getting-started/licensing).
+A [commercial license](https://infinite-table.com/eula) removes the footer and includes support. One license covers the React, Vue and Angular packages - see the [Pricing page](https://infinite-table.com/pricing) and [Licensing](https://infinite-table.com/docs/learn/getting-started/licensing).

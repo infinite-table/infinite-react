@@ -53,6 +53,21 @@ async function flush(ms = 30) {
   await nextTick();
 }
 
+// the header cells render a little after the body is sized (the header
+// brain gets the width, then renders its range): wait for them instead of
+// relying on a fixed delay
+async function waitForHeaderCells(container: HTMLElement, timeout = 1000) {
+  const start = Date.now();
+  while (
+    container.querySelector('.InfiniteHeaderWrapper') &&
+    !container.querySelector('[data-name="HeaderCell"]') &&
+    Date.now() - start < timeout
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+  }
+  await nextTick();
+}
+
 describe('Vue InfiniteTable column resize + row hover', () => {
   let container: HTMLElement;
   let app: App | null = null;
@@ -93,6 +108,7 @@ describe('Vue InfiniteTable column resize + row hover', () => {
     actions.bodySize = { ...VIEWPORT };
     getState().brain.update(VIEWPORT);
     await flush();
+    await waitForHeaderCells(container);
 
     return { getState, actions };
   };

@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import { Menu } from '../../Menu';
-import { MenuState } from '../../Menu/MenuState';
-import { getColumnApiForColumn } from '../api/getColumnApi';
 import { defaultGetColumnMenuItems } from './defaultGetColumnMenuItems';
+import { getColumnMenuProps } from './menuItemsShared';
 import { InfiniteTableStableContextValue } from '../types/InfiniteTableContextValue';
 
 export function getMenuForColumn<T>(
@@ -11,64 +10,14 @@ export function getMenuForColumn<T>(
   context: InfiniteTableStableContextValue<T>,
   onHideIntent?: VoidFunction,
 ) {
-  if (columnId == null) {
-    return null;
-  }
-  const { getComputed, getState } = context;
+  const MenuCmp = context.getState().components?.Menu ?? Menu;
 
-  const { components, getColumnMenuItems } = getState();
-
-  const MenuCmp = components?.Menu ?? Menu;
-
-  const column = getComputed().computedColumnsMap.get(columnId);
-
-  if (!column) {
-    return null;
-  }
-
-  const param = {
-    column,
-    columnApi: getColumnApiForColumn(column.id, context)!,
-    ...context,
-  };
-
-  const defaultItems = defaultGetColumnMenuItems([], param)!;
-
-  const items = getColumnMenuItems
-    ? getColumnMenuItems(defaultItems, param)
-    : defaultItems;
-
-  const onRootMouseDown: EventListener = (event: Event) => {
-    //@ts-ignore
-    event.__insideMenu = true;
-  };
-
-  const onHide = (state: MenuState) => {
-    state.domRef.current?.parentNode?.removeEventListener(
-      'mousedown',
-      onRootMouseDown,
-    );
-  };
-
-  if (!items || !items.length) {
-    return null;
-  }
-
-  return (
-    <MenuCmp
-      autoFocus
-      items={items}
-      onShow={(state) => {
-        state.domRef.current?.parentNode?.addEventListener(
-          'mousedown',
-          onRootMouseDown,
-        );
-      }}
-      onHide={onHide}
-      onHideIntent={(state: MenuState) => {
-        onHide(state);
-        onHideIntent?.();
-      }}
-    />
+  const menuProps = getColumnMenuProps(
+    columnId,
+    context,
+    onHideIntent,
+    (param) => defaultGetColumnMenuItems([], param),
   );
+
+  return menuProps ? <MenuCmp {...menuProps} /> : null;
 }

@@ -2,11 +2,24 @@
 title: Managing the tree column and expand/collapse icon
 description: Learn how to render the tree expand/collapse icon and manage the tree column
 vue: true
+angular: true
 ---
+
+<FrameworkContent not="angular">
 
 When rendering a tree, you have to use the `<TreeGrid />` component instead of `<InfiniteTable />`.
 
 The `<TreeGrid />` component is simply an `<InfiniteTable />` component with some props removed - those don't make sense for tree scenarios.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When rendering a tree, you have to use the `TreeGrid` component (`<infinite-tree-grid>`) instead of `InfiniteTable` (`<infinite-table>`), inside a `TreeDataSource` (`<infinite-tree-data-source>`).
+
+The `TreeGrid` component is simply an `InfiniteTable` component with some inputs removed - those don't make sense for tree scenarios.
+
+</FrameworkContent>
 
 
 <Note>
@@ -37,6 +50,12 @@ This prop can also be a function that returns a React node.
 <FrameworkContent framework="vue">
 
 This prop can also be a function that returns a VNode, created with `h()`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This prop can also be a function that returns a template (a `TemplateRef` of your component, read with `viewChild`), a component (`renderComponent(MyIcon)`) or a string. A template gets the arguments of the function as its context - `let-rowInfo="rowInfo"`, `let-toggleCurrentTreeNode="toggleCurrentTreeNode"`.
 
 </FrameworkContent>
 

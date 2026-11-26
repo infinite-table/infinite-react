@@ -1,6 +1,7 @@
 /*
- * Canvas helpers with no framework imports: the React charts and the Vue
- * ones (content/home/vue-hero) both draw with these.
+ * Canvas helpers with no framework imports: the React charts, the Vue ones
+ * (content/home/vue-hero) and the Angular ones (content/home/angular-hero)
+ * all draw with these.
  */
 
 /**

@@ -3,6 +3,8 @@ title: Custom Editor
 description: Writing a custom editor for a inline editing in Infinite Table for React
 vue:
   description: Writing a custom editor for inline editing in Infinite Table for Vue
+angular:
+  description: Writing a custom editor for inline editing in Infinite Table for Angular
 ---
 
 <FrameworkContent framework="react">
@@ -14,6 +16,12 @@ For writing a custom editor, you can use the <HookLink name="useInfiniteColumnEd
 <FrameworkContent framework="vue">
 
 For writing a custom editor, you can use the <HookLink name="useInfiniteColumnEditor" /> composable.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+For writing a custom editor, you can use the <HookLink name="useInfiniteColumnEditor" /> inject function.
 
 </FrameworkContent>
 
@@ -52,6 +60,21 @@ Inside any custom editor component, you can use the <HookLink name="useInfiniteC
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+The editor component should call <HookLink name="useInfiniteColumnEditor"/> (in a field initializer or in its constructor), to have access to cell-related information and to confirm, cancel or reject the edit. It returns a plain object: the editor is created when the edit starts, and `initialValue` is the value the edit starts with. The editor is responsible for focusing its input.
+
+```tsx file="custom-editor.snippet.tsx" region="customeditor-tsx" title="custom-editor.ts"
+```
+
+<Note>
+
+Inside any custom editor component, you can use <HookLink name="useInfiniteColumnCell"/> to get access to the cell-related information. It returns a signal.
+
+</Note>
+
+</FrameworkContent>
+
 <DemoDescription>
 
 In this example, the `salary` column is configured with a custom editor component.
@@ -75,6 +98,14 @@ A common use-case is integrating date editors. The following example uses the [M
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+A common use-case is integrating date editors. In Angular, a date editor is written like the editor above: a component that calls <HookLink name="useInfiniteColumnEditor" /> and renders a date input. The following example uses the browser's native `<input type="date">`; the date picker you already use in your project fits in the same way.
+
+</FrameworkContent>
+
+<FrameworkContent not="angular">
+
 <DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** column to show the date picker.
@@ -83,3 +114,18 @@ This is a basic example integrating with the [MUI X Date Picker](https://mui.com
 
 ```tsx file="date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker for editing dates in the DataGrid"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<DemoDescription>
+
+Click any cell in the **Birth Date** column to edit it with the browser's date input: pick a day to confirm the edit, press Escape (or click elsewhere) to cancel it.
+
+</DemoDescription>
+
+```tsx file="date-editor-example.demo.tsx" height="large" title="Using a native date input for editing dates in the DataGrid"
+```
+
+</FrameworkContent>

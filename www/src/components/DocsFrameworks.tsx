@@ -20,6 +20,7 @@ import {
   type DocsFrameworkId,
   type DocsFrameworkPages,
 } from '@www/utils/docsFrameworks';
+import { docsFramework } from '@www/utils/docsFrameworksRegistry';
 
 const PagesContext = React.createContext<DocsFrameworkPages>({});
 
@@ -94,9 +95,13 @@ export function useDocsFramework() {
         );
         return link.kind === 'missing' ? href : link.href;
       },
-      /** A sidebar tree for this page's framework. */
+      /**
+       * A sidebar tree for this page's framework (React's is the tree as it
+       * is, unless React lacks a page: then there's a list of its pages).
+       */
       routesFor<R extends { path?: string; routes?: R[] }>(routes: R[]): R[] {
-        return framework && framework !== docsFrameworks.default
+        return framework &&
+          (framework !== docsFrameworks.default || pages[framework])
           ? mapRouteTree(docsFrameworks, routes, framework, hasPage, {
               onFallback: (route, fallback) => ({
                 ...route,
@@ -108,11 +113,6 @@ export function useDocsFramework() {
     };
   }, [pages, pathname, preference]);
 }
-
-const DEMO_MAIN_FILE_EXTENSION: Record<DocsFrameworkId, string> = {
-  react: '.demo.tsx',
-  vue: '.demo.vue',
-};
 
 /**
  * The current hash, for the same page in the `target` framework.
@@ -134,16 +134,19 @@ function hashFor(hash: string, target: DocsFrameworkId): string {
   }
   const slug = raw.slice(0, slash);
   const file = raw.slice(slash + 1);
-  for (const ext of Object.values(DEMO_MAIN_FILE_EXTENSION)) {
+  for (const id of docsFrameworks.ids) {
+    const ext = docsFramework(id).demoSuffix;
     if (file.endsWith(ext)) {
-      return `#${slug}/${file.slice(0, -ext.length)}${DEMO_MAIN_FILE_EXTENSION[target]}`;
+      return `#${slug}/${file.slice(0, -ext.length)}${docsFramework(target).demoSuffix}`;
     }
   }
   return `#${slug}`;
 }
 
 /**
- * React | Vue, in the site header.
+ * React | Vue | Angular (every framework of www/frameworks.json), in the site
+ * header and the phone menus: a segmented control from 640px up, a dropdown
+ * below (no room for three segments there).
  *
  * - On a docs page, each option links to the same page in that framework (or
  *   the nearest parent that exists there).
@@ -169,85 +172,118 @@ export function DocsFrameworkSwitcher(props: { className?: string }) {
   const pageFramework = docsFrameworks.frameworkOf(pathname);
   const homeFramework = homeFrameworkOf(pathname);
 
+  const options = docsFrameworks.ids.map((id) => {
+    let href: string | undefined;
+    // only when the same page exists in that framework: then the
+    // current hash (heading, demo) is kept on switching
+    let samePage = false;
+    if (pageFramework) {
+      const target = resolveSwitchTarget(
+        docsFrameworks,
+        pathname,
+        id,
+        hasPage,
+      );
+      samePage = !!target?.exact;
+      href = target?.href ?? docsFrameworks.pathFor('/docs', id);
+    } else if (homeFramework) {
+      href = DOCS_FRAMEWORK_HOME[id];
+    }
+    return { id, href, samePage, active: id === current };
+  });
+
+  /**
+   * `href` with the current hash, when it's the same page: the hash is only
+   * known (and changes) on the client, so it's added when switching.
+   */
+  const fullHrefOf = (option: (typeof options)[number]) =>
+    option.href && option.samePage && option.id !== pageFramework
+      ? `${option.href}${hashFor(window.location.hash, option.id)}`
+      : option.href;
+
+  const switchTo = (option: (typeof options)[number]) => {
+    setPreference(option.id);
+    const fullHref = fullHrefOf(option);
+    if (option.href && option.href !== pathname && fullHref) {
+      router.push(fullHref);
+    }
+  };
+
   return (
-    <div
-      className={`dk-framework-switcher docs-framework-switcher ${
-        props.className ?? ''
-      }`}
-      role="group"
-      aria-label="Framework"
-    >
-      {docsFrameworks.ids.map((id) => {
-        let href: string | undefined;
-        // only when the same page exists in that framework: then the
-        // current hash (heading, demo) is kept on switching
-        let samePage = false;
-        if (pageFramework) {
-          const target = resolveSwitchTarget(
-            docsFrameworks,
-            pathname,
-            id,
-            hasPage,
+    <div className={`docs-framework-switcher-box ${props.className ?? ''}`}>
+      <div
+        className="dk-framework-switcher docs-framework-switcher"
+        role="group"
+        aria-label="Framework"
+      >
+        {options.map((option) => {
+          const { id, href, active } = option;
+          const className = `dk-framework-option${
+            active ? ' dk-framework-option--active' : ''
+          }`;
+          const onClick = (event: React.MouseEvent<HTMLElement>) => {
+            // this covers cmd/middle clicks too, as the browser reads the
+            // link's href after this handler
+            const fullHref = fullHrefOf(option);
+            if (fullHref && fullHref !== href) {
+              event.currentTarget.setAttribute('href', fullHref);
+            }
+            const plainClick =
+              event.button === 0 &&
+              !event.metaKey &&
+              !event.ctrlKey &&
+              !event.shiftKey &&
+              !event.altKey;
+            if (!href || !plainClick) {
+              setPreference(id);
+              return;
+            }
+            event.preventDefault();
+            switchTo(option);
+          };
+          return href ? (
+            <a
+              key={id}
+              href={href}
+              className={className}
+              data-framework={id}
+              aria-current={active ? 'true' : undefined}
+              onClick={onClick}
+            >
+              {docsFrameworks.label(id)}
+            </a>
+          ) : (
+            <button
+              key={id}
+              type="button"
+              className={className}
+              data-framework={id}
+              aria-current={active ? 'true' : undefined}
+              onClick={onClick}
+            >
+              {docsFrameworks.label(id)}
+            </button>
           );
-          samePage = !!target?.exact;
-          href = target?.href ?? docsFrameworks.pathFor('/docs', id);
-        } else if (homeFramework) {
-          href = DOCS_FRAMEWORK_HOME[id];
-        }
-        const active = id === current;
-        const className = `dk-framework-option${
-          active ? ' dk-framework-option--active' : ''
-        }`;
-        const onClick = (event: React.MouseEvent<HTMLElement>) => {
-          setPreference(id);
-          // the hash is only known (and changes) on the client, so it's added
-          // at click time - this covers cmd/middle clicks too, as the browser
-          // reads the link's href after this handler
-          const fullHref =
-            href && samePage && id !== pageFramework
-              ? `${href}${hashFor(window.location.hash, id)}`
-              : href;
-          if (fullHref && fullHref !== href) {
-            event.currentTarget.setAttribute('href', fullHref);
-          }
-          const plainClick =
-            event.button === 0 &&
-            !event.metaKey &&
-            !event.ctrlKey &&
-            !event.shiftKey &&
-            !event.altKey;
-          if (!href || !plainClick) {
-            return;
-          }
-          event.preventDefault();
-          if (href !== pathname && fullHref) {
-            router.push(fullHref);
-          }
-        };
-        return href ? (
-          <a
-            key={id}
-            href={href}
-            className={className}
-            data-framework={id}
-            aria-current={active ? 'true' : undefined}
-            onClick={onClick}
-          >
-            {docsFrameworks.label(id)}
-          </a>
-        ) : (
-          <button
-            key={id}
-            type="button"
-            className={className}
-            data-framework={id}
-            aria-current={active ? 'true' : undefined}
-            onClick={onClick}
-          >
-            {docsFrameworks.label(id)}
-          </button>
-        );
-      })}
+        })}
+      </div>
+      <span className="docs-framework-select">
+        <select
+          aria-label="Framework"
+          value={current}
+          onChange={(event) => {
+            const option = options.find((o) => o.id === event.target.value);
+            if (option) {
+              switchTo(option);
+            }
+          }}
+        >
+          {options.map(({ id }) => (
+            <option key={id} value={id}>
+              {docsFrameworks.label(id)}
+            </option>
+          ))}
+        </select>
+      </span>
     </div>
   );
 }

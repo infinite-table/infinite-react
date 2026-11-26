@@ -13,7 +13,7 @@ export type TestPagesIndexProps = {
   entries: IndexEntry[];
 };
 
-export type TestRunnerProject = 'react' | 'vue';
+export type TestRunnerProject = 'react' | 'vue' | 'angular';
 
 export type TestRunnerStatus =
   | 'idle'
@@ -28,8 +28,10 @@ export const TEST_RUNNER_PORT = Number(
   import.meta.env.VITE_TEST_RUNNER_PORT || 5599,
 );
 
+const TEST_PROJECT = import.meta.env.VITE_TEST_PROJECT;
+
 export const TEST_RUNNER_PROJECT: TestRunnerProject =
-  import.meta.env.VITE_TEST_PROJECT === 'vue' ? 'vue' : 'react';
+  TEST_PROJECT === 'vue' || TEST_PROJECT === 'angular' ? TEST_PROJECT : 'react';
 
 export const testRunnerBaseUrl = () =>
   `${window.location.protocol}//${window.location.hostname}:${TEST_RUNNER_PORT}`;

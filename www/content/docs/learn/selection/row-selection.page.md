@@ -2,6 +2,7 @@
 title: Row Selection
 description: InfiniteTable DataGrid component supports single and multiple row selection, including checkbox column selection and lazy rows selection
 vue: true
+angular: true
 ---
 
 `InfiniteTable` offers support for both single and multiple row selection. For selecting cells, see the [Cell Selection](/docs/learn/selection/cell-selection) page.
@@ -61,11 +62,31 @@ Both `cell` and `row` <PropLink name="keyboardNavigation" /> are available and y
 
 ## Controlled single row selection
 
+<FrameworkContent not="angular">
+
 Row selection can be used as a <DPropLink name="rowSelection" code={false}>controlled</DPropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. For the controlled version, make sure you also define your <DPropLink name="onRowSelectionChange" /> callback prop to update the selection.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Row selection can be used as a <DPropLink name="rowSelection" code={false}>controlled</DPropLink> or <PropLink name="defaultRowSelection" code={false}>uncontrolled</PropLink> property. The controlled <DPropLink name="rowSelection" /> is a model: bind it two-way to a signal, and the grid writes the selection the user makes back to your signal. To react to the change, use the <DPropLink name="onRowSelectionChange" /> output.
+
+</FrameworkContent>
 
 <DemoDescription>
 
+<FrameworkContent not="angular">
+
 This example uses <DPropLink name="onRowSelectionChange" /> callback prop to update the controlled <DPropLink name="rowSelection" />
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This example binds the controlled <DPropLink name="rowSelection" /> model two-way to a signal, so the grid writes the row you select back to it - the current value of the signal is shown above the grid.
+
+</FrameworkContent>
 
 </DemoDescription>
 
@@ -284,15 +305,37 @@ In the example above, we know that there are 3 groups (`continent`, `country`, `
 
 ### Controlled selection with checkbox column
 
+<FrameworkContent not="angular">
+
 When using the controlled <DPropLink name="rowSelection" />, make sure to specify the <DPropLink name="onRowSelectionChange" /> callback prop to update the selection accordingly as a result of user interaction.
 
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When using the controlled <DPropLink name="rowSelection" />, bind it two-way to a signal, so the selection is updated as a result of user interaction - or use the <DPropLink name="onRowSelectionChange" /> output when you need to do more with the new selection.
+
+</FrameworkContent>
+
 <DemoDescription>
+
+<FrameworkContent not="angular">
 
 This example shows how you can use multiple row selection with a predefined controlled value.
 
 Go ahead and select some groups/rows and see the selection value adjust.
 
 The example also shows how you can use the `InfiniteTableApi` to retrieve the actual ids of the selected rows.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This example shows how you can use multiple row selection with a predefined controlled value: the <DPropLink name="rowSelection" /> model is bound two-way to a signal.
+
+Go ahead and select some groups/rows and see the selection value adjust.
+
+</FrameworkContent>
 
 </DemoDescription>
 

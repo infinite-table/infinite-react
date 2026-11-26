@@ -1,0 +1,1370 @@
+{
+  "InfiniteTable": {
+    "activeCellIndex": [
+      {
+        "angularName": "activeCellIndex",
+        "kind": "model"
+      }
+    ],
+    "activeRowIndex": [
+      {
+        "angularName": "activeRowIndex",
+        "kind": "model"
+      }
+    ],
+    "autoSizeColumnsKey": [
+      {
+        "angularName": "autoSizeColumnsKey",
+        "kind": "input"
+      }
+    ],
+    "cellClassName": [
+      {
+        "angularName": "cellClassName",
+        "kind": "input"
+      }
+    ],
+    "cellStyle": [
+      {
+        "angularName": "cellStyle",
+        "kind": "input"
+      }
+    ],
+    "collapsedColumnGroups": [
+      {
+        "angularName": "collapsedColumnGroups",
+        "kind": "input"
+      }
+    ],
+    "columnCssEllipsis": [
+      {
+        "angularName": "columnCssEllipsis",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultDraggable": [
+      {
+        "angularName": "columnDefaultDraggable",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultEditable": [
+      {
+        "angularName": "columnDefaultEditable",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultFilterable": [
+      {
+        "angularName": "columnDefaultFilterable",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultFlex": [
+      {
+        "angularName": "columnDefaultFlex",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultGroupable": [
+      {
+        "angularName": "columnDefaultGroupable",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultSortable": [
+      {
+        "angularName": "columnDefaultSortable",
+        "kind": "input"
+      }
+    ],
+    "columnDefaultWidth": [
+      {
+        "angularName": "columnDefaultWidth",
+        "kind": "input"
+      }
+    ],
+    "columnGroups": [
+      {
+        "angularName": "columnGroups",
+        "kind": "input"
+      }
+    ],
+    "columnGroupVisibility": [
+      {
+        "angularName": "columnGroupVisibility",
+        "kind": "model"
+      }
+    ],
+    "columnHeaderCssEllipsis": [
+      {
+        "angularName": "columnHeaderCssEllipsis",
+        "kind": "input"
+      }
+    ],
+    "columnHeaderHeight": [
+      {
+        "angularName": "columnHeaderHeight",
+        "kind": "input"
+      }
+    ],
+    "columnMaxWidth": [
+      {
+        "angularName": "columnMaxWidth",
+        "kind": "input"
+      }
+    ],
+    "columnMenuRealignDelay": [
+      {
+        "angularName": "columnMenuRealignDelay",
+        "kind": "input"
+      }
+    ],
+    "columnMinWidth": [
+      {
+        "angularName": "columnMinWidth",
+        "kind": "input"
+      }
+    ],
+    "columnOrder": [
+      {
+        "angularName": "columnOrder",
+        "kind": "model"
+      }
+    ],
+    "columnPinning": [
+      {
+        "angularName": "columnPinning",
+        "kind": "model"
+      }
+    ],
+    "columns": [
+      {
+        "angularName": "columns",
+        "kind": "input"
+      }
+    ],
+    "columnSizing": [
+      {
+        "angularName": "columnSizing",
+        "kind": "model"
+      }
+    ],
+    "columnTypes": [
+      {
+        "angularName": "columnTypes",
+        "kind": "input"
+      }
+    ],
+    "columnVisibility": [
+      {
+        "angularName": "columnVisibility",
+        "kind": "model"
+      }
+    ],
+    "components": [
+      {
+        "angularName": "components",
+        "kind": "input"
+      }
+    ],
+    "debugId": [
+      {
+        "angularName": "debugId",
+        "kind": "input"
+      }
+    ],
+    "defaultActiveCellIndex": [
+      {
+        "angularName": "defaultActiveCellIndex",
+        "kind": "input"
+      }
+    ],
+    "defaultActiveRowIndex": [
+      {
+        "angularName": "defaultActiveRowIndex",
+        "kind": "input"
+      }
+    ],
+    "defaultCollapsedColumnGroups": [
+      {
+        "angularName": "defaultCollapsedColumnGroups",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnGroups": [
+      {
+        "angularName": "defaultColumnGroups",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnGroupVisibility": [
+      {
+        "angularName": "defaultColumnGroupVisibility",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnOrder": [
+      {
+        "angularName": "defaultColumnOrder",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnPinning": [
+      {
+        "angularName": "defaultColumnPinning",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnSizing": [
+      {
+        "angularName": "defaultColumnSizing",
+        "kind": "input"
+      }
+    ],
+    "defaultColumnVisibility": [
+      {
+        "angularName": "defaultColumnVisibility",
+        "kind": "input"
+      }
+    ],
+    "defaultRowDetailState": [
+      {
+        "angularName": "defaultRowDetailState",
+        "kind": "input"
+      }
+    ],
+    "domProps": [
+      {
+        "angularName": "domProps",
+        "kind": "input"
+      }
+    ],
+    "draggableColumns": [
+      {
+        "angularName": "draggableColumns",
+        "kind": "input"
+      }
+    ],
+    "draggableColumnsRestrictTo": [
+      {
+        "angularName": "draggableColumnsRestrictTo",
+        "kind": "input"
+      }
+    ],
+    "editable": [
+      {
+        "angularName": "editable",
+        "kind": "input"
+      }
+    ],
+    "focusedClassName": [
+      {
+        "angularName": "focusedClassName",
+        "kind": "input"
+      }
+    ],
+    "focusedStyle": [
+      {
+        "angularName": "focusedStyle",
+        "kind": "input"
+      }
+    ],
+    "focusedWithinClassName": [
+      {
+        "angularName": "focusedWithinClassName",
+        "kind": "input"
+      }
+    ],
+    "focusedWithinStyle": [
+      {
+        "angularName": "focusedWithinStyle",
+        "kind": "input"
+      }
+    ],
+    "getCellContextMenuItems": [
+      {
+        "angularName": "getCellContextMenuItems",
+        "kind": "input"
+      }
+    ],
+    "getColumnMenuItems": [
+      {
+        "angularName": "getColumnMenuItems",
+        "kind": "input"
+      }
+    ],
+    "getContextMenuItems": [
+      {
+        "angularName": "getContextMenuItems",
+        "kind": "input"
+      }
+    ],
+    "getFilterOperatorMenuItems": [
+      {
+        "angularName": "getFilterOperatorMenuItems",
+        "kind": "input"
+      }
+    ],
+    "groupColumn": [
+      {
+        "angularName": "groupColumn",
+        "kind": "input"
+      }
+    ],
+    "groupRenderStrategy": [
+      {
+        "angularName": "groupRenderStrategy",
+        "kind": "input"
+      }
+    ],
+    "header": [
+      {
+        "angularName": "header",
+        "kind": "input"
+      }
+    ],
+    "headerOptions": [
+      {
+        "angularName": "headerOptions",
+        "kind": "input"
+      }
+    ],
+    "hideColumnWhenGrouped": [
+      {
+        "angularName": "hideColumnWhenGrouped",
+        "kind": "input"
+      }
+    ],
+    "hideEmptyGroupColumns": [
+      {
+        "angularName": "hideEmptyGroupColumns",
+        "kind": "input"
+      }
+    ],
+    "id": [
+      {
+        "angularName": "id",
+        "kind": "input"
+      }
+    ],
+    "isRowDetailEnabled": [
+      {
+        "angularName": "isRowDetailEnabled",
+        "kind": "input"
+      }
+    ],
+    "isRowDetailExpanded": [
+      {
+        "angularName": "isRowDetailExpanded",
+        "kind": "input"
+      }
+    ],
+    "keyboardNavigation": [
+      {
+        "angularName": "keyboardNavigation",
+        "kind": "input"
+      }
+    ],
+    "keyboardSelection": [
+      {
+        "angularName": "keyboardSelection",
+        "kind": "input"
+      }
+    ],
+    "keyboardShortcuts": [
+      {
+        "angularName": "keyboardShortcuts",
+        "kind": "input"
+      }
+    ],
+    "licenseKey": [
+      {
+        "angularName": "licenseKey",
+        "kind": "input"
+      }
+    ],
+    "loadingText": [
+      {
+        "angularName": "loadingText",
+        "kind": "input"
+      }
+    ],
+    "menuConstrainTo": [
+      {
+        "angularName": "menuConstrainTo",
+        "kind": "input"
+      }
+    ],
+    "menuPortalContainer": [
+      {
+        "angularName": "menuPortalContainer",
+        "kind": "input"
+      }
+    ],
+    "multiRowSelectionWith": [
+      {
+        "angularName": "multiRowSelectionWith",
+        "kind": "input"
+      }
+    ],
+    "multiSortBehavior": [
+      {
+        "angularName": "multiSortBehavior",
+        "kind": "input"
+      }
+    ],
+    "onBlurWithin": [
+      {
+        "angularName": "blurWithin",
+        "kind": "output"
+      }
+    ],
+    "onCellClick": [
+      {
+        "angularName": "cellClick",
+        "kind": "output"
+      }
+    ],
+    "onCellContextMenu": [
+      {
+        "angularName": "cellContextMenu",
+        "kind": "output"
+      }
+    ],
+    "onCellDoubleClick": [
+      {
+        "angularName": "onCellDoubleClick",
+        "kind": "function-input"
+      }
+    ],
+    "onContextMenu": [
+      {
+        "angularName": "contextMenu",
+        "kind": "output"
+      }
+    ],
+    "onEditAccepted": [
+      {
+        "angularName": "editAccepted",
+        "kind": "output"
+      }
+    ],
+    "onEditCancelled": [
+      {
+        "angularName": "editCancelled",
+        "kind": "output"
+      }
+    ],
+    "onEditPersistError": [
+      {
+        "angularName": "editPersistError",
+        "kind": "output"
+      }
+    ],
+    "onEditPersistSuccess": [
+      {
+        "angularName": "editPersistSuccess",
+        "kind": "output"
+      }
+    ],
+    "onEditRejected": [
+      {
+        "angularName": "editRejected",
+        "kind": "output"
+      }
+    ],
+    "onFocusWithin": [
+      {
+        "angularName": "focusWithin",
+        "kind": "output"
+      }
+    ],
+    "onKeyDown": [
+      {
+        "angularName": "onKeyDown",
+        "kind": "function-input"
+      }
+    ],
+    "onReady": [
+      {
+        "angularName": "ready",
+        "kind": "output"
+      }
+    ],
+    "onRenderRangeChange": [
+      {
+        "angularName": "renderRangeChange",
+        "kind": "output"
+      }
+    ],
+    "onRowDetailStateChange": [
+      {
+        "angularName": "rowDetailStateChange",
+        "kind": "model-change"
+      },
+      {
+        "angularName": "onRowDetailStateChange",
+        "kind": "function-input"
+      }
+    ],
+    "onRowHeightChange": [
+      {
+        "angularName": "rowHeightChange",
+        "kind": "output"
+      }
+    ],
+    "onRowMouseEnter": [
+      {
+        "angularName": "rowMouseEnter",
+        "kind": "output"
+      }
+    ],
+    "onRowMouseLeave": [
+      {
+        "angularName": "rowMouseLeave",
+        "kind": "output"
+      }
+    ],
+    "onScrollbarsChange": [
+      {
+        "angularName": "scrollbarsChange",
+        "kind": "output"
+      }
+    ],
+    "onScrollStop": [
+      {
+        "angularName": "scrollStop",
+        "kind": "output"
+      }
+    ],
+    "onScrollToBottom": [
+      {
+        "angularName": "scrollToBottom",
+        "kind": "output"
+      }
+    ],
+    "onScrollToTop": [
+      {
+        "angularName": "scrollToTop",
+        "kind": "output"
+      }
+    ],
+    "onSelfBlur": [
+      {
+        "angularName": "selfBlur",
+        "kind": "output"
+      }
+    ],
+    "onSelfFocus": [
+      {
+        "angularName": "selfFocus",
+        "kind": "output"
+      }
+    ],
+    "persistEdit": [
+      {
+        "angularName": "persistEdit",
+        "kind": "input"
+      }
+    ],
+    "pinnedEndMaxWidth": [
+      {
+        "angularName": "pinnedEndMaxWidth",
+        "kind": "input"
+      }
+    ],
+    "pinnedStartMaxWidth": [
+      {
+        "angularName": "pinnedStartMaxWidth",
+        "kind": "input"
+      }
+    ],
+    "pivotColumn": [
+      {
+        "angularName": "pivotColumn",
+        "kind": "input"
+      }
+    ],
+    "pivotColumnGroups": [
+      {
+        "angularName": "pivotColumnGroups",
+        "kind": "input"
+      }
+    ],
+    "pivotColumns": [
+      {
+        "angularName": "pivotColumns",
+        "kind": "input"
+      }
+    ],
+    "pivotGrandTotalColumnPosition": [
+      {
+        "angularName": "pivotGrandTotalColumnPosition",
+        "kind": "input"
+      }
+    ],
+    "pivotTotalColumnPosition": [
+      {
+        "angularName": "pivotTotalColumnPosition",
+        "kind": "input"
+      }
+    ],
+    "repaintCellsKey": [
+      {
+        "angularName": "repaintCellsKey",
+        "kind": "input"
+      }
+    ],
+    "repeatWrappedGroupRows": [
+      {
+        "angularName": "repeatWrappedGroupRows",
+        "kind": "input"
+      }
+    ],
+    "resizableColumns": [
+      {
+        "angularName": "resizableColumns",
+        "kind": "input"
+      }
+    ],
+    "rowClassName": [
+      {
+        "angularName": "rowClassName",
+        "kind": "input"
+      }
+    ],
+    "rowDetailCache": [
+      {
+        "angularName": "rowDetailCache",
+        "kind": "input"
+      }
+    ],
+    "rowDetailHeight": [
+      {
+        "angularName": "rowDetailHeight",
+        "kind": "input"
+      }
+    ],
+    "rowDetailRenderer": [
+      {
+        "angularName": "rowDetailRenderer",
+        "kind": "input"
+      }
+    ],
+    "rowDetailState": [
+      {
+        "angularName": "rowDetailState",
+        "kind": "model"
+      }
+    ],
+    "rowHeight": [
+      {
+        "angularName": "rowHeight",
+        "kind": "input"
+      }
+    ],
+    "rowHoverClassName": [
+      {
+        "angularName": "rowHoverClassName",
+        "kind": "input"
+      }
+    ],
+    "rowProps": [
+      {
+        "angularName": "rowProps",
+        "kind": "input"
+      }
+    ],
+    "rowStyle": [
+      {
+        "angularName": "rowStyle",
+        "kind": "input"
+      }
+    ],
+    "scrollStopDelay": [
+      {
+        "angularName": "scrollStopDelay",
+        "kind": "input"
+      }
+    ],
+    "scrollToBottomOffset": [
+      {
+        "angularName": "scrollToBottomOffset",
+        "kind": "input"
+      }
+    ],
+    "scrollTopKey": [
+      {
+        "angularName": "scrollTopKey",
+        "kind": "input"
+      }
+    ],
+    "shouldAcceptEdit": [
+      {
+        "angularName": "shouldAcceptEdit",
+        "kind": "input"
+      }
+    ],
+    "showColumnFilters": [
+      {
+        "angularName": "showColumnFilters",
+        "kind": "input"
+      }
+    ],
+    "showHoverRows": [
+      {
+        "angularName": "showHoverRows",
+        "kind": "input"
+      }
+    ],
+    "showSeparatePivotColumnForSingleAggregation": [
+      {
+        "angularName": "showSeparatePivotColumnForSingleAggregation",
+        "kind": "input"
+      }
+    ],
+    "showZebraRows": [
+      {
+        "angularName": "showZebraRows",
+        "kind": "input"
+      }
+    ],
+    "sortable": [
+      {
+        "angularName": "sortable",
+        "kind": "input"
+      }
+    ],
+    "viewportReservedWidth": [
+      {
+        "angularName": "viewportReservedWidth",
+        "kind": "model"
+      }
+    ],
+    "virtualizeColumns": [
+      {
+        "angularName": "virtualizeColumns",
+        "kind": "input"
+      }
+    ],
+    "virtualizeRows": [
+      {
+        "angularName": "virtualizeRows",
+        "kind": "input"
+      }
+    ],
+    "wrapRowsHorizontally": [
+      {
+        "angularName": "wrapRowsHorizontally",
+        "kind": "input"
+      }
+    ],
+    "onActiveCellIndexChange": [
+      {
+        "angularName": "activeCellIndexChange",
+        "kind": "model-change"
+      }
+    ],
+    "onActiveRowIndexChange": [
+      {
+        "angularName": "activeRowIndexChange",
+        "kind": "model-change"
+      }
+    ],
+    "onColumnGroupVisibilityChange": [
+      {
+        "angularName": "columnGroupVisibilityChange",
+        "kind": "model-change"
+      }
+    ],
+    "onColumnOrderChange": [
+      {
+        "angularName": "columnOrderChange",
+        "kind": "model-change"
+      }
+    ],
+    "onColumnPinningChange": [
+      {
+        "angularName": "columnPinningChange",
+        "kind": "model-change"
+      }
+    ],
+    "onColumnSizingChange": [
+      {
+        "angularName": "columnSizingChange",
+        "kind": "model-change"
+      }
+    ],
+    "onColumnVisibilityChange": [
+      {
+        "angularName": "columnVisibilityChange",
+        "kind": "model-change"
+      }
+    ],
+    "onViewportReservedWidthChange": [
+      {
+        "angularName": "viewportReservedWidthChange",
+        "kind": "model-change"
+      }
+    ]
+  },
+  "DataSource": {
+    "aggregationReducers": [
+      {
+        "angularName": "aggregationReducers",
+        "kind": "input"
+      }
+    ],
+    "batchOperationDelay": [
+      {
+        "angularName": "batchOperationDelay",
+        "kind": "input"
+      }
+    ],
+    "cellSelection": [
+      {
+        "angularName": "cellSelection",
+        "kind": "model"
+      }
+    ],
+    "collapseGroupRowsOnDataFunctionChange": [
+      {
+        "angularName": "collapseGroupRowsOnDataFunctionChange",
+        "kind": "input"
+      }
+    ],
+    "data": [
+      {
+        "angularName": "data",
+        "kind": "input"
+      }
+    ],
+    "debugId": [
+      {
+        "angularName": "debugId",
+        "kind": "input"
+      }
+    ],
+    "defaultAggregationReducers": [
+      {
+        "angularName": "defaultAggregationReducers",
+        "kind": "input"
+      }
+    ],
+    "defaultCellSelection": [
+      {
+        "angularName": "defaultCellSelection",
+        "kind": "input"
+      }
+    ],
+    "defaultFilterValue": [
+      {
+        "angularName": "defaultFilterValue",
+        "kind": "input"
+      }
+    ],
+    "defaultGroupBy": [
+      {
+        "angularName": "defaultGroupBy",
+        "kind": "input"
+      }
+    ],
+    "defaultGroupRowsState": [
+      {
+        "angularName": "defaultGroupRowsState",
+        "kind": "input"
+      }
+    ],
+    "defaultLoading": [
+      {
+        "angularName": "defaultLoading",
+        "kind": "input"
+      }
+    ],
+    "defaultPivotBy": [
+      {
+        "angularName": "defaultPivotBy",
+        "kind": "input"
+      }
+    ],
+    "defaultRowDisabledState": [
+      {
+        "angularName": "defaultRowDisabledState",
+        "kind": "input"
+      }
+    ],
+    "defaultRowSelection": [
+      {
+        "angularName": "defaultRowSelection",
+        "kind": "input"
+      }
+    ],
+    "defaultSortInfo": [
+      {
+        "angularName": "defaultSortInfo",
+        "kind": "input"
+      }
+    ],
+    "defaultTreeExpandState": [
+      {
+        "angularName": "defaultTreeExpandState",
+        "kind": "input"
+      }
+    ],
+    "defaultTreeSelection": [
+      {
+        "angularName": "defaultTreeSelection",
+        "kind": "input"
+      }
+    ],
+    "fields": [
+      {
+        "angularName": "fields",
+        "kind": "input"
+      }
+    ],
+    "filterDelay": [
+      {
+        "angularName": "filterDelay",
+        "kind": "input"
+      }
+    ],
+    "filterFunction": [
+      {
+        "angularName": "filterFunction",
+        "kind": "input"
+      }
+    ],
+    "filterTypes": [
+      {
+        "angularName": "filterTypes",
+        "kind": "input"
+      }
+    ],
+    "filterValue": [
+      {
+        "angularName": "filterValue",
+        "kind": "model"
+      }
+    ],
+    "groupBy": [
+      {
+        "angularName": "groupBy",
+        "kind": "model"
+      }
+    ],
+    "groupRowsState": [
+      {
+        "angularName": "groupRowsState",
+        "kind": "model"
+      }
+    ],
+    "isNodeCollapsed": [
+      {
+        "angularName": "isNodeCollapsed",
+        "kind": "input"
+      }
+    ],
+    "isNodeExpanded": [
+      {
+        "angularName": "isNodeExpanded",
+        "kind": "input"
+      }
+    ],
+    "isNodeReadOnly": [
+      {
+        "angularName": "isNodeReadOnly",
+        "kind": "input"
+      }
+    ],
+    "isNodeSelectable": [
+      {
+        "angularName": "isNodeSelectable",
+        "kind": "input"
+      }
+    ],
+    "isNodeSelected": [
+      {
+        "angularName": "isNodeSelected",
+        "kind": "input"
+      }
+    ],
+    "isRowDisabled": [
+      {
+        "angularName": "isRowDisabled",
+        "kind": "input"
+      }
+    ],
+    "isRowSelected": [
+      {
+        "angularName": "isRowSelected",
+        "kind": "input"
+      }
+    ],
+    "lazyLoad": [
+      {
+        "angularName": "lazyLoad",
+        "kind": "input"
+      }
+    ],
+    "livePagination": [
+      {
+        "angularName": "livePagination",
+        "kind": "input"
+      }
+    ],
+    "livePaginationCursor": [
+      {
+        "angularName": "livePaginationCursor",
+        "kind": "input"
+      }
+    ],
+    "loading": [
+      {
+        "angularName": "loading",
+        "kind": "model"
+      }
+    ],
+    "multiRowSelectionTarget": [
+      {
+        "angularName": "multiRowSelectionTarget",
+        "kind": "input"
+      }
+    ],
+    "nodesKey": [
+      {
+        "angularName": "nodesKey",
+        "kind": "input"
+      }
+    ],
+    "onCellSelectionChange": [
+      {
+        "angularName": "cellSelectionChange",
+        "kind": "model-change"
+      },
+      {
+        "angularName": "onCellSelectionChange",
+        "kind": "function-input"
+      }
+    ],
+    "onDataArrayChange": [
+      {
+        "angularName": "dataArrayChange",
+        "kind": "output"
+      },
+      {
+        "angularName": "onDataArrayChange",
+        "kind": "function-input"
+      }
+    ],
+    "onDataMutations": [
+      {
+        "angularName": "dataMutations",
+        "kind": "output"
+      }
+    ],
+    "onDataParamsChange": [
+      {
+        "angularName": "dataParamsChange",
+        "kind": "output"
+      }
+    ],
+    "onLivePaginationCursorChange": [
+      {
+        "angularName": "livePaginationCursorChange",
+        "kind": "output"
+      }
+    ],
+    "onNodeCollapse": [
+      {
+        "angularName": "nodeCollapse",
+        "kind": "output"
+      },
+      {
+        "angularName": "onNodeCollapse",
+        "kind": "function-input"
+      }
+    ],
+    "onNodeExpand": [
+      {
+        "angularName": "nodeExpand",
+        "kind": "output"
+      },
+      {
+        "angularName": "onNodeExpand",
+        "kind": "function-input"
+      }
+    ],
+    "onReady": [
+      {
+        "angularName": "ready",
+        "kind": "output"
+      }
+    ],
+    "onRowSelectionChange": [
+      {
+        "angularName": "rowSelectionChange",
+        "kind": "model-change"
+      },
+      {
+        "angularName": "onRowSelectionChange",
+        "kind": "function-input"
+      }
+    ],
+    "onTreeDataMutations": [
+      {
+        "angularName": "treeDataMutations",
+        "kind": "output"
+      }
+    ],
+    "onTreeExpandStateChange": [
+      {
+        "angularName": "treeExpandStateChange",
+        "kind": "model-change"
+      },
+      {
+        "angularName": "onTreeExpandStateChange",
+        "kind": "function-input"
+      }
+    ],
+    "onTreeSelectionChange": [
+      {
+        "angularName": "treeSelectionChange",
+        "kind": "model-change"
+      },
+      {
+        "angularName": "onTreeSelectionChange",
+        "kind": "function-input"
+      }
+    ],
+    "pivotBy": [
+      {
+        "angularName": "pivotBy",
+        "kind": "model"
+      }
+    ],
+    "primaryKey": [
+      {
+        "angularName": "primaryKey",
+        "kind": "input"
+      }
+    ],
+    "refetchKey": [
+      {
+        "angularName": "refetchKey",
+        "kind": "input"
+      }
+    ],
+    "rowDisabledState": [
+      {
+        "angularName": "rowDisabledState",
+        "kind": "model"
+      }
+    ],
+    "rowInfoReducers": [
+      {
+        "angularName": "rowInfoReducers",
+        "kind": "input"
+      }
+    ],
+    "rowSelection": [
+      {
+        "angularName": "rowSelection",
+        "kind": "model"
+      }
+    ],
+    "selectionMode": [
+      {
+        "angularName": "selectionMode",
+        "kind": "input"
+      }
+    ],
+    "shouldReloadData": [
+      {
+        "angularName": "shouldReloadData",
+        "kind": "input"
+      }
+    ],
+    "sortFunction": [
+      {
+        "angularName": "sortFunction",
+        "kind": "input"
+      }
+    ],
+    "sortInfo": [
+      {
+        "angularName": "sortInfo",
+        "kind": "model"
+      }
+    ],
+    "sortTypes": [
+      {
+        "angularName": "sortTypes",
+        "kind": "input"
+      }
+    ],
+    "treeExpandState": [
+      {
+        "angularName": "treeExpandState",
+        "kind": "model"
+      }
+    ],
+    "treeFilterFunction": [
+      {
+        "angularName": "treeFilterFunction",
+        "kind": "input"
+      }
+    ],
+    "treeSelection": [
+      {
+        "angularName": "treeSelection",
+        "kind": "model"
+      }
+    ],
+    "useGroupKeysForMultiRowSelection": [
+      {
+        "angularName": "useGroupKeysForMultiRowSelection",
+        "kind": "input"
+      }
+    ],
+    "onFilterValueChange": [
+      {
+        "angularName": "filterValueChange",
+        "kind": "model-change"
+      }
+    ],
+    "onGroupByChange": [
+      {
+        "angularName": "groupByChange",
+        "kind": "model-change"
+      }
+    ],
+    "onGroupRowsStateChange": [
+      {
+        "angularName": "groupRowsStateChange",
+        "kind": "model-change"
+      }
+    ],
+    "onLoadingChange": [
+      {
+        "angularName": "loadingChange",
+        "kind": "model-change"
+      }
+    ],
+    "onPivotByChange": [
+      {
+        "angularName": "pivotByChange",
+        "kind": "model-change"
+      }
+    ],
+    "onRowDisabledStateChange": [
+      {
+        "angularName": "rowDisabledStateChange",
+        "kind": "model-change"
+      }
+    ],
+    "onSortInfoChange": [
+      {
+        "angularName": "sortInfoChange",
+        "kind": "model-change"
+      }
+    ]
+  },
+  "Menu": {
+    "addSubmenuColumnIfNeeded": [
+      {
+        "angularName": "addSubmenuColumnIfNeeded",
+        "kind": "input"
+      }
+    ],
+    "autoFocus": [
+      {
+        "angularName": "autoFocus",
+        "kind": "input"
+      }
+    ],
+    "bubbleActionsFromSubmenus": [
+      {
+        "angularName": "bubbleActionsFromSubmenus",
+        "kind": "input"
+      }
+    ],
+    "columns": [
+      {
+        "angularName": "columns",
+        "kind": "input"
+      }
+    ],
+    "constrainTo": [
+      {
+        "angularName": "constrainTo",
+        "kind": "input"
+      }
+    ],
+    "id": [
+      {
+        "angularName": "id",
+        "kind": "input"
+      }
+    ],
+    "items": [
+      {
+        "angularName": "items",
+        "kind": "input"
+      }
+    ],
+    "onAction": [
+      {
+        "angularName": "action",
+        "kind": "output"
+      }
+    ],
+    "onHide": [
+      {
+        "angularName": "hide",
+        "kind": "output"
+      }
+    ],
+    "onHideIntent": [
+      {
+        "angularName": "hideIntent",
+        "kind": "output"
+      }
+    ],
+    "onShow": [
+      {
+        "angularName": "show",
+        "kind": "output"
+      },
+      {
+        "angularName": "onShow",
+        "kind": "function-input"
+      }
+    ],
+    "parentMenuId": [
+      {
+        "angularName": "parentMenuId",
+        "kind": "input"
+      }
+    ],
+    "parentMenuItemKey": [
+      {
+        "angularName": "parentMenuItemKey",
+        "kind": "input"
+      }
+    ],
+    "portalContainer": [
+      {
+        "angularName": "portalContainer",
+        "kind": "input"
+      }
+    ],
+    "wrapLabels": [
+      {
+        "angularName": "wrapLabels",
+        "kind": "input"
+      }
+    ]
+  }
+}

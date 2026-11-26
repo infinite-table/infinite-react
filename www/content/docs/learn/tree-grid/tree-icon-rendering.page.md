@@ -2,6 +2,7 @@
 title: Using & rendering tree icons
 description: Learn how to customize the tree icons
 vue: true
+angular: true
 ---
 
 
@@ -64,6 +65,12 @@ This example renders a custom tree icon and uses the `toggleCurrentTreeNode` fun
 ```tsx file="tree-icon-custom-example.demo.tsx" title="Rendering a custom tree icon for both parent and leaf nodes"
 ```
 
+<FrameworkContent framework="angular">
+
+A template you return from the `renderTreeIcon` function gets the same properties as its context - the example above uses `let-rowInfo="rowInfo"` and `let-toggleCurrentTreeNode="toggleCurrentTreeNode"` on its `ng-template`.
+
+</FrameworkContent>
+
 
 <Note>
 
@@ -78,6 +85,12 @@ Use `renderBag.treeIcon` property in the JSX you return (the `renderBag` is avai
 <FrameworkContent framework="vue">
 
 Use the `renderBag.treeIcon` property in the VNodes you return, for example as a child in an `h()` call (the `renderBag` is available as a property of the `cellContext` argument of the `renderTreeIcon` function).
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Use the `renderBag.treeIcon` property in the template you return: `<ng-container [infiniteRender]="renderBag.treeIcon" />`, with `let-renderBag="renderBag"` on the `ng-template` and `InfiniteRender` in the `imports` of your component (the `renderBag` is available as a property of the `cellContext` argument of the `renderTreeIcon` function).
 
 </FrameworkContent>
 

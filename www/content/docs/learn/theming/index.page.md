@@ -3,12 +3,36 @@ title: Theming
 description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for React.
 vue:
   description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for Vue.
+angular:
+  description: Read our docs on the available themes and how you can customize the look and feel of InfiniteTable for Angular.
 ---
+
+<FrameworkContent not="angular">
 
 `<InfiniteTable />` ships with a CSS file that you need to import in your codebase to make the component look as intended.
 
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+`<infinite-table />` ships with a CSS file that you need to add to the global styles of your application to make the component look as intended - import it at the top of `src/styles.css`, or list it in the `styles` of the build options in `angular.json`:
+
+</FrameworkContent>
+
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="intro"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+```css title="src/styles.css"
+@import '@infinite-table/infinite-angular/index.css';
+```
+
+</FrameworkContent>
 
 This root CSS file includes the `"default"` theme.
 
@@ -24,8 +48,26 @@ The other available themes are
 
 and if you want to use any of them, you have to import their respective CSS file explicitly:
 
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="theme-css-imports"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+```css title="src/styles.css"
+@import '@infinite-table/infinite-angular/theme/shadcn.css';
+@import '@infinite-table/infinite-angular/theme/balsam.css';
+@import '@infinite-table/infinite-angular/theme/minimalist.css';
+@import '@infinite-table/infinite-angular/theme/ocean.css';
+@import '@infinite-table/infinite-angular/theme/terminal.css';
+@import '@infinite-table/infinite-angular/theme/sheet.css';
+@import '@infinite-table/infinite-angular/theme/paper.css';
+```
+
+</FrameworkContent>
 
 Each theme CSS file includes both the **`light`** and the **`dark`** modes.
 
@@ -167,7 +209,7 @@ The available icon variables are:
 | `--infinite-icon-hidden` | the icon displayed when dragging a column outside the table, to hide it |
 | `--infinite-icon-filter-operator-contains`, `-starts-with`, `-ends-with`, `-eq`, `-neq`, `-gt`, `-gte`, `-lt`, `-lte` | the filter operator icons |
 
-When the variables are not specified, the default icons are rendered (as inline SVG). The variables work the same way in React and Vue.
+When the variables are not specified, the default icons are rendered (as inline SVG). The variables work the same way in React, Vue and Angular.
 
 ```tsx file="custom-icons-example.demo.tsx" title="Replacing the icons via CSS variables"
 ```
@@ -192,8 +234,20 @@ The `minimalist` theme is inspired from minimalistic designs and is a good choic
 
 The `terminal` theme is made for dense, data-heavy screens, like trading desks: a monospace font with tabular numbers (so numbers line up), compact rows, hairline dividers and green/red flashing for values going up/down. It's designed dark-first, but it has a light mode too.
 
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="terminal-theme"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+```css title="src/styles.css"
+@import '@infinite-table/infinite-angular/theme/terminal.css';
+```
+
+</FrameworkContent>
 
 ```tsx file="index.snippet.tsx" region="terminal-theme-class-names"
 ```
@@ -207,8 +261,20 @@ It works with the density classNames - since the theme is already dense, `infini
 
 The `sheet` theme looks like a spreadsheet: full gridlines, sharp corners, an active cell with a thick border and a fill handle, and a header that looks like the column headers of a spreadsheet. It has a light and a dark mode.
 
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="sheet-theme"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+```css title="src/styles.css"
+@import '@infinite-table/infinite-angular/theme/sheet.css';
+```
+
+</FrameworkContent>
 
 The first column pinned at the start (see <PropLink name="columnPinning" />) is styled like the row headers of a spreadsheet - so if you want row numbers, add a column that renders `rowInfo.indexInAll + 1` and pin it at the start.
 
@@ -219,8 +285,20 @@ The first column pinned at the start (see <PropLink name="columnPinning" />) is 
 
 The `paper` theme is borderless and airy: hairline row separators, a subtle hover, selected rows painted as rounded pills, and its own icon set (rounded strokes) - a good fit for document-like and productivity apps. It has a light and a dark mode.
 
+<FrameworkContent not="angular">
+
 ```ts file="index.snippet.tsx" region="paper-theme"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+```css title="src/styles.css"
+@import '@infinite-table/infinite-angular/theme/paper.css';
+```
+
+</FrameworkContent>
 
 Its icons are set via the `--infinite-icon-*` CSS variables (see [Icons](#icons)), so you can replace any of them, or reuse them with another theme.
 

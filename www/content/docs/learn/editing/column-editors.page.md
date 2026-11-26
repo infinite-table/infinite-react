@@ -2,6 +2,7 @@
 title: Column Editors
 description: Learn how to use configure editors for columns in Infinite Table
 vue: true
+angular: true
 ---
 
 For now, Infinite Table comes with a default built-in editor that's rendered when editing starts on any editable cell.
@@ -38,6 +39,14 @@ A common use-case is integrating date editors. The following example uses the [M
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+A common use-case is integrating date editors. In Angular, a date editor is a [custom editor](/docs/learn/editing/custom-editor) like any other: a component that calls <HookLink name="useInfiniteColumnEditor" /> and renders a date input. The following example uses the browser's native `<input type="date">`; the date picker you already use in your project fits in the same way.
+
+</FrameworkContent>
+
+<FrameworkContent not="angular">
+
 <DemoDescription>
 
 This is a basic example integrating with the [MUI X Date Picker](https://mui.com/x/react-date-pickers/date-picker/) - click any cell in the **Birth Date** column to show the date picker.
@@ -46,6 +55,21 @@ This is a basic example integrating with the [MUI X Date Picker](https://mui.com
 
 ```tsx file="date-editor-example.demo.tsx" height="large" title="Using MUI X Date Picker for editing dates in the DataGrid"
 ```
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<DemoDescription>
+
+Click any cell in the **Birth Date** column to edit it with the browser's date input: pick a day to confirm the edit, press Escape (or click elsewhere) to cancel it.
+
+</DemoDescription>
+
+```tsx file="date-editor-example.demo.tsx" height="large" title="Using a native date input for editing dates in the DataGrid"
+```
+
+</FrameworkContent>
 
 ## Configure Editors for Column Types
 

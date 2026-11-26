@@ -5,6 +5,7 @@ on:
     paths:
       - 'devtools-ui/src/**'
       - 'source/src/**'
+      - 'source/build/**'
       - 'source/tsconfig*.json'
       - 'source/*.config.ts'
       - 'source/framework-resolve-plugin.ts'
@@ -13,6 +14,8 @@ on:
       - 'examples/src/**/*.page.tsx'
       - 'examples/src/**/*.vue'
       - 'examples/src/**/*.ts'
+      - 'examples/angular.json'
+      - 'examples/tsconfig.angular.json'
 
 # one run per branch: a push cancels the previous run of the same branch only
 concurrency:

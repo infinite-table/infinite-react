@@ -1,2 +1,5 @@
 # pages/docs/**/*.md
 pages/blog/**/*.page.md
+# prettier 2 can't parse their `import … with { type: 'json' }`
+src/utils/docsFrameworksRegistry.ts
+src/utils/docsReferenceNames.ts

@@ -13,7 +13,7 @@ export const wijmoCopy: CompareCopy = {
   ],
   chooseThem: [
     'You want an Excel-like grid with clipboard, Excel export, accessibility and RTL.',
-    'You use several frameworks, or plain JavaScript.',
+    'You use plain JavaScript or Web Components as well.',
     'You prefer a perpetual license, and deployment licensing suits your setup.',
   ],
   chooseInfinite: [

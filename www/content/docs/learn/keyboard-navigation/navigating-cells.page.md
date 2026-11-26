@@ -3,6 +3,8 @@ title: Keyboard Navigation for Table Cells
 description: Documentation for Cell Keyboard Navigation for your React Infinite Table DataGrid component
 vue:
   description: Documentation for Cell Keyboard Navigation for your Vue Infinite Table DataGrid component
+angular:
+  description: Documentation for Cell Keyboard Navigation for your Angular Infinite Table DataGrid component
 ---
 
 <FrameworkContent framework="react">
@@ -14,6 +16,12 @@ By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation
 <FrameworkContent framework="vue">
 
 By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation</PropLink> for table cells is enabled in Infinite Table for Vue. When a cell is clicked, it shows a highlight that indicates it is the currently active cell. From that point onwards, the user can use the keyboard to navigate the table cells.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+By default, <PropLink name="keyboardNavigation" code={false}>keyboard navigation</PropLink> for table cells is enabled in Infinite Table for Angular. When a cell is clicked, it shows a highlight that indicates it is the currently active cell. From that point onwards, the user can use the keyboard to navigate the table cells.
 
 </FrameworkContent>
 
@@ -68,6 +76,8 @@ This example starts with cell `[2,0]` already active.
 
 ## Listening to active cell changes
 
+<FrameworkContent not="angular">
+
 You can easily listen to changes in the cell navigation by using the <PropLink name="onActiveCellIndexChange">onActiveCellIndexChange</PropLink> callback.
 
 <Note>
@@ -76,9 +86,27 @@ When you use controlled <PropLink name="activeCellIndex" />, make sure to use <P
 
 </Note>
 
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<PropLink name="activeCellIndex" /> is a model: bind it two-way to a signal, and the grid writes the active cell to your signal as the user navigates. To only listen to the changes, use the <PropLink name="onActiveCellIndexChange">onActiveCellIndexChange</PropLink> output.
+
+</FrameworkContent>
+
 <DemoDescription>
 
+<FrameworkContent not="angular">
+
 This example starts with cell `[2,0]` already active and uses <PropLink name="onActiveCellIndexChange">onActiveCellIndexChange</PropLink> to update <PropLink name="activeCellIndex" />.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This example starts with cell `[2,0]` already active and binds the <PropLink name="activeCellIndex" /> model two-way to a signal.
+
+</FrameworkContent>
 
 </DemoDescription>
 

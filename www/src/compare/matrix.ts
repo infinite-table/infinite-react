@@ -318,13 +318,14 @@ export const infinite: Product = {
     },
   ],
   frameworks: {
-    list: ['React', 'Vue'],
-    source: 'https://www.npmjs.com/package/@infinite-table/infinite-vue',
-    note: 'React 18+ (@infinite-table/infinite-react) and Vue 3.4+ (@infinite-table/infinite-vue), same features and version.',
+    list: ['React', 'Vue', 'Angular'],
+    source: `${IT}/docs/learn/getting-started`,
+    note: 'React 18+ (@infinite-table/infinite-react), Vue 3.4+ (@infinite-table/infinite-vue) and Angular 22 (@infinite-table/infinite-angular), same features and version.',
   },
   packages: [
     { name: '@infinite-table/infinite-react' },
     { name: '@infinite-table/infinite-vue', note: 'for Vue 3' },
+    { name: '@infinite-table/infinite-angular', note: 'for Angular 22' },
   ],
   rendering: {
     text: 'DOM, with row and column virtualization.',

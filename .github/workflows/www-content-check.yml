@@ -1,15 +1,21 @@
 name: 'CI: docs content'
 
 # The docs demos and snippets (www/content) are type-checked against the
-# library source and every demo has to build. Changes under source/ are
-# covered by ci.yml, whose ts-check runs the same content check.
+# library source and every demo has to build, for every framework
+# (www/frameworks.json). Changes under source/ are covered by ci.yml, whose
+# ts-check runs the same content checks.
 on:
   push:
     paths:
       - 'www/content/**'
       - 'www/tsconfig.json'
+      - 'www/tsconfig.vue.json'
+      - 'www/tsconfig.angular.json'
+      - 'www/frameworks.json'
       - 'www/docs-kit.config.mjs'
       - 'www/docs-kit.bootstrap.ts'
+      - 'www/docs-kit.bootstrap.vue.ts'
+      - 'www/docs-kit.bootstrap.angular.ts'
       - 'www/docs-kit.tailwind.css'
       - 'www/package.json'
       - 'www/pnpm-lock.yaml'
@@ -52,6 +58,17 @@ jobs:
 
       - name: Type-check the docs demos and snippets against the source
         run: pnpm -C www run tsc:content
+
+      - name: Type-check the Vue docs demos and snippets
+        run: pnpm -C www run tsc:vue
+
+      - name: Type-check the Angular docs demos and snippets (templates included)
+        run: pnpm -C www run tsc:angular
+
+      # the Angular demos are built against the Angular compiler's emit of
+      # the source (source/.angular-out)
+      - name: Compile the Angular library
+        run: pnpm -C source run ngc:angular
 
       - name: Build the docs demos
         run: pnpm -C www run build-demos

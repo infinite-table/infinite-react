@@ -4,7 +4,7 @@
   "include": ["dist/index.d.ts"],
   "compilerOptions": {
     "lib": [],
-    "module":"System",
+    "module": "ESNext",
     "allowJs": false,
     "checkJs": false,
     "resolveJsonModule": false

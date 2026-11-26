@@ -354,12 +354,20 @@ export function compareAgainstBaseline(
 }
 
 /**
- * Format test name for baseline storage (consistent key format)
+ * Format test name for baseline storage (consistent key format):
+ * `tests/path:title` for the react Playwright project, and
+ * `${project}:tests/path:title` for the others (vue, angular), so each
+ * framework is compared against its own baseline
  */
-export function formatTestName(filePathNoExt: string, title: string): string {
+export function formatTestName(
+  filePathNoExt: string,
+  title: string,
+  project: string = 'react',
+): string {
   // Extract relative path from the full path
   const testsIndex = filePathNoExt.indexOf('tests/');
   const relativePath =
     testsIndex >= 0 ? filePathNoExt.slice(testsIndex) : filePathNoExt;
-  return `${relativePath}:${title}`;
+  const key = `${relativePath}:${title}`;
+  return project === 'react' ? key : `${project}:${key}`;
 }

@@ -2,6 +2,7 @@
 title: Multiple Sorting
 description: Docs and examples on applying multiple sorting to the DataSource for Infinite Table DataGrid
 vue: true
+angular: true
 ---
 
 By default, if you don't specify otherwise, the DataGrid is configured with single sorting. For multiple sorting, you need to specify the sorting information as an array:
@@ -85,7 +86,17 @@ This allows sorting by multiple fields (to which columns are bound) - you can sp
 
 If you want to change the sorting from code, after the component is mounted, you need to use the controlled <DPropLink name="sortInfo" /> prop.
 
+<FrameworkContent not="angular">
+
 In this case, make sure you update the <DPropLink name="sortInfo" /> prop as a result of user interaction, by using the <DPropLink name="onSortInfoChange" /> callback.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+Bind it two-way to a signal - <DPropLink name="sortInfo" /> is a model, so the grid writes the sorting the user chooses back to your signal. To react to the change, use the <DPropLink name="onSortInfoChange" /> output.
+
+</FrameworkContent>
 
 </Note>
 

@@ -1,6 +1,7 @@
 ---
 title: Lazy Loading
 vue: true
+angular: true
 ---
 
 With `InfiniteTable` you can lazily load data on demand - loading data is triggered by the user scrolling to a certain visible row range. So when the user stopped scrolling (after <PropLink name="scrollStopDelay" /> ms passed), the `DataSource` is loading the records that are in the viewport. Also, the table will render as if all the remote data is loaded into viewport - so the scroll height is correspondingly set.

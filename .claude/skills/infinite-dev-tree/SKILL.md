@@ -39,7 +39,7 @@ or `node scripts/worktree.mjs setup <worktree path>` from anywhere. It:
    - untracked files under `.claude` (`settings.local.json`)
 2. Links `/plans` to the main checkout's `plans` folder (a private nested git repo, where `AGENTS.md` and the plans live). Plans saved in a worktree land in that one repo: commit and push them from there.
 3. Runs `pnpm install` at the root, which installs every folder (see below). It takes well under a minute: packages are hard-linked from the global pnpm store.
-4. Runs `pnpm run build`: `source/dist` and `source/dist-vue`. The examples app returns 500 for every page without `source/dist/theme/*.css`, the Vue examples read `source/dist-vue`, and the docs site bundles `source/dist`. About a minute. `--no-build` skips it (e.g. for a docs-content-only change that doesn't run the site).
+4. Runs `pnpm run build`: `source/dist` and `source/dist-vue`. The examples app returns 500 for every page without `source/dist/theme/*.css`, the Vue examples read `source/dist-vue`, and the docs site bundles `source/dist`. About a minute. `--no-build` skips it (e.g. for a docs-content-only change that doesn't run the site). The Angular examples app builds its own copy of the library (`examples/.angular-lib`, from `pnpm -C examples run build:angular-lib`, which `dev:angular` and `build:angular` run first); the Angular CLI needs Node 22.22.3+ or 24.15+ (`.nvmrc` says 24).
 
 Run it in the foreground and report the worktree path and the copied files.
 
@@ -59,8 +59,8 @@ Start servers through the package scripts (they go through `scripts/with-ports.m
 
 ```bash
 pnpm -C www run serve:data     # local data server
-pnpm -C examples run dev       # React + Vue test apps and the test-runner sidecar
-pnpm -C examples run test      # build both apps, serve them, run Playwright
+pnpm -C examples run dev       # React + Vue + Angular test apps and the test-runner sidecar
+pnpm -C examples run test      # build the three apps, serve them, run Playwright
 pnpm -C www run dev            # docs site
 ```
 
@@ -71,6 +71,7 @@ Ports are picked when a command starts its servers (`scripts/dev-ports.cjs`). Ea
 | examples (React) | 5555 | 5655 |
 | examples (Vue) | 5556 | 5656 |
 | vue-playground | 5557 | 5657 |
+| examples (Angular) | 5558 | 5658 |
 | test runner | 5599 | 5699 |
 | docs site, static export (`serve-build`) | 3000 | 3100 |
 | docs site (`next dev`) | 3001 | 3101 |

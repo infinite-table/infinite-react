@@ -2,6 +2,8 @@
 title: Reference Overview
 description: Infinite Table Reference Overview
 layout: API
+vue: true
+angular: true
 ---
 
 The Reference pages contain API documentation on every prop exposed in the `InfiniteTable` component and the related `DataSource` component.
@@ -57,6 +59,8 @@ Jump into the `Tree` API, which allows advanced interactions with the tree data 
 </YouWillLearnCard>
 </HeroCards>
 
+<FrameworkContent not="angular">
+
 ## Hooks
 
 Infinite Table exposes a few custom hooks that can be used to customize the component and its behavior. Most of the hooks will be useful when you want to implement custom components for `InfiniteTable` - like custom cells, headers, cell editors, etc.
@@ -69,6 +73,25 @@ Custom hooks allow you to use the `InfiniteTable` at full potential and customiz
 </YouWillLearnCard>
 
 </HeroCards>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+## Inject functions
+
+Infinite Table exposes inject functions that custom cells, headers, cell editors and filter editors call to read their context - `injectColumnCell()`, `injectHeaderCell()`, `injectColumnEditor()`, `injectColumnFilterEditor()` and more. The hooks page describes them under their React names: `useInfiniteColumnCell` is `injectColumnCell` in Angular, and so on.
+
+<HeroCards>
+<YouWillLearnCard title="Infinite Table Hooks" path="/docs/reference/hooks">
+
+What each of them gives you, and how to use it in custom cells, headers and editors.
+
+</YouWillLearnCard>
+
+</HeroCards>
+
+</FrameworkContent>
 
 ## Type Definitions
 

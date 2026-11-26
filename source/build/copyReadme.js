@@ -34,7 +34,50 @@ const VUE_REPLACEMENTS = [
   ['@infinite-table/infinite-react', '@infinite-table/infinite-vue'],
   // the Vue docs and the Vue home page
   ['https://infinite-table.com/docs', 'https://infinite-table.com/vue/docs'],
-  ['href="https://infinite-table.com"', 'href="https://infinite-table.com/vue"'],
+  [
+    'href="https://infinite-table.com"',
+    'href="https://infinite-table.com/vue"',
+  ],
+];
+
+/** Angular: the same swaps, to the Angular banner, docs and home page. */
+const ANGULAR_REPLACEMENTS = [
+  [
+    'alt="The React DataGrid built for speed"',
+    'alt="The Angular DataGrid built for speed"',
+  ],
+  ['/hero/readme-banner-react.png', '/hero/readme-banner-angular.png'],
+  ['for building React apps', 'for building Angular apps'],
+  ['is a React DataGrid component', 'is an Angular DataGrid component'],
+  [
+    "Choosing a React DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits — particularly if you value a component that feels native to React (hooks, controlled/uncontrolled props).",
+    "Choosing a DataGrid is a big decision. We've put together honest comparisons so you can see where Infinite Table fits.",
+  ],
+  // MUI X Data Grid has no Angular version
+  [
+    '- [vs MUI X Data Grid](https://infinite-table.com/compare/mui-x-data-grid)\n',
+    '',
+  ],
+  // the benchmark page measures the React grids; there is no Angular run yet
+  [
+    '- [Benchmark: Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table at 300k and 1M rows](https://infinite-table.com/benchmark)\n',
+    '',
+  ],
+  // the CSS goes in the app's global styles, not in a JS import
+  [
+    ' - you have to import the CSS file from the package.\n\n```js\nimport "@infinite-table/infinite-react/index.css"\n```',
+    ". Add the CSS file from the package to your app's global styles, in the `styles` of the build options in `angular.json` or at the top of `src/styles.css`:\n\n```css\n@import '@infinite-table/infinite-angular/index.css';\n```",
+  ],
+  ['@infinite-table/infinite-react', '@infinite-table/infinite-angular'],
+  // the Angular docs and the Angular home page
+  [
+    'https://infinite-table.com/docs',
+    'https://infinite-table.com/angular/docs',
+  ],
+  [
+    'href="https://infinite-table.com"',
+    'href="https://infinite-table.com/angular"',
+  ],
 ];
 
 const outFolder = process.env.INFINITE_OUT_FOLDER;
@@ -42,14 +85,25 @@ if (!outFolder) {
   throw new Error('copyReadme: INFINITE_OUT_FOLDER is not set');
 }
 
-const framework = path.basename(outFolder) === 'dist-vue' ? 'vue' : 'react';
+const framework =
+  path.basename(outFolder) === 'dist-vue'
+    ? 'vue'
+    : path.basename(outFolder) === 'dist-angular'
+    ? 'angular'
+    : 'react';
 let readme = fs.readFileSync(
   path.resolve(__dirname, '../../README.md'),
   'utf8',
 );
 
-if (framework === 'vue') {
-  for (const [from, to] of VUE_REPLACEMENTS) {
+const REPLACEMENTS = {
+  vue: VUE_REPLACEMENTS,
+  angular: ANGULAR_REPLACEMENTS,
+  react: [],
+};
+
+{
+  for (const [from, to] of REPLACEMENTS[framework]) {
     if (!readme.includes(from)) {
       throw new Error(`copyReadme: the README does not contain: ${from}`);
     }

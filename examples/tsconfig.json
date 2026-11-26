@@ -1,6 +1,12 @@
 {
   "extends": "../tsconfig.root.json",
-  "exclude": ["node_modules", "src/vue-app", "vite.config.ts"],
+  "exclude": [
+    "node_modules",
+    "src/vue-app",
+    "vite.config.ts",
+    "src/angular-app",
+    "src/**/*.angular.ts"
+  ],
   "include": [
     "next-env.d.ts",
     "src/vite-env.d.ts",
@@ -13,7 +19,6 @@
     "typeRoots": ["node_modules/@types"],
     "strict": true,
     "jsx": "preserve",
-    "baseUrl": "./",
     "rootDir": "..",
     "paths": {
       "@src/*": ["../source/src/*"],

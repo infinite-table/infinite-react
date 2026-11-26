@@ -2,6 +2,7 @@
 title: Column Menus
 description: Columns have menus that allow quick actions - the menus can be customized or hidden altogether.
 vue: true
+angular: true
 ---
 
 All columns in the Infinite Table have a default menu, which can be customized or hidden altogether.
@@ -55,6 +56,12 @@ To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> p
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+To customize the menu icon, use the <PropLink name="columns.renderMenuIcon" /> prop. This prop can be a boolean or a function that returns text, a template (a `TemplateRef` of your component, read with `viewChild`) or a component (`renderComponent(MyIcon)`).
+
+</FrameworkContent>
+
 ```tsx file="column-menus.snippet.tsx" region="custom-menu-icon" title="custom-menu-icon"
 ```
 
@@ -73,6 +80,16 @@ For a custom menu icon 🌠 you don't have to hook up the `mousedown`/`click` in
 <Note>
 
 For a custom menu icon 🌠 you don't have to hook up the `mousedown`/`click` in order to show or hide the menu - all this is done for you - just return your custom VNode and you're good to go.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+For a custom menu icon 🌠 you don't have to hook up the `mousedown`/`click` in order to show or hide the menu - all this is done for you - just return your custom template or component and you're good to go.
 
 </Note>
 

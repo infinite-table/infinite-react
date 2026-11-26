@@ -1,6 +1,7 @@
 ---
 title: Updating Data in Real-Time
 vue: true
+angular: true
 ---
 
 Real-Time updates of data are possible via the [DataSource API](/docs/reference/datasource-api).
@@ -15,12 +16,32 @@ Data Updates are related to the `DataSource` component, therefore make sure you 
 
 You can get a reference to the [DataSource API](/docs/reference/datasource-api)
 
+<FrameworkContent not="angular">
+
 - either by using <DPropLink name="onReady" code={false}>the DataSource onReady</DPropLink> prop
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+- either with the <DPropLink name="onReady" /> output of the `DataSource`
+
+</FrameworkContent>
 
 ```tsx file="updating-data-in-realtime.snippet.tsx" region="getting-a-reference-to-the-datasource-api"
 ```
 
+<FrameworkContent not="angular">
+
 - or by using the <PropLink name="onReady" code={false}>InfiniteTable onReady</PropLink> prop.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+- or with the <PropLink name="onReady" /> output of the `InfiniteTable`.
+
+</FrameworkContent>
 
 ```tsx file="updating-data-in-realtime.snippet.tsx" region="infinite-table-on-ready"
 ```

@@ -2,6 +2,7 @@
 title: Sorting
 description: Docs and examples on sorting the DataSource for Infinite Table DataGrid
 vue: true
+angular: true
 ---
 
 `InfiniteTable` comes with multiple sorting behaviours, which are described below.
@@ -24,7 +25,17 @@ for explicit no sorting.
 
 <Note>
 
+<FrameworkContent not="angular">
+
 When you use controlled sorting via <DataSourcePropLink name="sortInfo" />, make sure you also listen to <DataSourcePropLink name="onSortInfoChange" /> for changes, to get notifications when sorting is changed by the user. Also, for controlled sorting, it's your responsibility to sort the data - read bellow in the [controlled and uncontrolled section](#controlled-and-uncontrolled-sorting).
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When you use controlled sorting via <DataSourcePropLink name="sortInfo" />, bind it two-way to a signal - it's a model, so the grid writes the sorting the user chooses back to your signal. To react to the change, use the <DataSourcePropLink name="onSortInfoChange" /> output. Also, for controlled sorting, it's your responsibility to sort the data - read bellow in the [controlled and uncontrolled section](#controlled-and-uncontrolled-sorting).
+
+</FrameworkContent>
 
 </Note>
 
@@ -112,7 +123,17 @@ The <DataSourcePropLink name="defaultSortInfo" /> prop is an uncontrolled prop, 
 
 When you use the controlled <DataSourcePropLink name="sortInfo" /> prop, the `<DataSource />` still sorts the data internally, just like with uncontrolled sorting - <DPropLink name="shouldReloadData.sortInfo" /> is `false` by default.
 
+<FrameworkContent not="angular">
+
 Also, be aware that when the user interacts with the DataGrid when controlled sorting is configured, the <DPropLink name="sortInfo" /> prop will not update automatically - you need to listen to <DPropLink name="onSortInfoChange" /> and update the <DPropLink name="sortInfo" /> yourself.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When the user sorts the DataGrid, the new sorting is written to the <DPropLink name="sortInfo" /> model - bind it two-way to a signal (`[(sortInfo)]="sortInfo"`) and your signal always has the current sorting. Use the <DPropLink name="onSortInfoChange" /> output when you need to react to the change.
+
+</FrameworkContent>
 
 <Note>
 

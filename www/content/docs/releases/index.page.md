@@ -1,6 +1,10 @@
 ---
 title: Releases
 description: All releases | Infinite Table DataGrid for React
+vue:
+  description: All releases | Infinite Table DataGrid for Vue
+angular:
+  description: All releases | Infinite Table DataGrid for Angular
 ---
 
 ## 10.2.1

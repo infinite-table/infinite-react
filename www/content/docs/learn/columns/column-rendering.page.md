@@ -2,6 +2,7 @@
 title: Column Rendering
 description: Customize column rendering for Infinite Table DataGrid to match your app and use custom components. Column styling and formatting, conditional rendering...
 vue: true
+angular: true
 ---
 
 Columns render the <PropLink name="columns.field">field</PropLink> value of the data they are bound to. This is the default behavior, which can be customized in a number of ways that we're exploring below.
@@ -35,6 +36,17 @@ This is important because `InfiniteTable` uses virtualization heavily, in both _
 When using custom rendering or custom components for columns, make sure your rendering logic doesn't have local/transient state (a `ref` created in the `setup` of a custom component, for example) - what a cell renders should come from the cell information, or from state that lives outside the cell.
 
 This is important because `InfiniteTable` uses virtualization heavily, in both _column cells and column headers_, so **custom components can and will be unmounted and re-mounted multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+When using custom rendering or custom components for columns, make sure your rendering logic doesn't have local/transient state (a signal of a custom component that copies the cell's value, for example) - what a cell renders should come from the cell information, or from state that lives outside the cell.
+
+This is important because `InfiniteTable` uses virtualization heavily, in both _column cells and column headers_, so **custom components can and will be destroyed and created again multiple times**, during the virtualization process (triggered by user scrolling, sorting, filtering and a few other interactions).
 </Note>
 
 </FrameworkContent>
@@ -77,6 +89,16 @@ The column value getter should not return VNodes or other markup, because the va
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+<Note>
+
+The column value getter should not return a template, a component or other markup, because the value returned by <PropLink name="columns.valueGetter"/> will be used when the column is sorted (when sorting is done client-side and not remotely). For more in-depth information on sorting see [the column sorting page](./column-sorting).
+
+</Note>
+
+</FrameworkContent>
+
 ## Use <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> to display custom content
 
 The next step in customizing the rendering for a column is to use the <PropLink name="columns.renderValue" /> or the <PropLink name="columns.render"/> props. In those functions, you have access to more information than in the <PropLink name="columns.valueGetter"/> function. For example, you have access to the current value of `groupBy` and `pivotBy` props.
@@ -90,6 +112,14 @@ The next step in customizing the rendering for a column is to use the <PropLink 
 <FrameworkContent framework="vue">
 
 <PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> can return any value that Vue can render: a string, a number, a VNode created with `h()`, or an array of those.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<PropLink name="columns.renderValue">renderValue</PropLink> and <PropLink name="columns.render">render</PropLink> can return a string, a number, a template (a `TemplateRef`), a component (`renderComponent(MyCell)`), or an array of those.
+
+A template gets the object the function is called with as its context - `let-data="data"`, `let-rowInfo="rowInfo"` - and the value as `let-value`. The columns are a plain object, so a template of your component goes in through the function: `renderValue: () => this.myTemplate()`, with `myTemplate = viewChild.required<TemplateRef<unknown>>('myTemplate')`.
 
 </FrameworkContent>
 
@@ -148,6 +178,21 @@ The composable returns a ref: read its `.value` in the render function of your c
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+<Note>
+
+A component you render from the <PropLink name="columns.renderValue"/> and <PropLink name="columns.render"/> functions (and from the other rendering functions) can use <HookLink name="useInfiniteColumnCell"/> to retrieve the same params that are passed to the render functions.
+
+It returns a signal: read it in the template of your component (or in a `computed`), not once in the constructor.
+
+```tsx file="column-rendering.snippet.tsx" region="use-rendervalue-and-render-to-display-custom"
+```
+
+</Note>
+
+</FrameworkContent>
+
 ```tsx file="/docs/reference/column-renderValue-example.demo.tsx" title="Column with custom renderValue"
 ```
 
@@ -195,6 +240,18 @@ In a component rendered inside a column cell, you can use the <HookLink name="us
 
 </FrameworkContent>
 
+<FrameworkContent framework="angular">
+
+## Using inject functions for custom rendering
+
+The components you render from the <PropLink name="columns.render" /> and <PropLink name="columns.renderValue" /> functions (with `renderComponent`) are created with the cell's injector, so they can use the inject functions `InfiniteTable` provides. Call them in a field initializer or in the constructor of the component.
+
+### Inject function: <HookLink name="useInfiniteColumnCell"/>
+
+In a component rendered inside a column cell, you can use <HookLink name="useInfiniteColumnCell"/> to get access to the current cell's rendering information - the argument passed to the <PropLink name="columns.render">render</PropLink> or <PropLink name="columns.renderValue">renderValue</PropLink> functions - as a signal.
+
+</FrameworkContent>
+
 ```tsx file="column-rendering.snippet.tsx" region="use-infinite-column-cell"
 ```
 
@@ -214,6 +271,14 @@ For column headers, you can use <HookLink name="useInfiniteHeaderCell" /> hook t
 ### Composable: <HookLink name="useInfiniteHeaderCell" />
 
 For column headers, a component rendered inside the header can use the <HookLink name="useInfiniteHeaderCell" /> composable to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function - as a ref.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+### Inject function: <HookLink name="useInfiniteHeaderCell" />
+
+For column headers, a component rendered inside the header (with `renderComponent`) can use <HookLink name="useInfiniteHeaderCell" /> to get access to the current header's rendering information - the argument passed to the <PropLink name="columns.header"/> function - as a signal.
 
 </FrameworkContent>
 
@@ -261,6 +326,23 @@ A custom component needs a single root element, and the attributes the grid pass
 The default content of the cell is passed as the default slot: render `slots.default?.()` where you want it.
 
 You don't have to pass the `domRef` returned by the composables (<HookLink name="useInfiniteColumnCell" /> for column cells and <HookLink name="useInfiniteHeaderCell" /> for header cells) to the root element - the grid uses the root element of your component.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+A custom component is the cell (or the header cell) itself: give it an attribute selector on a `div` (`selector: 'div[myColumnCell]'`). The grid creates the cell element with your component on it and adds the class names, styles and event listeners of the cell to that element - the `host` styles and classes of your component are merged with them.
+
+```tsx file="column-rendering.snippet.tsx" region="use-column-components-to-customize-the-column"
+```
+
+The default content of the cell is a renderable you get with `injectColumnCellChildren()` (`injectHeaderCellChildren()` for header cells): render it with `<ng-container [infiniteRender]="children()" />` where you want it.
+
+There is no `domRef` to pass on - the host element of your component is the cell. The cell information is available through <HookLink name="useInfiniteColumnCell" /> (<HookLink name="useInfiniteHeaderCell" /> for header cells).
 
 </Note>
 

@@ -56,7 +56,8 @@ export type FeedStats = {
 
 /**
  * What the feed needs from the grid: the DataSource API of either framework's
- * grid fits (this file has no framework imports, the Vue hero uses it too).
+ * grid fits (this file has no framework imports, the Vue and Angular heroes
+ * use it too).
  */
 export type FeedDataSourceApi = {
   updateDataArray(updates: InstrumentUpdate[]): unknown;

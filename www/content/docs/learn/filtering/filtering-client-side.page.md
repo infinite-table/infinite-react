@@ -3,6 +3,8 @@ title: Client-side Filtering
 description: Learn how to configure client-side filtering for your Infinite Table React DataGrid
 vue:
   description: Learn how to configure client-side filtering for your Infinite Table Vue DataGrid
+angular:
+  description: Learn how to configure client-side filtering for your Infinite Table Angular DataGrid
 ---
 
 The most common way to use filtering in Infinite Table is by configuring filters for columns (this works both for client-side and server-side filtering).
@@ -24,6 +26,16 @@ When the <DPropLink name="data" /> property is a function, it's not called again
 <Note>
 
 When the <DPropLink name="data" /> property is a function, it's not called again when the filters change. If you also want to reload the data on every filter change, and then filter it client-side, set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> together with `:filterFunction="defaultFilterFunction"`.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+When the <DPropLink name="data" /> property is a function, it's not called again when the filters change. If you also want to reload the data on every filter change, and then filter it client-side, set <DPropLink name="shouldReloadData.filterValue">shouldReloadData.filterValue: true</DPropLink> together with `[filterFunction]="defaultFilterFunction"` (with `defaultFilterFunction` exposed as a field of your component).
 
 </Note>
 

@@ -2,6 +2,8 @@
   "extends": "../tsconfig.root.json",
   "include": ["src/**/*", "globals.d.ts"],
   "compilerOptions": {
+    // TypeScript 6 no longer includes every @types package by default
+    "types": ["jest", "node"],
     "noEmit": false,
     "sourceMap": true,
     "rootDir": ".",
@@ -12,5 +14,7 @@
     "incremental": true,
     "jsx": "react"
   },
-  "exclude": ["dist"]
+  // Angular siblings need the Angular compiler (ngc) and its options:
+  // they are checked by tsconfig.angular.json only
+  "exclude": ["dist", "src/**/*.angular.ts"]
 }

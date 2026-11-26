@@ -1,6 +1,7 @@
 ---
 title: Grouping rows
 vue: true
+angular: true
 ---
 
 You can use any `field` available in the `DataSource` to do the grouping - it can even be a `field` that is not a column.
@@ -20,6 +21,16 @@ When using TypeScript, both `DataSource` and `InfiniteTable` components are gene
 <Note>
 
 When using TypeScript, the types of the props are generic and take a `DATA_TYPE` parameter - for example `DataSourcePropGroupBy<DATA_TYPE>` for the `groupBy` prop. The fields in that `DATA_TYPE` can then be used for grouping.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+When using TypeScript, the types of the inputs are generic and take a `DATA_TYPE` parameter - for example `DataSourcePropGroupBy<DATA_TYPE>` for the `groupBy` input. The `DataSource` and `InfiniteTable` components are generic as well, and the templates are type-checked against the `DATA_TYPE` of the data you bind. The fields in that `DATA_TYPE` can then be used for grouping.
 
 </Note>
 
@@ -95,7 +106,19 @@ will show all rows as collapsed, and just as soon as you expand `Mexico` you wil
 This data format gives you ultimate flexibility and allows you to easily restore an expand/collpase state at a later time, if you wanted to.
 
 <Note>
+
+<FrameworkContent not="angular">
+
 If you use the controlled <DPropLink name="groupRowsState" />, make sure you update it by leveraging the <DPropLink name="onGroupRowsStateChange" /> callback prop.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+If you use the controlled <DPropLink name="groupRowsState" />, bind it two-way to a signal - it's a model, so the grid writes the new expand/collapse state back to your signal when the user expands or collapses a group. To react to the change, use the <DPropLink name="onGroupRowsStateChange" /> output.
+
+</FrameworkContent>
+
 </Note>
 
 
@@ -116,6 +139,16 @@ The <DPropLink name="onGroupRowsStateChange" /> callback gives you an instance o
 <Note>
 
 Keep a `GroupRowsState` instance in a `shallowRef`, as the example above does. A `ref` unwraps the type of the class instance, so its value no longer type-checks as a `GroupRowsState`.
+
+</Note>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<Note>
+
+Type the signal as `DataSourcePropGroupRowsState`, as the example above does: it's the type of the model, a `GroupRowsState` instance or a plain object, so the grid can write its `GroupRowsState` back to the signal. `new GroupRowsState(state)` accepts both.
 
 </Note>
 

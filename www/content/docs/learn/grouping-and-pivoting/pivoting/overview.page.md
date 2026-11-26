@@ -1,6 +1,7 @@
 ---
 title: Pivoting with Infinite
 vue: true
+angular: true
 ---
 
 An enteprise-level feature `InfiniteTable` provides is the pivoting functionality. Combined with grouping and advanced aggregation, it unlocks new ways to visualize data.
@@ -20,6 +21,12 @@ You do that by using a `function` as a direct child of the `DataSource`, and in 
 <FrameworkContent framework="vue">
 
 You do that with the default slot of the `DataSource`: its slot props include the generated `pivotColumns`, which you bind to the `<InfiniteTable />` rendered in that slot. Likewise for `pivotColumnGroups`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+You do that with a template reference to the `DataSource`: `#ds="infiniteDataSource"` on the `<infinite-data-source>` gives you its generated `pivotColumns` as a signal, which you bind to the `<infinite-table>` inside it - `[pivotColumns]="ds.pivotColumns()"`. Likewise for `pivotColumnGroups`.
 
 </FrameworkContent>
 

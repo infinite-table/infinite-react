@@ -14,7 +14,7 @@ export const agGridCopy: CompareCopy = {
   ],
   chooseThem: [
     'You need integrated charts, Excel or PDF export, clipboard paste, formulas or tool panels. Infinite Table has none of these.',
-    'You standardize on one grid across Angular, React, Vue and plain JavaScript projects.',
+    'You standardize on one grid across React, Angular, Vue and plain JavaScript projects. Infinite Table has no plain JavaScript version.',
     'You need documented screen reader support or right-to-left layouts.',
     'The MIT Community edition covers what you need and you want no footer, free.',
     'Your team already knows AG Grid well.',
@@ -24,7 +24,7 @@ export const agGridCopy: CompareCopy = {
     'Supply-chain risk matters to you: Infinite Table has zero runtime dependencies.',
     'You want every piece of grid state (sorting, filtering, grouping, column order and sizes, selection) available as a controlled or uncontrolled prop.',
     'You work with large client-side datasets: see the [benchmark](/benchmark) for mount time, memory and sorting.',
-    'You use React and Vue and want the same grid in both.',
+    'You use more than one of React, Vue and Angular and want the same grid in each.',
   ],
   sections: [
     {
@@ -113,7 +113,7 @@ export function Cars() {
     },
     {
       q: 'Does Infinite Table support Angular or plain JavaScript?',
-      a: 'No. Infinite Table supports React and Vue 3. AG Grid supports React, Angular, Vue and plain JavaScript.',
+      a: 'Angular, yes: Infinite Table supports React 18+, Vue 3 and Angular 22, with the same features. Plain JavaScript, no. AG Grid supports React, Angular, Vue and plain JavaScript.',
     },
   ],
   demo: {

@@ -1,5 +1,5 @@
 import type { MatrixBrainOptions } from '../../VirtualBrain/MatrixBrain';
-import { RowSizeCache } from '../hooks/useComputedRowHeight';
+import type { RowSizeCache } from '../hooks/computedRowHeightShared';
 import { MultiCellSelector } from '../utils/MultiCellSelector';
 import { MultiRowSelector } from '../utils/MultiRowSelector';
 

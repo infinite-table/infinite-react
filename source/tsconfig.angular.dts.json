@@ -1,0 +1,17 @@
+{
+  // Bundling the declarations ngc emitted (dts.angular.tsup.config.ts) - not
+  // a compile of the source.
+  "files": [".angular-out/index.angular.d.ts", "globals.d.ts"],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "moduleSuffixes": [".angular", ""],
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "noEmit": true,
+    "types": []
+  }
+}

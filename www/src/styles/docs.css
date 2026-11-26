@@ -547,6 +547,34 @@ a > .docs-code-inline {
 .docs-prop__name:is(:hover, :focus-within) .docs-prop__icon {
   visibility: hidden;
 }
+/*
+ * On a page of another framework (Angular): the entry's names there - the
+ * other names it has, an anchor for each, and what kind of member it is (a
+ * pill, also after a link to it, see .docs-ref-chip)
+ */
+.docs-prop__anchor {
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+.docs-prop__more {
+  margin-left: 10px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.docs-prop__more::before {
+  content: '/ ';
+}
+.docs-ref-chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--muted);
+  font: 400 10.5px/1.6 var(--font-mono);
+  letter-spacing: 0.02em;
+  vertical-align: 0.1em;
+  white-space: nowrap;
+}
 .docs-prop__deprecated {
   position: absolute;
   top: -18px;

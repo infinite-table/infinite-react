@@ -117,6 +117,40 @@
   color: var(--heading);
   text-wrap: balance;
 }
+/* the framework name in the hero headline */
+.home-accent {
+  color: var(--accent-text);
+}
+.home-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* the billboard word in the headline: React → Angular → Vue → React */
+.home-flip {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+  margin-bottom: -0.09em;
+  transition: width 600ms;
+  transition-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+.home-flip__track {
+  display: flex;
+  flex-direction: column;
+  transition-timing-function: cubic-bezier(0.7, 0, 0.2, 1) !important;
+}
+.home-flip__word {
+  display: block;
+  width: max-content;
+  height: 1.2em;
+  line-height: 1.2em;
+  color: var(--accent-text);
+}
 .home-cursor {
   display: inline-block;
   width: 0.42em;
@@ -144,13 +178,55 @@
   gap: 10px;
   margin-top: 24px;
 }
-.home-hero__vue {
-  margin-top: 16px;
-  font: 400 12.5px/1.4 var(--font-mono);
-  color: var(--muted);
+/* links to the other frameworks' home pages (OtherFrameworks.tsx), under the hero's actions */
+.home-frameworks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
 }
-.home-hero__vue a {
-  color: var(--accent-text);
+.home-framework {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--surface);
+  font: 500 14px/1 var(--font-sans);
+  color: var(--heading);
+  text-decoration: none;
+  transition: border-color 150ms, background 150ms;
+}
+.home-framework__logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--framework-color);
+}
+.home-framework:hover {
+  border-color: var(--framework-color);
+  background: color-mix(in srgb, var(--framework-color) 10%, var(--surface));
+}
+.home-framework--vue {
+  --framework-color: #42b883;
+}
+.home-framework--react {
+  --framework-color: #087ea4;
+}
+.home-framework--angular {
+  --framework-color: #e40035;
+}
+/* Vue's white-on-dark logo in dark mode: its dark chevron doesn't show on a
+   dark key */
+.home-framework__logo--vue-dark,
+html[data-theme='dark'] .home-framework__logo--vue-light {
+  display: none;
+}
+html[data-theme='dark'] .home-framework__logo--vue-dark {
+  display: block;
 }
 
 /* $ npm i … */
@@ -307,6 +383,16 @@
   color: var(--heading);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+/* the React home: the frameworks get a row of their own (three names don't
+   fit in a quarter of the box) */
+.home-specs--frameworks-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.home-specs--frameworks-row div:last-child {
+  grid-column: 1 / -1;
+  border-left: 0;
+  border-top: 1px solid var(--line-strong);
 }
 
 /* the live demo: our frame around the hero's (components/hero) */
@@ -661,8 +747,8 @@
   color: var(--fg);
 }
 
-/* the Vue page: the same demos, each in an iframe (VueFrameDemo.tsx) that
-   takes the height of its card, or fills the demo's box (the pivot) */
+/* the Vue and Angular pages: the same demos, each in an iframe (FrameDemo.tsx)
+   that takes the height of its card, or fills the demo's box (the pivot) */
 .home-demo__frame {
   display: block;
   width: 100%;
@@ -951,6 +1037,11 @@
   }
   .home-specs div:nth-child(n + 3) {
     border-top: 1px solid var(--line-strong);
+  }
+  /* two columns: Rows | Dependencies, then a row each for Gzip and the
+     frameworks */
+  .home-specs--frameworks-row div:nth-child(3) {
+    grid-column: 1 / -1;
   }
   .home-frame__hint {
     display: none;

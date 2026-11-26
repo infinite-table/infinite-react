@@ -2,6 +2,9 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { docsFrameworks } from '@www/utils/docsFrameworks';
+import { docsFrameworksText } from '@www/utils/docsFrameworksRegistry';
+
 import { useDocsFramework } from './DocsFrameworks';
 import { ExternalLink } from './ExternalLink';
 
@@ -60,9 +63,10 @@ function FooterLink({ label, href }: FooterItem) {
 
 export const Footer = () => {
   const pathname = usePathname() || '';
-  // the docs and the blog have a fixed sidebar on the left
+  // the docs (of every framework) and the blog have a fixed sidebar on the left
   const besideSidebar =
-    /^\/(vue\/)?docs(\/|$)/.test(pathname) || pathname.startsWith('/blog');
+    docsFrameworks.frameworkOf(pathname) != null ||
+    pathname.startsWith('/blog');
 
   return (
     <footer
@@ -88,7 +92,7 @@ export const Footer = () => {
         </div>
         <div className="site-footer__base">
           <span>© {new Date().getFullYear()} Infinite Table</span>
-          <span>React and Vue DataGrid</span>
+          <span>{`${docsFrameworksText()} DataGrid`}</span>
         </div>
       </div>
     </footer>

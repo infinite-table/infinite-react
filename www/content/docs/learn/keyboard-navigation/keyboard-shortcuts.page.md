@@ -4,6 +4,8 @@ description: Infinite React DataGrid supports user-friendly keyboard shortcuts f
 since: 3.3.3
 vue:
   description: Infinite Vue DataGrid supports user-friendly keyboard shortcuts for executing custom actions.
+angular:
+  description: Infinite Angular DataGrid supports user-friendly keyboard shortcuts for executing custom actions.
 ---
 
 <FrameworkContent framework="react">
@@ -15,6 +17,12 @@ The React DataGrid supports defining <PropLink name="keyboardShortcuts" code={fa
 <FrameworkContent framework="vue">
 
 The Vue DataGrid supports defining <PropLink name="keyboardShortcuts" code={false}>keyboard shortcuts</PropLink> for performing custom actions.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The Angular DataGrid supports defining <PropLink name="keyboardShortcuts" code={false}>keyboard shortcuts</PropLink> for performing custom actions.
 
 </FrameworkContent>
 

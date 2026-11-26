@@ -118,7 +118,16 @@ body > .dk-demo-overlay {
   --dk-framework-fallback-label: 'React only for now';
 }
 
-/* the switcher (header, phone menus): a segmented control, like the toggles */
+/*
+ * the switcher (header, phone menus): a segmented control, like the toggles,
+ * from 640px up; a dropdown below (components/DocsFrameworks.tsx). The box
+ * around the two adds no layout (and has no specificity, so a class that
+ * hides it wins).
+ */
+:where(.docs-framework-switcher-box) {
+  display: contents;
+}
+
 .docs-framework-switcher {
   display: inline-flex;
   height: 32px;
@@ -161,6 +170,53 @@ body > .dk-demo-overlay {
   outline-offset: -2px;
 }
 
+.docs-framework-select {
+  display: none;
+  position: relative;
+  color: var(--accent-text);
+}
+
+.docs-framework-select select {
+  appearance: none;
+  height: 32px;
+  padding: 0 30px 0 11px;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.docs-framework-select select:focus-visible {
+  outline: 2px solid var(--heading);
+  outline-offset: 1px;
+}
+
+/* the chevron */
+.docs-framework-select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .docs-framework-switcher {
+    display: none;
+  }
+  .docs-framework-select {
+    display: inline-flex;
+  }
+}
+
 /* a demo, example or card on a Vue page that only exists for React */
 .docs-framework-notice,
 .dk-demo-notice {
@@ -195,7 +251,9 @@ body > .dk-demo-overlay {
 /* a live demo's framework (data-framework, set by docs-kit), as an icon
    before its title: the React icon on a React-only demo of a Vue page.
    A demo with no title shows its description instead, so the icon goes
-   before the description's first line */
+   before the description's first line.
+   One rule per framework of www/frameworks.json (light and dark), with its
+   icons in public/icons/frameworks/<id>-light.svg and <id>-dark.svg */
 .dk-demo[data-framework] .dk-demo-title::before,
 .dk-demo[data-framework]:not(:has(.dk-demo-title))
   .dk-demo-description
@@ -214,11 +272,17 @@ body > .dk-demo-overlay {
 .dk-demo[data-framework='vue'] {
   --docs-demo-framework-icon: url('/icons/frameworks/vue-light.svg');
 }
+.dk-demo[data-framework='angular'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/angular-light.svg');
+}
 [data-theme='dark'] .dk-demo[data-framework='react'] {
   --docs-demo-framework-icon: url('/icons/frameworks/react-dark.svg');
 }
 [data-theme='dark'] .dk-demo[data-framework='vue'] {
   --docs-demo-framework-icon: url('/icons/frameworks/vue-dark.svg');
+}
+[data-theme='dark'] .dk-demo[data-framework='angular'] {
+  --docs-demo-framework-icon: url('/icons/frameworks/angular-dark.svg');
 }
 
 /* shell fences (Terminal): the bar and the prompt as the site's labels */

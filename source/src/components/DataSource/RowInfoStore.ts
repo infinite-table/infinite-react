@@ -25,6 +25,14 @@ function deepEqual(a: any, b: any): boolean {
   // Different types
   if (typeof a !== typeof b) return false;
 
+  // Dates have no own keys: compare their time (two different dates would
+  // otherwise be equal, and the row of an edited date not notified)
+  if (a instanceof Date || b instanceof Date) {
+    return (
+      a instanceof Date && b instanceof Date && a.getTime() === b.getTime()
+    );
+  }
+
   // Arrays
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;

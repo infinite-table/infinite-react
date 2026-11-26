@@ -2,6 +2,7 @@
 title: Managing the tree expand/collapse state
 description: Learn how to control which tree nodes are expanded or collapsed
 vue: true
+angular: true
 ---
 
 By default, the tree will be rendered with all nodes expanded. This is fine for basic use cases, but as soon as you go into more complex scenarios, you will want to control which nodes are expanded or collapsed.
@@ -41,12 +42,29 @@ When using node ids, the object should have the following properties:
 
 ## Reacting to user actions
 
+<FrameworkContent not="angular">
+
 You can listen to the user interactions with the tree by using the <DPropLink name="onTreeExpandStateChange">{`onTreeExpandStateChange(treeExpandState, {dataSourceApi, nodePath, nodeState})`}</DPropLink> callback. This callback is called with the new tree state whenever the user expands or collapses a node.
 
 In addition to this callback, you can also use the following:
 
  - <DPropLink name="onNodeExpand">{`onNodeExpand(nodePath, {dataSourceApi})`}</DPropLink>
  - <DPropLink name="onNodeCollapse">{`onNodeCollapse(nodePath, {dataSourceApi})`}</DPropLink>
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+You can listen to the user interactions with the tree by using the <DPropLink name="onTreeExpandStateChange" /> output. It emits the new tree state whenever the user expands or collapses a node.
+
+In addition to this output, you can also use the following:
+
+ - <DPropLink name="onNodeExpand" /> - emits the path of the expanded node
+ - <DPropLink name="onNodeCollapse" /> - emits the path of the collapsed node
+
+When you also need the second argument of these callbacks (`{dataSourceApi, nodePath, nodeState}` and `{dataSourceApi}`), bind a function to the input of the same name instead: `[onTreeExpandStateChange]="onTreeExpandStateChange"`, `[onNodeExpand]`, `[onNodeCollapse]`.
+
+</FrameworkContent>
 
 <Note>
 
@@ -59,7 +77,17 @@ The <DPropLink name="onNodeExpand" /> and <DPropLink name="onNodeCollapse" /> ca
 
 If you want maximum control over the collapse/expand state, you should use the controlled <DPropLink name="treeExpandState" /> prop.
 
+<FrameworkContent not="angular">
+
 This will allow you to own the collapse/expand state entirely - but make sure you use the <DPropLink name="onTreeExpandStateChange" /> callback to react to user actions or API calls being made to update the tree state.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+This will allow you to own the collapse/expand state entirely. <DPropLink name="treeExpandState" /> is a model: bind it two-way to a signal, and the grid writes the new state back to it after user actions or API calls. To react to the change, use the <DPropLink name="onTreeExpandStateChange" /> output.
+
+</FrameworkContent>
 
 ```tsx file="/docs/reference/datasource-props/tree-controlled-expandstate-example.demo.tsx" title="Using controlled expand/collapse state" height="large"
 ```

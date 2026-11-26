@@ -9,7 +9,7 @@ import '@www/components/home/home.css';
 import '@www/components/themes/themes.css';
 
 export const metadata = asMeta({
-  title: 'Themes | Infinite Table DataGrid for React and Vue',
+  title: 'Themes | Infinite Table DataGrid for React, Vue and Angular',
   description: `The ${SITE_THEMES.length} themes of Infinite Table, live: each in light and dark mode, at three densities, with the CSS to use it.`,
 }, 'themes');
 

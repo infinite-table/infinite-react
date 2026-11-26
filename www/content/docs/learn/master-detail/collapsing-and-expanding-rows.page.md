@@ -2,6 +2,7 @@
 title: Master Detail - Collapsing and Expanding Rows
 description: Learn how to use master-detail and configure the state of the row details as expanded or collapsed
 vue: true
+angular: true
 ---
 
 You can control the collapsed/expanded state of rows in the master-detail configuration.
@@ -42,7 +43,17 @@ You can pass these objects into either the <PropLink name="defaultRowDetailState
 
 <Note>
 
+<FrameworkContent not="angular">
+
 If you're using the controlled <PropLink name="rowDetailState" /> prop, you'll need to respond to user interaction by listening to <PropLink name="onRowDetailStateChange" /> and updating the value of <PropLink name="rowDetailState" /> accordingly.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+<PropLink name="rowDetailState" /> is a model: the grid writes the state back when the user expands or collapses a row. Bind it two-way to a signal, or bind the input and update your signal from the <PropLink name="onRowDetailStateChange" /> output, as the examples below do.
+
+</FrameworkContent>
 
 </Note>
 
@@ -77,14 +88,34 @@ In order to be notified when the collapse/expand state of row details changes, y
 
 <Note>
 
+<FrameworkContent not="angular">
+
 This function is called with only one argument - the new <PropLink name="rowDetailState" />. Please note this is an instance of <TypeLink name="RowDetailState"/>. If you want to use the object literal, make sure you call `getState()` on the instance of `RowDetailState`.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+The output emits the new <PropLink name="rowDetailState" />. Please note this is an instance of <TypeLink name="RowDetailState"/>. If you want to use the object literal, make sure you call `getState()` on the instance of `RowDetailState`.
+
+</FrameworkContent>
 
 ```tsx file="collapsing-and-expanding-rows.snippet.tsx" region="using-the-onrowdetailstatechange-listener" title="Using the onRowDetailStateChange listener"
 ```
 
 </Note>
 
+<FrameworkContent not="angular">
+
 When using the controlled <PropLink name="rowDetailState" />, you'll need to respond to the user interaction by using the <PropLink name="onRowDetailStateChange"/> listener, in order to update the controlled <PropLink name="rowDetailState" />.
+
+</FrameworkContent>
+
+<FrameworkContent framework="angular">
+
+When using the controlled <PropLink name="rowDetailState" />, the grid applies the user interaction itself and writes the new state back to the model. Use the <PropLink name="onRowDetailStateChange"/> output to keep your own signal in sync - or to replace the new state with your own, as the single row expand example below does.
+
+</FrameworkContent>
 
 This allows you to manage the state of the row details yourself - making it easy to expand/collapse all rows, or to expand/collapse a specific row by simply updating the value of the <PropLink name="rowDetailState" /> prop.
 

@@ -254,7 +254,7 @@ export function PackageStatsTable({ products }: { products: Product[] }) {
         that <code>npm install</code> adds besides the grid&apos;s own packages
         and the framework, including required peer dependencies.{' '}
         <strong>JS / CSS</strong>: esbuild {packageStats.tools.esbuild} bundle
-        of the minimal getting-started usage, minified, React or Vue left out,
+        of the minimal getting-started usage, minified, the framework itself left out,
         gzip level 9 (kB = 1,000 bytes). Fonts and images are not counted.
         Numbers include required peers such as a design system, so they are
         lower if your app already ships those. The{' '}
