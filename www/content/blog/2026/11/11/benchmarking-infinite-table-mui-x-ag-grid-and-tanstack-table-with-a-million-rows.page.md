@@ -1,6 +1,6 @@
 ---
 title: Benchmarking Infinite Table, MUI X Data Grid, AG Grid and TanStack Table with a million rows
-description: An open, reproducible benchmark of Infinite Table, MUI X Data Grid, AG Grid Community and TanStack Table at 300,000 and 1,000,000 rows - mount time, memory, sorting and scrolling smoothness - with the exact steps to run it yourself.
+description: An open, reproducible benchmark of Infinite Table, MUI X Data Grid, AG Grid Community and TanStack Table at 300,000 and 1,000,000 rows - mount time, memory, sorting, scrolling smoothness and live data updates - with the exact steps to run it yourself.
 date: 2026-11-11
 author: radu
 tags: performance, benchmark, mui-x-data-grid, ag-grid, tanstack-table
@@ -8,7 +8,7 @@ tags: performance, benchmark, mui-x-data-grid, ag-grid, tanstack-table
 
 With release [10.1.4](/docs/releases#10-1-4) we improved Infinite Table rendering to make it possible to render huge amounts of data in your favorite React DataGrid. Previously, we were capped at about 400k records, but now you can go much higher, so we wanted to test 1 million records and see if performance stays sharp with this many records. So we put it to work and compared it against three other React DataGrids: [MUI X Data Grid](https://mui.com/x/react-data-grid/), [AG Grid](https://www.ag-grid.com/react-data-grid) and [TanStack Table](https://tanstack.com/table).
 
-We build Infinite Table, so you should read any benchmark we publish with healthy suspicion. That's exactly why we made this one open: the code, the raw numbers, and the exact commands are in the [datagrid-performance-comparison](https://github.com/infinite-table/datagrid-performance-comparison) repository, and you can [run the whole thing on your own machine](#run-it-yourself) in about an hour.
+We build Infinite Table, so you should read any benchmark we publish with healthy suspicion. That's exactly why we made this one open: the code, the raw numbers, and the exact commands are in the [datagrid-performance-comparison](https://github.com/infinite-table/datagrid-performance-comparison) repository, and you can [run the whole thing on your own machine](#run-it-yourself).
 
 The goal was not to declare a winner. It was to measure where each grid spends its time - and Infinite Table is not ahead everywhere.
 
@@ -19,6 +19,7 @@ The short version:
 - **Mounting:** with a million rows Infinite Table is the first to show them. With 300k rows TanStack Table is 6% faster than Infinite Table, which is faster than the other two.
 - **Scrolling:** TanStack Table, rendered with TanStack Virtual, does the least work while scrolling vertically and is the fastest to jump to a far-away row - with a much simpler page than a full grid. Infinite Table does the least work scrolling horizontally at 300k rows, and never shows blank rows; it also had the longest single frame while scrolling vertically.
 - **A million rows:** only Infinite Table and AG Grid can scroll to the last one. MUI X Data Grid and TanStack Table stop at row 838,860.
+- **Live updates:** with the rows as they are, AG Grid shows updates the soonest - 2.7× sooner than Infinite Table at a million rows. Once the rows are sorted by the column that changes, Infinite Table is 4.2× faster than MUI X Data Grid and more than 8× faster than AG Grid and TanStack Table. Filtered, AG Grid and Infinite Table are within 7% of each other; grouped, Infinite Table is 2.3× faster than TanStack Table.
 
 <BenchmarkChart
   title="At a glance - 1,000,000 rows"
@@ -218,6 +219,103 @@ AG Grid and TanStack Table take the first approach. Infinite Table takes the sec
 
 The benchmark measures both effects during a 20,000 px/s flick. At 1M rows, 53% of the frames captured from AG Grid and 10% of those from TanStack Table had blank rows, and none of those from Infinite Table or MUI X Data Grid. In Infinite Table, most of the points sampled in its rows during the flick showed a row's earlier content; MUI X Data Grid kept up with neither blank nor stale rows. All of those numbers are in the [full report](#the-full-report).
 
+## Live data updates
+
+Everything above loads the rows once and leaves them alone. Most apps that show this many rows also change them while you look at them - prices, positions, statuses. So we also measured what each grid does when rows change: with the rows as they are, sorted, filtered and grouped.
+
+<Note>
+
+The live updates come from a later run than the rest of this post, with newer versions of two of the grids: Infinite Table 10.2.1 and MUI X Data Grid 9.18.0. AG Grid 36.3.0 and TanStack Table 9.3.1 are unchanged. It ran on the same kind of GitHub runner (this time with an Intel Xeon 6975P-C), and has [its own report](#the-full-report).
+
+</Note>
+
+An update changes four number columns (salary, bonus, hours and score) by up to 1%, in random rows plus every row on screen, so every update changes what you see. Each grid gets the changed rows the way its documentation recommends:
+
+- **Infinite Table:** `dataSourceApi.updateDataArray(rows)`
+- **MUI X Data Grid:** a new `rows` array (in the free version, `apiRef.current.updateRows` takes one row at a time)
+- **AG Grid:** `api.applyTransaction({ update: rows })`
+- **TanStack Table:** a new `data` array
+
+The grid shows the rows in one of four ways while they change:
+
+- **as they are**, in the order of the data
+- **sorted** by salary, highest first - the column the updates change, so rows move
+- **filtered** to a salary of at least 115,000 - about half of the rows, and rows go in and out of the filter as their salary changes
+- **grouped** by department, in 10 collapsed groups, with the sum of the salaries of each group. Only Infinite Table and TanStack Table are measured here: row grouping is in MUI X Data Grid Premium and in AG Grid Enterprise, and we benchmark the free versions.
+
+An update is done when every visible row shows the new values, in the right order - the harness keeps its own copy of the data, sorted, filtered or grouped, to check against.
+
+### One update at a time
+
+Ten updates of 1,000 rows, each one sent half a second after the previous one is on screen - a dashboard that refreshes every now and then. Measured from sending the update to the end of the first frame that shows it.
+
+<BenchmarkChart
+  title="One update of 1,000 rows, 300,000 rows: update to rows painted"
+  subtitle="median of 10 updates, median of 7 runs"
+  unit="ms"
+  rows={[
+    { label: 'Rows as they are', mui: 153, ag: 45.5, tanstack: 132, infinite: 99 },
+    { label: 'Rows sorted', mui: 520, ag: 879, tanstack: 954, infinite: 152 },
+    { label: 'Rows filtered', mui: 208, ag: 81.7, tanstack: 290, infinite: 85.5 },
+    { label: 'Rows grouped', tanstack: 409, infinite: 217, note: 'grouping is not in the free MUI X and AG Grid' },
+  ]}
+/>
+
+<BenchmarkChart
+  title="One update of 1,000 rows, 1,000,000 rows: update to rows painted"
+  subtitle="median of 10 updates, median of 7 runs"
+  unit="ms"
+  rows={[
+    { label: 'Rows as they are', mui: 553, ag: 137, tanstack: 476, infinite: 368 },
+    { label: 'Rows sorted', mui: 2118, ag: 4169, tanstack: 4162, infinite: 505 },
+    { label: 'Rows filtered', mui: 685, ag: 258, tanstack: 1403, infinite: 276 },
+    { label: 'Rows grouped', tanstack: 1812, infinite: 790, note: 'grouping is not in the free MUI X and AG Grid' },
+  ]}
+/>
+
+With the rows as they are, AG Grid is the fastest: it shows a million-row update in 137 ms, 2.7× sooner than Infinite Table (368 ms), which is ahead of TanStack Table (476 ms) and MUI X Data Grid (553 ms). At 300k rows AG Grid is 2.2× faster than Infinite Table.
+
+Sorting turns that around. When the updated column is the one the rows are sorted by, Infinite Table shows the update in 505 ms with a million rows - 4.2× sooner than MUI X Data Grid, and 8.2-8.3× sooner than AG Grid and TanStack Table, which take about 4.2 seconds for every update.
+
+With a filter, AG Grid and Infinite Table are close: level at 300k rows, and 258 against 276 ms at 1M rows, where AG Grid is 7% ahead. MUI X Data Grid takes 2.5× and TanStack Table 5.1× as long as Infinite Table. Grouped, with the sums to keep up to date, Infinite Table is 2.3× faster than TanStack Table.
+
+### A feed of 50 updates a second
+
+The other end: a feed of 50 updates a second, of 100 rows each, for 4 seconds - 200 updates, like the messages of a socket. The page hands the grid everything that arrived since the previous frame, once per animation frame, as one update. A grid that keeps the main thread busy gets the updates later, and more of them at once.
+
+What we measured is the lag at the end: from the arrival of the last update to the first frame that shows it - how far behind the feed the screen is.
+
+<BenchmarkChart
+  title="A feed of 50 updates a second, 1,000,000 rows: lag at the end"
+  subtitle="last update to painted, median of 7 runs"
+  unit="ms"
+  rows={[
+    { label: 'Rows as they are', mui: 1038, ag: 182, tanstack: 772, infinite: 516 },
+    { label: 'Rows sorted', mui: 2741, ag: 8370, tanstack: 5029, infinite: 610 },
+    { label: 'Rows filtered', mui: 1109, ag: 379, tanstack: 1958, infinite: 352 },
+    { label: 'Rows grouped', tanstack: 2073, infinite: 2038, note: 'grouping is not in the free MUI X and AG Grid' },
+  ]}
+/>
+
+The feed tells the same story. With the rows as they are, AG Grid stays closest to it, 182 ms behind at the end against 516 ms for Infinite Table, 772 ms for TanStack Table and 1 s for MUI X Data Grid. Sorted, Infinite Table is 0.6 s behind at the end, MUI X Data Grid 2.7 s, TanStack Table 5 s and AG Grid 8.4 s - more than twice the 4 seconds the feed lasted. With a filter, AG Grid and Infinite Table end level, and so do Infinite Table and TanStack Table with grouped rows.
+
+A feed this fast keeps every grid busy at a million rows - none of them gets near 60 frames a second. What differs is how many frames each one gets to show while the updates come in, and so how often the screen changes:
+
+<BenchmarkChart
+  title="A feed of 50 updates a second, 1,000,000 rows: frames shown"
+  subtitle="frames the main thread committed a second, until the last update is painted, median of 7 runs"
+  unit="fps"
+  better="higher"
+  rows={[
+    { label: 'Rows as they are', mui: 2.59, ag: 7.67, tanstack: 1.89, infinite: 4.62 },
+    { label: 'Rows sorted', mui: 0.6, ag: 0.24, tanstack: 0.22, infinite: 2.83 },
+    { label: 'Rows filtered', mui: 1.96, ag: 3.67, tanstack: 0.67, infinite: 5.58 },
+    { label: 'Rows grouped', tanstack: 0.5, infinite: 1.56, note: 'grouping is not in the free MUI X and AG Grid' },
+  ]}
+/>
+
+With the rows as they are, AG Grid shows 1.7× as many frames as Infinite Table. In every other view Infinite Table shows the most: 1.5× as many as AG Grid with a filter, and with sorted rows 4.8× as many as MUI X Data Grid and 12-13× as many as AG Grid and TanStack Table, which show a new frame every 4 seconds or more. Grouped, Infinite Table shows 3.1× as many frames as TanStack Table, for the same lag at the end. The longest gaps between frames and the main thread's blocking time are in the [full report](#the-full-report).
+
 ## What we take away from this
 
 Where **Infinite Table** came out ahead of all three:
@@ -228,6 +326,8 @@ Where **Infinite Table** came out ahead of all three:
 - Main-thread work while scrolling horizontally at 300k rows
 - More frames fully presented while scrolling vertically
 - Reaching the last of a million rows, which only AG Grid also does
+- Live updates to sorted rows: 4.2× faster than MUI X Data Grid and more than 8× faster than AG Grid and TanStack Table at a million rows, and 2.3× faster than TanStack Table with grouped rows
+- More frames shown during a fast feed of updates to sorted, filtered or grouped rows
 
 Where **MUI X Data Grid** came out ahead of Infinite Table:
 
@@ -240,6 +340,8 @@ Where **AG Grid** came out ahead of Infinite Table:
 - Vertical scrolling: 59-60 fps and a shorter longest frame
 - A faster median jump at 1M rows (by 5 ms)
 - 6% less main-thread work scrolling vertically at 300k rows
+- Live updates to rows that aren't sorted: 2.2-2.7× faster, and level or up to 7% faster with a filter
+- More frames shown during a fast feed of updates to rows as they are
 
 Where **TanStack Table** (with TanStack Virtual) came out ahead of Infinite Table:
 
@@ -249,7 +351,7 @@ Where **TanStack Table** (with TanStack Virtual) came out ahead of Infinite Tabl
 
 It does that with a page that is not a full grid.
 
-For us, there are two clear to-dos, both in vertical scrolling: the long frame, and the JavaScript we run per scrolled frame. We're glad to see where we're ahead, and just as glad to have a precise, repeatable measure of where we're not.
+For us, there are three clear to-dos: in vertical scrolling, the long frame and the JavaScript we run per scrolled frame, and the time we take to apply updates to rows that aren't sorted. We're glad to see where we're ahead, and just as glad to have a precise, repeatable measure of where we're not.
 
 ## Limitations
 
@@ -259,7 +361,9 @@ A benchmark is a model of reality, not reality. Please keep these in mind:
 - **Headless Chrome.** These numbers come from Chrome's new headless mode, which runs the same rendering code as headed Chrome. Frame-pacing numbers can still differ in a headed browser with a real display.
 - **Defaults only.** Every grid has options that could change these results. We deliberately didn't tune any of them, because tuning one grid well and another badly is the easiest way to make a benchmark unfair.
 - **Not four of the same thing.** The TanStack Table page is an example with our markup, not a full grid; a different way of rendering TanStack Table would give different numbers. MUI X Data Grid is on one page that holds every row, which is not its default.
-- **One dataset shape.** 20 columns of plain text and numbers, no custom cell renderers, no grouping, no filtering, no live updates. Real apps do more.
+- **One dataset shape.** 20 columns of plain text and numbers, and no custom cell renderers. The live updates change four number columns, with one sort, one filter and one grouping. Real apps do more.
+- **Grouping against one grid.** MUI X Data Grid has row grouping in its Premium version and AG Grid in Enterprise. We benchmark the free versions, so the grouped rows are only compared with TanStack Table.
+- **Two runs.** The live updates come from a later run than the rest of the post, with newer versions of Infinite Table and MUI X Data Grid. Compare grids within a run, not across the two.
 - **One browser locale.** The string sorting result is for an `en-US` browser.
 - **We have an interest.** We make Infinite Table. We've tried to design the harness so that it measures every grid the same way, and to report every metric - including the ones where another grid is ahead - but you shouldn't have to trust us. That's what the next section is for.
 
@@ -283,7 +387,7 @@ npx playwright install chromium
 BENCH_HEADLESS=1 npm run benchmark
 ```
 
-A full run takes about an hour: 9 scenarios × 2 sizes × 4 grids × 8 runs. Without `BENCH_HEADLESS=1` it opens real browser windows - closer to what users see, but you have to leave the machine alone while they come and go.
+A full run takes about two and a half hours on a GitHub-hosted runner: 17 scenarios × 2 sizes × 4 grids × 8 runs (the two grouped scenarios with 2 grids). Without `BENCH_HEADLESS=1` it opens real browser windows - closer to what users see, but you have to leave the machine alone while they come and go.
 
 For numbers you can trust, close other apps, keep a laptop plugged in, and don't use the machine during the run.
 
@@ -324,7 +428,7 @@ Infinite Table reaches the last of a million rows starting with version 10.1.4. 
 | Variable | Default | |
 |---|---|---|
 | `BENCH_SIZES` | `300k,1m` | dataset sizes to run |
-| `BENCH_SCENARIOS` | all | `mount`, `sort-string`, `sort-number`, `scroll-jump`, `scroll-vertical`, `scroll-horizontal`, `correctness-vertical`, `correctness-horizontal`, `visual-blank-vertical` |
+| `BENCH_SCENARIOS` | all | `mount`, `sort-string`, `sort-number`, `scroll-jump`, `scroll-vertical`, `scroll-horizontal`, `correctness-vertical`, `correctness-horizontal`, `visual-blank-vertical`, `updates-low`, `updates-low-sorted`, `updates-low-filtered`, `updates-low-grouped`, `updates-high`, `updates-high-sorted`, `updates-high-filtered`, `updates-high-grouped` |
 | `BENCH_GRIDS` | all | `mui`, `ag-grid`, `tanstack`, `infinite` - at least two |
 | `BENCH_RUNS` | `7` | measured runs per grid per scenario |
 | `BENCH_HEADLESS` | off | `1` runs without opening browser windows |
@@ -344,12 +448,12 @@ Then open [localhost:3000](http://localhost:3000) for the list of pages: `/bench
 
 ### The full report
 
-The report and raw data behind this post:
+The reports and raw data behind this post:
 
-- [Full report (Markdown)](/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table/report.md)
-- [Raw results (JSON)](/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table/results.json)
+- Mounting, memory, sorting and scrolling: [full report (Markdown)](/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table/report.md), [raw results (JSON)](/benchmarks/2026-11-12-infinite-table-mui-x-ag-grid-tanstack-table/results.json)
+- Live data updates: [full report (Markdown)](/benchmarks/2026-11-25-infinite-table-mui-x-ag-grid-tanstack-table-live-updates/report.md), [raw results (JSON)](/benchmarks/2026-11-25-infinite-table-mui-x-ag-grid-tanstack-table-live-updates/results.json) - the later run, which also has every other scenario
 
-Both are also in the benchmark repository, under [`results/blog-post-2026-11-12`](https://github.com/infinite-table/datagrid-performance-comparison/tree/master/results/blog-post-2026-11-12).
+They are also in the benchmark repository, under [`results/blog-post-2026-11-12`](https://github.com/infinite-table/datagrid-performance-comparison/tree/master/results/blog-post-2026-11-12) and [`results/blog-post-2026-11-25`](https://github.com/infinite-table/datagrid-performance-comparison/tree/master/results/blog-post-2026-11-25).
 
 ## Help us make it fairer
 
