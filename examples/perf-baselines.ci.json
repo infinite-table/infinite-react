@@ -82,5 +82,113 @@
     "renderingTime": 30.9,
     "paintingTime": 29.81,
     "totalTime": 2669.75
+  },
+  "vue:tests/table/props/column/column-change:works correctly": {
+    "scriptingTime": 23.92,
+    "renderingTime": 3.05,
+    "paintingTime": 0.58,
+    "totalTime": 188.8
+  },
+  "vue:tests/table/props/data/basic-add-data:insert data": {
+    "scriptingTime": 20.76,
+    "renderingTime": 2.76,
+    "paintingTime": 0.71,
+    "totalTime": 146.64
+  },
+  "vue:tests/table/props/data/edit-with-delay:on string column": {
+    "scriptingTime": 65.91,
+    "renderingTime": 9.96,
+    "paintingTime": 2.75,
+    "totalTime": 3793.04
+  },
+  "vue:tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
+    "scriptingTime": 47.29,
+    "renderingTime": 7.35,
+    "paintingTime": 1.48,
+    "totalTime": 607.65
+  },
+  "vue:tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
+    "scriptingTime": 39.67,
+    "renderingTime": 6.96,
+    "paintingTime": 1.26,
+    "totalTime": 201.23
+  },
+  "vue:tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 179.53,
+    "renderingTime": 40.07,
+    "paintingTime": 11.25,
+    "totalTime": 447.38
+  },
+  "vue:tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 280.48,
+    "renderingTime": 35.94,
+    "paintingTime": 22.03,
+    "totalTime": 2568.73
+  },
+  "angular:tests/table/perf/default:horizontal-scrolling with tracing": {
+    "scriptingTime": 48.38,
+    "renderingTime": 9.48,
+    "paintingTime": 2.54,
+    "totalTime": 588.93
+  },
+  "angular:tests/table/perf/flashing/default:perf should remain stable for 50 clicks": {
+    "scriptingTime": 440.76,
+    "renderingTime": 35.93,
+    "paintingTime": 34.35,
+    "totalTime": 3385.1
+  },
+  "angular:tests/table/perf/flashing/default:perf should be fine when single click": {
+    "scriptingTime": 15.15,
+    "renderingTime": 0.98,
+    "paintingTime": 0.65,
+    "totalTime": 97.96
+  },
+  "angular:tests/table/perf/flashing/default:should be able to collapse and expand nodes with no error": {
+    "scriptingTime": 93.73,
+    "renderingTime": 27.87,
+    "paintingTime": 4.55,
+    "totalTime": 243.92
+  },
+  "angular:tests/table/props/column/column-change:works correctly": {
+    "scriptingTime": 18.28,
+    "renderingTime": 3.44,
+    "paintingTime": 0.82,
+    "totalTime": 155.83
+  },
+  "angular:tests/table/props/data/basic-add-data:insert data": {
+    "scriptingTime": 22.48,
+    "renderingTime": 2.09,
+    "paintingTime": 0.89,
+    "totalTime": 132.95
+  },
+  "angular:tests/table/props/data/edit-with-delay:on string column": {
+    "scriptingTime": 58.59,
+    "renderingTime": 8.88,
+    "paintingTime": 2.37,
+    "totalTime": 3739.97
+  },
+  "angular:tests/table/props/data/editing/persistEdit:should call and wait for async persistEdit correctly": {
+    "scriptingTime": 46.56,
+    "renderingTime": 6.85,
+    "paintingTime": 1.5,
+    "totalTime": 555.1
+  },
+  "angular:tests/table/props/data/editing/persistEdit:should not persist changes to the id column": {
+    "scriptingTime": 33.23,
+    "renderingTime": 6.31,
+    "paintingTime": 1,
+    "totalTime": 161.44
+  },
+  "angular:tests/table/props/data/scrolling:scrolls the table with performance tracing": {
+    "scriptingTime": 145.38,
+    "renderingTime": 39.35,
+    "paintingTime": 9.88,
+    "totalTime": 398.05
+  },
+  "angular:tests/table/props/data/update:clicks update button 30 times with performance tracing": {
+    "scriptingTime": 229.75,
+    "renderingTime": 23.83,
+    "paintingTime": 21.12,
+    "totalTime": 2138.76
   }
 }
