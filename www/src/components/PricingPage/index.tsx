@@ -384,9 +384,9 @@ export function PricingPage() {
   return (
     <MainLayout
       seoTitle={
-        'Infinite Table DataGrid for React — One License — Infinite Applications.'
+        'Infinite Table DataGrid for React, Vue and Angular — One License — Infinite Applications.'
       }
-      seoDescription="One License - Infinite Applications. Infinite Table is the modern DataGrid for building React apps with a straightforward licensing model."
+      seoDescription="One License - Infinite Applications. Infinite Table is the modern DataGrid for building React, Vue and Angular apps with a straightforward licensing model."
       title={
         <>
           <span>One License</span> — Infinite Applications
@@ -533,7 +533,7 @@ export function PricingPage() {
                         className="pricing-buy"
                         onClick={onBuyClick}
                       >
-                        <>Buy Infinite Table for React</>
+                        <>Buy Infinite Table</>
                         {!HAS_PADDLE ? <> - COMING SOON</> : null}
                       </AccentButton>
                     </>

@@ -14,7 +14,7 @@ export const devexpressCopy: CompareCopy = {
   chooseThem: [
     'You want one vendor for a whole UI suite: grid, charts, scheduler, forms and more.',
     'You need Excel or PDF export, or documented accessibility and RTL.',
-    'You also build with Angular, Vue, jQuery or ASP.NET.',
+    'You also build with jQuery or ASP.NET.',
     'You want commercial support from a large vendor.',
   ],
   chooseInfinite: [

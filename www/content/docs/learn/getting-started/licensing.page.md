@@ -15,13 +15,13 @@ You can immediately download and use [Infinite Table from the NPM registry](http
 
 <FrameworkContent framework="vue">
 
-You can immediately download and use [Infinite Table for Vue from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-vue) free of charge. `@infinite-table/infinite-vue` is published under the same license as the React package - one license covers both.
+You can immediately download and use [Infinite Table for Vue from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-vue) free of charge. `@infinite-table/infinite-vue` is published under the same license as the React and Angular packages - one license covers all three.
 
 </FrameworkContent>
 
 <FrameworkContent framework="angular">
 
-You can immediately download and use [Infinite Table for Angular from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-angular) free of charge. `@infinite-table/infinite-angular` is published under the same license as the React package - one license covers both.
+You can immediately download and use [Infinite Table for Angular from the NPM registry](https://www.npmjs.com/package/@infinite-table/infinite-angular) free of charge. `@infinite-table/infinite-angular` is published under the same license as the React and Vue packages - one license covers all three.
 
 </FrameworkContent>
 

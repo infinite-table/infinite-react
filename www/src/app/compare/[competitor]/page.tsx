@@ -259,9 +259,10 @@ export default async function ComparePage({ params }: Params) {
       <Section id="get-started" title="Try Infinite Table">
         <div className={styles.card}>
           <p style={{ marginTop: 0 }}>
-            <code>npm i @infinite-table/infinite-react</code> for React, or{' '}
-            <code>npm i @infinite-table/infinite-vue</code> for Vue. Every
-            feature is in the package.
+            <code>npm i @infinite-table/infinite-react</code> for React,{' '}
+            <code>npm i @infinite-table/infinite-vue</code> for Vue, or{' '}
+            <code>npm i @infinite-table/infinite-angular</code> for Angular.
+            Every feature is in the package.
           </p>
           <div className={styles.actions} style={{ justifyContent: 'flex-start' }}>
             <Link

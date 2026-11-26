@@ -34,19 +34,19 @@ const VUE_REPLACEMENTS = [
   ['@infinite-table/infinite-react', '@infinite-table/infinite-vue'],
   // the Vue docs and the Vue home page
   ['https://infinite-table.com/docs', 'https://infinite-table.com/vue/docs'],
-  ['href="https://infinite-table.com"', 'href="https://infinite-table.com/vue"'],
+  [
+    'href="https://infinite-table.com"',
+    'href="https://infinite-table.com/vue"',
+  ],
 ];
 
-/**
- * Angular: until the Angular docs and home page are live, the docs links
- * stay on the React docs and the banner is the React one; only the framework
- * wording and the package name change.
- */
+/** Angular: the same swaps, to the Angular banner, docs and home page. */
 const ANGULAR_REPLACEMENTS = [
   [
     'alt="The React DataGrid built for speed"',
     'alt="The Angular DataGrid built for speed"',
   ],
+  ['/hero/readme-banner-react.png', '/hero/readme-banner-angular.png'],
   ['for building React apps', 'for building Angular apps'],
   ['is a React DataGrid component', 'is an Angular DataGrid component'],
   [
@@ -63,7 +63,21 @@ const ANGULAR_REPLACEMENTS = [
     '- [Benchmark: Infinite Table vs MUI X Data Grid, AG Grid and TanStack Table at 300k and 1M rows](https://infinite-table.com/benchmark)\n',
     '',
   ],
+  // the CSS goes in the app's global styles, not in a JS import
+  [
+    ' - you have to import the CSS file from the package.\n\n```js\nimport "@infinite-table/infinite-react/index.css"\n```',
+    ". Add the CSS file from the package to your app's global styles, in the `styles` of the build options in `angular.json` or at the top of `src/styles.css`:\n\n```css\n@import '@infinite-table/infinite-angular/index.css';\n```",
+  ],
   ['@infinite-table/infinite-react', '@infinite-table/infinite-angular'],
+  // the Angular docs and the Angular home page
+  [
+    'https://infinite-table.com/docs',
+    'https://infinite-table.com/angular/docs',
+  ],
+  [
+    'href="https://infinite-table.com"',
+    'href="https://infinite-table.com/angular"',
+  ],
 ];
 
 const outFolder = process.env.INFINITE_OUT_FOLDER;

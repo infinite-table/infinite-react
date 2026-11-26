@@ -21,7 +21,7 @@ export const kendoReactCopy: CompareCopy = {
     'You need grouping, pivoting, tree data or master-detail without a Premium license.',
     'You want pivoting and tree data in the grid itself, not in separate components.',
     'Dependency count matters to you.',
-    'You use Vue as well as React.',
+    'You use Vue or Angular as well as React.',
   ],
   migration: {
     intro:

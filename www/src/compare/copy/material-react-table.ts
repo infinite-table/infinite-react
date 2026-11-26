@@ -20,7 +20,7 @@ export const materialReactTableCopy: CompareCopy = {
     "Your app doesn't use Material UI.",
     'You need pivoting, lazy loading or cell selection.',
     'Dependency count and bundle size matter to you.',
-    'You use Vue as well as React.',
+    'You use Vue or Angular as well as React.',
   ],
   migration: {
     intro:
