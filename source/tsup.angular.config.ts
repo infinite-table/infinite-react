@@ -63,7 +63,7 @@ export const tsupAngularConfig: Options = {
     const json: any = {
       name: '@infinite-table/infinite-angular',
       description: 'Infinite Table for Angular',
-      homepage: packageJSON.homepage,
+      homepage: 'https://infinite-table.com/angular',
       keywords: [
         'angular',
         'infinite-table',

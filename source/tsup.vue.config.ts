@@ -69,6 +69,7 @@ export const tsupVueConfig: Options = {
 
     json.name = '@infinite-table/infinite-vue';
     json.description = 'Infinite Table for Vue';
+    json.homepage = 'https://infinite-table.com/vue';
     json.keywords = ['vue', 'infinite-table', 'vue-table', 'table', 'datagrid'];
     json.main = 'index.js';
     json.module = 'index.mjs';

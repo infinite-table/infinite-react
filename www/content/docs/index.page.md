@@ -80,7 +80,7 @@ We take security seriously and only have a total of 3 dependencies in our full d
 
 ### 📦 Small Bundle Size
 
-Our bundle size is under `300kB` and we're dedicated to [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
+Our bundle size is under `200kB` minified and gzipped, and we're dedicated to [keeping it small](https://bundlephobia.com/package/@infinite-table/infinite-react).
 
 <HeroCards>
 <YouWillLearnCard title="Small bundle" newTab path="https://bundlephobia.com/package/@infinite-table/infinite-react">
