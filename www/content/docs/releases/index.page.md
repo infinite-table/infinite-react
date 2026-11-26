@@ -9,7 +9,7 @@ angular:
 
 ## 11.0.0
 
- - Initial Angular version
+- First release of `@infinite-table/infinite-angular`, Infinite Table for Angular - see [Infinite Table 11.0.0 — now for Angular](/blog/2026/11/26/infinite-table-for-angular). React, Vue and Angular are released together and share the version number from now on.
  
 ## 10.2.1
 
