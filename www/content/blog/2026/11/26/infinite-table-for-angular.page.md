@@ -24,41 +24,7 @@ The same functional test suite that runs against the React and Vue builds runs a
 
 ## What it looks like
 
-```ts
-import { Component } from '@angular/core';
-
-import { DataSource, InfiniteTable } from '@infinite-table/infinite-angular';
-import type { InfiniteTablePropColumns } from '@infinite-table/infinite-angular';
-
-type Person = {
-  id: number;
-  firstName: string;
-  age: number;
-};
-
-const columns: InfiniteTablePropColumns<Person> = {
-  id: { field: 'id', type: 'number', defaultWidth: 80 },
-  firstName: { field: 'firstName', header: 'First Name' },
-  age: { field: 'age', type: 'number' },
-};
-
-@Component({
-  selector: 'app-root',
-  imports: [DataSource, InfiniteTable],
-  template: `
-    <infinite-data-source [data]="data" primaryKey="id">
-      <infinite-table [columns]="columns" />
-    </infinite-data-source>
-  `,
-})
-export class App {
-  protected readonly data: Person[] = [
-    { id: 1, firstName: 'Bob', age: 3 },
-    { id: 2, firstName: 'Alice', age: 50 },
-    { id: 3, firstName: 'Bill', age: 5 },
-  ];
-  protected readonly columns = columns;
-}
+```ts file="/docs/learn/getting-started/meet-the-code.demo.angular.ts"
 ```
 
 And add the CSS to your global styles — in the `styles` of your build options in `angular.json`, or at the top of `src/styles.css`:
@@ -85,29 +51,15 @@ Our goal for every framework is the same: the grid should feel like it was writt
 - **Callbacks are outputs.** `(sortInfoChange)`, `(cellClick)`, `(ready)`.
 - **Custom rendering with templates or components.** Columns stay plain objects. Their `render*` functions return text, a `TemplateRef`, or a component through `renderComponent()` — and the component reads its cell with `injectColumnCell()`, which gives you a signal:
 
-  ```ts
-  @Component({
-    selector: 'country-info',
-    template: `<div>Country: {{ cell().value }}</div>`,
-  })
-  class CountryInfo {
-    protected readonly cell = injectColumnCell<Developer>();
-  }
-
-  const columns: InfiniteTablePropColumns<Developer> = {
-    country: {
-      field: 'country',
-      renderValue: () => renderComponent(CountryInfo),
-    },
-  };
+  ```ts file="/docs/learn/columns/column-rendering.snippet.angular.ts" region="use-infinite-column-cell"
   ```
 - **The imperative API is on the component.** Grab it with a template reference — `#grid="infiniteTable"` — and call `grid.api()`.
 
 ## The docs speak Angular
 
-The whole documentation site has an Angular version. Every page in [the Angular docs](/angular/docs) shows Angular code, and the live demos on those pages are real Angular apps you can edit and run in the browser.
+The whole documentation site has an Angular version. Every page in <a href="/angular/docs" data-framework-explicit="" className="text-link hover:underline underline-offset-5 hover:text-link/80">the Angular docs</a> shows Angular code, and the live demos on those pages are real Angular apps you can edit and run in the browser.
 
-Start with [Getting Started](/angular/docs/learn/getting-started), or have a look at the [Angular home page](/angular) for a million rows, pivoting and themes running in Angular.
+Start with <a href="/angular/docs/learn/getting-started" data-framework-explicit="" className="text-link hover:underline underline-offset-5 hover:text-link/80">Getting Started</a>, or have a look at the [Angular home page](/angular) for a million rows, pivoting and themes running in Angular.
 
 ## What's not there yet
 
@@ -117,17 +69,10 @@ The Angular package has the same feature set as the Vue one. A few things from t
 
 `@infinite-table/infinite-angular` has the same license as the React and Vue packages. Without a license key, the grid shows a "Powered by Infinite Table" footer. With one, provide it once for every grid of your application:
 
-```ts
-// app.config.ts
-import type { ApplicationConfig } from '@angular/core';
-import { provideInfiniteTable } from '@infinite-table/infinite-angular';
-
-export const appConfig: ApplicationConfig = {
-  providers: [provideInfiniteTable({ licenseKey: 'your-license-key' })],
-};
+```ts file="/docs/learn/getting-started/index.snippet.angular.ts" region="license-key"
 ```
 
-A license key works for all three frameworks. See [licensing](/angular/docs/learn/getting-started/licensing) and [pricing](/pricing) for the details.
+A license key works for all three frameworks. See <a href="/angular/docs/learn/getting-started/licensing" data-framework-explicit="" className="text-link hover:underline underline-offset-5 hover:text-link/80">licensing</a> and [pricing](/pricing) for the details.
 
 ## For React and Vue users
 

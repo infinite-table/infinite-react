@@ -7,6 +7,10 @@ import { visit } from 'unist-util-visit';
 import { MarkdownFileEnv, MarkdownFileInfo } from './MarkdownFileInfo';
 import { siteContent } from '../content';
 import { competitors } from '../compare/matrix';
+import {
+  DOCS_DEFAULT_FRAMEWORK,
+  DOCS_FRAMEWORK_IDS,
+} from './docsFrameworksRegistry';
 
 // app-router pages, which are not markdown content
 const EXCEPTIONS = [
@@ -16,6 +20,13 @@ const EXCEPTIONS = [
   '/compare',
   '/benchmark',
   ...competitors.map((product) => `/compare/${product.id}`),
+  // the home pages of the other frameworks (src/app/vue, src/app/angular).
+  // Their docs pages can't be linked from markdown: remarkFrameworkLinks
+  // points every docs link at the page's own framework. Use
+  // `<a href="/vue/docs/..." data-framework-explicit="">` for those.
+  ...DOCS_FRAMEWORK_IDS.filter((id) => id !== DOCS_DEFAULT_FRAMEWORK).map(
+    (id) => `/${id}`,
+  ),
 ];
 
 const exceptionsMap = EXCEPTIONS.reduce((acc, url) => {
@@ -34,6 +45,9 @@ const isPublicFile = (pathname: string) => {
   );
 };
 
+const contentPage = (pathname: string) =>
+  siteContent.paths[pathname] ?? siteContent.paths[pathname + '/'];
+
 export default (env: MarkdownFileEnv & { fileInfo: MarkdownFileInfo }) => {
   const transformer = (ast: any) => {
     visit(ast, 'link', (node) => {
@@ -48,11 +62,7 @@ export default (env: MarkdownFileEnv & { fileInfo: MarkdownFileInfo }) => {
         return;
       }
 
-      if (
-        !siteContent.paths[key] &&
-        !siteContent.paths[key + '/'] &&
-        !isPublicFile(key)
-      ) {
+      if (!contentPage(key) && !isPublicFile(key)) {
         const errorMessage = `Link not valid: "${key}", found in file ${env.fileInfo.fileAbsolutePath}.`;
 
         console.error(`\n\ \n \n ${errorMessage} \n \n \n`);

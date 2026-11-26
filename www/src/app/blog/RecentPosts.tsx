@@ -15,7 +15,11 @@ export default function RecentPosts({
       <BlogIndex
         posts={posts}
         selectedTag={selectedTag}
-        childrenAfterHeader={<CopyMarkdownButton mdPath="/blog/index.md" />}
+        // a key: React warns about a server element without one, rendered by
+        // the BlogIndex client component
+        childrenAfterHeader={
+          <CopyMarkdownButton key="copy-markdown" mdPath="/blog/index.md" />
+        }
       />
     </CenterContent>
   );
