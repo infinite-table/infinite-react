@@ -41,6 +41,12 @@ export default test.describe('HeadlessTable on its own, with rows and columns pi
   test('pinned cells do not move, and rows and columns stay aligned, while scrolling with the wheel', async ({
     page,
   }) => {
+    // the page starts the table at the host's outer size; the table measures
+    // its real (inner) size a little later, and the pinned end rows and
+    // columns move once then - they're compared against the first recorded
+    // frame, so recording must start after that
+    await expect.poll(() => getLayoutErrors(page), POLL).toEqual([]);
+
     await page.evaluate(() => {
       const frames: {
         scroll: [number, number];
