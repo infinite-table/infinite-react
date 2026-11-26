@@ -11,7 +11,7 @@ In the API Reference below we'll use **`DATA_TYPE`** to refer to the TypeScript 
 
 <Note>
 
-The props are listed with the names you use in an Angular template: `[(sortInfo)]` is a model (bind it two-way to a signal), `(sortInfoChange)` is an output, `[onRowSelectionChange]` is a function input. The other inputs keep their names. The examples are the React ones for now.
+The props are listed with the names you use in an Angular template: `[(sortInfo)]` is a model (bind it two-way to a signal), `(sortInfoChange)` is an output, `[onRowSelectionChange]` is a function input. The other inputs keep their names. The examples are written for Angular.
 
 </Note>
 
