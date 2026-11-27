@@ -487,54 +487,72 @@ export function createDataSourceEffects<T>(ctx: DataSourceEffectsContext<T>): {
   });
 
   // ---- data change notifications: onDataArrayChange / onDataMutations
+  // React has them in an effect on originalDataArrayChangedInfo, which reads
+  // the state of the render it runs after - so it also runs on mount, with
+  // the state the DataSource was first rendered with (the empty array it
+  // starts with, or a detail DataSource before its cached state is
+  // restored). Here that first run happens in afterEffectsMount, with the
+  // state from before the effects' mount runs; the watcher below reports
+  // the changes after that. An info is reported once.
+  let firstRenderState: DataSourceState<T> | null = null;
+  let notifiedInfo: DataSourceState<T>['originalDataArrayChangedInfo'] | null =
+    null;
+
+  const notifyDataChange = (dataSourceState: DataSourceState<T>) => {
+    if (dataSourceState.originalDataArrayChangedInfo === notifiedInfo) {
+      return;
+    }
+    notifiedInfo = dataSourceState.originalDataArrayChangedInfo;
+
+    dataSourceState.onDataArrayChange?.(
+      dataSourceState.originalDataArray,
+      dataSourceState.originalDataArrayChangedInfo,
+    );
+
+    if (
+      dataSourceState.onDataMutations &&
+      dataSourceState.originalDataArrayChangedInfo.mutations &&
+      dataSourceState.originalDataArrayChangedInfo.mutations.size
+    ) {
+      dataSourceState.onDataMutations({
+        primaryKeyField:
+          typeof dataSourceState.primaryKey === 'string'
+            ? dataSourceState.primaryKey
+            : undefined,
+        dataArray: dataSourceState.originalDataArray,
+        mutations: dataSourceState.originalDataArrayChangedInfo.mutations!,
+        timestamp: dataSourceState.originalDataArrayChangedInfo.timestamp,
+      });
+    }
+
+    if (
+      dataSourceState.onTreeDataMutations &&
+      dataSourceState.originalDataArrayChangedInfo.treeMutations &&
+      dataSourceState.originalDataArrayChangedInfo.treeMutations.size
+    ) {
+      dataSourceState.onTreeDataMutations({
+        nodesKey: dataSourceState.nodesKey
+          ? dataSourceState.nodesKey
+          : undefined,
+        dataArray: dataSourceState.originalDataArray,
+        treeMutations:
+          dataSourceState.originalDataArrayChangedInfo.treeMutations!,
+        timestamp: dataSourceState.originalDataArrayChangedInfo.timestamp,
+      });
+    }
+  };
+
   effects.push({
     name: 'dataChangeCallbacks',
     deps: () => ({
       originalDataArrayChangedInfo: state().originalDataArrayChangedInfo,
     }),
-    run: () => {
-      const dataSourceState = getState();
-
-      dataSourceState.onDataArrayChange?.(
-        dataSourceState.originalDataArray,
-        dataSourceState.originalDataArrayChangedInfo,
-      );
-
-      if (
-        dataSourceState.onDataMutations &&
-        dataSourceState.originalDataArrayChangedInfo.mutations &&
-        dataSourceState.originalDataArrayChangedInfo.mutations.size
-      ) {
-        dataSourceState.onDataMutations({
-          primaryKeyField:
-            typeof dataSourceState.primaryKey === 'string'
-              ? dataSourceState.primaryKey
-              : undefined,
-          dataArray: dataSourceState.originalDataArray,
-          mutations: dataSourceState.originalDataArrayChangedInfo.mutations!,
-          timestamp: dataSourceState.originalDataArrayChangedInfo.timestamp,
-        });
-      }
-
-      if (
-        dataSourceState.onTreeDataMutations &&
-        dataSourceState.originalDataArrayChangedInfo.treeMutations &&
-        dataSourceState.originalDataArrayChangedInfo.treeMutations.size
-      ) {
-        dataSourceState.onTreeDataMutations({
-          nodesKey: dataSourceState.nodesKey
-            ? dataSourceState.nodesKey
-            : undefined,
-          dataArray: dataSourceState.originalDataArray,
-          treeMutations:
-            dataSourceState.originalDataArrayChangedInfo.treeMutations!,
-          timestamp: dataSourceState.originalDataArrayChangedInfo.timestamp,
-        });
-      }
-    },
+    run: () => notifyDataChange(getState()),
   });
 
   const beforeEffectsMount = () => {
+    firstRenderState = getState();
+
     // register with the master (React: the useLayoutEffect in
     // useDataSourceInternal) - registerDetail restores cached detail state
     // and flips stateReadyAsDetails so data loading can start
@@ -559,6 +577,12 @@ export function createDataSourceEffects<T>(ctx: DataSourceEffectsContext<T>): {
       undefined,
       getMasterContext(),
     );
+
+    // the mount run of React's data change effect (see notifyDataChange):
+    // after the initial dataParams, before onReady, like the React hooks
+    const initialState = firstRenderState ?? getState();
+    firstRenderState = null;
+    notifyDataChange(initialState);
 
     getState().onReady?.(ctx.api);
   };

@@ -143,6 +143,19 @@ export function useInfiniteColumnFilterEditor<T>() {
     columnFilterValue?.filter.value ?? '',
   );
 
+  // a value typed here can be dropped before it is applied (the column's
+  // filter was written by something else): then show the filter again
+  const [droppedCount, setDroppedCount] = useState(0);
+  useEffect(
+    () =>
+      context
+        .getState()
+        .pendingColumnFilters.onCancel(column.id, () =>
+          setDroppedCount((count) => count + 1),
+        ),
+    [column.id],
+  );
+
   const onInputChange = React.useCallback(
     (filterValue: any) => {
       setTheValue(filterValue);
@@ -173,7 +186,7 @@ export function useInfiniteColumnFilterEditor<T>() {
         }
       }
     }
-  }, [columnFilterValue?.filter.value]);
+  }, [columnFilterValue?.filter.value, droppedCount]);
 
   const operator = filterContextValue.operator;
   const operatorName = operator?.name;

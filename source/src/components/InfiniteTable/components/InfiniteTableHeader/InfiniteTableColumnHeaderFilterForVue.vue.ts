@@ -231,9 +231,25 @@ export function useInfiniteColumnFilterEditor<
     filterCtxRef.value.columnFilterValue?.filter.value ?? '',
   );
 
+  // a value typed here can be dropped before it is applied (the column's
+  // filter was written by something else): then show the filter again
+  const droppedCount = ref(0);
   watch(
-    () => filterCtxRef.value.columnFilterValue?.filter.value,
-    (filterValue) => {
+    () => column.value.id,
+    (columnId, _, onCleanup) => {
+      onCleanup(
+        getState().pendingColumnFilters.onCancel(columnId, () => {
+          droppedCount.value++;
+        }),
+      );
+    },
+    { immediate: true },
+  );
+
+  watch(
+    // each source compared on its own (like the React effect's deps)
+    [() => filterCtxRef.value.columnFilterValue?.filter.value, droppedCount],
+    ([filterValue]) => {
       if (filterCtxRef.value.columnFilterValue) {
         if (theValue.value !== filterValue) {
           theValue.value = filterValue;

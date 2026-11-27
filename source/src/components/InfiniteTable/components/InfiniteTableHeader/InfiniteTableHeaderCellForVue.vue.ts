@@ -13,7 +13,7 @@ import type { InjectionKey, PropType, ShallowRef, VNodeChild } from 'vue';
 
 import { join } from '../../../../utils/join';
 import { stripVar } from '../../../../utils/stripVar';
-import { debounce } from '../../../utils/debounce';
+import { createColumnFilterChangeHandler } from '../../utils/pendingColumnFilters';
 import type { DataSourcePropSelectionMode } from '../../../DataSource/types';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
 import { useCellClassName } from '../../hooks/useCellClassName';
@@ -226,12 +226,16 @@ export const InfiniteTableHeaderCell = defineComponent({
       const key = `${columnId}:${filterDelay}`;
 
       if (!debouncedFilterChange || debouncedFilterChange.key !== key) {
-        const fn = (filterValue: any) => {
-          api.setColumnFilter(columnId, filterValue);
-        };
         debouncedFilterChange = {
           key,
-          fn: filterDelay > 0 ? debounce(fn, { wait: filterDelay }) : fn,
+          fn: createColumnFilterChangeHandler({
+            columnId,
+            filterDelay,
+            api,
+            getState,
+            getComputed,
+            getDataSourceState,
+          }),
         };
       }
       return debouncedFilterChange.fn;

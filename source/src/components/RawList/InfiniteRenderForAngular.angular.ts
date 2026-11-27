@@ -1,4 +1,6 @@
 import {
+  AfterRenderRef,
+  AfterViewChecked,
   ComponentRef,
   Directive,
   ElementRef,
@@ -9,6 +11,7 @@ import {
   TemplateRef,
   Type,
   ViewContainerRef,
+  afterEveryRender,
   inject,
   input,
   inputBinding,
@@ -221,11 +224,17 @@ function createForwardingContext(holder: { context: any }) {
  *
  * `[infiniteRenderContext]` is the context templates (and the inputs of
  * components) get when the content doesn't carry its own.
+ *
+ * Text is a DOM node next to the anchor comment, not a view, so Angular
+ * doesn't move it: when the outlet is content projected into a component
+ * that renders its `<ng-content>` later (in an `@if`, a `@for`, ...) or
+ * renders it again, the outlet puts its nodes next to the anchor itself
+ * once the anchor is in its new place.
  */
 @Directive({
   selector: 'ng-container[infiniteRender]',
 })
-export class InfiniteRender implements OnChanges, OnDestroy {
+export class InfiniteRender implements OnChanges, AfterViewChecked, OnDestroy {
   readonly content = input<Renderable | unknown>(undefined, {
     alias: 'infiniteRender',
   });
@@ -239,11 +248,34 @@ export class InfiniteRender implements OnChanges, OnDestroy {
 
   private rendered: RenderedLeaf[] = [];
 
+  /**
+   * The parent the nodes were last put in: null when the anchor had none
+   * (content projected into a component that hasn't rendered it yet),
+   * undefined before the first check
+   */
+  private placedIn: Node | null | undefined = undefined;
+  /** see watchPlacement */
+  private placementWatch: AfterRenderRef | null = null;
+
   ngOnChanges() {
     this.reconcile(flattenRenderable(this.content(), this.context()));
   }
 
+  /**
+   * After the components of this view rendered: a component this outlet is
+   * projected into puts the anchor in place when it renders its
+   * `<ng-content>`, which can be after ngOnChanges (in an `@if`). In a
+   * cell the anchor is in place from the start: one comparison.
+   */
+  ngAfterViewChecked() {
+    if (this.anchor.nativeElement.parentNode !== this.placedIn) {
+      this.placeNodes();
+    }
+  }
+
   ngOnDestroy() {
+    this.placementWatch?.destroy();
+    this.placementWatch = null;
     this.clear();
   }
 
@@ -408,12 +440,24 @@ export class InfiniteRender implements OnChanges, OnDestroy {
   /**
    * Puts the DOM nodes of the leaves, in order, before the anchor comment.
    * Views are created in the container in leaf order, but text nodes are
-   * not views, so the order is fixed up whenever the leaves change.
+   * not views, so the order is fixed up whenever the leaves change or the
+   * anchor moves.
+   *
+   * Without a parent (projected content not rendered yet, or taken out by
+   * the component it is projected into), Angular keeps the views out of
+   * the DOM: so does the text, until the anchor is back.
    */
   private placeNodes() {
     const anchor = this.anchor.nativeElement;
     const parent = anchor.parentNode;
+    this.placedIn = parent;
     if (!parent) {
+      for (const leaf of this.rendered) {
+        if (leaf.kind === 'text') {
+          leaf.node.remove();
+        }
+      }
+      this.watchPlacement();
       return;
     }
     for (const leaf of this.rendered) {
@@ -427,6 +471,29 @@ export class InfiniteRender implements OnChanges, OnDestroy {
         parent.insertBefore(leaf.ref.location.nativeElement, anchor);
       }
     }
+  }
+
+  /**
+   * Once the anchor was seen without a parent, the outlet is projected
+   * content: the component it is projected into can render (or remove) its
+   * `<ng-content>` in a check of its own view only (a signal it reads),
+   * which doesn't run ngAfterViewChecked here. So from then on the
+   * placement is also checked after every render.
+   */
+  private watchPlacement() {
+    if (this.placementWatch) {
+      return;
+    }
+    this.placementWatch = afterEveryRender(
+      {
+        write: () => {
+          if (this.anchor.nativeElement.parentNode !== this.placedIn) {
+            this.placeNodes();
+          }
+        },
+      },
+      { injector: this.injector },
+    );
   }
 }
 
