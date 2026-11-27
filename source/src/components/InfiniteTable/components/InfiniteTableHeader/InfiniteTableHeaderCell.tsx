@@ -8,7 +8,6 @@ import { stripVar } from '../../../../utils/stripVar';
 import { defaultFilterTypes } from '../../../DataSource/defaultFilterTypes';
 import { DataSourcePropFilterTypes } from '../../../DataSource/types';
 import { setupResizeObserver } from '../../../ResizeObserver';
-import { debounce } from '../../../utils/debounce';
 import { getColumnApiForColumn } from '../../api/getColumnApi';
 import { useCellClassName } from '../../hooks/useCellClassName';
 import { useColumnPointerEvents } from '../../hooks/useColumnPointerEvents';
@@ -58,6 +57,7 @@ import {
   InfiniteTableFilterOperatorSwitch,
 } from './InfiniteTableColumnHeaderFilter';
 import { useColumnResizeHandle } from './useColumnResizeHandle';
+import { createColumnFilterChangeHandler } from '../../utils/pendingColumnFilters';
 
 export const defaultRenderSelectionCheckBox: InfiniteTableColumnHeaderRenderFunction<
   any
@@ -568,17 +568,18 @@ function InfiniteTableHeaderCellFn<T>(props: InfiniteTableHeaderCellProps<T>) {
     align,
   };
 
-  const debouncedOnFilterValueChange = React.useMemo(() => {
-    const fn = (filterValue: any) => {
-      api.setColumnFilter(column.id, filterValue);
-    };
-
-    if (filterDelay > 0) {
-      return debounce(fn, { wait: filterDelay });
-    }
-
-    return fn;
-  }, [filterDelay, column.id]);
+  const debouncedOnFilterValueChange = React.useMemo(
+    () =>
+      createColumnFilterChangeHandler({
+        columnId: column.id,
+        filterDelay,
+        api,
+        getState,
+        getComputed,
+        getDataSourceState,
+      }),
+    [filterDelay, column.id],
+  );
 
   const filterTypeKey = column.computedFilterType;
   const filterType = filterTypes[filterTypeKey];

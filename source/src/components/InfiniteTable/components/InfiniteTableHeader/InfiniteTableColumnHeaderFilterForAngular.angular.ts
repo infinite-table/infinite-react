@@ -30,6 +30,7 @@ import {
   ViewEncapsulation,
   WritableSignal,
   computed,
+  effect,
   inject,
   input,
   linkedSignal,
@@ -38,7 +39,6 @@ import {
 } from '@angular/core';
 
 import { join } from '../../../../utils/join';
-import { debounce } from '../../../utils/debounce';
 import type {
   DataSourceFilterOperator,
   DataSourceFilterValueItem,
@@ -58,6 +58,7 @@ import type {
   InfiniteTableComputedColumn,
 } from '../../types';
 import { height } from '../../utilities.css';
+import { createColumnFilterChangeHandler as createSharedColumnFilterChangeHandler } from '../../utils/pendingColumnFilters';
 import { FilterIcon } from '../icons/FilterIcon/FilterIconForAngular.angular';
 import { StringFilterEditor } from '../FilterEditorsForAngular.angular';
 
@@ -205,11 +206,26 @@ export function injectColumnFilterEditor<
     () => filterProps().columnFilterValue?.filter.value,
   );
 
+  // a value typed here can be dropped before it is applied (the column's
+  // filter was written by something else): then show the filter again
+  const droppedCount = signal(0);
+  const columnId = computed(() => column().id);
+  effect((onCleanup) => {
+    const id = columnId();
+    onCleanup(
+      untracked(() =>
+        getState().pendingColumnFilters.onCancel(id, () =>
+          droppedCount.update((count) => count + 1),
+        ),
+      ),
+    );
+  });
+
   // like the React effect: follows the filter value; a column without a
   // filter value has the filter type's empty value (not '')
-  const theValue = linkedSignal<any, any>({
-    source: filterValue,
-    computation: (value, previous) => {
+  const theValue = linkedSignal<{ value: any; dropped: number }, any>({
+    source: () => ({ value: filterValue(), dropped: droppedCount() }),
+    computation: ({ value }, previous) => {
       if (filterProps().columnFilterValue) {
         return value;
       }
@@ -442,23 +458,27 @@ const EMPTY_FILTER = renderComponent(InfiniteTableColumnHeaderFilterEmpty);
 export function createColumnFilterChangeHandler<T>(
   tableContext: Pick<
     InfiniteTableContextValueForAngular<T>,
-    'api' | 'dataSourceContext'
+    'api' | 'getState' | 'getComputed' | 'dataSourceContext'
   >,
 ) {
   let current: { key: string; fn: (filterValue: any) => void } | null = null;
 
   return (columnId: string) => {
-    const filterDelay =
-      tableContext.dataSourceContext.getDataSourceState().filterDelay;
+    const { getDataSourceState } = tableContext.dataSourceContext;
+    const filterDelay = getDataSourceState().filterDelay;
     const key = `${columnId}:${filterDelay}`;
 
     if (!current || current.key !== key) {
-      const fn = (filterValue: any) => {
-        tableContext.api.setColumnFilter(columnId, filterValue);
-      };
       current = {
         key,
-        fn: filterDelay > 0 ? debounce(fn, { wait: filterDelay }) : fn,
+        fn: createSharedColumnFilterChangeHandler<T>({
+          columnId,
+          filterDelay,
+          api: tableContext.api,
+          getState: tableContext.getState,
+          getComputed: tableContext.getComputed,
+          getDataSourceState,
+        }),
       };
     }
     return current.fn;

@@ -985,6 +985,10 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
 
   setColumnFilter(columnId: string, filterValue: any) {
+    // a filter value typed in the header and not applied yet would
+    // overwrite this one later
+    this.getState().pendingColumnFilters.cancel(columnId);
+
     const col = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!col) {
@@ -1036,6 +1040,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
 
   setColumnFilterOperator(columnId: string, newOperator: string) {
+    this.getState().pendingColumnFilters.cancel(columnId);
+
     const col = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!col) {
@@ -1098,6 +1104,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
     columnId: string,
     filterValue: DataSourceFilterValueItem<T>,
   ) {
+    this.getState().pendingColumnFilters.cancel(columnId);
+
     const column = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!column) {
@@ -1132,6 +1140,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
 
   removeColumnFilter(columnId: string) {
+    this.getState().pendingColumnFilters.cancel(columnId);
+
     const column = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!column) {
@@ -1158,6 +1168,8 @@ class InfiniteTableApiImpl<T> implements InfiniteTableApi<T> {
   }
 
   clearColumnFilter(columnId: string) {
+    this.getState().pendingColumnFilters.cancel(columnId);
+
     const column = this.getComputed().computedColumnsMap.get(columnId);
 
     if (!column) {

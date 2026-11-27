@@ -26,6 +26,7 @@ import type { SubscriptionCallback } from '../../types/SubscriptionCallback';
 
 import type { MatrixBrain } from '../../VirtualBrain/MatrixBrain';
 import type { ScrollListener } from '../../VirtualBrain/ScrollListener';
+import type { PendingColumnFilters } from '../utils/pendingColumnFilters';
 
 import type {
   InfiniteTableColumn,
@@ -104,6 +105,8 @@ export interface InfiniteTableSetupState<T> {
     target: HTMLElement | EventTarget;
     column: InfiniteTableComputedColumn<T>;
   }>;
+  /** the filter values typed in the header, waiting for `filterDelay` */
+  pendingColumnFilters: PendingColumnFilters;
 
   cellContextMenu: SubscriptionCallback<CellContextMenuLocationWithEvent>;
   contextMenu: SubscriptionCallback<ContextMenuLocationWithEvent>;

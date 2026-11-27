@@ -61,6 +61,7 @@ import type {
 } from '../types/DevTools';
 
 import { getDebugChannel } from '../../../utils/debugChannel';
+import { PendingColumnFilters } from '../utils/pendingColumnFilters';
 const EMPTY_OBJECT = {};
 
 export function getCellSelector(cellPosition?: CellPositionByIndex) {
@@ -202,6 +203,7 @@ export function initSetupState<T>({
       target: HTMLElement | EventTarget;
       column: InfiniteTableComputedColumn<T>;
     }>(),
+    pendingColumnFilters: new PendingColumnFilters(),
 
     flashingDurationCSSVarValue: null,
     onFlashingDurationCSSVarChange: buildSubscriptionCallback<number>(),
